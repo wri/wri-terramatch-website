@@ -1,0 +1,87 @@
+{
+  "name": "wri-restoration-marketplace-website",
+  "version": "1.1.27",
+  "private": true,
+  "dependencies": {
+    "@mapbox/geojson-area": "^0.2.2",
+    "@mapbox/geojson-merge": "^1.1.1",
+    "@sentry/browser": "^5.5.0",
+    "@turf/union": "^6.0.3",
+    "circle-to-polygon": "^1.0.2",
+    "core-js": "^3.2.1",
+    "i18next": "^17.0.7",
+    "i18next-browser-languagedetector": "^3.0.1",
+    "jwt-decode": "^2.2.0",
+    "leaflet": "^1.5.1",
+    "leaflet-draw": "^1.0.4",
+    "matchmedia-polyfill": "^0.3.2",
+    "moment": "^2.24.0",
+    "node-sass": "^4.12.0",
+    "prop-types": "^15.7.2",
+    "query-string": "^6.8.3",
+    "react": "^16.8.6",
+    "react-app-polyfill": "^1.0.2",
+    "react-collapse": "^5.0.0",
+    "react-cookie": "^4.0.3",
+    "react-datepicker": "^2.12.1",
+    "react-dom": "^16.8.6",
+    "react-ga": "^2.7.0",
+    "react-i18next": "^10.11.4",
+    "react-redux": "^7.1.0",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1",
+    "react-select": "^3.0.8",
+    "react-slick": "^0.25.2",
+    "redux": "^4.0.4",
+    "redux-devtools": "^3.5.0",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-promise-middleware": "^6.1.1",
+    "redux-thunk": "^2.3.0",
+    "slick-carousel": "^1.8.1",
+    "superagent": "^5.1.0",
+    "tsc-chameleon-component-library": "git+ssh://git@bitbucket.org/3sidedcube/tsc-chameleon-component-library.git",
+    "wrm-api": "./scripts/api-gen/"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "api:generate-test": "rm -rf ./scripts/api-gen && node ./scripts/api-code-gen https://test.wrirestorationmarketplace.cubeapis.com/documentation/raw",
+    "api:generate-staging": "rm -rf ./scripts/api-gen && node ./scripts/api-code-gen https://staging.wrirestorationmarketplace.cubeapis.com/documentation/raw",
+    "version": "echo $npm_package_name@$npm_package_version",
+    "transifex:push": "node scripts/transifex/transifex-push.js",
+    "transifex:pull": "node scripts/transifex/transifex-pull.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "plugin:jsx-a11y/recommended"
+    ],
+    "plugins": [
+      "jsx-a11y"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all",
+      "ie 9-11"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "ie 9"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/react": "^8.0.8",
+    "dotenv": "^8.2.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "node-fetch": "^2.6.0",
+    "unzipper": "^0.10.3"
+  }
+}

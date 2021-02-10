@@ -1,0 +1,15 @@
+.c-team-members__list {
+    
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 30px;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+
+    .c-card {
+        border-radius: 0;
+        height: fit-content;
+        max-height: 310px;
+    }
+}

@@ -1,0 +1,36 @@
+.c-add-users__list {
+  list-style: none;
+  padding: 0;
+  .c-add-users__list-item {
+    max-width: 360px;
+    width: 100%;
+    height: 96px;
+    border-radius: 13px;
+    margin: 15px auto;
+    padding: 10px 30px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+    position: relative;
+  }
+  .c-add-users__invite-sent {
+    position: absolute;
+    right: 30px;
+    bottom: 15px;
+  }
+  .c-add-users__profile-picture-container {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+  }
+  .c-add-users__profile-content--has-avatar {
+    padding-left: 65px;
+  }
+  .c-add-users__profile-picture {
+    width: 62px;
+    height: 62px;
+    border-radius: 8px;
+    border: solid 1px rgba(155, 155, 155, 0.22);
+    background-position: center;
+    background-size: cover;
+  }
+}

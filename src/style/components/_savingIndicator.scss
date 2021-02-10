@@ -1,0 +1,12 @@
+.c-saving-indicator {
+  &__image {
+    width: 15px;
+    height: 15px;
+    display: block;
+  }
+  &__text {
+    @include font-size(16px, 1);
+    position: relative;
+    top: 2px;
+  }
+}

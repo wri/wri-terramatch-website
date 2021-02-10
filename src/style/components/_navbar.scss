@@ -1,0 +1,177 @@
+.c-navbar--container {
+  border-bottom: 3px solid $global-brand-color;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: $white;
+  z-index: 10002;
+}
+
+.c-navbar {
+  padding: 0px;
+  border-bottom: 0px;
+  height: $global-nav-bar-height;
+  @include container;
+  a {
+    line-height: normal;
+  }
+
+  &__link {
+    @include font-size(14px);
+    &.c-navbar__button {
+      position: relative;
+      bottom: 1px;
+    }
+  }
+
+  &__logo {
+    width: 111px;
+    height: $global-nav-bar-height;
+    background-image: url('../assets/images/logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  &__logo-beta {
+    background-color: $global-brand-color;
+    color: $white;
+    margin-left: 10px;
+    font-weight: bold;
+    padding: 2px 15px 0px 15px;
+    border-radius: 15px;
+  }
+
+  &__item {
+    margin: 0px 25px;
+    z-index: 9999;
+    white-space: nowrap;
+    float: left;
+    &--right {
+      align-self: center;
+      margin: 0;
+      height: 100%;
+    }
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+
+  &__hamburger {
+    padding: 0px;
+    top: 13px;
+    right: 10px;
+  }
+
+  &__skip-link {
+    position: absolute;
+    a {
+      &:not(:focus) {
+        @include visually-hidden();
+      }
+      &:focus, &:active {
+        position: fixed;
+        top: 70px;
+        z-index: 10000;
+        background-color: white;
+        padding: 5px;
+        border: 2px solid $global-brand-color;
+      }
+    }
+  }
+
+  &__login {
+    text-align: center;
+    .c-dropdown__button {
+      background-color: transparent;
+      border: none;
+      color: $darkGrey;
+      font-size: inherit;
+      font-weight: normal;
+      &:hover,
+      &:focus {
+        outline: none;
+        color: $darkGrey;
+        text-decoration: underline;
+      }
+    }
+
+    .c-dropdown__content {
+      border: 0;
+      background-color: $white;
+      margin-top: 18px;
+      padding: 30px;
+      white-space: normal;
+      @media screen and (min-width: $md) {
+        min-width: 275px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $lg) {
+  .c-navbar__item {
+    margin: 0px 10px;
+  }
+}
+
+@media screen and (max-width: $md) {
+  .c-navbar--container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: $white;
+  }
+  .c-navbar__logo {
+    position: relative;
+    left: 15px;
+  }
+
+  .c-navbar__logo-beta {
+    margin-left: 20px;
+  }
+
+  .c-navbar__item {
+    margin: 0px;
+    &.c-navbar__right-item {
+      margin: 17px 0px;
+    }
+
+    &--right {
+      position: fixed;
+      background-color: white;
+      top: $global-nav-bar-height;
+      left: 0;
+      bottom: 0;
+      border-bottom: 3px solid $global-brand-color;
+    }
+
+    .c-navbar__link, .c-navbar__login .c-dropdown__button {
+      @include font-size(27px);
+      color: $black;
+      letter-spacing: 2.03px;
+    }
+    .c-navbar__login {
+      .c-dropdown__content {
+        position: fixed;
+        left: 0;
+        right: 0;
+        margin: 0px 20px;
+        text-align: center;
+      }
+
+      input[type="submit"] {
+        width: 100%;
+        max-width: 215px;
+        min-width: inherit;
+      }
+    }
+  }
+}

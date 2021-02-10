@@ -1,0 +1,38 @@
+.c-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &__page-list {
+        margin-left: 57px;
+        margin-right: 57px;
+        button {
+            border: none;
+            font-size: 21px;
+            &--active {
+
+            }
+        }
+    }
+
+    &__btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 25px;
+        background-image: url('../assets/images/icons/chevron-slim-white.svg');
+        background-position: 55% center;
+        background-repeat: no-repeat;
+        background-size: 28%;
+
+        &--more {
+            background-color: $global-brand-color;
+            border-color: $global-brand-color;
+        }
+
+        &--less {
+            background-color: $grey;
+            border-color: $grey;
+            transform: rotate(180deg);
+        }
+    }
+
+}

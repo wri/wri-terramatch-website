@@ -1,0 +1,128 @@
+.c-project {
+  position: relative;
+  .c-card {
+    border: solid 1px $midGrey;
+  }
+  &__pill {
+    float: right;
+    background: $global-alternative-brand-color;
+    padding: 6px 22px 0px 22px;
+    border-radius: 20px;
+    p {
+      font-size: 15px;
+      position: relative;
+      top: -3px;
+    }
+  }
+  &--archived {
+    .c-card-header-content {
+      backdrop-filter: grayscale(100%);
+      height: 100%;
+    }
+  }
+  &__header {
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  &__read-more {
+    position: absolute;
+    bottom: 0;
+  }
+  &__remove {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+  }
+  &__project-logo {
+    width: 62px;
+    height: 62px;
+    border-radius: 8px;
+    position: absolute;
+    top: 100px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  &__title {
+    @include font-size(21px);
+  }
+
+  &__edit-name {
+    background-color: transparent;
+    font-family: "Acumin-Pro", sans-serif;
+    margin: 0.67em 0;
+    font-size: 2.25rem;
+    line-height: 1.16667;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+    color: $white;
+    border: none;
+    border-bottom: 1px solid $white;
+  }
+
+  &__description {
+    height: 60px;
+    text-overflow: ellipsis;
+    overflow-y: hidden;
+  }
+  &__details {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    bottom: 40px;
+    border-top: 1px solid $midGrey;
+    border-bottom: 1px solid $midGrey;
+    &-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      &:nth-of-type(2) {
+        border-left: 1px solid $midGrey;
+      }
+    }
+  }
+
+  &__details-tab {
+    flex: 1.5;
+    margin-right: 40px;
+    margin-bottom: 60px;
+    @media screen and (max-width: $md) {
+      margin-right: 0px;
+    }
+  }
+
+  &__tabs {
+    position: relative;
+    .c-add-users__list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      .c-user {
+        margin: 15px;
+      }
+    }
+
+    .c-tab__list {
+      border-bottom: 1px solid $midGrey;
+      @media screen and (min-width: $xl) {
+        text-align: center;
+      }
+
+      @media screen and (max-width: $sm) {
+        text-align: center;
+      }
+    }
+    .c-tab__content {
+      p {
+        white-space: pre-line;
+      }
+    }
+  }
+  &__video {
+    width: 419px;
+    margin: 0 auto;
+    @media screen and (max-width: $sm) {
+      width: 100%;
+    }
+  }
+}

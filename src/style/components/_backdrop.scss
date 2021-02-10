@@ -1,0 +1,24 @@
+.c-backdrop {
+  z-index: 9998;
+  margin-top: $global-nav-bar-height + 3px;
+  &--opaque {
+    background-color: #333333;
+  }
+  &--has-background {
+    background-position: center;
+    background-size: cover;
+
+    background-image: url('../assets/images/onboarding-background.jpg');
+
+    @media (-webkit-min-device-pixel-ratio: 1.5),
+    (min-resolution: 144dpi){
+        /* Retina-specific stuff here */
+        background-image: url('../assets/images/onboarding-background@2x.jpg');
+    }
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi) {
+        background-image: url('../assets/images/onboarding-background@3x.jpg');
+    }
+  }
+}

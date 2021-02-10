@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "MEXRL59E77.org.wri.restorationmarketplace",
+                "paths": ["/verify", "/invite", "/funding/*", "/projects/*", "/connections", "/organization/*", "/profile", "/profile/funding/*", "/profile/projects/*", "/passwordReset"]
+            }
+        ]
+    }
+}

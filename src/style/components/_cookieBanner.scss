@@ -1,0 +1,36 @@
+.c-cookie-banner {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: rgb(0, 0, 0);
+  z-index: 99001;
+  min-height: 60px;
+
+  p {
+    color: #fff;
+    font-family: 'Acumin-Pro';
+    font-size: 15px;
+    font-stretch: normal;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1.73;
+    letter-spacing: 0.17px;
+
+    @media screen and (max-width: $md) {
+      padding: 1em;
+    }
+  }
+
+  button {
+    display: inline-flex;
+    min-width: 45px;
+    width: 45px;
+    min-height: 28px;
+    height: 28px;
+    font-size: 12px;
+    justify-content: center;
+    border-radius: 4px;
+    margin-left: 16px;
+  }
+}

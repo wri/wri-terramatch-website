@@ -1,0 +1,27 @@
+.c-selected-filter {
+    min-width: 0;
+    margin-right: 11px;
+    margin-bottom: 11px;
+    color: $white;
+    background-color: $global-brand-color;
+    border-radius: 2.6px;
+    border-width: 0px;
+    height: 30.8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    p {
+        margin-right: 4.9px;
+        font-size: 11.6px;
+        font-family: $fontFamiliy;
+        letter-spacing: 0.77px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+    }
+    img {
+        margin-bottom: 1px;
+    }
+}

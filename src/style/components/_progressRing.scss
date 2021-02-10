@@ -1,0 +1,20 @@
+.c-progress-ring {
+    fill: none;
+    position: relative;
+    display: block;
+    width: 94px;
+    height: 94px;
+    &__indicator {
+      text-align: center;
+      width: 94px;
+      position: absolute;
+      top: 30px;
+        p {
+            line-height: 0.9;
+        }
+    }
+
+    circle {
+      transition: all 0.3s ease-in;
+    }
+}

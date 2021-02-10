@@ -1,0 +1,92 @@
+.u-text-uppercase {
+  text-transform: uppercase;
+}
+
+.u-text-capitalize {
+  text-transform: capitalize;
+}
+
+.u-text-pre-wrap {
+  white-space: pre-wrap;
+}
+
+.u-text-wrap {
+  overflow-wrap: break-word;
+}
+
+.u-text-bold {
+  font-weight: bold;
+}
+
+.u-text-italic {
+  font-style: italic;
+}
+
+.u-text-normal {
+  font-weight: normal;
+}
+
+.u-text-center {
+  text-align: center;
+}
+
+.u-text-right {
+  text-align: right;
+}
+
+.u-text-left {
+  text-align: left;
+}
+
+.u-text-underline {
+  text-decoration: underline;
+}
+
+.u-text-spaced {
+  letter-spacing: 2.25px;
+}
+
+.u-text-black {
+  color: $black;
+}
+
+.u-text-grey {
+  color: $grey;
+}
+
+.u-text-dark-grey {
+  color: #4E4E4E;
+}
+
+.u-text-white {
+  color: $white;
+}
+
+.u-text-spaced {
+  letter-spacing: 1.05px;
+}
+
+.u-text-spaced-small {
+  letter-spacing: 0.63px;
+}
+
+.u-text-decoration-none {
+  text-decoration: none;
+  &:hover, &:focus {
+    text-decoration: none;
+  }
+}
+
+.u-text-ellipsis {
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.u-text-error {
+  color: $form-input-error;
+}
+
+.u-line-height-large {
+  line-height: 4;
+}

@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.cube.wri.rm.dev",
+    "sha256_cert_fingerprints": ["E2:48:93:13:42:0E:10:3B:41:5C:6A:FF:D7:84:F7:33:AF:23:0D:28:02:54:38:99:AC:9C:E9:D1:D4:13:D2:B5"]
+  }
+}]

@@ -1,0 +1,64 @@
+.c-featured-item {
+  background-color: $white;
+  text-align: center;
+  width: 960px;
+  color: $darkGrey;
+  border-radius: 6px;
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  height: 100%;
+
+  @media screen and (max-width: $lg) {
+    width: 660px;
+  }
+
+  @media screen and (max-width: $md) {
+    width: 326px;
+  }
+
+  &__image {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+
+    @media screen and (max-width: $md) {
+      height: 230px;
+    }
+  }
+
+  &__details {
+    flex: 1;
+    padding: 40px;
+
+    & h3 {
+      font-size: 40px;
+    }
+
+    @media screen and (max-width: $md) {
+      padding: 24px;
+
+      & h3 {
+        font-size: 36px;
+      }
+
+      & p {
+        font-size: 13.5px;
+        line-height: 1.8;
+      }
+    }
+  }
+
+  &__metrics {
+    border-radius: 6px;
+    background-color: #ebebeb;
+
+    & h5 {
+      font-size: 20px;
+    }
+
+    & p {
+      font-size: 18px;
+    }
+  }
+}

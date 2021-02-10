@@ -1,0 +1,10 @@
+$sizes: 25 50 75 100;
+
+@each $size in $sizes {
+  .u-width-#{$size} {
+    width: #{$size}#{"%"};
+  }
+  .u-height-#{$size} {
+    height: #{$size}#{"%"};
+  }
+}

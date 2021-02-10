@@ -1,0 +1,13 @@
+.c-sidebar {
+  width: 139px;
+  position: fixed;
+  overflow-y: auto;
+  left: 0;
+  top: $global-nav-bar-height + 3;
+  bottom: 0;
+  border-right: 3px solid $global-brand-color;
+  padding: 0px 5px;
+  @media screen and (max-width: $sm) {
+    width: 110px;
+  }
+}

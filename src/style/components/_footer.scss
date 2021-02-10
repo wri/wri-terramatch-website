@@ -1,0 +1,25 @@
+.c-footer {
+  &__left-section {
+    margin-right: 20px;
+  }
+  &__right-section {
+    margin-left: 20px;
+  }
+  @media screen and (max-width: $md) {
+    &__left-section {
+      margin-right: 0;
+    }
+    &__right-section {
+      margin-left: 0;
+    }
+  }
+  h2, h3, p, a {
+    color: $grey;
+  }
+  &__logo {
+    width: 150px;
+  }
+  &__links {
+    list-style: none;
+  }
+}

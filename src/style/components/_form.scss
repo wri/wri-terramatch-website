@@ -1,0 +1,299 @@
+.c-form__group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.c-form__label {
+  box-sizing: border-box;
+  color: $black;
+  font-weight: bold;
+  line-height: 2.2;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.c-form__hidden-input {
+  @include visually-hidden();
+  bottom: 0;
+}
+
+.c-form__error-message {
+  color: $form-input-error;
+  display: block;
+  padding-right: 18px;
+  position: relative;
+  margin-top: 5px;
+  text-align: left;
+  list-style: none;
+  padding-left: 0;
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    background-image: url('../assets/images/icons/text-warning-icon.svg');
+  }
+}
+
+.c-form__input {
+  border-style: solid;
+  border-width: 0px;
+  border-bottom-width: 2px;
+  border-color: $form-input;
+  transition: border 300ms ease-in-out;
+  font-family: inherit;
+  padding: 8px;
+  color: inherit;
+  box-sizing: border-box;
+  background: $white;
+  &--large {
+    padding: 21px 23px;
+    font-size: 18px;
+  }
+  &::placeholder {
+    color: $form-input;
+  }
+
+  &:disabled {
+    border-color: $form-input;
+    border-style: dotted;
+    color: $form-input;
+    background: $white;
+  }
+
+  &:active,
+  &:focus {
+    border-color: $form-input-active;
+    outline: none;
+  }
+
+  &--primary {
+    &:focus {
+      border-color: $global-brand-color;
+    }
+  }
+
+  &--has-error {
+    border-color: $form-input-error;
+    &:active,
+    &:focus {
+      border-color: $form-input-error;
+    }
+  }
+}
+
+.u-form__upload-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 7px;
+  border: solid 2px rgba(0, 0, 0, 0.12);
+  min-width: 200px;
+  height: 125px;
+  position: relative;
+  margin: 0 12px;
+  cursor: pointer;
+  .u-form__upload-icon, .u-form__upload-text {
+    display: inline;
+  }
+  .u-form__upload-icon {
+    width: 35px;
+  }
+  .u-form__upload-text {
+    font-family: $fontFamiliy;
+  }
+  &--square {
+    flex-wrap: wrap;
+    width: 125px;
+    min-width: inherit;
+    height: 125px;
+    margin: 0 auto;
+    .u-form__upload-icon {
+      position: relative;
+      top: 24px;
+    }
+  }
+}
+
+.u-form__upload-image-preview {
+  height: 100px;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center
+}
+
+textarea.c-form__input {
+  border-width: 2px;
+  border-style: solid;
+  max-width: 100%;
+}
+
+.c-form__toggle-button {
+  display: inline-block;
+  position: relative;
+  width: 37px;
+  height: 18px;
+  padding: 3px;
+  border: 0;
+  border-radius: 10px;
+  background-color: $grey;
+  transition: $global-transition;
+  cursor: pointer;
+  overflow: hidden;
+  span {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+    top: 2px;
+    left: 3px;
+    background-color: $white;
+    transition: $global-transition;
+    &:before {
+      content: '';
+      display: block;
+      position: relative;
+      top: 2px;
+      left: -15px;
+      width: 12px;
+      height: 9px;
+    }
+  }
+  &[aria-checked='true'] {
+    background-color: $global-brand-color;
+    span {
+      left: 20px;
+      &:before {
+        background-image: url('../assets/images/icons/check-icon.svg');
+      }
+    }
+  }
+}
+
+.c-form__checkbox-group, .c-form__radio-group {
+  .c-form__group {
+    border-bottom: 1px solid $midGrey;
+  }
+}
+
+.c-form__checkbox-group--is-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  .c-form__group {
+    border-bottom: none;
+  }
+
+  .c-form__checkbox-label, .c-form__radio-label {
+    display: block;
+    text-align: center;
+    width: 97px;
+    margin: 5px;
+    text-transform: capitalize;
+    .c-label-image {
+      display: block !important;
+      text-align: center;
+      width: 89px;
+      height: 89px;
+      background-image: url('../assets/images/pitches/option-placeholder.png');
+      background-size: cover;
+      cursor: pointer;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 4px solid #333333;
+      transition: $global-transition;
+    }
+
+    &:after {
+      content: none;
+    }
+  }
+
+  .c-form__checkbox-input:focus + .c-form__checkbox-label,
+  .c-form__radio-input:focus + .c-form__radio-label {
+    .c-label-image {
+      box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .c-form__checkbox-input:checked + .c-form__checkbox-label,
+  .c-form__radio-input:checked + .c-form__radio-label {
+    .c-label-image {
+      border: 4px solid $global-brand-color;
+    }
+  }
+}
+
+.c-form__checkbox-label, .c-form__radio-label {
+  span {
+    max-width: 90%;
+  }
+  &:after {
+    content: '';
+    background-color: $white;
+    width: 18px;
+    height: 18px;
+    background-image: url('../assets/images/icons/check-icon.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 75%;
+    display: inline-block;
+    border-radius: 3px;
+    transition: $global-transition;
+    border: 2px solid $grey;
+  }
+}
+
+.c-form__checkbox-input:checked + .c-form__checkbox-label,
+.c-form__radio-input:checked + .c-form__radio-label {
+  &:after {
+    background-color: $global-brand-color;
+    border: 2px solid transparent;
+  }
+}
+
+.c-form__checkbox-input:focus + .c-form__checkbox-label,
+.c-form__radio-input:focus + .c-form__radio-label {
+  &:after {
+    outline: -webkit-focus-ring-color auto 5px;
+  }
+}
+
+.c-form__radio-label {
+  &:after {
+    border-radius: 50%;
+    background-image: none;
+    box-shadow: inset 0 0 0px 2px #FFFFFF
+  }
+}
+
+.c-form__radio-group {
+  .c-form__radio-label {
+    font-weight: normal;
+  }
+}
+
+.c-form__seperator {
+  border-style: solid;
+  border-width: 0px;
+  border-bottom-width: 2px;
+  border-color: $form-input;
+  margin-bottom: 25px;
+  .c-form__seperator-label {
+    background-color: white;
+    padding: 0 25px;
+    position: relative;
+    top: 14px;
+  }
+}
+
+.react-datepicker__input-container {
+  input {
+    width: 100%;
+  }
+}

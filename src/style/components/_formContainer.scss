@@ -1,0 +1,19 @@
+.c-form-container {
+    z-index: 9999;
+    display: flex;
+    max-width: 750px;
+    width: 100%;
+    margin: auto;
+    position: relative;
+
+    &__content {
+        background: $white;
+        width: 100%;
+        border: solid 1px $midGrey;
+        padding: 80px 160px 120px 160px;
+
+        @media screen and (max-width: $sm) {
+          padding: 80px 10px 120px 10px;
+        }
+    }
+}

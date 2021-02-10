@@ -1,0 +1,103 @@
+.c-form-walkthrough {
+  z-index: 9999;
+  display: flex;
+  max-width: 750px;
+  width: 100%;
+  margin: auto;
+  position: relative;
+
+  &__progress-text {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    @include font-size(20px);
+  }
+
+  &__saving-indicator {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+  }
+
+  &__alt-success-link {
+    margin-top: 30px;
+    display: inline-block;
+    width: 100%;
+  }
+
+  &__progress-bar-wrapper {
+    position: absolute;
+    top: 53px;
+    left: 0px;
+    right: 0px;
+    height: 9px;
+    background-color: #D9D9D9;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.16);
+  }
+
+  &__progress-bar {
+    background-color: $global-brand-color;
+    height: 100%;
+    transition: $global-transition;
+  }
+
+  .c-form__input {
+    width: 100%;
+  }
+
+  &--full-width {
+    .c-form__error-message {
+      padding: 0 38px 0 20px;
+      &:after {
+        right: 20px;
+      }
+    }
+  }
+  .c-form__group {
+    margin-bottom: 24px;
+  }
+  &__content {
+    background: $white;
+    width: 100%;
+    padding: 75px 130px 110px 130px;
+  }
+  &__icon {
+    max-width: 130px;
+    width: 100%;
+  }
+  &__actions {
+    margin: 15px 96px 0 96px;
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+  &__help {
+    max-width: 428px;
+    margin: 0 auto 40px auto;
+    white-space: pre-line;
+  }
+  @media screen and (max-width: $md) {
+    &__content {
+      padding: 41px 20px 90px 20px;
+    }
+    &__actions {
+      margin: 0 12px;
+    }
+  }
+  @media screen and (max-width: $sm) {
+    &__content {
+      padding: 41px 12px 90px 12px;
+    }
+    &__actions {
+      margin: 0 12px;
+    }
+  }
+  @media screen and (max-width: $xs) {
+    &__content {
+      .c-button {
+        width: 100%;
+        min-width: inherit;
+      }
+    }
+  }
+}

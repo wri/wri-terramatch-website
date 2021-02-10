@@ -1,0 +1,35 @@
+.c-icon {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  &--trash {
+    background-image: url('../assets/images/icons/trash.svg');
+  }
+  &--trash-white {
+    background-image: url('../assets/images/icons/trash-white.svg');
+  }
+  &--document {
+    background-image: url('../assets/images/icons/document.svg');
+  }
+  &--technical {
+    background-image: url('../assets/images/icons/document.svg');
+  }
+  &--legal {
+    background-image: url('../assets/images/icons/document.svg');
+  }
+  &--award {
+    background-image: url('../assets/images/icons/award.svg');
+  }
+  &--close {
+    background-image: url('../assets/images/icons/close-primary.svg');
+    background-size: cover;
+  }
+  &--chevron-black {
+    background-image: url('../assets/images/icons/chevron-black.svg');
+  }
+  &--play {
+    background-image: url('../assets/images/icons/play.svg');
+  }
+}

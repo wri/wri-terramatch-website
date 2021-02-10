@@ -1,0 +1,31 @@
+$time: 1.25s;
+
+/*
+  For the time it takes for one loop, hide and show each path in the spinner svg.
+  Each path is staggered by (time / 8) * (n - 1)
+ */
+.c-spinner {
+  @for $i from 1 through 8 {
+    #Fill-#{$i} {
+      animation: $time linear #{(($time / 8) * ($i - 1))} infinite onOff;
+    }
+  }
+}
+
+@keyframes onOff {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

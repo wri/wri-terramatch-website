@@ -1,0 +1,26 @@
+html {
+  font-family: $fontFamiliy;
+  color: $darkGrey;
+}
+
+p {
+  font-family: $secondaryFontFamily;
+  margin-block-start: 0.7em;
+  margin-block-end: 0.7em;
+}
+
+.App {
+  margin-top: $global-nav-bar-height;
+}
+
+code {
+  white-space: pre-wrap;
+}
+
+hr {
+  height: 0px;
+  border-bottom: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: solid 2.1px #E5E5E5;
+}

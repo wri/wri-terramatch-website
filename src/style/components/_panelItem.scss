@@ -1,0 +1,10 @@
+.c-panel-item {
+  border-radius: 8px;
+  border: solid 2px #e5e5e5;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px 48px;
+
+  @media screen and (max-width: $sm) {
+    padding: 12px;
+  }
+}

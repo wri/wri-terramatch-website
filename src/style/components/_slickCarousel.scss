@@ -1,0 +1,85 @@
+.slick-slider {
+  .slick-slide {
+    img {
+      display: inline;
+    }
+  }
+  .slick-next {
+    right: 10%;
+  }
+  .slick-prev {
+    left: 10%;
+    &:before {
+      transform: rotate(180deg);
+    }
+  }
+
+  &--isFetching {
+    .slick-slide {
+      opacity: 0.37;
+    }
+    padding-bottom: 24px;
+  }
+
+  .slick-prev, .slick-next {
+    z-index: 9998;
+    width: 60px;
+    height: 60px;
+
+    &:before {
+      display: block;
+      content: '';
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: $black;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.38);
+      font-size: 60px;
+      background-image: url('../assets/images/icons/chevron-slim-white.svg');
+      background-position: 55% center;
+      background-repeat: no-repeat;
+      background-size: 28%;
+    }
+    &:hover, &:focus {
+      &:before {
+        background-image: url('../assets/images/icons/chevron-slim-primary.svg');
+        box-shadow: 0 0 0 1px $global-brand-color;
+        opacity: 1;
+      }
+    }
+  }
+
+  @media screen and (max-width: $md) {
+    .slick-next {
+      right: 5%;
+    }
+    .slick-prev {
+      left: 5%;
+    }
+    .slick-prev, .slick-next {
+      width: 40px;
+      height: 40px;
+      &:before {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  }
+
+  .slick-track {
+    display: flex;
+  }
+  .slick-dots {
+    position: relative;
+    bottom: 0;
+    li, .slick-active {
+      margin: 0;
+      button {
+        &:before {
+          color: $white;
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}

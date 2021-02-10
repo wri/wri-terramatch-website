@@ -1,0 +1,82 @@
+.c-language-picker {
+  width: 148px;
+  display: block;
+
+  @media screen and (min-width: $md) {
+    height: 100%;
+  }
+
+  @media screen and (max-width: $md) {
+    position: absolute;
+    top: 0;
+  }
+
+  > div:first-of-type {
+    height: 100%;
+  }
+
+  &__control {
+    border-width: 0 !important;
+    border-radius: 0 !important;
+    height: 100%;
+    background-color: $language-picker-background !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+  }
+
+  &__value-container {
+    justify-content: flex-end;
+    text-transform: uppercase;
+    padding: 0px !important;
+  }
+
+  &__indicators {
+    flex: 0.3;
+  }
+
+  &__indicator {
+    padding: 0 !important;
+    transform: rotate(180deg);
+    transition: $global-transition !important;
+    position: relative;
+    bottom: 2px;
+  }
+
+  &__indicator-separator {
+    display: none;
+  }
+
+  &__menu {
+    border-radius: 0 !important;
+    margin-top: 3px !important;
+  }
+
+  &__menu-list {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+
+  &__option {
+    color: $darkGrey !important;
+    text-transform: uppercase;
+    &--is-focused {
+      background-color: $drop-down-focus  !important;
+    }
+
+    &--is-selected {
+      background-color: $drop-down-focus !important;
+      font-weight: bold;
+    }
+  }
+
+  &__single-value {
+    left: 50% !important;
+    transform: translateY(-50%) translateX(-50%) !important;
+  }
+}
+
+.c-language-picker__control--menu-is-open {
+  .c-language-picker__indicator {
+    transform: rotate(0deg);
+  }
+}

@@ -1,0 +1,83 @@
+.c-pitches {
+
+    &__content {
+        margin-left: 330px;
+    }
+    &__content-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 8px;
+        row-gap: 5px;
+        justify-items: center;
+    }
+
+    &__open-filters {
+      display: none;
+      @media screen and (max-width: $sm) {
+        display: block;
+      }
+    }
+
+    &__sidebar {
+        width: 330px;
+        border: none;
+        box-sizing: border-box;
+        padding: 24px;
+        z-index: 1;
+        .c-sidebar__close {
+          position: absolute;
+          top: 15px;
+          right: 3px;
+          display: none;
+          width: 30px;
+          height: 30px;
+          transform: rotate(180deg);
+          z-index: 1;
+          div {
+            background-size: 15px 15px;
+            background-position: 2px 7px;
+          }
+        }
+    }
+
+    &__empty-image {
+      width: 225px;
+      height: 225px;
+    }
+
+    @media screen and (max-width: $md) {
+      &__content {
+          margin-left: 200px;
+      }
+
+      &__sidebar {
+          width: 200px;
+      }
+
+      &__empty-image {
+        width: 150px;
+        height: 150px;
+      }
+    }
+
+    @media screen and (max-width: $sm) {
+      &__content {
+          margin-left: 0px;
+      }
+
+      &__sidebar {
+          transition: $global-transition;
+          width: 100%;
+          padding: 10px;
+          position: fixed;
+          left: -100%;
+          &--open {
+            left: 0%;
+            padding-top: 60px;
+          }
+          .c-sidebar__close {
+            display: block;
+          }
+      }
+    }
+}

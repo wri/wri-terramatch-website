@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'Acumin-Pro';
+  src: url('../assets/fonts/AcuminProCond-Light.eot');
+  src: url('../assets/fonts/AcuminProCond-Light.eot?#iefix') format('embedded-opentype'),
+      url('../assets/fonts/AcuminProCond-Light.woff') format('woff'),
+      url('../assets/fonts/AcuminProCond-Light.ttf') format('truetype'),
+      url('../assets/fonts/AcuminProCond-Light.otf') format('opentype');
+
+}
+
+@font-face {
+  font-family: 'Acumin-Pro';
+  font-weight: bold;
+  src: url('../assets/fonts/AcuminProCond-Bold.eot');
+  src: url('../assets/fonts/AcuminProCond-Bold.eot?#iefix') format('embedded-opentype'),
+      url('../assets/fonts/AcuminProCond-Bold.woff') format('woff'),
+      url('../assets/fonts/AcuminProCond-Bold.ttf') format('truetype'),
+      url('../assets/fonts/AcuminProCond-Bold.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Acumin-Pro';
+  font-weight: bold;
+  font-style: italic;
+  src: url('../assets/fonts/AcuminProCond-BoldItalic.eot');
+  src: url('../assets/fonts/AcuminProCond-BoldItalic.eot?#iefix') format('embedded-opentype'),
+      url('../assets/fonts/AcuminProCond-BoldItalic.woff') format('woff'),
+      url('../assets/fonts/AcuminProCond-BoldItalic.ttf') format('truetype'),
+      url('../assets/fonts/AcuminProCond-BoldItalic.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Acumin-Pro';
+  font-style: italic;
+  src: url('../assets/fonts/AcuminProCond-LightItalic.eot');
+  src: url('../assets/fonts/AcuminProCond-LightItalic.eot?#iefix') format('embedded-opentype'),
+      url('../assets/fonts/AcuminProCond-LightItalic.woff') format('woff'),
+      url('../assets/fonts/AcuminProCond-LightItalic.ttf') format('truetype'),
+      url('../assets/fonts/AcuminProCond-LightItalic.otf') format('opentype');
+}
+
+$fontFamiliy: 'Acumin-Pro', sans-serif;
+$secondaryFontFamily: 'Georgia', serif;

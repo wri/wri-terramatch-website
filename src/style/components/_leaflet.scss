@@ -1,0 +1,92 @@
+// custom styles for leaflet draw
+
+.leaflet-div-icon {
+  background: $global-brand-color;
+  border: 2px solid $global-brand-color;
+  border-radius: 50%;
+}
+
+.leaflet-draw {
+  position: absolute;
+  top: 63px;
+  right: 10px;
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+
+  .leaflet-draw-toolbar {
+    border: 0;
+
+    a {
+      background-size: 273px 35px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      background-color: $global-brand-color;
+      border-radius: 2px;
+      margin-bottom: 2px;
+    }
+
+    .leaflet-draw-draw-polygon {
+      padding: 6px;
+      background-image: url('../assets/images/map/draw_new.png') !important;
+      background-position: center !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+      background-origin: content-box !important;
+    }
+
+    .leaflet-draw-draw-circle {
+      padding: 6px;
+      background-position: -80px -1px !important;
+    }
+    .leaflet-draw-draw-marker {
+      padding: 6px;
+      background-position: -107px -1px !important;
+    }
+
+
+  }
+
+  .leaflet-draw-actions {
+    right: 36px !important;
+  }
+}
+
+.leaflet-right .leaflet-draw-actions li:first-child a {
+  border-radius: 2px 0 0 2px;
+}
+
+.leaflet-right .leaflet-draw-actions li:last-child a {
+  border-radius: 0 2px 2px;
+}
+
+.leaflet-touch .leaflet-draw-actions a {
+  line-height: 20px;
+  height: 20px;
+}
+
+.leaflet-control-attribution {
+  display: none;
+}
+
+.leaflet-draw-edit-edit {
+  padding: 6px;
+  background-image: url('../assets/images/map/edit.png') !important;
+  background-position: center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-origin: content-box !important;
+}
+
+.leaflet-draw-edit-remove {
+  padding: 6px;
+  background-image: url('../assets/images/map/delete.png') !important;
+  background-position: center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-origin: content-box !important;
+}
+
+.leaflet-disabled {
+  opacity: 0.7;
+}

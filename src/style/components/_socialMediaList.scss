@@ -1,0 +1,61 @@
+.c-social-media-list {
+  &__item {
+    width: 33px;
+    height: 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, .09);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    &:first-of-type, &:last-of-type {
+      margin: 0px;
+    }
+  }
+
+  a, &__icon {
+    width: 17px;
+    height: 17px;
+  }
+
+  &__icon {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    &--instagram {
+      background-image: url('../assets/images/icons/social/instagram.svg');
+      &:hover {
+        background-image: url('../assets/images/icons/social/instagramHighlight.svg');
+      }
+    }
+    &--facebook {
+      background-image: url('../assets/images/icons/social/facebook.svg');
+      &:hover {
+        background-image: url('../assets/images/icons/social/facebookHighlight.svg');
+      }
+    }
+    &--twitter {
+      background-image: url('../assets/images/icons/social/twitter.svg');
+      &:hover {
+        background-image: url('../assets/images/icons/social/twitterHighlight.svg');
+      }
+    }
+    &--website {
+      background-image: url('../assets/images/icons/social/website.svg');
+      &:hover {
+        background-image: url('../assets/images/icons/social/websiteHighlight.svg');
+      }
+    }
+    &--linkedin {
+      background-image: url('../assets/images/icons/social/linkedin.svg');
+      &:hover {
+        background-image: url('../assets/images/icons/social/linkedinHighlight.svg');
+      }
+    }
+  }
+
+  a:hover + &__icon {
+    background-color: red;
+  }
+}

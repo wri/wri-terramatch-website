@@ -1,0 +1,118 @@
+.c-connections {
+  &__section {
+    min-height: 485px;
+  }
+  &__empty-section {
+    img {
+      width: 255px;
+      height: 255px;
+
+      &.c-connections__empty-section--wide-image {
+        width: 398px;
+      }
+
+      @media screen and (max-width: $sm) {
+        width: 150px;
+        height: 150px;
+        &.c-connections__empty-section--wide-image {
+          width: 234px;
+        }
+      }
+    }
+  }
+}
+.c-connection {
+  @media screen and (max-width: $md) {
+    text-align: center;
+  }
+
+  &__avatar {
+    width: 75px;
+    min-width: 75px;
+    height: 75px;
+    border-radius: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url('../assets/images/pitches/option-placeholder.png');
+    border-radius: 5px;
+    margin: 5px auto;
+
+    @media screen and (min-width: $md) {
+      margin: 5px;
+    }
+  }
+
+  &__collapse-button {
+    width: 35px;
+    height: 35px;
+    transform: rotate(90deg);
+    transition: $global-transition;
+    margin: 0 auto;
+
+    @media screen and (min-width: $md) {
+      margin-right: 0px;
+      margin-top: 0px;
+    }
+    cursor: pointer;
+    &:focus, &:hover {
+      outline: none;
+      opacity: 0.5;
+    }
+    &--open {
+      transform: rotate(-90deg);
+    }
+  }
+
+  &__collapse {
+    position: relative;
+    top: -10px;
+    padding-top: 10px;
+
+    &:before {
+      position: absolute;
+      background-color: #f9f9f9;
+      top: -12px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      display: block;
+      z-index: -1;
+      border-radius: 8px;
+      content: '';
+    }
+  }
+}
+
+.c-connection-contact {
+  &__details {
+    li  {
+      word-break: break-all;
+      @media screen and (min-width: $md) {
+        width: 400px;
+      }
+    }
+  }
+
+  h3 {
+    @include font-size(18px);
+  }
+
+  h3, li {
+    @media screen and (min-width: $md) {
+      @include font-size(24px);
+    }
+  }
+
+  &__avatar {
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #333333;
+    border: 3px solid $global-brand-color;
+  }
+}

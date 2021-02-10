@@ -1,0 +1,24 @@
+.c-admin {
+  min-height: 100vh;
+  &__content {
+    padding-left: 167px;
+    padding-right: 10px;
+    @media screen and (max-width: $sm) {
+      padding-left: 122px;
+    }
+  }
+}
+
+@media screen and (max-width: $md) {
+  .c-admin__panel-item {
+    text-align: center;
+    .c-admin__panel-preview-link {
+      margin: 5px auto;
+    }
+  }
+}
+
+.c-admin__match {
+  background-color: #eaeaea;
+  border-radius: 8px;
+}

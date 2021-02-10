@@ -1,0 +1,21 @@
+.c-video-banner {
+  .c-video-banner__title h1 {
+    color: white;
+    text-transform: uppercase;
+  }
+
+  .c-video-banner__content {
+    max-width: 1000px;
+  }
+
+  .c-video-banner__toggle {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: white;
+    min-width: 130px;
+    bottom: 0px;
+    @media screen and (max-width: $md) {
+      bottom: -39px;
+    }
+  }
+
+}

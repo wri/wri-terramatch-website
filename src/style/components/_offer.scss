@@ -1,0 +1,81 @@
+.c-offer {
+    &__header {
+        background-size: cover;
+        background-position: center;
+        height: 400px;
+      }
+
+      &__pin {
+        position: relative;
+        top: 3px;
+      }
+
+      &__icon {
+        background-size: cover;
+        background-position: center;
+        height: 100px;
+        width: 100px;
+        border-radius: 8px;
+      }
+
+      &__about-left {
+        margin-right: 40px;
+        @media screen and (max-width: $md) {
+          margin-right: 0px;
+        }
+        margin-bottom: 40px;
+      }
+
+      &__heading {
+        font-family: $fontFamiliy;
+        font-size: 40px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: 1px;
+        margin-top: 0;
+      }
+
+      &__subtitle {
+        font-family: $fontFamiliy;
+        font-size: 19px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.32;
+        letter-spacing: 0.79px;
+        max-width: 207px;
+      }
+
+      &__description {
+        max-width: 514px;
+      }
+
+      &__tabs {
+        position: relative;
+        .c-add-users__list {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          .c-user {
+            margin: 15px;
+          }
+        }
+        .c-tab__list {
+          border-bottom: 1px solid $midGrey;
+          @media screen and (min-width: $xl) {
+            text-align: center;
+          }
+
+          @media screen and (max-width: $sm) {
+            text-align: center;
+          }
+        }
+        .c-tab__content {
+          p {
+            white-space: pre-line;
+          }
+        }
+      }
+}

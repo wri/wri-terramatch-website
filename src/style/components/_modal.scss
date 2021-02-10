@@ -1,0 +1,12 @@
+.c-modal {
+  z-index: 9999;
+  border: solid 0.6px rgba(155, 155, 155, 0.27);
+  font-family: $fontFamiliy;
+  .c-modal-close {
+    min-width: inherit;
+    background-color: transparent;
+    &:hover, &:focus {
+      color: $darkGrey;
+    }
+  }
+}

@@ -1,0 +1,96 @@
+.c-profile-preview {
+  border-radius: 3px;
+  background-color: #fcfcfc;
+  box-sizing: border-box;
+  padding-bottom: 20px;
+  padding-left: 36px;
+  padding-right: 36px;
+  padding-top: 20px;
+  width: 419px;
+
+  @media screen and (max-width: $md) {
+    width: 100%;
+  }
+
+  &__logo {
+    border-radius: 8px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-image: url('../assets/images/pitches/option-placeholder.png');
+    width: 96px;
+    min-width: 96px;
+    height: 96px;
+    @media screen and (max-width: $xs) {
+      width: 75px;
+      min-width: 75px;
+      height: 75px;
+    }
+  }
+
+  &__cta {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 6px;
+    margin-top: 35px;
+    max-width: 300px;
+    min-width: unset;
+  }
+
+  &__header {
+    display: flex;
+    @media screen and (max-width: $sm) {
+      display: block;
+    }
+    &--text {
+      flex: 2;
+
+      h3 {
+        @media screen and (max-width: $sm) {
+          margin-top: 10px;
+        }
+      }
+
+      span {
+        color: $black;
+        display: flex;
+      }
+    }
+  }
+
+  &__link {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 344px;
+    height: 35px;
+    border-radius: 8px;
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.08);
+    border: solid 0.5px #ededed;
+    background-color: $white;
+    margin-bottom: 5px;
+    color: $black;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-direction: row;
+
+    div {
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background-color: #d8d8d8;
+    }
+
+    span {
+      flex-grow: 2;
+      display: flex;
+      align-items: center;
+
+      .label {
+        flex-grow: 2;
+      }
+    }
+  }
+}

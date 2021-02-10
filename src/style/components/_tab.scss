@@ -1,0 +1,53 @@
+$tab-border-bottom-active: 3px solid $global-brand-color;
+$tab-border-bottom: 3px solid transparent;
+
+.c-tab {
+  padding: 0 !important;
+  &__item {
+    border: 0;
+    border-radius: 0;
+    margin-right: 20px;
+    &.is-active {
+      .c-tab__btn {
+        border-bottom: $tab-border-bottom-active;
+        font-weight: bold;
+
+      }
+    }
+  }
+  &__btn {
+    font-family: $fontFamiliy;
+    text-transform: uppercase;
+    border-bottom: $tab-border-bottom;
+    @include font-size(14px);
+    padding-bottom: 5px !important;
+    letter-spacing: 0.46px;
+    min-width: 145px;
+    cursor: pointer;
+    &:focus, &:active {
+      outline: none;
+      border-bottom: $tab-border-bottom-active;
+    }
+  }
+
+  &__content {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border: 0;
+    background-color: $white;
+    min-height: 393px;
+    overflow: inherit;
+
+    @media screen and (max-width: $md) {
+      padding: 10px;
+    }
+
+    @media screen and (max-width: $sm) {
+      padding: 0px;
+    }
+
+    &.is-active {
+      display: block;
+    }
+  }
+}

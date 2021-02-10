@@ -1,0 +1,23 @@
+.u-table {
+  border: none;
+  border-radius: 5px;
+  overflow: hidden;
+  border-spacing: 0;
+  td, th {
+    padding: 5px 10px;
+    border: none;
+  }
+  &__header {
+    background-color: $global-brand-color;
+  }
+  &__body {
+    tr {
+      &:nth-child(even) {
+        background-color: $white;
+      }
+      &:nth-child(odd) {
+        background-color: #fcfcfc;
+      }
+    }
+  }
+}

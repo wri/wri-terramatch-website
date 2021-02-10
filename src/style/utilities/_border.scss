@@ -1,0 +1,23 @@
+.u-border-separator {
+  border-bottom: 1px solid $midGrey;
+}
+
+.u-border-normal {
+  border: solid 1px $borderColor;
+}
+
+.u-border-bottom {
+  border-bottom: solid 1px $borderColor;
+}
+
+.u-border-radius-none {
+  border-radius: 0px;
+}
+
+.u-border-radius-small {
+  border-radius: 4px;
+}
+
+.u-border-radius-normal {
+  border-radius:8px;
+}

@@ -1,0 +1,99 @@
+.c-user {
+  max-width: 320px;
+  width: 100%;
+  height: 96px;
+  border-radius: 13px;
+  margin: 15px auto;
+  padding: 10px 30px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  position: relative;
+  border: 3px solid rgba(0, 0, 0, 0.12);
+
+  &--is-selectable {
+    transition: $global-transition;
+    cursor: pointer;
+  }
+
+  &--is-selected {
+    border: 3px solid $global-brand-color;
+  }
+
+  &__profile-picture-container {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+  }
+
+  &__profile-content--has-avatar {
+    padding-left: 65px;
+  }
+
+  &__profile-picture {
+    width: 62px;
+    height: 62px;
+    border-radius: 8px;
+    border: solid 1px rgba(155, 155, 155, 0.22);
+    background-position: center;
+    background-size: cover;
+  }
+
+  &__invite-sent {
+    position: absolute;
+    right: 30px;
+  }
+
+  &__action {
+    position: absolute;
+    right: 8px;
+    top: 5px;
+  }
+}
+
+.c-user--is-card {
+  width: 240px;
+  border-radius: 0;
+  padding: 0;
+  height: unset;
+  box-shadow: none;
+
+  .c-user--compact {
+    width: 150px;
+    .c-user__profile-picture {
+      height: 130px;
+    }
+  }
+
+  .c-user__profile-picture-container {
+    position: static;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+  }
+  .c-user__profile-picture {
+    position: static;
+    width: 100%;
+    height: 200px;
+    border-radius: 0;
+    background-color: #333333;
+  }
+
+  .c-user__profile-initials {
+    height: 202px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333333;
+  }
+
+  .c-user__profile-content {
+    padding: 0px 14px 8px 14px;
+  }
+}
+
+.c-user__checkbox-input:focus + .c-user__label{
+  .c-user {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.40);
+  }
+}

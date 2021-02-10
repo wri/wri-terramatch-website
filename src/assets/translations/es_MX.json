@@ -1,0 +1,2068 @@
+{
+    "translation": {
+        "addDocumentAwards": {
+            "addAnother": "Agregue más honores y premios",
+            "details": {
+                "addAward": "Agregue honores y premios",
+                "awards": "Honores y premios",
+                "awardsName": "Nombre del honor o premio",
+                "awardsSubtext": "Por favor, agregue detalles de cualuqier reconocimiento que su organización haya recibido en el último año para que aparezca en su perfil. Puede agregar alguna imagen o PDF y puede agregar multiples reconocimientos. \n\nLos tipos de documentos aceptados incluyen: pdf, jpg, png, gif.",
+                "awardsTitle": "Honores y premios de su organización",
+                "subtext": "Por favor, agregue documetnos sobre su organización aquí, inlcuyendo documentación oficial que certifique que su organización existe. Esto puede ser el certificado de incorporación o reglamento de operación, por ejemplo. \n\nLos tipos de documentos aceptados incluyen: pdf, jpg, png, gif.\n\nPor favor tenga en cuenta que cualquier documento que suba aquí sera visible únicamente para los miembros de su organización y de WRI. ",
+                "title": "Documentos de su organización",
+                "uploadAwards": "Cargue honores y premios",
+                "uploadDocuments": "Cargue los documentos",
+                "uploadDocumentsHelp": "P. ej. Un video de su organización",
+                "removeDocument": "Eliminar documento",
+                "removeDocumentHelp": "¿Está seguro que desea eliminar \"{{name}}\" de su organización?",
+                "addNewDocuments": "Agregue nuevos documentos",
+                "addNewDocumentsAwards": "Agregue nuevos documentos, honeres y premios"
+            }
+        },
+        "addTeamMember": {
+            "addAnother": "Agregue nuevo integrante del equipo",
+            "details": {
+                "accountType": "Selecciona un tipo de cuenta",
+                "addTeamMemberProfile": "Agregue perfil del integrante del equipo",
+                "awaitingConfirmation": "Cuenta esperando verificación",
+                "email": "Correo electrónico del trabajo del miembro del equipo",
+                "firstName": "Nombre del integrante del equipo",
+                "inviteSent": "Invitación enviada",
+                "jobRole": "Rol/posición del integrante del equipo",
+                "lastName": "Apellido del integrante del equipo",
+                "needsAccount": "Perfil completo del integrante del equipo (con cuenta de usaurio)",
+                "needsAccountSubtext": "Invite a un integrante de su equipo a unirse a su organización en TerraMatch. Proporcione su dirección de correo electrónico y les enviaremos una invitación por correo electrónico para configurar una cuenta.",
+                "noAccount": "Perfil básico del integrante del equipo (sin cuenta de usuario)",
+                "noAccountProfile": "Sin cuenta",
+                "noAccountSubtext": "Agregue un miembro del equipo para mostrar en el perfil de su organización. Sus detalles básicos serán visibles para otros usuarios, y su información de contacto será visible a otras organizaciones en caso de que lleguen a coincidir.",
+                "phoneNumber": "Número de teléfono de trabajo del miembro de equipo",
+                "removeTeamMember": "Eliminar integrante del equipo",
+                "removeTeamMemberHelp": "Está seguro que desea eliminar {{name}} de su organización?",
+                "subtext": "Puede agregar a varios miembros de equipo a us organización. Los miembros serán visibles en el perfil de su organización y pueden ser asignadso como contactos para cada uno de sus proyectos. \n\nEscoja si su colega necesita una cuenta de TerraMatch o no. Los miembros de equipo con una cuenta serán invitados a unirse al sitio y tendrán acceso para hacer cambios a su organización.",
+                "successAddSubtext": "¡Ha agregado con éxito {{name}} al equipo de su organización!",
+                "title": "Agregue integrante del equipo",
+                "editTeamMember": "Edite integrante del equipo",
+                "editProfile": "Edite su perfil"
+            },
+            "success": "El perfil de su organización esta casi completo. El siguiente paso es crear perfiles para los miembros de su equipo para que aparezcan en su perfil. ",
+            "successLinkText": "Agregue integrantes del equipo",
+            "successTitle": "Agregue integrante del equipo"
+        },
+        "admin": {
+            "approve": "Aprobar",
+            "approveMessage": "¿Está seguro que desea aprobar a {{name}}?",
+            "approvedOrganisations": "Organizaciones aprobadas",
+            "awaitingApproval": "Esperando aprobación",
+            "organisationsCount": "Número de organizaciones: {{count}}",
+            "organisationsCount_plural": "{{count}} organizaciones",
+            "matches": {
+                "empty": "No existen concordancias en este momento.",
+                "title": "Coincidencias"
+            },
+            "organisations": {
+                "nothingToAction": "No hay organizaciones para verificar en este momento.",
+                "preview": "Vista previa de organización",
+                "title": "Organizaciones",
+                "view": "Ver organización",
+                "search": "Buscar organizaciones",
+                "noOrganisations": "No hay organizaciones para mostrar"
+            },
+            "outOfDateVersion": "Esta versión esta desactualizada; existe una más reciente.",
+            "pitches": {
+                "nothingToAction": "No hay propuestas para verificar en este momento.",
+                "preview": "Vista previa de la propuesta",
+                "title": "Propuestas",
+                "view": "Ver propuesta"
+            },
+            "reject": "Rechazar",
+            "rejectMessage": "¿Está seguro que quiere rechazar {{name}}?",
+            "rejectReason": "Motivo del rechazo",
+            "rejectReasonBody": "Detalles del motivo de rechazo",
+            "reports": {
+                "organisations_all_time": "All organizations",
+                "organisations_all_timeHelp": "Export of all organizations",
+                "pitches_all_time": "All pitches",
+                "pitches_all_timeHelp": "Export of all pitches",
+                "pitches": "All pitches",
+                "pitchesHelp": "Export of all pitches",
+                "approved_organisations": "Organizaciones aprobadas",
+                "approved_organisationsHelp": "Exportar organizaciones que han sido aprobadas.",
+                "rejected_organisations": "Organizaciones rechazadas",
+                "rejected_organisationsHelp": "Exportar organizaciones que han sido rechazadas",
+                "approved_pitches": "Propuestas aprobadas",
+                "approved_pitchesHelp": "Exportar propuestas que han sido aprobadas",
+                "downloadCSV": "Descargar CSV",
+                "downloadingCSV": "Descargando CSV",
+                "filter_records": "Filtrar registros",
+                "filter_recordsHelp": "Exportar uso de filtros de proyecto",
+                "funding_amounts": "Montos de financiación",
+                "funding_amountsHelp": "Exportar montos de financiamiento",
+                "interests": "Intereses",
+                "interestsHelp": "Exportar intereses entre presentaciones y ofertas de financiación",
+                "matches": "Coincidencias",
+                "matchesHelp": "Exportar coincidencias entre propuestas y ofertas de financiación",
+                "funding_offers_all_time": "All funding Offers",
+                "funding_offers_all_timeHelp": "Export of all funding offers",
+                "offers": "All funding Offers",
+                "offersHelp": "Export of all funding offers",
+                "organisations": "All organizations",
+                "organisationsHelp": "Exportar todas las organizaciones",
+                "rejected_pitches": "Propuestas rechazadas",
+                "rejected_pitchesHelp": "Exportar presentaciones que han sido rechazadas",
+                "restored_hectares": "Hectáreas restauradas",
+                "restored_hectaresHelp": "Exportar hectáreas restauradas",
+                "benefited_people": "Personas beneficiadas",
+                "benefited_peopleHelp": "Exportar personas beneficiadas",
+                "title": "Reportes",
+                "users": "Usuarios",
+                "usersHelp": "Exportar todos los usuarios"
+            },
+            "submitted": "Enviado",
+            "updated": "Actualizado",
+            "title": "Administrador",
+            "users": {
+                "addAdmin": "Agregar",
+                "addNewAdmin": "Invitar al Administrador",
+                "adminListMessage": "Un Administrador aparecerá sólo hasta que este haya aceptado la invitación",
+                "currentAdmins": "Administradores",
+                "invitedAdmin": "{{email}} fue invitado(a) con éxito y recibirá un correo electrónico para registrarse.",
+                "title": "Gestión de Administradores"
+            },
+            "versions": {
+                "approvedRejectedBy": "Administrador",
+                "body": "Razón",
+                "date": "Fecha",
+                "history": "Historial de versiones",
+                "reason": "Categoría de razón",
+                "status": {
+                    "approved": "Aprobado",
+                    "archived": "Archivado",
+                    "pending": "Pendiente",
+                    "rejected": "Rechazado",
+                    "title": "Estado"
+                }
+            }
+        },
+        "api": {
+            "attributes": {
+                "funding_amount": "Monto de financiamiento",
+                "funding_bracket": "Rango de financiamiento ",
+                "funding_sources": "Fuente de financiamiento",
+                "land_continent": "Continente",
+                "land_country": "País",
+                "land_ownerships": "Propiedad de la tierra",
+                "land_size": "Superficie",
+                "land_types": "Tipo de suelo",
+                "long_term_engagement": "Compromiso a largo plazo",
+                "price_per_tree": "Precio promedio por árbol (USD)",
+                "reporting_frequency": "Frecuencia de reporte",
+                "reporting_level": "Nivel de reporte",
+                "restoration_goals": "Objetivos de restauración",
+                "restoration_methods": "Métodos de restauración",
+                "sustainable_development_goals": "Objetivos de desarrollo sustentable"
+            },
+            "carbon_certification_types": {
+                "fsc": "FSC",
+                "gold_standard": "Estándar de oro",
+                "other": "Otro",
+                "plan_vivo": "Plan Vivo",
+                "verified_carbon_standard": "Estándar de Carbono Verificado"
+            },
+            "continents": {
+                "africa": "África",
+                "antarctica": "Antártida",
+                "asia": "Asia",
+                "australia": "Australia",
+                "europe": "Europa",
+                "north_america": "América del Norte",
+                "south_america": "América del Sur"
+            },
+            "countries": {
+                "AD": "Andorra",
+                "AE": "Emiratos Árabes Unidos",
+                "AF": "Afganistán",
+                "AG": "Antigua y Barbuda",
+                "AI": "Anguila",
+                "AL": "Albania",
+                "AM": "Armenia",
+                "AO": "Angola",
+                "AQ": "Antártida",
+                "AR": "Argentina",
+                "AS": "Samoa Americana",
+                "AT": "Austria",
+                "AU": "Australia",
+                "AW": "Aruba",
+                "AX": "Islas Åland",
+                "AZ": "Azerbaiyán",
+                "BA": "Bosnia y Herzegovina",
+                "BB": "Barbados",
+                "BD": "Bangladés",
+                "BE": "Bélgica",
+                "BF": "Burkina Faso",
+                "BG": "Bulgaria",
+                "BH": "Baréin",
+                "BI": "Burundi",
+                "BJ": "Benín",
+                "BL": "San Bartolomé",
+                "BM": "Las islas Bermudas",
+                "BN": "Brunéi",
+                "BO": "Bolivia",
+                "BQ": "Saba",
+                "BR": "Brasil",
+                "BS": "Bahamas",
+                "BT": "Bután",
+                "BV": "La isla Bouvet",
+                "BW": "Botsuana",
+                "BY": "Belarús",
+                "BZ": "Belice",
+                "CA": "Canadá",
+                "CC": "Islas Cocos (Keeling)",
+                "CD": "República Democrática del Congo",
+                "CF": "República Centroafricana",
+                "CG": "República del Congo",
+                "CH": "Suiza",
+                "CI": "Costa de Marfil",
+                "CK": "Islas Cook",
+                "CL": "Chile",
+                "CM": "Camerún",
+                "CN": "China",
+                "CO": "Colombia",
+                "CR": "Costa Rica",
+                "CU": "Cuba",
+                "CV": "Cabo Verde",
+                "CW": "Curazao",
+                "CX": "Isla de Navidad",
+                "CY": "Chipre",
+                "CZ": "Republica Checa",
+                "DE": "Alemania",
+                "DJ": "Yibuti",
+                "DK": "Dinamarca",
+                "DM": "Dominica",
+                "DO": "República Dominicana",
+                "DZ": "Algeria",
+                "EC": "Ecuador",
+                "EE": "Estonia",
+                "EG": "Egipto",
+                "EH": "Sahara Occidental",
+                "ER": "Eritrea",
+                "ES": "España",
+                "ET": "Etiopía",
+                "FI": "Finlandia",
+                "FJ": "Fiyi",
+                "FK": "Islas Malvinas",
+                "FM": "Estados Federados de Micronesia",
+                "FO": "Islas Feroe",
+                "FR": "Francia",
+                "GA": "Gabón",
+                "GB": "Reino Unido de Gran Bretaña e Irlanda del Norte",
+                "GD": "Granada",
+                "GE": "Georgia",
+                "GF": "Guinea Francesa",
+                "GG": "Bailiazgo de Guernsey",
+                "GH": "Ghana",
+                "GI": "Gibraltar",
+                "GL": "Groenlandia",
+                "GM": "Gambia",
+                "GN": "Guinea",
+                "GP": "Guadelupe",
+                "GQ": "Guinea Ecuatorial",
+                "GR": "Grecia",
+                "GS": "Islas Georgias del Sur y Sandwich del Sur",
+                "GT": "Guatemala",
+                "GU": "Guam",
+                "GW": "Guinea-Bisáu",
+                "GY": "Guyana",
+                "HK": "Hong Kong",
+                "HM": "Islas Heard y McDonald",
+                "HN": "Honduras",
+                "HR": "Croacia",
+                "HT": "Haití",
+                "HU": "Hungría",
+                "ID": "Indonesia",
+                "IE": "Irlanda",
+                "IL": "Israel",
+                "IM": "Isla de Man",
+                "IN": "India",
+                "IO": "Territorio británico del océano Índico",
+                "IQ": "Irak",
+                "IR": "República Islámica de Irán",
+                "IS": "Islandia",
+                "IT": "Italia",
+                "JE": "Bailiazgo de Jersey",
+                "JM": "Jamaica",
+                "JO": "Jordania",
+                "JP": "Japón",
+                "KE": "Kenia",
+                "KG": "Kirguistán",
+                "KH": "Camboya",
+                "KI": "Kiribati",
+                "KM": "Comoras",
+                "KN": "San Cristóbal y Nieves",
+                "KP": "República Popular Democrática de Corea",
+                "KR": "República de Corea",
+                "KW": "Kuwait",
+                "KY": "Islas Caimán",
+                "KZ": "Kazajistán",
+                "LA": "República Popular Democrática de Lao",
+                "LB": "Líbano",
+                "LC": "Santa Lucía",
+                "LI": "Liechtenstein",
+                "LK": "Sri Lanka",
+                "LR": "Liberia",
+                "LS": "Lesoto",
+                "LT": "Lituania",
+                "LU": "Luxemburgo",
+                "LV": "Letonia",
+                "LY": "Libia",
+                "MA": "Marruecos",
+                "MC": "Mónaco",
+                "MD": "Moldavia",
+                "ME": "Montenegro",
+                "MF": "San Martín (Parte Francesa)",
+                "MG": "Madagascar",
+                "MH": "Islas Marshall",
+                "MK": "Macedonia",
+                "ML": "Malí",
+                "MM": "Birmania",
+                "MN": "Mongolia",
+                "MO": "Macao",
+                "MP": "Islas Marianas del Norte",
+                "MQ": "Martinica",
+                "MR": "Mauritania",
+                "MS": "Isla de Montserrat",
+                "MT": "Malta",
+                "MU": "Mauricio",
+                "MV": "Maldivas",
+                "MW": "Malaui",
+                "MX": "México",
+                "MY": "Malasia",
+                "MZ": "Mozambique",
+                "NA": "Namibia",
+                "NC": "Nueva Caledonia",
+                "NE": "Níger",
+                "NF": "Isla Norfolk",
+                "NG": "Nigeria",
+                "NI": "Nicaragua",
+                "NL": "Países Bajos",
+                "NO": "Noruega",
+                "NP": "Nepal",
+                "NR": "República de Nauru",
+                "NU": "Niue",
+                "NZ": "Nueva Zelanda",
+                "OM": "Omán",
+                "PA": "Panamá",
+                "PE": "Perú",
+                "PF": "Polinesia Francesa",
+                "PG": "Papúa Nueva Guinea",
+                "PH": "Filipinas",
+                "PK": "Pakistán",
+                "PL": "Polonia",
+                "PM": "San Pedro y Miquelón",
+                "PN": "Islas Pitcairn",
+                "PR": "Puerto Rico",
+                "PS": "Estado de Palestina",
+                "PT": "Portugal",
+                "PW": "Palau",
+                "PY": "Paraguay",
+                "QA": "Catar",
+                "RE": "Isla de la Reunión",
+                "RO": "Rumania",
+                "RS": "Serbia",
+                "RU": "Rusia",
+                "RW": "Ruanda",
+                "SA": "Arabia Saudita",
+                "SB": "Islas Salomón",
+                "SC": "Seychelles",
+                "SD": "Sudán",
+                "SE": "Suecia",
+                "SG": "Singapur",
+                "SH": "Tristan da Cunha",
+                "SI": "Eslovenia",
+                "SJ": "Jan Mayen",
+                "SK": "Eslovaquia",
+                "SL": "Sierra Leona",
+                "SM": "San Marino",
+                "SN": "Senegal",
+                "SO": "Somalia",
+                "SR": "Surinam",
+                "SS": "Sudán del Sur",
+                "ST": "Santo Tomé y Príncipe",
+                "SV": "El Salvador",
+                "SX": "San Martín (parte Holandesa)",
+                "SY": "República Árabe Siria",
+                "SZ": "Eswatini",
+                "TC": "Islas Turcas y Caicos",
+                "TD": "Chad",
+                "TF": "Tierras Australes y Antárticas Francesas",
+                "TG": "Togo",
+                "TH": "Tailandia",
+                "TJ": "Tayikistán",
+                "TK": "Tokelau",
+                "TL": "Timor Oriental",
+                "TM": "Turkmenistán",
+                "TN": "Túnez",
+                "TO": "Tonga",
+                "TR": "Turquía",
+                "TT": "Trinidad y Tobago",
+                "TV": "Tuvalu",
+                "TW": "Taiwan, provincia de China",
+                "TZ": "Tanzania",
+                "UA": "Ucrania",
+                "UG": "Uganda",
+                "UM": "Islas Ultramarinas Menores de Estados Unidos",
+                "US": "Estados Unidos",
+                "UY": "Uruguay",
+                "UZ": "Uzbekistán",
+                "VA": "Santa Sede",
+                "VC": "San Vicente y las Granadinas",
+                "VE": "Venezuela",
+                "VG": "Islas Vírgenes Británicas",
+                "VI": "Islas Vírgenes de los Estados Unidos",
+                "VN": "Vietnam",
+                "VU": "Vanuatu",
+                "WF": "La Colectividad de Wallis y Futuna",
+                "WS": "Samoa",
+                "YE": "Yemen",
+                "YT": "Mayotte",
+                "ZA": "Sudáfrica",
+                "ZM": "Zambia",
+                "ZW": "Zimbabue"
+            },
+            "funding_bracket": {
+                "250k_to_1m": "US$250,000 a US$1,000,000",
+                "50k_to_250k": "US$50,000 a US$250,000",
+                "gt_1m": "> US$1,000,000 ",
+                "lt_50k": "< US$50,000"
+            },
+            "funding_brackets": {
+                "250k_to_1m": "US$250,000 a US$1,000,000",
+                "50k_to_250k": "US$50,000 a US$250,000",
+                "gt_1m": "> US$1,000,000",
+                "lt_50k": "< US$50,000"
+            },
+            "funding_sources": {
+                "equity_investment": "Inversión de capital",
+                "grant_with_limited_reporting": "Donación con reportes limitados",
+                "grant_with_reporting": "Donación con reportes",
+                "loan_debt": "Préstamos /  Financiación con deuda"
+            },
+            "land_ownerships": {
+                "community": "Comunidad",
+                "national_park": "Parque nacional",
+                "national_park_reserve": "Parque nacional / Reserva",
+                "private": "Privado",
+                "public": "Público",
+                "reserve": "Reserva"
+            },
+            "land_size": {
+                "10_to_100": "10 - 100",
+                "gt_100": "Más de 100",
+                "lt_10": "Menos de 10",
+                "lt_100": "< 100"
+            },
+            "land_sizes": {
+                "10_to_100": "10 - 100",
+                "gt_100": "> 100",
+                "lt_10": "< 10"
+            },
+            "land_types": {
+                "bare_land": "Terreno no urbanizado",
+                "cropland": "Tierra de cultivo",
+                "forest": "Bosque",
+                "grassland": "Pastizal",
+                "industrial_land": "Terreno industrial",
+                "mangrove": "Manglar",
+                "peatland": "Turbera",
+                "settlement": "Acuerdo",
+                "shrubland": "Matorral",
+                "wetland": "Humedal"
+            },
+            "notification": {
+                "actions": {
+                    "interest_shown": "Interés",
+                    "match": "Coincidencia",
+                    "unmatch": "Desvincular",
+                    "version_approved": "Aprobación",
+                    "version_created": "Cambios",
+                    "version_rejected": "Rechazo",
+                    "project_changed": "El proyecto ha cambiado",
+                    "update_visibility": "Actualizar estado de financiación."
+                },
+                "typeMessages": {
+                    "interest_shown": {
+                        "Offer": "Una organización ha mostrado interés en una de sus propuestas",
+                        "Pitch": "Una organización ha mostrado interés en una de sus ofertas de financiación",
+                        "Interest": "Una organización ha mostrado interés en una de sus propuestas / ofertas de financiación"
+                    },
+                    "match": {
+                        "Match": "Una organización ha coincidido con una de sus presentaciones / ofertas de financiación",
+                        "null": "Una organización ha dejado de coincidir con una de sus presentaciones / ofertas de financiación"
+                    },
+                    "unmatch": {
+                        "null": "Alguien ha dejado de coincidir con una de sus presentaciones / ofertas de financiación"
+                    },
+                    "version_approved": {
+                        "Organisation": "Su organización se ha aprobado y ahora está activa",
+                        "PitchVersion": "Una presentación que estaba pendiente de aprobación ya fue aprobada y está disponible",
+                        "Pitch": "Una presentación que estaba pendiente de aprobación ya se ha aprobado y está activa."
+                    },
+                    "version_created": {
+                        "Organisation": "Una organización tiene una actualización que requiere de su aprobación",
+                        "OrganisationDocumentVersion": "Un documento de la organización cuenta con una actualización que requiere su aprobación",
+                        "Pitch": "Una presentación tiene una actualización que requiere su aprobación."
+                    },
+                    "version_rejected": {
+                        "Organisation": "Su organización ha sido rechazada",
+                        "Pitch": "Una presentación pendiente de aprobación ha sido rechazada."
+                    },
+                    "project_changed": {
+                        "Pitch": "Una propuesta que le interesa ha cambiado",
+                        "Offer": "Una oferta en la que ya ha mostrado interés se ha modificado."
+                    },
+                    "update_visibility": {
+                        "Pitch": "Actualice el estado de financiación de su presentación",
+                        "Offer": "Actualice el estado de financiación de su oferta"
+                    }
+                }
+            },
+            "organisation_types": {
+                "b_corporation": "Empresa B",
+                "corporation": "Corporación",
+                "foundation": "Fundación",
+                "government": "Gobierno",
+                "international_ngo": "ONG internacional",
+                "llc": "Sociedad de Responsabiliad Limitada",
+                "ngo": "ONG",
+                "nonprofit": "Sin fines de lucro",
+                "other": "Otros"
+            },
+            "rejected_reasons": {
+                "cannot_verify": "No se puede verificar la información",
+                "does_not_meet_requirements": "No cumple con los requisitos",
+                "follow_up_required": "Información de seguimiento requerida",
+                "not_enough_information": "No hay suficiente información",
+                "other": "Otros",
+                "unrelated_sector": "Sector no relacionado"
+            },
+            "reporting_frequencies": {
+                "annually": "Anualmente",
+                "bi_annually": "Bianual",
+                "gt_monthly": "Más de un vez al mes",
+                "gt_quarterly": "Más que trimestralmente",
+                "lt_annually": "Menos de una vez al año",
+                "monthly": "Mensual",
+                "quarterly": "Trimestral"
+            },
+            "reporting_levels": {
+                "high": "Alto",
+                "low": "Baja",
+                "medium": "Medio"
+            },
+            "restoration_goals": {
+                "agriculture_and_commodities": "Alimentos, agricultura y productos básicos",
+                "biodiversity": "Biodiversidad",
+                "climate": "Clima",
+                "ecotourism": "Ecoturismo",
+                "energy": "Energía",
+                "food": "Comida",
+                "forests": "Bosques",
+                "livelihoods": "Medios de vida",
+                "national_and_international": "Objetivos Nacionales e Internacionales",
+                "soil": "Suelo",
+                "water": "Agua"
+            },
+            "restoration_methods": {
+                "agroforestry": "Agroforestería",
+                "assisted_natural": "Regeneración Natural Asistida",
+                "ecological": "Restauración ecológica",
+                "mangrove": "Restauración de manglares",
+                "reforestation": "Reforestación",
+                "reserve_corridors": "Reserva de corredores o potreros",
+                "riparian_buffers": "Restauración de Riberas",
+                "sustainable_land_management": "Manejo sostenible de la tierra",
+                "terraces": "Terrazas"
+            },
+            "revenue_drivers": {
+                "carbon_credits": "Bonos de carbono",
+                "fruits": "Frutas",
+                "pulp_and_paper": "Productos de pulpa y papel",
+                "vegetables": "Hortalizas"
+            },
+            "sustainable_development_goals": {
+                "goal_1": "Objetivo 1: Find de la pobreza",
+                "goal_10": "Objetivo 10: Reducción de desigualdades",
+                "goal_11": "Objetivo 11: Ciudades y comunidades sostenibles",
+                "goal_12": "Objetivo 12: Producción y consumo responsables ",
+                "goal_13": "Objetivo 13: Acción por el clima",
+                "goal_14": "Objetivo 14: Vida submarina",
+                "goal_15": "Objetivo 15: Vida de ecosistemas terrestres",
+                "goal_16": "Objetivo 16: Paz, justicia e instituciones sólidas",
+                "goal_17": "Objetivo 17: Alianzas para lograr los objetivos",
+                "goal_2": "Objetivo 2: Hambre cero",
+                "goal_3": "Objetivo 3: Salud y bienestar",
+                "goal_4": "Objetivo 4: Educación de calidad",
+                "goal_5": "Objetivo 5: Igualdad de género",
+                "goal_6": "Objetivo 6: Agua limpia y saneamiento",
+                "goal_7": "Objetivo 7: Energía limpia y asequible",
+                "goal_8": "Objetivo 8: Trabajo digno y crecimiento económico",
+                "goal_9": "Objetivo 9: Industria, innovación e infraestructura"
+            },
+            "tree_species_owners": {
+                "community": "Comunidad",
+                "national_park": "Parque nacional",
+                "private_ownership": "Propiedad privada",
+                "public": "Público"
+            },
+            "visibilities": {
+                "offer": {
+                    "archived": "Archivado",
+                    "looking": "Buscando financiar",
+                    "talking": "En conversaciones con el desarrollador",
+                    "entering_contracts": "Procesando contratos",
+                    "finished": "Finalizado",
+                    "fully_invested_funded": "Financiado en su totalidad",
+                    "partially_invested_funded": "Financiado parcialmente"
+                },
+                "pitch": {
+                    "archived": "Archivado",
+                    "entering_contracts": "Procesando contratos",
+                    "finished": "Completado",
+                    "fully_invested_funded": "Completamente Financiado",
+                    "looking": "Buscando financiación",
+                    "partially_invested_funded": "Parcialmente financiado",
+                    "talking": "En discusiones con el financiador"
+                }
+            }
+        },
+        "attributes": {
+            "continents": "Continentes",
+            "countries": "Países",
+            "funding_bracket": "Rango de financiamiento ",
+            "funding_amount": "Monto de financiación",
+            "funding_sources": "Fuente de financiamiento",
+            "land_continent": "Continente del terreno",
+            "land_country": "País del terreno",
+            "land_ownerships": "Propiedad de la tierra",
+            "land_size": "Tamaño de la tierra",
+            "land_sizes": "Tamaños de la tierra",
+            "land_types": "Tipo de suelo",
+            "long_term_engagement": " Compromiso de largo plazo ",
+            "price_per_tree": "Precio promedio por árbol (USD)",
+            "reporting_frequencies": "Frecuencia de reporte",
+            "reporting_frequency": "Frecuencia de reporte",
+            "reporting_level": "Nivel de elaboración de reportes",
+            "reporting_levels": "Nivels de elaboración de reportes",
+            "restoration_goals": "Objetivos de restauración",
+            "restoration_methods": "Método de restauración",
+            "sustainable_development_goals": "ODS"
+        },
+        "common": {
+            "add": "Añadir",
+            "appName": "TerraMatch",
+            "archive": "Archivo",
+            "archived": "Archivado",
+            "avatar": "Avatar",
+            "back": "Atrás",
+            "beta": "Beta",
+            "cancel": "Cancelar",
+            "changesNotSaved": "¿Está seguro que quiere seguir navegando? Su progreso no se guardará",
+            "changesSaved": "¿Está seguro de que desea salir de la navegación? Sus cambios se guardarán y serán visibles en su perfil.",
+            "close": "Cerrar",
+            "confirm": "Confirmar",
+            "continue": "Continuar",
+            "delete": "Eliminar",
+            "deleting": "Eliminando",
+            "download": "Descargar",
+            "draft": "Borrador",
+            "edit": "Editar",
+            "errorSaving": "Error al guardar los cambios.",
+            "error": "¡Oh, no! ¡Algo salió mal! Disculpe",
+            "exampleVideo": "Video de ejemplo",
+            "fields": {
+                "urlHelp": "Ingrese una URL válida que comience con \"http://\" o \"https://\""
+            },
+            "finish": "Terminar",
+            "goBack": "Regresar",
+            "home": "Inicio",
+            "hint": "Consejos",
+            "latestSaved": "Los últimos cambios se han guardado",
+            "loading": "Cargando...",
+            "loadingOptions": "Cargando opciones",
+            "logout": "Salir",
+            "missing": "Faltante",
+            "na": "No aplicable",
+            "next": "Siguiente",
+            "nextAndSave": "Guardar y continuar",
+            "nextAndSkip": "Guardar y saltar",
+            "no": "No",
+            "noInternet": "No hay una conexión a Internet disponible",
+            "noSaveAndExit": "Aceptar",
+            "ok": "OK",
+            "open": "Abrir",
+            "pause": "Detener el video",
+            "people": "Personas",
+            "play": "Reproducir video",
+            "preview": "Vista previa",
+            "readMore": "Leer más",
+            "refresh": "Actualizar",
+            "retake": "Si está contento con su video, elija \"Guardar y continuar\". Elija \"Atrás\" para volverlo a grabar. ",
+            "reminder": "Recuerde que su video debe responder los siguientes puntos:",
+            "remove": "Eliminar",
+            "removing": "Eliminando",
+            "retry": "Volver a intentar",
+            "requiredFields": "* requerido",
+            "save": "Guardar",
+            "saveAndExit": "Guardar y salir",
+            "savedToDeviceOnly": "Guardado solo en este dispositivo",
+            "saving": "Guardando",
+            "skip": "Saltar",
+            "skip-nav": "Pasar al contenido principal",
+            "start": "Comenzar",
+            "status": "Estado",
+            "submit": "Enviar",
+            "upload": "Cargar media",
+            "unspecified": "SIN ESPECIFICAR",
+            "videoError": "¡Oh, no! ¡Algo salió mal! Disculpe",
+            "view": "Ver",
+            "viewAll": "Ver todo",
+            "viewProfile": "Ver perfil",
+            "yes": "Sí",
+            "uploadVideoFailed": "Error al subir los videos"
+        },
+        "connections": {
+            "address": "Dirección:",
+            "email": "Email:",
+            "empty": "Aún no tienes contactos.",
+            "newTime": "Las conexiones pueden demorar hasta un minuto en aparecer.",
+            "fundingOffer": "oferta de financiamiento",
+            "getInTouch": "Contactar",
+            "nameWasInterested": "mostró interés por su",
+            "phone": "Teléfono:",
+            "possessiveName": "{{name}}",
+            "project": "proyecto",
+            "title": "Conexiones",
+            "unmatch": "Desvincular",
+            "unmatchHelp": "Esto desvinculará la conexión que usted tiene con {{name}}. Tendrá que volverse a vincular para ver los detalles de contacto.",
+            "unmatching": "Desvinculando",
+            "yourConnections": "Sus conexiones",
+            "yourInterestedIn": "Tenía interés en",
+            "connectionsInterests": "Contactos e intereses",
+            "with": "con {{projectName}}"
+        },
+        "demo": {
+            "cta": "Conectarse ahora",
+            "hero": "Gente que planta árboles",
+            "heroSecondary": "la manera correcta",
+            "numberOfTrees": "Cantidad de árboles:",
+            "restorationType": "Tipo de restauración"
+        },
+        "drafts": {
+            "alreadySubmitted": "No puede ser subido",
+            "alreadySubmittedHelp": "Este borrador no puede ser subido. Pudo haber sido borrado o subido por otro usuario.",
+            "delete": "Eliminar borrador",
+            "deleteHelp": "¿Seguro de que quiere eliminar este borrador? Para crear otro, tendrá que empezar de nuevo.",
+            "drafts": "borradores",
+            "draft": "Borrador",
+            "empty": "No hay borradores",
+            "noSaveChanges": "Propuesta final",
+            "noSaveChangesHelp": "¿Está seguro(a) de que desea salir? Sus videos serán eliminados. Se guardarán los demás cambios en su formulario.",
+            "startNew": "Comenzar un proyecto nuevo",
+            "saveChanges": "Guardar cambios",
+            "saveChangesHelp": "¿Está seguro de querer salir? Sus cambios serán guardados y serán visibles en su perfil.",
+            "start": "Iniciar proyecto",
+            "startHelp": "Por favor, seleccione si desea comenzar un nuevo proyecto o reanudar un borrador."
+        },
+        "interests": {
+            "yourInterests": "Sus intereses",
+            "interestedInYou": "Interesados en usted",
+            "empty": {
+                "funderInterestedInYou": "Estamos esperando a que los desarrolladores muestren interés en sus ofertas de financiación",
+                "developerInterestedInYou": "Estamos esperando a que algún financiador muestre interés en su propuesta de proyecto. ",
+                "bothInterestedInYou": "Estamos esperando a que alguien muestre interés en su propuesta de proyecto u oferta de financiamiento. ",
+                "funderYourInterests": "Todavía no ha expresado interés en ningún proyecto.",
+                "developerYourInterests": "Aún no ha mostrado interés en ninguna oferta de financiamiento.",
+                "bothYourInterests": "Aún no has mostrado interés en ninguna propuesta de proyecto u oferta de financiamiento."
+            },
+            "viewFundingOffer": "Ver oferta de financiación.",
+            "viewPitch": "Ver propuesta"
+        },
+        "createOffer": {
+            "addNewPitch": "Agregue una nueva oferta de financiación",
+            "createOffer": "Crear oferta",
+            "archiveOffer": "Archivar oferta",
+            "archiveOfferHelp": "¿Está seguro que desea archivar {{name}}? Una vez confirmado, su proyecto será removido de TerraMatch y solo será visible para miembros de su propia organización. Esto no puede ser revertido.",
+            "details": {
+                "averagePricePerTree": "Precio promedio por árbol (USD)",
+                "averagePricePerTreeHelp": "¿Cuál sería el precio medio por árbol que estaría dispuesto a aceptar en su oferta?",
+                "beforeYouBegin": "Antes de comenzar",
+                "beforeYouBeginHelp": "Asegúrate de tener todo lo necesario para completar el proceso, ya que no podrás guardar el progreso hasta el final. Descarga el siguiente documento que contiene una lista de todo lo que necesitarás.",
+                "continent": "Continente",
+                "country": "País",
+                "description": "Descripción de oferta de financiación.",
+                "descriptionHelp": "Escriba una descripción sobre el problema que espera que su financiamiento ayude a resolver.",
+                "details": "Acerca de su oferta de financiamiento",
+                "detailsHelp": "Por favor, comparta más sobre su oferta de financiamiento",
+                "downloadChecklist": "Descargar la lista de verificación",
+                "fundingAmount": "Financiamiento ofrecido (USD)",
+                "fundingAmountHelp": "Comparta la cantidad exacta de financiamiento que estaría dispuesto a ofrecer en USD si la propuesta es relevante",
+                "fundingBracket": "Rango de financiamiento (USD)",
+                "fundingBracketHelp": "Seleccione el rango de financiamiento que está preparado a ofrecer",
+                "fundingSources": "Fuente de financiación",
+                "fundingSourcesHelp": "Seleccione las fuentes de financiación aplicables a esta oferta",
+                "landOwnership": "Tipo de propiedad de la tierra",
+                "landOwnershipHelp": "Seleccione el tipo de propiedad de la tierra que puede aplicar a su oferta de financiamiento",
+                "landSize": "Tamaño de la tierra (hectáreas)",
+                "landSizeHelp": "Por favor escoja uno de los siguientes",
+                "landTypes": "¿Qué tipo de tierra?",
+                "landTypesHelp": "Seleccione los tipos de tierra que aplican a su oferta de financiamiento",
+                "location": "Ubicación",
+                "locationHelp": "¿Dónde se aplicará la oferta de financiamiento?",
+                "longTermEngagement": "¿Está interesado en una colaboración a largo plazo?",
+                "longTermEngagementHelp": "Seleccione si esta interesado en un involucramiento a largo plazo con los proyectos de restauración",
+                "projectName": "Nombre de la oferta de financiamiento",
+                "projectNameHelp": "Proporcione un nombre a su oferta de financiamiento",
+                "projectTeam": "Equipo de la oferta de financiamiento",
+                "projectTeamHelp": "Seleccione los miembros de equipo de su organización para esta oferta de financiamiento. Sus contactos serán visibles una vez que coincida con un proyecto de restauración",
+                "reporting": "Reporte",
+                "reportingFrequency": "Frecuencia de presentación de reportes",
+                "reportingHelp": "Indique con qué frecuencia espera su organzación recibir reportes sobre los proyectos de restauración y qué tan detallados deberían ser estos",
+                "reportingLevel": "Nivel de reporte",
+                "restorationGoals": "¿Cuál es la meta de esta oferta de financiación?",
+                "restorationGoalsHelp": "Seleccione los objetivos de su meta de financiación",
+                "restorationMethods": "Métodos de restauración",
+                "restorationMethodsHelp": "Seleccione los métodos de restauración que está interesado en financiar",
+                "start": "Iniciar proyecto",
+                "startHelp": "Por favor, seleccione si desea comenzar un proyecto nuevo o continuar con un borrador.",
+                "sustDevGoals": "Objetivos de desarrollo sustentable",
+                "sustDevGoalsHelp": "Si es de relevancia, seleccione los objetivos de desarrolo sostenible que aplican para su oferta de financiación"
+            },
+            "success": "Su oferta de financiación ha sido creada. Aparecerá a organizaciones que estén buscando financiamiento y usted ya podrá comenzar a busca proyectos con lo que pueda coincidir",
+            "successLinkText": "Continuar",
+            "successTitle": "Oferta de financiamiento creada"
+        },
+        "createOrganisation": {
+            "description": {
+                "description": "Acerca de tu organización",
+                "subtext": "Por favor, provea una descripción detallada sobre su organización y su historia que estará disponible a otros usuarios en el sitio",
+                "title": "Descripción de la organización"
+            },
+            "details": {
+                "accountType": "Tipo de cuenta",
+                "address": "Detalles de contacto",
+                "address_1": "Dirección 1",
+                "address_2": "Dirección 2",
+                "city": "Ciudad",
+                "country": "País",
+                "facebook": "URL de Facebook",
+                "foundedAt": "Se fundó en",
+                "instagram": "URL de Instagram",
+                "linkedin": "URL de LinkedIn",
+                "name": "Nombre de la organización",
+                "organisationType": "Tipo de Organización",
+                "phoneNumber": "Teléfono de la organización",
+                "state": "Estado/Provincia",
+                "subtext": "Por favor, proporcione algunos detalles de la organización, incluyendo el nombre de su organización y dirección e indíquenos si su roganización busca financiar o desarrollar proyectos. Tome en cuenta que una vez haya indicado esta información no podrá hacer cambios al nombre de su organización o al tipo de cuenta. ",
+                "title": "Detalles de la organización",
+                "twitter": "URL de Twitter",
+                "website": "Sitio web\n",
+                "zipCode": "Código postal"
+            },
+            "editOrgConfirm": "Confirmar los cambios",
+            "editOrgHelp": "Por favor, tome en cuenta que al guardar estos cambios, el perfil de su organización será enviado nuevamente a WRI para su aprobación. Sus cambios no serán visibles para otros usuarios hasta que el perfil haya sido aprobado nuevamente. ",
+            "logoCover": {
+                "avatar": "Logo de la organización",
+                "cover": "Foto de portada",
+                "subtext": "Por favor, seleccione un logo y foto de portada para el perfil de su organización",
+                "title": "Logotipo y foto de portada"
+            },
+            "success": "Para continuar, agrega algunos miembros del equipo",
+            "successLinkText": "Agregar miembros del equipo",
+            "successTitle": "Se ha creado la organización"
+        },
+        "createPitch": {
+            "addNewPitch": "Añadir nuevo proyecto",
+            "archivePitch": "Archivar propuesta",
+            "archivePitchHelp": "¿Está seguro que quiere archivar {{name}}? Una vez que se archive, sólo será visble para su organización.",
+            "createPitch": "Crear presentación",
+            "coverTitle": "Foto de portada",
+            "details": {
+                "addDocumentsSubtext": "Suba algún documento que demuestre que tiene el derecho legal en la tierra asociada al proyecto de restauración, asi como cualquier otro documento que describa el proyecto. Por favor, note que los documentos serán visibles a otros usuarios cunado revisen su proyecto. \n\nLos tipos de documentos aceptados incluyen: pdf, jpg, png, gif.",
+                "addDocumentsTitle": "Subir documentos",
+                "anticipatedOutcome": "Resultado anticipado",
+                "anticipatedOutcomeHelp": "Descripción detallada de los resultados previstos si este proyecto se implementa con éxito",
+                "avatar": "Logo de la organización",
+                "beforeYouBegin": "Antes de comenzar\n",
+                "beforeYouBeginHelp": "Asegúrate de tener todo lo necesario para completar el proceso, ya que no podrás guardar el progreso hasta el final. Descarga el siguiente documento que contiene una lista de todo lo que necesitarás.",
+                "benefitedPeople": "Número estimado de personas que se beneficiarán del proyecto",
+                "carbonCerts": {
+                    "add": "Agregue otro certificado de bonos de carbono",
+                    "certificate": "Certificado {{number}}",
+                    "delete": "Eliminar bono de carbono",
+                    "help": "Especifique si su proyecto ha sido validado bajo algún estándar de carbono u otro estándar. Proporcione el enlace a la base de datos correspondiente en la que figura su proyecto. ",
+                    "link": "Enlace del bono",
+                    "other_help": "Añada cualquier detalle adicional sobre este bono.",
+                    "other_value": "Otros",
+                    "remove": "Eliminar bono de carbono",
+                    "removeDescription": "¿Desea eliminar este elemento?",
+                    "title": "Certificación de carbono",
+                    "type": "Tipo de bono"
+                },
+                "continent": "Continente",
+                "country": "País",
+                "cover": "Foto de portada",
+                "deleteItem": "Eliminar",
+                "deleteItemHelp": "¿Seguro de que quiere eliminarlo? Se eliminará definitivamente y su proyecto se enviará para aprobación.",
+                "description": "Descripción",
+                "descriptionHelp": "Escriba una descripción sobre el proyecto",
+                "details": "Detalles del proyecto",
+                "detailsHelp": "Por favor, proporcione más detalles de su proyecto de restauración.",
+                "downloadChecklist": "Descargar la lista de verificación",
+                "editPitchConfirm": "Confirmar cambios",
+                "editPitchHelp": "Por favor, tenga en cuenta que al enviar estos cambios su proyecto permanecerá oculto hasta que WRI haya revisado y aprobado estas modificaciones.",
+                "elevatorPitch": "Video de presentación de proyecto",
+                "elevatorPitchHelp": "El video con la presentación de la propuesta resume su proyecto en 1 minuto y 30 segundos. Puede subir su propio video o usar el creador de videos en la aplicación móvil que le guiará para hacer la propuesta informativa en video.\n\nLos formatos aceptados incluyen: .mp4 y .mov",
+                "fundingAmount": "Monto de financiamiento (USD)",
+                "fundingAmountHelp": "Provea el monto de financiamiento exacto que su proyecto de restauración está buscando (USD)",
+                "fundingBracket": "Rango de financiamiento (USD)",
+                "fundingBracketHelp": "Selecciona el rango de financiamiento que busca tu proyecto.",
+                "fundingSources": "Fuente de financiamiento",
+                "fundingSourcesHelp": "Seleccione el tipo de fianciamiento para su proyecto",
+                "futureMaintenance": "¿Cómo conservará este proyecto los árboles en el futuro?",
+                "futureMaintenanceHelp": "Descripción de cómo este proyecto conservará las tierras restauradas / asegurará la supervivencia de los árboles plantados en el futuro",
+                "landOwnership": "Tipo de propiedad de la tierra",
+                "landOwnershipHelp": "Seleccione los tipos de propiedad de la tierra que aplican para su proyecto",
+                "landSize": "Tamaño del terreno (hectáreas)",
+                "landSizeHelp": "Por favor, seleccione uno de los siguientes. ",
+                "landTypes": "¿Qué tipo de tierra?",
+                "landTypesHelp": "Seleccione los tipos de tierra que aplican a su proyecto de restauración.",
+                "localCommunityInvolvement": "¿Está trabajando con la comunidad o con la participación de la comunidad local?",
+                "location": "Ubicación",
+                "locationHelp": "Proporcione detalles sobre la ubicación de su proyecto de restauración y la extensión de tierra que cubre",
+                "locationMap": "Ubicación",
+                "locationMapHelp": "Utilice el mapa para seleccionar el área donde se lleva a cabo su proyecto de restauración.",
+                "locationMapHelpAdvice": "Use el mapa para seleccionar el área donde se encuentra su proyecto. El mapa dispone de funcionalidad avanzada para subir y definir shape files. ",
+                "longTermEngagement": "Compromiso a largo plazo",
+                "longTermEngagementHelp": "¿Ofrece un compromiso a largo plazo para su proyecto de restauración?",
+                "media": "Media",
+                "mediaHelp": "Subir foto de portada",
+                "peopleAmountAbroad": "¿Cuántas personas que trabajan en el proyecto provienen de otros países?",
+                "peopleAmountEmployees": "¿Cuántos empleados?",
+                "peopleAmountNearby": "¿Cuántas personas que trabajan en el proyecto son de la misma zona?",
+                "peopleAmountVolunteers": "¿Cuántos voluntarios?",
+                "peopleWorkingIn": "¿Quiénes son las personas que trabajan en el proyecto?",
+                "peopleWorkingInHelp": "Descripción detallada de las personas que se emplearán o harán voluntariado para este proyecto",
+                "problem": "El problema",
+                "problemHelp": "Descripción detallada del problema que este proyecto intenta resolver",
+                "projectName": "Nombre del proyecto",
+                "projectNameHelp": "Determine un nombre para su proyecto de restaruación",
+                "projectTeam": "Nombre del proyecto",
+                "projectTeamHelp": "Seleccione los miembros del equipo que están trabajando en este proyecto de restauración. Sus contacros serán visibles cuando su proyecto coincida con alguna oferta de financiamiento",
+                "reporting": "Reporte",
+                "reportingFrequency": "Frecuencia de reporte",
+                "reportingHelp": "Indique que tan seguido su organización podrá proveer reportes sobre el estado del proyecto de restauración y que tan detallados serán estos reportes",
+                "reportingLevel": "Nivel de reportes",
+                "restorationGoals": "¿Cuál es el objetivo de su proyecto?",
+                "restorationGoalsHelp": "Seleccione los objetivos de su proyecto de restauración",
+                "restorationMethod": {
+                    "biomassPerHectare": "Biomasa estimada por hectárea (toneladas)",
+                    "carbonImpact": "Estimación del impacto de carbono (tCO2e)",
+                    "experience": "Años de experiencia",
+                    "help": "Por favor, provea métricas detalladas relacionadas a cada uno de los métodos de restaruación relevantes para su proyecto",
+                    "landSize": "Hectáreas de tierra a restaurar",
+                    "pricePerHectare": "Precio por hectárea (USD)",
+                    "speciesImpacted": "Impactos en la biodiversidad",
+                    "speciesImpactedHelp": "Proporciona una lista de especies afectadas. Por favor, utiliza una de la Unión Internacional para la Conservación de la Naturaleza (UICN).",
+                    "title": "Métricas del proyecto",
+                    "add": "Agregar método de restauración"
+                },
+                "restorationMethods": "Métodos de restauración",
+                "restorationMethodsHelp": "Seleccione los métodos de restauración que se utilizarán en su proyecto de restauración",
+                "revenueDrivers": "Fuentes generadoras de ingresos",
+                "revenueDriversHelp": "Indique si su poryecto de restauración producirá algúnos productos comerciables para utilizar o vender una vez se haya implementado el proyecto",
+                "start": "Iniciar proyecto",
+                "startHelp": "Por favor, seleccione si desea comenzar un proyecto nuevo o continuar con un borrador.",
+                "sustDevGoals": "Objetivos de desarrollo sustentable",
+                "sustDevGoalsHelp": "Si es relevante, seleccione los objetivos de desarrollo sustentable que apliquen a su proyecto de restaruación",
+                "timespan": "Lapso de tiempo (Meses)",
+                "timespanHelp": "Especifique cuanto timepo tomará su proyecto (meses)",
+                "trainingAmountPeople": "Si la respuesta a la formación es \"sí\": ¿cuántas personas recibirán formación?",
+                "trainingInvolved": "¿Está entrenando a gente local?",
+                "trainingType": "En caso de que lo este haciendo: ¿qué tipo de entrenamiento ofrece?",
+                "trainingTypeHelp": "Indique el tipo de capacitación que se brindará.",
+                "treeSpecies": {
+                    "add": "Agregar una especie de árbol",
+                    "count": "Número de árboles",
+                    "help": "Provea información sobre las especies de árboles que se plantarán, restaurarán o protegerán como parte de este proyecto.",
+                    "isNative": "¿Estos árboles son nativos del lugar?",
+                    "name": "Nombre de la especie de árbol",
+                    "owner": "¿Quién posee los derechos sobre los productos?",
+                    "pricePerTree": "Precio por árbol (USD)",
+                    "priceToMaintain": "Precio por árbol a mantener (USD)",
+                    "priceToObtain": "Precio para comprar (USD)",
+                    "priceToPlant": "Precio de siembra por árbol (USD)",
+                    "produces_firewood": "¿Producirá leña?",
+                    "produces_food": "¿Producirá alimentos?",
+                    "produces_timber": "¿Producirá madera?",
+                    "remove": "Eliminar especies de árboles",
+                    "removeDescription": "¿Desea eliminar este elemento?\n",
+                    "saplings": "Precio de plántula unitaria (USD)",
+                    "season": "¿Cuándo planea plantar los árboles? (temporada)",
+                    "sitePrep": "Precio para preparar el sitio por árbol (USD)",
+                    "specie": "Especies de árboles {{number}}",
+                    "survivalRate": "Tasa histórica promedio de supervivencia %",
+                    "title": "Especies arbóreas",
+                    "totalPricePerTree": "Precio global por árbol (USD)"
+                },
+                "totalPricePerTree": {
+                    "title": "Precio promedio por árbol",
+                    "subtitle": "¿Cuál sería el precio promedio por árbol que su oferta estaría dispuesta a aceptar?",
+                    "inputTitle": "Costo por árbol (USD)",
+                    "footnote": "Precio general por árbol (USD)"
+                },
+                "useOfResources": "¿Cómo es que este proyecto usará de forma sostenible recursos locales como el agua y fertilizantes?",
+                "useOfResourcesHelp": "Descripción de cómo este proyecto usará de forma sostenible recursos locales como agua y fertilizantes",
+                "video": "Video del proyecto",
+                "whoIsInvolved": "Quién está involucrado",
+                "whoIsInvolvedHelp": "Descripción detallada de quién estará inovolucrado en este proyecto en términos del equipo de su organización"
+            },
+            "success": "Su presentación de propuesta de proyecto ha sido creada y enviada a WRI para su revisión. Ustéd será notificado una vez su presentación haya sido aprobada y esté disponible en TerraMatch",
+            "successLinkText": "Continuar",
+            "successTitle": "Se ha creado una presentación.",
+            "video": {
+                "cancel": {
+                    "title": "Eliminar video",
+                    "subtext": "¿Está seguro que desea eliminar este video?"
+                },
+                "connectivity": {
+                    "title": "No está conectado en este momento.",
+                    "subtext": "Por el momento no está conectado a internet así que no le podemos mostrar una vista preliminar del video y no será posible subirlo. Por favor, conéctese a internet para visualizar el video o elija \"Siguiente\" para guardar su proyecto sin un video. "
+                },
+                "edit": {
+                    "title": "¿Desea cambiar el video?",
+                    "subtext": "Si quisiera cambiar su video, por favor suba un nuevo archivo o cree uno video utilizando nuestro asistente. Tome en cuenta que el video anterior será eliminado. "
+                },
+                "elevator": {
+                    "title": "Video de discurso de presentación.",
+                    "subtext": "Suba su propio viedo o use nuestro asistente de videos para presentar su proyecto en 1 minuto y 30 segundos. \n\nPor favor, tenga en cuenta que necesitará una conexión a internet para hacer uso del asistente de videos. ",
+                    "uploadVideo": "Subir video de presentación. ",
+                    "recordVideo": "Grabar video de presentación.",
+                    "uploadNewVideo": "Subir un video de presentación nuevo. ",
+                    "recordNewVideo": "Grabar un nuevo video de presentación.",
+                    "exampleVideo": "Ejemplo de presentación en video"
+                },
+                "error": {
+                    "title": "Hubo un problema al subir su video.",
+                    "subtext": "Hubo un error al subir su video. \n\nPor favor, revise su conexión y elija \"Volver a intentar\" para intentar subirlo de nuevo, o \"Atrás\" para volver a grabar la sección."
+                },
+                "guide": {
+                    "title": "Bienvenido a nuestro creador de videos de presentación.",
+                    "subtext": "El asistente de video le guía paso a paso para grabar una gran presentación en video.",
+                    "header": "El editor de videos está dividido en tres secciones de 30 segundos:",
+                    "steps": "Paso 1: Preséntese\nPaso 2: Qué espera lograr\nPaso 3: Por qué su proyecto es importante",
+                    "tipsHeader": "Consejos antes de comenzar:",
+                    "tipsBody": "1. Necesitará contar con una conexión a internet para subir su video\n2. Filme con la cámara en dirección horizontal\n3. Tenga a alguien que pueda ayudarle\n4. Practique el video antes de comenzar a filmarlo",
+                    "videoHeader": "Aquí hay un buen ejemplo de video:"
+                },
+                "patch": {
+                    "title": "Estamos elaborando su video. Por favor espere...",
+                    "subtext": "Estamos trabajando arduamente de nuestro lado para finalizar su video. Normalmente esto lleva 1 minuto. Luego usted podrá ver una previsualización antes de guardarlo.",
+                    "cancel": {
+                        "title": "Cancelar la carga del video",
+                        "subtext": "¿Está seguro que quiere cancelar la carga de su video?"
+                    }
+                },
+                "processing": "Procesando video",
+                "record": {
+                    "record": "Registro",
+                    "videoIntroduction": {
+                        "title": "¿Quiénes somos?",
+                        "step": "Paso 1: Preséntese",
+                        "subtext": "Por favor, graba una descripción de 30 segundos donde menciones quién eres y tu lugar de origen.",
+                        "hints": "Cuéntenos quién es usted.\nCuéntenos sobre su organización.\nCuéntenos sobre el tipo de trabajo que hace y dónde lo hace. "
+                    },
+                    "videoGoals": {
+                        "title": "¿Qué buscamos alcanzar?",
+                        "step": "Paso 2: ¿Qué pretende lograr?",
+                        "subtext": "Por favor, graba una descripción de 30 segundos sobre lo que pretende lograr su proyecto.",
+                        "hints": "Cuéntenos sobre sus objetivos para este proyecto.\nCuéntenos sobre el impacto que su proyecto tendrá.\nCuéntenos sobre qué lo motivó a desarrollar este proyecto."
+                    },
+                    "videoSignificance": {
+                        "title": "¿Por qué es importante su proyecto?",
+                        "step": "Paso 3: Cuéntenos sobre la importancia de este proyecto.",
+                        "subtext": "Por favor, graba una descripción de 30 segundos que diga por qué su proyecto es importante.",
+                        "hints": "Cuéntenos cuál será el efecto sobre la comunidad local.\nCuéntenos cuántas personas se verán beneficiadas por su proyecto."
+                    },
+                    "cancel": {
+                        "title": "Eliminar video",
+                        "subtext": "¿Está seguro(a) de que desea eliminar este video?"
+                    }
+                },
+                "remove": {
+                    "title": "Eliminar el video actual",
+                    "subtext": "¿Está seguro de querer eliminar el video existente y crear uno nuevo?"
+                },
+                "review": {
+                    "title": "Su video está listo...",
+                    "subtext": "Si está contento con su video, elija \"Guardar y continuar\". Elija \"Atrás\" para volverlo a grabar. ",
+                    "warning": "Por favor, tenga en cuenta que al presionar \"Atrás\" el video será eliminado del perfil de proyecto. "
+                },
+                "timeOut": "El tamaño del archivo de video es demasiado grande. Por favor, reduce la resolución de tu video.",
+                "failedUploading": "Error al subir los videos. El tamaño del archivo de video es demasiado grande. Por favor, reduzca la resolución de su video.",
+                "upload": {
+                    "title": "Presentación introductoria de la propuesta ",
+                    "subtext": "Suba su presentación de video. Este video se mostrará junto con su propuesta.",
+                    "uploadVideo": "Subir video",
+                    "hint": "La duración del video debe ser superior a 1 minuto y 30 segundos.",
+                    "remove": "Eliminar video"
+                }
+            }
+        },
+        "errors": {
+            "account_type": {
+                "REQUIRED": "Por favor, selecciona un tipo de cuenta"
+            },
+            "address_1": {
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "anticipated_outcome": {
+                "MIN": "El resultado previsto debe tener al menos {{min}} caracteres.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "api": {
+                "forbidden": "Lo sentimos, no tiene permitido hacer eso en este momento.",
+                "invalid_input": "Hubo un problema con uno o más datos. Por favor, revise el formulario e inténtelo de nuevo.",
+                "not_found": "Vaya, parece que no se puede encontrar.",
+                "server": "Hay un problema con el servidor. Por favor, intente de nuevo más tarde.",
+                "unauthorized": "Parece que no está autorizado a realizar esa acción."
+            },
+            "avatar": {
+                "BETWEEN": "La imagen no debe ser mayor de {{max}} MB.",
+                "GENERIC": "Algo salió mal. Asegúrese de que el tamaño de su imagen no supere los 2 MB.",
+                "REQUIRED": "Por favor, seleccione un avatar"
+            },
+            "benefited_people": {
+                "REQUIRED": "Este campo es obligatorio",
+                "BETWEEN": "Por favor, ingrese un mínimo de {{min}} personas."
+            },
+            "biomass": {
+                "REQUIRED": "Por favor, ingrese la biomasa por hectárea."
+            },
+            "carbon": {
+                "REQUIRED": "Introduzca su impacto de carbono.",
+                "create_failed": "No se pudo añadir el certificado del bono {{name}}.",
+                "delete_failed": "No se pudo eliminar el contacto {{name}}."
+            },
+            "carbon_link": {
+                "REQUIRED": "Seleccione un enlace del bono"
+            },
+            "carbon_other_value": {
+                "REQUIRED": "Ingrese un tipo de bono"
+            },
+            "carbon_type": {
+                "REQUIRED": "Por favor, selecciona un tipo de carbón."
+            },
+            "category": {
+                "REQUIRED": "Por favor, seleccione un tipo de cuenta."
+            },
+            "city": {
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "contacts": {
+                "create_failed": "No se pudo añadir el contacto.",
+                "delete_failed": "No se pudo eliminar el contacto."
+            },
+            "continent": {
+                "REQUIRED": "Por favor, seleccione el continente de su organización"
+            },
+            "country": {
+                "REQUIRED": "Por favor, seleccione el país de su organización"
+            },
+            "cover": {
+                "BETWEEN": "La imagen no puede superar 2 MB."
+            },
+            "cover_photo": {
+                "BETWEEN": "La imagen no debe ser mayor a {{max}} MB.",
+                "CUSTOM": "The upload is corrupted. Please try a different image",
+                "GENERIC": "Algo salió mal. Asegúrese que su imagen no sea mayor a 2 MB.",
+                "REQUIRED": "Por favor, seleccione una foto de portada",
+                "WRONG_FORMAT": "Images should only be of type jpg, png or gif"
+            },
+            "description": {
+                "MIN": "La descripción debe tener al menos {{min}} carácteres.",
+                "BETWEEN": "The description must be no more than {{max}} characters.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "docs": {
+                "REQUIRED": "Suba al menos un documento.",
+                "create_failed": "No se pudo subir el documento {{name}}.",
+                "delete_failed": "No se pudo eliminar el documento {{name}}.",
+                "GENERIC": "Asegúrese que los archivos PDF nos superen los 4 MB y que las imágenes no superen los 2 MB. "
+            },
+            "email_address": {
+                "REQUIRED": "Por favor, ingresa una dirección de correo electrónico.",
+                "UNIQUE": "La dirección de correo electrónico ya ha sido tomada."
+            },
+            "experience": {
+                "MIN": "El valor debe ser de al menos {{min}}"
+            },
+            "facebook": {
+                "INVALID": "Por favor, introduzca una URL válida para el perfil de Facebook.",
+                "STARTS_WITH": "La URL de Facebook debe comenzar con {{values}}.",
+                "STARTS_WITH_FACEBOOK": "El URL debe estar estructurado como facebook.com/"
+            },
+            "first_name": {
+                "REQUIRED": "Introduzca un nombre\n"
+            },
+            "funding_amount": {
+                "REQUIRED": "Ingrese su monto de financiación",
+                "BETWEEN": "El monto del financiamiento no debe ser mayor a {{max}} USD",
+                "INTEGER": "Por favor, ingresa un número entero"
+            },
+            "funding_sources": {
+                "REQUIRED": "Seleccione al menos una fuente de financiamiento"
+            },
+            "future_maintenance": {
+                "MIN": "Debe haber al menos {{min}} carácteres.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "hectare_land": {
+                "REQUIRED": "Introduzca la superficie de la tierra en hectáreas"
+            },
+            "hectare_price": {
+                "REQUIRED": "Ingrese su precio por hectárea"
+            },
+            "instagram": {
+                "INVALID": "Por favor, ingrese una URL válida para el perfil de Instagram.",
+                "STARTS_WITH": "La URL de Instagram debe comenzar con {{values}}",
+                "STARTS_WITH_INSTAGRAM": "El URL debe estar estructurado como instagram.com/"
+            },
+            "job_role": {
+                "REQUIRED": "Por favor ingrese una descripción de empleo"
+            },
+            "land_geojson": {
+                "REQUIRED": "Proporcione una ubicación",
+                "BETWEEN": "Su shapefile es demasiado grande. Seleccione un shapefile más pequeño."
+            },
+            "land_ownerships": {
+                "REQUIRED": "Seleccione al menos un tipo de posesión de la tierra"
+            },
+            "land_size": {
+                "REQUIRED": "Seleccione el tamaño de la tierra a restaurar"
+            },
+            "land_types": {
+                "REQUIRED": "Seleccione al menos un tipo de tierra"
+            },
+            "last_name": {
+                "REQUIRED": "Por favor, ingresa un apellido."
+            },
+            "link": {
+                "INVALID": "Por favor, proporcione una URL válida."
+            },
+            "linkedin": {
+                "INVALID": "Por favor, ingrese una URL válida para su perfil de LinkedIn",
+                "STARTS_WITH": "La URL de LinkedIn debe comenzar con {{values}}.",
+                "STARTS_WITH_LINKEDIN": "El URL debe estar estructurado como linkedin.com/"
+            },
+            "local_community_involvement": {
+                "REQUIRED": "Selecciona \"Sí\" o \"No\""
+            },
+            "long_term_engagement": {
+                "REQUIRED": "Selecciona \"Sí\" o \"No\"."
+            },
+            "map": {
+                "genericError": "Hubo un problema cargando el shapefile. Por favor, elija un formato válido (.zip, .csv, .json, .geojson, .kml, .kmz, .shp, .dbf, .shx).",
+                "intersect": "No puede dibujar un área que se intersecta.",
+                "minSize": "Cree una forma que sea mayor de 9600 metros cuadrados.",
+                "tooBig": "Asegúrese de que el archivo sea menor a 1 MB. ",
+                "noPolygons": "The shapefile did not contain any polygons"
+            },
+            "media_upload": {
+                "BETWEEN": "Los archivos de multimedia no pueden ser de más de {{max}} MB.",
+                "REQUIRED": "Por favor, seleccione los archivos multimedia.",
+                "upload_failed": "No se pudo cargar el archivo de multimedia."
+            },
+            "networking": {
+                "disconnected": "Por favor, revise su conexión e intente de nuevo.",
+                "timeout": "Por favor, revise su conexión e intente de nuevo."
+            },
+            "offer_id": {
+                "EXISTS": "Esta oferta de financiación ya ha indicado su interés con la propuesta de proyecto",
+                "CUSTOM": "Esta oferta de financiación ya ha recibido toda la inversión necesaria, elija otra."
+            },
+            "organisation_founded_at": {
+                "REQUIRED": "Por favor, seleccione una fecha de fundación."
+            },
+            "organisation_name": {
+                "REQUIRED": "Por favor, ingresa tu organización."
+            },
+            "partial_success": "Algunas acciones no se pudieron completar.",
+            "password": {
+                "BETWEEN": "La contraseña debe tener entre {{min}} y {{max}} caracteres.",
+                "CONTAIN_LOWER": "La contraseña debe contener una letra minúscula",
+                "CONTAIN_NUMBER": "El campo de contraseña debe contener un número",
+                "CONTAIN_UPPER": "El campo de la contraseña debe contener un carácter en mayúsculas",
+                "CUSTOM": "La nueva contraseña no puede ser alguna de las que haya usado antes.",
+                "MIN": "La contraseña debe tener al menos {{min}} caracteres."
+            },
+            "people_amount_abroad": {
+                "REQUIRED": "Este campo es obligatorio",
+                "BETWEEN": "Por favor, introduzca un mínimo de {{min}} personas."
+            },
+            "people_amount_employees": {
+                "REQUIRED": "Este campo es obligatorio",
+                "BETWEEN": "Ingrese un mínimo de {{min}} personas."
+            },
+            "people_amount_nearby": {
+                "REQUIRED": "Este campo es obligatorio.",
+                "BETWEEN": "Ingrese un mínimo de {{min}} personas."
+            },
+            "people_amount_volunteers": {
+                "REQUIRED": "Este campo es obligatorio",
+                "BETWEEN": "Introduzca un mínimo de {{min}} personas."
+            },
+            "people_working_in": {
+                "MIN": "Debe haber al menos {{min}} caracteres.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "phone_number": {
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "pitch_id": {
+                "EXISTS": "Esta propuesta de proyecto ya ha indicado su interés con la oferta de financiación",
+                "CUSTOM": "La propuesta está totalmente financiada. Elige una diferente."
+            },
+            "price_per_tree": {
+                "BETWEEN": "El precio por árbol debe estar entre 0 y 1000000.",
+                "STRICT_FLOAT": "Por favor, Introduzca un precio con solo dos decimales."
+            },
+            "problem": {
+                "MIN": "El campo del problema debe tener al menos {{min}} caracteres.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "repeat_password": {
+                "REPEAT": "Las contraseñas deben coincidir"
+            },
+            "reporting_frequency": {
+                "REQUIRED": "Por favor, seleccione una frecuencia de reporte."
+            },
+            "reporting_level": {
+                "REQUIRED": "Seleccione un nivel de reporte"
+            },
+            "restoration_goals": {
+                "REQUIRED": "Selecciona al menos un objetivo"
+            },
+            "restoration_methods": {
+                "REQUIRED": "Seleccione al menos un método de restauración"
+            },
+            "restoration_metrics": {
+                "create_failed": "No se pudo agregar una métrica para {{name}}.",
+                "update_failed": "No se pudo actualizar la métrica de {{name}}."
+            },
+            "revenue_drivers": {
+                "REQUIRED": "Seleccione al menos un generador de ingresos."
+            },
+            "species_impacted": {
+                "MINSTR": "Ningún elemento puede estar vacío",
+                "REQUIRED": "Por favor, ingresa una especie.",
+                "UNIQUE": "Todos los elementos deben ser únicos"
+            },
+            "state": {
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "survival_rate": {
+                "BETWEEN": "La tasa de supervivencia debe estar entre {{min}} y {{max}}."
+            },
+            "sustainable_development_goals": {
+                "REQUIRED": "Seleccione al menos un objetivo de desarrollo sustentable"
+            },
+            "team_member": {
+                "create_failed": "No se pudo crear el miembro del equipo.",
+                "update_failed": "No se pudo actualizar el miembro del equipo."
+            },
+            "teamSelect": {
+                "REQUIRED": "Selecciona al menos un miembro del equipo."
+            },
+            "time_span": {
+                "REQUIRED": "Por favor, ingrese su período de tiempo."
+            },
+            "training_amount_people": {
+                "REQUIRED": "Este campo es obligatorio",
+                "PRESENT": "Por favor, Indique el número de personas que recibirá entrenamiento. "
+            },
+            "training_involved": {
+                "REQUIRED": "Selecciona \"Sí\" o \"No\""
+            },
+            "training_type": {
+                "MIN": "El tipo de entrenamiento debe tener al menos {{min}} caracteres.",
+                "REQUIRED": "Este campo es requerido",
+                "PRESENT": "Por favor, especifique un tipo de formación."
+            },
+            "tree_count": {
+                "REQUIRED": "Ingrese un número de árboles"
+            },
+            "tree_name": {
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "tree_owner": {
+                "REQUIRED": "Por favor, especifica quién tiene los derechos sobre el producto"
+            },
+            "tree_price": {
+                "REQUIRED": "Por favor, ingrese un precio."
+            },
+            "tree_season": {
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "tree_species": {
+                "create_failed": "No se pudo crear las especie de árbol {{name}}.",
+                "delete_failed": "No se pudo eliminar la especie de árbol {{name}}."
+            },
+            "tree_survival": {
+                "REQUIRED": "Introduzca una tasa de supervivencia histórica"
+            },
+            "token": {
+                "EXISTS": "Token caducado. Inténtelo de nuevo."
+            },
+            "twitter": {
+                "INVALID": "Ingrese una URL válida para el perfil de Twitter.",
+                "STARTS_WITH": "La URL de Twitter debe comenzar con {{values}}.",
+                "STARTS_WITH_TWITTER": "El URL debe estar estructurado como twitter.com/"
+            },
+            "type": {
+                "REQUIRED": "Seleccione un tipo de organización"
+            },
+            "unknown": {
+                "GENERIC": "Algo salió mal, inténtelo de nuevo."
+            },
+            "upload": {
+                "BETWEEN": "El archivo no puede ser mayor que {{max}} MB.",
+                "MIMETYPES": "The file can only be of type jpeg (image or document), png (image or document), gif (image or document), mp4 (video), mov (video), 3gp (video) or pdf (document)",
+                "file_missing": "No se pudo encontrar el archivo"
+            },
+            "use_of_resources": {
+                "MIN": "Debe tener al menos {{min}} caracteres.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "user": {
+                "invite_failed": "No se pudo invitar a {{email}}.",
+                "update_failed": "No se pudo actualizar el usuario."
+            },
+            "verify": "Ficha inválida",
+            "video": {
+                "BETWEEN": "El archivo no debe ser mayor a {{max}} MB.",
+                "GENERIC": "Algo ha salido mal. Asegúrese de que su video no supera los 32 MB.",
+                "MIMETYPES": "Por favor, sube un video en formato mp4.",
+                "WRONG_FORMAT": "Videos should only be of type mp4, mov or 3gp"
+            },
+            "website": {
+                "INVALID": "Introduzca una dirección URL válida para su sitio web."
+            },
+            "who_is_involved": {
+                "MIN": "La sección \"Quién está involucrado\" debe contener al menos {{min}} caracteres.",
+                "REQUIRED": "Este campo es obligatorio"
+            },
+            "year_experience": {
+                "REQUIRED": "Por favor, ingrese sus años de experiencia."
+            },
+            "zip_code": {
+                "REQUIRED": "Ingrese su código postal"
+            },
+            "*": {
+                "CUSTOM": "The upload is corrupted. Please try a different image"
+            }
+        },
+        "filters": {
+            "amountNeeded": "Monto requerido",
+            "fundingBracket": "Rango de financiamiento",
+            "fundingSources": "Fuente de financiación",
+            "geography": "Geografía",
+            "landOwnerships": "Propiedad de la tierra",
+            "landSize": "Superficie del terreno (hectáreas)",
+            "landTypes": "Tipo de suelo",
+            "pricePerTree": "Precio por árbol (USD)",
+            "minimumPricePerTree": "Precio mínimo por árbol (USD)",
+            "maximumPricePerTree": "Precio máximo por árbol (USD)",
+            "reportingFrequencies": "Frecuencia de reporte",
+            "reportingLevels": "Niveles de reporte",
+            "restorationGoals": "Objetivo de restauración",
+            "restorationMethods": "Método de restauración",
+            "sustDevGoals": "Objetivos de desarrollo sustentable",
+            "treeSpecies": "Detalles de la especie de árbol",
+            "selectFilters": "Seleccionar filtros"
+        },
+        "footer": {
+            "body": " ",
+            "contact": "Contáctenos",
+            "contactSubject": "Cómo contactar a TerraMatch",
+            "privacy": "Política de privacidad",
+            "terms": "Términos de Servicio",
+            "title": " "
+        },
+        "funding": {
+            "filter": {
+                "none": "Personalizado"
+            },
+            "title": "Financiamiento"
+        },
+        "home": {
+            "title": "Inicio"
+        },
+        "landing": {
+            "cookieBanner": {
+                "notice": "Esta página web utiliza cookies para mejorar tu navegación. Al continuar navegando en la página, estas consintiendo al uso de cookies y tecnologías similares. Para más información, por favor revisa nuestra <0>política de privacidad.</0>"
+            },
+            "cta": "Conectarse ahora",
+            "hero": "Gente cultivando árboles",
+            "heroSecondary": "de la forma correcta",
+            "numberOfTrees": "Número de árboles:",
+            "restorationType": "Tipo de restauración",
+            "caseStudy": {
+                "latest": "Casos de estudio más recientes",
+                "readMore": "Leer más"
+            },
+            "demo": "Programar una demostración",
+            "demoMailBody": "Gracias por su interés en TerraMatch.\n\nPor favor, indique fechas y horas disponibles para una demostración (tenga en cuenta que requerimos un aviso previo de dos semanas):\n\n1) Fecha MM/DD/AAAA y Hora: xx.xx am/pm\n2) Fecha MM/DD/AAAA y Hora: xx.xx am/pm\n3) Fecha MM/DD/AAAA y Hora: xx.xx am/pm\n\nUsted recibirá una respuesta de nuestro equipo dentro de dos días hábiles.",
+            "message": "Regional actual: {{locale}}",
+            "news": {
+                "latest": "Noticias recientes",
+                "readMore": "Leer más"
+            },
+            "ourPartners": "Nuestros socios",
+            "pdfExplainer": "Ver explicación en PDF",
+            "project": {
+                "bestMatch": "Mejores coincidencias",
+                "compatibility": "Compatibilidad",
+                "fundingAmount": "Monto de financiación",
+                "latest": "Proyectos recientes",
+                "readMore": "Leer más"
+            },
+            "request": "Solicitar una cuenta",
+            "title": "TerraMatch",
+            "whatCan": "Lo que puede hacer TerraMatch por usted",
+            "whatCanImage": "TerraMatch",
+            "whatCanTabs": {
+                "developers": {
+                    "header1": "¿Usted o su organización siembran árboles? TerraMatch le ayudar:",
+                    "header2": " ",
+                    "paragraph1": "Conéctese con una red global de productores y financiadores.\n\nAcceda a financiamiento de fuentes confiables y formales para expandir sus operaciones.\n\nConozca mejor el mercado y lo que buscan los financiadores.\n\nComparta tu trabajo y los beneficios del cultivo de árboles con un público global.",
+                    "paragraph2": " ",
+                    "title": "Desarrolladores de proyectos"
+                },
+                "funders": {
+                    "header1": "¿Quiere apoyar a las personas a sembrar árboles? TerraMatch le ayuda:",
+                    "header2": " ",
+                    "paragraph1": "Conéctese con una red global de personas y organizaciones acreditadas y capacitadas que expertas en cómo cultivar árboles y asegurarse de que sobrevivan.\n\nIdentifique rápidamente proyectos que coincidan con sus necesidades específicas.\n\nAyude a empoderar a las comunidades rurales a mejorar sus tierras, el acceso al agua, el rendimiento de sus cultivos, las oportunidades de empleo y sus ingresos.\n\nMeda el progreso para seguir de cerca el impacto de su inversión a lo largo del tiempo (¡próximamente!).",
+                    "paragraph2": " ",
+                    "title": "Financiadores"
+                },
+                "overview": {
+                    "header1": " ",
+                    "header2": " ",
+                    "paragraph1": "Los árboles ayudan a combatir el cambio climático y a transformar vidas. Es por ello que personas alrededor del mundo los están sembrando en grandes cantidades. Sin embargo, no es tan simple como sembrar cualquier tipo de árbol en cualquier lugar. Las personas y el clima se benefician únicamente si los árboles adecuados prosperan en los lugares correctos.\n\nAfortunadamente, existen numerosos expertos a nivel local que saben cómo cultivarlos bien, pero hay un problema importante: hasta ahora no existe una forma centralizada capaz de conectar a estos innovadores con otros agentes que puedan financiar sus esfuerzos.\n\nDespués de décadas de investigación el World Resources Institute (WRI) creó TerraMatch, una plataforma global que une ambos mundos. El algoritmo único de TerraMatch combina las preferencias de los financiadores — desde la geografía hasta el tipo de suelo y mucho más — con proyectos verificados que buscan sembrar o ya están sembrando los árboles adecuados en los suelos correctos.\n\n¿La meta? Ayudar a las personas y financiadores a cultivar un billón de árboles juntos.",
+                    "paragraph2": " ",
+                    "title": "Resumen"
+                }
+            }
+        },
+        "languages": {
+            "en-US": "Inglés",
+            "es": "Español",
+            "es-MX": "Español mexicano",
+            "fr": "Français",
+            "pt-BR": "Portugues do Brasil"
+        },
+        "login": {
+            "emailLabel": "Dirección de correo electrónico",
+            "errors": {
+                "incorrectDetails": "Detalles incorrectos",
+                "problem": "Problemas para ingresar; intente más tarde."
+            },
+            "login": "Iniciar sesión",
+            "logout": "Cerrar sesión",
+            "passwordLabel": "Contraseña",
+            "pleaseSignIn": "Inicia sesión para ver esa página"
+        },
+        "map": {
+            "enterRadius": "Ingresar un radio, en metros",
+            "enterLong": "Ingrese una longitud, en grados",
+            "enterLat": "Introduzca una latitud, en grados"
+        },
+        "match": {
+            "interest": {
+                "appliedFunding": "Ya tiene un interés registrado.",
+                "applyFunding": "Registrar interés",
+                "applyPitch": "Enviar solicitud de financiación",
+                "chooseFunding": "Elija la oferta de financiación",
+                "chooseFundingHelp": "Seleccione una de las ofertas de financiación de su organización para registrar el interés en la propuesta.\n",
+                "choosePitch": "Elegir Propuesta",
+                "choosePitchHelp": "Selecciona una de las presentaciones de tu organización para registrar interés por la oferta de financiación.",
+                "emptyFunding": "Su organización debe crear una oferta de financiación. Cree una para registrar su interés para esta presentación.",
+                "emptyPitch": "Su organización aún no ha creado ninguna propuesta, cree una para capturar el interés en esta oferta de financiación.",
+                "selectFunding": "Seleccionar oferta de financiación",
+                "selectPitch": "Seleccionar Propuesta",
+                "success": "Interés creado",
+                "successMessage": "Su interés para una oferta / propuesta de financiamiento se ha capturado exitosamente.",
+                "noPitch": "No tiene proyectos para elegir. Por favor, crea uno.",
+                "noFunding": "No tiene ninguna oferta de financiación para elegir. Por favor, crea una.",
+                "subheadingFunding": "Está aplicando para financiar el proyecto: {{name}}",
+                "subheadingPitch": "Estás aplicando a la siguiente oferta de financiamiento: {{name}}",
+                "alreadyApplied": "Ya ha presentado una solicitud con todos sus proyectos. Cree otro:",
+                "withdraw": "Retirar",
+                "withdrawing": "Retirando",
+                "withdrawHelp": "¿Está seguro de que desea retirar tu interés de {{name}}?",
+                "apply": "Solicitar"
+            }
+        },
+        "mobile": {
+            "accessibility": {
+                "common": {
+                    "required": "Obligatorio",
+                    "requiredField": "*"
+                },
+                "projectCard": {
+                    "avatar": "Avatar",
+                    "cover_image": "Imagen de portada"
+                }
+            },
+            "addTeamMember": {
+                "addMember": "Agregar un miembro de equipo",
+                "details": {
+                    "successAddSubtextNoAccount": "Ha invitado exitosamente a {{name}} para que se una al equipo.",
+                    "unknownRole": "Miembro"
+                }
+            },
+            "common": {
+                "continue_anyway": "Ignorar errores y continuar",
+                "custom": "Personalizar",
+                "unknown": "Desconocido",
+                "unnamed": "Sin nombre"
+            },
+            "connections": {
+                "email": "Correo electrónico",
+                "phone": "Teléfono"
+            },
+            "createOrganisation": {
+                "review": {
+                    "network_error": "Actualmente estás desconectado. Tu información no se pudo enviar, pero se ha guardado. Por favor, conéctate a Internet y envíala de nuevo.",
+                    "subtext": "Al enviarse, su perfil de organización será enviado a WRI para ser aprobado. Se hará visible a otros usuarios una vez este haya sido aprobado. ",
+                    "title": "Explorar perfil"
+                }
+            },
+            "createPitch": {
+                "details": {
+                    "treeSpecies": {
+                        "add": "Añadir especies de árboles",
+                        "remove": "Eliminar especie de árbol",
+                        "removeDescription": "¿Desea eliminar este elemento?"
+                    },
+                    "carbonCerts": {
+                        "add": "Agregar bono de carbono"
+                    }
+                },
+                "review": {
+                    "network_error": "Actualmente está desconectado. Su información no se pudo enviar, pero fue guardada. Por favor, conéctese a internet y envíela de nuevo.",
+                    "subtext": "Al enviarse, su proyecto será enviado a WRI para aprobación y estará oculto hasta que este haya sido aprobado. ",
+                    "title": "Revisar presentación"
+                }
+            },
+            "createOffer": {
+                "review": {
+                    "network_error": "Actualmente está desconectado. Su información no se pudo enviar, pero fue guardada. Por favor, conéctese a internet y envíela de nuevo.",
+                    "subtext": "Al enviarse, su oferta será visible en las búsquedas y podrá comenzar a buscar proyectos con lo que coincidir. ",
+                    "title": "Revisar oferta"
+                }
+            },
+            "filter": {
+                "applyFilter": "Aplicar filtros",
+                "clearAll": "Borrar todos",
+                "title": "Busqueda por filtros"
+            },
+            "funding": {
+                "empty": "No se han encontrado fondos"
+            },
+            "home": {
+                "latestUpdate": "Actualizaciones recientes"
+            },
+            "landing": {
+                "createOrg": "Crear organización",
+                "editOrg": "Ver organización",
+                "verify": "Completar proceso de registro"
+            },
+            "login": {
+                "enterApp": "Entrar a la aplicación",
+                "hint": "Introduzca los detalles con los que se registró"
+            },
+            "organisation": {
+                "approved": "¡Su cuenta ha sido aprobada!",
+                "approvedMessage": "Nos da gusto confirmar que su cuenta ha sido aprobada. ¡Bienvenido a TerraMatch! Ingrese ahora. ",
+                "rejected": "Su cuenta ha sido rechazada",
+                "rejectedButton": "Fijar aplicación"
+            },
+            "pitches": {
+                "empty": "No se encontraron proyectos"
+            },
+            "project": {
+                "location": {
+                    "latLong": "Latitud Longitud",
+                    "area": "Área a ser monitoreada:",
+                    "radius": "{{km}} km de radio"
+                },
+                "match": {
+                    "viewLess": "Ver menos"
+                },
+                "metrics": {
+                    "years": "Años"
+                }
+            },
+            "projectCard": {
+                "compatibility": "Compatibilidad",
+                "funding_amount": "Monto de la financiación"
+            },
+            "projects": {
+                "applyFilters": "Aplicar filtros",
+                "customFilters": "Personalizado",
+                "funding": {
+                    "description": "*El monto de dinero está en dólares americanos"
+                }
+            },
+            "reset": {
+                "hint": "Introduzca el correo electrónico con el que se registró."
+            },
+            "settings": {
+                "title": "Ajustes"
+            },
+            "signup": {
+                "agreeTerms": "Acepto los términos del servicio y la política de privacidad.",
+                "viewTerms": "Ver términos del servicio",
+                "viewPrivacy": "Ver política de privacidad"
+            },
+            "units": {
+                "hectares": "Hectáreas",
+                "tCO2e": "tCO2e",
+                "tonnes": "Toneladas"
+            },
+            "verify": {
+                "continue": "Ya lo he verificado",
+                "openInbox": "Abrir bandeja de entrada",
+                "sendAgain": "Enviar correo electrónico de nuevo",
+                "sendAgainSuccess": "Se ha enviado un enlace nuevo. Revise su buzón de entrada.",
+                "subtext": "Por favor, haga clic en el enlace de dentro para verificar su correo electrónico con WRI.",
+                "title": "Verificar"
+            }
+        },
+        "monitoring": {
+            "setup": {
+                "cta": "Set Up Monitoring",
+                "steps": {
+                    "welcome": {
+                        "title": "Welcome to project monitoring",
+                        "subtitle": "In order to monitor this project you will need to enter the terms that were agreed within your project's contact."
+                    },
+                    "fundingStatus": {
+                        "title": "Funding Status",
+                        "subtitle": "In order to monitor this project please update the status of your funding offer that matched with this project."
+                    },
+                    "selectoffer": {
+                        "title": "Select a Funder",
+                        "subtitle": "This project has matched with multiple funders. Please pick which funder you would like to set up monitoring with. You can set up other instances of monitoring with other funders afterwards if desired."
+                    },
+                    "selectpitch": {
+                        "title": "Select a Project Developer",
+                        "subtitle": "This offer has matched with multiple project developers. Please pick which project developer you would like to set up monitoring with. You can set up other instances of monitoring with other project developers afterwards if desired."
+                    }
+                }
+            },
+            "card": {
+                "createReport": "Create Report",
+                "fundingAmount": "Funding Amount: <0>{{value}}</0>",
+                "lastReport": "Last report: <0>{{date}}</0>",
+                "reportsFrom": "Reporting reports from <0>{{projectName}}</0>",
+                "setupMonitoring": "Setup Monitoring",
+                "viewProject": "View Project"
+            },
+            "emptyState": {
+                "matchedProjects": {
+                    "title": "Matched projects",
+                    "additionalInfo": "Projects that you are not monitoring",
+                    "card": {
+                        "body": "To set up monitoring for a project, you need to have matched with an offer or project on the site. To do this, create a project/offer, and then start your search via the projects or funding tab.",
+                        "title": "Find your match"
+                    }
+                },
+                "monitoredProjects": {
+                    "card": {
+                        "body": "Once you have matched with a project or funding offer and have entered into an agreement, you can both initiate the monitoring process by setting up mutually agreed targets.",
+                        "title": "Monitor your first project"
+                    },
+                    "title": "Monitored projects"
+                }
+            },
+            "cta": {
+                "findNewProjects": "Find New Projects"
+            },
+            "title": "Monitoring",
+            "matchedNotMonitoring": "Projects you have matched with but are not monitoring",
+            "projectsYouAreMonitoring": "Projects you are monitoring"
+        },
+        "notifications": {
+            "empty": "No tiene notificaciones.",
+            "read": "Visto",
+            "title": "Notificaciones",
+            "unread": "Sin leer",
+            "unreadEmpty": "Estás actualizado.",
+            "yourNotifications": "Sus notificaciones"
+        },
+        "offer": {
+            "amount": "Monto ofrecido (USD)",
+            "longTermEngagement": "¿Compromiso a largo plazo?",
+            "reportingRequirements": "Requisitos de reportes",
+            "summary": "Resumen",
+            "team": "Equipo",
+            "title": "Oferta de financiación",
+            "noProjects": "No hay ofertas de financiamiento para mostrar en esta búsqueda"
+        },
+        "organisation": {
+            "about": "Acerca de",
+            "aboutOrganisation": "Acerca de la organización",
+            "awaitingApproval": "Su cuenta está a la espera de aprobación",
+            "awaitingApprovalMessage": "El perfil de su organización ha sido completado y enviado a WRI para su revisión. Le notificaremos por correo cuando su organización haya sido aprobada. Una vez aprobada, podrá acceder al resto del sitio y comenzar su viaje por TerraMatch. ",
+            "awards": "Honores y premios de su organización",
+            "categories": {
+                "both": "Desarrollador y financiador",
+                "developer": "Desarrollador",
+                "funder": "Financiador"
+            },
+            "certification": "Certificación",
+            "documents": "Documentos",
+            "followSocialMedia": "Síguenos en redes sociales",
+            "lessThanOneYearOfOperation": "Menos de un año de operación.",
+            "license": "Licencia",
+            "media": "Cargar audiovisuales",
+            "noDocuments": "Esta organización aún no tiene documentos",
+            "noOffers": "Esta organización no tiene ninguna oferta aprobada",
+            "noPitches": "Esta organización no tienen ninguna presentación aprobada",
+            "noProjects": "Esta organización no tiene ningún proyecto aprobado",
+            "noTeamMembers": "Esta organización todavía no tiene miembros del equipo.",
+            "offers": "Ofertas",
+            "pitches": "Propuestas",
+            "projects": "Proyectos",
+            "projectsFunded": "Proyectos financiados",
+            "rejected": "Organización rechazada",
+            "rejectedMessage": "Por favor, resuelva los temas mencionados en el siguiente mensaje de TerraMatch:\n\n \"{{reason}}\"",
+            "team": "Conozca al equipo",
+            "teamList": {
+                "email": "Correo electrónico del trabajo del miembro del equipo",
+                "invite": "Invitar",
+                "inviteUser": "Invitar usuario"
+            },
+            "yearsOfOperation": "{{count}} año de operación",
+            "yearsOfOperation_plural": "{{count}} años en funcionamiento"
+        },
+        "pageNotFound": {
+            "notFound": "Lo sentimos. La página que usted está buscando no ha sido encontrada.",
+            "notFoundHelp": "Por favor, utilice la navegación de arriba para encontrar lo que está buscando."
+        },
+        "profile": {
+            "title": "Perfil"
+        },
+        "project": {
+            "about": "Acerca de",
+            "aboutProject": "Acerca del proyecto",
+            "awaitingApproval": "Su proyecto está pendiente de aprobación",
+            "awaitingApprovalMessage": "Su presentación de propuesta de proyecto ha sido completada y enviada a WRI para revisión. Le enviaremos una notiifcación por correo cuando haya sido aprobada. Una vez aprobada, su proyecto será visible a otros usuarios en el sitio y podrá comenzar a buscar ofertas de financiación para aplicar a ellas. ",
+            "capabilities": {
+                "frequency": "Frecuencia",
+                "level": "Nivel",
+                "title": "Capacidades de reporte",
+                "longTermEngagement": "¿Compromiso a largo plazo?"
+            },
+            "certificates": {
+                "certificate": "Certificado",
+                "title": "Certificación"
+            },
+            "deleteVideo": "Borrar video",
+            "deleteVideoHelp": "¿Está seguro? Una vez eliminado podrá cargar un nuevo video.",
+            "details": {
+                "anticipatedOutcome": "Resultado previsto",
+                "community": {
+                    "involvementFalse": "No, no involucraremos a la comunidad local",
+                    "involvementTrue": "Sí, la comunidad local estará muy involucrada en el proyecto.",
+                    "localInvolvement": "Participación de la comunidad local",
+                    "numberOfBenefitedPeople": "Número estimado de personas que se beneficiarán del proyecto",
+                    "numberOfEmployees": "Número de empleados",
+                    "numberOfVolunteers": "Número de voluntarios",
+                    "peopleAbroad": "Número de personas que trabajan en el proyecto desde otros países",
+                    "peopleNearby": "Número de personas que trabajan en el proyecto de cerca",
+                    "peopleWorkingIn": "¿Quién trabaja en nuestro proyecto?",
+                    "title": "Efecto en las comunidades locales",
+                    "trainingInvolved": "Cómo estamos entrenando gente local",
+                    "trainingNumber": "Número de personas que entrenaremos"
+                },
+                "description": "Descripción",
+                "problem": "El problema",
+                "sustainability": {
+                    "futureMaintenance": "Cómo nuestro proyecto mantendrá los árboles en el futuro",
+                    "title": "Sustentabilidad del proyecto",
+                    "useOfResources": "Cómo es que nuestro proyecto utilizará recursos locales de forma sustentable, como el agua y los fertilizantes"
+                },
+                "whoIsInvolved": "Quién está involucrado"
+            },
+            "documents": {
+                "none": "Este proyecto no tienen ningún documento",
+                "title": "Documentos"
+            },
+            "funding": {
+                "amount": "Monto Solicitado (USD)",
+                "average_price_tree": "Precio promedio por árbol (USD)",
+                "drivers": "Fuentes de ingresos",
+                "long_term_engagement": "¿Compromiso a largo plazo?",
+                "title": "Requisitos de financiamiento "
+            },
+            "geolocation": {
+                "title": "Geolocalización"
+            },
+            "match": {
+                "amount": "vínculo de categorías",
+                "basedOnFunding": "en función de su oferta de financiamiento ",
+                "basedOnPitch": "basado en su presentación de proyecto",
+                "editMode": "Editar proyecto",
+                "editModeSub": "Elija un campo para editar",
+                "viewMore": "Mostrar más"
+            },
+            "metrics": "Mediciones",
+            "organisationDetails": {
+                "location": "Ubicación",
+                "name": "Nombre",
+                "title": "Detalles de la organización",
+                "website": "Sitio web"
+            },
+            "projectMetrics": {
+                "biodiversityImpact": "Impacto en la biodiversidad",
+                "biomassPerHectare": "Biomasa estimada por hectárea (toneladas)",
+                "carbonImpact": "Impacto en carbono (tCO2e)",
+                "experience": "Años de experiencia",
+                "landSize": "Hectáreas de la superficie",
+                "pricePerHectare": "Precio por hectárea (USD)",
+                "timespan": "Duración del proyecto (meses)",
+                "timespanUnit": "{{count}} mes",
+                "timespanUnit_plural": "{{count}} meses",
+                "title": "Metricas del proyecto"
+            },
+            "rejected": "Proyecto rechazado",
+            "rejectedMessage": "Por favor, resuelva los temas mencionados en el siguiente mensaje de TerraMatch:\n\n \"{{reason}}\"",
+            "sustainableDevelopmentGoals": {
+                "title": "Objetivos de desarrollo sustentable"
+            },
+            "team": "Equipo",
+            "treeSpecies": {
+                "details": "{{name}} detalles",
+                "native": "¿Nativa o no nativa?",
+                "numberOfTrees": "Número de árboles",
+                "owner": "¿Quién tiene el derecho de los productos?",
+                "overallPrice": "Costo total por árbol (USD)",
+                "pricePerTree": "Precio por árbol (USD)",
+                "priceToMaintain": "Precio de mantenimiento por árbol (USD)",
+                "priceToPlant": "Precio de siembra por árbol (USD)",
+                "producesFirewood": "¿Produce leña?",
+                "producesFood": "¿Produce alimentos?",
+                "producesTimber": "¿Produce madera?",
+                "season": "Temporada de siembra",
+                "saplings": "Precio de plántula unitaria (USD)",
+                "sitePrep": "Costo por árbol para preparar el sitio (USD)",
+                "survivalRate": "Tasa de supervivencia media histórica %",
+                "title": "Especie de árbol"
+            },
+            "updateStatus": "Actualizar estado",
+            "watchElevator": "Ver presentación"
+        },
+        "projects": {
+            "clearFilters": "Borrar filtros",
+            "currentlyFiltering": "Filtrando por:",
+            "directMatchNone": "No hay vínculos directos de proyectos. Por favor, refine su búsqueda.",
+            "directMatchNumber": "Número de proyectos que coinciden directamente con los filtros activos: {{{count}} ",
+            "directMatchNumber_plural": "Número de proyectos que coinciden exactamente con los filtros activos: {{count}} ",
+            "exploreFunding": "Explorar ofertas de financiación",
+            "explorePitches": "Explora presentaciones de proyectos",
+            "matchNumber": "Número de proyectos que coinciden en gran medida con los filtros activos: {{count}} ",
+            "matchNumber_plural": "Número de proyectos coinciden en gran medida con los filtros activos: {{count}}",
+            "noFiltersOrProject": "Elige la oferta de financiación o las categorías para filtrar presentaciones de proyectos",
+            "title": "Proyectos",
+            "noProjects": "En esta búsqueda no se encontraron propuestas de proyecto para mostrar"
+        },
+        "projectStatus": {
+            "congratulations": {
+                "pitch": "¡Felicidades por haber completado financiamiento para su proyecto!",
+                "offer": "¡Felicitaciones por haber completado su oferta de financiamiento!"
+            },
+            "congratulationsHelp": {
+                "pitch": "Su proyecto será removido de las búsquedas, y las organizaciones ya no podrán vincularse con él. Sin embargo, permanecerá en el perfil de su organización para que usted comparta las fantásticas noticias.\n\nAún puede volver a modificar su estatus de financiamiento si su situación llegara a cambiar en alguna forma.",
+                "offer": "Su oferta se eliminará de las búsquedas y las organizaciones ya no podrán vincularse con ella. Sin embargo, permanecerá en el perfil de su organización para que comparta las fantásticas noticias.\n\nAún puede cambiar el estado de financiación en caso de que algo llegara a cambiar."
+            },
+            "title": "Situación de financiamiento",
+            "help": "Por favor, cuéntenos sobre el progreso de su proyecto. ¡Esto nos ayuda a mantener la plataforma actualizada!",
+            "submit": "Enviar actualización",
+            "visibility": {
+                "title": "Estado de Financiamiento",
+                "subtext": "Por favor, cuéntenos sobre el progreso de su proyecto. ¡Esto nos ayuda a mantener la plataforma actualizada!",
+                "fullyFunded": {
+                    "title": "¡Felicitaciones por la financiación total de su proyecto!",
+                    "subtext": "Su proyecto será eliminado de las búsquedas y las organizaciones ya no podrán vincularse con el mismo. Sin embargo, este permanecerá en el perfil de su organización para que usted comparta las buenas noticias.\n\nAún podrá modificar el estado de su financiamiento, en caso de que algo llegara a cambiar."
+                },
+                "update": "Actualizar Estado de Financiamiento",
+                "status": "Estado: {{status}}"
+            }
+        },
+        "reset": {
+            "changeSuccess": "Cambio de contraseña exitoso",
+            "errors": {
+                "problem": "Ocurrió un problema al cambiar su contraseña"
+            },
+            "newPasswordLabel": "Nueva contraseña",
+            "reset": "Restablecer la contraseña",
+            "resetSubText": "Por favor ingrese su nueva clave a continuación",
+            "resetSuccess": "Las instrucciones para restablecer su contraseña se enviaron a su correo electrónico."
+        },
+        "signup": {
+            "agreeConsent": "Otorgo mi consentimiento para que se comparta mi información de contacto con otros usuarios a través de TerraMatch para establecer el contacto con las partes interesadas",
+            "agreeTerms": "Acepto los {{- terms}} y la {{- privacy}}.",
+            "emailAddress": "Correo electrónico de trabajo",
+            "firstName": "Nombre",
+            "jobRole": "Cargo",
+            "lastName": "Apellido",
+            "password": "Contraseña",
+            "phoneNumber": "Número de teléfono de trabajo",
+            "repeatPassword": "Repita la contraseña",
+            "subtext": "Regístrese a TerraMarch usando su correo de trabajo. Le enviaremos un correo para verificar su cuenta. ",
+            "success": "Su cuenta de usuario ha sido creada y recibirá un correo de verificación en un momento. Por favor, dé click sobre el enlace de verificación que le proporcionamos para completar el proceso de registro",
+            "successLinkText": "Proceder a la página de inicio",
+            "termsDescription": " ",
+            "title": "Registrarse"
+        },
+        "sort": {
+            "compatibility_score_asc": "Puntaje de compatibilidad (bajo a alto)",
+            "compatibility_score_desc": "Puntaje de compatibilidad (bajo a alto)",
+            "created_at_asc": "Fecha de creación (de nuevos a viejos)",
+            "created_at_desc": "Fecha de creación (de nuevos a viejos)",
+            "funding_amount_asc": "Monto de financiación (menor a mayor)",
+            "funding_amount_desc": "Monto de la financiación (de mayor a menor)\n",
+            "sortBy": "Ordenar por:"
+        },
+        "user": {
+            "member": "Miembro del equipo"
+        },
+        "unsubscribe": {
+            "title": "Suscripción cancelada",
+            "subtext": "Ya no está suscrito a correos electrónicos no esenciales. "
+        },
+        "verify": {
+            "checkEmail": "Su cuenta no se ha sido verificada. Compruebe el enlace de validación que le hemos enviado al correo electrónico.",
+            "problem": "Sin verificar",
+            "verifying": "Verificando usuario",
+            "checkEmailInvalid": "Ocurrió un problema al verificar su cuenta. Por favor, use el enlace en el correo electrónico que le enviamos."
+        },
+        "welcome": {
+            "button": "continuar",
+            "subtext": "Gracias por registrarse en TerraMatch. Para empezar, por favor complete algunos detalles sobre su organización. Nosotros revisaremos los datos y le avisaremos cuando hayamos elaborado su perfil para que pueda comenzar a utilizar TerraMatch.",
+            "title": "Bienvenido(a) a TerraMatch"
+        }
+    }
+}

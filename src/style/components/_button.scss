@@ -1,0 +1,220 @@
+.c-button {
+  background-color: $global-brand-color;
+  border-radius: 6px;
+  border-width: 0px;
+  @include font-size(14px);
+  text-transform: uppercase;
+  font-weight: bold;
+  height: 40px;
+  font-family: $fontFamiliy;
+  min-width: 215px;
+  position: relative;
+  letter-spacing: 1px;
+  text-decoration: none;
+
+  &--is-link {
+    display: inline-block;
+    line-height: 2.8;
+  }
+
+  &--is-link-slim {
+    display: inline-block;
+    line-height: 2.2;
+    height: 30px;
+  }
+
+  @media screen and (max-width: $md) {
+    min-width: 180px;
+  }
+
+  @media screen and (max-width: $xs) {
+    min-width: inherit;
+    height: inherit;
+    &--is-link {
+      line-height: 1.4;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    outline: none;
+    color: $white;
+    background-color: $global-brand-color;
+  }
+
+  &:disabled {
+    background-color: $global-brand-tertiary-color;
+    color: $white;
+  }
+
+  &.has-icon {
+    padding-right: 25px;
+    &:before {
+      display: none;
+    }
+    &:after {
+      position: absolute;
+      right: 2px;
+      content: '';
+      height: 22px;
+      width: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+    }
+
+    &--arrow-right {
+      &:after {
+        background-image: url('../assets/images/icons/chevron-black.svg');
+      }
+      &:hover {
+        &:after {
+          background-image: url('../assets/images/icons/chevron-white.svg');
+        }
+      }
+    }
+
+    &--cross-right {
+      &:after {
+        content: url('../assets/images/icons/cross-icon.svg');
+      }
+    }
+  }
+
+  &--alternative {
+    background-color: $global-alternative-brand-color;
+    &:hover,
+    &:focus {
+      outline: none;
+      color: $white;
+      background-color: $global-alternative-brand-color;
+    }
+  }
+
+  &--secondary {
+    background-color: $global-brand-secondary-color;
+    color: $white;
+    &:hover,
+    &:focus {
+      background-color: $global-brand-tertiary-color;
+    }
+
+    &.has-icon {
+      &--arrow-right {
+        &:after {
+          background-image: url('../assets/images/icons/chevron-white.svg');
+        }
+      }
+    }
+  }
+
+  &--danger {
+    background-color: $red;
+    color: $white;
+    &:hover,
+    &:focus {
+      background-color: lighten($red, 10%);
+    }
+  }
+
+  &--outline {
+    border-radius: 5.6px;
+    border: solid 1.3px $global-brand-tertiary-color;
+    color: $global-brand-tertiary-color;
+    background: $white;
+    text-transform: none;
+    &:hover,
+    &:focus {
+      background-color: $global-brand-tertiary-color;
+      color: $white;
+    }
+  }
+
+  &--grey {
+    background-color: $global-brand-tertiary-color;
+    color: $white;
+    &:hover, &:focus {
+      background-color: $global-brand-tertiary-color;
+      color: $black;
+    }
+  }
+
+
+  &--small {
+    @include font-size(12px);
+    letter-spacing: normal;
+    height: 26px;
+    min-width: 90px;
+    padding-left: 7px;
+    padding-right: 7px;
+    &.has-icon {
+      &:after {
+        height: 12px;
+        width: 7px;
+        top: 6px;
+        right: 10px;
+      }
+    }
+  }
+
+  &--tiny {
+    @include font-size(12px);
+    letter-spacing: normal;
+    height: 24px;
+    min-width: 70px;
+    padding: 4px 5px;
+    &.has-icon {
+      padding-right: 20px;
+      &:after {
+        height: 12px;
+        width: 7px;
+        top: 5px;
+        right: 10px;
+      }
+    }
+  }
+
+  &--medium {
+    @include font-size(12px);
+    letter-spacing: normal;
+    height: 32px;
+    min-width: 120px;
+    padding-left: 7px;
+    padding-right: 7px;
+    &.has-icon {
+      padding-right: 17px;
+      &:after {
+        height: 12px;
+        width: 7px;
+        top: 6px;
+        right: 7px;
+      }
+    }
+  }
+
+  &--link {
+    background-color: transparent;
+    border: none;
+    color: $darkGrey;
+    font-weight: normal;
+    font-size: inherit;
+    letter-spacing: normal;
+    min-width: inherit;
+    &:hover,
+    &:focus {
+      outline: none;
+      color: $darkGrey;
+      text-decoration: underline;
+      background-color: transparent;
+    }
+  }
+
+  &--icon-only{
+    height: 35px;
+    width: 35px;
+    padding: 7px;
+    min-width: 28px;
+  }
+}

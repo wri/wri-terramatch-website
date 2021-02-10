@@ -1,0 +1,26 @@
+.c-notification-bar {
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.43);
+  min-height: 188px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 10px;
+  @media screen and (max-width: $sm) {
+    padding-top: 40px;
+    padding-bottom: 30px;
+    &__close {
+      top: 9px;
+      right: 6px;
+    }
+  }
+  &__message {
+    white-space: pre-line;
+  }
+  &__close {
+    position: absolute;
+    top: 18px;
+    right: 14px;
+  }
+}

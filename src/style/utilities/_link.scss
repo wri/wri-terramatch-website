@@ -1,0 +1,42 @@
+.u-link {
+  color: $darkGrey;
+  text-decoration: none;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0.4px;
+
+  &__inherit {
+    color: inherit;
+  }
+
+  &.active {
+    font-weight: bold;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+
+  &--has-notification-dot {
+    position: relative;
+    &:after {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      background-color: $red;
+      position: absolute;
+      top: -6px;
+      right: -7px;
+      border-radius: 50%;
+    }
+  }
+}
+
+.u-link-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+}

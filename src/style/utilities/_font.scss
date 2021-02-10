@@ -1,0 +1,51 @@
+.u-font-xmassive {
+  @include font-size(140px);
+}
+
+.u-font-massive {
+  @include font-size(72px);
+}
+
+.u-font-huge {
+  @include font-size(36px);
+}
+
+.u-font-large {
+  @include font-size(28px);
+}
+
+.u-font-medium {
+  @include font-size(24px);
+}
+
+.u-font-normal {
+  @include font-size(18px);
+}
+
+.u-font-small {
+  @include font-size(14px);
+}
+
+.u-font-tiny {
+  @include font-size(12px);
+}
+
+.u-font-primary {
+  font-family: $fontFamiliy;
+}
+
+.u-font-white {
+  color: $white;
+}
+
+.u-font-grey {
+  color: $darkGrey;
+}
+
+.u-font-grey-alt {
+  color: $grey;
+}
+
+.u-font-gold {
+  color: #f0ab00;
+}

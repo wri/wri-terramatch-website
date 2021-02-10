@@ -1,0 +1,37 @@
+.c-post {
+  &__header {
+    height: 285px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  &__header-title {
+    margin: auto;
+    @include font-size(60px);
+    @media screen and (max-width: $sm) {
+      @include font-size(40px);
+    }
+  }
+
+  .aligncenter {
+    margin: 0 auto;
+  }
+
+  .alignright {
+    float: right;
+    margin: 10px;
+    margin-right: 0px;
+    text-align: right;
+  }
+
+  .alignleft {
+    float: left;
+    margin: 10px;
+    margin-left: 0px;
+    text-align: left;
+  }
+
+  p {
+    margin: 20px 0px;
+  }
+}

@@ -1,0 +1,59 @@
+.c-select {
+  &__indicator {
+    transform: rotate(180deg);
+    transition: $global-transition !important;
+  }
+
+  &__indicator-separator {
+    display: none;
+  }
+
+  &__control {
+    border-radius: 2px !important;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24), 0 0 8px 0 rgba(0, 0, 0, 0.12);
+    background-color: #fafafa;
+    border: 0 !important;
+    height: 57px;
+    &--is-focused {
+      box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24), 0 0 8px 0 rgba(0, 0, 0, 0.12) !important;
+      border-radius: 2px 2px 0 0 !important;
+    }
+  }
+
+  &__input {
+    input {
+      font-family: $fontFamiliy !important;
+    }
+  }
+
+  &__option {
+    color: $darkGrey !important;
+    &--is-focused {
+      background-color: $drop-down-focus  !important;
+    }
+
+    &--is-selected {
+      background-color: $drop-down-focus !important;
+      font-weight: bold;
+    }
+  }
+
+  &__menu {
+    border-radius: 0 0 2px 2px !important;
+    border-top: solid 1px rgba(0, 0, 0, 0.12);
+    margin-top: 0px !important;
+    text-align: left;
+    box-shadow: 0 12px 8px 0 rgba(0, 0, 0, 0.24), 0 3px 8px 0 rgba(0, 0, 0, 0.12) !important;
+  }
+
+  &__menu-list {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+}
+
+.c-select__control--menu-is-open {
+  .c-select__indicator {
+    transform: rotate(0deg);
+  }
+}

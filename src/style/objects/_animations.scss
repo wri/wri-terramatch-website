@@ -1,0 +1,26 @@
+@keyframes fadeIn {
+  0% {
+       display: block;
+       opacity: 0;
+     }
+  100% {
+      display: block;
+      opacity: 1;
+    }
+}
+
+.o-animate-fadeIn {
+  animation: fadeIn 3s ease-in;
+}
+
+@keyframes rotate {
+  /* 100% keyframe for  clockwise.
+     use 0% instead for anticlockwise */
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.o-animate-rotate {
+  animation: rotate 1s infinite linear;
+}

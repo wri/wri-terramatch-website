@@ -1,0 +1,17 @@
+.c-hamburger {
+  padding: 5px;
+  border-radius: 50%;
+  width: auto;
+  transition: $global-transition;
+  background-color: $white;
+  span {
+    transition: $global-transition;
+  }
+}
+
+.c-hamburger__checkbox:checked + .c-hamburger {
+  background-color: $black;
+  span {
+    background-color: $white;
+  }
+}
