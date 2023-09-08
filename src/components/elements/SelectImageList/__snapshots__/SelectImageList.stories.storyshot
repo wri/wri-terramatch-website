@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
+<div
+  className="grid w-fit grid-cols-3 gap-x-4 gap-y-9"
+>
+  <div>
+    <div
+      className="flex cursor-pointer flex-col items-center gap-2"
+    >
+      <div
+        className="aspect-square h-24 rounded-lg border-4 border-neutral-900  bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-body-400"
+        data-testid="txt"
+      >
+        No Poverty
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex cursor-pointer flex-col items-center gap-2"
+    >
+      <div
+        className="aspect-square h-24 rounded-lg border-4 border-neutral-900  bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-body-400"
+        data-testid="txt"
+      >
+        Good Health and Well-being
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex cursor-pointer flex-col items-center gap-2"
+    >
+      <div
+        className="aspect-square h-24 rounded-lg border-4 border-neutral-900  bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-body-400"
+        data-testid="txt"
+      >
+        Quality Education
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex cursor-pointer flex-col items-center gap-2"
+    >
+      <div
+        className="aspect-square h-24 rounded-lg border-4 border-neutral-900  bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-body-400"
+        data-testid="txt"
+      >
+        Affordable and Clean Energy
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex cursor-pointer flex-col items-center gap-2"
+    >
+      <div
+        className="aspect-square h-24 rounded-lg border-4 border-neutral-900  bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-body-400"
+        data-testid="txt"
+      >
+        Climate Action
+      </p>
+    </div>
+  </div>
+</div>
+`;

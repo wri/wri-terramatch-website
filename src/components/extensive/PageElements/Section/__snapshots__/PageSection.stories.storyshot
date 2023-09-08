@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Page/Section Default 1`] = `
+<div
+  className="h-[500px]"
+>
+  <p>
+    page content
+  </p>
+</div>
+`;

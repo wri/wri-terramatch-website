@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getCapacityBuildingNeedOptions 1`] = `
+[
+  {
+    "title": "Site Selection",
+    "value": "site-selection",
+  },
+  {
+    "title": "Nursery Management",
+    "value": "nursery-management",
+  },
+  {
+    "title": "Species",
+    "value": "species",
+  },
+  {
+    "title": "Community Engagement",
+    "value": "community-engagement",
+  },
+  {
+    "title": "Narrative",
+    "value": "narrative",
+  },
+  {
+    "title": "Field Monitoring",
+    "value": "field-monitoring",
+  },
+  {
+    "title": "Remote Sensing",
+    "value": "remote-sensing",
+  },
+  {
+    "title": "Accounting",
+    "value": "accounting",
+  },
+  {
+    "title": "Proposal",
+    "value": "proposal",
+  },
+  {
+    "title": "Government",
+    "value": "government",
+  },
+  {
+    "title": "Certifications",
+    "value": "certifications",
+  },
+  {
+    "title": "Communications",
+    "value": "communications",
+  },
+  {
+    "title": "Social Equity",
+    "value": "social-equity",
+  },
+  {
+    "title": "Supply Chain Development",
+    "value": "supply-chain-development",
+  },
+  {
+    "title": "Product Marketing",
+    "value": "product-marketing",
+  },
+]
+`;

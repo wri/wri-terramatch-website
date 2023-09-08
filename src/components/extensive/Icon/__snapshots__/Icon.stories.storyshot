@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Icon Default 1`] = `
+<div
+  style={
+    Object {
+      "height": 40,
+      "width": 40,
+    }
+  }
+/>
+`;

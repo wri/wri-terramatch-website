@@ -1,0 +1,288 @@
+@tailwind utilities;
+
+@layer utilities {
+  .border-dashed-2 {
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23D8D8D8FF' stroke-width='1' stroke-dasharray='14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  }
+
+  .scroll-indicator-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Heading */
+  .text-heading-2000 {
+    @apply font-primary text-5xl font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-heading-1000 {
+    @apply font-primary text-4xl font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-bold-headline-1000 {
+    @apply font-primary text-4xl font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-bold-headline-800 {
+    @apply font-primary text-3xl font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-heading-700 {
+    @apply font-primary text-4xl font-bold;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+  }
+
+  .text-heading-600 {
+    @apply font-primary text-3xl font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-heading-500 {
+    @apply font-primary text-2xl font-bold;
+    line-height: 2rem; /* 32px */
+    letter-spacing: 1.12408px;
+  }
+
+  .text-bold-subtitle-400 {
+    @apply font-primary text-lg font-bold;
+  }
+
+  .text-bold-subtitle-500 {
+    @apply font-primary text-lg font-bold leading-[26px] tracking-wide;
+  }
+
+  .text-bold-subtitle-600 {
+    @apply font-primary text-2xl font-bold;
+  }
+
+  .text-light-subtitle-400 {
+    @apply text-md font-light leading-[27px];
+  }
+
+  .text-bold-subtitle-400 {
+    @apply text-md font-bold leading-normal;
+  }
+
+  .text-heading-400 {
+    @apply font-primary text-xl font-light;
+    line-height: 1.5rem; /* 32px */
+  }
+
+  .text-heading-300 {
+    @apply font-primary text-lg font-bold;
+    line-height: 1.625rem; /* 26px */
+    letter-spacing: 0.4px;
+  }
+
+  .text-heading-200 {
+    @apply font-primary text-md font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-heading-100 {
+    @apply font-primary text-md font-light;
+    letter-spacing: 0.45px;
+  }
+
+  /* Caption */
+  .text-bold-caption-200 {
+    @apply font-primary text-sm font-bold leading-5;
+    font-style: normal;
+  }
+
+  .text-light-caption-200 {
+    @apply font-primary text-sm font-light leading-5;
+    font-style: normal;
+  }
+
+  .text-bold-caption-100 {
+    @apply font-primary text-xs font-bold leading-5;
+    font-style: normal;
+  }
+
+  /* Body */
+  .text-body-1200 {
+    @apply font-primary text-base font-bold;
+    line-height: 1.375rem; /* 22px */
+    letter-spacing: 0.666667px;
+  }
+
+  .text-body-1100 {
+    @apply font-secondary text-base font-bold;
+    line-height: 1.5rem; /* 24px */
+  }
+
+  .text-body-1000 {
+    @apply font-secondary text-base font-normal;
+    line-height: 1.5rem; /* 24px */
+  }
+
+  .text-body-900 {
+    @apply font-primary text-base font-bold;
+    line-height: 1.375rem; /* 22px */
+    letter-spacing: 0.666667px;
+  }
+
+  .text-body-800 {
+    @apply font-primary text-base font-normal;
+    line-height: 1.5rem; /* 24px */
+  }
+
+  .text-body-700 {
+    @apply font-primary text-base font-light;
+    letter-spacing: 0.666667px;
+  }
+
+  .text-body-600 {
+    @apply font-primary text-base font-light;
+    line-height: 1.375rem; /* 22px */
+  }
+
+  .text-body-500 {
+    @apply font-primary text-sm font-bold;
+    letter-spacing: normal;
+  }
+
+  .text-body-400 {
+    @apply font-primary text-sm font-normal;
+    letter-spacing: normal;
+  }
+
+  .text-body-300 {
+    @apply font-primary text-sm font-light;
+    letter-spacing: normal;
+  }
+
+  .text-bold-body-300 {
+    @apply text-base font-bold leading-snug tracking-wide;
+  }
+
+  .text-light-body-300 {
+    @apply text-base font-light leading-snug;
+  }
+
+  .text-body-200 {
+    @apply font-secondary text-sm font-normal;
+    line-height: 1.188rem; /* 19px */
+  }
+
+  .text-body-100 {
+    @apply font-primary text-xs font-bold;
+    line-height: 1.188rem; /* 19px */
+  }
+
+  /* Button */
+  .text-button-400 {
+    @apply font-primary text-base font-bold;
+    line-height: 1rem; /* 16px */
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .text-button-300 {
+    @apply font-primary text-sm font-bold;
+    line-height: 1rem; /* 16px */
+    text-transform: uppercase;
+  }
+
+  .text-button-200 {
+    @apply font-primary text-sm font-light;
+    letter-spacing: normal;
+  }
+
+  .text-button-100 {
+    @apply font-primary text-xs font-bold;
+    line-height: 1.188rem; /* 19px */
+  }
+
+  .text-bold-caption-200 {
+    @apply font-primary text-sm font-bold;
+  }
+
+  /* Swiper */
+  .swiper-button-next,
+  .swiper-button-prev {
+    @apply flex !h-12 !w-12 items-center justify-center rounded-full border border-solid border-primary-400 bg-neutral-900;
+  }
+
+  .swiper-button-next:after,
+  .swiper-button-prev:after {
+    content: "" !important;
+  }
+
+  .swiper-pagination-bullet-active {
+    @apply !bg-black opacity-100;
+  }
+
+  /* Borders */
+  .border-light {
+    @apply border border-black border-opacity-12;
+  }
+
+  .border-medium {
+    border-width: 1.6px;
+    @apply border-neutral-500 border-opacity-25;
+  }
+
+  /* With-inner-html */
+  .with-inner-html > * {
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+  }
+
+  .with-inner-html > *:not(strong, b) {
+    font-weight: inherit;
+  }
+  .with-inner-html a {
+    @apply text-primary underline;
+  }
+
+  .with-inner-html h1 {
+    @apply text-bold-headline-1000 mb-2;
+  }
+
+  .with-inner-html h2 {
+    @apply text-bold-subtitle-500 mb-4;
+  }
+
+  .with-inner-html p {
+    @apply text-light-body-300 mb-8;
+  }
+
+  .with-inner-html p:last-child {
+    @apply mb-0;
+  }
+
+  .with-inner-html hr {
+    @apply my-8 text-neutral-200;
+  }
+
+  .with-inner-html ul,
+  .with-inner-html ol {
+    @apply space-y-3;
+  }
+  .with-inner-html ul > li {
+    @apply flex gap-3;
+  }
+
+  .with-inner-html ul > li::before {
+    content: "●";
+    @apply text-xl leading-none text-secondary;
+  }
+
+  .with-inner-html ol > li {
+    @apply ml-3 list-decimal;
+  }
+}
+
+/* Override swiper button hidden to hide button instead to fix Carousel when buttonsOutside is enabled */
+.swiper-button-lock {
+  display: unset !important;
+  visibility: hidden;
+}

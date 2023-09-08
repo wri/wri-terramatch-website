@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/DataTable Default 1`] = `
+<div
+  className="relative space-y-2"
+>
+  <label
+    className="inline-block uppercase text-bold-body-300"
+    data-testid="txt"
+  >
+    What are your funding sources? 
+  </label>
+  <p
+    className="text-light-body-300 with-inner-html"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "Add a description for jobs created.",
+      }
+    }
+    data-testid="txt"
+  />
+  <div
+    className="w-full pt-6"
+  >
+    <form
+      className="w-full space-y-8"
+    >
+      <div
+        className="relative space-y-2"
+      >
+        <label
+          className="inline-block uppercase text-bold-body-300"
+          data-testid="txt"
+          htmlFor=":rb:"
+        >
+          Funding type *
+        </label>
+        <p
+          className="text-light-body-300 with-inner-html"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Explainer text",
+            }
+          }
+          data-testid="txt"
+          id=":rb:-description"
+        />
+        <div
+          className="relative"
+        >
+          <input
+            aria-describedby=":rb:-description"
+            aria-invalid={false}
+            className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+            id=":rb:"
+            name="funding_type"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onChangeCapture={[Function]}
+            placeholder="Select an option"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        className="relative space-y-2"
+      >
+        <label
+          className="inline-block uppercase text-bold-body-300"
+          data-testid="txt"
+          htmlFor=":rc:"
+        >
+          Founding source *
+        </label>
+        <p
+          className="text-light-body-300 with-inner-html"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Explainer text",
+            }
+          }
+          data-testid="txt"
+          id=":rc:-description"
+        />
+        <div
+          className="relative"
+        >
+          <input
+            aria-describedby=":rc:-description"
+            aria-invalid={false}
+            className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+            id=":rc:"
+            name="number_field"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onChangeCapture={[Function]}
+            onKeyDown={[Function]}
+            type="number"
+          />
+        </div>
+      </div>
+      <div
+        className="relative space-y-2"
+      >
+        <label
+          className="inline-block uppercase text-bold-body-300"
+          data-testid="txt"
+          htmlFor=":rd:"
+        >
+          Founding source 
+        </label>
+        <p
+          className="text-light-body-300 with-inner-html"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Explainer text",
+            }
+          }
+          data-testid="txt"
+          id=":rd:-description"
+        />
+        <div
+          className="relative"
+        >
+          <input
+            aria-describedby=":rd:-description"
+            aria-invalid={false}
+            className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+            id=":rd:"
+            name="funding_source"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onChangeCapture={[Function]}
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        className="relative space-y-2"
+      >
+        <label
+          className="inline-block uppercase text-bold-body-300"
+          data-testid="txt"
+          htmlFor=":re:"
+        >
+          Funding amount in USD 
+        </label>
+        <p
+          className="text-light-body-300 with-inner-html"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Explainer text",
+            }
+          }
+          data-testid="txt"
+          id=":re:-description"
+        />
+        <div
+          className="relative"
+        >
+          <input
+            aria-describedby=":re:-description"
+            aria-invalid={false}
+            className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+            id=":re:"
+            name="funding_amount"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onChangeCapture={[Function]}
+            onKeyDown={[Function]}
+            type="number"
+          />
+        </div>
+      </div>
+    </form>
+    <button
+      className="mt-8 bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      onClick={[Function]}
+    >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 12,
+          }
+        }
+      />
+      <span
+        className="text-bold-caption-200 pt-0.75 leading-3"
+      >
+        Add funding source
+      </span>
+    </button>
+  </div>
+</div>
+`;

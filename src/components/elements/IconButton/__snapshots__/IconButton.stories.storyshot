@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/IconButton Icon Button 1`] = `
+<button
+  className="flex items-center justify-center rounded-full hover:bg-opacity-60 h-11 w-11"
+>
+  <div
+    style={
+      Object {
+        "height": 28,
+        "width": 24,
+      }
+    }
+  />
+</button>
+`;

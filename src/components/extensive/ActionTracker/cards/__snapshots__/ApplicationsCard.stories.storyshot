@@ -1,0 +1,452 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 1`] = `
+<div
+  className="flex h-[520px] flex-col items-center rounded-xl border border-neutral border-opacity-30 bg-white px-4 py-6"
+>
+  <div
+    style={
+      Object {
+        "height": 36,
+        "width": 36,
+      }
+    }
+  />
+  <p
+    className="mb-2 text-heading-500"
+    data-testid="txt"
+  >
+    Applications
+  </p>
+  <p
+    className="text-body-500"
+    data-testid="txt"
+  >
+    You have 6 updates
+  </p>
+  <ul
+    className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4"
+  >
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="applications/undefined"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
+            </p>
+            <div
+              className="bg-secondary-200 flex items-center gap-1.5 rounded-xl py-0.5 pr-3 pl-1.5"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-body-100"
+                data-testid="txt"
+              >
+                Approved
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            View Application
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="applications/undefined"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
+            </p>
+            <div
+              className="bg-neutral-200 flex items-center gap-1.5 rounded-xl py-0.5 pr-3 pl-1.5"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-body-100"
+                data-testid="txt"
+              >
+                Draft
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            View Application
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="applications/undefined"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
+            </p>
+            <div
+              className="bg-neutral-200 flex items-center gap-1.5 rounded-xl py-0.5 pr-3 pl-1.5"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-body-100"
+                data-testid="txt"
+              >
+                Draft
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            View Application
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="applications/undefined"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
+            </p>
+            <div
+              className="bg-error-200 flex items-center gap-1.5 rounded-xl py-0.5 pr-3 pl-1.5"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-body-100"
+                data-testid="txt"
+              >
+                Rejected
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            View Application
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="applications/undefined"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
+            </p>
+            <div
+              className="bg-tertiary-200 flex items-center gap-1.5 rounded-xl py-0.5 pr-3 pl-1.5"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-body-100"
+                data-testid="txt"
+              >
+                More info requested
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            View Application
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="applications/undefined"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
+            </p>
+            <div
+              className="bg-primary-200 flex items-center gap-1.5 rounded-xl py-0.5 pr-3 pl-1.5"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-body-100"
+                data-testid="txt"
+              >
+                Awaiting Review
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            View Application
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+`;

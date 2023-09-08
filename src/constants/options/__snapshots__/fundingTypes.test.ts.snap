@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getFundingTypesOptions 1`] = `
+[
+  {
+    "title": "Private grant from foundation",
+    "value": "private_grant_from_foundation",
+  },
+  {
+    "title": "Public Grant from Government",
+    "value": "public_grant_from_government",
+  },
+  {
+    "title": "Loan/Credit Finance from Private Bank or Investor",
+    "value": "loan_credit_finance_from_private_bank_or_investor",
+  },
+  {
+    "title": "Equity from Private Investor",
+    "value": "equity_from_private_investor",
+  },
+  {
+    "title": "Product Offtake Contract",
+    "value": "product_offtake_contract",
+  },
+  {
+    "title": "Carbon Credits Contract",
+    "value": "carbon_credits_contract",
+  },
+  {
+    "title": "Public/Private Payments for Ecosystem Services",
+    "value": "public_private_payments_for_ecosystem_services",
+  },
+  {
+    "title": "Other",
+    "value": "other",
+  },
+]
+`;

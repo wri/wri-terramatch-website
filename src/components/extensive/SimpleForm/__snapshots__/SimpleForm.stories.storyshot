@@ -1,0 +1,355 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Form/Simple Default 1`] = `
+<div
+  className="flex w-full justify-center bg-background px-3"
+>
+  <form
+    className="w-full space-y-8"
+  >
+    <div
+      className="relative space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-testid="txt"
+        htmlFor=":r21:"
+      >
+        Simple text field *
+      </label>
+      <div
+        className="relative"
+      >
+        <input
+          aria-describedby=":r21:-description"
+          aria-invalid={false}
+          className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+          id=":r21:"
+          name="text_field"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onChangeCapture={[Function]}
+          placeholder="Please enter ..."
+          type="text"
+        />
+      </div>
+    </div>
+    <div
+      className="relative space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-testid="txt"
+        htmlFor=":r22:"
+      >
+        Simple number field *
+      </label>
+      <div
+        className="relative"
+      >
+        <input
+          aria-describedby=":r22:-description"
+          aria-invalid={false}
+          className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+          id=":r22:"
+          name="number_field"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onChangeCapture={[Function]}
+          onKeyDown={[Function]}
+          placeholder="Please enter ..."
+          type="number"
+        />
+      </div>
+    </div>
+    <div
+      className="space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-headlessui-state=""
+        data-testid="txt"
+        id="headlessui-listbox-label-:r23:"
+        onClick={[Function]}
+      >
+        Dropdown component *
+      </label>
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="headlessui-listbox-label-:r23: headlessui-listbox-button-:r24:"
+        className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+        data-headlessui-state=""
+        disabled={false}
+        id="headlessui-listbox-button-:r24:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+      >
+        <span
+          className="w-full line-clamp-1"
+        >
+          Select ...
+        </span>
+      </div>
+    </div>
+    <div
+      className="space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-headlessui-state=""
+        data-testid="txt"
+        id="headlessui-listbox-label-:r25:"
+        onClick={[Function]}
+      >
+        Multi-Select Dropdown component *
+      </label>
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="headlessui-listbox-label-:r25: headlessui-listbox-button-:r26:"
+        className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+        data-headlessui-state=""
+        disabled={false}
+        id="headlessui-listbox-button-:r26:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+      >
+        <span
+          className="w-full line-clamp-1"
+        >
+          Select ...
+        </span>
+      </div>
+    </div>
+    <div
+      className="space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-headlessui-state=""
+        data-testid="txt"
+        id="headlessui-listbox-label-:r27:"
+        onClick={[Function]}
+      >
+        Country selector *
+      </label>
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="headlessui-listbox-label-:r27: headlessui-listbox-button-:r28:"
+        className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+        data-headlessui-state=""
+        disabled={false}
+        id="headlessui-listbox-button-:r28:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+      >
+        <span
+          className="w-full line-clamp-1"
+        >
+          Select country ...
+        </span>
+      </div>
+    </div>
+    <div
+      className="relative space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-testid="txt"
+        htmlFor=":r29:"
+      >
+        Select component *
+      </label>
+      <div
+        className="space-y-3"
+      >
+        <label
+          className="flex items-center flex-row-reverse justify-end gap-3"
+          htmlFor=":r2a:"
+        >
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Option 1
+          </p>
+          <input
+            checked={false}
+            containerClassName="flex-row-reverse justify-end gap-3"
+            id=":r2a:"
+            label="Option 1"
+            onClick={[Function]}
+            type="radio"
+          />
+        </label>
+        <label
+          className="flex items-center flex-row-reverse justify-end gap-3"
+          htmlFor=":r2b:"
+        >
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Option 2
+          </p>
+          <input
+            checked={false}
+            containerClassName="flex-row-reverse justify-end gap-3"
+            id=":r2b:"
+            label="Option 2"
+            onClick={[Function]}
+            type="radio"
+          />
+        </label>
+        <label
+          className="flex items-center flex-row-reverse justify-end gap-3"
+          htmlFor=":r2c:"
+        >
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Option 3
+          </p>
+          <input
+            checked={false}
+            containerClassName="flex-row-reverse justify-end gap-3"
+            id=":r2c:"
+            label="Option 3"
+            onClick={[Function]}
+            type="radio"
+          />
+        </label>
+      </div>
+    </div>
+    <div
+      className="relative space-y-2"
+    >
+      <label
+        className="inline-block uppercase text-bold-body-300"
+        data-testid="txt"
+        htmlFor=":r2d:"
+      >
+        Multi-Select component *
+      </label>
+      <div
+        className="space-y-3"
+      >
+        <div
+          className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+        >
+          <label
+            className="w-full"
+            htmlFor=":r2e:"
+          >
+            <label
+              className="max-w-[365px] undefined text-body-600 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Option 1 ",
+                }
+              }
+              data-testid="txt"
+              htmlFor=":r2e:"
+            />
+          </label>
+          <input
+            checked={false}
+            className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+            id=":r2e:"
+            name=""
+            onClick={[Function]}
+            type="checkbox"
+          />
+        </div>
+        <div
+          className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+        >
+          <label
+            className="w-full"
+            htmlFor=":r2f:"
+          >
+            <label
+              className="max-w-[365px] undefined text-body-600 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Option 2 ",
+                }
+              }
+              data-testid="txt"
+              htmlFor=":r2f:"
+            />
+          </label>
+          <input
+            checked={false}
+            className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+            id=":r2f:"
+            name=""
+            onClick={[Function]}
+            type="checkbox"
+          />
+        </div>
+        <div
+          className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+        >
+          <label
+            className="w-full"
+            htmlFor=":r2g:"
+          >
+            <label
+              className="max-w-[365px] undefined text-body-600 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Option 3 ",
+                }
+              }
+              data-testid="txt"
+              htmlFor=":r2g:"
+            />
+          </label>
+          <input
+            checked={false}
+            className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+            id=":r2g:"
+            name=""
+            onClick={[Function]}
+            type="checkbox"
+          />
+        </div>
+        <div
+          className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+        >
+          <label
+            className="w-full"
+            htmlFor=":r2h:"
+          >
+            <label
+              className="max-w-[365px] undefined text-body-600 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Option 4 ",
+                }
+              }
+              data-testid="txt"
+              htmlFor=":r2h:"
+            />
+          </label>
+          <input
+            checked={false}
+            className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+            id=":r2h:"
+            name=""
+            onClick={[Function]}
+            type="checkbox"
+          />
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+`;

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/test Test 1`] = `
+<button
+  aria-expanded={false}
+  aria-haspopup="listbox"
+  data-headlessui-state=""
+  disabled={false}
+  id="headlessui-listbox-button-:rj:"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  type="button"
+>
+  Durward Reynolds
+</button>
+`;

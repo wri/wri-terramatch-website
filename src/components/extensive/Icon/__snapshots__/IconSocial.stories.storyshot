@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/IconSocial Facebook 1`] = `
+<a
+  href="https://example.com"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onTouchStart={[Function]}
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <div
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 18,
+        }
+      }
+    />
+  </div>
+</a>
+`;
+
+exports[`Storyshots Components/Extensive/IconSocial Instagram 1`] = `
+<a
+  href="https://example.com"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onTouchStart={[Function]}
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <div
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 18,
+        }
+      }
+    />
+  </div>
+</a>
+`;
+
+exports[`Storyshots Components/Extensive/IconSocial Linkedin 1`] = `
+<a
+  href="https://example.com"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onTouchStart={[Function]}
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <div
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 18,
+        }
+      }
+    />
+  </div>
+</a>
+`;
+
+exports[`Storyshots Components/Extensive/IconSocial Twitter 1`] = `
+<a
+  href="https://example.com"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onTouchStart={[Function]}
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <div
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 18,
+        }
+      }
+    />
+  </div>
+</a>
+`;
+
+exports[`Storyshots Components/Extensive/IconSocial Website 1`] = `
+<a
+  href="https://example.com"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onTouchStart={[Function]}
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <div
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 18,
+        }
+      }
+    />
+  </div>
+</a>
+`;

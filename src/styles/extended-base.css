@@ -1,0 +1,27 @@
+@tailwind base;
+
+@layer base {
+  /* Regular */
+  @font-face {
+    font-family: "Acumin Pro";
+    font-weight: 300;
+    src: url(../assets/fonts/AcuminProCond-Light.otf);
+  }
+
+  /* Bold */
+  @font-face {
+    font-family: "Acumin Pro";
+    font-weight: 700;
+    src: url(../assets/fonts/AcuminProCond-Bold.otf);
+  }
+
+  /* To remove gap underneath text area */
+  textarea {
+    display: block;
+  }
+
+  b,
+  strong {
+    font-weight: bold;
+  }
+}

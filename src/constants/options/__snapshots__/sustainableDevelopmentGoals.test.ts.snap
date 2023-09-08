@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test sustainableDevelopmentGoalsOptions 1`] = `
+[
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/no_poverty@2x.png",
+    },
+    "title": "No Poverty",
+    "value": "no-poverty",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/zero_hunger@2x.png",
+    },
+    "title": "Zero Hunger",
+    "value": "zero-hunger",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png",
+    },
+    "title": "Good Health and Well-being",
+    "value": "good-health-and-well-being",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/quality-education@2x.png",
+    },
+    "title": "Quality Education",
+    "value": "quality-education",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/gender-equality@2x.png",
+    },
+    "title": "Gender Equality",
+    "value": "gender-equality",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/clean-water-and-sanitation@2x.png",
+    },
+    "title": "Clean Water and Sanitation",
+    "value": "clean-water-and-sanitation",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png",
+    },
+    "title": "Affordable and Clean Energy",
+    "value": "affordable-and-clean-energy",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/decent-work-and-economic-growth@2x.png",
+    },
+    "title": "Decent Work and Economic Growth",
+    "value": "decent-work-and-economic-growth",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/industry-innovation-and-infrastructure@2x.png",
+    },
+    "title": "Industry, Innovation, and Infrastructure",
+    "value": "industry-innovation-and-infrastructure",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/reduced-inequalities@2x.png",
+    },
+    "title": "Reduced Inequalities",
+    "value": "reduced-inequalities",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/sustainable-cities-and-communities@2x.png",
+    },
+    "title": "Sustainable Cities and Communities",
+    "value": "sustainable-cities-and-communities",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/responsible-consumption-and-production@2x.png",
+    },
+    "title": "Responsible Consumption and Production",
+    "value": "responsible-consumption-and-production",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/climate-action@2x.png",
+    },
+    "title": "Climate Action",
+    "value": "climate-action",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/life-below-water@2x.png",
+    },
+    "title": "Life Below Water",
+    "value": "life-below-water",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/life-on-land@2x.png",
+    },
+    "title": "Life on Land",
+    "value": "life-on-land",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/peace-justice-and-strong-institutions@2x.png",
+    },
+    "title": "Peace, Justice, and Strong Institutions",
+    "value": "peace-justice-and-strong-institutions",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/partnerships-for-the-goals@2x.png",
+    },
+    "title": "Partnerships for the Goals",
+    "value": "partnerships-for-the-goals",
+  },
+]
+`;

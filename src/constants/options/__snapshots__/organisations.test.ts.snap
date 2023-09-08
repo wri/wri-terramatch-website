@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getOrganisationTypeOptions 1`] = `
+[
+  {
+    "title": "For-Profit Organization",
+    "value": "for-profit-organization",
+  },
+  {
+    "title": "Non-Profit Organization",
+    "value": "non-profit-organization",
+  },
+  {
+    "title": "Government agency",
+    "value": "government-agency",
+  },
+]
+`;
