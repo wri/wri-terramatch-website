@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Section/EntryRow Default 1`] = `
+<div
+  className="flex first-letter:uppercase"
+>
+  <p
+    className="flex-[2] pr-4.5 text-heading-300"
+    data-testid="txt"
+  >
+    Objectives
+  </p>
+  <div
+    className="flex-[3] space-y-8"
+  >
+    <p
+      className="text-heading-100"
+      data-testid="txt"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sit amet bibendum urna. Aenean tempus eget dolor a porttitor. Duis sodales aliquam mi, in commodo velit scelerisque nec. Maecenas vel lorem ac massa dapibus porttitor. Donec interdum elit arcu, nec fringilla ante consequat ac. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sit amet bibendum urna. Aenean tempus eget dolor a porttitor. Duis sodales aliquam mi, in commodo velit scelerisque nec. Maecenas vel lorem ac massa dapibus porttitor. Donec interdum elit arcu, nec fringilla ante consequat ac.
+    </p>
+  </div>
+</div>
+`;

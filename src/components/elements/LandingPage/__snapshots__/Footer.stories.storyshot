@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/LandingPage/Footer Default 1`] = `
+<footer
+  className="mx-auto flex w-full max-w-[1218px] flex-col items-start gap-12 px-4 py-12 md:flex-row md:gap-29"
+>
+  <div
+    style={
+      Object {
+        "height": 42,
+        "width": 156,
+      }
+    }
+  />
+  <p
+    className="order-3 max-w-[294px] md:order-2 text-heading-200"
+    data-testid="txt"
+  >
+    WRI would like to thank the German Federal Ministry for Environment, Nature Conservation and Nuclear Safety, Mastercard, and the Bezos Earth Fund for their support for the development of TerraMatch.
+  </p>
+  <div
+    className="order-2 flex flex-col gap-6 md:order-3"
+  >
+    <a
+      className="block"
+      href="/"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+    >
+      <p
+        className="text-heading-200"
+        data-testid="txt"
+      >
+        Home
+      </p>
+    </a>
+    <a
+      className="block"
+      href="https://terramatchsupport.zendesk.com/"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+    >
+      <p
+        className="text-heading-200"
+        data-testid="txt"
+      >
+        Help Center
+      </p>
+    </a>
+    <a
+      className="block"
+      href="https://www.terramatch.org/v1/privacy"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+    >
+      <p
+        className="text-heading-200"
+        data-testid="txt"
+      >
+        Privacy Policy
+      </p>
+    </a>
+    <a
+      className="block"
+      href="https://wriorg.s3.amazonaws.com/s3fs-public/terra-match-terms-and-conditions.pdf"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+    >
+      <p
+        className="text-heading-200"
+        data-testid="txt"
+      >
+        Terms of Service
+      </p>
+    </a>
+  </div>
+</footer>
+`;

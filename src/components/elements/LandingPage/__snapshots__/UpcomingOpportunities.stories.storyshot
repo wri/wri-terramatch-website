@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Default 1`] = `
+<div
+  className="pb-9 pt-9 md:pt-24 md:pb-29 flex flex-col items-center"
+>
+  <p
+    className="text-center underline text-heading-700"
+    data-testid="txt"
+  />
+  <p
+    className="text-center text-heading-700"
+    data-testid="txt"
+  >
+    Upcoming Opportunities in TerraMatch
+  </p>
+  <ul
+    className="mt-8 flex flex-wrap items-center justify-center gap-6"
+  >
+    <div
+      className="relative flex h-[178px] w-[308px] flex-col items-start justify-end gap-4 bg-cover bg-no-repeat px-7 py-4 bg-landAcceleratorAfricaThumb"
+    >
+      <p
+        className="absolute top-2 right-4 text-white text-body-500"
+        data-testid="txt"
+      >
+        Support
+      </p>
+      <p
+        className="text-white text-heading-300"
+        data-testid="txt"
+      >
+        Land Accelerator Africa 2022
+      </p>
+      <a
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Find out more
+        </span>
+      </a>
+    </div>
+    <div
+      className="relative flex h-[178px] w-[308px] flex-col items-start justify-end gap-4 bg-cover bg-no-repeat px-7 py-4 bg-terrafundRFPThumb"
+    >
+      <p
+        className="absolute top-2 right-4 text-white text-body-500"
+        data-testid="txt"
+      >
+        Support
+      </p>
+      <p
+        className="text-white text-heading-300"
+        data-testid="txt"
+      >
+        Terramatch RFP
+      </p>
+      <a
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Find out more
+        </span>
+      </a>
+    </div>
+    <div
+      className="relative flex h-[178px] w-[308px] flex-col items-start justify-end gap-4 bg-cover bg-no-repeat px-7 py-4 bg-landAcceleratorThumb"
+    >
+      <p
+        className="absolute top-2 right-4 text-white text-body-500"
+        data-testid="txt"
+      >
+        Support
+      </p>
+      <p
+        className="text-white text-heading-300"
+        data-testid="txt"
+      >
+        Land Accelerator fund
+      </p>
+      <a
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Find out more
+        </span>
+      </a>
+    </div>
+  </ul>
+</div>
+`;

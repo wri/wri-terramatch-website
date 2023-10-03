@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" stroke="currentColor">
+    <path
+        d="M52.5 30C52.5 42.4264 42.4264 52.5 30 52.5C17.5736 52.5 7.5 42.4264 7.5 30C7.5 17.5736 17.5736 7.5 30 7.5C42.4264 7.5 52.5 17.5736 52.5 30Z"
+        stroke-width="5" fill="transparent" />
+    <path d="M20 30.6413L26.4551 37.6157C26.7718 37.9578 27.3127 37.9578 27.6294 37.6157L40 24.25" stroke-width="5"
+        stroke-linecap="round" fill="transparent" />
+</svg>

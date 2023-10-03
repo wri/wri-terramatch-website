@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/LandingPage/ExplainerSection Default 1`] = `
+<ul
+  className="flex flex-col gap-15 md:flex-row md:gap-1"
+>
+  <div
+    className="flex flex-col items-center"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 110,
+        }
+      }
+    />
+    <p
+      className="mt-6 mb-[10px] md:mb-5 text-heading-200"
+      data-testid="txt"
+    >
+      1. Apply for Funding
+    </p>
+    <p
+      className="max-w-[250px] text-center text-heading-100"
+      data-testid="txt"
+    >
+      We are working with hundreds of funders in the restoration space who are eager to support locally-led projects. We will host requests for proposals on TerraMatch when new rounds of capital are ready to be deployed.
+    </p>
+  </div>
+  <div
+    className="mt-16 hidden h-[1px] w-10 bg-neutral-300 md:block"
+  />
+  <div
+    className="flex flex-col items-center"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 110,
+        }
+      }
+    />
+    <p
+      className="mt-6 mb-[10px] md:mb-5 text-heading-200"
+      data-testid="txt"
+    >
+      2. Find Support
+    </p>
+    <p
+      className="max-w-[250px] text-center text-heading-100"
+      data-testid="txt"
+    >
+      TerraMatch is committed to support restoration project developers grow. We will host applications cohort-based accelerator programs for those who are looking to level up their operations and offer guidance for those who do not match with any of our programs
+    </p>
+  </div>
+  <div
+    className="mt-16 hidden h-[1px] w-10 bg-neutral-300 md:block"
+  />
+  <div
+    className="flex flex-col items-center"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 110,
+        }
+      }
+    />
+    <p
+      className="mt-6 mb-[10px] md:mb-5 text-heading-200"
+      data-testid="txt"
+    >
+      3. Report + Monitor
+    </p>
+    <p
+      className="max-w-[250px] text-center text-heading-100"
+      data-testid="txt"
+    >
+      Funders who are looking to invest in planting trees the right way rely on TerraMatch’s monitoring and reporting capabilities, which marry the best in field-collected data with cutting-edge satellite insights, to ensure that their investments in locally led restoration have a real impact on communities and ecosystems.
+    </p>
+  </div>
+</ul>
+`;

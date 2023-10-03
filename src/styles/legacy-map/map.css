@@ -1,0 +1,35 @@
+.c-map--hide-controls .leaflet-bottom.leaflet-right {
+  display: none;
+}
+.c-map__controls {
+  position: absolute;
+  top: 92px;
+  right: 10px;
+  z-index: 9999;
+}
+.c-map__controls--bottom {
+  top: auto;
+  bottom: 10px;
+  right: 10px;
+}
+.c-map__action {
+  z-index: 9999;
+  width: 100%;
+}
+.c-map__control {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-color: white;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border: solid 1px #c5c5bf;
+  border-radius: 4px;
+  padding: 0px;
+}
+.c-map__control--location {
+  background-image: url("/images/map/location.svg");
+  background-size: 55%;
+  background-position: center;
+  background-repeat: no-repeat;
+}

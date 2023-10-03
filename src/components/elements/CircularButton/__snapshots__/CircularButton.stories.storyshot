@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/CircularButton Default 1`] = `
+<button
+  className="bg-primary rounded-[50%] h-12 w-12 flex items-center justify-center shadow"
+>
+  <div
+    style={
+      Object {
+        "height": undefined,
+        "width": 22,
+      }
+    }
+  />
+</button>
+`;

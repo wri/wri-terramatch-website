@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/LanguagesDropdown Default 1`] = `
+<div
+  className="flex h-[300px] justify-end"
+>
+  <div
+    className="relative w-fit"
+    data-headlessui-state=""
+  >
+    <button
+      aria-expanded={false}
+      className="flex items-center justify-between p-2"
+      data-headlessui-state=""
+      id="headlessui-popover-button-:rp:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      type="button"
+    >
+      <span
+        className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+      >
+        English
+      </span>
+    </button>
+  </div>
+</div>
+`;

@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getLanguageOptions 1`] = `
+[
+  {
+    "title": "English",
+    "value": "english",
+  },
+  {
+    "title": "French",
+    "value": "french",
+  },
+  {
+    "title": "Spanish",
+    "value": "spanish",
+  },
+  {
+    "title": "Portuguese",
+    "value": "portuguese",
+  },
+  {
+    "title": "Other",
+    "value": "other",
+  },
+]
+`;

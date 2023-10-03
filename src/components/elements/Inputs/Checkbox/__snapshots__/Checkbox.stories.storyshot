@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/Checkbox Checked 1`] = `
+<div
+  className="relative flex items-start gap-4 justify-between"
+>
+  <label
+    className="w-full"
+    htmlFor=":ra:"
+  >
+    <label
+      className="max-w-[365px] undefined text-body-600 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Checked Checkbox ",
+        }
+      }
+      data-testid="txt"
+      htmlFor=":ra:"
+    />
+  </label>
+  <input
+    checked={true}
+    className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+    id=":ra:"
+    type="checkbox"
+  />
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Inputs/Checkbox Unchecked 1`] = `
+<div
+  className="relative flex items-start gap-4 justify-between"
+>
+  <label
+    className="w-full"
+    htmlFor=":r9:"
+  >
+    <label
+      className="max-w-[365px] undefined text-body-600 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Unchecked Checkbox ",
+        }
+      }
+      data-testid="txt"
+      htmlFor=":r9:"
+    />
+  </label>
+  <input
+    className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+    id=":r9:"
+    type="checkbox"
+  />
+</div>
+`;

@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Section/Body Default 1`] = `
+<div
+  className="flex w-full flex-col gap-8"
+>
+  <div
+    className="flex first-letter:uppercase"
+  >
+    <p
+      className="flex-[2] pr-4.5 text-heading-300"
+      data-testid="txt"
+    >
+      Objectives
+    </p>
+    <div
+      className="flex-[3] space-y-8"
+    >
+      <p
+        className="text-heading-100"
+        data-testid="txt"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sit amet bibendum urna. Aenean tempus eget dolor a porttitor. Duis sodales aliquam mi, in commodo velit scelerisque nec. Maecenas vel lorem ac massa dapibus porttitor. Donec interdum elit arcu, nec fringilla ante consequat ac. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sit amet bibendum urna. Aenean tempus eget dolor a porttitor. Duis sodales aliquam mi, in commodo velit scelerisque nec. Maecenas vel lorem ac massa dapibus porttitor. Donec interdum elit arcu, nec fringilla ante consequat ac.
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex first-letter:uppercase"
+  >
+    <p
+      className="flex-[2] pr-4.5 text-heading-300"
+      data-testid="txt"
+    >
+      Country
+    </p>
+    <div
+      className="flex-[3] space-y-8"
+    >
+      <p
+        className="text-heading-100"
+        data-testid="txt"
+      >
+        United States
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex first-letter:uppercase"
+  >
+    <p
+      className="flex-[2] pr-4.5 text-heading-300"
+      data-testid="txt"
+    >
+      County/District
+    </p>
+    <div
+      className="flex-[3] space-y-8"
+    >
+      <p
+        className="text-heading-100"
+        data-testid="txt"
+      >
+        California
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex first-letter:uppercase"
+  >
+    <p
+      className="flex-[2] pr-4.5 text-heading-300"
+      data-testid="txt"
+    >
+      Detailed Project Budget
+    </p>
+    <div
+      className="flex-[3] space-y-8"
+    >
+      <div
+        className="flex items-center justify-between rounded-xl bg-white p-4 pr-6 shadow"
+      >
+        <div
+          className="flex flex-1 items-center justify-center gap-2"
+        >
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-lg border border-neutral-400 border-opacity-20 bg-cover bg-no-repeat"
+            style={
+              Object {
+                "backgroundImage": "url()",
+              }
+            }
+          >
+            <div
+              style={
+                Object {
+                  "height": 30,
+                  "width": 22.5,
+                }
+              }
+            />
+          </div>
+          <div
+            className="flex flex-1 flex-col items-start gap-1"
+          >
+            <p
+              className=" capitalize line-clamp-1 text-heading-200"
+              data-testid="txt"
+            >
+              Project Budget
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

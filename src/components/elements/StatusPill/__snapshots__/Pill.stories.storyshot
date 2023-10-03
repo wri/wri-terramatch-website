@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Pill Default 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-tertiary-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      Pill children
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Pill Error 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-error-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      Error
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Pill Neutral 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-neutral-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      Neutral
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Pill Primary 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-primary-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      Primary
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Pill Secondary 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-secondary-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      Secondary
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Pill Success 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-success-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      success
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Pill Tertiary 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="bg-tertiary-500 flex items-center justify-center rounded-2xl py-[4px] px-[14px] first-letter:uppercase "
+  >
+    <p
+      className="mt-[3px] text-body-100"
+      color="black"
+      data-testid="txt"
+    >
+      Tertiary
+    </p>
+  </div>
+</div>
+`;

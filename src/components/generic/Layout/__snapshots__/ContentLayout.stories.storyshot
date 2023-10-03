@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/Layouts/ContentLayout Default 1`] = `
+<div
+  className="mx-auto my-10 w-full max-w-[800px]"
+>
+  <div
+    className="h-[400px] w-[400px] bg-neutral-200"
+  >
+    Children
+  </div>
+</div>
+`;

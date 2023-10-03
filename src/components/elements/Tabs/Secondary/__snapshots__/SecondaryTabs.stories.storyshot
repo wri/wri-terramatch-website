@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
+<div
+  className="h-[40px] w-full bg-neutral-150"
+>
+  <div
+    aria-orientation="horizontal"
+    className="h-12 w-full border-b border-neutral-400 bg-white"
+    role="tablist"
+  >
+    <div
+      className="m-auto flex h-full items-center justify-between"
+    >
+      <button
+        aria-selected={false}
+        className="h-full px-4 outline-none"
+        data-headlessui-state=""
+        id="headlessui-tabs-tab-:r1p:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onMouseDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+      >
+        <p
+          className="whitespace-nowrap text-neutral-700 text-heading-200"
+          data-testid="txt"
+        >
+          Overview
+        </p>
+      </button>
+      <button
+        aria-selected={true}
+        className="h-full px-4 outline-none border-b-[3px] border-primary"
+        data-headlessui-state="selected"
+        id="headlessui-tabs-tab-:r1q:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onMouseDown={[Function]}
+        role="tab"
+        tabIndex={0}
+      >
+        <p
+          className="whitespace-nowrap text-black text-heading-200"
+          data-testid="txt"
+        >
+          Environmental Impact
+        </p>
+      </button>
+      <button
+        aria-selected={false}
+        className="h-full px-4 outline-none"
+        data-headlessui-state=""
+        id="headlessui-tabs-tab-:r1r:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onMouseDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+      >
+        <p
+          className="whitespace-nowrap text-neutral-700 text-heading-200"
+          data-testid="txt"
+        >
+          Social Impact
+        </p>
+      </button>
+    </div>
+  </div>
+  <div>
+    <span
+      id="headlessui-tabs-panel-:r1s:"
+      role="tabpanel"
+      style={
+        Object {
+          "borderWidth": "0",
+          "clip": "rect(0, 0, 0, 0)",
+          "height": 0,
+          "left": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "fixed",
+          "top": 1,
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+      tabIndex={-1}
+    />
+    <div
+      data-headlessui-state="selected"
+      id="headlessui-tabs-panel-:r1t:"
+      role="tabpanel"
+      tabIndex={0}
+    >
+      <div>
+        step 2 body
+      </div>
+    </div>
+    <span
+      id="headlessui-tabs-panel-:r1u:"
+      role="tabpanel"
+      style={
+        Object {
+          "borderWidth": "0",
+          "clip": "rect(0, 0, 0, 0)",
+          "height": 0,
+          "left": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "fixed",
+          "top": 1,
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+      tabIndex={-1}
+    />
+  </div>
+</div>
+`;

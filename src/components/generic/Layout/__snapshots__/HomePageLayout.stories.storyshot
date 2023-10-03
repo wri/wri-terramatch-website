@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/Layouts/HomePageLayout Default 1`] = `
+<div
+  className=" min-h-[calc(100vh-70px)] bg-background py-15 px-8"
+>
+  <div
+    className="mx-[auto] w-full max-w-6xl"
+  >
+    <div
+      className="h-[400px] bg-neutral-200"
+    >
+      Children
+    </div>
+  </div>
+</div>
+`;

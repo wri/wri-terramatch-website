@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
+<div
+  className="relative"
+>
+  <div
+    className="space-y-2"
+  >
+    <label
+      className="inline-block uppercase text-bold-body-300"
+      data-headlessui-state=""
+      data-testid="txt"
+      id="headlessui-listbox-label-:rd:"
+      onClick={[Function]}
+    >
+      Drop down label 
+    </label>
+    <p
+      className="text-light-body-300 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Drop down description",
+        }
+      }
+      data-testid="txt"
+    />
+    <div
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-labelledby="headlessui-listbox-label-:rd: headlessui-listbox-button-:re:"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      data-headlessui-state=""
+      disabled={false}
+      id="headlessui-listbox-button-:re:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+    >
+      <span
+        className="w-full line-clamp-1"
+      >
+        placeholder
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other Option 1`] = `
+<div
+  className="relative"
+>
+  <div
+    className="space-y-2"
+  >
+    <label
+      className="inline-block uppercase text-bold-body-300"
+      data-headlessui-state=""
+      data-testid="txt"
+      id="headlessui-listbox-label-:rh:"
+      onClick={[Function]}
+    >
+      Drop down label 
+    </label>
+    <p
+      className="text-light-body-300 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Drop down description",
+        }
+      }
+      data-testid="txt"
+    />
+    <div
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-labelledby="headlessui-listbox-label-:rh: headlessui-listbox-button-:ri:"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      data-headlessui-state=""
+      disabled={false}
+      id="headlessui-listbox-button-:ri:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+    >
+      <span
+        className="w-full line-clamp-1"
+      >
+        placeholder
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
+<div
+  className="relative"
+>
+  <div
+    className="space-y-2"
+  >
+    <label
+      className="inline-block uppercase text-bold-body-300"
+      data-headlessui-state=""
+      data-testid="txt"
+      id="headlessui-listbox-label-:rb:"
+      onClick={[Function]}
+    >
+      Drop down label 
+    </label>
+    <p
+      className="text-light-body-300 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Drop down description",
+        }
+      }
+      data-testid="txt"
+    />
+    <div
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-labelledby="headlessui-listbox-label-:rb: headlessui-listbox-button-:rc:"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      data-headlessui-state=""
+      disabled={false}
+      id="headlessui-listbox-button-:rc:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+    >
+      <span
+        className="w-full line-clamp-1"
+      >
+        placeholder
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other Option 1`] = `
+<div
+  className="relative"
+>
+  <div
+    className="space-y-2"
+  >
+    <label
+      className="inline-block uppercase text-bold-body-300"
+      data-headlessui-state=""
+      data-testid="txt"
+      id="headlessui-listbox-label-:rf:"
+      onClick={[Function]}
+    >
+      Drop down label 
+    </label>
+    <p
+      className="text-light-body-300 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Drop down description",
+        }
+      }
+      data-testid="txt"
+    />
+    <div
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-labelledby="headlessui-listbox-label-:rf: headlessui-listbox-button-:rg:"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      data-headlessui-state=""
+      disabled={false}
+      id="headlessui-listbox-button-:rg:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+    >
+      <span
+        className="w-full line-clamp-1"
+      >
+        placeholder
+      </span>
+    </div>
+  </div>
+</div>
+`;

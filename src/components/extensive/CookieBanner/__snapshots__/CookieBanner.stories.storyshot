@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/CookieBanner Default 1`] = `
+<div
+  className="sticky bottom-0 right-0 left-0 z-50 flex w-full flex-col items-center justify-center gap-4 bg-black py-4 px-8 md:flex-row"
+>
+  <p
+    className="u-text-center u-font-gold u-text-decoration-none text-white text-heading-200 with-inner-html"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "This website uses cookies to provide you with an improved user experience. By continuing to browse this site, you consent to the use of cookies and similar technologies. For further details please visit our <a href=\\"https://www.terramatch.org/v1/privacy\\">privacy policy.</a>",
+      }
+    }
+    data-testid="txt"
+  />
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+    onClick={[Function]}
+  >
+    <span
+      className="text-bold-caption-200 pt-0.75 leading-3"
+    >
+      Ok
+    </span>
+  </button>
+</div>
+`;

@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getMarketingReferenceOptions 1`] = `
+[
+  {
+    "title": "Land Accelerator",
+    "value": "land-accelerator",
+  },
+  {
+    "title": "AFR100 Partner",
+    "value": "afr100-partner",
+  },
+  {
+    "title": "WhatsApp",
+    "value": "whatsapp",
+  },
+  {
+    "title": "LinkedIn",
+    "value": "linkedin",
+  },
+  {
+    "title": "Funding Partner",
+    "value": "funding-partner",
+  },
+  {
+    "title": "Facebook",
+    "value": "facebook",
+  },
+  {
+    "title": "Twitter",
+    "value": "twitter",
+  },
+  {
+    "title": "World Resources Institute",
+    "value": "world-resources-institute",
+  },
+  {
+    "title": "One Tree Planted",
+    "value": "one-tree-planted",
+  },
+  {
+    "title": "Realize Impact",
+    "value": "realize-impact",
+  },
+  {
+    "title": "Barka Fund",
+    "value": "barka-fund",
+  },
+  {
+    "title": "Government Agency",
+    "value": "government-agency",
+  },
+  {
+    "title": "Grant opportunity website",
+    "value": "grant-opportunity-website",
+  },
+  {
+    "title": "Internet search",
+    "value": "internet-search",
+  },
+  {
+    "title": "Email",
+    "value": "email",
+  },
+  {
+    "title": "Other",
+    "value": "other",
+  },
+]
+`;
