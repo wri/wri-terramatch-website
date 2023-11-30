@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/ConditionalInput Default 1`] = `
+Array [
+  <div
+    className="relative space-y-2"
+  >
+    <label
+      className="mr-2 inline uppercase text-bold-body-300"
+      data-testid="txt"
+    >
+      Input Label 
+    </label>
+    <p
+      className="text-light-body-300 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Input description",
+        }
+      }
+      data-testid="txt"
+    />
+    <div
+      className="space-y-2"
+      id="headlessui-radiogroup-:rj:"
+      onKeyDown={[Function]}
+      role="radiogroup"
+    >
+      <div
+        aria-checked="false"
+        data-headlessui-state=""
+        id="headlessui-radiogroup-option-:rk:"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        role="radio"
+        tabIndex={0}
+      >
+        <div
+          className="rounded-lg border border-neutral-400 py-2 px-3"
+        >
+          <label
+            className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
+            htmlFor=":rl:"
+          >
+            <p
+              className="text-light-caption-200"
+              data-testid="txt"
+            >
+              Yes
+            </p>
+            <input
+              checked={false}
+              className="flex flex-row-reverse items-center justify-end gap-3 "
+              id=":rl:"
+              label="Yes"
+              type="radio"
+            />
+          </label>
+        </div>
+      </div>
+      <div
+        aria-checked="false"
+        data-headlessui-state=""
+        id="headlessui-radiogroup-option-:rm:"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        role="radio"
+        tabIndex={-1}
+      >
+        <div
+          className="rounded-lg border border-neutral-400 py-2 px-3"
+        >
+          <label
+            className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
+            htmlFor=":rn:"
+          >
+            <p
+              className="text-light-caption-200"
+              data-testid="txt"
+            >
+              No
+            </p>
+            <input
+              checked={false}
+              className="flex flex-row-reverse items-center justify-end gap-3 "
+              id=":rn:"
+              label="No"
+              type="radio"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <ul />,
+]
+`;

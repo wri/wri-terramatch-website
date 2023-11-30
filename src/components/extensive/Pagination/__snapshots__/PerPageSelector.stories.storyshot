@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Table/PerPageSelector Default 1`] = `
+<div
+  className="w-fit"
+>
+  <div
+    className="space-y-2"
+    data-headlessui-state=""
+  >
+    <div
+      className="flex items-center gap-3"
+    >
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="headlessui-listbox-label-:r2s: headlessui-listbox-button-:r2r:"
+        className="flex h-10 w-20 items-center justify-center rounded-md shadow"
+        data-headlessui-state=""
+        disabled={false}
+        id="headlessui-listbox-button-:r2r:"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+      >
+        <div
+          className="flex h-full flex-1 items-center justify-center"
+        >
+          <p
+            className="w-fit uppercase line-clamp-1 text-bold-subtitle-500"
+            data-testid="txt"
+          >
+            5
+          </p>
+        </div>
+        <div
+          className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
+        />
+      </div>
+      <p
+        className="text-bold-subtitle-500"
+        data-headlessui-state=""
+        data-testid="txt"
+        id="headlessui-listbox-label-:r2s:"
+        onClick={[Function]}
+      />
+    </div>
+  </div>
+</div>
+`;

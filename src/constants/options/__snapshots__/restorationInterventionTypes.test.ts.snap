@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getRestorationInterventionTypeOptions 1`] = `
+[
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/agroforestry@2x.png",
+    },
+    "title": "Agroforestry",
+    "value": "agroforestry",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/applied_nucleation_tree_island@2x.png",
+    },
+    "title": "Applied Nucleation",
+    "value": "applied-nucleation",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/assisted_natural@2x.png",
+    },
+    "title": "Assisted Natural Regeneration",
+    "value": "assisted-natural-regeneration",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/direct_seeding@2x.png",
+    },
+    "title": "Direct Seeding",
+    "value": "direct-seeding",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/enrichment_planting@2x.png",
+    },
+    "title": "Enrichment Planting",
+    "value": "enrichment-planting",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/mangrove@2x.png",
+    },
+    "title": "Mangrove Restoration",
+    "value": "mangrove-restoration",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/reforestation@2x.png",
+    },
+    "title": "Reforestation",
+    "value": "reforestation",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/riparian@2x.png",
+    },
+    "title": "Riparian Restoration",
+    "value": "riparian-restoration",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/restoration-methods/silvopasture@2x.png",
+    },
+    "title": "Silvopasture",
+    "value": "silvopasture",
+  },
+]
+`;

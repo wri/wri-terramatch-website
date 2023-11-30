@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/BuildStrongerProfile Neutral 150 1`] = `
+<section
+  className="my-10 p-8 bg-neutral-150 border border-neutral-400 shadow"
+>
+  <div
+    className="flex flex-col"
+  >
+    <div
+      className="flex items-center justify-between"
+    >
+      <p
+        className="mb-4.5 text-heading-700"
+        data-testid="txt"
+      >
+        Build a Stronger Pitch
+      </p>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Edit Profile
+        </span>
+      </button>
+    </div>
+    <p
+      className="mb-15 text-heading-100"
+      data-testid="txt"
+    >
+      Pitches with strong profiles are more likely to be successful in funding applications.
+    </p>
+    <p
+      className="mb-8 text-heading-300"
+      data-testid="txt"
+    >
+      Adding these items would make your profile stronger:
+    </p>
+    <ul
+      className="space-y-8"
+    >
+      <li>
+        <div
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+        >
+          <p
+            className="text-heading-200"
+            data-testid="txt"
+          >
+            Add Organizational Budget
+          </p>
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Note that the budget denotes the amount of money managed by your organization in the given year, converted into USD.
+          </p>
+        </div>
+      </li>
+      <li>
+        <div
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+        >
+          <p
+            className="text-heading-200"
+            data-testid="txt"
+          >
+            Add Financial Documents
+          </p>
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Note that your organisation's financial documents denotes the amount of money managed by your organization in the given year, converted into USD.
+          </p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+`;
+
+exports[`Storyshots Components/Extensive/BuildStrongerProfile White 1`] = `
+<section
+  className="my-10 p-8 border border-neutral-400 shadow"
+>
+  <div
+    className="flex flex-col"
+  >
+    <div
+      className="flex items-center justify-between"
+    >
+      <p
+        className="mb-4.5 text-heading-700"
+        data-testid="txt"
+      >
+        Build a Stronger Pitch
+      </p>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Edit Profile
+        </span>
+      </button>
+    </div>
+    <p
+      className="mb-15 text-heading-100"
+      data-testid="txt"
+    >
+      Pitches with strong profiles are more likely to be successful in funding applications.
+    </p>
+    <p
+      className="mb-8 text-heading-300"
+      data-testid="txt"
+    >
+      Adding these items would make your profile stronger:
+    </p>
+    <ul
+      className="space-y-8"
+    >
+      <li>
+        <div
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+        >
+          <p
+            className="text-heading-200"
+            data-testid="txt"
+          >
+            Add Organizational Budget
+          </p>
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Note that the budget denotes the amount of money managed by your organization in the given year, converted into USD.
+          </p>
+        </div>
+      </li>
+      <li>
+        <div
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+        >
+          <p
+            className="text-heading-200"
+            data-testid="txt"
+          >
+            Add Financial Documents
+          </p>
+          <p
+            className="text-body-600"
+            data-testid="txt"
+          >
+            Note that your organisation's financial documents denotes the amount of money managed by your organization in the given year, converted into USD.
+          </p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+`;

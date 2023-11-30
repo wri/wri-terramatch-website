@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getDistributionOptions 1`] = `
+[
+  {
+    "title": "Partial",
+    "value": "partial",
+  },
+  {
+    "title": "Whole",
+    "value": "whole",
+  },
+  {
+    "title": "Single Line",
+    "value": "single-line",
+  },
+]
+`;

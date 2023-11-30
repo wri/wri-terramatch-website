@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/ImageWithPlaceholder Default 1`] = `
+<div
+  className="h-44"
+>
+  <div
+    className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 h-full"
+  >
+    <img
+      alt="Some Alt"
+      className="object-cover"
+      data-nimg="fill"
+      decoding="async"
+      loading="lazy"
+      onError={[Function]}
+      onLoad={[Function]}
+      src="https://headshots-inc.com/wp-content/uploads/2020/11/Professional-Headshot-Poses-Blog-Post.jpg"
+      style={
+        Object {
+          "bottom": 0,
+          "color": "transparent",
+          "height": "100%",
+          "left": 0,
+          "objectFit": undefined,
+          "objectPosition": undefined,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+          "width": "100%",
+        }
+      }
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/ImageWithPlaceholder No Image 1`] = `
+<div
+  className="h-44"
+>
+  <div
+    className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 h-full"
+  >
+    <div
+      style={
+        Object {
+          "height": 64,
+          "width": 64,
+        }
+      }
+    />
+  </div>
+</div>
+`;

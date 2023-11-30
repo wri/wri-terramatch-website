@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Breadcrumbs Default 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="flex items-center gap-3"
+  >
+    <a
+      href="#"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+    >
+      <p
+        className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+        data-testid="txt"
+        title="My Projects"
+      >
+        My Projects
+      </p>
+    </a>
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 12,
+        }
+      }
+    />
+    <a
+      href="#"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+    >
+      <p
+        className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+        data-testid="txt"
+        title="India Tree restoration project"
+      >
+        India Tree restoration project
+      </p>
+    </a>
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 12,
+        }
+      }
+    />
+    <p
+      className="text-black line-clamp-1 text-bold-body-300"
+      data-testid="txt"
+      title="Taj Mahal"
+    >
+      Taj Mahal
+    </p>
+  </div>
+</div>
+`;

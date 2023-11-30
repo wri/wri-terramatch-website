@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/LandingPage/AlternatingSection Left 1`] = `
+<div
+  className="w-full md:flex flex-row-reverse"
+>
+  <div
+    className="flex items-center justify-center py-9 px-12 md:w-[50%]"
+  >
+    <div
+      className="flex max-w-[400px] flex-col items-start gap-4"
+    >
+      <p
+        className="text-heading-700"
+        data-testid="txt"
+      >
+        TerraFund for AFR100
+      </p>
+      <p
+        className="text-heading-100 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "A partnership of WRI, One Tree Planted, and Realize Impact, in 2022, TerraFund for AFR100 invested in Africa’s Top 100 locally led land restoration projects. Located across 27 member countries of the AFR100 Initiative, these community-based non-profits and enterprises received grants or loans of $50,000 to $500,000 each. Now, TerraMatch is tracking their progress by combining field-collected data with insights from WRI’s Land & Carbon Lab.",
+          }
+        }
+        data-testid="txt"
+      />
+      <a
+        className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Learn more
+        </span>
+      </a>
+    </div>
+  </div>
+  <div
+    className="flex justify-center bg-background md:w-[50%]"
+  >
+    <div
+      className="relative h-[278px] w-full md:h-[472px]"
+    >
+      <img
+        alt="image"
+        data-nimg="fill"
+        decoding="async"
+        loading="lazy"
+        onError={[Function]}
+        onLoad={[Function]}
+        src="/img.jpg"
+        style={
+          Object {
+            "backgroundImage": "url(\\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http%3A//www.w3.org/2000/svg'%3E%3Cimage style='filter:blur(20px)' x='0' y='0' height='100%25' width='100%25' href='data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAbEAADAAMBAQAAAAAAAAAAAAABAgMABAURUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAFxEAAwEAAAAAAAAAAAAAAAAAAAECEf/aAAwDAQACEQMRAD8Anz9voy1dCI2mectSE5ioFCqia+KCwJ8HzGMZPqJb1oPEf//Z'/%3E%3C/svg%3E\\")",
+            "backgroundPosition": "50% 50%",
+            "backgroundRepeat": "no-repeat",
+            "backgroundSize": "cover",
+            "bottom": 0,
+            "color": "transparent",
+            "height": "100%",
+            "left": 0,
+            "objectFit": "cover",
+            "objectPosition": undefined,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+            "width": "100%",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/LandingPage/AlternatingSection Right 1`] = `
+<div
+  className="w-full md:flex"
+>
+  <div
+    className="flex items-center justify-center py-9 px-12 md:w-[50%]"
+  >
+    <div
+      className="flex max-w-[400px] flex-col items-start gap-4"
+    >
+      <p
+        className="text-heading-700"
+        data-testid="txt"
+      >
+        TerraFund for AFR100
+      </p>
+      <p
+        className="text-heading-100 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "A partnership of WRI, One Tree Planted, and Realize Impact, in 2022, TerraFund for AFR100 invested in Africa’s Top 100 locally led land restoration projects. Located across 27 member countries of the AFR100 Initiative, these community-based non-profits and enterprises received grants or loans of $50,000 to $500,000 each. Now, TerraMatch is tracking their progress by combining field-collected data with insights from WRI’s Land & Carbon Lab.",
+          }
+        }
+        data-testid="txt"
+      />
+      <a
+        className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          Learn more
+        </span>
+      </a>
+    </div>
+  </div>
+  <div
+    className="flex justify-center bg-background md:w-[50%]"
+  >
+    <div
+      className="relative h-[278px] w-full md:h-[472px]"
+    >
+      <img
+        alt="image"
+        data-nimg="fill"
+        decoding="async"
+        loading="lazy"
+        onError={[Function]}
+        onLoad={[Function]}
+        src="/img.jpg"
+        style={
+          Object {
+            "backgroundImage": "url(\\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http%3A//www.w3.org/2000/svg'%3E%3Cimage style='filter:blur(20px)' x='0' y='0' height='100%25' width='100%25' href='data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAbEAADAAMBAQAAAAAAAAAAAAABAgMABAURUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAFxEAAwEAAAAAAAAAAAAAAAAAAAECEf/aAAwDAQACEQMRAD8Anz9voy1dCI2mectSE5ioFCqia+KCwJ8HzGMZPqJb1oPEf//Z'/%3E%3C/svg%3E\\")",
+            "backgroundPosition": "50% 50%",
+            "backgroundRepeat": "no-repeat",
+            "backgroundSize": "cover",
+            "bottom": 0,
+            "color": "transparent",
+            "height": "100%",
+            "left": 0,
+            "objectFit": "cover",
+            "objectPosition": undefined,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+            "width": "100%",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;

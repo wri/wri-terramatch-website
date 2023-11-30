@@ -1,0 +1,776 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
+<div
+  className="space-y-8"
+>
+  <div
+    className="space-y-2 w-64"
+    data-headlessui-state=""
+  >
+    <div
+      className="flex items-center gap-3"
+    >
+      <div
+        className="relative"
+      >
+        <div
+          aria-expanded={false}
+          aria-haspopup="listbox"
+          className="flex h-8 items-center justify-center gap-1 rounded-md border bg-white px-10"
+          data-headlessui-state=""
+          disabled={false}
+          id="headlessui-listbox-button-:r6:"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+        >
+          <p
+            className="mt-1 w-full uppercase line-clamp-1 text-bold-caption-200"
+            data-testid="txt"
+          >
+            Show All
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="grid grid-cols-3 gap-8"
+  >
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/ZIV07iZ/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/ZIV07iZ/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Quod distinctio reiciendis maxime enim et quidem.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/b1VyWqu/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/b1VyWqu/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Blanditiis magnam quae labore vel dicta quasi qui.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/4HQi7vzT/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/4HQi7vzT/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Aliquam quidem cupiditate reprehenderit incidunt.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/TxaYRIBHBd/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/TxaYRIBHBd/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Doloremque quisquam hic pariatur in dolores reprehenderit illo.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/3RPcmU/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/3RPcmU/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Dignissimos unde tempore modi aut ut.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/WkcO32m6ZA/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/WkcO32m6ZA/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Fugit quod ullam cum natus expedita reprehenderit.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/eMjrY/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/eMjrY/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Sit nobis unde numquam tenetur.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/0YeRnwOeq0/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/0YeRnwOeq0/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Dolorum explicabo magnam ad qui ab reprehenderit dolor.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/mvuu0/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/mvuu0/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Rerum hic laboriosam similique quidem molestias.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+    <div
+      className="relative overflow-hidden rounded-lg shadow"
+    >
+      <div
+        className="h-[211px] w-full relative"
+      >
+        <img
+          alt=""
+          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          data-nimg="1"
+          decoding="async"
+          height={211}
+          loading="lazy"
+          onError={[Function]}
+          onLoad={[Function]}
+          role="presentation"
+          src="https://picsum.photos/seed/i1uDrKPuA/640/480"
+          style={
+            Object {
+              "color": "transparent",
+              "objectFit": "cover",
+            }
+          }
+          width={1440}
+        />
+        <div
+          className="absolute top-0 right-0 left-0 bottom-0"
+        >
+          <div
+            className="flex justify-between p-3"
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <a
+                className="z-10 mr-2.5"
+                href="https://picsum.photos/seed/i1uDrKPuA/640/480"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+                target="_blank"
+              />
+              <button
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                onClick={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="px-8 py-4"
+      >
+        <p
+          className="text-bold-body-300"
+          data-testid="txt"
+        >
+          Odit quo ipsam cupiditate laborum qui.
+        </p>
+      </div>
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+  </div>
+  <div
+    className="flex items-center justify-between"
+  >
+    <div
+      className="space-y-2"
+      data-headlessui-state=""
+    >
+      <div
+        className="flex items-center gap-3"
+      >
+        <div
+          aria-expanded={false}
+          aria-haspopup="listbox"
+          aria-labelledby="headlessui-listbox-label-:r8: headlessui-listbox-button-:r7:"
+          className="flex h-10 w-20 items-center justify-center rounded-md shadow"
+          data-headlessui-state=""
+          disabled={false}
+          id="headlessui-listbox-button-:r7:"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+        >
+          <div
+            className="flex h-full flex-1 items-center justify-center"
+          >
+            <p
+              className="w-fit uppercase line-clamp-1 text-bold-subtitle-500"
+              data-testid="txt"
+            >
+              10
+            </p>
+          </div>
+          <div
+            className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
+          />
+        </div>
+        <p
+          className="text-bold-subtitle-500"
+          data-headlessui-state=""
+          data-testid="txt"
+          id="headlessui-listbox-label-:r8:"
+          onClick={[Function]}
+        >
+          Per page
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex items-center justify-center gap-5"
+      defaultPageSize={10}
+      hasPageSizeSelector={true}
+      setPageSize={[Function]}
+    >
+      <button
+        className="flex items-center justify-center rounded-full hover:bg-opacity-60"
+        disabled={true}
+        onClick={[Function]}
+      />
+      <p
+        className="text-neutral-1000 underline text-bold-subtitle-500"
+        data-testid="txt"
+        disabled={false}
+        onClick={[Function]}
+        role="button"
+      >
+        1
+      </p>
+      <p
+        className="text-neutral-600 text-bold-subtitle-500"
+        data-testid="txt"
+        disabled={false}
+        onClick={[Function]}
+        role="button"
+      >
+        2
+      </p>
+      <button
+        className="flex items-center justify-center rounded-full hover:bg-opacity-60"
+        disabled={false}
+        onClick={[Function]}
+      />
+    </div>
+  </div>
+</div>
+`;

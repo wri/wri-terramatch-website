@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
+<div
+  className="w-[200px]"
+>
+  <div
+    className="rounded-xl pb-4 shadow"
+  >
+    <div
+      className="relative flex aspect-square w-full items-center justify-center"
+    >
+      <img
+        alt="johndoe"
+        className="object-contain object-top"
+        data-nimg="fill"
+        decoding="async"
+        loading="lazy"
+        onError={[Function]}
+        onLoad={[Function]}
+        src="https://headshots-inc.com/wp-content/uploads/2020/11/Professional-Headshot-Poses-Blog-Post.jpg"
+        style={
+          Object {
+            "bottom": 0,
+            "color": "transparent",
+            "height": "100%",
+            "left": 0,
+            "objectFit": undefined,
+            "objectPosition": undefined,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+            "width": "100%",
+          }
+        }
+      />
+    </div>
+    <div
+      className="mt-4 space-y-2 px-3"
+    >
+      <div
+        className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 my-4 mt-4 w-fit"
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 24,
+            }
+          }
+        />
+        <p
+          className="pt-0.5 text-bold-caption-100"
+          data-testid="txt"
+        >
+          Invite Sent
+        </p>
+      </div>
+      <p
+        className="text-bold-body-300"
+        data-testid="txt"
+      >
+        johndoe
+      </p>
+      <p
+        className="text-light-body-300"
+        data-testid="txt"
+      >
+        SaveTheTrees
+      </p>
+      <p
+        className="text-ellipsis line-clamp-1 text-light-body-300"
+        data-testid="txt"
+        title="johndoe@mail.com"
+      >
+        johndoe@mail.com
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Cards/UserProfileCard No Image 1`] = `
+<div
+  className="w-[200px]"
+>
+  <div
+    className="rounded-xl pb-4 shadow"
+  >
+    <div
+      className="relative flex aspect-square w-full items-center justify-center"
+    >
+      <img
+        alt="janedoe"
+        className="object-contain object-top"
+        data-nimg="fill"
+        decoding="async"
+        loading="lazy"
+        onError={[Function]}
+        onLoad={[Function]}
+        src="/img.jpg"
+        style={
+          Object {
+            "bottom": 0,
+            "color": "transparent",
+            "height": "100%",
+            "left": 0,
+            "objectFit": undefined,
+            "objectPosition": undefined,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+            "width": "100%",
+          }
+        }
+      />
+    </div>
+    <div
+      className="mt-4 space-y-2 px-3"
+    >
+      <p
+        className="text-bold-body-300"
+        data-testid="txt"
+      >
+        janedoe
+      </p>
+      <p
+        className="text-light-body-300"
+        data-testid="txt"
+      >
+        WeLoveTrees
+      </p>
+      <p
+        className="text-ellipsis line-clamp-1 text-light-body-300"
+        data-testid="txt"
+        title="jane@mail.com"
+      >
+        jane@mail.com
+      </p>
+    </div>
+  </div>
+</div>
+`;

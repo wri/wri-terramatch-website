@@ -1,0 +1,31 @@
+* {
+  @apply font-primary text-base font-light;
+}
+
+input[type="radio"] {
+  -webkit-appearance: none;
+  @apply h-5 w-5 rounded-[50%] border-2 border-solid border-neutral-500 outline-none transition-all duration-300 ease-in-out checked:border-primary-500;
+}
+
+input[type="radio"]:checked {
+  @apply border-primary-500 bg-white;
+}
+
+input[type="radio"]:before {
+  content: "";
+  @apply my-[12%] mx-auto block h-[75%] w-[75%] rounded-[50%] transition-all duration-300 ease-in-out;
+}
+
+input[type="radio"]:checked:before {
+  @apply bg-primary-500;
+}
+
+input[type="radio"]:hover,
+input[type="radio"]:focus {
+  @apply !border-primary-500 text-transparent;
+  box-shadow: none;
+}
+
+@import url("./extended-base.css");
+@import url("./extended-utilities.css");
+@import url("./extended-components.css");

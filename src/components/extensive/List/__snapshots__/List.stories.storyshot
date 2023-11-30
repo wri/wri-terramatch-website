@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/List List 1`] = `
+<ul>
+  <li>
+    <div
+      className="mb-2 flex h-20 w-20 items-center justify-center rounded bg-primary-400 shadow"
+    >
+      1
+    </div>
+  </li>
+  <li>
+    <div
+      className="mb-2 flex h-20 w-20 items-center justify-center rounded bg-primary-400 shadow"
+    >
+      2
+    </div>
+  </li>
+  <li>
+    <div
+      className="mb-2 flex h-20 w-20 items-center justify-center rounded bg-primary-400 shadow"
+    >
+      3
+    </div>
+  </li>
+  <li>
+    <div
+      className="mb-2 flex h-20 w-20 items-center justify-center rounded bg-primary-400 shadow"
+    >
+      4
+    </div>
+  </li>
+  <li>
+    <div
+      className="mb-2 flex h-20 w-20 items-center justify-center rounded bg-primary-400 shadow"
+    >
+      5
+    </div>
+  </li>
+</ul>
+`;

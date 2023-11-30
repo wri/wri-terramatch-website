@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/Layouts/Container Default 1`] = `
+<section
+  className="mx-auto w-full max-w-[1218px] undefined"
+>
+  <div
+    className="h-[400px] bg-neutral-200"
+  />
+</section>
+`;

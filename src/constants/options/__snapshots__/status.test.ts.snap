@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot getStatusOptions 1`] = `
+[
+  {
+    "title": "Draft",
+    "value": "started",
+  },
+  {
+    "title": "Rejected",
+    "value": "rejected",
+  },
+  {
+    "title": "Approved",
+    "value": "approved",
+  },
+  {
+    "title": "Awaiting Review",
+    "value": "awaiting-approval",
+  },
+  {
+    "title": "More info requested",
+    "value": "needs-more-information",
+  },
+]
+`;

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/SmallGoalProgressCard Default 1`] = `
+<div
+  className="flex w-full items-center justify-between"
+>
+  <p
+    className="text-bold-subtitle-500"
+    data-testid="txt"
+  >
+    Survival Rate
+  </p>
+  <div
+    className="ml-4 flex min-w-[100px] flex-col items-end"
+  >
+    <p
+      className="text-light-subtitle-400"
+      data-testid="txt"
+    >
+      123/200
+    </p>
+    <div
+      className="h-[9px] w-full bg-neutral-200 bg-primary-200"
+      role="progressbar"
+    >
+      <div
+        className="h-full bg-primary transition-all duration-300"
+        style={
+          Object {
+            "width": "61.5%",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;

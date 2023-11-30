@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Banner/HeroBanner Default 1`] = `
+<div
+  className="relative flex w-full flex-col items-center justify-center bg-heroBanner bg-cover bg-no-repeat px-10 py-8 md:py-15"
+  style={
+    Object {
+      "backgroundImage": "url('undefined')",
+    }
+  }
+>
+  <h1
+    className="mb-8 text-center uppercase text-white text-heading-700 with-inner-html"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "People growing trees the right way",
+      }
+    }
+    data-testid="txt"
+  />
+  <h2
+    className="mb-8 max-w-lg text-center text-white text-heading-200"
+    data-testid="txt"
+  >
+    Unlocking the funding and training opportunities needed to grow millions of trees the right way.
+  </h2>
+  <a
+    className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+    href="auth/signup"
+    onClick={[Function]}
+    onMouseEnter={[Function]}
+    onTouchStart={[Function]}
+  >
+    <span
+      className="text-bold-caption-200 pt-0.75 leading-3"
+    >
+      Sign up
+    </span>
+  </a>
+</div>
+`;

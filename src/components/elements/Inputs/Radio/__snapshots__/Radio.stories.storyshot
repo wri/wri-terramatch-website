@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/Radio Default 1`] = `
+<label
+  className="flex items-center undefined"
+  htmlFor=":r1d:"
+>
+  <p
+    className="text-light-caption-200"
+    data-testid="txt"
+  >
+    Radio Label
+  </p>
+  <input
+    checked={true}
+    id=":r1d:"
+    label="Radio Label"
+    type="radio"
+  />
+</label>
+`;

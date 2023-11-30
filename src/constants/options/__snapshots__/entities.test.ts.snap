@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot getEntitiesOptions 1`] = `
+[
+  {
+    "title": "Project",
+    "value": "projects",
+  },
+  {
+    "title": "Site",
+    "value": "sites",
+  },
+  {
+    "title": "Nursery",
+    "value": "nurseries",
+  },
+  {
+    "title": "Project Reports",
+    "value": "project-reports",
+  },
+  {
+    "title": "Site Reports",
+    "value": "site-reports",
+  },
+  {
+    "title": "Nursery Reports",
+    "value": "nursery-reports",
+  },
+]
+`;

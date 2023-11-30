@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] = `
+<div
+  className="p-4"
+>
+  <div
+    className="relative overflow-hidden rounded-lg shadow"
+  >
+    <div
+      className="h-[211px] w-full relative"
+    >
+      <img
+        alt=""
+        className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+        data-nimg="1"
+        decoding="async"
+        height={211}
+        loading="lazy"
+        onError={[Function]}
+        onLoad={[Function]}
+        role="presentation"
+        src="https://picsum.photos/seed/1mPXM8RR/640/480"
+        style={
+          Object {
+            "color": "transparent",
+            "objectFit": "cover",
+          }
+        }
+        width={1440}
+      />
+      <div
+        className="absolute top-0 right-0 left-0 bottom-0"
+      >
+        <div
+          className="flex justify-between p-3"
+        >
+          <div
+            className="ml-auto flex items-center"
+          >
+            <a
+              className="z-10 mr-2.5"
+              href="https://picsum.photos/seed/tNNswMG7ID/640/480"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onTouchStart={[Function]}
+              target="_blank"
+            >
+              <div
+                style={
+                  Object {
+                    "height": 32,
+                    "width": 32,
+                  }
+                }
+              />
+            </a>
+            <button
+              className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+              onClick={[Function]}
+            >
+              <div
+                style={
+                  Object {
+                    "height": 32,
+                    "width": 32,
+                  }
+                }
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="px-8 py-4"
+    >
+      <p
+        className="text-bold-body-300"
+        data-testid="txt"
+      >
+        Fugit deleniti hic optio totam beatae.
+      </p>
+      <p
+        className="mt-2 text-light-body-300"
+        data-testid="txt"
+      >
+        30/10/2022
+      </p>
+    </div>
+    <div
+      className="absolute inset-0 cursor-pointer"
+      onClick={[Function]}
+    />
+  </div>
+</div>
+`;

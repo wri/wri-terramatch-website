@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/ExpandedCard Default 1`] = `
+<div
+  className="rounded-lg bg-primary-50"
+>
+  <div
+    className="flex items-center gap-4 px-5 py-4"
+  >
+    <p>
+      Header
+    </p>
+  </div>
+  <div
+    className="border-t border-neutral-100 px-5 py-6"
+  >
+    <p>
+      Body
+    </p>
+  </div>
+</div>
+`;

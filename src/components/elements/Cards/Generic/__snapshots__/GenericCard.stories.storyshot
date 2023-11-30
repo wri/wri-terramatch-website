@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/GenericCard Default 1`] = `
+<div
+  className="h-[530px] max-w-xs flex w-full flex-col overflow-hidden rounded-lg border border-neutral-500 border-opacity-25 bg-white"
+>
+  <div
+    className="relative flex aspect-[5/3] min-h-[180px] items-start justify-between bg-cover bg-center bg-no-repeat p-4"
+    style={
+      Object {
+        "backgroundImage": "url(static/media/public/images/green-leaves.webp)",
+      }
+    }
+  >
+    <div
+      className="flex w-full items-start justify-between"
+    >
+      <button
+        className="flex items-center justify-center rounded-full hover:bg-opacity-60 flex h-8 w-8 items-center justify-center rounded-full bg-error-500"
+      >
+        <div
+          style={
+            Object {
+              "height": 20,
+              "width": 15,
+            }
+          }
+        />
+      </button>
+      <div
+        className="flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
+      >
+        <p
+          className="text-black mt-[3px] text-bold-caption-200"
+          data-testid="txt"
+        >
+          Completed
+        </p>
+      </div>
+    </div>
+    <div
+      className="absolute bottom-0 right-0 left-0 flex gap-2 px-6 py-2 bg-black items-center"
+    >
+      <p
+        className="text-white text-body-400"
+        data-testid="txt"
+      >
+        Last report:
+      </p>
+      <p
+        className="text-white text-body-900"
+        data-testid="txt"
+      >
+        24/05/2023
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex-1 px-6 py-4"
+  >
+    <p
+      className="mb-3 text-heading-300"
+      data-testid="txt"
+    >
+      Test
+    </p>
+    <div
+      className="flex items-start gap-2 border-b border-neutral-500 border-opacity-25 py-3 last:border-none"
+    >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
+      <p
+        className="text-body-400 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Country: UK",
+          }
+        }
+        data-testid="txt"
+      />
+    </div>
+    <div
+      className="flex items-start gap-2 border-b border-neutral-500 border-opacity-25 py-3 last:border-none"
+    >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
+      <p
+        className="text-body-400 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "<strong>Date Created:</strong> 24/08/2023",
+          }
+        }
+        data-testid="txt"
+      />
+    </div>
+  </div>
+  <div
+    className="px-6 py-4.5"
+  >
+    <button
+      className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-full justify-center"
+    >
+      <span
+        className="text-bold-caption-200 pt-0.75 leading-3"
+      >
+        View
+      </span>
+    </button>
+  </div>
+</div>
+`;

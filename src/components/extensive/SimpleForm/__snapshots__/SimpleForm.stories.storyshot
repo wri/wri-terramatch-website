@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Form/Simple Default 1`] = `
+<div
+  className="flex w-full justify-center bg-background px-3"
+/>
+`;

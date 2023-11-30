@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
+<div
+  className="w-full overflow-hidden rounded-xl shadow"
+>
+  <div
+    className="bg-white p-8"
+  >
+    <p
+      className="mb-2 text-bold-headline-800"
+      data-testid="txt"
+    >
+      Get Ready for Funding Opportunities
+    </p>
+    <p
+      className="text-light-subtitle-400"
+      data-testid="txt"
+    >
+      Keep your information updated to have more chances of having a successful application.
+    </p>
+  </div>
+  <div
+    className="flex flex-col gap-8 bg-taskList bg-cover bg-no-repeat p-8 pb-10"
+  >
+    <div
+      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-5 shadow  border-neutral-200 bg-white"
+    >
+      <div
+        className="flex min-w-0 items-center gap-4"
+      >
+        <div
+          style={
+            Object {
+              "height": 60,
+              "width": 60,
+            }
+          }
+        />
+        <div>
+          <p
+            className="mb-1 text-bold-subtitle-500"
+            data-testid="txt"
+          >
+            Organizational Information
+          </p>
+          <p
+            className="text-light-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Keep your profile updated to have more chances of having a successful application. ",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+      </div>
+      <a
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          View
+        </span>
+      </a>
+    </div>
+    <div
+      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-5 shadow  border-neutral-200 bg-white"
+    >
+      <div
+        className="flex min-w-0 items-center gap-4"
+      >
+        <div
+          style={
+            Object {
+              "height": 60,
+              "width": 60,
+            }
+          }
+        />
+        <div>
+          <p
+            className="mb-1 text-bold-subtitle-500"
+            data-testid="txt"
+          >
+            Pitches
+          </p>
+          <p
+            className="text-light-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Start a pitch or edit your pitches to apply for funding opportunities. To go to create a pitch, manage your pitches/funding applications, tap on \\"view\\".",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+      </div>
+      <a
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        href="/"
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          View
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
+<div
+  className="h-[203px] w-full relative"
+>
+  <img
+    alt=""
+    className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+    data-nimg="1"
+    decoding="async"
+    height={40}
+    loading="lazy"
+    onError={[Function]}
+    onLoad={[Function]}
+    role="presentation"
+    src="/img.jpg"
+    style={
+      Object {
+        "color": "transparent",
+        "objectFit": "cover",
+      }
+    }
+    width={40}
+  />
+  <div
+    className="absolute top-0 right-0 left-0 bottom-0"
+  >
+    <div
+      className="m-auto flex h-full w-full max-w-7xl flex-col items-start justify-between p-10 text-white"
+    >
+      <button
+        className="gap-2 p-0 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <div
+          style={
+            Object {
+              "height": 32,
+              "width": 32,
+            }
+          }
+        />
+        <span
+          className="text-bold-body-300"
+        >
+          Back to somewhere
+        </span>
+      </button>
+      <h1
+        className="text-heading-700"
+        data-testid="txt"
+      >
+        [Title]
+      </h1>
+    </div>
+  </div>
+</div>
+`;

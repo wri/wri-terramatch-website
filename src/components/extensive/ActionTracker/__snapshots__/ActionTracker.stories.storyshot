@@ -1,0 +1,422 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default 1`] = `
+<div
+  className="flex h-full max-h-[567px] min-h-[492px] flex-col items-center rounded-xl border border-neutral border-opacity-30 bg-white px-4 py-6"
+>
+  <div
+    style={
+      Object {
+        "height": 36,
+        "width": 36,
+      }
+    }
+  />
+  <p
+    className="mb-2 text-heading-500"
+    data-testid="txt"
+  >
+    A title
+  </p>
+  <ul
+    className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4"
+  >
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="Card 1"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              Card 1
+            </p>
+            <div
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-bold-caption-100"
+                data-testid="txt"
+              >
+                Awaiting
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            cta
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="Card 2"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              Card 2
+            </p>
+            <div
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-bold-caption-100"
+                data-testid="txt"
+              >
+                Edit
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            cta
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="Card 3"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              Card 3
+            </p>
+            <div
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-bold-caption-100"
+                data-testid="txt"
+              >
+                Error
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            cta
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="Card 4"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              Card 4
+            </p>
+            <div
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-bold-caption-100"
+                data-testid="txt"
+              >
+                Success
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            cta
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+    <li>
+      <a
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        href="/"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+        title="Card 5"
+      >
+        <div
+          className="mx-3 mb-2 mt-3"
+        >
+          <div
+            className="mb-1 flex items-start gap-3"
+          >
+            <p
+              className="flex-1 text-body-500"
+              data-testid="txt"
+            >
+              Card 5
+            </p>
+            <div
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-bold-caption-100"
+                data-testid="txt"
+              >
+                Warning
+              </p>
+            </div>
+          </div>
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+        </div>
+        <div
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+        >
+          <p
+            className="text-body-500"
+            data-testid="txt"
+          >
+            cta
+          </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Empty 1`] = `
+<div
+  className="flex h-full max-h-[567px] min-h-[492px] flex-col items-center rounded-xl border border-neutral border-opacity-30 bg-white px-4 py-6"
+>
+  <div
+    style={
+      Object {
+        "height": 36,
+        "width": 36,
+      }
+    }
+  />
+  <p
+    className="mb-2 text-heading-500"
+    data-testid="txt"
+  >
+    Empty State
+  </p>
+  <div
+    className="mt-4 flex h-full w-full flex-col items-center justify-center rounded-lg border border-neutral-300 bg-neutral-50 p-6"
+  >
+    <p
+      className="mb-4 text-bold-body-300"
+      data-testid="txt"
+    >
+      Empty
+    </p>
+    <p
+      className="text-center text-light-caption-200"
+      data-testid="txt"
+    >
+      Empty Subtitle
+    </p>
+    <button
+      className="mt-6 bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+    >
+      <span
+        className="text-bold-caption-200 pt-0.75 leading-3"
+      >
+        CTA here
+      </span>
+    </button>
+  </div>
+</div>
+`;

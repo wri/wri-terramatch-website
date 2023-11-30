@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Fields/FieldsExpander Default 1`] = `
+<div>
+  <div
+    className="mb-2 flex items-center justify-between rounded-lg bg-primary-100 p-4"
+  >
+    <p
+      className="text-bold-subtitle-500"
+      data-testid="txt"
+    >
+      Key Metrics and Information
+    </p>
+    <button
+      onClick={[Function]}
+    >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
+    </button>
+  </div>
+  <div
+    className="flex flex-col space-y-2"
+  >
+    <div
+      className="flex flex-col rounded-lg bg-neutral-50 p-4"
+    >
+      <div
+        className="flex items-center justify-between"
+      >
+        <p
+          className="text-bold-subtitle-500"
+          data-testid="txt"
+        >
+          Metric
+        </p>
+        <p
+          className="text-light-subtitle-400"
+          data-testid="txt"
+        >
+          1,321
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col rounded-lg bg-neutral-50 p-4"
+    >
+      <div
+        className="flex items-center justify-between"
+      >
+        <p
+          className="text-bold-subtitle-500"
+          data-testid="txt"
+        >
+          News Article
+        </p>
+        <a
+          href="https://google.com"
+          onClick={[Function]}
+          onMouseEnter={[Function]}
+          onTouchStart={[Function]}
+          target="_blank"
+        >
+          <p
+            className="leading-normal text-primary-500 underline text-bold-subtitle-400"
+            data-testid="txt"
+          >
+            Visit
+          </p>
+        </a>
+      </div>
+    </div>
+    <div
+      className="flex flex-col rounded-lg bg-neutral-50 p-4"
+    >
+      <div
+        className="flex items-center justify-between"
+      >
+        <div
+          className="space-y-1"
+        >
+          <p
+            className="text-bold-subtitle-500"
+            data-testid="txt"
+          >
+            2023 Report
+          </p>
+        </div>
+        <button
+          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          onClick={[Function]}
+        >
+          <span
+            className="text-bold-caption-200 pt-0.75 leading-3"
+          >
+            Download
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

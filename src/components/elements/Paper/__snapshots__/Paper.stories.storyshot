@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Paper Default 1`] = `
+<div
+  className="w-full rounded-xl bg-white p-8 shadow"
+>
+  <p>
+    Paper content
+  </p>
+</div>
+`;

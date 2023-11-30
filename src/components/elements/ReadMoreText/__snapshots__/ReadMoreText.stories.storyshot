@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/ReadMoreText Default 1`] = `
+<div
+  className="max-w-[100px]"
+>
+  <div
+    className="line-clamp-1"
+  >
+    <p
+      className="whitespace-pre-line"
+      data-testid="txt"
+    >
+      Some really long text with something to line clamp and then eventually read more
+    </p>
+  </div>
+</div>
+`;

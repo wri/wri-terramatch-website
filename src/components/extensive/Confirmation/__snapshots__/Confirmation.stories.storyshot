@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Confirmation Default 1`] = `
+<section
+  className="min-h-[calc(100vh-74px)] w-full bg-primary-50"
+>
+  <div
+    className="mx-auto my-10 w-full max-w-[800px]"
+  >
+    <div
+      className="flex w-full flex-col items-center gap-2 rounded-lg border-2 border-neutral-100 bg-white p-14"
+    >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 50,
+          }
+        }
+      />
+      <p
+        className="mt-6 uppercase text-bold-headline-1000"
+        data-testid="txt"
+      >
+        Request success!
+      </p>
+    </div>
+  </div>
+</section>
+`;

@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Text Body 100 1`] = `
+<p
+  className="text-body-100"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 200 1`] = `
+<p
+  className="text-body-200"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 300 1`] = `
+<p
+  className="text-body-300"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 400 1`] = `
+<p
+  className="text-body-400"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 500 1`] = `
+<p
+  className="text-body-500"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 600 1`] = `
+<p
+  className="text-body-600"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 700 1`] = `
+<p
+  className="text-body-700"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 800 1`] = `
+<p
+  className="text-body-800"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 900 1`] = `
+<p
+  className="text-body-900"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 1000 1`] = `
+<p
+  className="text-body-1000"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 1100 1`] = `
+<p
+  className="text-body-1100"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Body 1200 1`] = `
+<p
+  className="text-body-1200"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Button 100 1`] = `
+<p
+  className="text-button-100"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Button 200 1`] = `
+<p
+  className="text-button-200"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Button 300 1`] = `
+<p
+  className="text-button-300"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Button 400 1`] = `
+<p
+  className="text-button-400"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 100 1`] = `
+<p
+  className="text-heading-100"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 200 1`] = `
+<p
+  className="text-heading-200"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 300 1`] = `
+<p
+  className="text-heading-300"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 400 1`] = `
+<p
+  className="text-heading-400"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 500 1`] = `
+<p
+  className="text-heading-500"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 600 1`] = `
+<p
+  className="text-heading-600"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
+
+exports[`Storyshots Components/Elements/Text Heading 700 1`] = `
+<p
+  className="text-heading-700"
+  data-testid="txt"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+`;
