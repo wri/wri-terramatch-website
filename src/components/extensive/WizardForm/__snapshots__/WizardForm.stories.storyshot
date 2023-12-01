@@ -1,0 +1,835 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
+<div
+  className="flex w-full justify-center bg-background px-3"
+>
+  <div>
+    <div
+      className="sticky top-[74px] z-40 flex border-primary-50 bg-leavesWithOverlay bg-cover bg-center p-6"
+    >
+      <div
+        className="mx-auto flex w-full min-w-0 max-w-7xl items-center gap-8"
+      >
+        <div
+          className="min-w-0 flex-grow text-white"
+        >
+          <p
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-bold-body-300"
+            data-testid="txt"
+          >
+            Progress: 1/8 steps complete
+          </p>
+          <p
+            className="text-bold-caption-200"
+            data-testid="txt"
+          >
+            Unsaved
+          </p>
+        </div>
+        <button
+          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          onClick={[Function]}
+        >
+          <span
+            className="text-bold-caption-200 pt-0.75 leading-3"
+          >
+            Close and continue later
+          </span>
+        </button>
+      </div>
+    </div>
+    <div
+      className="mx-auto mt-0 max-w-7xl px-6 py-10 xl:px-0"
+    >
+      <div
+        className="flex h-full w-full"
+      >
+        <div
+          aria-orientation="vertical"
+          className="flex w-full max-w-[86px] flex-grow flex-col md:max-w-[280px] h-[calc(100vh-285px)] overflow-auto"
+          role="tablist"
+        >
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r2t:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 1<br/> Simple Inputs",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r2u:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 2<br/> Dropdown Inputs",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="true"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            data-headlessui-state="selected"
+            disabled={false}
+            id="headlessui-tabs-tab-:r2v:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={0}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 3<br/> Select Inputs",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r30:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 4<br/> File Uploader",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r31:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 5<br/> Tree species input",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r32:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 6<br/> Funding Sources",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r33:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 7<br/> Info of proposed projects",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r34:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Step 8<br/> Map",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <div
+            className="flex-1 border border-neutral-100 bg-white"
+          />
+        </div>
+        <div
+          className="w-full overflow-hidden border border-l-0 border-neutral-100"
+        >
+          <div
+            className="flex-1 bg-white px-16 pt-8 pb-15 h-[calc(100vh-287px)] overflow-auto"
+            id="step"
+          >
+            <div
+              className="flex items-center justify-between"
+            >
+              <p
+                className="text-heading-700"
+                data-testid="txt"
+              >
+                Select Inputs
+              </p>
+            </div>
+            <p
+              className="mt-8 text-body-600 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "These are all simple inputs",
+                }
+              }
+              data-testid="txt"
+            />
+            <div
+              className="my-8 h-[2px] w-full bg-neutral-200"
+            />
+            <ul>
+              <li
+                className="mt-8"
+              >
+                <div
+                  className="relative space-y-2"
+                >
+                  <label
+                    className="mr-2 inline uppercase text-bold-body-300"
+                    data-testid="txt"
+                    htmlFor=":r35:"
+                  >
+                    Select component *
+                  </label>
+                  <div
+                    className="space-y-3"
+                  >
+                    <label
+                      className="flex items-center flex-row-reverse justify-end gap-3"
+                      htmlFor=":r36:"
+                    >
+                      <p
+                        className="text-light-caption-200"
+                        data-testid="txt"
+                      >
+                        Option 1
+                      </p>
+                      <input
+                        checked={false}
+                        className="flex-row-reverse justify-end gap-3"
+                        id=":r36:"
+                        label="Option 1"
+                        onClick={[Function]}
+                        type="radio"
+                      />
+                    </label>
+                    <label
+                      className="flex items-center flex-row-reverse justify-end gap-3"
+                      htmlFor=":r37:"
+                    >
+                      <p
+                        className="text-light-caption-200"
+                        data-testid="txt"
+                      >
+                        Option 2
+                      </p>
+                      <input
+                        checked={false}
+                        className="flex-row-reverse justify-end gap-3"
+                        id=":r37:"
+                        label="Option 2"
+                        onClick={[Function]}
+                        type="radio"
+                      />
+                    </label>
+                    <label
+                      className="flex items-center flex-row-reverse justify-end gap-3"
+                      htmlFor=":r38:"
+                    >
+                      <p
+                        className="text-light-caption-200"
+                        data-testid="txt"
+                      >
+                        Option 3
+                      </p>
+                      <input
+                        checked={false}
+                        className="flex-row-reverse justify-end gap-3"
+                        id=":r38:"
+                        label="Option 3"
+                        onClick={[Function]}
+                        type="radio"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </li>
+              <li
+                className="mt-8"
+              >
+                <div
+                  className="relative space-y-2"
+                >
+                  <label
+                    className="mr-2 inline uppercase text-bold-body-300"
+                    data-testid="txt"
+                    htmlFor=":r39:"
+                  >
+                    Multi-Select component *
+                  </label>
+                  <div
+                    className="space-y-3"
+                  >
+                    <div
+                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+                    >
+                      <label
+                        className="w-full"
+                        htmlFor=":r3a:"
+                      >
+                        <label
+                          className="max-w-[365px] undefined text-body-600 with-inner-html"
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "Option 1 ",
+                            }
+                          }
+                          data-testid="txt"
+                          htmlFor=":r3a:"
+                        />
+                      </label>
+                      <input
+                        checked={false}
+                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+                        id=":r3a:"
+                        name=""
+                        onClick={[Function]}
+                        type="checkbox"
+                      />
+                    </div>
+                    <div
+                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+                    >
+                      <label
+                        className="w-full"
+                        htmlFor=":r3b:"
+                      >
+                        <label
+                          className="max-w-[365px] undefined text-body-600 with-inner-html"
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "Option 2 ",
+                            }
+                          }
+                          data-testid="txt"
+                          htmlFor=":r3b:"
+                        />
+                      </label>
+                      <input
+                        checked={false}
+                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+                        id=":r3b:"
+                        name=""
+                        onClick={[Function]}
+                        type="checkbox"
+                      />
+                    </div>
+                    <div
+                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+                    >
+                      <label
+                        className="w-full"
+                        htmlFor=":r3c:"
+                      >
+                        <label
+                          className="max-w-[365px] undefined text-body-600 with-inner-html"
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "Option 3 ",
+                            }
+                          }
+                          data-testid="txt"
+                          htmlFor=":r3c:"
+                        />
+                      </label>
+                      <input
+                        checked={false}
+                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+                        id=":r3c:"
+                        name=""
+                        onClick={[Function]}
+                        type="checkbox"
+                      />
+                    </div>
+                    <div
+                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
+                    >
+                      <label
+                        className="w-full"
+                        htmlFor=":r3d:"
+                      >
+                        <label
+                          className="max-w-[365px] undefined text-body-600 with-inner-html"
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "Option 4 ",
+                            }
+                          }
+                          data-testid="txt"
+                          htmlFor=":r3d:"
+                        />
+                      </label>
+                      <input
+                        checked={false}
+                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400"
+                        id=":r3d:"
+                        name=""
+                        onClick={[Function]}
+                        type="checkbox"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div
+              className="w-full"
+            >
+              <div
+                className="flex w-full items-center justify-between mt-12"
+              >
+                <button
+                  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                  onClick={[Function]}
+                >
+                  <span
+                    className="text-bold-caption-200 pt-0.75 leading-3"
+                  >
+                    Back
+                  </span>
+                </button>
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                  disabled={false}
+                  onClick={[Function]}
+                >
+                  <span
+                    className="text-bold-caption-200 pt-0.75 leading-3"
+                  >
+                    Save and Continue
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
+<div
+  className="flex w-full justify-center bg-background px-3"
+>
+  <div>
+    <div
+      className="mx-auto mt-0 max-w-7xl px-6 py-10 xl:px-0"
+    >
+      <div
+        className="flex h-full w-full"
+      >
+        <div
+          aria-orientation="vertical"
+          className="flex w-full max-w-[86px] flex-grow flex-col md:max-w-[280px] h-[calc(100vh-285px)] overflow-auto"
+          role="tablist"
+        >
+          <button
+            aria-checked="false"
+            aria-selected="true"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            data-headlessui-state="selected"
+            disabled={false}
+            id="headlessui-tabs-tab-:r3e:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={0}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Simple Inputs",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3f:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Dropdown Inputs",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3g:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Select Inputs",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3h:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "File Uploader",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3i:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Tree species input",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3j:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "What are your funding sources?*",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3k:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Section subtitle",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <button
+            aria-checked="false"
+            aria-selected="false"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+            data-headlessui-state=""
+            disabled={false}
+            id="headlessui-tabs-tab-:r3l:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            role="option"
+            tabIndex={-1}
+          >
+            <p
+              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Draw on Map",
+                }
+              }
+              data-testid="txt"
+            />
+          </button>
+          <div
+            className="flex-1 border border-neutral-100 bg-white"
+          />
+        </div>
+        <div
+          className="w-full overflow-hidden border border-l-0 border-neutral-100"
+        >
+          <div
+            className="flex-1 bg-white px-16 pt-8 pb-15 h-[calc(100vh-287px)] overflow-auto"
+            id="step"
+          >
+            <div
+              className="flex items-center justify-between"
+            >
+              <p
+                className="text-heading-700"
+                data-testid="txt"
+              >
+                Simple Inputs
+              </p>
+            </div>
+            <p
+              className="mt-8 text-body-600 with-inner-html"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "These are all simple inputs",
+                }
+              }
+              data-testid="txt"
+            />
+            <div
+              className="my-8 h-[2px] w-full bg-neutral-200"
+            />
+            <ul>
+              <li
+                className="mt-8"
+              >
+                <div
+                  className="relative space-y-2"
+                >
+                  <label
+                    className="mr-2 inline uppercase text-bold-body-300"
+                    data-testid="txt"
+                    htmlFor=":r3m:"
+                  >
+                    Simple text field *
+                  </label>
+                  <div
+                    className="relative"
+                  >
+                    <input
+                      aria-describedby=":r3m:-description"
+                      aria-invalid={false}
+                      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+                      id=":r3m:"
+                      name="text_field"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onChangeCapture={[Function]}
+                      placeholder="Please enter ..."
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </li>
+              <li
+                className="mt-8"
+              >
+                <div
+                  className="relative space-y-2"
+                >
+                  <label
+                    className="mr-2 inline uppercase text-bold-body-300"
+                    data-testid="txt"
+                    htmlFor=":r3n:"
+                  >
+                    Simple number field *
+                  </label>
+                  <div
+                    className="relative"
+                  >
+                    <input
+                      aria-describedby=":r3n:-description"
+                      aria-invalid={false}
+                      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+                      id=":r3n:"
+                      name="number_field"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onChangeCapture={[Function]}
+                      onKeyDown={[Function]}
+                      placeholder="Please enter ..."
+                      type="number"
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div
+              className="w-full"
+            >
+              <div
+                className="flex w-full items-center justify-between mt-12"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                  disabled={false}
+                  onClick={[Function]}
+                >
+                  <span
+                    className="text-bold-caption-200 pt-0.75 leading-3"
+                  >
+                    Save
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

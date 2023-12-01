@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getRestorationStrategy 1`] = `
+[
+  {
+    "title": "Assisted Natural Regeneration",
+    "value": "assisted-natural-regeneration",
+  },
+  {
+    "title": "Direct Seeding",
+    "value": "direct-seeding",
+  },
+  {
+    "title": "Tree Planting",
+    "value": "tree-planting",
+  },
+]
+`;

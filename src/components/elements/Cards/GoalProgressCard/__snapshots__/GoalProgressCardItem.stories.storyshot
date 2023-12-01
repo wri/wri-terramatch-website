@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] = `
+<div
+  className="flex items-center justify-between"
+>
+  <div
+    style={
+      Object {
+        "height": undefined,
+        "width": 24,
+      }
+    }
+  />
+  <p
+    className="mr-auto whitespace-nowrap text-bold-caption-200"
+    data-testid="txt"
+  >
+    Trash Removed 
+  </p>
+  <p
+    className="ml-4 text-bold-subtitle-500"
+    data-testid="txt"
+  >
+    530000
+  </p>
+</div>
+`;

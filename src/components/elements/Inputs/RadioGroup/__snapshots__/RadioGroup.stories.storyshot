@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
+<div
+  className="relative space-y-2"
+>
+  <label
+    className="mr-2 inline uppercase text-bold-body-300"
+    data-testid="txt"
+  >
+    Radio Label 
+  </label>
+  <div
+    className="space-y-2"
+    id="headlessui-radiogroup-:r1e:"
+    onKeyDown={[Function]}
+    role="radiogroup"
+  >
+    <div
+      aria-checked="false"
+      data-headlessui-state=""
+      id="headlessui-radiogroup-option-:r1f:"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      role="radio"
+      tabIndex={0}
+    >
+      <div
+        className="rounded-lg border border-neutral-400 py-2 px-3"
+      >
+        <label
+          className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
+          htmlFor=":r1g:"
+        >
+          <p
+            className="text-light-caption-200"
+            data-testid="txt"
+          >
+            Yes
+          </p>
+          <input
+            checked={false}
+            className="flex flex-row-reverse items-center justify-end gap-3 "
+            id=":r1g:"
+            label="Yes"
+            type="radio"
+          />
+        </label>
+      </div>
+    </div>
+    <div
+      aria-checked="false"
+      data-headlessui-state=""
+      id="headlessui-radiogroup-option-:r1h:"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      role="radio"
+      tabIndex={-1}
+    >
+      <div
+        className="rounded-lg border border-neutral-400 py-2 px-3"
+      >
+        <label
+          className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
+          htmlFor=":r1i:"
+        >
+          <p
+            className="text-light-caption-200"
+            data-testid="txt"
+          >
+            No
+          </p>
+          <input
+            checked={false}
+            className="flex flex-row-reverse items-center justify-end gap-3 "
+            id=":r1i:"
+            label="No"
+            type="radio"
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;

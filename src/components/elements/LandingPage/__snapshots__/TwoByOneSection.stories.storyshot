@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/LandingPage/TwoByOneSection Primary 1`] = `
+<div
+  className="w-full md:flex md:flex-row-reverse bg-black"
+>
+  <div
+    className="md:w-[50%] md:py-16 md:px-20"
+  >
+    <div
+      className="h-[292px] bg-neutral-300"
+    >
+      Video placeholder
+    </div>
+  </div>
+  <div
+    className="flex items-center justify-center md:w-[50%]"
+  >
+    <div
+      className="flex flex-col items-start gap-4"
+    >
+      <div
+        className="flex max-w-[515px] flex-col items-start justify-center gap-8 py-9 px-12"
+      >
+        <p
+          className="text-white text-heading-700"
+          data-testid="txt"
+        >
+          Access Support Today
+        </p>
+        <p
+          className="text-white text-body-900"
+          data-testid="txt"
+        >
+          Behind TerraMatch is a team of restoration project specialists, who want to x, y, x. We are gathering a document of support materials to help projects prepare for upcoming applications and
+        </p>
+        <button
+          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        >
+          <span
+            className="text-bold-caption-200 pt-0.75 leading-3"
+          >
+            Launch Resource Library
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

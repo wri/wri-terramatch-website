@@ -1,0 +1,15 @@
+@tailwind components;
+
+@layer components {
+}
+
+.mouse-tooltip > .mapboxgl-popup-content {
+  padding: 4px;
+  background-color: rgba(100, 100, 100, 0.75);
+  color: white;
+}
+
+.mouse-tooltip > .mapboxgl-popup-tip {
+  border-right-color: rgba(100, 100, 100, 0.75) !important;
+  border-width: 6px;
+}

@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Fields/ProgressField Default 1`] = `
+<div
+  className="flex flex-col rounded-lg bg-neutral-50 p-4"
+>
+  <div
+    className="flex items-center justify-between"
+  >
+    <p
+      className="text-bold-subtitle-500"
+      data-testid="txt"
+    >
+      ProgressField
+    </p>
+    <div
+      className="w-25"
+    >
+      <p
+        className="text-light-subtitle-400"
+        data-testid="txt"
+      >
+        35
+        /
+        100
+      </p>
+      <div
+        className="h-[9px] w-full bg-neutral-200 "
+        role="progressbar"
+      >
+        <div
+          className="h-full bg-primary transition-all duration-300"
+          style={
+            Object {
+              "width": "35%",
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

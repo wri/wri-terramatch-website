@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test  snapShot test getFarmersEngagementStrategyOptions 1`] = `
+[
+  {
+    "title": "We provide paid jobs for farmers",
+    "value": "we-provide-paid-jobs-for-farmers",
+  },
+  {
+    "title": "We directly engage & benefit farmers",
+    "value": "we-directly-engage-benefit-farmers",
+  },
+  {
+    "title": "We provide indirect benefits to farmers",
+    "value": "we-provide-indirect-benefits-to-farmers",
+  },
+  {
+    "title": "We do not engage with farmers",
+    "value": "we-do-not-engage-with-farmers",
+  },
+]
+`;
+
+exports[`test  snapShot test getWomenEngagementStrategyOptions 1`] = `
+[
+  {
+    "title": "We provide paid jobs for women",
+    "value": "we-provide-paid-jobs-for-women",
+  },
+  {
+    "title": "We directly engage & benefit women",
+    "value": "we-directly-engage-benefit-women",
+  },
+  {
+    "title": "We provide indirect benefits to women",
+    "value": "we-provide-indirect-benefits-to-women",
+  },
+  {
+    "title": "We do not engage with women",
+    "value": "we-do-not-engage-with-women",
+  },
+]
+`;
+
+exports[`test  snapShot test getYoungerThan35EngagementStrategyOptions 1`] = `
+[
+  {
+    "title": "We provide paid jobs for people younger than 35",
+    "value": "we-provide-paid-jobs-for-people-younger-than-35",
+  },
+  {
+    "title": "We directly engage & benefit people younger than 35",
+    "value": "we-directly-engage-benefit-people-younger-than-35",
+  },
+  {
+    "title": "We provide indirect benefits to people younger than 35",
+    "value": "we-provide-indirect-benefits-to-people-younger-than-35",
+  },
+  {
+    "title": "We do not engage with people younger than 35",
+    "value": "we-do-not-engage-with-people-younger-than-35",
+  },
+]
+`;

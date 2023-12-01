@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/DataTable Default 1`] = `
+<div
+  className="relative space-y-2"
+>
+  <label
+    className="mr-2 inline uppercase text-bold-body-300"
+    data-testid="txt"
+  >
+    What are your funding sources? 
+  </label>
+  <p
+    className="text-light-body-300 with-inner-html"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "Add a description for jobs created.",
+      }
+    }
+    data-testid="txt"
+  />
+  <div
+    className="w-full pt-6"
+  >
+    <button
+      className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      onClick={[Function]}
+    >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 12,
+          }
+        }
+      />
+      <span
+        className="text-bold-caption-200 pt-0.75 leading-3"
+      >
+        Add funding source
+      </span>
+    </button>
+  </div>
+</div>
+`;

@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
+<div
+  className="border border-neutral-400"
+>
+  <div
+    className="flex min-h-screen w-full flex-col"
+  >
+    <header
+      className="sticky top-0 z-50 flex w-full flex-col justify-center border-b-4 border-primary bg-white px-4 lg:flex-row"
+    >
+      <section
+        className="mx-auto w-full max-w-[1218px] flex h-[70px] items-center justify-between"
+      >
+        <div
+          className="hidden items-center gap-8 lg:flex"
+        >
+          <div
+            className="absolute top-4 left-[50%] translate-x-[-50%]"
+          >
+            <div
+              className="block lg:hidden relative w-fit"
+              data-headlessui-state=""
+            >
+              <button
+                aria-expanded={false}
+                className="flex items-center justify-between p-2"
+                data-headlessui-state=""
+                id="headlessui-popover-button-:r4j:"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                type="button"
+              >
+                <span
+                  className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+                >
+                  English
+                </span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <div
+              className="font-regular uppercase xl:w-full hover:underline lg:mr-2"
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                >
+                  <span
+                    className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+                    data-testid="txt"
+                  >
+                    Home
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div>
+            <div
+              className="font-regular uppercase xl:w-full hover:underline lg:mr-2"
+            >
+              <a
+                href="https://terramatchsupport.zendesk.com/"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                >
+                  <span
+                    className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+                    data-testid="txt"
+                  >
+                    Support
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div
+            className="hidden h-4 w-[1px] bg-neutral-500 lg:mx-2 lg:block"
+          />
+          <div
+            className="font-regular uppercase xl:w-full hover:underline"
+          >
+            <a
+              href="/auth/login"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onTouchStart={[Function]}
+            >
+              <div
+                className="flex items-center"
+              >
+                <span
+                  className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+                  data-testid="txt"
+                >
+                  Sign in
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            className="hidden lg:block relative w-fit"
+            data-headlessui-state=""
+          >
+            <button
+              aria-expanded={false}
+              className="flex items-center justify-between p-2"
+              data-headlessui-state=""
+              id="headlessui-popover-button-:r4o:"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              type="button"
+            >
+              <span
+                className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+              >
+                English
+              </span>
+            </button>
+          </div>
+        </div>
+        <button
+          className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block lg:hidden"
+          disabled={false}
+          onClick={[Function]}
+        />
+      </section>
+    </header>
+    <main
+      className="flex min-h-[calc(100vh-74px)] flex-1 flex-col undefined"
+    >
+      <div
+        className="h-[400px] "
+      />
+    </main>
+  </div>
+</div>
+`;

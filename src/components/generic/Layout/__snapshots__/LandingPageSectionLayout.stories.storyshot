@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/Layouts/LandingPageSectionLayout Default 1`] = `
+<div
+  className="flex flex-col items-center  py-9 md:py-15"
+>
+  <p
+    className="text-center underline text-heading-700"
+    data-testid="txt"
+  >
+    preTitle
+  </p>
+  <p
+    className="text-center text-heading-700"
+    data-testid="txt"
+  >
+    Title
+  </p>
+  <div
+    className="h-[400px] w-[400px] bg-neutral-200"
+  >
+    Children
+  </div>
+</div>
+`;

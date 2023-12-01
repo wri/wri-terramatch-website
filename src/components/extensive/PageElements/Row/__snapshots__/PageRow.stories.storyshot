@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Page/Row Default 1`] = `
+<div
+  className="mx-auto flex max-w-7xl flex-wrap gap-8"
+>
+  <div
+    className="min-w-[500px] flex-1 space-y-8"
+  >
+    <div
+      className="w-full rounded-xl bg-white p-8 shadow"
+    >
+      <div
+        className="flex flex-wrap justify-between"
+      >
+        <p
+          className="flex-1 text-bold-headline-1000"
+          data-testid="txt"
+        >
+          card title
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="min-w-[500px] flex-1 space-y-8"
+  >
+    <div
+      className="w-full rounded-xl bg-white p-8 shadow"
+    >
+      <div
+        className="flex flex-wrap justify-between"
+      >
+        <p
+          className="flex-1 text-bold-headline-1000"
+          data-testid="txt"
+        >
+          card title
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

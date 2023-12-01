@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
+<div
+  className="flex h-full w-full"
+>
+  <div
+    aria-orientation="vertical"
+    className="flex w-full max-w-[86px] flex-grow flex-col md:max-w-[280px]"
+    role="tablist"
+  >
+    <button
+      aria-checked="false"
+      aria-selected="true"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+      data-headlessui-state="selected"
+      id="headlessui-tabs-tab-:r2h:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onMouseDown={[Function]}
+      role="option"
+      tabIndex={0}
+    >
+      <p
+        className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Organization Details",
+          }
+        }
+        data-testid="txt"
+      />
+    </button>
+    <button
+      aria-checked="false"
+      aria-selected="false"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+      data-headlessui-state=""
+      id="headlessui-tabs-tab-:r2i:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onMouseDown={[Function]}
+      role="option"
+      tabIndex={-1}
+    >
+      <p
+        className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Social Media Presence",
+          }
+        }
+        data-testid="txt"
+      />
+    </button>
+    <button
+      aria-checked="false"
+      aria-selected="false"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+      data-headlessui-state=""
+      id="headlessui-tabs-tab-:r2j:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onMouseDown={[Function]}
+      role="option"
+      tabIndex={-1}
+    >
+      <p
+        className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a very long tab title too long to fit into one line",
+          }
+        }
+        data-testid="txt"
+      />
+    </button>
+    <button
+      aria-checked="false"
+      aria-selected="false"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+      data-headlessui-state=""
+      id="headlessui-tabs-tab-:r2k:"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onMouseDown={[Function]}
+      role="option"
+      tabIndex={-1}
+    >
+      <p
+        className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Additional Information",
+          }
+        }
+        data-testid="txt"
+      />
+    </button>
+    <div
+      className="flex-1 border border-neutral-100 bg-white"
+    />
+  </div>
+  <div
+    className="w-full overflow-hidden border border-l-0 border-neutral-100"
+  >
+    <div>
+      step 1 body
+    </div>
+  </div>
+</div>
+`;

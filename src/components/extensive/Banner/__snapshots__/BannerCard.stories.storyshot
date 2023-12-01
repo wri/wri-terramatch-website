@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Banner/BannerCard Default 1`] = `
+<section
+  className="mx-auto w-full max-w-[1218px] flex justify-end"
+>
+  <div
+    className="w-[420px] rounded-sm bg-white"
+  >
+    <div
+      className="flex gap-4 p-4"
+    >
+      <div
+        className="flex h-20 w-20 items-center justify-center rounded-xl border border-neutral-150"
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 35,
+            }
+          }
+        />
+      </div>
+      <div
+        className="flex flex-1 flex-col gap-1"
+      >
+        <p
+          className="text-body-900"
+          data-testid="txt"
+        >
+          Reforestation in Uganda
+        </p>
+        <p
+          className="text-body-800"
+          data-testid="txt"
+        >
+          Organization Type: Government
+        </p>
+      </div>
+    </div>
+    <div
+      className="bg-neutral-150 p-4"
+    >
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-full justify-center"
+      >
+        <span
+          className="text-bold-caption-200 pt-0.75 leading-3"
+        >
+          View Profile
+        </span>
+      </button>
+    </div>
+  </div>
+</section>
+`;

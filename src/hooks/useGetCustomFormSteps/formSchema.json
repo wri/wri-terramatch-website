@@ -1,0 +1,827 @@
+{
+  "uuid": "75ec24a3-52be-4577-8bd8-d88db492ff2f",
+  "version": 0,
+  "title": "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+  "subtitle": "BEFORE YOU BEGIN, PLEASE READ CAREFULLY.  THIS FORM IS FOR ENTERPRISES ONLY. SELECT OTHER FORM IF YOU ARE A NON PROFIT",
+  "description": "BEFORE YOU BEGIN, PLEASE READ CAREFULLY.  THIS FORM IS FOR ENTERPRISES ONLY. SELECT OTHER FORM IF YOU ARE A NON PROFIT<br>TerraFund for AFR100: Landscapes will fund projects based in three African Landscapes: the Ghana Cocoa Belt, the Greater Rusizi Basin of Burundi, the Democratic Republic of the Congo, and Rwanda, and the Great Rift Valley of Kenya. This Expression of Interest (EOI) will be the first of two application phases. This form must be submitted by May 5 to be considered for funding. We will let applicants know if they will be invited to submit a full Request for Proposals (RFP) application on May 15.<br>View more details about the application process and eligibility requirements <a href=\"https://terramatchsupport.zendesk.com/hc/en-us/categories/13162555518491-TerraFund-for-AFR100-Landscapes-\" target=\"_blank\">here</a>.",
+  "duration": "duration",
+  "documentation": "https://wri-rm-wp-production.cube-sites.com/wp-content/uploads/2023/03/Terrafund-RFP-enterprises.pdf",
+  "document": "",
+  "submission_message": "submission_message",
+  "published": true,
+  "stage_id": "b9f253b2-d7d7-4a2f-8172-f8dc3e55c0b9",
+  "form_sections": [
+    {
+      "uuid": "e0e9d03a-115f-4deb-9a64-5a87f2fffa93",
+      "order": 1,
+      "title": "Organizational Information: Governance  ",
+      "description": "Please answer the questions below so that we can understand your organization's mission and structure. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a>",
+      "form_questions": [
+        {
+          "uuid": "3e34aab6-f6fe-45f2-9d2c-581a69dbd1bc",
+          "input_type": "select",
+          "label": "Headquarters address Country",
+          "order": 1,
+          "options_list": "countries"
+        },
+        {
+          "uuid": "a90630bf-b77f-4b6e-a828-013f4d0ac1fb",
+          "input_type": "select",
+          "label": "What Countries is your organisation legally registered in?",
+          "description": "Please select the relevant countries where your organization is legally registered to operate.",
+          "validation": { "required": false, "min": 1, "max": 3 },
+          "multichoice": true,
+          "order": 2,
+          "options_list": "countries"
+        },
+        {
+          "uuid": "d64877a6-fc33-4bd8-9f75-43e77a5112ab",
+          "input_type": "long-text",
+          "label": "Organization Mission",
+          "description": "Please describe your organization's mission.",
+          "validation": { "required": true, "max": 300 },
+          "order": 3
+        },
+        {
+          "uuid": "ced1d792-2f5f-40b0-8686-86e048c98406",
+          "input_type": "date",
+          "label": "On what date was your organisation founded?",
+          "order": 4
+        },
+        {
+          "uuid": "6827e8c1-632c-47cf-a45b-43b8bfba78f2",
+          "input_type": "select",
+          "label": "In what languages can your organisation communicate?",
+          "description": "Please select as many as apply. TerraMatch is available only in the languages listed below.",
+          "validation": { "required": true, "min": 1, "max": 3 },
+          "multichoice": true,
+          "order": 5,
+          "options": [
+            {
+              "uuid": "7eb9e4be-a278-42e1-8cd3-061af40378fd",
+              "slug": "english",
+              "form_question_id": 5,
+              "label": "English",
+              "order": 1,
+              "image_url": null
+            },
+            {
+              "uuid": "dd42ee93-5aba-4310-8c5e-0d3a3811fe18",
+              "slug": "french",
+              "form_question_id": 5,
+              "label": "French",
+              "order": 2,
+              "image_url": null
+            },
+            {
+              "uuid": "ca3af231-bb11-4f8d-8dfc-9e732af03444",
+              "slug": "spanish",
+              "form_question_id": 5,
+              "label": "Spanish",
+              "order": 3,
+              "image_url": null
+            },
+            {
+              "uuid": "72546591-92b3-4631-a742-dd9d1adc92cb",
+              "slug": "portugese",
+              "form_question_id": 5,
+              "label": "Portugese",
+              "order": 4,
+              "image_url": null
+            }
+          ]
+        },
+        {
+          "uuid": "6303cc5c-cbd7-4f46-bed6-d339c4c2f00b",
+          "input_type": "file",
+          "label": "Please provide at least two letters of reference",
+          "description": "Reference letters could come from a verifiable former donor or investor, a former or current project partner, a traditional or community leader, or any other individual or organization that can vouch for your work. We highly recommend that applicants submit an endorsement letter from a local or national government agency. Upload only .pdf files less than 5mb.",
+
+          "validation": { "required": false },
+          "multichoice": true,
+          "order": 6,
+          "reference": { "model": "organisation", "uuid": null, "collection": "reference" },
+          "accept": ["application/pdf"],
+          "max": 5
+        },
+        {
+          "uuid": "981edb54-739e-4971-b078-4e2a971d9ffd",
+          "input_type": "url",
+          "label": "Organization Twitter URL(optional)",
+          "order": 7
+        },
+        {
+          "uuid": "4388ff23-a5e7-486a-9b37-7ad41cce5e77",
+          "input_type": "long-text",
+          "label": "List the people who have a ownership stake in your company",
+          "description": "Please list the individuals who own your company. For each person listed, please indicate their name, title, gender and age:<br>Name<br>Title<br>Gender<br>Age",
+          "order": 8
+        },
+        {
+          "uuid": "9bfe6b76-2ff1-4658-9763-54bc6242cce6",
+          "input_type": "select-image",
+          "label": "What interventions do you intend to use to restore land?",
+          "description": "Please indicate all of the restoration interventions you have used in previous projects. If you intend to use multiple different restoration interventions, check all that apply. ",
+          "order": 5,
+          "multichoice": true,
+          "options": [
+            {
+              "uuid": "042e4e69-27fe-4cb3-bc97-877c07e898e6",
+              "slug": "agroforestry",
+              "form_question_id": 28,
+              "label": "Agroforestry",
+              "order": 1,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "76f6c0c2-8c11-4420-9ec9-4496ea3e51a5",
+              "slug": "applied-nucleation",
+              "form_question_id": 28,
+              "label": "Applied Nucleation",
+              "order": 2,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "bfc6c535-c063-45e0-acaa-e24d8bf7c112",
+              "slug": "assisted-natural-regeneration",
+              "form_question_id": 28,
+              "label": "Assisted Natural Regeneration",
+              "order": 3,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "37c347e5-53e8-4914-9a28-427d82fe133b",
+              "slug": "direct-seeding",
+              "form_question_id": 28,
+              "label": "Direct Seeding",
+              "order": 4,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "ae401768-c3d3-446a-a421-8642887b025e",
+              "slug": "enrichment-planting",
+              "form_question_id": 28,
+              "label": "Enrichment Planting",
+              "order": 5,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "188a2058-19ca-40d0-8ebf-800c3e4b47c0",
+              "slug": "mangrove-restoration",
+              "form_question_id": 28,
+              "label": "Mangrove Restoration",
+              "order": 6,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "87f70e1a-1cbe-4990-9ca8-40f5709eebc9",
+              "slug": "reforestation",
+              "form_question_id": 28,
+              "label": "Reforestation",
+              "order": 7,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "5b5c7206-7702-47b9-8102-bf33a26d08fb",
+              "slug": "riparian-restoration",
+              "form_question_id": 28,
+              "label": "Riparian Restoration",
+              "order": 8,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            },
+            {
+              "uuid": "d6193e04-a219-4d49-9724-52116567367a",
+              "slug": "silvopasture",
+              "form_question_id": 28,
+              "label": "Silvopasture",
+              "order": 9,
+              "image_url": "https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "uuid": "8388e082-cfaa-4569-882f-73ed2f104292",
+      "order": 1,
+      "title": "Organizational Information: Past Community Engagement Experience",
+      "description": "Please answer the questions below so that we can understand how your organization engages with local communities. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a>",
+      "form_questions": [
+        {
+          "uuid": "3be9ae6a-c769-44e7-a8e6-46cd9b7d7ff2",
+          "input_type": "select",
+          "label": "How does your organization engage with farmers? ",
+          "description": "Select the statement(s) below that best align with your farmer engagement strategy: ",
+          "validation": { "required": true },
+          "multichoice": true,
+          "order": 1,
+          "options": [
+            {
+              "uuid": "ee31f5b4-d313-459f-9dfd-f47a11817c07",
+              "slug": "we-provide-paid-jobs-for-farmers",
+              "form_question_id": 9,
+              "label": "We provide paid jobs for farmers",
+              "order": 1,
+              "image_url": null
+            },
+            {
+              "uuid": "0ab6203a-ee33-490e-b7d7-4a641c14edaa",
+              "slug": "we-directly-engage-benefit-farmers",
+              "form_question_id": 9,
+              "label": "We directly engage & benefit farmers",
+              "order": 2,
+              "image_url": null
+            },
+            {
+              "uuid": "462e1eae-5c47-4734-926d-677e5a09e615",
+              "slug": "we-provide-indirect-benefits-to-farmers",
+              "form_question_id": 9,
+              "label": "We provide indirect benefits to farmers",
+              "order": 3,
+              "image_url": null
+            },
+            {
+              "uuid": "d8512f2a-5078-4a2b-a0ac-1d439af9315b",
+              "slug": "we-do-not-engage-with-farmers",
+              "form_question_id": 9,
+              "label": "We do not engage with farmers",
+              "order": 4,
+              "image_url": null
+            }
+          ]
+        },
+        {
+          "uuid": "32873c74-5ec4-4508-90a1-bb05b9139ab2",
+          "input_type": "select",
+          "label": "How does your organization engage with women?",
+          "description": "Select the statement(s) below that best aligns with your engagement strategy for women: ",
+          "validation": { "required": true },
+          "multichoice": true,
+          "order": 2,
+          "options": [
+            {
+              "uuid": "d87e6655-89fc-48d3-9caf-0e9575aed4a5",
+              "slug": "we-provide-paid-jobs-for-women",
+              "form_question_id": 10,
+              "label": "We provide paid jobs for women",
+              "order": 1,
+              "image_url": null
+            },
+            {
+              "uuid": "042919de-1690-4877-b75a-0c3a0d2141f4",
+              "slug": "we-directly-engage-and-benefit-women",
+              "form_question_id": 10,
+              "label": "We directly engage and benefit women",
+              "order": 2,
+              "image_url": null
+            },
+            {
+              "uuid": "106099ab-7d80-4637-9262-471da342b079",
+              "slug": "we-provide-indirect-benefits-to-women",
+              "form_question_id": 10,
+              "label": "We provide indirect benefits to women",
+              "order": 3,
+              "image_url": null
+            },
+            {
+              "uuid": "dfe35891-547b-4ddb-bfa6-002a706dcfff",
+              "slug": "we-do-not-engage-with-women",
+              "form_question_id": 10,
+              "label": "We do not engage with women",
+              "order": 4,
+              "image_url": null
+            }
+          ]
+        },
+        {
+          "uuid": "bb1c3fd3-be90-46db-9996-5148ead42376",
+          "input_type": "select",
+          "label": "How does your organization engage with people younger than 35 years old?",
+          "description": "Select the statement(s) below that best aligns with your engagement strategy for people younger than 35 years old",
+          "validation": { "required": true },
+          "multichoice": true,
+          "order": 3,
+          "options": [
+            {
+              "uuid": "cd8a6189-9720-4dba-b09b-b444ebe3fd77",
+              "slug": "we-provide-paid-jobs-for-people-younger-than-35",
+              "form_question_id": 11,
+              "label": "We provide paid jobs for people younger than 35",
+              "order": 1,
+              "image_url": null
+            },
+            {
+              "uuid": "d80d254b-a6e7-400f-8de8-c204729944a4",
+              "slug": "we-directly-engage-and-benefit-younger-than-35",
+              "form_question_id": 11,
+              "label": "We directly engage and benefit younger than 35",
+              "order": 2,
+              "image_url": null
+            },
+            {
+              "uuid": "abfd25b5-d85c-4807-b10a-a2659a7e89e4",
+              "slug": "we-provide-indirect-benefits-to-people-younger-than-35",
+              "form_question_id": 11,
+              "label": "We provide indirect benefits to people younger than 35",
+              "order": 3,
+              "image_url": null
+            },
+            {
+              "uuid": "aa9a6237-f607-4c69-a4dc-f82803201694",
+              "slug": "we-do-not-engage-with-people-younger-than-35",
+              "form_question_id": 11,
+              "label": "We do not engage with people younger than 35",
+              "order": 4,
+              "image_url": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "uuid": "e938398f-e697-486e-9992-b9e2833a453c",
+      "order": 1,
+      "title": "Organizational Information: Financial History ",
+      "description": "Please answer the questions below so that we can understand your organization\u2019s financial history and current fiscal health. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a>",
+      "form_questions": [
+        {
+          "uuid": "2fc2ddcb-65c4-401f-ad8b-2464127995e1",
+          "input_type": "number",
+          "label": "What were your organization's revenues in USD in 2020?",
+          "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\"",
+          "order": 1
+        },
+        {
+          "uuid": "dfc8b46f-a2b5-4c47-9d86-6eaf02f38ff4",
+          "input_type": "file",
+          "label": "Please upload your organization's 2020 income statement and balance sheet.",
+          "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
+          "validation": { "required": false },
+          "multichoice": true,
+          "order": 2,
+          "reference": { "model": "organisation", "uuid": null, "collection": "op_budget_3year" },
+          "accept": [
+            "application/pdf",
+            "text/csv",
+            "application/xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
+          ],
+          "max": 20
+        },
+        {
+          "uuid": "a5ff9d12-249f-4752-8c56-93d6c21ff7b6",
+          "input_type": "number",
+          "label": "What were your organization's revenues in USD in 2021?",
+          "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\"",
+          "order": 3
+        },
+        {
+          "uuid": "4519d674-4110-4523-a745-f999741622cd",
+          "input_type": "file",
+          "label": "Please upload your organization's 2021 income statement and balance sheet.",
+          "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
+          "validation": { "required": false },
+          "multichoice": true,
+          "order": 4,
+          "reference": { "model": "organisation", "uuid": null, "collection": "op_budget_2year" },
+          "accept": [
+            "application/pdf",
+            "text/csv",
+            "application/xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
+          ],
+          "max": 20
+        },
+        {
+          "uuid": "c1537262-4802-4223-b694-9088d76a2d11",
+          "input_type": "number",
+          "label": "What were your organization's revenues in USD in 2022?",
+          "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\"",
+          "order": 5
+        },
+        {
+          "uuid": "eae46eca-8e4e-4cec-a7a0-cd9d93af8054",
+          "input_type": "file",
+          "label": "Please upload your organization's 2022 income statement and balance sheet.",
+          "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
+          "validation": { "required": false },
+          "multichoice": true,
+          "order": 6,
+          "reference": { "model": "organisation", "uuid": null, "collection": "op_budget_1year" },
+          "accept": [
+            "application/pdf",
+            "text/csv",
+            "application/xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
+          ],
+          "max": 20
+        },
+        {
+          "uuid": "ae621f3b-552c-4f5f-8616-5d7821299959",
+          "input_type": "number",
+          "label": "What are your organization's projected revenues in USD for 2023",
+          "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\" We understand that this information is not yet available for 2023. Please provide your best estimation. ",
+          "order": 7
+        }
+      ]
+    },
+    {
+      "uuid": "1ae9e0f3-e627-4681-8436-5019752af6ef",
+      "order": 1,
+      "title": "Organizational Information: Past Restoration Experience ",
+      "description": "Please answer the questions below so that we can understand your organization\u2019s experience in land restoration. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a> ",
+      "form_questions": [
+        {
+          "uuid": "003a59f0-d262-45b1-b4ef-c46c62f79341",
+          "input_type": "number",
+          "label": "How many years of restoration experience does your organization have?",
+          "description": "Please indicate how many years your organization has been involved in actively restoring degraded land. If your organization began to restore land significantly later than it was founded, make sure to only include the years after you began to work on restoration.",
+          "order": 1
+        },
+        {
+          "uuid": "c8ba24a7-3532-4665-99d0-8d1b10e85f27",
+          "input_type": "number",
+          "label": "How many hectares of degraded land has your organisation restored since it was founded? ",
+          "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
+          "order": 2
+        },
+        {
+          "uuid": "12e2645b-ab2d-4c69-ab21-379408a1e743",
+          "input_type": "number",
+          "label": "How many hectares of degraded land has your organization restored in the past 36 months?",
+          "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
+          "order": 3
+        },
+        {
+          "uuid": "1817a476-e340-467c-8c6b-8918c200654e",
+          "input_type": "number",
+          "label": "How many trees has your organization restored or naturally regenerated since it was founded? ",
+          "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts \"trees restored,\" not \"planted.\" Only trees that survive to maturity after they  are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as \"restored.\"",
+          "order": 4
+        },
+        {
+          "uuid": "4c0e0a9f-636a-45b0-ad5c-80f5722c7cfe",
+          "input_type": "number",
+          "label": "How many trees has your organization planted, naturally regenerated or otherwise restored in the past 36 months?",
+          "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk  growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts \"trees restored,\" not \"planted.\" Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as \"restored.\"",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "uuid": "0e0a4e8b-e1c6-455d-92b1-782f71ef3331",
+      "order": 1,
+      "title": "Proposed Project Information",
+      "description": "Please answer the questions below so that we can understand basic information about the project you are looking to fund through TerraFund for AFR100: Landscapes. Reminder: We are only funding projects that are location in three key geographies: the Ghana Cocoa Belt, the Greater Rusizi Basin of Burundi, the Democratic Republic of the Congo, and Rwanda, and the Great Rift Valley of Kenya. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a> ",
+      "form_questions": [
+        {
+          "uuid": "2f114af5-a0b9-405d-926b-7689a9fd5a25",
+          "input_type": "text",
+          "label": "What is the name of your proposed project?",
+          "order": 1
+        },
+        {
+          "uuid": "917fd2b0-74c2-42c8-b65e-b98144322f6d",
+          "input_type": "long-text",
+          "label": "What are the objectives of your proposed project?",
+          "order": 2
+        },
+        {
+          "uuid": "875d923a-f1e4-4516-a77a-96fcdf099f66",
+          "input_type": "select",
+          "label": "In what country will your project operate? ",
+          "order": 3,
+          "options_list": "countries"
+        },
+        {
+          "uuid": "59388280-52bd-48f8-97a6-8de30b509494",
+          "input_type": "text",
+          "label": "In which subnational jurisdictions would you carry out this project? ",
+          "description": "Please enter the precise name of the district or sub-counties where your project would operate. This should be an official administrative jurisdiction. Please be as precise as possible.",
+          "order": 4
+        },
+        {
+          "uuid": "5c2b9303-302d-4140-beba-95d79fb2d060",
+          "input_type": "number",
+          "label": "How many hectares of land do you intend to restore through this project?",
+          "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land could without active planting. Only count land that has benefitted from tree-based restoration techniques in your total.",
+          "order": 6
+        },
+        {
+          "uuid": "790370ce-a8e4-4185-a6ef-99a64b2e4bc5",
+          "input_type": "number",
+          "label": "How many trees do you intend to restore through this project?",
+          "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts \"trees restored,\" not \"planted.\" Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as \"restored.\"",
+          "order": 7
+        },
+        {
+          "uuid": "90acff1b-27f1-4de7-a9a3-caf6be137604",
+          "input_type": "treeSpecies",
+          "label": "What tree species do you intend to grow through this project?",
+          "description": "List the species and the estimated number of trees that you intend to plant using the form below. The scientific names of each species are preferred. Please be precise.",
+          "order": 8,
+          "reference": { "model": "project-pitch", "uuid": null },
+          "with_numbers": true
+        },
+        {
+          "uuid": "09475088-63b9-4634-bb13-d0ad6c9ecf14",
+          "input_type": "number",
+          "label": "What is your proposed project budget in USD? ",
+          "order": 9
+        }
+      ]
+    },
+    {
+      "uuid": "0e90ca09-83e0-4f75-ae0e-d6713c5d3cee",
+      "order": 1,
+      "title": "Additional Information ",
+      "form_questions": [
+        {
+          "uuid": "e55c81f1-e0ba-42a3-9887-d22f853687c2",
+          "input_type": "file",
+          "label": "Upload any additional documents",
+          "validation": { "required": false },
+          "multichoice": true,
+          "order": 1,
+          "reference": { "model": "project-pitch", "uuid": null, "collection": "additional" },
+          "accept": [
+            "application/pdf",
+            "application/msword",
+            "application/xlsx",
+            "text/csv",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel",
+            "image/png",
+            "image/jpeg"
+          ],
+          "max": 20
+        },
+        {
+          "uuid": "3d456c52-8e68-45ff-ae88-37a96263130e",
+          "input_type": "select",
+          "label": "On which of the following topics would you request technical assistance from a team of experts?",
+          "description": "Please select as many as apply. Note that this information remains private. Definitions for each topic can be found here (<a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a>)",
+          "validation": { "required": true },
+          "multichoice": true,
+          "order": 2,
+          "options": [
+            {
+              "uuid": "27529a5b-1933-451b-aa11-cdb8b4de3cab",
+              "slug": "site-selection",
+              "form_question_id": 34,
+              "label": "Site Selection",
+              "order": 1,
+              "image_url": null
+            },
+            {
+              "uuid": "c926d216-85cd-46c8-8bc1-4e4426f4d3a0",
+              "slug": "nursery-management",
+              "form_question_id": 34,
+              "label": "Nursery Management",
+              "order": 2,
+              "image_url": null
+            },
+            {
+              "uuid": "8a4facb5-3549-441d-85f5-bf0051fb17cd",
+              "slug": "species",
+              "form_question_id": 34,
+              "label": "Species",
+              "order": 3,
+              "image_url": null
+            },
+            {
+              "uuid": "1199bdcb-e7f3-4835-bc89-5b64005a78f2",
+              "slug": "community-engagement",
+              "form_question_id": 34,
+              "label": "Community Engagement",
+              "order": 4,
+              "image_url": null
+            },
+            {
+              "uuid": "0b6a0fe4-ae62-4d33-908e-1790c6f8f82a",
+              "slug": "narrative",
+              "form_question_id": 34,
+              "label": "Narrative",
+              "order": 5,
+              "image_url": null
+            },
+            {
+              "uuid": "d1a8b06c-d7f0-438c-a8f7-af5fd8040e21",
+              "slug": "field-monitoring",
+              "form_question_id": 34,
+              "label": "Field Monitoring",
+              "order": 6,
+              "image_url": null
+            },
+            {
+              "uuid": "eca1a9de-a323-4a32-b4b4-1140f3324214",
+              "slug": "remote-sensing",
+              "form_question_id": 34,
+              "label": "Remote Sensing",
+              "order": 7,
+              "image_url": null
+            },
+            {
+              "uuid": "1ff09e46-29b3-4c95-962e-9b16d1ec2414",
+              "slug": "accounting",
+              "form_question_id": 34,
+              "label": "Accounting",
+              "order": 8,
+              "image_url": null
+            },
+            {
+              "uuid": "497450b4-ca58-41d5-bf45-8115617d7b1e",
+              "slug": "proposal",
+              "form_question_id": 34,
+              "label": "Proposal",
+              "order": 9,
+              "image_url": null
+            },
+            {
+              "uuid": "ee59ccca-56f9-4908-874c-60497aa05ed4",
+              "slug": "government",
+              "form_question_id": 34,
+              "label": "Government",
+              "order": 10,
+              "image_url": null
+            },
+            {
+              "uuid": "c71a349d-8480-4530-adfd-4b22beb2c709",
+              "slug": "certifications",
+              "form_question_id": 34,
+              "label": "Certifications",
+              "order": 11,
+              "image_url": null
+            },
+            {
+              "uuid": "4ae2c983-3148-4d00-8770-dbeec4e1fd0c",
+              "slug": "communications",
+              "form_question_id": 34,
+              "label": "Communications",
+              "order": 12,
+              "image_url": null
+            },
+            {
+              "uuid": "dea6535a-9ecf-4304-bb5b-f27beabb119b",
+              "slug": "social-equity",
+              "form_question_id": 34,
+              "label": "Social Equity",
+              "order": 13,
+              "image_url": null
+            },
+            {
+              "uuid": "4a00fd75-5080-4657-b0a5-346bb005e2d4",
+              "slug": "supply-chain-development",
+              "form_question_id": 34,
+              "label": "Supply Chain Development",
+              "order": 14,
+              "image_url": null
+            },
+            {
+              "uuid": "ad297006-1278-4e84-8bd9-8c18f0e4a084",
+              "slug": "product-marketing",
+              "form_question_id": 34,
+              "label": "Product Marketing",
+              "order": 15,
+              "image_url": null
+            }
+          ]
+        },
+        {
+          "uuid": "6ed56eff-b1c3-4df3-bfcc-98db47e02fb0",
+          "input_type": "select",
+          "label": "How did you hear about this opportunity on TerraMatch?",
+          "description": "Please select all that apply. If you heard about us from another source, please select other.",
+          "validation": { "required": true },
+          "multichoice": true,
+          "order": 3,
+          "options": [
+            {
+              "uuid": "c2e9e562-bc2d-4383-83ea-c43813fb52ba",
+              "slug": "land-accelerator",
+              "form_question_id": 35,
+              "label": "Land Accelerator",
+              "order": 1,
+              "image_url": null
+            },
+            {
+              "uuid": "8ac23119-a56c-4e8a-a009-1b2a5db22785",
+              "slug": "afr100-partner",
+              "form_question_id": 35,
+              "label": "AFR100 Partner",
+              "order": 2,
+              "image_url": null
+            },
+            {
+              "uuid": "a4863b5d-1af2-44b0-b2f5-9adb629ecd81",
+              "slug": "whatsapp",
+              "form_question_id": 35,
+              "label": "WhatsApp",
+              "order": 3,
+              "image_url": null
+            },
+            {
+              "uuid": "50acbe4c-0bbd-4b4f-92d8-e009557c6af9",
+              "slug": "linkedin",
+              "form_question_id": 35,
+              "label": "LinkedIn",
+              "order": 4,
+              "image_url": null
+            },
+            {
+              "uuid": "80c43105-c796-4ee4-8eef-7525b1480bdf",
+              "slug": "funding-partner",
+              "form_question_id": 35,
+              "label": "Funding Partner",
+              "order": 5,
+              "image_url": null
+            },
+            {
+              "uuid": "8778d708-378d-4681-a8ce-5700f29b58c0",
+              "slug": "facebook",
+              "form_question_id": 35,
+              "label": "Facebook",
+              "order": 6,
+              "image_url": null
+            },
+            {
+              "uuid": "9d167043-2ad3-40e9-a748-205585939731",
+              "slug": "twitter",
+              "form_question_id": 35,
+              "label": "Twitter",
+              "order": 7,
+              "image_url": null
+            },
+            {
+              "uuid": "7e02cfc3-ac85-4ca4-8efa-32107ce275c5",
+              "slug": "world-resources-institute",
+              "form_question_id": 35,
+              "label": "World Resources Institute",
+              "order": 8,
+              "image_url": null
+            },
+            {
+              "uuid": "478a473f-f638-4acd-969d-6cf05b004153",
+              "slug": "one-tree-planted",
+              "form_question_id": 35,
+              "label": "One Tree Planted",
+              "order": 9,
+              "image_url": null
+            },
+            {
+              "uuid": "9ef297fe-7fa2-4ecf-9169-1036a2b50c5b",
+              "slug": "realize-impact",
+              "form_question_id": 35,
+              "label": "Realize Impact",
+              "order": 10,
+              "image_url": null
+            },
+            {
+              "uuid": "c631a846-498a-4784-8601-b1b225560227",
+              "slug": "barka-fund",
+              "form_question_id": 35,
+              "label": "Barka Fund",
+              "order": 11,
+              "image_url": null
+            },
+            {
+              "uuid": "6b630e30-8897-4b67-8d19-95951f7b9b37",
+              "slug": "government-agency",
+              "form_question_id": 35,
+              "label": "Government Agency",
+              "order": 12,
+              "image_url": null
+            },
+            {
+              "uuid": "3e1ca4f1-6a94-448a-bbe7-982a79b51f72",
+              "slug": "grant-opportunity-website",
+              "form_question_id": 35,
+              "label": "Grant opportunity website",
+              "order": 13,
+              "image_url": null
+            },
+            {
+              "uuid": "bb374d1e-5010-4080-bcda-fda34a5b189d",
+              "slug": "internet-search",
+              "form_question_id": 35,
+              "label": "Internet search",
+              "order": 14,
+              "image_url": null
+            },
+            {
+              "uuid": "674c8c62-1bd1-492a-8ee1-932dbeef86db",
+              "slug": "email",
+              "form_question_id": 35,
+              "label": "Email",
+              "order": 15,
+              "image_url": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

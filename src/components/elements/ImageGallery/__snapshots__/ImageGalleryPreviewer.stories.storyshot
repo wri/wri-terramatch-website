@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Previewer Default 1`] = `
+<div
+  className="relative h-[600px] w-full"
+>
+  <div
+    className="h-[640px] w-full max-w-7xl overflow-hidden rounded-lg !absolute"
+  >
+    <div
+      className="flex items-center justify-between bg-white px-8 py-3.5"
+    >
+      <div
+        className="flex items-center"
+      >
+        <a
+          className="mr-2.5"
+          href="https://picsum.photos/seed/1mPXM8RR/640/480"
+          onClick={[Function]}
+          onMouseEnter={[Function]}
+          onTouchStart={[Function]}
+          target="_blank"
+        >
+          <div
+            style={
+              Object {
+                "height": 32,
+                "width": 32,
+              }
+            }
+          />
+        </a>
+      </div>
+      <button
+        className="flex items-center justify-center rounded-full hover:bg-opacity-60"
+        onClick={[Function]}
+      >
+        <div
+          style={
+            Object {
+              "height": 32,
+              "width": 32,
+            }
+          }
+        />
+      </button>
+    </div>
+    <div
+      className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100"
+    >
+      <img
+        alt=""
+        className="object-cover"
+        data-nimg="fill"
+        decoding="async"
+        loading="lazy"
+        onError={[Function]}
+        onLoad={[Function]}
+        src="https://picsum.photos/seed/1mPXM8RR/640/480"
+        style={
+          Object {
+            "bottom": 0,
+            "color": "transparent",
+            "height": "100%",
+            "left": 0,
+            "objectFit": undefined,
+            "objectPosition": undefined,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+            "width": "100%",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;

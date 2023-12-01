@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/Layouts/BackgroundLayout Default 1`] = `
+<section
+  className="min-h-[calc(100vh-74px)] w-full bg-primary-50"
+>
+  <div
+    className="h-[400px]"
+  />
+</section>
+`;

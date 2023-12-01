@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getLandUseTypeOptions 1`] = `
+[
+  {
+    "title": "Agroforest",
+    "value": "agroforest",
+  },
+  {
+    "title": "Mangrove",
+    "value": "mangrove",
+  },
+  {
+    "title": "Natural Forest",
+    "value": "natural-forest",
+  },
+  {
+    "title": "Silvopasture",
+    "value": "silvopasture",
+  },
+  {
+    "title": "Riparian Area or Wetland",
+    "value": "riparian-area-or-wetland",
+  },
+  {
+    "title": "Urban Forest",
+    "value": "urban-forest",
+  },
+  {
+    "title": "Woodlot or Plantation",
+    "value": "woodlot-or-plantation",
+  },
+]
+`;

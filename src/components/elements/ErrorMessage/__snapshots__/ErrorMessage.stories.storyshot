@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/ErrorMessage Primary 1`] = `
+<div
+  className="relative"
+>
+  <div
+    className="flex w-full items-center gap-3"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 20,
+        }
+      }
+    />
+    <span
+      className="w-full text-left text-error text-body-500"
+      data-testid="txt"
+    >
+      This field is required
+    </span>
+  </div>
+</div>
+`;

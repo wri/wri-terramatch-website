@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Fields/LinkField Default 1`] = `
+<div
+  className="flex flex-col rounded-lg bg-neutral-50 p-4"
+>
+  <div
+    className="flex items-center justify-between"
+  >
+    <p
+      className="text-bold-subtitle-500"
+      data-testid="txt"
+    >
+      News Article
+    </p>
+    <a
+      href="https://google.com"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+      onTouchStart={[Function]}
+      target="_blank"
+    >
+      <p
+        className="leading-normal text-primary-500 underline text-bold-subtitle-400"
+        data-testid="txt"
+      >
+        Visit
+      </p>
+    </a>
+  </div>
+</div>
+`;

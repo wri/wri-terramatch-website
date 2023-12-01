@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Inputs/InputTable Default 1`] = `
+<div
+  className="relative space-y-2"
+>
+  <div>
+    <table
+      className="w-full"
+    >
+      <thead
+        className="h-[60px] bg-primary"
+      >
+        <tr>
+          <th
+            align="center"
+          >
+            <p
+              className="text-heading-300"
+              data-testid="txt"
+            >
+              Breakdown
+            </p>
+          </th>
+          <th
+            align="center"
+          >
+            <p
+              className="text-heading-300"
+              data-testid="txt"
+            >
+              Percentage(%)
+            </p>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td
+            align="center"
+            className="h-[53px] border-b border-neutral-400 p-0 pb-1.5 pt-6 align-bottom"
+          >
+            <p
+              className="first-letter:uppercase text-heading-100"
+              data-testid="txt"
+            >
+              % New paid full-time hobs
+            </p>
+          </td>
+          <td
+            className="h-[53px] p-0 align-bottom"
+          >
+            <div
+              className="relative space-y-2"
+            >
+              <div
+                className="relative"
+              >
+                <input
+                  aria-describedby=":r15:-description"
+                  aria-invalid={false}
+                  className="text-heading-100 text-center w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
+                  id=":r15:"
+                  name="full-time-jobs"
+                  onChange={[Function]}
+                  onKeyDown={[Function]}
+                  placeholder="Enter a value"
+                  type="number"
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td
+            align="center"
+            className="h-[53px] border-b border-neutral-400 p-0 pb-1.5 pt-6 align-bottom"
+          >
+            <p
+              className="first-letter:uppercase text-heading-100"
+              data-testid="txt"
+            >
+              % New paid part-time jobs
+            </p>
+          </td>
+          <td
+            className="h-[53px] p-0 align-bottom"
+          >
+            <div
+              className="relative space-y-2"
+            >
+              <div
+                className="relative"
+              >
+                <input
+                  aria-describedby=":r16:-description"
+                  aria-invalid={false}
+                  className="text-heading-100 text-center w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
+                  id=":r16:"
+                  name="part-time-jobs"
+                  onChange={[Function]}
+                  onKeyDown={[Function]}
+                  placeholder="Enter a value"
+                  type="number"
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td
+            align="center"
+            className="h-[53px] border-b border-neutral-400 p-0 pb-1.5 pt-6 align-bottom"
+          >
+            <p
+              className="first-letter:uppercase text-heading-100"
+              data-testid="txt"
+            >
+              % of women employees
+            </p>
+          </td>
+          <td
+            className="h-[53px] p-0 align-bottom"
+          >
+            <div
+              className="relative space-y-2"
+            >
+              <div
+                className="relative"
+              >
+                <input
+                  aria-describedby=":r17:-description"
+                  aria-invalid={false}
+                  className="text-heading-100 text-center w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
+                  id=":r17:"
+                  name="women-employees"
+                  onChange={[Function]}
+                  onKeyDown={[Function]}
+                  placeholder="Enter a value"
+                  type="number"
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;

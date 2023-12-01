@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/StatusPill Awaiting 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 24,
+        }
+      }
+    />
+    <p
+      className="pt-0.5 text-body-100"
+      data-testid="txt"
+    >
+      Awaiting Review
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/StatusPill Default 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 24,
+        }
+      }
+    />
+    <p
+      className="pt-0.5 text-body-100"
+      data-testid="txt"
+    >
+      Draft
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/StatusPill Error 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 24,
+        }
+      }
+    />
+    <p
+      className="pt-0.5 text-body-100"
+      data-testid="txt"
+    >
+      Rejected
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/StatusPill Success 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 24,
+        }
+      }
+    />
+    <p
+      className="pt-0.5 text-body-100"
+      data-testid="txt"
+    >
+      Approved
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/StatusPill Warning 1`] = `
+<div
+  className="flex items-start justify-start"
+>
+  <div
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+  >
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 24,
+        }
+      }
+    />
+    <p
+      className="pt-0.5 text-body-100"
+      data-testid="txt"
+    >
+      More Info Requested
+    </p>
+  </div>
+</div>
+`;

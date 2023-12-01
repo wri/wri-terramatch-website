@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/LoadingContainer Default 1`] = `
+<div
+  className="flex h-32 items-center justify-center undefined"
+>
+  <div
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+  />
+</div>
+`;

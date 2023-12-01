@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/SelectImageList Condensed 1`] = `
+<div
+  className="flex w-fit grid-cols-3 flex-wrap gap-5"
+>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        No Poverty
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Good Health and Well-being
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Quality Education
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Affordable and Clean Energy
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Climate Action
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
+<div
+  className="flex w-fit grid-cols-3 flex-wrap gap-5"
+>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        No Poverty
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Good Health and Well-being
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Quality Education
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Affordable and Clean Energy
+      </p>
+    </div>
+  </div>
+  <div>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer"
+    >
+      <div
+        className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+        style={
+          Object {
+            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
+          }
+        }
+      />
+      <p
+        className="max-w-[96px] text-center leading-4 text-light-body-300"
+        data-testid="txt"
+      >
+        Climate Action
+      </p>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Banner/OverviewBanner Default 1`] = `
+<div
+  className="relative flex w-full flex-col items-center justify-center bg-heroBanner bg-cover bg-no-repeat px-10 py-8 md:py-15"
+  style={
+    Object {
+      "backgroundImage": "url('/images/bg-hero-banner-2.webp')",
+    }
+  }
+>
+  <div
+    className="flex w-full max-w-[1218px] items-center justify-between gap-8"
+  >
+    <div
+      className="flex flex-col gap-3 text-white"
+    >
+      <div
+        className="w-[75px] bg-tertiary flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
+      >
+        <p
+          className="text-black mt-[3px] text-bold-caption-200"
+          data-testid="txt"
+        >
+          Pitch
+        </p>
+      </div>
+      <p
+        className="first-letter:uppercase text-heading-700"
+        data-testid="txt"
+      >
+        Reforestation in Bournemouth
+      </p>
+      <div
+        className="flex gap-2 "
+      >
+        <div
+          style={
+            Object {
+              "height": 18,
+              "width": 13,
+            }
+          }
+        />
+        <p
+          className="flex-1 uppercase text-body-300"
+          data-testid="txt"
+        >
+          Bournemouth, United Kingdom
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

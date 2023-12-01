@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapShot test getLandTenureOptions 1`] = `
+[
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/land-tenures/public.png",
+    },
+    "title": "Public",
+    "value": "public",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/land-tenures/private.png",
+    },
+    "title": "Private",
+    "value": "private",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/land-tenures/indigenous.png",
+    },
+    "title": "Indigenous",
+    "value": "indigenous",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/land-tenures/communal.png",
+    },
+    "title": "Communal",
+    "value": "communal",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/land-tenures/national-protected-area.png",
+    },
+    "title": "National Protected Area",
+    "value": "national-protected-area",
+  },
+  {
+    "meta": {
+      "image_url": "https://test.wrirestorationmarketplace.cubeapis.com/images/V2/land-tenures/other.png",
+    },
+    "title": "Other",
+    "value": "other",
+  },
+]
+`;

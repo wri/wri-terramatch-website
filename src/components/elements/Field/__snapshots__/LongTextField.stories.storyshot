@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Fields/LongTextField Default 1`] = `
+<div>
+  <p
+    className="mb-2 text-bold-subtitle-400"
+    data-testid="txt"
+  >
+    Description
+  </p>
+  <div>
+    <div
+      className="line-clamp-3"
+    >
+      <p
+        className="whitespace-pre-line text-light-subtitle-400"
+        data-testid="txt"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
+      </p>
+    </div>
+  </div>
+</div>
+`;
