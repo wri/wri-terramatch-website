@@ -4,7 +4,7 @@ import { useNotify } from "react-admin";
 import { fetchGetV2AdminFormsUUIDExport } from "@/admin/apiProvider/dataProviders/applicationDataProvider";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import { fetchGetV2AdminFormsApplicationsUUIDExport } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 type ExportType = {
   loading: boolean;

@@ -9,6 +9,7 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 
 /* Todo: To select actions and their copies based on form's parent(application, project, site, etc) in 2.4 */
@@ -38,7 +39,7 @@ const ConfirmPage = () => {
         children: t("Add Another Site"),
         href: `/entity/sites/create/${entity.framework_uuid}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
       },
-      { children: t("View Site"), href: `/site/${entityUUID}` }
+      { children: t("View Site"), href: getEntityDetailPageLink("sites", entityUUID) }
     ],
     nurseries: [
       {
@@ -46,13 +47,13 @@ const ConfirmPage = () => {
         children: t("Add Another Nursery"),
         href: `/entity/nurseries/create/${entity.framework_uuid}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
       },
-      { children: t("View Nursery"), href: `/nursery/${entityUUID}` }
+      { children: t("View Nursery"), href: getEntityDetailPageLink("nurseries", entityUUID) }
     ],
     "project-reports": [
       {
         variant: "secondary",
         children: t("View Report"),
-        href: `/reports/project-report/${entityUUID}`
+        href: getEntityDetailPageLink("project-reports", entityUUID)
       },
       {
         children: t("Back to reporting tasks"),
@@ -60,14 +61,14 @@ const ConfirmPage = () => {
       }
     ],
     "site-reports": [
-      { children: t("View Report"), href: `/reports/site-report/${entityUUID}` },
+      { children: t("View Report"), href: getEntityDetailPageLink("site-reports", entityUUID) },
       {
         children: t("Back to reporting tasks"),
         href: `/project/${entity.project?.uuid}/reporting-task/${entity.task_uuid}`
       }
     ],
     "nursery-reports": [
-      { children: t("View Report"), href: `/reports/nursery-report/${entityUUID}` },
+      { children: t("View Report"), href: getEntityDetailPageLink("nursery-reports", entityUUID) },
       {
         children: t("Back to reporting tasks"),
         href: `/project/${entity.project?.uuid}/reporting-task/${entity.task_uuid}`

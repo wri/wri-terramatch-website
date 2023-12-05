@@ -41,13 +41,14 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           case "Nursery": {
             ctaText = t("View Nursery Details");
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
-            ctaLink = `nursery/${target?.uuid}`;
+            ctaLink = getEntityDetailPageLink("nurseries", target?.uuid);
             break;
           }
           case "Site": {
             ctaText = t("View Site Details");
-            ctaLink = `site/${target?.uuid}`;
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
+            ctaLink = getEntityDetailPageLink("sites", target?.uuid);
+
             break;
           }
         }

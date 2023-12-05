@@ -19,7 +19,7 @@ import {
 } from "@/generated/apiComponents";
 import { apiFetch } from "@/generated/apiFetcher";
 import { FormSubmissionRead } from "@/generated/apiSchemas";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";

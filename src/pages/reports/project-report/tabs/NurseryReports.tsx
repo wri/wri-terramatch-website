@@ -14,6 +14,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 interface NurseryReportsTabProps {
@@ -116,7 +117,7 @@ const NurseryReportsTab = ({ taskUuid }: NurseryReportsTabProps) => {
                             <Else>
                               <Button
                                 as={Link}
-                                href={`/reports/nursery-report/${props.getValue()}`}
+                                href={getEntityDetailPageLink("nursery-reports", props.getValue() as string)}
                                 className="float-right"
                               >
                                 {t("View Report")}

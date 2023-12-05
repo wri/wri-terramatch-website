@@ -17,7 +17,7 @@ import Text from "@/components/elements/Text/Text";
 import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import LandingPageSectionLayout from "@/components/generic/Layout/LandingPageSectionLayout";
-import { zendeskSupportLink } from "@/utils/const";
+import { zendeskSupportLink } from "@/constants/links";
 
 const LandingPage = () => {
   const t = useT();
