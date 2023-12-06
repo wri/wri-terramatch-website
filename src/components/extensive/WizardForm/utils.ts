@@ -12,7 +12,7 @@ import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/
 import { FormRead } from "@/generated/apiSchemas";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { CSVGenerator } from "@/utils/CsvGenerator";
+import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 import { FieldType, FormField, FormStepSchema } from "./types";
 
