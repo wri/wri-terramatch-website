@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
-import { useGetReadableEntityName } from "@/hooks/useGetReadableEntityName";
+import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
 
 interface GetEditEntityHandlerArgs {
@@ -14,6 +14,11 @@ interface GetEditEntityHandlerArgs {
   updateRequestStatus: string;
 }
 
+/**
+ * To get edit entity handler, this will apply the shared logic to all entities.
+ * @param args GetEditEntityHandlerArgs
+ * @returns { handleEdit }
+ */
 export const useGetEditEntityHandler = ({
   entityName,
   entityUUID,

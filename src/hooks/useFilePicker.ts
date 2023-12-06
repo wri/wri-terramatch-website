@@ -5,6 +5,12 @@ interface useFilePickerOptions {
   multiple?: boolean;
 }
 
+/**
+ * React friendly hook to initiate a file picker without having an input element in the page.
+ * @param onChange
+ * @param options
+ * @returns openPickerHandler
+ */
 export const useFilePicker = (onChange: (files: FileList) => void, options?: useFilePickerOptions) => {
   const input = document.createElement("input");
   input.type = "file";

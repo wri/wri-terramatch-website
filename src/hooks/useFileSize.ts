@@ -1,6 +1,9 @@
 import { filesize } from "filesize";
 import { useRouter } from "next/router";
 
+/**
+ * @returns Human readable file size
+ */
 export const useFileSize = () => {
   const { locale } = useRouter();
 
