@@ -3,6 +3,12 @@ import { useMemo } from "react";
 import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
 
+/**
+ * To compile list of images for an entity into a FeatureCollection to be used in on the map
+ * @param modelName EntityName
+ * @param uuid string
+ * @returns GeoJSON(FeatureCollection)
+ */
 export const useGetImagesGeoJSON = (modelName: EntityName, uuid: string) => {
   const { data } = useGetV2MODELUUIDImageLocations({
     pathParams: { model: modelName, uuid }

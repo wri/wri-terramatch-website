@@ -2,6 +2,12 @@ import _ from "lodash";
 
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 
+/**
+ * To compile pitch status based on what user has added to the pitch
+ * Suggestion: move this into the backend
+ * @param pitches ProjectPitchRead[]
+ * @returns complete | incomplete | empty
+ */
 export const usePitchStatus = (pitches?: ProjectPitchRead[]) => {
   if (!pitches || pitches?.length === 0) {
     return "empty";

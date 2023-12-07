@@ -2,6 +2,10 @@ import { format as _format, subMonths, subWeeks } from "date-fns";
 import * as Locales from "date-fns/locale";
 import { useRouter } from "next/router";
 
+/**
+ * Collection of most used date manipulator and formatter.
+ * @returns { format, subMonths, subWeeks }
+ */
 export const useDate = () => {
   const { locale } = useRouter();
   const formattedLocale = locale?.substring(0, 2) ?? "en";

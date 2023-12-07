@@ -5,6 +5,9 @@ import { usePostV2ProjectsInviteAccept } from "@/generated/apiComponents";
 
 export const INVITE_TOKEN_KEY = "invite-token";
 
+/**
+ * To set monitoring partner invite token in local storage
+ */
 export const useSetInviteToken = () => {
   const router = useRouter();
   const inviteToken = router.query[INVITE_TOKEN_KEY];
@@ -16,6 +19,9 @@ export const useSetInviteToken = () => {
   }, [inviteToken]);
 };
 
+/**
+ * To accept invitation using usePostV2ProjectsInviteAccept endpoint
+ */
 export const useAcceptInvitation = () => {
   const { mutate } = usePostV2ProjectsInviteAccept({
     onSuccess() {

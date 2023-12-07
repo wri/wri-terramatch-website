@@ -19,9 +19,9 @@ import {
   useGetV2ProjectsUUID,
   useGetV2ReportingFrameworksUUID
 } from "@/generated/apiComponents";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFramework } from "@/hooks/useFramework";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import CompletedReportsTab from "@/pages/project/[uuid]/tabs/CompletedReports";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";

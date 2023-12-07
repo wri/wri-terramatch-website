@@ -1,5 +1,11 @@
 import { useEffect } from "react";
 
+/**
+ * To attach a listener to a HTML element, and detaching when component unmounts
+ * @param id Element id
+ * @param type Event type
+ * @param listener
+ */
 export function useEventListener<K extends keyof HTMLElementEventMap>(
   id: string,
   type: K,

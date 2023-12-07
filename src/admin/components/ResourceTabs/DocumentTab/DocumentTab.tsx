@@ -5,8 +5,8 @@ import { When } from "react-if";
 
 import List from "@/components/extensive/List/List";
 import { useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
+import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";
-import { useGetReadableEntityName } from "@/hooks/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
