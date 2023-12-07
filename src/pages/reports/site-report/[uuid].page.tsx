@@ -72,7 +72,7 @@ const SiteReportDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: siteReport.project?.name ?? t("Project"), path: `/project/${siteReport.project?.uuid}` },
           { title: siteReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
           { title: reportTitle }

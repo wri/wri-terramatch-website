@@ -65,7 +65,7 @@ const NurseryReportDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: nurseryReport.project?.name ?? t("Project"), path: `/project/${nurseryReport.project?.uuid}` },
           { title: nurseryReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
           { title: reportTitle }

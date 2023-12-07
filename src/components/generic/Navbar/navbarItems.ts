@@ -47,7 +47,7 @@ export const getNavbarItems = (t: typeof useT, myOrg?: V2MonitoringOrganisationR
       },
       {
         title: t("My projects"),
-        url: "/my/projects",
+        url: "/my-projects",
         visibility,
         tourTarget: tourSelectors.PROJECTS
       },

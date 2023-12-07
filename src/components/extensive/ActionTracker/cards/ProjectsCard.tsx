@@ -77,12 +77,12 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
         subtitle: t("You will find the updates to your projects here. To view your projects, click the button below."),
         buttonProps: {
           as: Link,
-          href: "/my/projects",
+          href: "/my-projects",
           children: t("View my projects")
         }
       }}
       cta={
-        projectActions.length > 10 ? { as: Link, href: "/my/projects", children: t("View all projects") } : undefined
+        projectActions.length > 10 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined
       }
     />
   );
