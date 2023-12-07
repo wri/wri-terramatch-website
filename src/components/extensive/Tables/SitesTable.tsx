@@ -16,6 +16,7 @@ import {
   useDeleteV2SitesUUID,
   useGetV2ProjectsUUIDSites
 } from "@/generated/apiComponents";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 interface SitesTableProps {
@@ -133,7 +134,11 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
 
             return (
               <ActionTableCell
-                primaryButtonProps={{ as: Link, href: `/site/${props.getValue()}`, children: t("View site") }}
+                primaryButtonProps={{
+                  as: Link,
+                  href: getEntityDetailPageLink("sites", props.getValue() as string),
+                  children: t("View site")
+                }}
                 hasDeleteButton={record.site_reports_total === 0}
                 onDelete={() => handleDeleteSite(props.getValue() as string)}
               />

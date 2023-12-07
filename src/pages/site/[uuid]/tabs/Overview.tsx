@@ -17,6 +17,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
 import { useGetOptions } from "@/hooks/useGetOptions";
@@ -80,7 +81,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               as={Link}
               variant="secondary"
               className="m-auto"
-              href={`/site/${router.query.uuid}?tab=goals`}
+              href={getEntityDetailPageLink("sites", router.query.uuid as string, "goals")}
               shallow
             >
               {t("View all")}

@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
-import { privacyPolicyLink } from "@/utils/const";
+import { privacyPolicyLink } from "@/constants/links";
 
 const CookieBanner = () => {
   const [cookies, setCookie] = useCookies();

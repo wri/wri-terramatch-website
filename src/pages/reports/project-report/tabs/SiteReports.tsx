@@ -14,6 +14,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 interface SiteReportsTabProps {
@@ -117,7 +118,7 @@ const SiteReportsTab = ({ taskUuid }: SiteReportsTabProps) => {
                             <Else>
                               <Button
                                 as={Link}
-                                href={`/reports/site-report/${props.getValue()}`}
+                                href={getEntityDetailPageLink("site-reports", props.getValue() as string)}
                                 className="float-right"
                               >
                                 {t("View Report")}

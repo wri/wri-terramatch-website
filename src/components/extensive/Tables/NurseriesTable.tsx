@@ -16,6 +16,7 @@ import {
   useDeleteV2NurseriesUUID,
   useGetV2ProjectsUUIDNurseries
 } from "@/generated/apiComponents";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 interface NurseriesTableProps {
@@ -128,7 +129,11 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
 
             return (
               <ActionTableCell
-                primaryButtonProps={{ as: Link, href: `/nursery/${props.getValue()}`, children: t("View Nursery") }}
+                primaryButtonProps={{
+                  as: Link,
+                  href: getEntityDetailPageLink("nurseries", props.getValue() as string),
+                  children: t("View Nursery")
+                }}
                 hasDeleteButton={record.nursery_reports_total === 0}
                 onDelete={() => handleDeleteNursery(props.getValue() as string)}
               />

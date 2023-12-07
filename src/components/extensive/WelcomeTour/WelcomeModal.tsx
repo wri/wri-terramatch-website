@@ -6,7 +6,7 @@ import { FC } from "react";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import { ModalBase } from "@/components/extensive/Modal/Modal";
-import { zendeskSupportLink } from "@/utils/const";
+import { zendeskSupportLink } from "@/constants/links";
 
 interface IModalProps {
   onSkip: () => void;
