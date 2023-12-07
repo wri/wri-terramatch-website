@@ -9,6 +9,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
 import { getFullName } from "@/utils/user";
@@ -55,7 +56,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             title={t("Socioeconomic Data")}
             gap={4}
             headerChildren={
-              <Button as={Link} variant="secondary" href={`/reports/project-report/${report.uuid}?tab=socioeconomic`}>
+              <Button
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "socioeconomic")}
+              >
                 {t("View More")}
               </Button>
             }
@@ -74,7 +79,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           <PageCard
             title={t("Images")}
             headerChildren={
-              <Button as={Link} variant="secondary" href={`/reports/project-report/${report.uuid}?tab=gallery`}>
+              <Button
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "gallery")}
+              >
                 {t("View All images")}
               </Button>
             }
@@ -82,7 +91,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           <PageCard
             title={t("Trees Data")}
             headerChildren={
-              <Button as={Link} variant="secondary" href={`/reports/project-report/${report.uuid}?tab=site-reports`}>
+              <Button
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "site-reports")}
+              >
                 {t("View all Site Reports")}
               </Button>
             }
@@ -97,7 +110,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
                 <Button
                   as={Link}
                   variant="secondary"
-                  href={`/reports/project-report/${report.uuid}?tab=nursery-reports`}
+                  href={getEntityDetailPageLink("project-reports", report.uuid, "nursery-reports")}
                 >
                   {t("View all Nurseries")}
                 </Button>

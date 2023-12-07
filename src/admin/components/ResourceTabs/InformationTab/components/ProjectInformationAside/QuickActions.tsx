@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { InviteMonitoringPartnerDialog } from "@/admin/components/Dialogs/InviteMonitoringPartnerDialog";
 import modules from "@/admin/modules";
 import { fetchGetV2ProjectsUUIDENTITYExport } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 const QuickActions: FC = () => {
   const { record } = useShowContext();

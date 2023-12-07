@@ -1,8 +1,8 @@
 import { useT } from "@transifex/react";
 
 import { tourSelectors } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
+import { zendeskSupportLink } from "@/constants/links";
 import { V2MonitoringOrganisationRead } from "@/generated/apiSchemas";
-import { zendeskSupportLink } from "@/utils/const";
 
 interface INavbarItem {
   title: string;
@@ -47,7 +47,7 @@ export const getNavbarItems = (t: typeof useT, myOrg?: V2MonitoringOrganisationR
       },
       {
         title: t("My projects"),
-        url: "/my/projects",
+        url: "/my-projects",
         visibility,
         tourTarget: tourSelectors.PROJECTS
       },

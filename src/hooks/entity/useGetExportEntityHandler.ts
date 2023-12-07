@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { fetchGetV2ENTITYUUIDExport } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 /**
  * To get entity export handler

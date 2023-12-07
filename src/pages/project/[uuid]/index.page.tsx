@@ -56,7 +56,7 @@ const ProjectDetailPage = () => {
 
   const { mutate: deleteProject } = useDeleteV2ProjectsUUID({
     onSuccess() {
-      router.push("/my/projects");
+      router.push("/my-projects");
       openToast(t("The project has been successfully deleted"));
     },
     onError() {
@@ -101,7 +101,7 @@ const ProjectDetailPage = () => {
       <Head>
         <title>{t("Project")}</title>
       </Head>
-      <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my/projects" }, { title: project.name }]} />
+      <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project.name }]} />
       <PageHeader
         className="h-[203px]"
         title={project.name}

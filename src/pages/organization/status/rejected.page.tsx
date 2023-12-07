@@ -6,8 +6,8 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
+import { zendeskSupportLink } from "@/constants/links";
 import { useMyOrg } from "@/hooks/useMyOrg";
-import { zendeskSupportLink } from "@/utils/const";
 
 const OrganizationRejectedPage = () => {
   const myOrg = useMyOrg();

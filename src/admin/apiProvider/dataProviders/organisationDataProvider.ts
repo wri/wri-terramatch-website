@@ -16,7 +16,7 @@ import {
   PutV2AdminOrganisationsUUIDError
 } from "@/generated/apiComponents";
 import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";

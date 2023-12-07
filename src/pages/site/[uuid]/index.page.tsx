@@ -37,7 +37,7 @@ const SiteDetailPage = () => {
   });
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
     onSuccess() {
-      router.push("/my/projects");
+      router.push("/my-projects");
       openToast(t("The site has been successfully deleted"));
     },
     onError() {
@@ -86,7 +86,7 @@ const SiteDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: site.project?.name, path: `/project/${site.project?.uuid}` },
           { title: site.name }
         ]}

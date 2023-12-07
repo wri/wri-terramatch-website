@@ -2855,7 +2855,7 @@ export type GetV2MyProjectsVariables = ApiContext["fetcherOptions"];
 
 export const fetchGetV2MyProjects = (variables: GetV2MyProjectsVariables, signal?: AbortSignal) =>
   apiFetch<GetV2MyProjectsResponse, GetV2MyProjectsError, undefined, {}, {}, {}>({
-    url: "/v2/my/projects",
+    url: "/v2/my-projects",
     method: "get",
     ...variables,
     signal
@@ -2870,7 +2870,7 @@ export const useGetV2MyProjects = <TData = GetV2MyProjectsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MyProjectsResponse, GetV2MyProjectsError, TData>(
-    queryKeyFn({ path: "/v2/my/projects", operationId: "getV2MyProjects", variables }),
+    queryKeyFn({ path: "/v2/my-projects", operationId: "getV2MyProjects", variables }),
     ({ signal }) => fetchGetV2MyProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -31404,7 +31404,7 @@ export type QueryOperation =
       variables: GetV2ProjectsUUIDPartnersVariables;
     }
   | {
-      path: "/v2/my/projects";
+      path: "/v2/my-projects";
       operationId: "getV2MyProjects";
       variables: GetV2MyProjectsVariables;
     }

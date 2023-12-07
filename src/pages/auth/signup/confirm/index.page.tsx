@@ -8,8 +8,8 @@ import Confirmation from "@/components/extensive/Confirmation/Confirmation";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
+import { zendeskSupportLink } from "@/constants/links";
 import { usePostV2UsersResend } from "@/generated/apiComponents";
-import { zendeskSupportLink } from "@/utils/const";
 
 const SignupConfirmPage = ({ email }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const t = useT();

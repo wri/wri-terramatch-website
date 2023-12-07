@@ -35,7 +35,7 @@ const NurseryDetailPage = () => {
 
   const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
     onSuccess() {
-      router.push("/my/projects");
+      router.push("/my-projects");
       openToast(t("The nursery has been successfully deleted"));
     },
     onError() {
@@ -83,7 +83,7 @@ const NurseryDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: nursery.project?.name, path: `/project/${nursery.project?.uuid}` },
           { title: nursery.name }
         ]}
