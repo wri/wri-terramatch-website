@@ -70,7 +70,9 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      normalizedFieldDefaultValue(values, field, isMigrated);
+      if (field.fieldProps.type !== "date") {
+        normalizedFieldDefaultValue(values, field, isMigrated);
+      }
     }
   }
 

@@ -15,9 +15,9 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2SitesUUID, useGetV2SitesUUID } from "@/generated/apiComponents";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFramework } from "@/hooks/useFramework";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
@@ -37,7 +37,7 @@ const SiteDetailPage = () => {
   });
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
     onSuccess() {
-      router.push("/my/projects");
+      router.push("/my-projects");
       openToast(t("The site has been successfully deleted"));
     },
     onError() {
@@ -86,7 +86,7 @@ const SiteDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: site.project?.name, path: `/project/${site.project?.uuid}` },
           { title: site.name }
         ]}

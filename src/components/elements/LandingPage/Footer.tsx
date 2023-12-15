@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { privacyPolicyLink, termsAndConditionsLink, zendeskSupportLink } from "@/utils/const";
+import { privacyPolicyLink, termsAndConditionsLink, zendeskSupportLink } from "@/constants/links";
 
 import Text from "../Text/Text";
 

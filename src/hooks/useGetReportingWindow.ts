@@ -1,5 +1,10 @@
 import { useDate } from "@/hooks/useDate";
-
+/**
+ * to generate reporting window based on the due_date and period
+ * ex: quarterly   => {2 month before due_date} - {1 week before due date} [yyyy]
+ * ex: bi-annually => {5 month before due_date} - {1 week before due date} [yyyy]
+ * @returns string
+ */
 export const useGetReportingWindow = () => {
   const { format, subMonths, subWeeks } = useDate();
 

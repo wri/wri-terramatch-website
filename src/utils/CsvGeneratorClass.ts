@@ -1,4 +1,4 @@
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 export class CSVGenerator {
   private csvRows: string[] = [];

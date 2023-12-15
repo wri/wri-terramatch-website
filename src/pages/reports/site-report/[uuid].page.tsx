@@ -26,10 +26,10 @@ import WorkdaysTable from "@/components/extensive/Tables/WorkdaysTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { getReadableWorkdayCollectionName, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import { getFullName } from "@/utils/user";
 
@@ -72,7 +72,7 @@ const SiteReportDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: siteReport.project?.name ?? t("Project"), path: `/project/${siteReport.project?.uuid}` },
           { title: siteReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
           { title: reportTitle }

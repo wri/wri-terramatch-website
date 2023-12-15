@@ -25,8 +25,10 @@ export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, s
   return mapping[reportModelName] as BaseModelNames;
 };
 
-export const getEntityDetailPageLink = (entityName: EntityName, uuid: string) =>
-  `${entityName.includes("report") ? "/reports" : ""}/${pluralEntityNameToSingular(entityName)}/${uuid}`;
+export const getEntityDetailPageLink = (entityName: EntityName, uuid: string, tab?: string) =>
+  `${entityName.includes("report") ? "/reports" : ""}/${pluralEntityNameToSingular(entityName)}/${uuid}${
+    tab ? `?tab=${tab}` : ""
+  }`;
 
 export const isEntityReport = (entityName: EntityName) => {
   return entityName.includes("report");

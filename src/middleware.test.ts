@@ -285,7 +285,7 @@ describe("middlewareCache is existing", () => {
     const spy = jest.spyOn(NextResponse, "redirect");
     const cachedUrl = "/home";
 
-    await middleware(getRequest("/my/projects", true, cachedUrl));
+    await middleware(getRequest("/my-projects", true, cachedUrl));
     expect(spy).toBeCalledTimes(0);
 
     await middleware(getRequest("/project/[uuid]", true, cachedUrl));

@@ -4,7 +4,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { fetchGetV2ApplicationsUUIDExport } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
 interface ApplicationHeaderProps {
   name: string;

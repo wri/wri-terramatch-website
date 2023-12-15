@@ -14,8 +14,8 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2NurseriesUUID, useGetV2ENTITYUUID } from "@/generated/apiComponents";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -35,7 +35,7 @@ const NurseryDetailPage = () => {
 
   const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
     onSuccess() {
-      router.push("/my/projects");
+      router.push("/my-projects");
       openToast(t("The nursery has been successfully deleted"));
     },
     onError() {
@@ -83,7 +83,7 @@ const NurseryDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: nursery.project?.name, path: `/project/${nursery.project?.uuid}` },
           { title: nursery.name }
         ]}

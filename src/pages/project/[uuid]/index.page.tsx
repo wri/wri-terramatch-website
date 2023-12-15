@@ -19,9 +19,9 @@ import {
   useGetV2ProjectsUUID,
   useGetV2ReportingFrameworksUUID
 } from "@/generated/apiComponents";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFramework } from "@/hooks/useFramework";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import CompletedReportsTab from "@/pages/project/[uuid]/tabs/CompletedReports";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
@@ -56,7 +56,7 @@ const ProjectDetailPage = () => {
 
   const { mutate: deleteProject } = useDeleteV2ProjectsUUID({
     onSuccess() {
-      router.push("/my/projects");
+      router.push("/my-projects");
       openToast(t("The project has been successfully deleted"));
     },
     onError() {
@@ -101,7 +101,7 @@ const ProjectDetailPage = () => {
       <Head>
         <title>{t("Project")}</title>
       </Head>
-      <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my/projects" }, { title: project.name }]} />
+      <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project.name }]} />
       <PageHeader
         className="h-[203px]"
         title={project.name}

@@ -41,13 +41,14 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           case "Nursery": {
             ctaText = t("View Nursery Details");
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
-            ctaLink = `nursery/${target?.uuid}`;
+            ctaLink = getEntityDetailPageLink("nurseries", target?.uuid);
             break;
           }
           case "Site": {
             ctaText = t("View Site Details");
-            ctaLink = `site/${target?.uuid}`;
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
+            ctaLink = getEntityDetailPageLink("sites", target?.uuid);
+
             break;
           }
         }
@@ -77,12 +78,12 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
         subtitle: t("You will find the updates to your projects here. To view your projects, click the button below."),
         buttonProps: {
           as: Link,
-          href: "/my/projects",
+          href: "/my-projects",
           children: t("View my projects")
         }
       }}
       cta={
-        projectActions.length > 10 ? { as: Link, href: "/my/projects", children: t("View all projects") } : undefined
+        projectActions.length > 10 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined
       }
     />
   );

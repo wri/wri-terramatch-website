@@ -2,6 +2,10 @@ import { useAuthContext } from "@/context/auth.provider";
 import { useGetAuthMe } from "@/generated/apiComponents";
 import { UserRead } from "@/generated/apiSchemas";
 
+/**
+ * To easily access user data
+ * @returns UserRead
+ */
 export const useUserData = () => {
   const { token } = useAuthContext();
   const { data: authMe } = useGetAuthMe<{ data: UserRead }>(
