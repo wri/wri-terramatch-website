@@ -1,6 +1,8 @@
 import { Divider, Stack, Typography } from "@mui/material";
 import { FC } from "react";
-import { Datagrid, EditButton, List, ShowButton, TextField } from "react-admin";
+import { Datagrid, EditButton, List, ShowButton, TextField, WrapperField } from "react-admin";
+
+import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 
 export const ReportingFrameworkList: FC = () => {
   return (
@@ -18,6 +20,9 @@ export const ReportingFrameworkList: FC = () => {
           <TextField source="total_projects_count" label="Enrolled Projects" />
           <ShowButton />
           <EditButton />
+          <WrapperField>
+            <CustomDeleteWithConfirmButton source="name" />
+          </WrapperField>
         </Datagrid>
       </List>
     </>

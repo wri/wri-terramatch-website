@@ -7083,6 +7083,56 @@ export const fetchPostV2AdminReportingFrameworks = (
     {}
   >({ url: "/v2/admin/reporting-frameworks", method: "post", ...variables, signal });
 
+export type DeleteV2AdminReportingFrameworksUUIDPathParams = {
+  uuid: string;
+};
+
+export type DeleteV2AdminReportingFrameworksUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2AdminReportingFrameworksUUIDVariables = {
+  pathParams: DeleteV2AdminReportingFrameworksUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2AdminReportingFrameworksUUID = (
+  variables: DeleteV2AdminReportingFrameworksUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2AdminReportingFrameworksUUIDError,
+    undefined,
+    {},
+    {},
+    DeleteV2AdminReportingFrameworksUUIDPathParams
+  >({
+    url: "/v2/admin/reporting-frameworks/{uuid}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2AdminReportingFrameworksUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2AdminReportingFrameworksUUIDError,
+      DeleteV2AdminReportingFrameworksUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2AdminReportingFrameworksUUIDError,
+    DeleteV2AdminReportingFrameworksUUIDVariables
+  >(
+    (variables: DeleteV2AdminReportingFrameworksUUIDVariables) =>
+      fetchDeleteV2AdminReportingFrameworksUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2ReportingFrameworksAccessCodeACCESSCODEPathParams = {
   accessCode: string;
 };
