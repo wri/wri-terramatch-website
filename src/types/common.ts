@@ -75,7 +75,12 @@ export type BodyTextVariants =
 
 export type CaptionTextVariants = "text-bold-caption-200" | "text-light-caption-200" | "text-bold-caption-100";
 
-export type ButtonTextVariants = "text-button-400" | "text-button-300" | "text-button-200" | "text-button-100";
+export type ButtonTextVariants =
+  | "text-button-400"
+  | "text-button-300"
+  | "text-button-200"
+  | "text-button-100"
+  | "text-button-700";
 
 export type Option = {
   title: string;

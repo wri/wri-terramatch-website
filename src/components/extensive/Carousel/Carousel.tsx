@@ -59,7 +59,7 @@ const Carousel = <T extends Record<any, any>>({
         >
           <Icon
             name={IconNames.CHEVRON_LEFT}
-            className={classNames("fill-primary-400", smallSwiperButtons ? "mr-0.5" : "mr-1")}
+            className={classNames("fill-white", smallSwiperButtons ? "mr-0.5" : "mr-1")}
             height={swiperButtonSize}
             width={swiperButtonSize}
           />
@@ -96,7 +96,7 @@ const Carousel = <T extends Record<any, any>>({
         >
           <Icon
             name={IconNames.CHEVRON_RIGHT}
-            className={classNames("fill-primary-400", smallSwiperButtons ? "ml-0.5" : "ml-1")}
+            className={classNames("fill-white", smallSwiperButtons ? "ml-0.5" : "ml-1")}
             height={swiperButtonSize}
             width={swiperButtonSize}
           />
