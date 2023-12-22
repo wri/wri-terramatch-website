@@ -61,6 +61,7 @@ const App = () => (
       list={modules.reportingFramework.List}
       show={modules.reportingFramework.Show}
       edit={modules.reportingFramework.Edit}
+      create={modules.reportingFramework.Create}
       icon={WatchLater}
       options={{ label: "Reporting Frameworks" }}
     />

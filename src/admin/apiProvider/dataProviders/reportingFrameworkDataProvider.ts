@@ -2,6 +2,7 @@ import { DataProvider } from "react-admin";
 
 import {
   fetchGetV2AdminReportingFrameworks,
+  fetchPostV2AdminReportingFrameworks,
   fetchPutV2AdminReportingFrameworksUUID,
   GetV2AdminReportingFrameworksError
 } from "@/generated/apiComponents";
@@ -31,6 +32,19 @@ export const reportingFrameworkDataProvider: DataProvider = {
 
       //@ts-ignore
       return { data: { ...response.data, id: response.data.uuid } };
+    } catch (err) {
+      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+    }
+  },
+  //@ts-ignore
+  async create(__, params) {
+    try {
+      const response = await fetchPostV2AdminReportingFrameworks({
+        body: params.data
+      });
+
+      // @ts-expect-error
+      return { data: { ...response.data, id: response.id } };
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
     }
