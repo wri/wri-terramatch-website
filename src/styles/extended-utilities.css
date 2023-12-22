@@ -104,7 +104,7 @@
   }
 
   .text-light-caption-200 {
-    @apply font-primary text-sm font-light leading-5;
+    @apply font-primary text-sm font-normal leading-5;
     font-style: normal;
   }
 

@@ -8,7 +8,7 @@ import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
 export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
   as?: ElementType;
   iconProps?: IconProps;
-  variant?: "primary" | "secondary" | "text" | "link";
+  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -31,6 +31,8 @@ const Button: FC<IButtonProps> = props => {
     const nonTextClasses =
       "rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8";
     const nonTextSpanClasses = "text-bold-caption-200 pt-0.75 leading-3";
+    const newText =
+      "flex items-center font-inter font-bold text-16 leading-snug tracking-tighter uppercase text-primary";
 
     switch (variant) {
       case "primary":
@@ -47,7 +49,16 @@ const Button: FC<IButtonProps> = props => {
           ),
           span: nonTextSpanClasses
         };
-
+      case "white":
+        return {
+          container: classNames("bg-white py-4 rounded-lg"),
+          span: newText
+        };
+      case "sky":
+        return {
+          container: classNames("py-4 bg-primary-200 rounded-lg"),
+          span: newText
+        };
       case "text":
         return { container: "", span: "text-bold-body-300" };
 

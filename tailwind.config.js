@@ -42,9 +42,9 @@ module.exports = {
         500: "#27A9E0",
         400: "#4EBBEA",
         300: "#98CEED",
-        200: "#CEE6F4",
+        200: "#E5F8FF",
         100: "#F2FAFD",
-        50: "#F5F7F9"
+        50: "#F5F7F9",
       },
       secondary: {
         DEFAULT: "#8CC63F",
@@ -100,7 +100,7 @@ module.exports = {
       "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px
     },
     fontFamily: {
-      primary: ["Acumin Pro"],
+      primary: ["Inter"],
       secondary: ["Georgia"]
     },
     fontSize: {

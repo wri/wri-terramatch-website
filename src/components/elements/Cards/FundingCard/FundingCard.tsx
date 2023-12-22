@@ -77,8 +77,8 @@ const FundingCard = (props: FundingCardProps) => {
       <div className="mt-8 flex gap-3">
         <Button
           as={Link}
-          variant="secondary"
-          iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
+          variant="white"
+          // iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
           className="flex-1"
           href={secondaryLink}
           disabled={!secondaryLink}
@@ -88,6 +88,7 @@ const FundingCard = (props: FundingCardProps) => {
         </Button>
         <Button
           as={Link}
+          variant="sky"
           className="flex-1"
           href={primaryLink}
           disabled={!primaryLink || status === "inactive" || status === "disabled" || status === "coming-soon"}
