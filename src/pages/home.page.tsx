@@ -67,7 +67,13 @@ const HomePage = () => {
       <When condition={!!myOrg}>
         <PageSection>
           <TaskList
-            title={t("Get Ready for Funding Opportunities")}
+            title={
+              <>
+                Get Ready for
+                <br />
+                Funding Opportunities
+              </>
+            }
             subtitle={t("Keep your information updated to have more chances of having a successful application.")}
             items={[
               {

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -8,13 +8,13 @@ import Icon, { IconProps } from "../Icon/Icon";
 import List from "../List/List";
 
 export interface TaskListProps {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   items: TaskListItem[];
 }
 
 export interface TaskListItem {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   iconProps: IconProps;
   actionText: string;
@@ -26,10 +26,12 @@ const TaskList = (props: TaskListProps) => {
   return (
     <div className="w-full overflow-hidden rounded-xl shadow">
       <div className="bg-white p-8">
-        <Text variant="text-bold-headline-800" className="mb-2">
+        <Text variant="text-heading-700" className="text-center">
           {props.title}
         </Text>
-        <Text variant="text-light-subtitle-400">{props.subtitle}</Text>
+        <Text variant="text-bold-subtitle-400" className="mt-2 text-center">
+          {props.subtitle}
+        </Text>
       </div>
       <List
         as="div"
