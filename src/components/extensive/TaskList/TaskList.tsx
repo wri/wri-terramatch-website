@@ -24,7 +24,7 @@ export interface TaskListItem {
 
 const TaskList = (props: TaskListProps) => {
   return (
-    <div className="w-full overflow-hidden rounded-xl shadow">
+    <div className="w-[82vw] max-w-[82vw] overflow-hidden">
       <div className="bg-white p-8">
         <Text variant="text-heading-700" className="text-center">
           {props.title}
@@ -35,13 +35,13 @@ const TaskList = (props: TaskListProps) => {
       </div>
       <List
         as="div"
-        className="flex flex-col gap-8 bg-taskList bg-cover bg-no-repeat p-8 pb-10"
+        className="flex flex-col gap-8 bg-no-repeat pt-8 pb-10"
         items={props.items}
         itemAs={Fragment}
         render={item => {
           return (
             <div
-              className={classNames("flex items-center justify-between gap-6 rounded-xl border py-6 px-5 shadow ", {
+              className={classNames("flex items-center justify-between gap-6 rounded-xl border py-6 px-12 ", {
                 "border-neutral-200 bg-white": !item.done,
                 "border-secondary-500 bg-success-100": item.done
               })}
@@ -57,14 +57,16 @@ const TaskList = (props: TaskListProps) => {
                   <Text variant="text-bold-subtitle-500" className="mb-1">
                     {item.title}
                   </Text>
-                  <Text variant="text-light-body-300" containHtml>
+                  <Text variant="text-body-400" containHtml>
                     {item.subtitle}
                   </Text>
                 </div>
               </div>
-              <Button as="a" variant="secondary" href={item.actionUrl}>
-                {item.actionText}
-              </Button>
+              <div className="w-[148px]">
+                <Button as="a" variant="sky" className="w-full flex-1" href={item.actionUrl}>
+                  {item.actionText}
+                </Button>
+              </div>
             </div>
           );
         }}

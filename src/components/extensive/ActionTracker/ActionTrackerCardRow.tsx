@@ -50,8 +50,10 @@ const ActionTrackerCardRow = ({
           {subtitle}
         </Text>
       </div>
-      <div className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 ">
-        <Text variant="text-button-700">{ctaText}</Text>
+      <div className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white">
+        <Text variant="text-button-700" className="group-hover:text-white">
+          {ctaText}
+        </Text>
         <Icon name={IconNames.CHEVRON_RIGHT_SMALL} className="h-5 w-5" />
       </div>
     </Link>

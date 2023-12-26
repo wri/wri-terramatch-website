@@ -8,6 +8,7 @@ import ActionTracker from "@/components/extensive/ActionTracker/ActionTracker";
 import FundingCarouselList from "@/components/extensive/FundingsCarouselList/FundingsCarouselList";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import TaskList from "@/components/extensive/TaskList/TaskList";
 import { useGetHomeTourItems } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
@@ -65,7 +66,7 @@ const HomePage = () => {
         </LoadingContainer>
       </When>
       <When condition={!!myOrg}>
-        <PageSection>
+        <PageSection className="flex justify-center bg-white" hasFull>
           <TaskList
             title={
               <>
@@ -102,6 +103,7 @@ const HomePage = () => {
           />
         </PageSection>
       </When>
+      <PageFooter />
     </PageBody>
   );
 };
