@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import HabitBaharatFund from "public/images/habit-baharat-fund.webp";
 import pricelessPlanetCoalitionExplainerImage from "public/images/priceless-planet-coalition-explainer.webp";
+import fondoHaritBharatImage from "public/images/_AJL2963.jpg";
 import SupportImage from "public/images/support.webp";
 import TerrafundAFR100ExplainerImage from "public/images/terrafund-afr-100-explainer.webp";
 import UpcomingOpportunitiesExplainerImage from "public/images/upcoming-opportunities-explainer.webp";
@@ -131,6 +132,20 @@ const LandingPage = () => {
         imageCredit={{
           name: "Sabin Ray/WRI",
           position: "right"
+        }}
+      />
+      <AlternatingSection
+        title={t("Harit Bharat Fund")}
+        description={t(
+          "A partnership led by World Resources Institute, Harit Bharat Fund is investing in 20 non-governmental organizations, small enterprises, and and farmer-producer companies that restore land in the Central Indian states of Madhya Pradesh, Maharashtra, and Chhattisgarh. Learning from TerraFund for AFR100, this new initiative uses and adapts TerraMatch's application and monitoring functions. WRI India, India Climate Collaborative, Pune Knowledge Cluster, Sangam, Spectrum Impact, and Transform Rural Impact are implementing partners."
+        )}
+        buttonText={t("Sign up")}
+        buttonLink="/auth/signup"
+        imageSrc={fondoHaritBharatImage}
+        className="flex-row-reverse"
+        imageCredit={{
+          name: "FOLU India",
+          position: "left"
         }}
       />
       <TwoByOneSection.Container className="bg-black">
