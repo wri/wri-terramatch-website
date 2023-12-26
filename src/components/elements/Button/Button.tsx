@@ -37,7 +37,7 @@ const Button: FC<IButtonProps> = props => {
     switch (variant) {
       case "primary":
         return {
-          container: classNames("h-fit bg-primary-500 hover:bg-primary-400 py-2", nonTextClasses),
+          container: classNames("h-fit bg-primary-500 hover:bg-primary-400 py-2  text-white", nonTextClasses),
           span: nonTextSpanClasses
         };
 

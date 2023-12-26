@@ -66,7 +66,7 @@ const HomePage = () => {
         </LoadingContainer>
       </When>
       <When condition={!!myOrg}>
-        <PageSection className="flex justify-center bg-white" hasFull>
+        <PageSection className="flex justify-center bg-white pb-10" hasFull>
           <TaskList
             title={
               <>

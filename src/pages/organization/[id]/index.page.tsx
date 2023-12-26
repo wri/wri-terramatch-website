@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
@@ -75,6 +76,7 @@ const OrganizationPage = () => {
           }
         ]}
       />
+      <PageFooter />
     </LoadingContainer>
   );
 };
