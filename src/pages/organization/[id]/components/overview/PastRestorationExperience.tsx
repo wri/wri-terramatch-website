@@ -89,8 +89,12 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
           condition={!!organization?.historic_monitoring_geojson}
         >
           <div>
-            <Text variant="text-body-500" className="w-1/3">
-              {t("Historic Monitoring Shapefile Upload:")}
+            <Text variant="text-body-900" className="w-1/3">
+              <>
+                Historic Monitoring Shapefile Upload:
+                <br />
+                <br />
+              </>
             </Text>
             <Map geojson={projectBoundary} />
           </div>

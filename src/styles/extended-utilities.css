@@ -303,3 +303,8 @@
   display: unset !important;
   visibility: hidden;
 }
+
+/* mapbox-gl */
+.mapboxgl-map{
+  border-radius: 10px;
+}
