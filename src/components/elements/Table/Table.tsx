@@ -119,7 +119,7 @@ function Table<TData extends RowData>({
         {children}
       </div>
       <table {...props} className={classNames(className, "w-full border-separate border-spacing-y-4")}>
-        <thead className="bg-primary-200">
+        <thead className="bg-[#CFE6F4]">
           {getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(
@@ -166,7 +166,7 @@ function Table<TData extends RowData>({
                   <td
                     className={classNames(
                       "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-                      "text-light-subtitle-400 px-6 py-4"
+                      "text-normal-subtitle-400 px-6 py-4"
                     )}
                     align={"center"}
                     colSpan={columns.length}
@@ -222,7 +222,7 @@ function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown>
     <td
       className={classNames(
         "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-        "text-light-subtitle-400 px-6 py-4"
+        "text-normal-subtitle-400 px-6 py-4"
       )}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}
@@ -237,7 +237,7 @@ function LoadingCell() {
     <tr>
       <td align="center" colSpan={100} className="py-4 px-6">
         <Lottie animationData={SpinnerLottie} className="mb-8 h-8 w-8" />
-        <Text variant="text-light-subtitle-400">Loading results, load times might increase with more data</Text>
+        <Text variant="text-normal-subtitle-400">Loading results, load times might increase with more data</Text>
       </td>
     </tr>
   );

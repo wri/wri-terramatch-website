@@ -72,6 +72,10 @@
     @apply text-md font-light leading-[27px];
   }
 
+  .text-normal-subtitle-400 {
+    @apply text-md font-normal leading-[27px];
+  }
+
   .text-bold-subtitle-400 {
     @apply text-md font-bold leading-normal;
   }

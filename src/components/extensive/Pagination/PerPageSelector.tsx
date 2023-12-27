@@ -34,7 +34,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                   {value}
                 </Text>
               </div>
-              <div className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200">
+              <div className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]">
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
                   className={classNames("mb-[2px] fill-neutral-900 transition", open && "rotate-180")}
@@ -51,14 +51,14 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
             show={open}
             enter="transition duration-100 ease-out"
             enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
+            enterTo="transform scale-100 opacity-100 !mt-0"
             leave="transition duration-75 ease-out"
             leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
+            leaveTo="transform scale-95 opacity-0 !mt-0"
           >
             <Listbox.Options
               as="div"
-              className="mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
+              className="absolute mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
             >
               {props.options.map(option => {
                 let isSelected = value === option;

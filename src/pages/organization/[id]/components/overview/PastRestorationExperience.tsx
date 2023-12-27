@@ -25,7 +25,7 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
   }
 
   return (
-    <section className="my-10 bg-neutral-150 p-8">
+    <section className="my-10 rounded-lg bg-neutral-150  p-8">
       <Text variant="text-heading-300">{t("Environmental Impact")}</Text>
       <div className="mt-10 flex flex-col gap-3">
         <TextRow

@@ -55,6 +55,7 @@ export type HeadingTextVariants =
   | "text-bold-subtitle-600"
   | "text-bold-subtitle-500"
   | "text-light-subtitle-400"
+  | "text-normal-subtitle-400"
   | "text-bold-subtitle-400";
 
 export type BodyTextVariants =

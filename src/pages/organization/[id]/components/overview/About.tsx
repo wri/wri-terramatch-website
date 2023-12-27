@@ -12,7 +12,7 @@ const About = ({ organization }: AboutProps) => {
   const t = useT();
 
   return (
-    <section className="my-15 bg-neutral-150 p-8">
+    <section className="my-15 rounded-lg bg-neutral-150 p-8">
       <div className="flex flex-col gap-4">
         <Text variant="text-heading-300">{t("About")}</Text>
         <Text variant="text-body-800">{organization?.description}</Text>
