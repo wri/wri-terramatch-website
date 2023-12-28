@@ -34,6 +34,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
             </When>
             <When condition={isTerrafund}>
+              <LongTextField title={t("Community Contribution")}>{report.community_progress}</LongTextField>
               <LongTextField title={t("Landscape Community Contribution")}>
                 {report.landscape_community_contribution}
               </LongTextField>
