@@ -155,6 +155,9 @@ const SiteReportDetailPage = () => {
                   <GenericField label={t("Disturbances")}>
                     <DisturbancesTable modelName="site-report" modelUUID={siteReportUUID} />
                   </GenericField>
+                  <When condition={!isPPC}>
+                    <LongTextField title={t("Site Changes")}>{siteReport.polygon_status}</LongTextField>
+                  </When>
                 </PageCard>
               </PageColumn>
             </PageRow>
