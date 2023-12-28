@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -20,7 +20,7 @@ import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAle
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import FrameworkSelectionDialog from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
-import { frameworkChoices } from "@/constants/options/frameworks";
+import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
 import { downloadFileBlob } from "@/utils";
@@ -29,6 +29,19 @@ import { optionToChoices } from "@/utils/options";
 import modules from "../..";
 
 const SiteReportDataGrid: FC = () => {
+  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
+  const fetchData = async () => {
+    try {
+      const choices = await useFrameworkChoices();
+      setFrameworkChoices(choices);
+    } catch (error) {
+      console.error("Error fetching framework choices:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
       <TextField source="site.name" label="Site Name" sortable={false} />
@@ -44,7 +57,8 @@ const SiteReportDataGrid: FC = () => {
         source="framework_key"
         label="Framework"
         render={(record: any) =>
-          frameworkChoices.find(framework => framework.id === record?.framework_key)?.name || record?.framework_key
+          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
+          record?.framework_key
         }
         sortable={false}
       />
@@ -61,7 +75,19 @@ const SiteReportDataGrid: FC = () => {
 export const SiteReportsList: FC = () => {
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [exporting, setExporting] = useState<boolean>(false);
+  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
+  const fetchData = async () => {
+    try {
+      const choices = await useFrameworkChoices();
+      setFrameworkChoices(choices);
+    } catch (error) {
+      console.error("Error fetching framework choices:", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
     <ReferenceInput
