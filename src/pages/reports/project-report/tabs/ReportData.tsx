@@ -46,6 +46,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Survival Rate")}>{report.percentage_survival_to_date}</LongTextField>
               <LongTextField title={t("Survival Calculation")}>{report.survival_calculation}</LongTextField>
               <LongTextField title={t("Survival Comparison")}>{report.survival_comparison}</LongTextField>
+              <LongTextField title={t("Equitable Opportunities for Women + Youth")}>{report.equitable_opportunities}</LongTextField>
             </When>
           </PageCard>
         </PageColumn>
