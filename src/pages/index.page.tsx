@@ -1,9 +1,9 @@
 import { useT } from "@transifex/react";
 import Image from "next/image";
 import Link from "next/link";
+import fondoHaritBharatImage from "public/images/_AJL2963.jpg";
 import HabitBaharatFund from "public/images/habit-baharat-fund.webp";
 import pricelessPlanetCoalitionExplainerImage from "public/images/priceless-planet-coalition-explainer.webp";
-import fondoHaritBharatImage from "public/images/_AJL2963.jpg";
 import SupportImage from "public/images/support.webp";
 import TerrafundAFR100ExplainerImage from "public/images/terrafund-afr-100-explainer.webp";
 import UpcomingOpportunitiesExplainerImage from "public/images/upcoming-opportunities-explainer.webp";

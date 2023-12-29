@@ -151,16 +151,16 @@ const NurseryReportDetailPage = () => {
                   <TextField label={t("Seedling or Young Trees")} value={nurseryReport.seedlings_young_trees} />
                 </PageCard>
                 <Paper>
-                    <ButtonField
-                      label={t("Tree Seedling Contributions")}
-                      subtitle={t(nurseryReport?.tree_seedling_contributions?.[0]?.file_name || "")}
-                      buttonProps={{
-                        as: Link,
-                        children: t("Download"),
-                        href: nurseryReport?.tree_seedling_contributions?.[0]?.url || "",
-                        download: true
-                      }}
-                    />
+                  <ButtonField
+                    label={t("Tree Seedling Contributions")}
+                    subtitle={t(nurseryReport?.tree_seedling_contributions?.[0]?.file_name || "")}
+                    buttonProps={{
+                      as: Link,
+                      children: t("Download"),
+                      href: nurseryReport?.tree_seedling_contributions?.[0]?.url || "",
+                      download: true
+                    }}
+                  />
                 </Paper>
               </PageColumn>
             </PageRow>
