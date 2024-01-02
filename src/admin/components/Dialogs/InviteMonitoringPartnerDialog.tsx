@@ -18,7 +18,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { usePostV2ProjectsUUIDInvite } from "@/generated/apiComponents";
-import { INVITE_TOKEN_KEY } from "@/hooks/useInviteToken";
 
 interface InviteMonitoringPartnerDialogProps extends DialogProps {
   handleClose: () => void;
@@ -62,7 +61,7 @@ export const InviteMonitoringPartnerDialog = ({ handleClose, ...props }: InviteM
       pathParams: { uuid: record.id as string },
       queryParams: {
         email_address: data.email,
-        callback_url: window.location.origin + `/auth/login?${INVITE_TOKEN_KEY}=`
+        callback_url: window.location.origin + `/auth/login`
       }
     });
   };

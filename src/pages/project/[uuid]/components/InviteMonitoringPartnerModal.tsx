@@ -10,7 +10,6 @@ import { ModalBase } from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
 import { usePostV2ProjectsUUIDInvite } from "@/generated/apiComponents";
-import { INVITE_TOKEN_KEY } from "@/hooks/useInviteToken";
 
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
@@ -55,7 +54,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
       pathParams: { uuid: projectUUID },
       queryParams: {
         email_address: data.email,
-        callback_url: window.location.origin + `/auth/login?${INVITE_TOKEN_KEY}=`
+        callback_url: window.location.origin + `/auth/login`
       }
     });
   };
