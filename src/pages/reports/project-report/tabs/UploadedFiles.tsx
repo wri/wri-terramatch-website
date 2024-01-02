@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Then } from "react-if";
+import { useMemo } from "react";
+import { Else, If, Then } from "react-if";
 
 import ButtonField from "@/components/elements/Field/ButtonField";
 import Paper from "@/components/elements/Paper/Paper";
@@ -13,39 +14,48 @@ interface UploadedFilesTabProps {
   report: any;
 }
 
+const sections = [
+  { name: "Socio Economic", property: "socioeconomic_benefits" },
+  { name: "Files", property: "file" },
+  { name: "Other Additional Files", property: "other_additional_documents" }
+];
+
 const UploadedFilesTab = ({ report }: UploadedFilesTabProps) => {
   const t = useT();
 
-  const sections = [
-    { name: "Socio Economic", property: "socioeconomic_benefits" },
-    { name: "Files", property: "file" },
-    { name: "Other Additional Files", property: "other_additional_documents" }
-  ];
+  const totalFiles = useMemo(() => sections.reduce((total, section) => total + report[section.property].length, 0), []);
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
           <PageCard>
-            {sections.map((section, index) => (
-              <Then key={index}>
-                {report[section.property].map((file: any) => (
-                  <Paper key={file.uuid}>
-                    <ButtonField
-                      key={file.uuid}
-                      label={t(section.name)}
-                      subtitle={t(file.file_name)}
-                      buttonProps={{
-                        as: Link,
-                        children: t("Download"),
-                        href: file.url,
-                        download: true
-                      }}
-                    />
-                  </Paper>
-                ))}
+            <If condition={totalFiles === 0}>
+              <Then>
+                <h3>{t("Files not found")}</h3>
               </Then>
-            ))}
+              <Else>
+                {sections.map((section, index) => (
+                  <Then key={index}>
+                    {report[section.property].map((file: any) => (
+                      <Paper key={file.uuid}>
+                        <ButtonField
+                          key={file.uuid}
+                          label={t(section.name)}
+                          subtitle={t(file.file_name)}
+                          buttonProps={{
+                            as: Link,
+                            children: t("Download"),
+                            href: file.url,
+                            download: true
+                          }}
+                        />
+                      </Paper>
+                    ))}
+                  </Then>
+                ))}
+              </Else>
+            </If>
           </PageCard>
         </PageColumn>
       </PageRow>
