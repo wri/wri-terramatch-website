@@ -22,6 +22,7 @@ import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
 import ReportDataTab from "./tabs/ReportData";
 import SiteReportsTab from "./tabs/SiteReports";
 import TFSocioeconomicTab from "./tabs/TFSocioeconomic";
+import UploadedFilesTab from "./tabs/UploadedFiles";
 
 const ProjectReportDetailPage = () => {
   const uuid = useRouter().query.uuid as string;
@@ -156,6 +157,11 @@ const ProjectReportDetailPage = () => {
             title: t("Nursery reports"),
             body: <NurseryReportsTab taskUuid={report.task_uuid} />,
             hidden: isPPC
+          },
+          {
+            key: "uploaded-files",
+            title: t("Uploaded Files"),
+            body: <UploadedFilesTab report={report} />
           }
         ]}
         containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
