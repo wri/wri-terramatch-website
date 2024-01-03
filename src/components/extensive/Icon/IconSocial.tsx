@@ -17,7 +17,9 @@ const IconSocial = ({ name, url }: IconSocialProps) => {
   return (
     <When condition={url}>
       <Link href={url ?? ""} rel="noopener noreferrer" target="_blank">
-        <Icon name={name} className=" h-8 w-8" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-[#002633]">
+          <Icon name={name} width={17} className=" fill-white" />
+        </div>
       </Link>
     </When>
   );

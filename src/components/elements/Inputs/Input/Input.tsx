@@ -57,12 +57,12 @@ const Input = forwardRef(
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
-        "border border-neutral-400": !error
+        "border border-neutral-200": !error
       },
       secondary: {
         "border-0 border-b py-[10px] px-0": true,
         "pl-4": inputProps.type === "number",
-        "border-b-neutral-400": !error
+        "border-b-neutral-200": !error
       }
     };
 
