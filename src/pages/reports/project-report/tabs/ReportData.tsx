@@ -29,16 +29,14 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Reported Data")} gap={8}>
-            <LongTextField title={t("Local Engagement")}>{report.local_engagement}</LongTextField>
             <When condition={isPPC}>
               <LongTextField title={t("Technical Narrative")}>{report.technical_narrative}</LongTextField>
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
             </When>
             <When condition={isTerrafund}>
-              <LongTextField title={t("Community Contribution")}>{report.community_progress}</LongTextField>
-              <LongTextField title={t("Landscape Community Contribution")}>
-                {report.landscape_community_contribution}
-              </LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
+              <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
+              <LongTextField title={t("Community Engagement Approach")}>{report.local_engagement}</LongTextField>
               <LongTextField title={t("Top 3 Successes")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Challenges Faced")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
