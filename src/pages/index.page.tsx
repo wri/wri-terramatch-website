@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Image from "next/image";
 import Link from "next/link";
+import fondoHaritBharatImage from "public/images/_AJL2963.jpg";
 import HabitBaharatFund from "public/images/habit-baharat-fund.webp";
 import pricelessPlanetCoalitionExplainerImage from "public/images/priceless-planet-coalition-explainer.webp";
 import SupportImage from "public/images/support.webp";
@@ -121,6 +122,19 @@ const LandingPage = () => {
         }}
       />
       <AlternatingSection
+        title={t("Harit Bharat Fund")}
+        description={t(
+          "A partnership led by World Resources Institute, Harit Bharat Fund is investing in 20 non-governmental organizations, small enterprises, and and farmer-producer companies that restore land in the Central Indian states of Madhya Pradesh, Maharashtra, and Chhattisgarh. Learning from TerraFund for AFR100, this new initiative uses and adapts TerraMatch's application and monitoring functions. WRI India, India Climate Collaborative, Pune Knowledge Cluster, Sangam, Spectrum Impact, and Transform Rural Impact are implementing partners."
+        )}
+        buttonText={t("Learn more")}
+        buttonLink="https://www.india.terramatch.org"
+        imageSrc={fondoHaritBharatImage}
+        imageCredit={{
+          name: "FOLU India",
+          position: "right"
+        }}
+      />
+      <AlternatingSection
         title={t("More Opportunities To Come")}
         description={t(
           "TerraMatch will continue to host new funding and capacity building programs. Prepare for those upcoming opportunities by filling out your profile today.<br/><br/>The first application on TerraMatch is for the TerraFund for AFR100: Landscapes opportunity, featured above."
@@ -128,6 +142,7 @@ const LandingPage = () => {
         buttonText={t("Sign up")}
         buttonLink="/auth/signup"
         imageSrc={UpcomingOpportunitiesExplainerImage}
+        className="flex-row-reverse"
         imageCredit={{
           name: "Sabin Ray/WRI",
           position: "right"

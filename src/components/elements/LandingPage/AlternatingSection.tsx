@@ -32,7 +32,7 @@ const AlternatingSection = (props: AlternatingSectionProps) => {
         </div>
       </div>
       <div className="flex justify-center bg-background md:w-[50%]">
-        <div className="relative h-[278px] w-full md:h-[472px]">
+        <div className="relative h-[278px] w-full md:h-[510px]">
           <Image src={imageSrc} alt="image" fill style={{ objectFit: "cover" }} placeholder="blur" />
           <ImageCredit
             className={classNames(`absolute bottom-0`, {
