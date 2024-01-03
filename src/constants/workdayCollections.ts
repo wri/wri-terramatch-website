@@ -1,14 +1,10 @@
 import { useT } from "@transifex/react";
 
-// const COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT = "paid-project-establishment";
 const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = "paid-nursery-operations";
 const COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT = "paid-project-management";
-// const COLLECTION_PROJECT_PAID_SEED_COLLECTION = "paid-seed-collection";
 const COLLECTION_PROJECT_PAID_OTHER = "paid-other-activities";
-// const COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT = "volunteer-project-establishment";
 const COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS = "volunteer-nursery-operations";
 const COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT = "volunteer-project-management";
-// const COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION = "volunteer-seed-collection";
 const COLLECTION_PROJECT_VOLUNTEER_OTHER = "volunteer-other-activities";
 
 const COLLECTION_SITE_PAID_SITE_ESTABLISHMENT = "paid-site-establishment";
@@ -23,14 +19,10 @@ const COLLECTION_SITE_VOLUNTEER_SITE_MONITORING = "volunteer-site-monitoring";
 const COLLECTION_SITE_VOLUNTEER_OTHER = "volunteer-other-activities";
 
 export const PROJECT_WORKDAY_COLLECTIONS = [
-  // COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT,
-  // COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT,
   COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT,
   COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT,
   COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS,
   COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS,
-  // COLLECTION_PROJECT_PAID_SEED_COLLECTION,
-  // COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION,
   COLLECTION_PROJECT_PAID_OTHER,
   COLLECTION_PROJECT_VOLUNTEER_OTHER
 ];
@@ -50,15 +42,11 @@ export const SITE_WORKDAY_COLLECTIONS = [
 
 export const getReadableWorkdayCollectionName = (collection: string, t: typeof useT = (t: string) => t) => {
   const value = {
-    // [COLLECTION_PROJECT_PAID_PROJECT_ESTABLISHMENT]: t("Project Establishment - Paid Workday"),
     [COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS]: t("Nursery Operations - Paid Workday"),
     [COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT]: t("Project Management - Paid Workday"),
-    // [COLLECTION_PROJECT_PAID_SEED_COLLECTION]: t("Seed Collection - Paid Workday"),
     [COLLECTION_PROJECT_PAID_OTHER]: t("Other Activities - Paid Workday"),
-    // [COLLECTION_PROJECT_VOLUNTEER_PROJECT_ESTABLISHMENT]: t("Project Establishment - Volunteer"),
     [COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS]: t("Nursery Operations  - Volunteer"),
     [COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT]: t("Project Management - Volunteer"),
-    // [COLLECTION_PROJECT_VOLUNTEER_SEED_COLLECTION]: t("Seed Collection - Volunteer"),
     [COLLECTION_PROJECT_VOLUNTEER_OTHER]: t("Other Activities - Volunteer"),
     [COLLECTION_SITE_PAID_SITE_ESTABLISHMENT]: t("Site Establishment - Paid Workday"),
     [COLLECTION_SITE_PAID_PLANTING]: t("Planting - Paid Workday"),
