@@ -29,6 +29,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Reported Data")} gap={8}>
+            <LongTextField title={t("Local Engagement")}>{report.local_engagement}</LongTextField>
             <When condition={isPPC}>
               <LongTextField title={t("Technical Narrative")}>{report.technical_narrative}</LongTextField>
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
