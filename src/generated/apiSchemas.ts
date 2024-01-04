@@ -1594,6 +1594,7 @@ export type FormCreate = {
   type?: string;
   title?: string;
   subtitle?: string;
+  framework_key?: string;
   description?: string;
   deadline_at?: string;
   documentation?: string;
@@ -1715,6 +1716,7 @@ export type FormRead = {
   type?: string;
   version?: number;
   title?: string;
+  framework_key?: string;
   subtitle?: string;
   description?: string;
   duration?: string;

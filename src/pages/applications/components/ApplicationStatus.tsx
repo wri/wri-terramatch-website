@@ -38,13 +38,15 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   //@ts-ignore
   const stages = application?.funding_programme?.stages?.data as StageRead[];
   const fundingProgrammeStatus = application?.funding_programme?.status;
-
+  const currentForm: any = currentSubmission?.form;
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
-  const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({ pathParams: { accessCode: "terrafund" } });
+  const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
+    pathParams: { accessCode: currentForm?.framework_key ? currentForm?.framework_key : "terrafund" }
+  });
   //@ts-ignore
   const terrafundReportingFramework = (data?.data || {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
 
