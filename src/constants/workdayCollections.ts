@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 
 const COLLECTION_PROJECT_PAID_NURSERY_OPERATIONS = "paid-nursery-operations";
 const COLLECTION_PROJECT_PAID_PROJECT_MANAGEMENT = "paid-project-management";
-const COLLECTION_PROJECT_PAID_OTHER = "paid-other-activities";
+export const COLLECTION_PROJECT_PAID_OTHER = "paid-other-activities";
 const COLLECTION_PROJECT_VOLUNTEER_NURSERY_OPERATIONS = "volunteer-nursery-operations";
 const COLLECTION_PROJECT_VOLUNTEER_PROJECT_MANAGEMENT = "volunteer-project-management";
 const COLLECTION_PROJECT_VOLUNTEER_OTHER = "volunteer-other-activities";
@@ -11,7 +11,7 @@ const COLLECTION_SITE_PAID_SITE_ESTABLISHMENT = "paid-site-establishment";
 const COLLECTION_SITE_PAID_PLANTING = "paid-planting";
 const COLLECTION_SITE_PAID_SITE_MAINTENANCE = "paid-site-maintenance";
 const COLLECTION_SITE_PAID_SITE_MONITORING = "paid-site-monitoring";
-const COLLECTION_SITE_PAID_OTHER = "paid-other-activities";
+export const COLLECTION_SITE_PAID_OTHER = "paid-other-activities";
 const COLLECTION_SITE_VOLUNTEER_SITE_ESTABLISHMENT = "volunteer-site-establishment";
 const COLLECTION_SITE_VOLUNTEER_PLANTING = "volunteer-planting";
 const COLLECTION_SITE_VOLUNTEER_SITE_MAINTENANCE = "volunteer-site-maintenance";
