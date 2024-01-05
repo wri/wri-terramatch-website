@@ -58,14 +58,23 @@ const FundingCard = (props: FundingCardProps) => {
       </Text>
       <When condition={!!deadline}>
         <CardItem
-          iconProps={{ name: IconNames.CALENDAR, width: 16, className: "fill-neutral-900" }}
+          iconProps={{
+            name: IconNames.CALENDAR,
+            width: 16,
+            className: "fill-neutral-900 wide:min-h-[20px] wide:min-w-[20px] "
+          }}
           title={t("Deadline") + ":"}
           subtitle={format(Date.parse(deadline!), "do MMMM y, HH:mm")}
         />
       </When>
       <When condition={!!location}>
         <CardItem
-          iconProps={{ name: IconNames.MAP_PIN, width: 13, height: 18, className: "fill-neutral-900" }}
+          iconProps={{
+            name: IconNames.MAP_PIN,
+            width: 13,
+            height: 18,
+            className: "fill-neutral-900 min-w-[13px] min-h-[18px] wide:min-w-[17px] wide:min-h-[22px]"
+          }}
           title={t("Location") + ":"}
           subtitle={location!}
         />

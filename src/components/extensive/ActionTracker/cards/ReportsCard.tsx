@@ -114,7 +114,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
                 (projects?.data.length ?? 0) > 1
                   ? "/my-projects"
                   : `project/${projects?.data?.[0]?.uuid}?tab=reporting-tasks`,
-              children: t("View all reporting tasks")
+              children: t("Reports")
             }
           : undefined
       }

@@ -19,201 +19,201 @@
 
   /* Heading */
   .text-heading-2000 {
-    @apply font-primary text-5xl font-bold;
+    @apply font-primary text-5xl font-bold wide:text-7xl;
     letter-spacing: normal;
   }
 
   .text-heading-1000 {
-    @apply font-primary text-4xl font-bold;
+    @apply font-primary text-4xl font-bold wide:text-6xl;
     letter-spacing: normal;
   }
 
   .text-bold-headline-1000 {
-    @apply font-primary text-4xl font-bold;
+    @apply font-primary text-4xl font-bold wide:text-6xl;
     letter-spacing: normal;
   }
 
   .text-bold-headline-800 {
-    @apply font-primary text-3xl font-bold;
+    @apply font-primary text-3xl font-bold wide:text-5xl;
     letter-spacing: normal;
   }
 
   .text-heading-700 {
-    @apply font-primary text-4xl font-bold;
+    @apply font-primary text-4xl font-bold wide:text-6xl;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
   }
 
   .text-heading-600 {
-    @apply font-primary text-3xl font-bold;
+    @apply font-primary text-3xl font-bold wide:text-5xl;
     letter-spacing: normal;
   }
 
   .text-heading-500 {
-    @apply font-primary text-2xl font-bold;
+    @apply font-primary text-2xl font-bold wide:text-4xl;
     line-height: 2rem; /* 32px */
     letter-spacing: 1.12408px;
   }
 
   .text-bold-subtitle-400 {
-    @apply font-primary text-lg font-bold;
+    @apply font-primary text-lg font-bold wide:text-2xl;
   }
 
   .text-bold-subtitle-500 {
-    @apply font-primary text-lg font-bold leading-[26px] tracking-wide;
+    @apply font-primary text-lg font-bold leading-[130%] tracking-wide wide:text-2xl;
   }
 
   .text-bold-subtitle-600 {
-    @apply font-primary text-2xl font-bold;
+    @apply font-primary text-2xl font-bold wide:text-4xl;
   }
 
   .text-light-subtitle-400 {
-    @apply text-md font-light leading-[27px];
+    @apply text-md font-light leading-normal wide:text-xl;
   }
 
   .text-normal-subtitle-400 {
-    @apply text-md font-normal leading-[27px];
+    @apply text-md font-normal leading-normal wide:text-xl;
   }
 
   .text-bold-subtitle-400 {
-    @apply text-md font-bold leading-normal;
+    @apply text-md font-bold leading-normal wide:text-xl;
   }
 
   .text-heading-400 {
-    @apply font-primary text-xl font-light;
+    @apply font-primary text-xl font-light wide:text-3xl;
     line-height: 1.5rem; /* 32px */
   }
 
   .text-heading-300 {
-    @apply font-primary text-lg font-bold;
+    @apply font-primary text-lg font-bold wide:text-2xl;
     line-height: 1.625rem; /* 26px */
     letter-spacing: 0.4px;
   }
 
   .text-heading-200 {
-    @apply font-primary text-md font-bold;
+    @apply font-primary text-md font-bold wide:text-xl;
     letter-spacing: normal;
   }
 
   .text-heading-100 {
-    @apply font-primary text-md font-light;
+    @apply font-primary text-md font-light wide:text-xl;
     letter-spacing: 0.45px;
   }
 
   /* Caption */
   .text-bold-caption-200 {
-    @apply font-primary text-sm font-bold leading-5;
+    @apply font-primary text-sm font-bold leading-normal wide:text-md;
     font-style: normal;
   }
 
   .text-light-caption-200 {
-    @apply font-primary text-sm font-normal leading-5;
+    @apply font-primary text-sm font-normal leading-normal wide:text-md;
     font-style: normal;
   }
 
   .text-bold-caption-100 {
-    @apply font-primary text-xs font-bold leading-5;
+    @apply font-primary text-xs font-bold leading-normal wide:text-base;
     font-style: normal;
   }
 
   /* Body */
   .text-body-1200 {
-    @apply font-primary text-base font-bold;
+    @apply font-primary text-base font-bold wide:text-lg;
     line-height: 1.375rem; /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-1100 {
-    @apply font-secondary text-base font-bold;
+    @apply font-secondary text-base font-bold wide:text-lg;
     line-height: 1.5rem; /* 24px */
   }
 
   .text-body-1000 {
-    @apply font-secondary text-base font-normal;
+    @apply font-secondary text-base font-normal wide:text-lg;
     line-height: 1.5rem; /* 24px */
   }
 
   .text-body-900 {
-    @apply font-primary text-base font-bold;
+    @apply font-primary text-base font-bold wide:text-lg;
     line-height: 1.375rem; /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-800 {
-    @apply font-primary text-base font-normal;
+    @apply font-primary text-base font-normal wide:text-lg;
     line-height: 1.5rem; /* 24px */
   }
 
   .text-body-700 {
-    @apply font-primary text-base font-light;
+    @apply font-primary text-base font-light wide:text-lg;
     letter-spacing: 0.666667px;
   }
 
   .text-body-600 {
-    @apply font-primary text-base font-light;
+    @apply font-primary text-base font-light wide:text-lg;
     line-height: 1.375rem; /* 22px */
   }
 
   .text-body-500 {
-    @apply font-primary text-sm font-bold;
+    @apply font-primary text-sm font-bold wide:text-md;
     letter-spacing: normal;
   }
 
   .text-body-400 {
-    @apply font-primary text-sm font-normal;
+    @apply font-primary text-sm font-normal wide:text-md;
     letter-spacing: normal;
   }
 
   .text-body-300 {
-    @apply font-primary text-sm font-light;
+    @apply font-primary text-sm font-light wide:text-md ;
     letter-spacing: normal;
   }
 
   .text-bold-body-300 {
-    @apply text-base font-bold leading-snug tracking-wide;
+    @apply text-base font-bold leading-snug tracking-wide wide:text-lg;
   }
 
   .text-light-body-300 {
-    @apply text-base font-light leading-snug;
+    @apply text-base font-light leading-snug wide:text-lg;
   }
 
   .text-body-200 {
-    @apply font-secondary text-sm font-normal;
+    @apply font-secondary text-sm font-normal wide:text-md;
     line-height: 1.188rem; /* 19px */
   }
 
   .text-body-100 {
-    @apply font-primary text-xs font-bold;
+    @apply font-primary text-xs font-bold wide:text-base;
     line-height: 1.188rem; /* 19px */
   }
 
   /* Button */
   .text-button-700 {
-    @apply font-primary text-primary text-sm font-bold;
+    @apply font-primary text-primary text-sm font-bold wide:text-md;
     line-height: 170%;
   }
 
   .text-button-400 {
-    @apply font-primary text-base font-bold;
+    @apply font-primary text-base font-bold wide:text-lg;
     line-height: 1rem; /* 16px */
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
   .text-button-300 {
-    @apply font-primary text-sm font-bold;
+    @apply font-primary text-sm font-bold wide:text-md;
     line-height: 1rem; /* 16px */
     text-transform: uppercase;
   }
 
   .text-button-200 {
-    @apply font-primary text-sm font-light;
+    @apply font-primary text-sm font-light wide:text-md;
     letter-spacing: normal;
   }
 
   .text-button-100 {
-    @apply font-primary text-xs font-bold;
+    @apply font-primary text-xs font-bold wide:text-base;
     line-height: 1.188rem; /* 19px */
   }
 
@@ -290,7 +290,7 @@
 
   .with-inner-html ul > li::before {
     content: "●";
-    @apply text-xl leading-none text-secondary;
+    @apply text-xl leading-none text-secondary wide:text-3xl;
   }
 
   .with-inner-html ol > li {
