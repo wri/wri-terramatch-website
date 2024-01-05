@@ -44,7 +44,7 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
           as="div"
           className={classNames(
             containerClassName,
-            tabItems.length <= 5 ? "justify-between lg:justify-center lg:gap-30" : "justify-between",
+            tabItems.length <= 5 ? "justify-between lg:justify-start lg:gap-30" : "justify-between",
             "m-auto flex h-full items-center"
           )}
           itemAs={Fragment}
@@ -60,8 +60,8 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
                   disabled={item.disabled}
                 >
                   <Text
-                    variant="text-heading-200"
-                    className={classNames("whitespace-nowrap", selected ? "text-black" : "text-neutral-700")}
+                    variant={selected ? "text-heading-200" : "text-heading-100"}
+                    className={classNames("whitespace-nowrap", "text-black")}
                   >
                     {item.title}
                   </Text>
