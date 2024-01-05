@@ -124,10 +124,11 @@ const RHFWorkdaysTable = ({
         {
           label: t("Select Ethnicity"),
           name: "ethnicity",
-          type: FieldType.Dropdown,
+          type: FieldType.Input,
           validation: yup.string().required(),
           fieldProps: {
-            options: ethnicityOptions,
+            // options: ethnicityOptions,
+            type: "text",
             required: true
           }
         },
