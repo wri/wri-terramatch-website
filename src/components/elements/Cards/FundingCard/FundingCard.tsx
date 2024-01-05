@@ -47,7 +47,7 @@ const FundingCard = (props: FundingCardProps) => {
       {...rest}
       className={classNames(
         className,
-        "flex h-[420px] w-full flex-col rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow"
+        "flex h-[420px] w-full flex-col overflow-auto rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow wide:h-[500px]"
       )}
     >
       <When condition={!!statusProps}>

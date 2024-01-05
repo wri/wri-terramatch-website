@@ -51,7 +51,7 @@ const TaskList = (props: TaskListProps) => {
                   {...item.iconProps}
                   width={60}
                   height={60}
-                  className={classNames(item.iconProps.className, "min-w-[60px]")}
+                  className={classNames(item.iconProps.className, "min-w-[60px] wide:min-h-[100px] wide:min-w-[100px]")}
                 />
                 <div>
                   <Text variant="text-bold-subtitle-500" className="mb-1">
