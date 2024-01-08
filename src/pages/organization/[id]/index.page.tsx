@@ -36,7 +36,7 @@ const OrganizationPage = () => {
       />
       <OrganizationHeader organization={organizationData?.data} />
       <SecondaryTabs
-        containerClassName="max-w-4xl"
+        containerClassName="max-w-[75vw]"
         tabItems={[
           {
             key: "overview",
