@@ -9,6 +9,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
 import { getFullName } from "@/utils/user";
@@ -33,9 +34,9 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
             </When>
             <When condition={isTerrafund}>
-              <LongTextField title={t("Landscape Community Contribution")}>
-                {report.landscape_community_contribution}
-              </LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
+              <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
+              <LongTextField title={t("Community Engagement Approach")}>{report.local_engagement}</LongTextField>
               <LongTextField title={t("Top 3 Successes")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Challenges Faced")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
@@ -46,6 +47,9 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Survival Rate")}>{report.percentage_survival_to_date}</LongTextField>
               <LongTextField title={t("Survival Calculation")}>{report.survival_calculation}</LongTextField>
               <LongTextField title={t("Survival Comparison")}>{report.survival_comparison}</LongTextField>
+              <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
+                {report.equitable_opportunities}
+              </LongTextField>
             </When>
           </PageCard>
         </PageColumn>
@@ -55,7 +59,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             title={t("Socioeconomic Data")}
             gap={4}
             headerChildren={
-              <Button as={Link} variant="secondary" href={`/reports/project-report/${report.uuid}?tab=socioeconomic`}>
+              <Button
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "socioeconomic")}
+              >
                 {t("View More")}
               </Button>
             }
@@ -74,7 +82,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           <PageCard
             title={t("Images")}
             headerChildren={
-              <Button as={Link} variant="secondary" href={`/reports/project-report/${report.uuid}?tab=gallery`}>
+              <Button
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "gallery")}
+              >
                 {t("View All images")}
               </Button>
             }
@@ -82,7 +94,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           <PageCard
             title={t("Trees Data")}
             headerChildren={
-              <Button as={Link} variant="secondary" href={`/reports/project-report/${report.uuid}?tab=site-reports`}>
+              <Button
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "site-reports")}
+              >
                 {t("View all Site Reports")}
               </Button>
             }
@@ -97,7 +113,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
                 <Button
                   as={Link}
                   variant="secondary"
-                  href={`/reports/project-report/${report.uuid}?tab=nursery-reports`}
+                  href={getEntityDetailPageLink("project-reports", report.uuid, "nursery-reports")}
                 >
                   {t("View all Nurseries")}
                 </Button>

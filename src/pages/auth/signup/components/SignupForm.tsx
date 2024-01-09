@@ -6,7 +6,7 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
 import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
-import { privacyPolicyLink, termsAndConditionsLink } from "@/utils/const";
+import { privacyPolicyLink, termsAndConditionsLink } from "@/constants/links";
 
 import { SignUpFormData } from "../index.page";
 

@@ -102,7 +102,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         ),
         buttonProps: {
           as: Link,
-          href: "/my/projects",
+          href: "/my-projects",
           children: t("View my reports")
         }
       }}
@@ -112,7 +112,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
               as: Link,
               href:
                 (projects?.data.length ?? 0) > 1
-                  ? "/my/projects"
+                  ? "/my-projects"
                   : `project/${projects?.data?.[0]?.uuid}?tab=reporting-tasks`,
               children: t("View all reporting tasks")
             }

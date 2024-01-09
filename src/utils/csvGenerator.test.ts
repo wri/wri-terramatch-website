@@ -1,4 +1,4 @@
-import { CSVGenerator } from "@/utils/csvGenerator";
+import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 describe("test CSV Generator", () => {
   test("", () => {

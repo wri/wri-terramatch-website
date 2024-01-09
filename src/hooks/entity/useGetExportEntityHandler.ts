@@ -3,8 +3,16 @@ import { useT } from "@transifex/react";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { fetchGetV2ENTITYUUIDExport } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 
+/**
+ * To get entity export handler
+ * @param entity EntityName
+ * @param uuid string
+ * @param name string
+ * @param extension string = "zip"
+ * @returns { handleExport }
+ */
 export const useGetExportEntityHandler = (
   entity: EntityName,
   uuid: string,

@@ -20,7 +20,7 @@ import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/Custom
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";

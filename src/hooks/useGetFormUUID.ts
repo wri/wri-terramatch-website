@@ -1,7 +1,13 @@
 import { GetV2ReportingFrameworksUUIDResponse, useGetV2ReportingFrameworksUUID } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
 
-export const useGetFormUUID = (frameworkUUID: string, entity: EntityName) => {
+/**
+ * To fetch reporting framework custom form uuid
+ * @param frameworkUUID UUID
+ * @param entity EntityName
+ * @returns custom form UUID
+ */
+export const useGetReportingFrameworkFormUUID = (frameworkUUID: string, entity: EntityName) => {
   const { data } = useGetV2ReportingFrameworksUUID(
     { pathParams: { uuid: frameworkUUID } },
     {

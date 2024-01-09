@@ -5,7 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { V2FileRead } from "@/generated/apiSchemas";
 import { UploadedFile } from "@/types/common";
-import { downloadFile } from "@/utils";
+import { downloadFile } from "@/utils/network";
 
 type FilesProps = {
   title?: string;

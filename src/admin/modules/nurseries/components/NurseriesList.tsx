@@ -22,7 +22,7 @@ import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDele
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils";
+import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";

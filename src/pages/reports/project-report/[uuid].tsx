@@ -10,9 +10,9 @@ import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/Pag
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2ENTITYUUID, useGetV2ProjectsUUID, useGetV2TasksUUID } from "@/generated/apiComponents";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFramework } from "@/hooks/useFramework";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
 import { useGetReportingWindow } from "@/hooks/useGetReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -22,6 +22,7 @@ import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
 import ReportDataTab from "./tabs/ReportData";
 import SiteReportsTab from "./tabs/SiteReports";
 import TFSocioeconomicTab from "./tabs/TFSocioeconomic";
+import UploadedFilesTab from "./tabs/UploadedFiles";
 
 const ProjectReportDetailPage = () => {
   const uuid = useRouter().query.uuid as string;
@@ -78,7 +79,7 @@ const ProjectReportDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: report.project?.name || t("Project"), path: `/project/${report.project?.uuid}` },
           { title: taskTitle, path: `/project/${report.project?.uuid}/reporting-task/${report.task_uuid}` },
           { title: reportTitle }
@@ -156,6 +157,11 @@ const ProjectReportDetailPage = () => {
             title: t("Nursery reports"),
             body: <NurseryReportsTab taskUuid={report.task_uuid} />,
             hidden: isPPC
+          },
+          {
+            key: "uploaded-files",
+            title: t("Uploaded Files"),
+            body: <UploadedFilesTab report={report} />
           }
         ]}
         containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"

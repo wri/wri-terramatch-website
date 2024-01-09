@@ -20,9 +20,9 @@ import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useDate } from "@/hooks/useDate";
-import { useGetEditEntityHandler } from "@/hooks/useGetEditEntityHandler";
-import { useGetExportEntityHandler } from "@/hooks/useGetExportEntityHandler";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import { getFullName } from "@/utils/user";
 
@@ -65,7 +65,7 @@ const NurseryReportDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: nurseryReport.project?.name ?? t("Project"), path: `/project/${nurseryReport.project?.uuid}` },
           { title: nurseryReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
           { title: reportTitle }
@@ -150,6 +150,27 @@ const NurseryReportDetailPage = () => {
                 <PageCard title={t("Overview")}>
                   <TextField label={t("Seedling or Young Trees")} value={nurseryReport.seedlings_young_trees} />
                 </PageCard>
+                <Paper>
+                  <If condition={!!nurseryReport?.tree_seedling_contributions?.[0]?.url}>
+                    <Then>
+                      <ButtonField
+                        label={t("Tree Seedling Contributions")}
+                        subtitle={t(nurseryReport?.tree_seedling_contributions?.[0]?.file_name || "")}
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: nurseryReport?.tree_seedling_contributions?.[0]?.url || "",
+                          download: true
+                        }}
+                      />
+                    </Then>
+                    <Else>
+                      <Then>
+                        <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
+                      </Then>
+                    </Else>
+                  </If>
+                </Paper>
               </PageColumn>
             </PageRow>
           </Else>

@@ -309,7 +309,7 @@ const ReportingTaskPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          { title: t("My Projects"), path: "/my/projects" },
+          { title: t("My Projects"), path: "/my-projects" },
           { title: project.name, path: `/project/${projectUUID}` },
           {
             title

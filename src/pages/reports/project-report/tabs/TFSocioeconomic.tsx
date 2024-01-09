@@ -8,7 +8,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { downloadFile } from "@/utils";
+import { downloadFile } from "@/utils/network";
 
 interface ReportOverviewTabProps {
   report: any;
