@@ -22756,6 +22756,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDResponse = {
   funding_programme_id?: number;
   name?: string;
   order?: number;
+  framework_key?: string;
   forms?: {
     id?: number;
     uuid?: string;
@@ -23100,6 +23101,7 @@ export type GetV2AdminFundingProgrammeResponse = {
       deadline_at?: string;
       readable_status?: string;
       funding_programme_id?: number;
+      framework_key?: string;
       name?: string;
       order?: number;
       forms?: {
@@ -23281,6 +23283,7 @@ export type PostV2AdminFundingProgrammeResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23448,6 +23451,7 @@ export type GetV2FundingProgrammeUUIDResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23612,6 +23616,7 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23784,6 +23789,7 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -24055,6 +24061,7 @@ export type GetV2FundingProgrammeStageResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -24197,6 +24204,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDStatusResponse = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
+  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {
@@ -24335,6 +24343,7 @@ export type GetV2FundingProgrammeStageUUIDResponse = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
+  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {

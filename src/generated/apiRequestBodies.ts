@@ -215,6 +215,7 @@ export type GetV2FundingProgrammeIDBody = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {

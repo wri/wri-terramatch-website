@@ -1419,6 +1419,7 @@ export type FundingProgramme = {
   read_more_url?: string;
   status?: string;
   organisation_types?: string[];
+  framework_key?: string;
   stages?: {
     id?: number;
     uuid?: string;
@@ -6211,6 +6212,7 @@ export type ProjectFullRead = {
         deadline_at?: string;
         readable_status?: string;
         funding_programme_id?: number;
+        framework_key?: string;
         name?: string;
         order?: number;
         forms?: {
@@ -7898,6 +7900,7 @@ export type StagePaginated = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
+    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -8013,6 +8016,7 @@ export type StageRead = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
+  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {
@@ -8632,6 +8636,7 @@ export type ApplicationRead = {
       deadline_at?: string;
       readable_status?: string;
       funding_programme_id?: number;
+      framework_key?: string;
       name?: string;
       order?: number;
       forms?: {
