@@ -23,7 +23,6 @@ import { maxFileSize } from "@/admin/utils/forms";
 import {
   useDeleteV2AdminFormsQuestionUUID,
   useDeleteV2AdminFormsSectionUUID,
-  useGetV2AdminReportingFrameworks,
   useGetV2FormsLinkedFieldListing
 } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead, V2GenericList } from "@/generated/apiSchemas";
@@ -48,7 +47,6 @@ export const getLinkedFieldListingQuery = (formType: string): string =>
 export const FormBuilderForm = () => {
   const { getValues, watch } = useFormContext<FormRead>();
   const formType = watch("type");
-  const formFramework = watch("framework_key");
 
   const { mutateAsync: deleteSection } = useDeleteV2AdminFormsSectionUUID();
   const { mutateAsync: deleteQuestion } = useDeleteV2AdminFormsQuestionUUID();
@@ -61,12 +59,6 @@ export const FormBuilderForm = () => {
     },
     { enabled: !!formType }
   );
-
-  const { data: reportingFrameworksData } = useGetV2AdminReportingFrameworks({});
-  const frameworkChoices: any = reportingFrameworksData?.data?.map(framework => ({
-    id: framework.access_code,
-    name: framework.name
-  }));
 
   const DeleteSection = async (index: number, source: string) => {
     const values = getValues();
@@ -101,18 +93,7 @@ export const FormBuilderForm = () => {
         helperText="If you choose the incorrect form type and need to switch, please return to the previous page and start a new form. This ensures you won't lose any data by altering the form type midway through the creation process."
         sx={{ marginBottom: 6 }}
       />
-      <When condition={formType === "application"}>
-        <SelectInput
-          label="Reporting Framework"
-          source="framework_key"
-          choices={frameworkChoices}
-          fullWidth
-          disabled={!!formFramework}
-          helperText="If you choose the incorrect reporting framework and need to switch, please return to the previous page and start a new form. This ensures you won't lose any data by altering the form type midway through the creation process."
-          sx={{ marginBottom: 6 }}
-        />
-      </When>
-      <When condition={formType === "application" ? !!formType && !!formFramework : !!formType}>
+      <When condition={!!formType}>
         <>
           <div>
             <Accordion className="w-full" defaultExpanded>
