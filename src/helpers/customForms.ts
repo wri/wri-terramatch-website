@@ -17,35 +17,48 @@ import { urlValidation } from "@/utils/yup";
 export function normalizedFormData<T = any>(values: T, steps: FormStepSchema[]): T {
   for (const step of steps) {
     for (const field of step.fields) {
-      switch (field.type) {
-        case FieldType.Input: {
-          if (field.fieldProps.type === "number") {
-            values[field.name] = Number(values[field.name]);
-          }
-          break;
-        }
-        case FieldType.InputTable: {
-          values = { ...values, ...values[field.name] };
-          values = omit(values, [field.name]);
-          break;
-        }
+      values = normalizedFormFieldData(values, field);
+    }
+  }
+  return values;
+}
 
-        case FieldType.Map: {
-          if (typeof values[field.name] === "object") {
-            try {
-              values[field.name] = JSON.stringify(values[field.name]);
-            } catch (e) {
-              values[field.name] = "";
-            }
-          }
-          break;
+export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T => {
+  switch (field.type) {
+    case FieldType.Input: {
+      if (field.fieldProps.type === "number") {
+        values[field.name] = Number(values[field.name]);
+      }
+      break;
+    }
+    case FieldType.InputTable: {
+      const inputValues = values[field.name];
+      values = { ...values, ...inputValues };
+      values = omit(values, [field.name]);
+      break;
+    }
+
+    case FieldType.Conditional: {
+      field?.fieldProps.fields.map(f => {
+        values = normalizedFormFieldData(values, f);
+      });
+      break;
+    }
+
+    case FieldType.Map: {
+      if (typeof values[field.name] === "object") {
+        try {
+          values[field.name] = JSON.stringify(values[field.name]);
+        } catch (e) {
+          values[field.name] = "";
         }
       }
+      break;
     }
   }
 
   return values;
-}
+};
 
 export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[], isMigrated?: boolean): T {
   if (!values || !steps) return {};

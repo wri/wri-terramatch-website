@@ -127,7 +127,7 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
       }
 
       //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
+      return { data: { ...resp.data, id: resp.data.uuid, framework_key: body.framework_key } };
     } catch (err) {
       throw getFormattedErrorForRA(err as PutV2AdminFundingProgrammeUUIDError);
     }

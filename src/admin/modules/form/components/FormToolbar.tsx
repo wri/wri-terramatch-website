@@ -3,6 +3,7 @@ import { Button, SaveButton, Toolbar, ToolbarClasses, useEditContext, useRefresh
 import { When } from "react-if";
 
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
+import { CloneForm } from "@/admin/modules/form/components/CloneForm";
 import { CopyFormToOtherEnv } from "@/admin/modules/form/components/CopyFormToOtherEnv";
 import { usePatchV2AdminFormsUUIDPublish } from "@/generated/apiComponents";
 
@@ -24,6 +25,7 @@ export const FormToolbar = (props: { isEdit?: boolean }) => {
         <SaveButton />
 
         <div>
+          <CloneForm />
           <CopyFormToOtherEnv />
           <When condition={props.isEdit}>
             <Button

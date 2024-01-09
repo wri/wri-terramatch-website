@@ -19,7 +19,7 @@ import { AddItemButton, RemoveItemButton } from "@/admin/components/AccordionFor
 import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
 import modules from "@/admin/modules";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { useDeleteV2AdminFundingProgrammeStageUUID } from "@/generated/apiComponents";
+import { useDeleteV2AdminFundingProgrammeStageUUID, useGetV2AdminReportingFrameworks } from "@/generated/apiComponents";
 import { FundingProgramme } from "@/generated/apiSchemas";
 import { optionToChoices } from "@/utils/options";
 
@@ -41,6 +41,12 @@ const FundingForm = () => {
     }
   };
 
+  const { data: reportingFrameworksData, isLoading: reportingFrameworksLoading } = useGetV2AdminReportingFrameworks({});
+  const frameworkChoices: any = reportingFrameworksData?.data?.map(framework => ({
+    id: framework.access_code,
+    name: framework.name
+  }));
+
   return (
     <>
       <TextInput source="name" fullWidth label="Funding Program Title" validate={[required(), maxLength(100)]} />
@@ -53,6 +59,17 @@ const FundingForm = () => {
       <TextInput source="read_more_url" fullWidth label="Read More Url" validate={[required()]} />
       <TextInput source="location" label="Location" fullWidth />
       <SelectInput source="status" label="Status" choices={statusChoices} fullWidth validate={required()} />
+      {reportingFrameworksLoading ? (
+        <> </>
+      ) : (
+        <SelectInput
+          source="framework_key"
+          label="Reporting Framework"
+          choices={frameworkChoices}
+          fullWidth
+          validate={required()}
+        />
+      )}
       <SelectArrayInput
         source="organisation_types"
         label="Organization type"

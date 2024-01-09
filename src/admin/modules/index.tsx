@@ -2,6 +2,7 @@ import { EntityEdit } from "@/admin/components/EntityEdit/EntityEdit";
 import { FormCreate } from "@/admin/modules/form/components/FormCreate";
 import { FormEdit } from "@/admin/modules/form/components/FormEdit";
 import { FormList } from "@/admin/modules/form/components/FormList";
+import { ReportingFrameworkCreate } from "@/admin/modules/reportingFramework/components/ReportingFrameworkCreate";
 import { ReportingFrameworkEdit } from "@/admin/modules/reportingFramework/components/ReportingFrameworkEdit";
 import { ReportingFrameworkList } from "@/admin/modules/reportingFramework/components/ReportingFrameworkList";
 import { ReportingFrameworkShow } from "@/admin/modules/reportingFramework/components/ReportingFrameworkShow";
@@ -90,7 +91,8 @@ const reportingFramework = {
   ResourceName: "reportingFramework",
   List: ReportingFrameworkList,
   Show: ReportingFrameworkShow,
-  Edit: ReportingFrameworkEdit
+  Edit: ReportingFrameworkEdit,
+  Create: ReportingFrameworkCreate
 };
 
 const project = {
