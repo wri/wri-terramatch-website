@@ -113,10 +113,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               label={t("Country:")}
               value={project.country && formatOptionsList(getCountriesOptions(t), project.country)}
             />
-            <TextField
-              label={t("District:")}
-              value={project.project_county_district && formatOptionsList(getCountriesOptions(t), project.country)}
-            />
+            <TextField label={t("District:")} value={project.project_county_district} />
             <TextField label={t("Planting Start Date:")} value={format(project.planting_start_date)} />
             <TextField label={t("Planting End Date:")} value={format(project.planting_end_date)} />
             <TextField label={t("Project Last Updated:")} value={format(project.updated_at)} />
