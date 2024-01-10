@@ -71,8 +71,12 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
           )}
           <div className="flex">
             <Text variant="text-bold-subtitle-500">{t("Framework")}:&#160;</Text>
-            <Text variant="text-light-subtitle-400">
-              {project.framework_key === "ppc" ? t("Priceless Planet Coalition") : t("Terrafund")}
+            <Text variant="text-light-subtitle-400" className="capitalize">
+              {project.framework_key === "ppc"
+                ? t("Priceless Planet Coalition")
+                : project.framework_key === "terrafund"
+                ? t("Terrafund")
+                : project.framework_key}
             </Text>
           </div>
           <div className="flex">
