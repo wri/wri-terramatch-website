@@ -44,7 +44,7 @@ const ProjectDetailPage = () => {
   });
 
   const project = (data?.data || {}) as any;
-  const { isPPC } = useFramework(project);
+  const { isPPC, isTerrafund } = useFramework(project);
 
   const { handleExport } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const { handleEdit } = useGetEditEntityHandler({
@@ -107,7 +107,7 @@ const ProjectDetailPage = () => {
         title={project.name}
         subtitles={[
           `${t("Organisation")}: ${project.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : t("Terrafund")
+          isPPC ? t("Priceless Planet Coalition") : isTerrafund ? t("Terrafund") : reportingFramework.name
         ]}
         hasBackButton={false}
       >
