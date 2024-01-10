@@ -76,7 +76,8 @@ const EntityIntroPage = () => {
         },
         body: {
           parent_entity: parentName,
-          parent_uuid: parentUUID
+          parent_uuid: parentUUID,
+          form_uuid: formUUID
         }
       });
     }
