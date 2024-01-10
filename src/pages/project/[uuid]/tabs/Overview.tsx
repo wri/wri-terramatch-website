@@ -90,8 +90,10 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Project Information")} gap={8}>
-            <LongTextField title={t("Description")}>{project.description}</LongTextField>
-            <LongTextField title={t("History")}>{project.history}</LongTextField>
+            <LongTextField title={t("Description of Timeline")}>
+              {project.description_of_project_timeline}
+            </LongTextField>
+            <LongTextField title={t("History of Project Area")}>{project.history}</LongTextField>
             <SelectImageListField
               title={t("Target Land Use Types")}
               options={landUseTypesOptions}
@@ -108,12 +110,16 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         <PageColumn>
           <PageCard title={t("Project Details")} gap={4}>
             <TextField
-              label={t("Location")}
+              label={t("Country:")}
               value={project.country && formatOptionsList(getCountriesOptions(t), project.country)}
             />
-            <TextField label={t("Planting Start Date")} value={format(project.planting_start_date)} />
-            <TextField label={t("Planting End Date")} value={format(project.planting_end_date)} />
-            <TextField label={t("Project Last Updated")} value={format(project.updated_at)} />
+            <TextField
+              label={t("District:")}
+              value={project.project_county_district && formatOptionsList(getCountriesOptions(t), project.country)}
+            />
+            <TextField label={t("Planting Start Date:")} value={format(project.planting_start_date)} />
+            <TextField label={t("Planting End Date:")} value={format(project.planting_end_date)} />
+            <TextField label={t("Project Last Updated:")} value={format(project.updated_at)} />
           </PageCard>
         </PageColumn>
       </PageRow>
