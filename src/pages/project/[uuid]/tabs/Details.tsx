@@ -127,34 +127,30 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                 }}
               />
             </Paper>
-            <If condition={!project.other_additional_documents}>
-              <Then>
-                <Paper className="min-w-[500px]">
-                  <h3>{t("Files not found")}</h3>
-                </Paper>
-              </Then>
-              <Else>
+            <Paper className="min-w-[500px]">
+              <If condition={!project.other_additional_documents.length}>
                 <Then>
-                  <Paper className="min-w-[500px]">
-                    {project.other_additional_documents?.map((document: any, index: any) => (
-                      <>
-                        <ButtonField
-                          key={index}
-                          label={t("Additional Document", { title: document })}
-                          buttonProps={{
-                            as: Link,
-                            children: t("Download"),
-                            href: document?.url || "",
-                            download: true
-                          }}
-                        />
-                        <br />
-                      </>
-                    ))}
-                  </Paper>
+                  <h3>{t("Files not found")}</h3>
                 </Then>
-              </Else>
-            </If>
+                <Else>
+                  <Then>
+                    {project.other_additional_documents?.map((document: any, index: any) => (
+                      <ButtonField
+                        key={index}
+                        label={t("Additional Document", { title: document })}
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: document?.url || "",
+                          download: true
+                        }}
+                        style={{ marginBottom: "10px" }}
+                      />
+                    ))}
+                  </Then>
+                </Else>
+              </If>
+            </Paper>
           </When>
           <When condition={!!project.application}>
             <Paper className="min-w-[500px]">
