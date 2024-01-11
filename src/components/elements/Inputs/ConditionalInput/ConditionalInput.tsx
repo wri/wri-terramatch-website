@@ -19,7 +19,6 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const { fields, formHook, onChangeCapture, ...inputProps } = props;
   const t = useT();
   const { field } = useController(props);
-
   useEffect(() => {
     fields
       .filter(field => field.condition !== formHook.watch(props.name))
@@ -30,8 +29,10 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   }, [fields, formHook.watch(props.name)]);
 
   const onChange = (value: OptionValueWithBoolean) => {
+    console.log("Change", value);
     field.onChange(value);
     onChangeCapture();
+    formHook.trigger();
   };
 
   return (
