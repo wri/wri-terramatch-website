@@ -121,10 +121,23 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return output;
   }, [props.options, props.hasOtherOptions, props.optionsFilter]);
 
+  useEffect(() => {
+    if (props.value) {
+      if (Array.isArray(props.value)) {
+        setSelected(props.value);
+      } else {
+        setSelected([props.value]);
+      }
+    }
+  }, [props.value]);
+  console.log("otherKey", otherKey);
+  console.log("selected", selected);
+  console.log("otherValue", otherValue);
   const otherIsSelected = useMemo(() => selected?.includes(otherKey), [selected]);
+  console.log("otherIsSelected", otherIsSelected);
   const internalError = useMemo(() => {
     const error =
-      otherIsSelected && !otherValue
+      !otherIsSelected && !otherValue
         ? ({ type: "required", message: t("This field is required") } as FieldError)
         : undefined;
     props.onInternalError?.(error as ErrorOption);
