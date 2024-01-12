@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { uniq } from "lodash";
 import { ChangeEvent, Fragment, PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
-import { ErrorOption, FieldError } from "react-hook-form";
+import { ErrorOption, FieldError, UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 
 import ErrorMessage from "@/components/elements/ErrorMessage/ErrorMessage";
@@ -35,6 +35,7 @@ export interface DropdownProps {
   hasOtherOptions?: boolean;
   optionsFilter?: string;
   feedbackRequired?: boolean;
+  formHook?: UseFormReturn;
 
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
@@ -84,7 +85,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const onChange = (value: OptionValue | OptionValue[], _otherValue?: string) => {
     let otherStr = typeof _otherValue === "string" ? _otherValue : otherValue;
-
     if (Array.isArray(value)) {
       setSelected(value);
       const allowedValues = getAllowedValues(value, props.options);
@@ -105,6 +105,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     onChange(selected, e.target.value);
   };
 
+  useEffect(() => {
+    props.formHook?.trigger();
+  }, [selected]);
+
   const options = useMemo(() => {
     const output = [...props.options];
     if (props.hasOtherOptions) {
@@ -120,24 +124,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
     return output;
   }, [props.options, props.hasOtherOptions, props.optionsFilter]);
-
-  useEffect(() => {
-    if (props.value) {
-      if (Array.isArray(props.value)) {
-        setSelected(props.value);
-      } else {
-        setSelected([props.value]);
-      }
-    }
-  }, [props.value]);
-  console.log("otherKey", otherKey);
-  console.log("selected", selected);
-  console.log("otherValue", otherValue);
   const otherIsSelected = useMemo(() => selected?.includes(otherKey), [selected]);
-  console.log("otherIsSelected", otherIsSelected);
   const internalError = useMemo(() => {
     const error =
-      !otherIsSelected && !otherValue
+      otherIsSelected && !otherValue
         ? ({ type: "required", message: t("This field is required") } as FieldError)
         : undefined;
     props.onInternalError?.(error as ErrorOption);
