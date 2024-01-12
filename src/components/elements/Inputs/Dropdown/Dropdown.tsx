@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { uniq } from "lodash";
 import { ChangeEvent, Fragment, PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
-import { ErrorOption, FieldError } from "react-hook-form";
+import { ErrorOption, FieldError, UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 
 import ErrorMessage from "@/components/elements/ErrorMessage/ErrorMessage";
@@ -35,6 +35,7 @@ export interface DropdownProps {
   hasOtherOptions?: boolean;
   optionsFilter?: string;
   feedbackRequired?: boolean;
+  formHook?: UseFormReturn;
 
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
@@ -84,7 +85,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const onChange = (value: OptionValue | OptionValue[], _otherValue?: string) => {
     let otherStr = typeof _otherValue === "string" ? _otherValue : otherValue;
-
     if (Array.isArray(value)) {
       setSelected(value);
       const allowedValues = getAllowedValues(value, props.options);
@@ -105,6 +105,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     onChange(selected, e.target.value);
   };
 
+  useEffect(() => {
+    props.formHook?.trigger();
+  }, [selected]);
+
   const options = useMemo(() => {
     const output = [...props.options];
     if (props.hasOtherOptions) {
@@ -120,7 +124,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
     return output;
   }, [props.options, props.hasOtherOptions, props.optionsFilter]);
-
   const otherIsSelected = useMemo(() => selected?.includes(otherKey), [selected]);
   const internalError = useMemo(() => {
     const error =
