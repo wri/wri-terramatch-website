@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import UserProfileCard from "@/components/elements/Cards/UserProfileCard/UserProfileCard";
@@ -14,6 +14,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { useFramework } from "@/hooks/useFramework";
@@ -46,8 +47,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Project Information")}>
-            <LongTextField title={t("Description")}>{project.description}</LongTextField>
-            <LongTextField title={t("History")}>{project.history}</LongTextField>
+            <LongTextField title={t("Description of Timeline")}>
+              {project.description_of_project_timeline}
+            </LongTextField>
+            <LongTextField title={t("History of Project Area")}>{project.history}</LongTextField>
             <SelectImageListField
               title={t("Target Land Use Types")}
               options={landUseTypesOptions}
@@ -70,8 +73,41 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                 options={sdgsImpactedOptions}
                 selectedValues={project.sdgs_impacted}
               />
-              <LongTextField title={t("Long Term Growth")}>{project.long_term_growth}</LongTextField>
-              <LongTextField title={t("Community Incentives")}>{project.community_incentives}</LongTextField>
+              <LongTextField title={t("Project Partners")}>{project.proj_partner_info}</LongTextField>
+              <LongTextField title={t("Seedlings Source")}>{project.seedlings_source}</LongTextField>
+              <LongTextField title={t("Overview of Siting Strategy")}>
+                {project.siting_strategy_description}
+              </LongTextField>
+              <LongTextField title={t("Siting Strategy")}>{project.siting_strategy}</LongTextField>
+              <LongTextField title={t("Community Engagement Strategy")}>{project.landholder_comm_engage}</LongTextField>
+              <SelectImageListField
+                title={t("Land Tenure")}
+                options={getLandTenureOptions(t)}
+                selectedValues={project.land_tenure_project_area || []}
+              />
+              <If condition={!project?.proof_of_land_tenure_mou}>
+                <Then>
+                  <Paper className="min-w-[500px]">
+                    <h3>{t("Files not found")}</h3>
+                  </Paper>
+                </Then>
+                <Else>
+                  <Then>
+                    {project?.proof_of_land_tenure_mou?.map((document: any, index: any) => (
+                      <ButtonField
+                        key={index}
+                        label={t("Land Tenure MOU")}
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: document?.url || "",
+                          download: true
+                        }}
+                      />
+                    ))}
+                  </Then>
+                </Else>
+              </If>
             </PageCard>
           </When>
         </PageColumn>
@@ -80,6 +116,40 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           <When condition={isTerrafund}>
             <Paper className="min-w-[500px]">
               <TextField label={t("Project Budget")} value={project.budget} />
+              <br />
+              <ButtonField
+                label={t("Detailed Project Budget")}
+                buttonProps={{
+                  as: Link,
+                  children: t("Download"),
+                  href: project?.detailed_project_budget?.url || "",
+                  download: true
+                }}
+              />
+            </Paper>
+            <Paper className="min-w-[500px]">
+              <If condition={!project.other_additional_documents.length}>
+                <Then>
+                  <h3>{t("Files not found")}</h3>
+                </Then>
+                <Else>
+                  <Then>
+                    {project.other_additional_documents?.map((document: any, index: any) => (
+                      <ButtonField
+                        key={index}
+                        label={t("Additional Document", { title: document })}
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: document?.url || "",
+                          download: true
+                        }}
+                        style={{ marginBottom: "10px" }}
+                      />
+                    ))}
+                  </Then>
+                </Else>
+              </If>
             </Paper>
           </When>
           <When condition={!!project.application}>
