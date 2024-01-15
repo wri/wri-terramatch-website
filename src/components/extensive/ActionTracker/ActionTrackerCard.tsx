@@ -44,6 +44,10 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     status: "warning",
     statusText: t("Nothing Reported")
   },
+  "requires-more-information": {
+    status: "warning",
+    statusText: t("More info requested")
+  },
   ...SubmissionStatusMapping(t)
 });
 
