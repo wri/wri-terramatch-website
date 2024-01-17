@@ -319,7 +319,7 @@ const ReportingTaskPage = () => {
       <PageHeader
         className="h-[203px]"
         title={title}
-        subtitles={[t("Due by {due_at}", { due_at: format(reportingTask?.due_at, "MMMM Mo, HH:mm") })]}
+        subtitles={[t("Due by {due_at}", { due_at: format(reportingTask?.due_at, "MMMM do, HH:mm") })]}
         hasBackButton={false}
       >
         <Button id="submit-button" onClick={submitReportingTaskHandler}>
