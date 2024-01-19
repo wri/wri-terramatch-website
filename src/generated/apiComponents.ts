@@ -16610,6 +16610,159 @@ export const useDeleteV2LeadershipTeamUUID = (
   );
 };
 
+export type PostV2OwnershipStakeError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2OwnershipStakeResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type PostV2OwnershipStakeRequestBody = {
+  organisation_id?: string;
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type PostV2OwnershipStakeVariables = {
+  body?: PostV2OwnershipStakeRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2OwnershipStake = (variables: PostV2OwnershipStakeVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2OwnershipStakeResponse, PostV2OwnershipStakeError, PostV2OwnershipStakeRequestBody, {}, {}, {}>({
+    url: "/v2/ownership-stake",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2OwnershipStake = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2OwnershipStakeResponse,
+      PostV2OwnershipStakeError,
+      PostV2OwnershipStakeVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PostV2OwnershipStakeResponse, PostV2OwnershipStakeError, PostV2OwnershipStakeVariables>(
+    (variables: PostV2OwnershipStakeVariables) => fetchPostV2OwnershipStake({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PatchV2OwnershipStakeUUIDPathParams = {
+  uuid: string;
+};
+
+export type PatchV2OwnershipStakeUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2OwnershipStakeUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type PatchV2OwnershipStakeUUIDRequestBody = {
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type PatchV2OwnershipStakeUUIDVariables = {
+  body?: PatchV2OwnershipStakeUUIDRequestBody;
+  pathParams: PatchV2OwnershipStakeUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2OwnershipStakeUUID = (variables: PatchV2OwnershipStakeUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PatchV2OwnershipStakeUUIDResponse,
+    PatchV2OwnershipStakeUUIDError,
+    PatchV2OwnershipStakeUUIDRequestBody,
+    {},
+    {},
+    PatchV2OwnershipStakeUUIDPathParams
+  >({ url: "/v2/ownership-stake/{uuid}", method: "patch", ...variables, signal });
+
+export const usePatchV2OwnershipStakeUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PatchV2OwnershipStakeUUIDResponse,
+      PatchV2OwnershipStakeUUIDError,
+      PatchV2OwnershipStakeUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PatchV2OwnershipStakeUUIDResponse,
+    PatchV2OwnershipStakeUUIDError,
+    PatchV2OwnershipStakeUUIDVariables
+  >(
+    (variables: PatchV2OwnershipStakeUUIDVariables) =>
+      fetchPatchV2OwnershipStakeUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2OwnershipStakeUUIDPathParams = {
+  uuid: string;
+};
+
+export type DeleteV2OwnershipStakeUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2OwnershipStakeUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type DeleteV2OwnershipStakeUUIDVariables = {
+  pathParams: DeleteV2OwnershipStakeUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2OwnershipStakeUUID = (variables: DeleteV2OwnershipStakeUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    DeleteV2OwnershipStakeUUIDResponse,
+    DeleteV2OwnershipStakeUUIDError,
+    undefined,
+    {},
+    {},
+    DeleteV2OwnershipStakeUUIDPathParams
+  >({ url: "/v2/ownership-stake/{uuid}", method: "delete", ...variables, signal });
+
+export const useDeleteV2OwnershipStakeUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      DeleteV2OwnershipStakeUUIDResponse,
+      DeleteV2OwnershipStakeUUIDError,
+      DeleteV2OwnershipStakeUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    DeleteV2OwnershipStakeUUIDResponse,
+    DeleteV2OwnershipStakeUUIDError,
+    DeleteV2OwnershipStakeUUIDVariables
+  >(
+    (variables: DeleteV2OwnershipStakeUUIDVariables) =>
+      fetchDeleteV2OwnershipStakeUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2AdminSitesQueryParams = {
   /**
    * search term to use on the collection

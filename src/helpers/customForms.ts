@@ -337,6 +337,18 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "ownershipStake": {
+      return {
+        ...sharedProps,
+        type: FieldType.OwnershipStakeDataTable,
+
+        fieldProps: {
+          required,
+          addButtonCaption: question.add_button_text
+        }
+      };
+    }
+
     case "stratas": {
       return {
         ...sharedProps,
@@ -581,6 +593,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
     case "checkboxes":
     case "dataTable":
     case "leadershipTeam":
+    case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":
     case "disturbances":

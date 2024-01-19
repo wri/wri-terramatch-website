@@ -78,7 +78,7 @@ const RequestMoreInformationPage = () => {
           summaryOptions={{
             title: t("Review Application Details")
           }}
-          title={submission.form?.title}
+          title={submission?.form?.title}
           roundedCorners
         />
       </LoadingContainer>

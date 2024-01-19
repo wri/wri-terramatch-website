@@ -10,6 +10,7 @@ import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { RHFLeadershipTeamTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { RHFOwnershipStakeTableProps } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { RHFSeedingProps } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { RHFStrataTableProps } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { RHFWorkdaysTableProps } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
@@ -68,7 +69,8 @@ export enum FieldType {
   SelectImage = "selectImage",
   Map = "map",
   Conditional = "conditional",
-  Boolean = "boolean"
+  Boolean = "boolean",
+  OwnershipStakeDataTable = "OwnershipStakeDataTable"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -97,6 +99,10 @@ export type FormField =
   | FieldTypeBuilder<
       FieldType.LeadershipTeamDataTable,
       Omit<RHFLeadershipTeamTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.OwnershipStakeDataTable,
+      Omit<RHFOwnershipStakeTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
       FieldType.CoreTeamLeadersDataTable,

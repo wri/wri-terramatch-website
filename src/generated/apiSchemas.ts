@@ -3884,6 +3884,27 @@ export type V2LeadershipTeamUpdate = {
   age?: number;
 };
 
+export type V2OwnershipStakeCreate = {
+  organisation_id?: string;
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type V2OwnershipStakeRead = {
+  uuid?: string;
+  organisation_id?: string;
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
+export type V2OwnershipStakeUpdate = {
+  title?: string;
+  gender?: string;
+  year_of_birth?: number;
+};
+
 export type V2FundingTypeCreate = {
   organisation_id?: string;
   amount?: number;
