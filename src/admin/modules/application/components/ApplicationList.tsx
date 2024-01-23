@@ -59,8 +59,8 @@ const ApplicationDataGrid = () => {
         }
         sortable={false}
       />
-      <DateField source="created_at" label="Created" showTime />
-      <DateField source="updated_at" label="Last Edited" showTime />
+      <DateField source="created_at" label="Created" showTime locales="en-GB" />
+      <DateField source="updated_at" label="Last Edited" showTime locales="en-GB" />
       <ShowButton />
       <DeleteWithConfirmButton />
     </Datagrid>

@@ -63,8 +63,8 @@ const UserDataGrid = () => {
       <TextField source="email_address" label="Email" />
       <BooleanField source="verified" label="Verified" sortBy="email_address_verified_at" />
       <SelectField source="user_type" label="Type" choices={userTypesChoices} />
-      <DateField source="last_logged_in_at" label="Last Login Date" />
-      <DateField source="created_at" label="Date Added" />
+      <DateField source="last_logged_in_at" label="Last Login Date" locales="en-GB" />
+      <DateField source="created_at" label="Date Added" locales="en-GB" />
       <ShowButton />
       <EditButton />
     </Datagrid>

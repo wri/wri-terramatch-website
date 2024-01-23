@@ -17,6 +17,29 @@ import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/custom
 
 const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
+
+  const formatDateString = (inputDateString: string) => {
+    try {
+      const dateObject = new Date(inputDateString);
+      const formattedDay = dateObject.getUTCDate().toString().padStart(2, "0");
+      const formattedMonth = (dateObject.getUTCMonth() + 1).toString().padStart(2, "0");
+      const formattedYear = dateObject.getUTCFullYear();
+      const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear}`;
+      return formattedDate;
+    } catch (error) {
+      // Manejar el error, por ejemplo, puedes retornar "Invalid Date"
+      return "Invalid Date";
+    }
+  };
+
+  function isDateStringValid(dateString: string): boolean {
+    if (!isNaN(Number(dateString))) {
+      return false;
+    }
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
+  }
+
   return (
     <>
       <Typography variant="h6" component="h3">
@@ -32,7 +55,12 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
             </Typography>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
-                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: entry.value }} />
+                <If condition={isDateStringValid(entry.value)}>
+                  <Then>{formatDateString(entry.value)}</Then>
+                  <Else>
+                    <Typography variant="body2" dangerouslySetInnerHTML={{ __html: entry.value }} />
+                  </Else>
+                </If>
               </Then>
               <Else>{entry.value}</Else>
             </If>

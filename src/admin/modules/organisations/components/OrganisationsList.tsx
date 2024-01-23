@@ -78,7 +78,8 @@ const ApplicationDataGrid = () => {
       </Tabs>
       <Divider />
       <Datagrid>
-        <DateField source="created_at" label="Date Created" />
+        {/* format change Organisation TM-452 */}
+        <DateField source="created_at" label="Date Created" locales="en-GB" />
         <TextField source="name" label="Organisation Name" />
         <SelectField label="Organisation Type" source="type" choices={optionToChoices(getOrganisationTypeOptions())} />
         <TextField source="readable_status" label="Organisation Status" />

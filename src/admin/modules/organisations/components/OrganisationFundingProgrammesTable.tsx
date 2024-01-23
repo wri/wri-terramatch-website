@@ -17,7 +17,7 @@ const OrganisationFundingProgrammesTable = () => {
         <Datagrid bulkActionButtons={false} rowClick="show">
           <TextField source="name" />
           <TextField source="status" />
-          <DateField source="created_at" label="Date added" />
+          <DateField source="created_at" label="Date added" locales="en-GB" />
         </Datagrid>
       </ReferenceArrayField>
     </div>
