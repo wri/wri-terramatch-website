@@ -24,11 +24,7 @@ import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import WorkdaysTable from "@/components/extensive/Tables/WorkdaysTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import {
-  COLLECTION_SITE_PAID_OTHER,
-  getReadableWorkdayCollectionName,
-  SITE_WORKDAY_COLLECTIONS
-} from "@/constants/workdayCollections";
+import { getReadableWorkdayCollectionName, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -201,29 +197,9 @@ const SiteReportDetailPage = () => {
                 <PageRow>
                   <PageColumn>
                     {SITE_WORKDAY_COLLECTIONS.map(collection => (
-                      <If key={collection} condition={collection === COLLECTION_SITE_PAID_OTHER}>
-                        <Then>
-                          <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4}>
-                            <TextField label={t("Description")} value={siteReport.paid_other_activity_description} />
-                            <WorkdaysTable
-                              modelName="site-report"
-                              modelUUID={siteReport.uuid}
-                              collection={collection}
-                            />
-                          </PageCard>
-                        </Then>
-                        <Else>
-                          <Then key={collection}>
-                            <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4}>
-                              <WorkdaysTable
-                                modelName="site-report"
-                                modelUUID={siteReport.uuid}
-                                collection={collection}
-                              />
-                            </PageCard>
-                          </Then>
-                        </Else>
-                      </If>
+                      <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4} key={collection}>
+                        <WorkdaysTable modelName="site-report" modelUUID={siteReport.uuid} collection={collection} />
+                      </PageCard>
                     ))}
                   </PageColumn>
                 </PageRow>
