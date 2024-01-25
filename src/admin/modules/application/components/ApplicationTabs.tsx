@@ -14,31 +14,11 @@ import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { useVerifyDate } from "@/hooks/useVerifyDate";
 
 const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
-
-  const formatDateString = (inputDateString: string) => {
-    try {
-      const dateObject = new Date(inputDateString);
-      const formattedDay = dateObject.getUTCDate().toString().padStart(2, "0");
-      const formattedMonth = (dateObject.getUTCMonth() + 1).toString().padStart(2, "0");
-      const formattedYear = dateObject.getUTCFullYear();
-      const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear}`;
-      return formattedDate;
-    } catch (error) {
-      // Manejar el error, por ejemplo, puedes retornar "Invalid Date"
-      return "Invalid Date";
-    }
-  };
-
-  function isDateStringValid(dateString: string): boolean {
-    if (!isNaN(Number(dateString))) {
-      return false;
-    }
-    const timestamp = Date.parse(dateString);
-    return !isNaN(timestamp);
-  }
+  const { formatDateLocalString, isDateStringValid } = useVerifyDate();
 
   return (
     <>
@@ -56,7 +36,7 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
                 <If condition={isDateStringValid(entry.value)}>
-                  <Then>{formatDateString(entry.value)}</Then>
+                  <Then>{formatDateLocalString(entry.value)}</Then>
                   <Else>
                     <Typography variant="body2" dangerouslySetInnerHTML={{ __html: entry.value }} />
                   </Else>

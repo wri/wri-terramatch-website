@@ -16,6 +16,7 @@ import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import { useVerifyDate } from "@/hooks/useVerifyDate";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -150,6 +151,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
+  const { formatDateString, isDateStringValid } = useVerifyDate();
 
   return (
     <Accordion
@@ -174,9 +176,16 @@ const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
             </Text>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
-                <Text variant="text-body-300" className="flex-1" containHtml>
-                  {entry.value}
-                </Text>
+                <If condition={isDateStringValid(entry.value)}>
+                  <Text variant="text-body-300" className="flex-1" containHtml>
+                    {formatDateString(entry.value)}
+                  </Text>
+                  <Else>
+                    <Text variant="text-body-300" className="flex-1" containHtml>
+                      {entry.value}
+                    </Text>
+                  </Else>
+                </If>
               </Then>
               <Else>{entry.value}</Else>
             </If>
