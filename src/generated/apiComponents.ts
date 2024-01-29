@@ -7872,6 +7872,7 @@ export type PostV2WorkdaysResponse = {
   gender?: string;
   age?: string;
   ethnicity?: string;
+  indigeneity?: string;
 };
 
 export type PostV2WorkdaysRequestBody = {
@@ -7882,6 +7883,7 @@ export type PostV2WorkdaysRequestBody = {
   gender?: string;
   age?: string;
   ethnicity?: string;
+  indigeneity?: string;
 };
 
 export type PostV2WorkdaysVariables = {
@@ -7923,6 +7925,7 @@ export type PatchV2WorkdaysUUIDResponse = {
     gender?: string;
     age?: string;
     ethnicity?: string;
+    indigeneity?: string;
   }[];
   links?: {
     first?: string;
@@ -8013,6 +8016,7 @@ export type GetV2WorkdaysENTITYUUIDResponse = {
     gender?: string;
     age?: string;
     ethnicity?: string;
+    indigeneity?: string;
   }[];
   links?: {
     first?: string;
