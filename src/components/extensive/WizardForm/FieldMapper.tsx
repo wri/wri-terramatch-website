@@ -8,6 +8,7 @@ import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDistu
 import FundingTypeDataTable from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import RHFInvasiveTable from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import RHFLeadershipTeamDataTable from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import RHFWorkdaysTable from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
@@ -230,6 +231,15 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           {...field.fieldProps}
           {...sharedProps}
           formHook={formHook}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+    case FieldType.OwnershipStakeDataTable:
+      return (
+        <RHFOwnershipStakeDataTable
+          {...field.fieldProps}
+          {...sharedProps}
           control={formHook.control}
           onChangeCapture={onChange}
         />
