@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { Else, If, Then } from "react-if";
 
+import { convertDateFormat } from "@/admin/apiProvider/utils/dateFormat";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
@@ -16,7 +17,6 @@ import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import { useVerifyDate } from "@/hooks/useVerifyDate";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -151,7 +151,6 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
-  const { formatDateString, isDateStringValid } = useVerifyDate();
 
   return (
     <Accordion
@@ -176,18 +175,11 @@ const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
             </Text>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
-                <If condition={isDateStringValid(entry.value)}>
-                  <Text variant="text-body-300" className="flex-1" containHtml>
-                    {formatDateString(entry.value)}
-                  </Text>
-                  <Else>
-                    <Text variant="text-body-300" className="flex-1" containHtml>
-                      {entry.value}
-                    </Text>
-                  </Else>
-                </If>
+                <Text variant="text-body-300" className="flex-1" containHtml>
+                  {convertDateFormat(entry.value)}
+                </Text>
               </Then>
-              <Else>{entry.value}</Else>
+              <Else>{convertDateFormat(entry.value)}</Else>
             </If>
           </div>
         )}

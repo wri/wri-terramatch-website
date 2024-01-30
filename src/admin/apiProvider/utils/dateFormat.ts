@@ -1,6 +1,6 @@
 import { format, isValid, parseISO } from "date-fns";
 
-export const convertDateformat = (value: any) => {
+export const convertDateFormat = (value: any) => {
   if (isValid(parseISO(value))) {
     if (typeof value === "string") {
       const dateObject = new Date(value);

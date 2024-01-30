@@ -1,8 +1,8 @@
 import { Divider, Typography } from "@mui/material";
 import { LabeledClasses } from "react-admin";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
-import { convertDateformat } from "@/admin/apiProvider/utils/dateFormat";
+import { convertDateFormat } from "@/admin/apiProvider/utils/dateFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 
@@ -25,7 +25,12 @@ const InformationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
             <Typography className={LabeledClasses.label}>
               <span className="capitalize">{entry.title}</span>
             </Typography>
-            <Typography variant="body2" dangerouslySetInnerHTML={{ __html: convertDateformat(entry.value) }} />
+            <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
+              <Then>
+                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: convertDateFormat(entry.value) }} />
+              </Then>
+              <Else>{convertDateFormat(entry.value)}</Else>
+            </If>
           </div>
         )}
       />
