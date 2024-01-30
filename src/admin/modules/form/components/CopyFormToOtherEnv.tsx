@@ -63,7 +63,7 @@ export const CopyFormToOtherEnv = () => {
     }
 
     const token = (await loginResp.json()).data.token;
-    const formData = { ...record, title: formTitle };
+    const formData = { ...record, title: formTitle, framework_key };
     const formBody = JSON.parse(
       JSON.stringify(
         normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData.data) as any),
