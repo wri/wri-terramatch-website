@@ -8,17 +8,17 @@ import {
   TabbedShowLayoutTabs,
   useShowContext
 } from "react-admin";
-import { Else, If, Then, When } from "react-if";
+import { When } from "react-if";
 
+import { convertDateformat } from "@/admin/apiProvider/utils/dateFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
-import { useVerifyDate } from "@/hooks/useVerifyDate";
+// import { useVerifyDate } from "@/hooks/useVerifyDate";
 
 const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
-  const { formatDateLocalString, isDateStringValid } = useVerifyDate();
 
   return (
     <>
@@ -33,17 +33,7 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
             <Typography className={LabeledClasses.label}>
               <span>{entry.title}</span>
             </Typography>
-            <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-              <Then>
-                <If condition={isDateStringValid(entry.value)}>
-                  <Then>{formatDateLocalString(entry.value)}</Then>
-                  <Else>
-                    <Typography variant="body2" dangerouslySetInnerHTML={{ __html: entry.value }} />
-                  </Else>
-                </If>
-              </Then>
-              <Else>{entry.value}</Else>
-            </If>
+            <Typography variant="body2" dangerouslySetInnerHTML={{ __html: convertDateformat(entry.value) }} />
           </div>
         )}
       />
