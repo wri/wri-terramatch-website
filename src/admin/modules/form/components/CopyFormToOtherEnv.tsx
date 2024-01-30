@@ -7,40 +7,47 @@ import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
+import { fetchGetV2FormsLinkedFieldListing, useGetV2AdminReportingFrameworks } from "@/generated/apiComponents";
 
 const envOptions = [
   {
-    title: "Demo",
-    value: "https://demo.wrirestorationmarketplace.cubeapis.com"
+    title: "Dev",
+    value: "https://new-wri-dev.wri-restoration-marketplace-api.com"
   },
   {
     title: "Test",
-    value: "https://test.wrirestorationmarketplace.cubeapis.com"
+    value: "https://new-wri-test.wri-restoration-marketplace-api.com"
   },
   {
     title: "Staging",
-    value: "https://staging.wrirestorationmarketplace.cubeapis.com"
+    value: "https://new-wri-staging.wri-restoration-marketplace-api.com"
   },
   {
     title: "Production",
-    value: "https://production.wrirestorationmarketplace.cubeapis.com"
+    value: "https://new-wri-prod.wri-restoration-marketplace-api.com"
   }
 ];
 
 export const CopyFormToOtherEnv = () => {
+  const { data: reportingFrameworksData } = useGetV2AdminReportingFrameworks({});
+  const frameworkOptions =
+    reportingFrameworksData?.data?.map((f: any) => ({
+      title: f.name,
+      value: f.access_code
+    })) || [];
   const record: any = useRecordContext();
   const [open, setOpen] = useState(false);
   const notify = useNotify();
   const formHook = useForm<any>({
     defaultValues: {
-      title: record.title
+      title: record.title,
+      framework_key: record.framework_key
     }
   });
   const { register, handleSubmit, formState, getValues } = formHook;
   console.log(getValues(), formState.errors);
 
-  const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, ...body }: any) => {
+  const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, framework_key, ...body }: any) => {
     const linkedFieldsData: any = await fetchGetV2FormsLinkedFieldListing({});
     const loginResp = await fetch(`${baseUrl}/api/auth/login`, {
       method: "POST",
@@ -125,6 +132,18 @@ export const CopyFormToOtherEnv = () => {
             description="use this to update copy form title"
             //@ts-ignore
             error={formState.errors.title}
+          />
+          <RHFDropdown
+            name="framework_key"
+            formHook={formHook}
+            control={formHook.control}
+            label="Framework key"
+            options={frameworkOptions}
+            required
+            rules={{ required: true }}
+            description="Please select a Reporting Framework"
+            //@ts-ignore
+            error={formState.errors.framework_key}
           />
           <Input
             type="text"
