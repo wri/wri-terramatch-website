@@ -67,7 +67,7 @@ const SiteDataGrid: FC = () => {
         choices={optionToChoices(getChangeRequestStatusOptions())}
       />
       <TextField source="project.name" label="Project Name" />
-      <DateField source="start_date" label="Establishment" />
+      <DateField source="start_date" label="Establishment" locales="en-GB" />
       <FunctionField
         source="framework_key"
         label="Framework"

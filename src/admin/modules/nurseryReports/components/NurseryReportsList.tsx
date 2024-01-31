@@ -38,9 +38,9 @@ const NurseryReportDataGrid: FC = () => {
       />
       <TextField source="project.name" label="Project" />
       <TextField source="organisation.name" label="Organization" />
-      <DateField source="due_at" label="Due Date" />
-      <DateField source="updated_at" label="Last Updated" />
-      <DateField source="submitted_at" label="Date Submitted" />
+      <DateField source="due_at" label="Due Date" locales="en-GB" />
+      <DateField source="updated_at" label="Last Updated" locales="en-GB" />
+      <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
       <ShowButton />
       <EditButton />
     </Datagrid>

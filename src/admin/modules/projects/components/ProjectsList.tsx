@@ -67,7 +67,7 @@ const ProjectDataGrid = () => {
         choices={optionToChoices(getChangeRequestStatusOptions())}
       />
       <TextField source="organisation.name" label="Organization" />
-      <DateField source="planting_start_date" label="Establishment" />
+      <DateField source="planting_start_date" label="Establishment" locales="en-GB" />
       <FunctionField
         source="framework_key"
         label="Framework"
