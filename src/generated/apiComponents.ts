@@ -2855,7 +2855,7 @@ export type GetV2MyProjectsVariables = ApiContext["fetcherOptions"];
 
 export const fetchGetV2MyProjects = (variables: GetV2MyProjectsVariables, signal?: AbortSignal) =>
   apiFetch<GetV2MyProjectsResponse, GetV2MyProjectsError, undefined, {}, {}, {}>({
-    url: "/v2/my-projects",
+    url: "/v2/my/projects",
     method: "get",
     ...variables,
     signal
@@ -2870,7 +2870,7 @@ export const useGetV2MyProjects = <TData = GetV2MyProjectsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MyProjectsResponse, GetV2MyProjectsError, TData>(
-    queryKeyFn({ path: "/v2/my-projects", operationId: "getV2MyProjects", variables }),
+    queryKeyFn({ path: "/v2/my/projects", operationId: "getV2MyProjects", variables }),
     ({ signal }) => fetchGetV2MyProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -6805,6 +6805,7 @@ export type GetV2AdminFormsResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -6970,6 +6971,71 @@ export const useGetV2AdminReportingFrameworks = <TData = GetV2AdminReportingFram
   );
 };
 
+export type PostV2AdminReportingFrameworksError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AdminReportingFrameworksResponse = {
+  uuid?: string;
+  name?: string;
+  slug?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type PostV2AdminReportingFrameworksRequestBody = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type PostV2AdminReportingFrameworksVariables = {
+  body?: PostV2AdminReportingFrameworksRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AdminReportingFrameworks = (
+  variables: PostV2AdminReportingFrameworksVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2AdminReportingFrameworksResponse,
+    PostV2AdminReportingFrameworksError,
+    PostV2AdminReportingFrameworksRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/admin/reporting-frameworks", method: "post", ...variables, signal });
+
+export const usePostV2AdminReportingFrameworks = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2AdminReportingFrameworksResponse,
+      PostV2AdminReportingFrameworksError,
+      PostV2AdminReportingFrameworksVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2AdminReportingFrameworksResponse,
+    PostV2AdminReportingFrameworksError,
+    PostV2AdminReportingFrameworksVariables
+  >(
+    (variables: PostV2AdminReportingFrameworksVariables) =>
+      fetchPostV2AdminReportingFrameworks({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PutV2AdminReportingFrameworksUUIDPathParams = {
   uuid: string;
 };
@@ -7040,49 +7106,6 @@ export const usePutV2AdminReportingFrameworksUUID = (
   );
 };
 
-export type PostV2AdminReportingFrameworksError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2AdminReportingFrameworksResponse = {
-  uuid?: string;
-  name?: string;
-  slug?: string;
-  access_code?: string;
-  project_form_uuid?: string;
-  project_report_form_uuid?: string;
-  site_form_uuid?: string;
-  site_report_form_uuid?: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
-export type PostV2AdminReportingFrameworksRequestBody = {
-  name: string;
-  access_code: string;
-  project_form_uuid: string;
-  project_report_form_uuid: string;
-  site_form_uuid: string;
-  site_report_form_uuid: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
-export type PostV2AdminReportingFrameworksVariables = {
-  body: PostV2AdminReportingFrameworksRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2AdminReportingFrameworks = (
-  variables: PostV2AdminReportingFrameworksVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2AdminReportingFrameworksResponse,
-    PostV2AdminReportingFrameworksError,
-    PostV2AdminReportingFrameworksRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/admin/reporting-frameworks", method: "post", ...variables, signal });
-
 export type DeleteV2AdminReportingFrameworksUUIDPathParams = {
   uuid: string;
 };
@@ -7104,12 +7127,7 @@ export const fetchDeleteV2AdminReportingFrameworksUUID = (
     {},
     {},
     DeleteV2AdminReportingFrameworksUUIDPathParams
-  >({
-    url: "/v2/admin/reporting-frameworks/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/reporting-frameworks/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminReportingFrameworksUUID = (
   options?: Omit<
@@ -8941,6 +8959,7 @@ export type GetV2FormsResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -9065,6 +9084,7 @@ export type PatchV2AdminFormsUUIDPublishResponse = {
   title?: string;
   subtitle?: string;
   description?: string;
+  framework_key?: string;
   duration?: string;
   deadline_at?: string;
   documentation?: string;
@@ -9688,6 +9708,7 @@ export type PatchV2AdminFormsUUIDResponse = {
   title?: string;
   subtitle?: string;
   description?: string;
+  framework_key?: string;
   duration?: string;
   deadline_at?: string;
   documentation?: string;
@@ -16618,6 +16639,7 @@ export type PostV2OwnershipStakeResponse = {
   title?: string;
   gender?: string;
   year_of_birth?: number;
+  percent_ownership?: number;
 };
 
 export type PostV2OwnershipStakeRequestBody = {
@@ -16625,6 +16647,7 @@ export type PostV2OwnershipStakeRequestBody = {
   title?: string;
   gender?: string;
   year_of_birth?: number;
+  percent_ownership?: number;
 };
 
 export type PostV2OwnershipStakeVariables = {
@@ -16668,12 +16691,14 @@ export type PatchV2OwnershipStakeUUIDResponse = {
   title?: string;
   gender?: string;
   year_of_birth?: number;
+  percent_ownership?: number;
 };
 
 export type PatchV2OwnershipStakeUUIDRequestBody = {
   title?: string;
   gender?: string;
   year_of_birth?: number;
+  percent_ownership?: number;
 };
 
 export type PatchV2OwnershipStakeUUIDVariables = {
@@ -16725,6 +16750,7 @@ export type DeleteV2OwnershipStakeUUIDResponse = {
   title?: string;
   gender?: string;
   year_of_birth?: number;
+  percent_ownership?: number;
 };
 
 export type DeleteV2OwnershipStakeUUIDVariables = {
@@ -18424,6 +18450,7 @@ export type GetV2ProjectsUUIDResponse = {
           title?: string;
           subtitle?: string;
           description?: string;
+          framework_key?: string;
           duration?: string;
           deadline_at?: string;
           documentation?: string;
@@ -18537,6 +18564,7 @@ export type GetV2ProjectsUUIDResponse = {
           title?: string;
           subtitle?: string;
           description?: string;
+          framework_key?: string;
           duration?: string;
           deadline_at?: string;
           documentation?: string;
@@ -18664,6 +18692,7 @@ export type GetV2ProjectsUUIDResponse = {
             title?: string;
             subtitle?: string;
             description?: string;
+            framework_key?: string;
             duration?: string;
             deadline_at?: string;
             documentation?: string;
@@ -20337,6 +20366,7 @@ export type GetV2FormsSitesUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -21740,6 +21770,7 @@ export type GetV2ProjectPitchesUUIDSubmissionsResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -21908,6 +21939,7 @@ export type GetV2AdminFormsSubmissionsUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -22177,6 +22209,7 @@ export type GetV2AdminFormsSubmissionsResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -22358,6 +22391,7 @@ export type GetV2FormsMySubmissionsResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -22527,6 +22561,7 @@ export type GetV2FormsUUIDResponse = {
   title?: string;
   subtitle?: string;
   description?: string;
+  framework_key?: string;
   duration?: string;
   deadline_at?: string;
   documentation?: string;
@@ -22647,6 +22682,7 @@ export type PostV2AdminFundingProgrammeStageResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -22783,6 +22819,7 @@ export type DeleteV2AdminFundingProgrammeStageUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -22909,7 +22946,6 @@ export type PatchV2AdminFundingProgrammeStageUUIDResponse = {
   funding_programme_id?: number;
   name?: string;
   order?: number;
-  framework_key?: string;
   forms?: {
     id?: number;
     uuid?: string;
@@ -22918,6 +22954,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -23071,6 +23108,7 @@ export type GetV2FundingProgrammeResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -23254,7 +23292,6 @@ export type GetV2AdminFundingProgrammeResponse = {
       deadline_at?: string;
       readable_status?: string;
       funding_programme_id?: number;
-      framework_key?: string;
       name?: string;
       order?: number;
       forms?: {
@@ -23265,6 +23302,7 @@ export type GetV2AdminFundingProgrammeResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -23436,7 +23474,6 @@ export type PostV2AdminFundingProgrammeResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23447,6 +23484,7 @@ export type PostV2AdminFundingProgrammeResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -23604,7 +23642,6 @@ export type GetV2FundingProgrammeUUIDResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23615,6 +23652,7 @@ export type GetV2FundingProgrammeUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -23769,7 +23807,6 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23780,6 +23817,7 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -23942,7 +23980,6 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -23953,6 +23990,7 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -24214,7 +24252,6 @@ export type GetV2FundingProgrammeStageResponse = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -24225,6 +24262,7 @@ export type GetV2FundingProgrammeStageResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -24357,7 +24395,6 @@ export type PatchV2AdminFundingProgrammeStageUUIDStatusResponse = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
-  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {
@@ -24368,6 +24405,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDStatusResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -24496,7 +24534,6 @@ export type GetV2FundingProgrammeStageUUIDResponse = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
-  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {
@@ -24507,6 +24544,7 @@ export type GetV2FundingProgrammeStageUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -24638,6 +24676,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -24798,6 +24837,7 @@ export type PostV2FormsSubmissionsResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -24956,6 +24996,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -25108,6 +25149,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -25312,6 +25354,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -25471,6 +25514,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -26349,6 +26393,7 @@ export type GetV2AdminFormsApplicationsResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -26462,6 +26507,7 @@ export type GetV2AdminFormsApplicationsResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -26660,6 +26706,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -26773,6 +26820,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -26900,6 +26948,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -27606,6 +27655,7 @@ export type GetV2MyApplicationsResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -27719,6 +27769,7 @@ export type GetV2MyApplicationsResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -27904,6 +27955,7 @@ export type GetV2ApplicationsUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -28017,6 +28069,7 @@ export type GetV2ApplicationsUUIDResponse = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -28144,6 +28197,7 @@ export type GetV2ApplicationsUUIDResponse = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -31659,7 +31713,7 @@ export type QueryOperation =
       variables: GetV2ProjectsUUIDPartnersVariables;
     }
   | {
-      path: "/v2/my-projects";
+      path: "/v2/my/projects";
       operationId: "getV2MyProjects";
       variables: GetV2MyProjectsVariables;
     }
