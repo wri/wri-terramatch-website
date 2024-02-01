@@ -1417,9 +1417,9 @@ export type FundingProgramme = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
-  framework_key?: string;
   stages?: {
     id?: number;
     uuid?: string;
@@ -1437,6 +1437,7 @@ export type FundingProgramme = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -1595,7 +1596,6 @@ export type FormCreate = {
   type?: string;
   title?: string;
   subtitle?: string;
-  framework_key?: string;
   description?: string;
   deadline_at?: string;
   documentation?: string;
@@ -1717,9 +1717,9 @@ export type FormRead = {
   type?: string;
   version?: number;
   title?: string;
-  framework_key?: string;
   subtitle?: string;
   description?: string;
+  framework_key?: string;
   duration?: string;
   deadline_at?: string;
   documentation?: string;
@@ -2139,6 +2139,17 @@ export type ReportingFrameworkRead = {
 };
 
 export type ReportingFrameworkUpdate = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type ReportingFrameworkCreate = {
   name?: string;
   access_code?: string;
   project_form_uuid?: string;
@@ -3882,27 +3893,6 @@ export type V2LeadershipTeamUpdate = {
   position?: string;
   gender?: string;
   age?: number;
-};
-
-export type V2OwnershipStakeCreate = {
-  organisation_id?: string;
-  title?: string;
-  gender?: string;
-  year_of_birth?: number;
-};
-
-export type V2OwnershipStakeRead = {
-  uuid?: string;
-  organisation_id?: string;
-  title?: string;
-  gender?: string;
-  year_of_birth?: number;
-};
-
-export type V2OwnershipStakeUpdate = {
-  title?: string;
-  gender?: string;
-  year_of_birth?: number;
 };
 
 export type V2FundingTypeCreate = {
@@ -6003,6 +5993,7 @@ export type ProjectFullRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -6116,6 +6107,7 @@ export type ProjectFullRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -6233,7 +6225,6 @@ export type ProjectFullRead = {
         deadline_at?: string;
         readable_status?: string;
         funding_programme_id?: number;
-        framework_key?: string;
         name?: string;
         order?: number;
         forms?: {
@@ -6244,6 +6235,7 @@ export type ProjectFullRead = {
           title?: string;
           subtitle?: string;
           description?: string;
+          framework_key?: string;
           duration?: string;
           deadline_at?: string;
           documentation?: string;
@@ -6815,6 +6807,7 @@ export type ProjectWithSchemaRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7376,6 +7369,7 @@ export type SiteWithSchemaRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7715,6 +7709,7 @@ export type FormSubmissionRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7826,6 +7821,7 @@ export type FormPaginated = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7921,7 +7917,6 @@ export type StagePaginated = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -7932,6 +7927,7 @@ export type StagePaginated = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8037,7 +8033,6 @@ export type StageRead = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
-  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {
@@ -8048,6 +8043,7 @@ export type StageRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -8184,6 +8180,7 @@ export type ApplicationLiteRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8297,6 +8294,7 @@ export type ApplicationLiteRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8427,6 +8425,7 @@ export type ApplicationRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8540,6 +8539,7 @@ export type ApplicationRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8657,7 +8657,6 @@ export type ApplicationRead = {
       deadline_at?: string;
       readable_status?: string;
       funding_programme_id?: number;
-      framework_key?: string;
       name?: string;
       order?: number;
       forms?: {
@@ -8668,6 +8667,7 @@ export type ApplicationRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
