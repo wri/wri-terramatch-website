@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { getAgeOptions } from "@/constants/options/age";
 import { getGenderOptionsWithUndefined } from "@/constants/options/gender";
+import { getIndigeneityOptionsWithUndefined } from "@/constants/options/indigeneity";
 import { useDeleteV2WorkdaysUUID, usePostV2Workdays } from "@/generated/apiComponents";
 import { Entity, Option } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
@@ -43,6 +44,11 @@ export const getWorkdaysTableColumns = (
     header: t("Ethnicity"),
     enableSorting: false,
     cell: props => formatOptionsList(ethnicityOptions, props.getValue() as string)
+  },
+  {
+    accessorKey: "indigeneity",
+    header: t("Indigeneity"),
+    cell: props => formatOptionsList(getIndigeneityOptionsWithUndefined(t), props.getValue() as string)
   },
   {
     accessorKey: "amount",
@@ -122,12 +128,22 @@ const RHFWorkdaysTable = ({
           }
         },
         {
-          label: t("Select Ethnicity"),
+          label: t("Specify Ethnicity, if known"),
           name: "ethnicity",
           type: FieldType.Dropdown,
           validation: yup.string().required(),
           fieldProps: {
             options: ethnicityOptions,
+            required: true
+          }
+        },
+        {
+          label: t("Indigeneity"),
+          name: "indigeneity",
+          type: FieldType.Dropdown,
+          validation: yup.string().required(),
+          fieldProps: {
+            options: getIndigeneityOptionsWithUndefined(),
             required: true
           }
         },
