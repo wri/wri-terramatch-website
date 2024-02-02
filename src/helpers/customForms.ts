@@ -1,9 +1,10 @@
 //@ts-nocheck Swagger type def is quite wrong!
 import { useT } from "@transifex/react";
-import { format } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
+import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { getCountriesOptions } from "@/constants/options/countries";
@@ -77,18 +78,26 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
   return values;
 }
 
-let alreadyExecuted: Date | null = null;
 export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
   switch (field.type) {
     case FieldType.Input: {
-      if (field.fieldProps.type === "date" && !!values[field.name]) {
-        const dateObject = Date.parse(values[field.name]);
-        const localDateTime = new Date(dateObject);
-        if (!alreadyExecuted) {
-          if (localDateTime) {
+      if (field.fieldProps.type === "date") {
+        try {
+          values[field.name] = formatEntryValue(values[field.name]);
+          const date = format(Date.parse(values[field.name]), "dd/MM/yyyy");
+          if (!isValid(date)) {
             values[field.name] = format(new Date(values[field.name]), "yyyy-MM-dd");
           }
-          alreadyExecuted = new Date(values[field.name]);
+        } catch (e) {
+          const formatsToTry = ["dd/MM/yyyy", "yyyy/MM/dd", "dd-MM-yyyy", "yyyy-MM-dd"];
+          for (const formatToTry of formatsToTry) {
+            try {
+              values[field.name] = parse(values[field.name], formatToTry, new Date());
+              break;
+            } catch (error) {
+              /* empty */
+            }
+          }
         }
       }
       break;
