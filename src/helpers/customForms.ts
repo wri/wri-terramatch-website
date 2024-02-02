@@ -1,6 +1,6 @@
 //@ts-nocheck Swagger type def is quite wrong!
 import { useT } from "@transifex/react";
-import { format, isValid } from "date-fns";
+import { format } from "date-fns";
 import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
@@ -70,24 +70,25 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      // if (field.fieldProps.type !== "date") {
       normalizedFieldDefaultValue(values, field, isMigrated);
-      // }
     }
   }
 
   return values;
 }
 
+let alreadyExecuted: Date | null = null;
 export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "date" && !!values[field.name]) {
-        if (!isValid(values[field.name])) {
-          const date = Date.parse(values[field.name]);
-          if (!isNaN(date)) {
-            values[field.name] = format(date, "dd/MM/yyyy");
+        const dateObject = Date.parse(values[field.name]);
+        const localDateTime = new Date(dateObject);
+        if (!alreadyExecuted) {
+          if (localDateTime) {
+            values[field.name] = format(new Date(values[field.name]), "yyyy-MM-dd");
           }
+          alreadyExecuted = new Date(values[field.name]);
         }
       }
       break;

@@ -103,6 +103,7 @@ function WizardForm(props: WizardFormProps) {
         //Disable auto step progress if disableAutoProgress was passed
         setSelectedStepIndex(n => n + 1);
       }
+      props.onChange && props.onChange(formHook.getValues());
       props.onStepChange?.(data, selectedStep);
     } else {
       //Step changes on last step
@@ -112,6 +113,7 @@ function WizardForm(props: WizardFormProps) {
   };
 
   const onClickSaveAndClose = () => {
+    props.onChange && props.onChange(formHook.getValues());
     modal.openModal(
       <SaveAndCloseModal
         {...props.saveAndCloseModal}
