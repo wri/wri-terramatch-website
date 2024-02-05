@@ -44,7 +44,13 @@ const LandingPage = () => {
             )}
           </Text>
           <div className="flex flex-col items-center justify-center gap-8 md:flex-row">
-            <Button variant="secondary" as={Link} href="https://www.africa.terramatch.org/">
+            <Button
+              variant="secondary"
+              as={Link}
+              href={t(
+                "https://terramatchsupport.zendesk.com/hc/en-us/categories/21188899997339-The-Land-Accelerator-in-Africa-Application-Hub"
+              )}
+            >
               {t("Learn more")}
             </Button>
           </div>
