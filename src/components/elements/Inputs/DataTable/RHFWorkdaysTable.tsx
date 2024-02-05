@@ -131,10 +131,10 @@ const RHFWorkdaysTable = ({
           label: t("Specify Ethnicity, if known"),
           name: "ethnicity",
           type: FieldType.Input,
-          validation: yup.string().required(),
+          validation: yup.string(),
           fieldProps: {
             type: "text",
-            required: true
+            required: false
           }
         },
         {
