@@ -1,4 +1,17 @@
-import { format, isValid, parseISO } from "date-fns";
+import { format, isValid, parse, parseISO } from "date-fns";
+
+export const fixInputValueDates = (value: any) => {
+  try {
+    value = formatEntryValue(value);
+    const date = format(Date.parse(value), "dd/MM/yyyy");
+    if (!isValid(date)) {
+      value = format(new Date(value), "yyyy-MM-dd");
+    }
+  } catch (e) {
+    value = parse(value, "dd/MM/yyyy", new Date());
+  }
+  return value;
+};
 
 export const formatEntryValue = (entry: any) => {
   if (isDateType(entry)) {
