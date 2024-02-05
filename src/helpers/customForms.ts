@@ -89,15 +89,7 @@ export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormFie
             values[field.name] = format(new Date(values[field.name]), "yyyy-MM-dd");
           }
         } catch (e) {
-          const formatsToTry = ["dd/MM/yyyy", "yyyy/MM/dd", "dd-MM-yyyy", "yyyy-MM-dd"];
-          for (const formatToTry of formatsToTry) {
-            try {
-              values[field.name] = parse(values[field.name], formatToTry, new Date());
-              break;
-            } catch (error) {
-              /* empty */
-            }
-          }
+          values[field.name] = parse(values[field.name], "dd/MM/yyyy", new Date());
         }
       }
       break;
