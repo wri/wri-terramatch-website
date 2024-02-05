@@ -148,6 +148,16 @@ const RHFWorkdaysTable = ({
           }
         },
         {
+          label: t("Indigeneity"),
+          name: "indigeneity",
+          type: FieldType.Dropdown,
+          validation: yup.string().required(),
+          fieldProps: {
+            options: getIndigeneityOptionsWithUndefined(),
+            required: true
+          }
+        },
+        {
           label: t("How many workdays were created for the selected options?"),
           name: "amount",
           type: FieldType.Input,
