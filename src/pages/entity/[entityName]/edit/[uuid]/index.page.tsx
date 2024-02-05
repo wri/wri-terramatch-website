@@ -67,7 +67,8 @@ const EditEntityPage = () => {
   const feedbackFields = updateRequest?.feedback_fields || entity?.feedback_fields || [];
 
   const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
+    pathParams: { entity: entityName, uuid: entityUUID },
+    queryParams: { lang: router.locale }
   });
   //@ts-ignore
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;

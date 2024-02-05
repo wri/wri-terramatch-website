@@ -24,10 +24,6 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     status: "success",
     statusText: t("Approved")
   },
-  "awaiting-approval": {
-    statusText: t("Awaiting Review"),
-    status: "awaiting"
-  },
   awaiting: {
     statusText: t("Awaiting Review"),
     status: "awaiting"
@@ -43,6 +39,14 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
   "nothing-to-report": {
     status: "warning",
     statusText: t("Nothing Reported")
+  },
+  "requires-more-information": {
+    status: "warning",
+    statusText: t("More info requested")
+  },
+  "awaiting-approval": {
+    statusText: t("Awaiting Approval"),
+    status: "awaiting"
   },
   ...SubmissionStatusMapping(t)
 });

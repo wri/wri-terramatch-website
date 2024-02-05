@@ -1417,6 +1417,7 @@ export type FundingProgramme = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
@@ -1436,6 +1437,7 @@ export type FundingProgramme = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -1717,6 +1719,7 @@ export type FormRead = {
   title?: string;
   subtitle?: string;
   description?: string;
+  framework_key?: string;
   duration?: string;
   deadline_at?: string;
   documentation?: string;
@@ -2136,6 +2139,17 @@ export type ReportingFrameworkRead = {
 };
 
 export type ReportingFrameworkUpdate = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type ReportingFrameworkCreate = {
   name?: string;
   access_code?: string;
   project_form_uuid?: string;
@@ -5983,6 +5997,7 @@ export type ProjectFullRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -6096,6 +6111,7 @@ export type ProjectFullRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -6223,6 +6239,7 @@ export type ProjectFullRead = {
           title?: string;
           subtitle?: string;
           description?: string;
+          framework_key?: string;
           duration?: string;
           deadline_at?: string;
           documentation?: string;
@@ -6794,6 +6811,7 @@ export type ProjectWithSchemaRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7355,6 +7373,7 @@ export type SiteWithSchemaRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7694,6 +7713,7 @@ export type FormSubmissionRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7805,6 +7825,7 @@ export type FormPaginated = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7910,6 +7931,7 @@ export type StagePaginated = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8025,6 +8047,7 @@ export type StageRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -8161,6 +8184,7 @@ export type ApplicationLiteRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8274,6 +8298,7 @@ export type ApplicationLiteRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8404,6 +8429,7 @@ export type ApplicationRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8517,6 +8543,7 @@ export type ApplicationRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8644,6 +8671,7 @@ export type ApplicationRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;

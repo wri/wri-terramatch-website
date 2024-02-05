@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Image from "next/image";
 import Link from "next/link";
 import fondoHaritBharatImage from "public/images/_AJL2963.jpg";
-import HabitBaharatFund from "public/images/habit-baharat-fund.webp";
 import pricelessPlanetCoalitionExplainerImage from "public/images/priceless-planet-coalition-explainer.webp";
 import SupportImage from "public/images/support.webp";
 import TerrafundAFR100ExplainerImage from "public/images/terrafund-afr-100-explainer.webp";
@@ -37,29 +36,15 @@ const LandingPage = () => {
         ctaText={t("Sign up")}
         ctaLink="auth/signup"
       />
-      <LandingPageSectionLayout
-        preTitle={t("APPLY BY MAY 5")}
-        title={t("TerraFund for AFR100: Landscapes")}
-        className="bg-background"
-      >
+      <LandingPageSectionLayout preTitle={t("APPLY BY MAY 5")} title={""} className="bg-background">
         <div className="mt-8 w-full max-w-[550px] space-y-8">
-          <Image
-            alt={t("Habit baharat fund")}
-            className="m-auto aspect-[16/9] h-[212px] w-auto md:h-[292px]"
-            style={{ objectFit: "contain" }}
-            placeholder="blur"
-            src={HabitBaharatFund}
-          />
           <Text variant="text-heading-100" containHtml className="px-8 text-center md:px-0">
             {t(
               "Applications are now live for TerraFund for AFR100: Landscapes. This program will fund locally led land restoration projects based in three African landscapes: the Ghana Cocoa Belt, the Greater Rusizi Basin of Burundi, the Democratic Republic of the Congo, and Rwanda, and the Great Rift Valley of Kenya.<br/><br/><br/>Register your account on TerraMatch today to submit your Expression of Interest (EOI). Applications must be submitted by May 5 to be considered for funding. Successful applicants will  be invited to submit a full Request for Proposal (RFP) application by may 15."
             )}
           </Text>
           <div className="flex flex-col items-center justify-center gap-8 md:flex-row">
-            <Button as={Link} href="/auth/signup">
-              {t("Sign up to apply today")}
-            </Button>
-            <Button variant="secondary" as={Link} href="https://www.india.terramatch.org/">
+            <Button variant="secondary" as={Link} href="https://www.africa.terramatch.org/">
               {t("Learn more")}
             </Button>
           </div>

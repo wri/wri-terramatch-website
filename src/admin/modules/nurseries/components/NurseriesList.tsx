@@ -40,7 +40,7 @@ const NurseryDataGrid: FC = () => {
       />
       <TextField source="project.name" label="Project Name" />
       <TextField source="organisation.name" label="Organization" />
-      <DateField source="start_date" label="Establishment" />
+      <DateField source="start_date" label="Establishment" locales="en-GB" />
       <ShowButton />
       <EditButton />
       <WrapperField>

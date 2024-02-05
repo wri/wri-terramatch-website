@@ -21,6 +21,7 @@ const RadioGroup = ({ value, onChange, options, ...inputWrapperProps }: RadioGro
                 <Radio
                   label={option.title}
                   checked={checked}
+                  onChange={() => onChange && onChange(option.value)}
                   className="flex flex-row-reverse items-center justify-end gap-3 "
                 />
               </div>

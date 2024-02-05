@@ -5,6 +5,7 @@ import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTab
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
@@ -40,7 +41,7 @@ export const getSchemaFields = (fields: FormField[]) => {
           .label(child.label || "");
       });
     } else {
-      schema[field.name] = field.validation.nullable().label(field.label);
+      schema[field.name] = field.validation?.nullable().label(field.label);
     }
 
     if (field.fieldProps.required) schema[field.name] = schema[field.name].required();
@@ -173,6 +174,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     }
 
     case FieldType.LeadershipTeamDataTable:
+    case FieldType.OwnershipStakeDataTable:
     case FieldType.FundingTypeDataTable:
     case FieldType.StrataDataTable:
     case FieldType.DisturbanceDataTable:
@@ -182,6 +184,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       let headers: AccessorKeyColumnDef<any>[] = [];
 
       if (field.type === FieldType.LeadershipTeamDataTable) headers = getLeadershipTableColumns();
+      else if (field.type === FieldType.OwnershipStakeDataTable) headers = getOwnershipTableColumns();
       else if (field.type === FieldType.FundingTypeDataTable) headers = getFundingTypeTableColumns();
       else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
       else if (field.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(field.fieldProps);

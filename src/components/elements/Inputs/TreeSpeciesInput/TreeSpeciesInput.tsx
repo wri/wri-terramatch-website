@@ -90,6 +90,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           as="div"
           className="max-h-[300px] overflow-y-auto"
           itemAs={Fragment}
+          uniqueId={"uuid"}
           items={props.value}
           render={(value, index) => (
             <div className="relative flex w-full">

@@ -53,6 +53,21 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           }
         }
 
+        switch (status) {
+          case "started": {
+            ctaText = t("Continue Project");
+            subtitle = "";
+            ctaLink = `/entity/projects/edit/${project?.uuid}`;
+            break;
+          }
+          case "awaiting-approval": {
+            ctaText = t("View Project");
+            subtitle = "";
+            ctaLink = getEntityDetailPageLink("projects", project?.uuid);
+            break;
+          }
+        }
+
         return {
           ...getActionCardStatusMapper(t)[status!],
           ctaLink,
