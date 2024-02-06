@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
-import { fixInputValueDates } from "@/admin/apiProvider/utils/entryFormat";
+import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { getCountriesOptions } from "@/constants/options/countries";
@@ -81,7 +81,7 @@ export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormFie
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "date") {
-        values[field.name] = fixInputValueDates(values[field.name]);
+        values[field.name] = parseDateValues(values[field.name]);
       }
       break;
     }
