@@ -1,9 +1,9 @@
 //@ts-nocheck Swagger type def is quite wrong!
 import { useT } from "@transifex/react";
-import { format } from "date-fns";
 import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
+import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { getCountriesOptions } from "@/constants/options/countries";
@@ -70,9 +70,7 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      if (field.fieldProps.type !== "date") {
-        normalizedFieldDefaultValue(values, field, isMigrated);
-      }
+      normalizedFieldDefaultValue(values, field, isMigrated);
     }
   }
 
@@ -82,8 +80,8 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
   switch (field.type) {
     case FieldType.Input: {
-      if (field.fieldProps.type === "date" && !!values[field.name]) {
-        values[field.name] = format(new Date(values[field.name]), "yyyy-MM-dd");
+      if (field.fieldProps.type === "date") {
+        values[field.name] = parseDateValues(values[field.name]);
       }
       break;
     }

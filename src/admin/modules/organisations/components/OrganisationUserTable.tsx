@@ -20,7 +20,7 @@ const OrganisationUserTable = () => {
         <Datagrid bulkActionButtons={false} rowClick="show">
           <FunctionField label="Name" render={(user: V2AdminUserRead) => `${user.first_name} ${user.last_name}`} />
           <TextField source="email_address" />
-          <DateField label="Last login date" source="last_logged_in_at" />
+          <DateField label="Last login date" source="last_logged_in_at" locales="en-GB" />
         </Datagrid>
       </ReferenceManyField>
     </div>

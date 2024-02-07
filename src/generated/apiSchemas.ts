@@ -4915,6 +4915,7 @@ export type V2WorkdayRead = {
   gender?: string;
   age?: string;
   ethnicity?: string;
+  indigeneity?: string;
 };
 
 export type V2WorkdayCreate = {
@@ -4925,6 +4926,7 @@ export type V2WorkdayCreate = {
   gender?: string;
   age?: string;
   ethnicity?: string;
+  indigeneity?: string;
 };
 
 export type V2WorkdayUpdate = {
@@ -4933,6 +4935,7 @@ export type V2WorkdayUpdate = {
   gender?: string;
   age?: string;
   ethnicity?: string;
+  indigeneity?: string;
 };
 
 export type V2WorkdaysPaginated = {
@@ -4943,6 +4946,7 @@ export type V2WorkdaysPaginated = {
     gender?: string;
     age?: string;
     ethnicity?: string;
+    indigeneity?: string;
   }[];
   links?: {
     first?: string;

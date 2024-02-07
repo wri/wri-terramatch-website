@@ -44,6 +44,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               source="created_at"
               label="Date and time"
               showTime
+              locales="en-GB"
               options={{ dateStyle: "short", timeStyle: "short" }}
             />
             <ReferenceField source="user_uuid" reference={modules.user.ResourceName} label="User">

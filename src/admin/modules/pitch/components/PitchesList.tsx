@@ -58,7 +58,7 @@ const ApplicationDataGrid = () => {
         choices={optionToChoices(getRestorationInterventionTypeOptions())}
       />
       <SelectField source="project_country" label="Countries" choices={optionToChoices(getCountriesOptions())} />
-      <DateField source="created_at" label="Date Added" />
+      <DateField source="created_at" label="Date Added" locales="en-GB" />
       <ShowButton />
       <EditButton />
     </Datagrid>
