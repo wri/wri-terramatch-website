@@ -1,9 +1,13 @@
 import { format, isValid, parse, parseISO } from "date-fns";
 
 export const parseDateValues = (value: any) => {
-  const formattedValue = formatEntryValue(value);
-  const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
-  return format(new Date(parsedDate), "yyyy-MM-dd");
+  try {
+    const formattedValue = formatEntryValue(value);
+    const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
+    return format(new Date(parsedDate), "yyyy-MM-dd");
+  } catch (e) {
+    return value;
+  }
 };
 
 export const formatEntryValue = (entry: any) => {
