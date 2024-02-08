@@ -81,7 +81,10 @@ export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormFie
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "date") {
-        values[field.name] = parseDateValues(values[field.name]);
+        const parsedValue = parseDateValues(values[field.name]);
+        if (parsedValue) {
+          values[field.name] = parsedValue;
+        }
       }
       break;
     }
