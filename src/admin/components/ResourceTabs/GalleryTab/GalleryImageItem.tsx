@@ -40,7 +40,9 @@ const GalleryImageItem: FC<GalleryImageItemProps> = ({ data, className }) => {
         </Text>
         <Text variant="text-bold-body-300">
           Created:{" "}
-          <span className="capitalize">{format(new Date(Date.parse(data.raw?.created_date)), "Y-MM-dd HH:mm:ss")}</span>
+          <span className="capitalize">
+            {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/yyyy HH:mm:ss")}
+          </span>
         </Text>
         <Text variant="text-bold-body-300">
           Visibility: <span className="capitalize">{data.isPublic ? "Public" : "Private"}</span>
