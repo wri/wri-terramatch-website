@@ -35,7 +35,7 @@ const normalizeStagePayload = (object: StageRead) => ({
   ...object,
   //@ts-expect-error
   form_id: object.form.uuid,
-  deadline_at: object.deadline_at ? format(new Date(Date.parse(object.deadline_at)), "dd/MM/yyyy HH:mm:ss") : undefined
+  deadline_at: object.deadline_at ? format(new Date(Date.parse(object.deadline_at)), "Y-MM-dd HH:mm:ss") : undefined
 });
 
 export const stageDataProvider: StageDataProvider = {
