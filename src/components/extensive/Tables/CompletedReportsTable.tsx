@@ -64,7 +64,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
             const title = props.row.original.title;
 
             return (
-              <Text variant="text-light-subtitle-400" className="whitespace-nowrap">
+              <Text variant="text-light-subtitle-400" className="whitespace-normal">
                 {report_title || title}
               </Text>
             );
