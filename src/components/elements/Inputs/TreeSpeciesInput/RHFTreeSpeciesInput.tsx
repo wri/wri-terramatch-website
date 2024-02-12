@@ -30,7 +30,7 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
 
   const { mutate: createTreeSpecies } = usePostV2TreeSpecies({
     onSuccess(data) {
-      const _tmp = [...value];
+      const _tmp = [...(value || "")];
       //@ts-ignore
       _tmp.push(data.data);
       onChange(_tmp);
