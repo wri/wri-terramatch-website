@@ -148,7 +148,7 @@ const FormIntroPage = () => {
               name="pitch_uuid"
               label={t("Select a pitch for this application")}
               description={t(
-                "Select a project pitch for your application. You can use a pitch you have already created or create a new one. Your pitch represents the proposed work you are seeking to fund. <br /><br /> You can update the details of your pitch while you are finalizing your application. If your expression of interest is accepted, you will be asked to provide more details of your project pitch."
+                "Select a project pitch for your application. You can use a pitch you have already created or create a new one. Your pitch represents the proposed work you are seeking to fund. <br /><br /> You can update the details of your pitch while you are finalizing your application. If your expression of interest is accepted, you will be asked to provide more details of your project pitch. <br /><br /> “Land Accelerator applicants: choose “Create a new pitch,” and then continue with your application. Please disregard the information above, it is not relevant to the Land Accelerator application.”"
               )}
               options={pitchesOptions}
               control={form.control}
