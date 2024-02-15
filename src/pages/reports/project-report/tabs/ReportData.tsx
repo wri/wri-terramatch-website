@@ -3,12 +3,14 @@ import Link from "next/link";
 import { Else, If, Then, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
@@ -121,6 +123,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             }
           >
             <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} /> {/*TODO*/}
+            <If condition={isPPC}>
+              <GenericField label={t("Tree Species")}>
+                <TreeSpeciesTable modelName="project-report" modelUUID={report.uuid} />
+              </GenericField>
+            </If>
             <When condition={isTerrafund}>
               <TextField label={t("Number of Nursery Reports")} value={report.nursery_reports_count} />
             </When>
