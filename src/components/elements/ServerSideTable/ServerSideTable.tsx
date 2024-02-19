@@ -18,6 +18,7 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
   meta: any;
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: any) => void;
+  treeSpeciesShow?: boolean;
 }
 
 export function ServerSideTable<TData extends RowData>({
@@ -67,6 +68,7 @@ export function ServerSideTable<TData extends RowData>({
             setPage(1);
             setPageSize(size);
           }}
+          treeSpeciesShow={props.treeSpeciesShow}
         />
       )}
     </>
