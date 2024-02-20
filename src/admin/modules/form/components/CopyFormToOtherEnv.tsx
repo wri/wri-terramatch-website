@@ -80,7 +80,9 @@ export const CopyFormToOtherEnv = () => {
     if (!formBody.subtitle) {
       delete formBody.subtitle;
     }
-    delete formBody.framework_key;
+    if (formBody.framework_key) {
+      delete formBody.framework_key;
+    }
 
     const response = await fetch(`${baseUrl}/api/v2/admin/forms`, {
       method: "POST",
