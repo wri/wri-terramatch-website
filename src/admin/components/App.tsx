@@ -147,6 +147,14 @@ const App = () => {
         icon={SummarizeIcon}
         options={{ label: "Nursery Reports" }}
       />
+      <Resource
+        name={modules.nurseryReport.ResourceName}
+        list={modules.nurseryReport.List}
+        show={modules.nurseryReport.Show}
+        edit={modules.nurseryReport.Edit}
+        icon={SummarizeIcon}
+        options={{ label: "Airtable" }}
+      />
       <Resource name={modules.audit.ResourceName} />
     </Admin>
   );
