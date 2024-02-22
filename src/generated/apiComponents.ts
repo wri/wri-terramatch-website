@@ -6971,71 +6971,6 @@ export const useGetV2AdminReportingFrameworks = <TData = GetV2AdminReportingFram
   );
 };
 
-export type PostV2AdminReportingFrameworksError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2AdminReportingFrameworksResponse = {
-  uuid?: string;
-  name?: string;
-  slug?: string;
-  access_code?: string;
-  project_form_uuid?: string;
-  project_report_form_uuid?: string;
-  site_form_uuid?: string;
-  site_report_form_uuid?: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
-export type PostV2AdminReportingFrameworksRequestBody = {
-  name?: string;
-  access_code?: string;
-  project_form_uuid?: string;
-  project_report_form_uuid?: string;
-  site_form_uuid?: string;
-  site_report_form_uuid?: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
-export type PostV2AdminReportingFrameworksVariables = {
-  body?: PostV2AdminReportingFrameworksRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2AdminReportingFrameworks = (
-  variables: PostV2AdminReportingFrameworksVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2AdminReportingFrameworksResponse,
-    PostV2AdminReportingFrameworksError,
-    PostV2AdminReportingFrameworksRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/admin/reporting-frameworks", method: "post", ...variables, signal });
-
-export const usePostV2AdminReportingFrameworks = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2AdminReportingFrameworksResponse,
-      PostV2AdminReportingFrameworksError,
-      PostV2AdminReportingFrameworksVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2AdminReportingFrameworksResponse,
-    PostV2AdminReportingFrameworksError,
-    PostV2AdminReportingFrameworksVariables
-  >(
-    (variables: PostV2AdminReportingFrameworksVariables) =>
-      fetchPostV2AdminReportingFrameworks({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PutV2AdminReportingFrameworksUUIDPathParams = {
   uuid: string;
 };
@@ -7112,6 +7047,19 @@ export type DeleteV2AdminReportingFrameworksUUIDPathParams = {
 
 export type DeleteV2AdminReportingFrameworksUUIDError = Fetcher.ErrorWrapper<undefined>;
 
+export type DeleteV2AdminReportingFrameworksUUIDResponse = {
+  uuid?: string;
+  name?: string;
+  slug?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
 export type DeleteV2AdminReportingFrameworksUUIDVariables = {
   pathParams: DeleteV2AdminReportingFrameworksUUIDPathParams;
 } & ApiContext["fetcherOptions"];
@@ -7121,7 +7069,7 @@ export const fetchDeleteV2AdminReportingFrameworksUUID = (
   signal?: AbortSignal
 ) =>
   apiFetch<
-    undefined,
+    DeleteV2AdminReportingFrameworksUUIDResponse,
     DeleteV2AdminReportingFrameworksUUIDError,
     undefined,
     {},
@@ -7132,7 +7080,7 @@ export const fetchDeleteV2AdminReportingFrameworksUUID = (
 export const useDeleteV2AdminReportingFrameworksUUID = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      undefined,
+      DeleteV2AdminReportingFrameworksUUIDResponse,
       DeleteV2AdminReportingFrameworksUUIDError,
       DeleteV2AdminReportingFrameworksUUIDVariables
     >,
@@ -7141,7 +7089,7 @@ export const useDeleteV2AdminReportingFrameworksUUID = (
 ) => {
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<
-    undefined,
+    DeleteV2AdminReportingFrameworksUUIDResponse,
     DeleteV2AdminReportingFrameworksUUIDError,
     DeleteV2AdminReportingFrameworksUUIDVariables
   >(
@@ -7439,7 +7387,7 @@ export const usePutV2FormsENTITYUUIDSubmit = (
 
 export type PostV2FormsENTITYPathParams = {
   /**
-   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+   * allowed values projects/sites/nurseries
    */
   entity: string;
   /**
@@ -16635,50 +16583,57 @@ export const useDeleteV2LeadershipTeamUUID = (
   );
 };
 
-export type PostV2OwnershipStakeError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2LeadershipTeamUUIDError = Fetcher.ErrorWrapper<undefined>;
 
-export type PostV2OwnershipStakeResponse = {
+export type PostV2LeadershipTeamUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
   percent_ownership?: number;
 };
 
-export type PostV2OwnershipStakeRequestBody = {
+export type PostV2LeadershipTeamUUIDRequestBody = {
   organisation_id?: string;
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
   percent_ownership?: number;
 };
 
-export type PostV2OwnershipStakeVariables = {
-  body?: PostV2OwnershipStakeRequestBody;
+export type PostV2LeadershipTeamUUIDVariables = {
+  body?: PostV2LeadershipTeamUUIDRequestBody;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPostV2OwnershipStake = (variables: PostV2OwnershipStakeVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2OwnershipStakeResponse, PostV2OwnershipStakeError, PostV2OwnershipStakeRequestBody, {}, {}, {}>({
-    url: "/v2/ownership-stake",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const fetchPostV2LeadershipTeamUUID = (variables: PostV2LeadershipTeamUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2LeadershipTeamUUIDResponse,
+    PostV2LeadershipTeamUUIDError,
+    PostV2LeadershipTeamUUIDRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/leadership-team/{uuid}", method: "post", ...variables, signal });
 
-export const usePostV2OwnershipStake = (
+export const usePostV2LeadershipTeamUUID = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      PostV2OwnershipStakeResponse,
-      PostV2OwnershipStakeError,
-      PostV2OwnershipStakeVariables
+      PostV2LeadershipTeamUUIDResponse,
+      PostV2LeadershipTeamUUIDError,
+      PostV2LeadershipTeamUUIDVariables
     >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2OwnershipStakeResponse, PostV2OwnershipStakeError, PostV2OwnershipStakeVariables>(
-    (variables: PostV2OwnershipStakeVariables) => fetchPostV2OwnershipStake({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<
+    PostV2LeadershipTeamUUIDResponse,
+    PostV2LeadershipTeamUUIDError,
+    PostV2LeadershipTeamUUIDVariables
+  >(
+    (variables: PostV2LeadershipTeamUUIDVariables) =>
+      fetchPostV2LeadershipTeamUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -16692,16 +16647,16 @@ export type PatchV2OwnershipStakeUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type PatchV2OwnershipStakeUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
   percent_ownership?: number;
 };
 
 export type PatchV2OwnershipStakeUUIDRequestBody = {
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
   percent_ownership?: number;
 };
 
@@ -16751,9 +16706,9 @@ export type DeleteV2OwnershipStakeUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type DeleteV2OwnershipStakeUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
   percent_ownership?: number;
 };
 
@@ -18677,6 +18632,7 @@ export type GetV2ProjectsUUIDResponse = {
         description?: string;
         location?: string;
         read_more_url?: string;
+        framework_key?: string;
         status?: string;
         organisation_types?: string[];
         stages?: {
@@ -23093,6 +23049,7 @@ export type GetV2FundingProgrammeResponse = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
@@ -23287,6 +23244,7 @@ export type GetV2AdminFundingProgrammeResponse = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
@@ -23469,6 +23427,7 @@ export type PostV2AdminFundingProgrammeResponse = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
@@ -23637,6 +23596,7 @@ export type GetV2FundingProgrammeUUIDResponse = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
@@ -23802,6 +23762,7 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
@@ -23975,6 +23936,7 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
@@ -26933,6 +26895,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
@@ -28182,6 +28145,7 @@ export type GetV2ApplicationsUUIDResponse = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
