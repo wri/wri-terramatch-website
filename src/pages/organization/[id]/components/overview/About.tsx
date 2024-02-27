@@ -17,7 +17,7 @@ const About = ({ organization }: AboutProps) => {
         <Text variant="text-heading-300">{t("About")}</Text>
         <Text variant="text-body-800">{organization?.description}</Text>
       </div>
-      <div className="mt-10 flex flex-col gap-3">
+      <div className="mt-10 flex flex-col gap-4">
         <TextRow name={t("Website:")} value={organization?.web_url} nameClassName="w-1/3" />
         <TextRow
           name={t("Headquarters:")}

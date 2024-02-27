@@ -32,35 +32,35 @@ export const FilterControl = () => {
   if (!draw) return null;
 
   return (
-    <div className="flex h-7 gap-5 rounded-lg bg-white px-3 py-1 shadow">
-      <Button variant="text" className="underline" onClick={() => setShowFilters(true)}>
+    <div className="flex h-fit gap-5 rounded-lg bg-white px-6 py-2 shadow">
+      <Button variant="text" className="h-fit" onClick={() => setShowFilters(true)}>
         {t("Map Filter")}
       </Button>
       <When condition={showFilters}>
-        <div className="flex items-center gap-2">
+        <div className="flex h-fit items-center gap-2">
           <Checkbox
             id="filter-images"
             name="filter-images"
             defaultChecked={!imagesVisibility || imagesVisibility === "visible"}
             onChange={e => changeImagesVisibility(e.target.checked)}
           />
-          <Text htmlFor="filter-images" as="label" variant="text-bold-caption-200" className="mt-[2px]">
+          <Text htmlFor="filter-images" as="label" variant="text-bold-caption-200">
             {t("Images")}
           </Text>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex h-fit items-center gap-2">
           <Checkbox
             id="filter-shapes"
             name="filter-shapes"
             defaultChecked={!filterVisibility || filterVisibility === "visible"}
             onChange={e => changeShapeFileVisibility(e.target.checked)}
           />
-          <Text htmlFor="filter-shapes" as="label" variant="text-bold-caption-200" className="mt-[2px]">
+          <Text htmlFor="filter-shapes" as="label" variant="text-bold-caption-200">
             {t("Shapefiles")}
           </Text>
         </div>
         <IconButton
-          iconProps={{ name: IconNames.CROSS, className: "fill-error" }}
+          iconProps={{ name: IconNames.CROSS, className: "fill-error h-[22px]" }}
           onClick={() => setShowFilters(false)}
         />
       </When>

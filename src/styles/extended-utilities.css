@@ -8,6 +8,17 @@
   .scroll-indicator-hide::-webkit-scrollbar {
     display: none;
   }
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5PX;
+    margin-left: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #AEAEAE;
+    border-radius: 10px;
+    padding-left: 5px;
+  }
 
   .font-inherit {
     font-size: inherit;

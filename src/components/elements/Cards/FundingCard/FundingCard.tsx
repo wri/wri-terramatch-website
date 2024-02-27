@@ -87,7 +87,6 @@ const FundingCard = (props: FundingCardProps) => {
         <Button
           as={Link}
           variant="white"
-          // iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
           className="flex-1"
           href={secondaryLink}
           disabled={!secondaryLink}
@@ -117,7 +116,7 @@ interface CardItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
 
 const CardItem = ({ iconProps, title, subtitle, className, ...props }: CardItemProps) => {
   return (
-    <div {...props} className={classNames(className, "flex items-center gap-2 border-b border-neutral-200 py-2")}>
+    <div {...props} className={classNames(className, "flex items-center gap-2 py-2")}>
       <Icon {...iconProps} />
       <Text variant="text-bold-caption-200">{title}</Text>
       <Text variant="text-light-caption-200">{subtitle}</Text>
