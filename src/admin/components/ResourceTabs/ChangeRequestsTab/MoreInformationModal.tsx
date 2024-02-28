@@ -17,7 +17,7 @@ import { usePutV2AdminUpdateRequestsUUIDSTATUS } from "@/generated/apiComponents
 import { Option } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
-export type IStatus = "approve" | "moreinfo" | "reject";
+export type IStatus = "approve" | "moreinfo";
 
 interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
   handleClose: () => void;
@@ -27,7 +27,6 @@ interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
 }
 
 const statusTitles = {
-  reject: "Reject Change Request",
   approve: "Approve Change Request",
   moreinfo: "Request more information for this Change Request"
 };
