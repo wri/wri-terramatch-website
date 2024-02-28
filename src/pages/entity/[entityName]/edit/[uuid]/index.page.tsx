@@ -41,17 +41,12 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data: updateRequestData } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      enabled: mode === "provide-feedback-change-request"
+  const { data: updateRequestData, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID({
+    pathParams: {
+      entity: pluralEntityNameToSingular(entityName),
+      uuid: entityUUID
     }
-  );
+  });
   //@ts-ignore
   const updateRequest = updateRequestData?.data;
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
@@ -66,7 +61,11 @@ const EditEntityPage = () => {
   });
   const feedbackFields = updateRequest?.feedback_fields || entity?.feedback_fields || [];
 
-  const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
+  const {
+    data,
+    isLoading: formDataLoading,
+    isError
+  } = useGetV2FormsENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID },
     queryParams: { lang: router.locale }
   });
@@ -82,8 +81,13 @@ const EditEntityPage = () => {
     //@ts-ignore
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData.answers, formSteps, entity.migrated);
+
+  const isLoading = updateRequestLoading || formDataLoading;
+  const defaultValues = useNormalizedFormDefaultValue(
+    updateRequest?.content ?? formData.answers,
+    formSteps,
+    entity.migrated
+  );
 
   const formTitle = useMemo(() => {
     const reportingWindow = getReportingWindow(
