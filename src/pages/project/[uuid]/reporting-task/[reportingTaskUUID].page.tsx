@@ -256,7 +256,8 @@ const ReportingTaskPage = () => {
       header: t("Last Update")
     },
     {
-      accessorKey: "uuid",
+      accessorKey: "completion",
+      id: "uuid",
       header: "",
       enableSorting: false,
       cell: props => {

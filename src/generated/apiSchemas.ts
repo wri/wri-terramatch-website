@@ -3895,6 +3895,30 @@ export type V2LeadershipTeamUpdate = {
   age?: number;
 };
 
+export type V2OwnershipStakeCreate = {
+  organisation_id?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  percent_ownership?: number;
+};
+
+export type V2OwnershipStakeRead = {
+  uuid?: string;
+  organisation_id?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  percent_ownership?: number;
+};
+
+export type V2OwnershipStakeUpdate = {
+  position?: string;
+  gender?: string;
+  age?: number;
+  percent_ownership?: number;
+};
+
 export type V2FundingTypeCreate = {
   organisation_id?: string;
   amount?: number;
@@ -6220,6 +6244,7 @@ export type ProjectFullRead = {
       description?: string;
       location?: string;
       read_more_url?: string;
+      framework_key?: string;
       status?: string;
       organisation_types?: string[];
       stages?: {
@@ -8652,6 +8677,7 @@ export type ApplicationRead = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
