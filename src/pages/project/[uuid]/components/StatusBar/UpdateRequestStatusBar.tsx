@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -20,7 +19,6 @@ interface UpdateRequestStatusBarProps {
 
 const UpdateRequestStatusBar = ({ entityName, entityUUID, updateRequest }: UpdateRequestStatusBarProps) => {
   const t = useT();
-  const router = useRouter();
   const { openModal, closeModal } = useModalContext();
   const { mutateAsync: deleteUpdateRequest, isLoading, isSuccess } = useDeleteV2UpdateRequestsUUID();
   //@ts-ignore
@@ -31,27 +29,6 @@ const UpdateRequestStatusBar = ({ entityName, entityUUID, updateRequest }: Updat
   if (!projectStatus) return null;
 
   const statusMapping: any = {
-    rejected: {
-      title: t("Change Request Status: Rejected"),
-      icon: IconNames.CROSS_CIRCLE,
-      className: "fill-error",
-      primaryButtonProps: {
-        children: t("Acknowledge"),
-        disabled: isLoading || isSuccess,
-        onClick: async () => {
-          await deleteUpdateRequest({ pathParams: { uuid: updateRequest.uuid! } });
-          location.reload();
-        }
-      },
-      secondaryButtonProps: {
-        children: t("Edit"),
-        onClick: async () => {
-          await deleteUpdateRequest({ pathParams: { uuid: updateRequest.uuid! } });
-          closeModal();
-          router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
-        }
-      }
-    },
     approved: {
       title: t("Change Request Status: Approved"),
       icon: IconNames.CHECK_CIRCLE_FILL,

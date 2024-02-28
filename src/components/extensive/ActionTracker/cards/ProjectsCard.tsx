@@ -31,7 +31,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
         const type = action.targetable_type;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
-        let canClearActionClientSide = status === "approved" || status === "rejected";
+        let canClearActionClientSide = status === "approved";
 
         let subtitle = "";
         let ctaText = t("View Project Details");

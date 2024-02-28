@@ -1,4 +1,4 @@
-import { Check, Close } from "@mui/icons-material";
+import { Check } from "@mui/icons-material";
 import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import { FC, useState } from "react";
@@ -165,8 +165,6 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                                 return "More information requested";
                               case "approved":
                                 return "Approved";
-                              case "rejected":
-                                return "Rejected";
                               default:
                                 return "-";
                             }
@@ -184,16 +182,6 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
 
                   <Box pt={2}>
                     <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
-                      <Button
-                        variant="contained"
-                        color="error"
-                        startIcon={<Close />}
-                        // @ts-ignore
-                        disabled={changeRequest?.data?.status === "rejected"}
-                        onClick={() => handleStatusUpdate("reject")}
-                      >
-                        Reject
-                      </Button>
                       <Button
                         variant="contained"
                         startIcon={<Check />}

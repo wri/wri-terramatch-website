@@ -18,10 +18,6 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
       title: t("Draft")
     },
     {
-      value: "rejected",
-      title: t("Rejected")
-    },
-    {
       value: "approved",
       title: t("Approved")
     },

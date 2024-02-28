@@ -7677,7 +7677,7 @@ export const useDeleteV2AdminUpdateRequestsUUID = (
 export type PutV2AdminUpdateRequestsUUIDSTATUSPathParams = {
   uuid: string;
   /**
-   * allowed values are approve, reject, moreinfo
+   * allowed values are approve, moreinfo
    */
   status: string;
 };
