@@ -32,6 +32,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const onChange = (value: OptionValueWithBoolean) => {
     field.onChange(value);
     onChangeCapture();
+    formHook.trigger();
   };
 
   return (

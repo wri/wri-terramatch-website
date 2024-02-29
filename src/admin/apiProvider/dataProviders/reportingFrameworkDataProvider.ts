@@ -1,7 +1,9 @@
 import { DataProvider } from "react-admin";
 
 import {
+  fetchDeleteV2AdminReportingFrameworksUUID,
   fetchGetV2AdminReportingFrameworks,
+  fetchPostV2AdminReportingFrameworks,
   fetchPutV2AdminReportingFrameworksUUID,
   GetV2AdminReportingFrameworksError
 } from "@/generated/apiComponents";
@@ -36,6 +38,19 @@ export const reportingFrameworkDataProvider: DataProvider = {
     }
   },
   //@ts-ignore
+  async create(__, params) {
+    try {
+      const response = await fetchPostV2AdminReportingFrameworks({
+        body: params.data
+      });
+
+      // @ts-expect-error
+      return { data: { ...response.data, id: response.id } };
+    } catch (err) {
+      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+    }
+  },
+  //@ts-ignore
   async update(__, params) {
     try {
       const response = await fetchPutV2AdminReportingFrameworksUUID({
@@ -45,6 +60,17 @@ export const reportingFrameworkDataProvider: DataProvider = {
 
       // @ts-expect-error
       return { data: { ...response.data, id: response.id } };
+    } catch (err) {
+      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+    }
+  },
+  //@ts-ignore
+  async delete(__, params) {
+    try {
+      await fetchDeleteV2AdminReportingFrameworksUUID({
+        pathParams: { uuid: params.id as string }
+      });
+      return { data: { id: params.id } };
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
     }

@@ -15,7 +15,7 @@ export const FundingProgrammeList = () => {
           <TextField source="name" label="Name" sortable={false} />
           <TextField source="description" label="Description" sortable={false} />
           <TextField source="status" label="Status" sortable={false} sx={{ textTransform: "capitalize" }} />
-          <DateField source="created_at" label="Date Added" sortable={false} />
+          <DateField source="created_at" label="Date Added" sortable={false} locales="en-GB" />
           <ShowButton />
           <EditButton />
         </Datagrid>

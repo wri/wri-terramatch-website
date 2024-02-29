@@ -146,10 +146,32 @@ const NurseryReportDetailPage = () => {
                   <TextField label={t("Created by")} value={getFullName(nurseryReport.created_by)} />
                   <TextField label={t("Updated")} value={format(nurseryReport.updated_at)} />
                   <TextField label={t("Due date")} value={format(nurseryReport.due_at)} />
+                  <TextField label={t("Submitted date")} value={format(nurseryReport.submitted_at)} />
                 </PageCard>
                 <PageCard title={t("Overview")}>
                   <TextField label={t("Seedling or Young Trees")} value={nurseryReport.seedlings_young_trees} />
                 </PageCard>
+                <Paper>
+                  <If condition={!!nurseryReport?.tree_seedling_contributions?.[0]?.url}>
+                    <Then>
+                      <ButtonField
+                        label={t("Tree Seedling Contributions")}
+                        subtitle={t(nurseryReport?.tree_seedling_contributions?.[0]?.file_name || "")}
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: nurseryReport?.tree_seedling_contributions?.[0]?.url || "",
+                          download: true
+                        }}
+                      />
+                    </Then>
+                    <Else>
+                      <Then>
+                        <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
+                      </Then>
+                    </Else>
+                  </If>
+                </Paper>
               </PageColumn>
             </PageRow>
           </Else>

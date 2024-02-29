@@ -3,12 +3,14 @@ import Link from "next/link";
 import { Else, If, Then, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
@@ -34,9 +36,9 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
             </When>
             <When condition={isTerrafund}>
-              <LongTextField title={t("Landscape Community Contribution")}>
-                {report.landscape_community_contribution}
-              </LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
+              <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
+              <LongTextField title={t("Community Engagement Approach")}>{report.local_engagement}</LongTextField>
               <LongTextField title={t("Top 3 Successes")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Challenges Faced")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
@@ -47,6 +49,9 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Survival Rate")}>{report.percentage_survival_to_date}</LongTextField>
               <LongTextField title={t("Survival Calculation")}>{report.survival_calculation}</LongTextField>
               <LongTextField title={t("Survival Comparison")}>{report.survival_comparison}</LongTextField>
+              <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
+                {report.equitable_opportunities}
+              </LongTextField>
             </When>
           </PageCard>
         </PageColumn>
@@ -118,6 +123,11 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             }
           >
             <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} /> {/*TODO*/}
+            <If condition={isPPC}>
+              <GenericField label={t("Tree Species")}>
+                <TreeSpeciesTable modelName="project-report" modelUUID={report.uuid} />
+              </GenericField>
+            </If>
             <When condition={isTerrafund}>
               <TextField label={t("Number of Nursery Reports")} value={report.nursery_reports_count} />
             </When>

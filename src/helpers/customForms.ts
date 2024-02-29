@@ -1,9 +1,9 @@
 //@ts-nocheck Swagger type def is quite wrong!
 import { useT } from "@transifex/react";
-import { format } from "date-fns";
 import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
+import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { getCountriesOptions } from "@/constants/options/countries";
@@ -70,9 +70,7 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      if (field.fieldProps.type !== "date") {
-        normalizedFieldDefaultValue(values, field, isMigrated);
-      }
+      normalizedFieldDefaultValue(values, field, isMigrated);
     }
   }
 
@@ -82,8 +80,11 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
   switch (field.type) {
     case FieldType.Input: {
-      if (field.fieldProps.type === "date" && !!values[field.name]) {
-        values[field.name] = format(new Date(values[field.name]), "yyyy-MM-dd");
+      if (field.fieldProps.type === "date") {
+        const parsedValue = parseDateValues(values[field.name]);
+        if (parsedValue) {
+          values[field.name] = parsedValue;
+        }
       }
       break;
     }
@@ -337,6 +338,18 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "ownershipStake": {
+      return {
+        ...sharedProps,
+        type: FieldType.OwnershipStakeDataTable,
+
+        fieldProps: {
+          required,
+          addButtonCaption: question.add_button_text
+        }
+      };
+    }
+
     case "stratas": {
       return {
         ...sharedProps,
@@ -581,6 +594,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
     case "checkboxes":
     case "dataTable":
     case "leadershipTeam":
+    case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":
     case "disturbances":

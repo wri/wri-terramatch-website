@@ -76,9 +76,10 @@ const RequestMoreInformationPage = () => {
             disableFutureTabs: true
           }}
           summaryOptions={{
-            title: t("Review Application Details")
+            title: t("Review Application Details"),
+            downloadButtonText: t("Download Application")
           }}
-          title={submission.form?.title}
+          title={submission?.form?.title}
           roundedCorners
         />
       </LoadingContainer>

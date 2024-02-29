@@ -83,11 +83,12 @@ const FundingCard = (props: FundingCardProps) => {
         {description}
       </Text>
 
-      <div className="mt-8 flex gap-3">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         <Button
           as={Link}
           variant="white"
-          className="flex-1"
+          iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
+          className="w-full flex-1"
           href={secondaryLink}
           disabled={!secondaryLink}
           target="_blank"
@@ -97,7 +98,7 @@ const FundingCard = (props: FundingCardProps) => {
         <Button
           as={Link}
           variant="sky"
-          className="flex-1"
+          className="w-full flex-1"
           href={primaryLink}
           disabled={!primaryLink || status === "inactive" || status === "disabled" || status === "coming-soon"}
         >
@@ -119,7 +120,9 @@ const CardItem = ({ iconProps, title, subtitle, className, ...props }: CardItemP
     <div {...props} className={classNames(className, "flex items-center gap-2 py-2")}>
       <Icon {...iconProps} />
       <Text variant="text-bold-caption-200">{title}</Text>
-      <Text variant="text-light-caption-200">{subtitle}</Text>
+      <Text variant="text-light-caption-200" className="max-h-10 overflow-hidden">
+        {subtitle}
+      </Text>
     </div>
   );
 };

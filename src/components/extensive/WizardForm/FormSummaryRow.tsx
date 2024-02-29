@@ -4,11 +4,13 @@ import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { Else, If, Then } from "react-if";
 
+import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
@@ -77,6 +79,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       }
 
       case FieldType.LeadershipTeamDataTable:
+      case FieldType.OwnershipStakeDataTable:
       case FieldType.FundingTypeDataTable:
       case FieldType.StrataDataTable:
       case FieldType.DisturbanceDataTable:
@@ -86,6 +89,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
         let headers: AccessorKeyColumnDef<any>[] = [];
 
         if (f.type === FieldType.LeadershipTeamDataTable) headers = getLeadershipTableColumns(t);
+        else if (f.type === FieldType.OwnershipStakeDataTable) headers = getOwnershipTableColumns(t);
         else if (f.type === FieldType.FundingTypeDataTable) headers = getFundingTypeTableColumns(t);
         else if (f.type === FieldType.StrataDataTable) headers = getStrataTableColumns(t);
         else if (f.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(f.fieldProps, t);
@@ -172,10 +176,10 @@ const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
                 <Text variant="text-body-300" className="flex-1" containHtml>
-                  {entry.value}
+                  {formatEntryValue(entry.value)}
                 </Text>
               </Then>
-              <Else>{entry.value}</Else>
+              <Else>{formatEntryValue(entry.value)}</Else>
             </If>
           </div>
         )}

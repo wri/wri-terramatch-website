@@ -10,6 +10,7 @@ import {
 } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
+import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
@@ -32,9 +33,9 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
             </Typography>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
-                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: entry.value }} />
+                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }} />
               </Then>
-              <Else>{entry.value}</Else>
+              <Else>{formatEntryValue(entry.value)}</Else>
             </If>
           </div>
         )}

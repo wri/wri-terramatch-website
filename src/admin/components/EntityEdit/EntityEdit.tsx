@@ -44,6 +44,7 @@ export const EntityEdit = () => {
     pathParams: { entity: entityName, uuid: entityUUID }
   });
   //@ts-ignore
+
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
 
   const formSteps = useGetCustomFormSteps(formData.form, {

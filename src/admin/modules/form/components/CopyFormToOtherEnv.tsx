@@ -11,20 +11,20 @@ import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
 
 const envOptions = [
   {
-    title: "Demo",
-    value: "https://demo.wrirestorationmarketplace.cubeapis.com"
+    title: "Dev",
+    value: "https://new-wri-dev.wri-restoration-marketplace-api.com"
   },
   {
     title: "Test",
-    value: "https://test.wrirestorationmarketplace.cubeapis.com"
+    value: "https://new-wri-test.wri-restoration-marketplace-api.com"
   },
   {
     title: "Staging",
-    value: "https://staging.wrirestorationmarketplace.cubeapis.com"
+    value: "https://new-wri-staging.wri-restoration-marketplace-api.com"
   },
   {
     title: "Production",
-    value: "https://production.wrirestorationmarketplace.cubeapis.com"
+    value: "https://new-wri-prod.wri-restoration-marketplace-api.com"
   }
 ];
 
@@ -34,13 +34,14 @@ export const CopyFormToOtherEnv = () => {
   const notify = useNotify();
   const formHook = useForm<any>({
     defaultValues: {
-      title: record.title
+      title: record.title,
+      framework_key: record.framework_key
     }
   });
   const { register, handleSubmit, formState, getValues } = formHook;
   console.log(getValues(), formState.errors);
 
-  const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, ...body }: any) => {
+  const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, framework_key, ...body }: any) => {
     const linkedFieldsData: any = await fetchGetV2FormsLinkedFieldListing({});
     const loginResp = await fetch(`${baseUrl}/api/auth/login`, {
       method: "POST",
@@ -56,7 +57,7 @@ export const CopyFormToOtherEnv = () => {
     }
 
     const token = (await loginResp.json()).data.token;
-    const formData = { ...record, title: formTitle };
+    const formData = { ...record, title: formTitle, framework_key };
     const formBody = JSON.parse(
       JSON.stringify(
         normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData.data) as any),
@@ -79,6 +80,7 @@ export const CopyFormToOtherEnv = () => {
     if (!formBody.subtitle) {
       delete formBody.subtitle;
     }
+    delete formBody.framework_key;
 
     const response = await fetch(`${baseUrl}/api/v2/admin/forms`, {
       method: "POST",

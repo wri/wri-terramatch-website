@@ -199,6 +199,14 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
           fieldProps: {}
         },
         {
+          name: "ownership_stake",
+          type: FieldType.OwnershipStakeDataTable,
+          label: t("Ownership participation (providing your senior leaders by position)"),
+          description: t("Please list the ownership of your organization’s."),
+          validation: yup.array(),
+          fieldProps: {}
+        },
+        {
           name: "employees",
           type: FieldType.InputTable,
           label: t("Your employees"),
