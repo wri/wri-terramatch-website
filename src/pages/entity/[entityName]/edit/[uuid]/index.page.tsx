@@ -41,12 +41,23 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data: updateRequestData, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID({
-    pathParams: {
-      entity: pluralEntityNameToSingular(entityName),
-      uuid: entityUUID
+  const { data: updateRequestData, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
+    {
+      pathParams: {
+        entity: pluralEntityNameToSingular(entityName),
+        uuid: entityUUID
+      }
+    },
+    {
+      retry(failureCount: number, error: any): boolean {
+        // avoid retries on a 404; that's expected in most cases for this form.
+        return error.statusCode !== 404 && failureCount < 3;
+      },
+      onError() {
+        // To override error toast
+      }
     }
-  });
+  );
   //@ts-ignore
   const updateRequest = updateRequestData?.data;
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
