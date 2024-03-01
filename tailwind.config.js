@@ -57,6 +57,7 @@ module.exports = {
       },
       success: {
         DEFAULT: "#009344",
+        600: "#29C499",
         500: "#009344",
         400: "#9EDD8F",
         300: "#C7ECC4",
@@ -80,6 +81,7 @@ module.exports = {
       },
       tertiary: {
         DEFAULT: "#F0AB00",
+        600: "#FF8938",
         500: "#F0AB00",
         400: "#F3C148",
         300: "#F6D279",
@@ -88,6 +90,7 @@ module.exports = {
       },
       error: {
         DEFAULT: "#D50000",
+        600: "#FF4040",
         500: "#D50000",
         400: "#F5B5B5",
         300: "#F9D7D7",
