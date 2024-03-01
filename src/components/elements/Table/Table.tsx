@@ -105,19 +105,17 @@ function Table<TData extends RowData>({
 
   return (
     <div className="overflow-x-auto px-4 md:px-0 lg:overflow-x-visible">
-      <div className="flex items-center justify-between">
-        <When condition={!!columnFilters && columnFilters.length > 0}>
-          <TableFilter
-            filters={filters}
-            columnFilters={columnFilters!}
-            onChangeFilters={filters => {
-              setFilters(filters);
-              onTableStateChange?.({ sorting: tableState.sorting, filters: [...filters] });
-            }}
-          />
-        </When>
-        {children}
-      </div>
+      <When condition={!!columnFilters && columnFilters.length > 0}>
+        <TableFilter
+          filters={filters}
+          columnFilters={columnFilters!}
+          onChangeFilters={filters => {
+            setFilters(filters);
+            onTableStateChange?.({ sorting: tableState.sorting, filters: [...filters] });
+          }}
+        />
+      </When>
+      {children}
       <table {...props} className={classNames(className, "w-full border-separate border-spacing-y-4")}>
         <thead className="bg-[#CFE6F4]">
           {getHeaderGroups().map(headerGroup => (
@@ -235,7 +233,7 @@ function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown>
 function LoadingCell() {
   return (
     <tr>
-      <td align="center" colSpan={100} className="py-4 px-6">
+      <td align="center" colSpan={100} className="px-6 py-4">
         <Lottie animationData={SpinnerLottie} className="mb-8 h-8 w-8" />
         <Text variant="text-normal-subtitle-400">Loading results, load times might increase with more data</Text>
       </td>

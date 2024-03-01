@@ -47,39 +47,52 @@ function TableFilter({ filters, onChangeFilters, className, columnFilters, ...pr
   };
 
   return (
-    <div {...props} className={classNames(className, "flex items-center gap-12")}>
-      {columnFilters
-        ?.filter(filter => !filter.hide)
-        .map(filter => {
-          switch (filter.type) {
-            case "search":
-              return (
-                <FilterSearchBox
-                  key={filter.accessorKey}
-                  onChange={value => onChangeHandler(value, filter)}
-                  placeholder={filter.placeholder}
-                  className="w-64"
-                />
-              );
-            case "dropDown": {
-              const options: Option[] = [{ title: t("Show All"), value: showAllValue }, ...filter.options];
+    <div {...props} className={classNames(className, "flex w-full items-center justify-between")}>
+      <div>
+        {columnFilters
+          ?.filter(filter => !filter.hide)
+          .map(filter => {
+            switch (filter.type) {
+              case "search":
+                return (
+                  <FilterSearchBox
+                    key={filter.accessorKey}
+                    onChange={value => onChangeHandler(value, filter)}
+                    placeholder={filter.placeholder}
+                    className="w-64"
+                  />
+                );
 
-              return (
-                <FilterDropDown
-                  key={filter.accessorKey}
-                  options={options}
-                  onChange={value => onChangeHandler(value, filter)}
-                  label={filter.label}
-                  placeholder={t("Show All")}
-                  defaultValue={showAllValue}
-                />
-              );
+              default:
+                return null;
             }
+          })}
+      </div>
+      <div className="flex items-center gap-12">
+        {columnFilters
+          ?.filter(filter => !filter.hide)
+          .map(filter => {
+            switch (filter.type) {
+              case "dropDown": {
+                const options: Option[] = [{ title: t("Show All"), value: showAllValue }, ...filter.options];
 
-            default:
-              return null;
-          }
-        })}
+                return (
+                  <FilterDropDown
+                    key={filter.accessorKey}
+                    options={options}
+                    onChange={value => onChangeHandler(value, filter)}
+                    label={filter.label}
+                    placeholder={t("Show All")}
+                    defaultValue={showAllValue}
+                  />
+                );
+              }
+
+              default:
+                return null;
+            }
+          })}
+      </div>
     </div>
   );
 }
