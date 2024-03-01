@@ -10,7 +10,31 @@ export interface IChangeRowProps extends Omit<FormSummaryRowProps, "values"> {
   changedValues: any;
 }
 
-const cleanValue = (value: any) => (typeof value === "string" ? value.trim() : value);
+const BOOLEAN_STRING_VALUES = ["-", "No", "Yes"];
+
+const cleanValue = (value: any) => {
+  if (typeof value === "string") {
+    value = value.trim();
+
+    if (value.length === 0) {
+      value = null;
+    }
+  }
+
+  return value;
+};
+
+const needsVisualDiff = (currentValue: any, newValue: any) => {
+  if (typeof currentValue !== "string" || typeof newValue !== "string") {
+    return false;
+  }
+
+  if (BOOLEAN_STRING_VALUES.includes(currentValue) && BOOLEAN_STRING_VALUES.includes(newValue)) {
+    return false;
+  }
+
+  return true;
+};
 
 export default function ChangeRow({ index, ...props }: IChangeRowProps) {
   const currentEntries = useGetFormEntries({
@@ -34,8 +58,8 @@ export default function ChangeRow({ index, ...props }: IChangeRowProps) {
         items={changedEntries}
         render={entry => {
           const currentEntry = currentEntries.find(e => e.title === entry.title);
-          const currentValue = cleanValue(currentEntry?.value) || "-";
-          const newValue = cleanValue(entry.value) || "-";
+          const currentValue = cleanValue(currentEntry?.value);
+          const newValue = cleanValue(entry.value);
 
           return (
             <div>
@@ -43,18 +67,18 @@ export default function ChangeRow({ index, ...props }: IChangeRowProps) {
                 {entry?.title}
               </Typography>
               <Switch>
-                <Case condition={newValue === currentValue}>
+                <Case condition={newValue == currentValue}>
                   <p className="mb-2">
                     Existing Value (unchanged):
-                    <Typography variant="body2">{currentValue}</Typography>
+                    <Typography variant="body2">{currentValue ?? "-"}</Typography>
                   </p>
                 </Case>
-                <Case condition={typeof currentValue === "string"}>
+                <Case condition={needsVisualDiff(currentValue, newValue)}>
                   <VisualDiff {...{ currentValue, newValue }} />
                 </Case>
                 <Default>
                   <p className="mb-2">
-                    New Value: {newValue} <br /> Old Value: {currentValue}
+                    New Value: {newValue ?? "-"} <br /> Old Value: {currentValue ?? "-"}
                   </p>
                 </Default>
               </Switch>
