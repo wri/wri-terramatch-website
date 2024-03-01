@@ -1,5 +1,6 @@
-import { Check } from "@mui/icons-material";
+import { Check, PriorityHigh } from "@mui/icons-material";
 import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
+import { pink } from "@mui/material/colors";
 import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 import { FunctionField, Labeled, TabbedShowLayout, TabProps, TextField, useShowContext } from "react-admin";
@@ -103,6 +104,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   // @ts-ignore
   const current = currentValues?.data?.answers;
   // @ts-ignore
+  const status = changeRequest?.data?.status;
+  // @ts-ignore
   const form = currentValues?.data?.form;
 
   const formSteps = form && getCustomFormSteps(form, t);
@@ -113,9 +116,16 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
     setStatusToChangeTo(type);
   };
 
+  const icon = status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
+
   return (
     <When condition={!ctx.isLoading}>
-      <TabbedShowLayout.Tab label={label ?? "Change Requests"} {...rest}>
+      <TabbedShowLayout.Tab
+        style={{ flexDirection: "row", minHeight: "unset" }}
+        icon={icon}
+        label={label ?? "Change Requests"}
+        {...rest}
+      >
         {/* @ts-ignore */}
         <If condition={changeRequest?.data && !isError}>
           <Then>
