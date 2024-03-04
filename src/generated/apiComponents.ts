@@ -6129,6 +6129,60 @@ export const useGetV2AdminProjectReports = <TData = GetV2AdminProjectReportsResp
   );
 };
 
+export type GetV2AdminTasksError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminTasksResponse = {
+  data?: {
+    uuid?: number;
+    project?: Record<string, any>;
+    period_key?: string;
+    status?: string;
+    status_readable?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+  };
+};
+
+export type GetV2AdminTasksVariables = {
+  body?: RequestBodies.GetV2AdminNurseryReportsBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminTasks = (variables: GetV2AdminTasksVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2AdminTasksResponse, GetV2AdminTasksError, RequestBodies.GetV2AdminNurseryReportsBody, {}, {}, {}>({
+    url: "/v2/admin/tasks",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2AdminTasks = <TData = GetV2AdminTasksResponse>(
+  variables: GetV2AdminTasksVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AdminTasksResponse, GetV2AdminTasksError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AdminTasksResponse, GetV2AdminTasksError, TData>(
+    queryKeyFn({ path: "/v2/admin/tasks", operationId: "getV2AdminTasks", variables }),
+    ({ signal }) => fetchGetV2AdminTasks({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2AdminNurseriesError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminNurseriesResponse = {
@@ -16863,252 +16917,6 @@ export const useGetV2AdminSites = <TData = GetV2AdminSitesResponse>(
   return reactQuery.useQuery<GetV2AdminSitesResponse, GetV2AdminSitesError, TData>(
     queryKeyFn({ path: "/v2/admin/sites", operationId: "getV2AdminSites", variables }),
     ({ signal }) => fetchGetV2AdminSites({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2AdminSitesPpcQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2AdminSitesPpcError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminSitesPpcResponse = {
-  data?: {
-    id?: number;
-    site_id?: number;
-    terrafund_site_id?: number;
-    programme_id?: number;
-    terrafund_programme_id?: number;
-    control_site?: boolean;
-    name?: string;
-    country?: string;
-    project_country?: string;
-    continent?: string;
-    description?: string;
-    planting_pattern?: string;
-    stratification_for_heterogeneity?: string;
-    history?: string;
-    workdays_paid?: number;
-    workdays_volunteer?: number;
-    total_workdays?: number;
-    /**
-     * @format date
-     */
-    establishment_date?: string;
-    /**
-     * @format date
-     */
-    start_date?: string;
-    /**
-     * @format date
-     */
-    end_date?: string;
-    technical_narrative?: string;
-    public_narrative?: string;
-    aim_survival_rate?: number;
-    aim_year_five_crown_cover?: number;
-    aim_direct_seeding_survival_rate?: number;
-    aim_natural_regeneration_trees_per_hectare?: number;
-    aim_natural_regeneration_hectares?: number;
-    aim_soil_condition?: string;
-    aim_number_of_mature_trees?: number;
-    hectares_to_restore?: number;
-    landscape_community_contribution?: string;
-    disturbances?: string;
-    boundary_geojson?: string;
-    /**
-     * @format date-time
-     */
-    created_at?: string;
-    /**
-     * @format date-time
-     */
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
-export type GetV2AdminSitesPpcVariables = {
-  queryParams?: GetV2AdminSitesPpcQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminSitesPpc = (variables: GetV2AdminSitesPpcVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2AdminSitesPpcResponse, GetV2AdminSitesPpcError, undefined, {}, GetV2AdminSitesPpcQueryParams, {}>({
-    url: "/v2/admin/sites/ppc",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminSitesPpc = <TData = GetV2AdminSitesPpcResponse>(
-  variables: GetV2AdminSitesPpcVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminSitesPpcResponse, GetV2AdminSitesPpcError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminSitesPpcResponse, GetV2AdminSitesPpcError, TData>(
-    queryKeyFn({ path: "/v2/admin/sites/ppc", operationId: "getV2AdminSitesPpc", variables }),
-    ({ signal }) => fetchGetV2AdminSitesPpc({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2AdminSitesTerrafundQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2AdminSitesTerrafundError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminSitesTerrafundResponse = {
-  data?: {
-    id?: number;
-    site_id?: number;
-    terrafund_site_id?: number;
-    programme_id?: number;
-    terrafund_programme_id?: number;
-    control_site?: boolean;
-    name?: string;
-    country?: string;
-    project_country?: string;
-    continent?: string;
-    description?: string;
-    planting_pattern?: string;
-    stratification_for_heterogeneity?: string;
-    history?: string;
-    workdays_paid?: number;
-    workdays_volunteer?: number;
-    total_workdays?: number;
-    /**
-     * @format date
-     */
-    establishment_date?: string;
-    /**
-     * @format date
-     */
-    start_date?: string;
-    /**
-     * @format date
-     */
-    end_date?: string;
-    technical_narrative?: string;
-    public_narrative?: string;
-    aim_survival_rate?: number;
-    aim_year_five_crown_cover?: number;
-    aim_direct_seeding_survival_rate?: number;
-    aim_natural_regeneration_trees_per_hectare?: number;
-    aim_natural_regeneration_hectares?: number;
-    aim_soil_condition?: string;
-    aim_number_of_mature_trees?: number;
-    hectares_to_restore?: number;
-    landscape_community_contribution?: string;
-    disturbances?: string;
-    boundary_geojson?: string;
-    /**
-     * @format date-time
-     */
-    created_at?: string;
-    /**
-     * @format date-time
-     */
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
-export type GetV2AdminSitesTerrafundVariables = {
-  queryParams?: GetV2AdminSitesTerrafundQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminSitesTerrafund = (variables: GetV2AdminSitesTerrafundVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2AdminSitesTerrafundResponse,
-    GetV2AdminSitesTerrafundError,
-    undefined,
-    {},
-    GetV2AdminSitesTerrafundQueryParams,
-    {}
-  >({ url: "/v2/admin/sites/terrafund", method: "get", ...variables, signal });
-
-export const useGetV2AdminSitesTerrafund = <TData = GetV2AdminSitesTerrafundResponse>(
-  variables: GetV2AdminSitesTerrafundVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminSitesTerrafundResponse, GetV2AdminSitesTerrafundError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminSitesTerrafundResponse, GetV2AdminSitesTerrafundError, TData>(
-    queryKeyFn({ path: "/v2/admin/sites/terrafund", operationId: "getV2AdminSitesTerrafund", variables }),
-    ({ signal }) => fetchGetV2AdminSitesTerrafund({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -31711,6 +31519,11 @@ export type QueryOperation =
       variables: GetV2AdminProjectReportsVariables;
     }
   | {
+      path: "/v2/admin/tasks";
+      operationId: "getV2AdminTasks";
+      variables: GetV2AdminTasksVariables;
+    }
+  | {
       path: "/v2/admin/nurseries";
       operationId: "getV2AdminNurseries";
       variables: GetV2AdminNurseriesVariables;
@@ -31874,16 +31687,6 @@ export type QueryOperation =
       path: "/v2/admin/sites";
       operationId: "getV2AdminSites";
       variables: GetV2AdminSitesVariables;
-    }
-  | {
-      path: "/v2/admin/sites/ppc";
-      operationId: "getV2AdminSitesPpc";
-      variables: GetV2AdminSitesPpcVariables;
-    }
-  | {
-      path: "/v2/admin/sites/terrafund";
-      operationId: "getV2AdminSitesTerrafund";
-      variables: GetV2AdminSitesTerrafundVariables;
     }
   | {
       path: "/v2/admin/project-pitches";

@@ -9282,6 +9282,28 @@ export type ProjectReportPaginated = {
   };
 };
 
+export type TaskPaginated = {
+  data?: {
+    uuid?: number;
+    project?: Record<string, any>;
+    period_key?: string;
+    status?: string;
+    status_readable?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+  };
+};
+
 export type SiteReportLiteRead = {
   uuid?: string;
   framework_key?: string;
