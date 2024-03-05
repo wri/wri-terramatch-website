@@ -4,9 +4,68 @@ export type Colors = "white" | "black" | "neutral" | "secondary" | "tertiary" | 
 export type ColorCodes = "none" | 50 | 100 | 150 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 export type TextSizes = "xs" | "sm" | "base" | "md" | "m" | "lg";
 export type TextWeights = "regular" | "bold";
-export type TextVariants = HeadingTextVariants | BodyTextVariants | ButtonTextVariants | CaptionTextVariants;
+export type TextVariants =
+  | HeadingTextVariants
+  | BodyTextVariants
+  | ButtonTextVariants
+  | CaptionTextVariants
+  | TextVariantNew;
 
 export type Color = PrimaryColor | SecondaryColor | SuccessColor | NeutralColor | TertiaryColor | ErrorColor;
+
+export type TextVariantNew =
+  | "text-8-light"
+  | "text-8"
+  | "text-8-semibold"
+  | "text-8-bold"
+  | "text-10-light"
+  | "text-10"
+  | "text-10-semibold"
+  | "text-10-bold"
+  | "text-12-light"
+  | "text-12"
+  | "text-12-semibold"
+  | "text-12-bold"
+  | "text-13-light"
+  | "text-13"
+  | "text-13-semibold"
+  | "text-13-bold"
+  | "text-14-light"
+  | "text-14"
+  | "text-14-semibold"
+  | "text-14-bold"
+  | "text-16-light"
+  | "text-16"
+  | "text-16-semibold"
+  | "text-16-bold"
+  | "text-18-light"
+  | "text-18"
+  | "text-18-semibold"
+  | "text-18-bold"
+  | "text-20-light"
+  | "text-20"
+  | "text-20-semibold"
+  | "text-20-bold"
+  | "text-24-light"
+  | "text-24"
+  | "text-24-semibold"
+  | "text-24-bold"
+  | "text-26-light"
+  | "text-26"
+  | "text-26-semibold"
+  | "text-26-bold"
+  | "text-28-light"
+  | "text-28"
+  | "text-28-semibold"
+  | "text-28-bold"
+  | "text-36-light"
+  | "text-36"
+  | "text-36-semibold"
+  | "text-36-bold"
+  | "text-40-light"
+  | "text-40"
+  | "text-40-semibold"
+  | "text-40-bold";
 
 export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
 export type SecondaryColor =
