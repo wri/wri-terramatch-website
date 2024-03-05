@@ -173,7 +173,7 @@ const SiteReportDetailPage = () => {
                   <TextField label={t("Created by")} value={getFullName(siteReport.created_by)} />
                   <TextField label={t("Updated")} value={format(siteReport.updated_at)} />
                   <TextField label={t("Due date")} value={format(siteReport.due_at)} />
-                  <TextField label={t("Submitted date")} value={format(siteReport.due_at)} />
+                  <TextField label={t("Submitted date")} value={format(siteReport.submitted_at)} />
                 </PageCard>
               </PageColumn>
               <When condition={isPPC}>
