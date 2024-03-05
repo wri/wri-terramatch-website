@@ -33,15 +33,21 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           </Labeled>
 
           <Grid spacing={2} marginBottom={2} container>
-            <Grid xs={6} item>
+            <Grid xs={4} item>
               <Labeled label="Framework">
                 <FrameworkField />
               </Labeled>
             </Grid>
 
-            <Grid xs={6} item>
+            <Grid xs={4} item>
               <Labeled label="Status">
                 <TextField source="readable_status" />
+              </Labeled>
+            </Grid>
+
+            <Grid xs={4} item>
+              <Labeled label="Change Request Status">
+                <TextField source="readable_update_request_status" />
               </Labeled>
             </Grid>
           </Grid>
