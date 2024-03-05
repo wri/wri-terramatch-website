@@ -2,14 +2,23 @@ import { Check, PriorityHigh } from "@mui/icons-material";
 import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
-import { FunctionField, Labeled, TabbedShowLayout, TabProps, TextField, useShowContext } from "react-admin";
+import { FC, useMemo, useState } from "react";
+import {
+  FunctionField,
+  Labeled,
+  TabbedShowLayout,
+  TabProps,
+  TextField,
+  useShowContext,
+  WrapperField
+} from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
+import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
 import { useGetV2FormsENTITYUUID, useGetV2UpdateRequestsENTITYUUID } from "@/generated/apiComponents";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { getCustomFormSteps } from "@/helpers/customForms";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import ChangeRequestRequestMoreInfoModal, { IStatus } from "./MoreInformationModal";
@@ -58,9 +67,15 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   // @ts-ignore
   const form = currentValues?.data?.form;
 
-  const formSteps = form && getCustomFormSteps(form, t);
-  const currentValueData = normalizedFormDefaultValue(current, formSteps);
-  const changedValueData = normalizedFormDefaultValue(changes, formSteps);
+  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t)), [form]);
+  const formChanges = useFormChanges(current, changes, formSteps ?? []);
+  const numFieldsAffected = useMemo(
+    () =>
+      formChanges.reduce((sum, stepChange) => {
+        return sum + stepChange.changes.filter(({ newValue }) => newValue != null).length;
+      }, 0),
+    [formChanges]
+  );
 
   const handleStatusUpdate = (type: IStatus) => {
     setStatusToChangeTo(type);
@@ -84,17 +99,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                 <Grid item xs={8}>
                   <List
                     className="space-y-8"
-                    items={formSteps || []}
-                    render={(step, index) => (
-                      <ChangeRow
-                        index={index}
-                        // @ts-ignore
-                        step={step}
-                        currentValues={currentValueData}
-                        changedValues={changedValueData}
-                        steps={formSteps}
-                      />
-                    )}
+                    items={formChanges}
+                    render={stepChange => <ChangeRow key={stepChange.step.title} stepChange={stepChange} />}
                   />
                 </Grid>
               )}
@@ -135,7 +141,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
 
                     <Grid xs={6} item>
                       <Labeled label="Fields Affected">
-                        <FunctionField render={() => Object.keys(changes || {}).length} />
+                        <WrapperField>{numFieldsAffected}</WrapperField>
                       </Labeled>
                     </Grid>
                   </Grid>
