@@ -3,11 +3,14 @@ import { green, red } from "@mui/material/colors";
 import { Change, diffWords } from "diff";
 import { ReactNode, useMemo } from "react";
 
+import { FieldType } from "@/components/extensive/WizardForm/types";
+
 import ChangeBox from "./ChangeBox";
 
 export interface IVisualDiffProps {
   currentValue: string;
   newValue: string;
+  type: FieldType;
 }
 
 type NodeTuple = [ReactNode[], ReactNode[]];
@@ -31,11 +34,11 @@ function reduceDiffView([oldView, newView]: NodeTuple, change: Change, index: nu
   return [oldView, newView];
 }
 
-export default function VisualDiff({ currentValue, newValue }: IVisualDiffProps) {
+export default function VisualDiff({ currentValue, newValue, type }: IVisualDiffProps) {
   const [oldView, newView] = useMemo<NodeTuple>(
     () => diffWords(currentValue, newValue).reduce(reduceDiffView, [[], []]),
     [currentValue, newValue]
   );
 
-  return <ChangeBox oldView={oldView} newView={newView} />;
+  return <ChangeBox oldView={oldView} newView={newView} type={type} />;
 }

@@ -48,12 +48,14 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
         const value = getAnswer(f, props.values) as TreeSpeciesValue[] | null;
         outputArr.push({
           title: t("Total {label}", { label: f.label ?? "" }),
+          type: f.type,
           value: value?.length ?? props.nullText ?? t("Answer Not Provided")
         });
         if (f.fieldProps.withNumbers) {
           //If tree species included numbers
           outputArr.push({
             title: t("Total {label} Count", { label: f.label ?? "" }),
+            type: f.type,
             value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? props.nullText ?? t("Answer Not Provided")
           });
         }
@@ -63,6 +65,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.Map: {
         outputArr.push({
           title: f.label,
+          type: f.type,
           value: <Map geojson={props.values[f.name]} className="h-[240px] flex-1" hasControls={false} />
         });
         break;
@@ -71,6 +74,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.InputTable: {
         outputArr.push({
           title: f.label,
+          type: f.type,
           value: f.fieldProps.rows
             .map(row => `${row.label}: ${props.values[f.name]?.[row.name] ?? t("Answer Not Provided")}`)
             .join("<br/>")
@@ -112,6 +116,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
 
         outputArr.push({
           title: f.label,
+          type: f.type,
           value: values.join("<br/>")
         });
         break;
@@ -120,6 +125,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.Conditional: {
         outputArr.push({
           title: f.label ?? "",
+          type: f.type,
           value: getFormattedAnswer(f, props.values) ?? props.nullText ?? t("Answer Not Provided")
         });
         const children = getFormEntries(
@@ -139,6 +145,7 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       default: {
         outputArr.push({
           title: f.label ?? "",
+          type: f.type,
           value: getFormattedAnswer(f, props.values) ?? props.nullText ?? t("Answer Not Provided")
         });
       }

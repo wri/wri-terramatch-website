@@ -2,16 +2,16 @@ import { Box, Card, Typography } from "@mui/material";
 import { Case, Default, Switch } from "react-if";
 
 import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
+import FieldView from "@/admin/components/ResourceTabs/ChangeRequestsTab/FieldView";
 import VisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/VisualDiff";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { FieldType } from "@/components/extensive/WizardForm/types";
 
 export interface IChangeRowProps extends Omit<FormSummaryRowProps, "values"> {
   currentValues: any;
   changedValues: any;
 }
-
-const BOOLEAN_STRING_VALUES = ["-", "No", "Yes"];
 
 const cleanValue = (value: any) => {
   if (typeof value === "string") {
@@ -23,18 +23,6 @@ const cleanValue = (value: any) => {
   }
 
   return value;
-};
-
-const needsVisualDiff = (currentValue: any, newValue: any) => {
-  if (typeof currentValue !== "string" || typeof newValue !== "string") {
-    return false;
-  }
-
-  if (BOOLEAN_STRING_VALUES.includes(currentValue) && BOOLEAN_STRING_VALUES.includes(newValue)) {
-    return false;
-  }
-
-  return true;
 };
 
 export default function ChangeRow({ index, ...props }: IChangeRowProps) {
@@ -59,8 +47,8 @@ export default function ChangeRow({ index, ...props }: IChangeRowProps) {
         items={changedEntries}
         render={entry => {
           const currentEntry = currentEntries.find(e => e.title === entry.title);
-          const currentValue = cleanValue(currentEntry?.value);
-          const newValue = cleanValue(entry.value);
+          const currentValue = cleanValue(currentEntry?.value) ?? "-";
+          const newValue = cleanValue(entry.value) ?? "-";
 
           return (
             <div>
@@ -71,14 +59,14 @@ export default function ChangeRow({ index, ...props }: IChangeRowProps) {
                 <Case condition={newValue == currentValue}>
                   <Box sx={{ flexGrow: 1 }}>
                     Existing Value (unchanged):
-                    <Typography variant="body2">{currentValue ?? "-"}</Typography>
+                    <FieldView type={entry.type} value={currentValue} />
                   </Box>
                 </Case>
-                <Case condition={needsVisualDiff(currentValue, newValue)}>
-                  <VisualDiff {...{ currentValue, newValue }} />
+                <Case condition={entry.type === FieldType.TextArea}>
+                  <VisualDiff type={entry.type} {...{ currentValue, newValue }} />
                 </Case>
                 <Default>
-                  <ChangeBox small oldView={currentValue ?? "-"} newView={newValue ?? "-"} />
+                  <ChangeBox type={entry.type} oldView={currentValue} newView={newValue} />
                 </Default>
               </Switch>
             </div>
