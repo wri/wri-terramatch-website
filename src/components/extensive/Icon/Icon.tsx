@@ -11,6 +11,7 @@ export enum IconNames {
   CHEVRON_LEFT = "chevron-left",
   CHEVRON_LEFT_CIRCLE = "chevron-left-circle",
   CHEVRON_DOWN = "chevron-down",
+  CHECK_PROGRESSBAR = "check-progressbar",
   CROSS = "cross",
   CROSS_CIRCLE = "cross-circle",
   CLOCK = "clock",
