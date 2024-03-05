@@ -43,6 +43,7 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
         meta={treeSpecies?.meta}
         data={treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) || []}
         isLoading={isLoading}
+        treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
         columns={[
           {
