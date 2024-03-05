@@ -124,6 +124,12 @@ const App = () => {
         icon={FullscreenIcon}
       />
       <Resource
+        name={modules.task.ResourceName}
+        list={modules.task.List}
+        show={modules.task.Show}
+        options={{ label: "Tasks" }}
+      />
+      <Resource
         name={modules.projectReport.ResourceName}
         list={modules.projectReport.List}
         show={modules.projectReport.Show}

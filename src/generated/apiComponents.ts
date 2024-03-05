@@ -6133,11 +6133,11 @@ export type GetV2AdminTasksError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminTasksResponse = {
   data?: {
-    uuid?: number;
+    uuid?: string;
     project?: Record<string, any>;
     period_key?: string;
     status?: string;
-    status_readable?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -7564,11 +7564,11 @@ export type GetV2ProjectsUUIDSitePolygonsError = Fetcher.ErrorWrapper<undefined>
 
 export type GetV2ProjectsUUIDSitePolygonsResponse = {
   data?: {
-    uuid?: number;
+    uuid?: string;
     project?: Record<string, any>;
     period_key?: string;
     status?: string;
-    status_readable?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -19780,11 +19780,11 @@ export type GetV2ProjectsUUIDTasksError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2ProjectsUUIDTasksResponse = {
   data?: {
-    uuid?: number;
+    uuid?: string;
     project?: Record<string, any>;
     period_key?: string;
     status?: string;
-    status_readable?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -19870,11 +19870,11 @@ export type GetV2OrganisationsUUIDTasksError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2OrganisationsUUIDTasksResponse = {
   data?: {
-    uuid?: number;
+    uuid?: string;
     project?: Record<string, any>;
     period_key?: string;
     status?: string;
-    status_readable?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -19948,11 +19948,11 @@ export type GetV2TasksUUIDError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2TasksUUIDResponse = {
   data?: {
-    uuid?: number;
+    uuid?: string;
     project?: Record<string, any>;
     period_key?: string;
     status?: string;
-    status_readable?: string;
+    readable_status?: string;
   }[];
 };
 

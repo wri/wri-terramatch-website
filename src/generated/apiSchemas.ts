@@ -9284,11 +9284,11 @@ export type ProjectReportPaginated = {
 
 export type TaskPaginated = {
   data?: {
-    uuid?: number;
+    uuid?: string;
     project?: Record<string, any>;
     period_key?: string;
     status?: string;
-    status_readable?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -22935,11 +22935,11 @@ export type ActionRead = {
 };
 
 export type V2TaskRead = {
-  uuid?: number;
+  uuid?: string;
   project?: Record<string, any>;
   period_key?: string;
   status?: string;
-  status_readable?: string;
+  readable_status?: string;
 };
 
 export type V2TaskActionRead = {
