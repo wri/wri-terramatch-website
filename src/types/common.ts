@@ -8,6 +8,8 @@ export type TextVariants = HeadingTextVariants | BodyTextVariants | ButtonTextVa
 
 export type Color = PrimaryColor | SecondaryColor | SuccessColor | NeutralColor | TertiaryColor | ErrorColor;
 
+export type TextVariantNew = "text-8-ligh" | "text-8" | "text-8-semibold";
+
 export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
 export type SecondaryColor =
   | "secondary"
