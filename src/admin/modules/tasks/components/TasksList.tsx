@@ -3,11 +3,11 @@ import { FC, useEffect, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
+  DateField,
   FunctionField,
   List,
   ReferenceInput,
   SelectInput,
-  ShowButton,
   TextField
 } from "react-admin";
 
@@ -31,20 +31,21 @@ const TaskDataGrid: FC = () => {
   }, []);
 
   return (
-    <Datagrid>
+    <Datagrid rowClick="show" bulkActionButtons={false}>
       <TextField source="project.name" label="Project Name" />
       <TextField source="readable_status" label="Status" sortable={false} />
       <TextField source="organisation.name" label="Organization" />
       <FunctionField
-        source="framework_key"
+        source="project.framework_key"
         label="Framework"
         render={(record: any) =>
-          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
-          record?.framework_key
+          frameworkChoices.find((framework: any) => framework.id === record?.project?.framework_key)?.name ||
+          record?.project?.framework_key
         }
         sortable={false}
       />
-      <ShowButton />
+      <DateField source="due_at" label="Due Date" locales="en-GB" />
+      <DateField source="updated_at" label="Last Updated" locales="en-GB" />
     </Datagrid>
   );
 };
@@ -65,16 +66,16 @@ export const TasksList: FC = () => {
 
   const filters = [
     <ReferenceInput
-      key="organisation"
-      source="organisation_uuid"
-      reference={modules.organisation.ResourceName}
-      label="Organization"
+      key="project"
+      source="project_uuid"
+      reference={modules.project.ResourceName}
+      label="Project"
       sort={{
         field: "name",
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Organization" />
+      <AutocompleteInput optionText="name" label="Project" />
     </ReferenceInput>,
     <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getTaskStatusOptions())} />,
     <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />

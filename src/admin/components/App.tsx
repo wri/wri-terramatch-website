@@ -127,6 +127,7 @@ const App = () => {
         name={modules.task.ResourceName}
         list={modules.task.List}
         show={modules.task.Show}
+        icon={SummarizeIcon}
         options={{ label: "Tasks" }}
       />
       <Resource

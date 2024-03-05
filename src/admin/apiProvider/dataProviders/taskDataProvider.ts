@@ -4,7 +4,7 @@ import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "@/admin/apiProvider/utils/listing";
 import { fetchGetV2AdminTasks, GetV2AdminTasksError } from "@/generated/apiComponents";
 
-const taskSortableList = ["organisation_name", "due_at"];
+const taskSortableList = ["project_name", "organisation_name", "due_at", "updated_at"];
 
 // @ts-ignore
 export const taskDataProvider: DataProvider = {
