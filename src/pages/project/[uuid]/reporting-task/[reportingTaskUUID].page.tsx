@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { Case, Default, Switch } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
@@ -34,7 +35,14 @@ import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useGetReportingWindow } from "@/hooks/useGetReportingWindow";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
-import { ReportsModelNames } from "@/types/common";
+import { ReportsModelNames, Status } from "@/types/common";
+
+const StatusMapping: { [index: string]: Status } = {
+  due: "edit",
+  "awaiting-approval": "awaiting",
+  approved: "success",
+  "needs-more-information": "warning"
+};
 
 const ReportingTaskPage = () => {
   const t = useT();
@@ -327,6 +335,7 @@ const ReportingTaskPage = () => {
           {t("Submit Report")}
         </Button>
       </PageHeader>
+      <StatusBar status={StatusMapping?.[reportingTask?.status]} />
       <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
         <PageSection>
           <PageCard title={t("Mandatory Project Report")}>
