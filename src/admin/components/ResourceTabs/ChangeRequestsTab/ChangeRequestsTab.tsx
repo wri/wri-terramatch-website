@@ -154,7 +154,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                         variant="contained"
                         startIcon={<Check />}
                         // @ts-ignore
-                        disabled={changeRequest?.data?.status === "approved"}
+                        disabled={["approved", "draft"].includes(changeRequest?.data?.status)}
                         onClick={() => handleStatusUpdate("approve")}
                       >
                         Approve
@@ -162,7 +162,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                       <Button
                         variant="outlined"
                         // @ts-ignore
-                        disabled={changeRequest?.data?.status === "more-information"}
+                        disabled={["more-information", "draft"].includes(changeRequest?.data?.status)}
                         onClick={() => handleStatusUpdate("moreinfo")}
                       >
                         Request More Information

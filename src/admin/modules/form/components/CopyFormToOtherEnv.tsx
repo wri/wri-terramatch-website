@@ -7,7 +7,7 @@ import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { fetchGetV2FormsLinkedFieldListing, useGetV2AdminReportingFrameworks } from "@/generated/apiComponents";
+import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
 
 const envOptions = [
   {
@@ -29,12 +29,6 @@ const envOptions = [
 ];
 
 export const CopyFormToOtherEnv = () => {
-  const { data: reportingFrameworksData } = useGetV2AdminReportingFrameworks({});
-  const frameworkOptions =
-    reportingFrameworksData?.data?.map((f: any) => ({
-      title: f.name,
-      value: f.access_code
-    })) || [];
   const record: any = useRecordContext();
   const [open, setOpen] = useState(false);
   const notify = useNotify();
@@ -86,6 +80,7 @@ export const CopyFormToOtherEnv = () => {
     if (!formBody.subtitle) {
       delete formBody.subtitle;
     }
+    delete formBody.framework_key;
 
     const response = await fetch(`${baseUrl}/api/v2/admin/forms`, {
       method: "POST",
@@ -132,18 +127,6 @@ export const CopyFormToOtherEnv = () => {
             description="use this to update copy form title"
             //@ts-ignore
             error={formState.errors.title}
-          />
-          <RHFDropdown
-            name="framework_key"
-            formHook={formHook}
-            control={formHook.control}
-            label="Framework key"
-            options={frameworkOptions}
-            required
-            rules={{ required: true }}
-            description="Please select a Reporting Framework"
-            //@ts-ignore
-            error={formState.errors.framework_key}
           />
           <Input
             type="text"
