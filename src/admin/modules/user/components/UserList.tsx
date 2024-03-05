@@ -19,6 +19,8 @@ import {
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import Drawer from "@/components/elements/Drawer/Drawer";
+import Text from "@/components/elements/Text/Text";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
@@ -84,6 +86,19 @@ export const UserList = () => {
 
   return (
     <>
+      <Drawer
+        isOpen={true}
+        title={
+          <div>
+            <Text variant={"text-body-100"}>Polygon ID: 1213023412</Text>
+            <Text variant={"text-bold-subtitle-400"}>Malanga</Text>
+          </div>
+        }
+        content={<div>Hello world</div>}
+        setIsOpen={function (isOpen: boolean): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
       <Stack gap={1} py={2}>
         <Typography variant="h5">Users</Typography>
 

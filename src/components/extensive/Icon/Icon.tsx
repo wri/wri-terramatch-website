@@ -86,7 +86,8 @@ export enum IconNames {
   LEAF_CIRCLE = "leaf-circle",
   REFRESH_CIRCLE = "refresh-circle",
   SITE_CIRCLE = "site-circle",
-  NURSERY_CIRCLE = "nursery-circle"
+  NURSERY_CIRCLE = "nursery-circle",
+  CLEAR = "clear"
 }
 
 export interface IconProps {
