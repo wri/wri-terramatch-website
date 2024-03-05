@@ -124,6 +124,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                           render={() => {
                             // @ts-ignore
                             switch (changeRequest?.data?.status) {
+                              case "draft":
+                                return "Draft";
                               case "awaiting-approval":
                                 return "Awaiting Approval";
                               case "more-information":
