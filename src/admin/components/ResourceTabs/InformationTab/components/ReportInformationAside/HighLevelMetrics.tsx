@@ -25,7 +25,7 @@ const HighLevelMetics: FC = () => {
         <Stack gap={3}>
           <When condition={!isTerraFund}>
             <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
-              <NumberField source="workdays_total" emptyText="0" />
+              <NumberField source={record.workdays_total ? "workdays_total" : "total_workdays_count"} emptyText="0" />
             </Labeled>
           </When>
           <When condition={isTerraFund}>
@@ -34,7 +34,10 @@ const HighLevelMetics: FC = () => {
             </Labeled>
           </When>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
-            <NumberField source="trees_planted_count" emptyText="0" />
+            <NumberField
+              source={record.trees_planted_count ? "trees_planted_count" : "total_trees_planted_count"}
+              emptyText="0"
+            />
           </Labeled>
           <When condition={isTerraFund}>
             <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
