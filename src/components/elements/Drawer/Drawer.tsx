@@ -8,12 +8,12 @@ import Button from "../Button/Button";
 export interface DrawerProps {
   isOpen: boolean;
   title: ReactNode;
-  content: ReactNode;
+  children: ReactNode;
   setIsOpen: (isOpen: boolean) => void;
 }
 
 const Drawer = (props: DrawerProps) => {
-  const { isOpen, setIsOpen, title, content } = props;
+  const { isOpen, setIsOpen, title, children } = props;
 
   return (
     <div
@@ -33,15 +33,7 @@ const Drawer = (props: DrawerProps) => {
           <Icon name={IconNames.CLEAR} className="h-5 w-5" />
         </Button>
       </div>
-      {content}
-      <div className="mt-auto flex items-center justify-end gap-5">
-        <Button variant="semiRed" onClick={() => {}}>
-          Delete
-        </Button>
-        <Button variant="semiBlack" onClick={() => {}}>
-          Create
-        </Button>
-      </div>
+      {children}
     </div>
   );
 };
