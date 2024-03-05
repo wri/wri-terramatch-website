@@ -1,7 +1,9 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { green, red } from "@mui/material/colors";
 import { Change, diffWords } from "diff";
 import { ReactNode, useMemo } from "react";
+
+import ChangeBox from "./ChangeBox";
 
 export interface IVisualDiffProps {
   currentValue: string;
@@ -35,18 +37,5 @@ export default function VisualDiff({ currentValue, newValue }: IVisualDiffProps)
     [currentValue, newValue]
   );
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          Old Value:
-          <Typography variant="body2">{oldView}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          New Value:
-          <Typography variant="body2">{newView}</Typography>
-        </Grid>
-      </Grid>
-    </Box>
-  );
+  return <ChangeBox oldView={oldView} newView={newView} />;
 }

@@ -1,6 +1,7 @@
-import { Card, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import { Case, Default, Switch } from "react-if";
 
+import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
 import VisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/VisualDiff";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
@@ -68,18 +69,16 @@ export default function ChangeRow({ index, ...props }: IChangeRowProps) {
               </Typography>
               <Switch>
                 <Case condition={newValue == currentValue}>
-                  <p className="mb-2">
+                  <Box sx={{ flexGrow: 1 }}>
                     Existing Value (unchanged):
                     <Typography variant="body2">{currentValue ?? "-"}</Typography>
-                  </p>
+                  </Box>
                 </Case>
                 <Case condition={needsVisualDiff(currentValue, newValue)}>
                   <VisualDiff {...{ currentValue, newValue }} />
                 </Case>
                 <Default>
-                  <p className="mb-2">
-                    New Value: {newValue ?? "-"} <br /> Old Value: {currentValue ?? "-"}
-                  </p>
+                  <ChangeBox small oldView={currentValue ?? "-"} newView={newValue ?? "-"} />
                 </Default>
               </Switch>
             </div>
