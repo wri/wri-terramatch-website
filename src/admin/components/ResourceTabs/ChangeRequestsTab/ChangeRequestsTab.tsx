@@ -67,7 +67,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   // @ts-ignore
   const form = currentValues?.data?.form;
 
-  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t)), [form]);
+  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t)), [form, t]);
   const formChanges = useFormChanges(current, changes, formSteps ?? []);
   const numFieldsAffected = useMemo(
     () =>
@@ -124,6 +124,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                           render={() => {
                             // @ts-ignore
                             switch (changeRequest?.data?.status) {
+                              case "draft":
+                                return "Draft";
                               case "awaiting-approval":
                                 return "Awaiting Approval";
                               case "more-information":

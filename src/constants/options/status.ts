@@ -33,6 +33,10 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
 
 export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
+    {
+      value: "draft",
+      title: t("Draft")
+    },
     ...getStatusOptions(t).filter(option => option.value !== "started"),
     {
       value: "no-update",
