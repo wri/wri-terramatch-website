@@ -18,11 +18,11 @@ const Drawer = (props: DrawerProps) => {
   return (
     <div
       className={classNames(
-        "shadow-xl fixed left-full z-40 flex h-[-webkit-fill-available] w-96 flex-col overflow-auto bg-white p-6 transition-all",
-        { "translate-x-[-24rem]": isOpen }
+        "absolute left-full z-40 ml-2 flex h-[-webkit-fill-available] w-96 flex-col overflow-auto bg-white p-6 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all",
+        { "translate-x-[-24.5rem]": isOpen }
       )}
     >
-      <div className="flex w-full items-center justify-between">
+      <div className="flex w-full items-center justify-between ">
         {title}
         <Button
           variant="text"
