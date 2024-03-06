@@ -6971,6 +6971,71 @@ export const useGetV2AdminReportingFrameworks = <TData = GetV2AdminReportingFram
   );
 };
 
+export type PostV2AdminReportingFrameworksError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AdminReportingFrameworksResponse = {
+  uuid?: string;
+  name?: string;
+  slug?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type PostV2AdminReportingFrameworksRequestBody = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type PostV2AdminReportingFrameworksVariables = {
+  body?: PostV2AdminReportingFrameworksRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AdminReportingFrameworks = (
+  variables: PostV2AdminReportingFrameworksVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2AdminReportingFrameworksResponse,
+    PostV2AdminReportingFrameworksError,
+    PostV2AdminReportingFrameworksRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/admin/reporting-frameworks", method: "post", ...variables, signal });
+
+export const usePostV2AdminReportingFrameworks = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2AdminReportingFrameworksResponse,
+      PostV2AdminReportingFrameworksError,
+      PostV2AdminReportingFrameworksVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2AdminReportingFrameworksResponse,
+    PostV2AdminReportingFrameworksError,
+    PostV2AdminReportingFrameworksVariables
+  >(
+    (variables: PostV2AdminReportingFrameworksVariables) =>
+      fetchPostV2AdminReportingFrameworks({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PutV2AdminReportingFrameworksUUIDPathParams = {
   uuid: string;
 };
