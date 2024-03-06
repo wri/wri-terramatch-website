@@ -109,11 +109,13 @@ const ReportingTaskPage = () => {
       reportsData?.data?.map((report: any) => {
         let completion_status = "completed";
 
-        if (report.nothing_to_report) {
+        if (report.status === "needs-more-information") {
+          completion_status = "needs-more-information";
+        } else if (report.nothing_to_report) {
           completion_status = "nothing-to-report";
         } else if (report.completion === 0) {
           completion_status = "not-started";
-        } else if (report.completion < 100) {
+        } else if (report.status === "started") {
           completion_status = "started";
         }
 
@@ -297,6 +299,11 @@ const ReportingTaskPage = () => {
               <Case condition={record.completion_status === "completed"}>
                 <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
                   {t("View Completed Report")}
+                </Button>
+              </Case>
+              <Case condition={record.completion_status === "needs-more-information"}>
+                <Button as={Link} href={`/entity/${record.type}s/edit/${record.uuid}?mode=provide-feedback-entity`}>
+                  {t("Provide Feedback")}
                 </Button>
               </Case>
               <Default>

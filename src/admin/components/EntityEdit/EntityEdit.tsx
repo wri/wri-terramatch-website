@@ -5,7 +5,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ENTITYUUID, useGetV2FormsENTITYUUID, usePutV2FormsENTITYUUID } from "@/generated/apiComponents";
+import {
+  useGetV2ENTITYUUID,
+  useGetV2FormsENTITYUUID,
+  useGetV2UpdateRequestsENTITYUUID,
+  usePutV2FormsENTITYUUID
+} from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import {
@@ -35,24 +40,50 @@ export const EntityEdit = () => {
 
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
 
-  const { data: entityData } = useGetV2ENTITYUUID({
+  const { data: entityResponse } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
   });
-  const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
+  const entity = entityResponse?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
+  const { data: updateRequestResponse, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
+    {
+      pathParams: {
+        entity: pluralEntityNameToSingular(entityName),
+        uuid: entityUUID
+      }
+    },
+    {
+      retry(failureCount: number, error: any): boolean {
+        // avoid retries on a 404; that's expected in most cases for this form
+        return error.statusCode !== 404 && failureCount < 3;
+      },
+      onError() {
+        // To override error toast
+      }
+    }
+  );
+  // @ts-ignore
+  const updateRequest = updateRequestResponse?.data;
+
+  const {
+    data: formResponse,
+    isLoading: formDataLoading,
+    isError
+  } = useGetV2FormsENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
   });
   //@ts-ignore
 
-  const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+  const formData = (formResponse?.data || {}) as GetV2FormsENTITYUUIDResponse;
 
   const formSteps = useGetCustomFormSteps(formData.form, {
     entityName: pluralEntityNameToSingular(entityName),
     entityUUID
   });
+
+  const isLoading = updateRequestLoading || formDataLoading;
   //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData.answers, formSteps);
+  const defaultValues = useNormalizedFormDefaultValue(updateRequest?.content ?? formData.answers, formSteps);
   const formTitle = entity.report_title || entity.title || entity.name;
 
   if (isError) {
