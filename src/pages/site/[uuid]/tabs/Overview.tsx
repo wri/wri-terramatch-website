@@ -71,9 +71,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   return (
     <PageBody>
       <PageRow>
-        <PageCard title={t("Site Area")}>
-          <Map className="rounded-lg" geojson={geoJSON} imageLayerGeojson={imagesGeoJson} />
-        </PageCard>
         <PageCard
           title={t("Progress & Goals")}
           headerChildren={
@@ -112,6 +109,9 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               className="flex-1"
             />
           </div>
+        </PageCard>
+        <PageCard title={t("Site Area")}>
+          <Map className="rounded-lg" geojson={geoJSON} imageLayerGeojson={imagesGeoJson} />
         </PageCard>
       </PageRow>
 
