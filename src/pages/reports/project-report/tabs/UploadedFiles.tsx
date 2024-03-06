@@ -23,7 +23,10 @@ const sections = [
 const UploadedFilesTab = ({ report }: UploadedFilesTabProps) => {
   const t = useT();
 
-  const totalFiles = useMemo(() => sections.reduce((total, section) => total + report[section.property].length, 0), []);
+  const totalFiles = useMemo(
+    () => sections.reduce((total, section) => total + report[section.property].length, 0),
+    [report]
+  );
 
   return (
     <PageBody>
