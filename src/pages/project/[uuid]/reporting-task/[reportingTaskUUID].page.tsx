@@ -115,7 +115,7 @@ const ReportingTaskPage = () => {
           completion_status = "nothing-to-report";
         } else if (report.completion === 0) {
           completion_status = "not-started";
-        } else if (report.completion < 100) {
+        } else if (report.status === "started") {
           completion_status = "started";
         }
 
