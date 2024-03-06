@@ -97,6 +97,10 @@ export default ReportingTasksTable;
 
 export const CompletionStatusMapping = (t: typeof useT): any => {
   return {
+    "needs-more-information": {
+      status: "warning",
+      statusText: t("Needs More Information")
+    },
     "not-started": {
       status: "error",
       statusText: t("Not started")

@@ -109,7 +109,9 @@ const ReportingTaskPage = () => {
       reportsData?.data?.map((report: any) => {
         let completion_status = "completed";
 
-        if (report.nothing_to_report) {
+        if (report.status === "needs-more-information") {
+          completion_status = "needs-more-information";
+        } else if (report.nothing_to_report) {
           completion_status = "nothing-to-report";
         } else if (report.completion === 0) {
           completion_status = "not-started";
