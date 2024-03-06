@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } from "react-admin";
 
 import modules from "@/admin/modules";
+import { downloadFileBlob } from "@/utils/network";
 
 const QuickActions: FC = () => {
   const { record } = useShowContext();
@@ -26,6 +27,16 @@ const QuickActions: FC = () => {
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
     justifyContent: "space-between"
+  };
+
+  const downloadShapefile = async () => {
+    try {
+      if (record && record.name && record.boundary_geojson) {
+        downloadFileBlob(record.boundary_geojson, `${record.name}_shapefile.geojson`);
+      }
+    } catch (error) {
+      console.error("Error downloading shapefile:", error);
+    }
   };
 
   return (
@@ -58,6 +69,7 @@ const QuickActions: FC = () => {
           </Labeled>
           <Button variant="outlined" component={Link} to={getNavigationPath("siteReport")} label="View Site Reports" />
           <Button variant="outlined" component={Link} to={getNavigationPath("./4")} label="Add Monitored Data" />
+          <Button variant="outlined" onClick={downloadShapefile} label="Download Shapefile" />
         </Stack>
       </Box>
     </Card>

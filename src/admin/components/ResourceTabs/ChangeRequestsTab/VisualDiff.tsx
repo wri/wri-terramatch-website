@@ -1,31 +1,44 @@
 import { Typography } from "@mui/material";
 import { green, red } from "@mui/material/colors";
-import { diffWords } from "diff";
-import { useMemo } from "react";
+import { Change, diffWords } from "diff";
+import { ReactNode, useMemo } from "react";
+
+import { FieldType } from "@/components/extensive/WizardForm/types";
+
+import ChangeBox from "./ChangeBox";
 
 export interface IVisualDiffProps {
   currentValue: string;
   newValue: string;
+  type: FieldType;
 }
 
-export default function VisualDiff({ currentValue, newValue }: IVisualDiffProps) {
-  const diffs = useMemo(
-    () =>
-      diffWords(currentValue, newValue).map(({ added, removed, value }, index) => {
-        const color = added ? green[500] : removed ? red[500] : null;
-        return (
-          <Typography key={`${value}-${index}`} component="span" sx={{ color }}>
-            {value}
-          </Typography>
-        );
-      }),
+type NodeTuple = [ReactNode[], ReactNode[]];
+
+const getStyle = (change: Change) => ({
+  color: change.added ? green[800] : change.removed ? red[800] : null,
+  textDecoration: change.removed ? "line-through" : null
+});
+
+const DiffSpan = ({ key, change }: { key: string; change: Change }) => (
+  <Typography key={key} component="span" sx={getStyle(change)}>
+    {change.value}
+  </Typography>
+);
+
+function reduceDiffView([oldView, newView]: NodeTuple, change: Change, index: number): NodeTuple {
+  const key = `${change.value}-${index}`;
+  if (!change.added) oldView = [...oldView, <DiffSpan key={key} change={change} />];
+  if (!change.removed) newView = [...newView, <DiffSpan key={key} change={change} />];
+
+  return [oldView, newView];
+}
+
+export default function VisualDiff({ currentValue, newValue, type }: IVisualDiffProps) {
+  const [oldView, newView] = useMemo<NodeTuple>(
+    () => diffWords(currentValue, newValue).reduce(reduceDiffView, [[], []]),
     [currentValue, newValue]
   );
 
-  return (
-    <p className="mb-2">
-      Updated Value:
-      <Typography variant="body2">{diffs}</Typography>
-    </p>
-  );
+  return <ChangeBox oldView={oldView} newView={newView} type={type} />;
 }
