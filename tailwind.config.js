@@ -7,7 +7,8 @@ module.exports = {
       screens: {
         sx: "460px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
-        wide: "2500px"
+        wide: "2500px",
+        lg: "1900px"
       },
       width: {
         "fit-content": "fit-content"
