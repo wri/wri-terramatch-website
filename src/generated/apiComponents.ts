@@ -16648,9 +16648,9 @@ export const useDeleteV2LeadershipTeamUUID = (
   );
 };
 
-export type PostV2LeadershipTeamUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2OwnershipStakeError = Fetcher.ErrorWrapper<undefined>;
 
-export type PostV2LeadershipTeamUUIDResponse = {
+export type PostV2OwnershipStakeResponse = {
   uuid?: string;
   organisation_id?: string;
   position?: string;
@@ -16659,7 +16659,7 @@ export type PostV2LeadershipTeamUUIDResponse = {
   percent_ownership?: number;
 };
 
-export type PostV2LeadershipTeamUUIDRequestBody = {
+export type PostV2OwnershipStakeRequestBody = {
   organisation_id?: string;
   position?: string;
   gender?: string;
@@ -16667,38 +16667,31 @@ export type PostV2LeadershipTeamUUIDRequestBody = {
   percent_ownership?: number;
 };
 
-export type PostV2LeadershipTeamUUIDVariables = {
-  body?: PostV2LeadershipTeamUUIDRequestBody;
+export type PostV2OwnershipStakeVariables = {
+  body?: PostV2OwnershipStakeRequestBody;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPostV2LeadershipTeamUUID = (variables: PostV2LeadershipTeamUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PostV2LeadershipTeamUUIDResponse,
-    PostV2LeadershipTeamUUIDError,
-    PostV2LeadershipTeamUUIDRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/leadership-team/{uuid}", method: "post", ...variables, signal });
+export const fetchPostV2OwnershipStake = (variables: PostV2OwnershipStakeVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2OwnershipStakeResponse, PostV2OwnershipStakeError, PostV2OwnershipStakeRequestBody, {}, {}, {}>({
+    url: "/v2/ownership-stake",
+    method: "post",
+    ...variables,
+    signal
+  });
 
-export const usePostV2LeadershipTeamUUID = (
+export const usePostV2OwnershipStake = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      PostV2LeadershipTeamUUIDResponse,
-      PostV2LeadershipTeamUUIDError,
-      PostV2LeadershipTeamUUIDVariables
+      PostV2OwnershipStakeResponse,
+      PostV2OwnershipStakeError,
+      PostV2OwnershipStakeVariables
     >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2LeadershipTeamUUIDResponse,
-    PostV2LeadershipTeamUUIDError,
-    PostV2LeadershipTeamUUIDVariables
-  >(
-    (variables: PostV2LeadershipTeamUUIDVariables) =>
-      fetchPostV2LeadershipTeamUUID({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<PostV2OwnershipStakeResponse, PostV2OwnershipStakeError, PostV2OwnershipStakeVariables>(
+    (variables: PostV2OwnershipStakeVariables) => fetchPostV2OwnershipStake({ ...fetcherOptions, ...variables }),
     options
   );
 };
