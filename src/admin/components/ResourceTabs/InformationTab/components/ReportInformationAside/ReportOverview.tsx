@@ -10,6 +10,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
 
   const { record } = useShowContext();
+  const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.update_request_status);
 
   return (
     <>
@@ -55,7 +56,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={record?.status === "needs-more-information"}
+              disabled={reportActionDisabled || record?.status === "needs-more-information"}
               onClick={() => setStatusModal("moreinfo")}
             >
               Request More Info
@@ -63,7 +64,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={record?.status === "approved"}
+              disabled={reportActionDisabled || record?.status === "approved"}
               onClick={() => setStatusModal("approve")}
             >
               Approve
