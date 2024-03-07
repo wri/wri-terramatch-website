@@ -126,13 +126,17 @@ export const SubmissionStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Due")
     },
-    overdue: {
-      status: "error",
-      statusText: t("Overdue")
-    },
-    complete: {
+    "awaiting-approval": {
       status: "success",
-      statusText: t("Completed")
+      statusText: t("Awaiting approval")
+    },
+    "needs-more-information": {
+      status: "warning",
+      statusText: t("Needs more information")
+    },
+    approved: {
+      status: "success",
+      statusText: t("Approved")
     }
   };
 };
