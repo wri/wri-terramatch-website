@@ -9282,6 +9282,28 @@ export type ProjectReportPaginated = {
   };
 };
 
+export type TaskPaginated = {
+  data?: {
+    uuid?: string;
+    project?: Record<string, any>;
+    period_key?: string;
+    status?: string;
+    readable_status?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+  };
+};
+
 export type SiteReportLiteRead = {
   uuid?: string;
   framework_key?: string;
@@ -22913,11 +22935,11 @@ export type ActionRead = {
 };
 
 export type V2TaskRead = {
-  uuid?: number;
+  uuid?: string;
   project?: Record<string, any>;
   period_key?: string;
   status?: string;
-  status_readable?: string;
+  readable_status?: string;
 };
 
 export type V2TaskActionRead = {
@@ -22929,6 +22951,13 @@ export type V2TaskActionRead = {
    */
   due_at?: string;
   title?: string;
+  report_title?: string;
+  update_request_status?: string;
+  /**
+   * @format date-time
+   */
+  submitted_at?: string;
+  parent_name?: string;
 };
 
 export type StatusUpdate = {

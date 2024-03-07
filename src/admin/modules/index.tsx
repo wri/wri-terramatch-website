@@ -9,6 +9,8 @@ import { ReportingFrameworkShow } from "@/admin/modules/reportingFramework/compo
 import { StageCreate } from "@/admin/modules/stages/StageCreate";
 import { StageEdit } from "@/admin/modules/stages/StageEdit";
 import { StageShow } from "@/admin/modules/stages/StageShow";
+import TaskShow from "@/admin/modules/tasks/components/TaskShow";
+import { TasksList } from "@/admin/modules/tasks/components/TasksList";
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
@@ -116,6 +118,12 @@ const nursery = {
   Edit: EntityEdit
 };
 
+const task = {
+  ResourceName: "task",
+  List: TasksList,
+  Show: TaskShow
+};
+
 const projectReport = {
   ResourceName: "projectReport",
   List: ProjectReportsList,
@@ -153,6 +161,7 @@ const modules = {
   project,
   site,
   nursery,
+  task,
   projectReport,
   siteReport,
   nurseryReport,
