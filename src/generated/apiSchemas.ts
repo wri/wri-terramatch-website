@@ -3895,6 +3895,30 @@ export type V2LeadershipTeamUpdate = {
   age?: number;
 };
 
+export type V2OwnershipStakeCreate = {
+  organisation_id?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  percent_ownership?: number;
+};
+
+export type V2OwnershipStakeRead = {
+  uuid?: string;
+  organisation_id?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  percent_ownership?: number;
+};
+
+export type V2OwnershipStakeUpdate = {
+  position?: string;
+  gender?: string;
+  age?: number;
+  percent_ownership?: number;
+};
+
 export type V2FundingTypeCreate = {
   organisation_id?: string;
   amount?: number;
@@ -6220,6 +6244,7 @@ export type ProjectFullRead = {
       description?: string;
       location?: string;
       read_more_url?: string;
+      framework_key?: string;
       status?: string;
       organisation_types?: string[];
       stages?: {
@@ -8652,6 +8677,7 @@ export type ApplicationRead = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
@@ -9241,6 +9267,28 @@ export type ProjectReportPaginated = {
     status?: number;
     readable_status?: string;
     title?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+  };
+};
+
+export type TaskPaginated = {
+  data?: {
+    uuid?: string;
+    project?: Record<string, any>;
+    period_key?: string;
+    status?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -22887,11 +22935,11 @@ export type ActionRead = {
 };
 
 export type V2TaskRead = {
-  uuid?: number;
+  uuid?: string;
   project?: Record<string, any>;
   period_key?: string;
   status?: string;
-  status_readable?: string;
+  readable_status?: string;
 };
 
 export type V2TaskActionRead = {
@@ -22903,6 +22951,13 @@ export type V2TaskActionRead = {
    */
   due_at?: string;
   title?: string;
+  report_title?: string;
+  update_request_status?: string;
+  /**
+   * @format date-time
+   */
+  submitted_at?: string;
+  parent_name?: string;
 };
 
 export type StatusUpdate = {
