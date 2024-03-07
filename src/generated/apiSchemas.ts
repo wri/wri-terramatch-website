@@ -22951,6 +22951,13 @@ export type V2TaskActionRead = {
    */
   due_at?: string;
   title?: string;
+  report_title?: string;
+  update_request_status?: string;
+  /**
+   * @format date-time
+   */
+  submitted_at?: string;
+  parent_name?: string;
 };
 
 export type StatusUpdate = {
