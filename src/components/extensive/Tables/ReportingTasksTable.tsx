@@ -127,7 +127,7 @@ export const SubmissionStatusMapping = (t: typeof useT): any => {
       statusText: t("Due")
     },
     "awaiting-approval": {
-      status: "success",
+      status: "awaiting",
       statusText: t("Awaiting approval")
     },
     "needs-more-information": {
