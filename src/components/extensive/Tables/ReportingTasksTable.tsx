@@ -97,6 +97,10 @@ export default ReportingTasksTable;
 
 export const CompletionStatusMapping = (t: typeof useT): any => {
   return {
+    "needs-more-information": {
+      status: "warning",
+      statusText: t("Needs More Information")
+    },
     "not-started": {
       status: "error",
       statusText: t("Not started")
@@ -105,13 +109,17 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
       status: "edit",
       statusText: t("Started")
     },
-    completed: {
+    approved: {
       status: "success",
-      statusText: t("Completed")
+      statusText: t("Approved")
     },
     "nothing-to-report": {
       status: "warning",
       statusText: t("Nothing Reported")
+    },
+    "awaiting-approval": {
+      status: "success",
+      statusText: t("Submitted for approval")
     }
   };
 };
@@ -122,13 +130,17 @@ export const SubmissionStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Due")
     },
-    overdue: {
-      status: "error",
-      statusText: t("Overdue")
+    "awaiting-approval": {
+      status: "awaiting",
+      statusText: t("Awaiting approval")
     },
-    complete: {
+    "needs-more-information": {
+      status: "warning",
+      statusText: t("Needs more information")
+    },
+    approved: {
       status: "success",
-      statusText: t("Completed")
+      statusText: t("Approved")
     }
   };
 };
