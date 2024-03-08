@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import Button from "../Button/Button";
 interface DrawerFooterPolygonProps {
   onDelete: () => void;
@@ -5,13 +7,14 @@ interface DrawerFooterPolygonProps {
 }
 export const DrawerFooterPolygon = (props: DrawerFooterPolygonProps) => {
   const { onDelete, onCreate } = props;
+  const t = useT();
   return (
     <div className="mt-auto flex items-center justify-end gap-5">
       <Button variant="semiRed" onClick={onDelete}>
-        Delete
+        {t("Delete")}
       </Button>
       <Button variant="semiBlack" onClick={onCreate}>
-        Create
+        {t("Create")}
       </Button>
     </div>
   );
