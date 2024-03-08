@@ -307,7 +307,270 @@
   .with-inner-html ol > li {
     @apply ml-3 list-decimal;
   }
+
+  /* new Text Styles */
+
+  /* Text 8px */
+  .text-8-light{
+    @apply text-[8px] font-normal;
+    letter-spacing: normal;
+  }
+  .text-8{
+    @apply text-[8px] font-medium;
+    letter-spacing: normal;
+  }
+  .text-8-semibold{
+    @apply text-[8px] font-semibold;
+    letter-spacing: normal;
+  }
+  .text-8-bold{
+    @apply text-[8px] font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 10px */
+  .text-10-light{
+    @apply text-[10px] font-normal;
+    letter-spacing: normal;
+  }
+  .text-10{
+    @apply text-[10px] font-medium;
+    letter-spacing: normal;
+  }
+  .text-10-semibold{
+    @apply text-[10px] font-semibold;
+    letter-spacing: normal;
+  }
+  .text-10-bold{
+    @apply text-[10px] font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 12px */
+  .text-12-light{
+    @apply text-xs font-normal;
+    letter-spacing: normal;
+  }
+  .text-12{
+    @apply text-xs font-medium;
+    letter-spacing: normal;
+  }
+  .text-12-semibold{
+    @apply text-xs font-semibold;
+    letter-spacing: normal;
+  }
+  .text-12-bold{
+    @apply text-xs font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 13px */
+  .text-13-light{
+    @apply font-normal;
+    font-size: 13px;
+    letter-spacing: normal;
+  }
+  .text-13{
+    @apply font-medium;
+    font-size: 13px;
+    letter-spacing: normal;
+  }
+  .text-13-semibold{
+    @apply font-semibold;
+    font-size: 13px;
+    letter-spacing: normal;
+  }
+  .text-13-bold{
+    @apply font-bold;
+    font-size: 13px;
+    letter-spacing: normal;
+  }
+
+
+  /* Text 14px */
+  .text-14-light{
+    @apply text-sm font-normal;
+    letter-spacing: normal;
+  }
+  .text-14{
+    @apply text-sm font-medium;
+    letter-spacing: normal;
+  }
+  .text-14-semibold{
+    @apply text-sm font-semibold;
+    letter-spacing: normal;
+  }
+  .text-14-bold{
+    @apply !text-sm !font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 16px */
+  .text-16-light{
+    @apply text-base font-normal;
+    letter-spacing: normal;
+  }
+  .text-16{
+    @apply text-base font-medium;
+    letter-spacing: normal;
+  }
+  .text-16-semibold{
+    @apply text-base font-semibold;
+    letter-spacing: normal;
+  }
+  .text-16-bold{
+    @apply text-base font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 18px */
+  .text-18-light{
+    @apply font-normal text-md;
+    letter-spacing: normal;
+  }
+  .text-18{
+    @apply font-medium text-md;
+    letter-spacing: normal;
+  }
+  .text-18-semibold{
+    @apply font-semibold text-md;
+    letter-spacing: normal;
+  }
+  .text-18-bold{
+    @apply font-bold text-md;
+    letter-spacing: normal;
+  }
+
+  /* Text 20px */
+  .text-20-light{
+    @apply text-lg font-normal;
+    letter-spacing: normal;
+  }
+  .text-20{
+    @apply text-lg font-medium;
+    letter-spacing: normal;
+  }
+  .text-20-semibold{
+    @apply text-lg font-semibold;
+    letter-spacing: normal;
+  }
+  .text-20-bold{
+    @apply text-lg font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 24px */
+  .text-24-light{
+    @apply text-xl font-normal;
+    letter-spacing: normal;
+  }
+  .text-24{
+    @apply text-xl font-medium;
+    letter-spacing: normal;
+  }
+  .text-24-semibold{
+    @apply text-xl font-semibold;
+    letter-spacing: normal;
+  }
+  .text-24-bold{
+    @apply text-xl font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 26px */
+  .text-26-light{
+    @apply text-2xl font-normal;
+    letter-spacing: normal;
+  }
+  .text-26{
+    @apply text-2xl font-medium;
+    letter-spacing: normal;
+  }
+  .text-26-semibold{
+    @apply text-2xl font-semibold;
+    letter-spacing: normal;
+  }
+  .text-26-bold{
+    @apply text-2xl font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 28px */
+  .text-28-light{
+    @apply text-3xl font-normal;
+    letter-spacing: normal;
+  }
+  .text-28{
+    @apply text-3xl font-medium;
+    letter-spacing: normal;
+  }
+  .text-28-semibold{
+    @apply text-3xl font-semibold;
+    letter-spacing: normal;
+  }
+  .text-28-bold{
+    @apply text-3xl font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 36px */
+  .text-36-light{
+    @apply text-4xl font-normal;
+    letter-spacing: normal;
+  }
+  .text-36{
+    @apply text-4xl font-medium;
+    letter-spacing: normal;
+  }
+  .text-36-semibold{
+    @apply text-4xl font-semibold;
+    letter-spacing: normal;
+  }
+  .text-36-bold{
+    @apply text-4xl font-bold;
+    letter-spacing: normal;
+  }
+
+  /* Text 40px */
+  .text-40-light{
+    @apply text-5xl font-normal;
+    letter-spacing: normal;
+  }
+  .text-40{
+    @apply text-5xl font-medium;
+    letter-spacing: normal;
+  }
+  .text-40-semibold{
+    @apply text-5xl font-semibold;
+    letter-spacing: normal;
+  }
+  .text-40-bold{
+    @apply text-5xl font-bold;
+    letter-spacing: normal;
+  }
+
+  .filter-button-pa span {
+    @apply text-neutral-950 text-14-bold opacity-100; 
+  }
+  .filter-button-pa button {
+    @apply text-neutral-950 text-14-bold px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white; 
+  }
+  .filter-button-pa span {
+    @apply text-neutral-950 text-14-bold opacity-100; 
+  }
+  .filter-button-pa button {
+    @apply text-neutral-950 text-14-bold px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white; 
+  }
+
+  .button-pa{
+    @apply !text-neutral-950 !bg-white text-14-bold !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300; 
+  }
+  .button-pa span{
+    @apply text-neutral-950 text-14-bold; 
+  }
+
 }
+
 
 /* Override swiper button hidden to hide button instead to fix Carousel when buttonsOutside is enabled */
 .swiper-button-lock {
@@ -318,247 +581,4 @@
 /* mapbox-gl */
 .mapboxgl-map{
   border-radius: 10px;
-}
-
-
-
-/* new Text Styles */
-
-/* Text 8px */
-.text-8-light{
-  @apply text-[8px] font-normal;
-  letter-spacing: normal;
-}
-.text-8{
-  @apply text-[8px] font-medium;
-  letter-spacing: normal;
-}
-.text-8-semibold{
-  @apply text-[8px] font-semibold;
-  letter-spacing: normal;
-}
-.text-8-bold{
-  @apply text-[8px] font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 10px */
-.text-10-light{
-  @apply text-[10px] font-normal;
-  letter-spacing: normal;
-}
-.text-10{
-  @apply text-[10px] font-medium;
-  letter-spacing: normal;
-}
-.text-10-semibold{
-  @apply text-[10px] font-semibold;
-  letter-spacing: normal;
-}
-.text-10-bold{
-  @apply text-[10px] font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 12px */
-.text-12-light{
-  @apply text-xs font-normal;
-  letter-spacing: normal;
-}
-.text-12{
-  @apply text-xs font-medium;
-  letter-spacing: normal;
-}
-.text-12-semibold{
-  @apply text-xs font-semibold;
-  letter-spacing: normal;
-}
-.text-12-bold{
-  @apply text-xs font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 13px */
-.text-13-light{
-  @apply font-normal;
-  font-size: 13px;
-  letter-spacing: normal;
-}
-.text-13{
-  @apply font-medium;
-  font-size: 13px;
-  letter-spacing: normal;
-}
-.text-13-semibold{
-  @apply font-semibold;
-  font-size: 13px;
-  letter-spacing: normal;
-}
-.text-13-bold{
-  @apply font-bold;
-  font-size: 13px;
-  letter-spacing: normal;
-}
-
-
-/* Text 14px */
-.text-14-light{
-  @apply text-sm font-normal;
-  letter-spacing: normal;
-}
-.text-14{
-  @apply text-sm font-medium;
-  letter-spacing: normal;
-}
-.text-14-semibold{
-  @apply text-sm font-semibold;
-  letter-spacing: normal;
-}
-.text-14-bold{
-  @apply text-sm font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 16px */
-.text-16-light{
-  @apply text-base font-normal;
-  letter-spacing: normal;
-}
-.text-16{
-  @apply text-base font-medium;
-  letter-spacing: normal;
-}
-.text-16-semibold{
-  @apply text-base font-semibold;
-  letter-spacing: normal;
-}
-.text-16-bold{
-  @apply text-base font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 18px */
-.text-18-light{
-  @apply font-normal text-md;
-  letter-spacing: normal;
-}
-.text-18{
-  @apply font-medium text-md;
-  letter-spacing: normal;
-}
-.text-18-semibold{
-  @apply font-semibold text-md;
-  letter-spacing: normal;
-}
-.text-18-bold{
-  @apply font-bold text-md;
-  letter-spacing: normal;
-}
-
-/* Text 20px */
-.text-20-light{
-  @apply text-lg font-normal;
-  letter-spacing: normal;
-}
-.text-20{
-  @apply text-lg font-medium;
-  letter-spacing: normal;
-}
-.text-20-semibold{
-  @apply text-lg font-semibold;
-  letter-spacing: normal;
-}
-.text-20-bold{
-  @apply text-lg font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 24px */
-.text-24-light{
-  @apply text-xl font-normal;
-  letter-spacing: normal;
-}
-.text-24{
-  @apply text-xl font-medium;
-  letter-spacing: normal;
-}
-.text-24-semibold{
-  @apply text-xl font-semibold;
-  letter-spacing: normal;
-}
-.text-24-bold{
-  @apply text-xl font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 26px */
-.text-26-light{
-  @apply text-2xl font-normal;
-  letter-spacing: normal;
-}
-.text-26{
-  @apply text-2xl font-medium;
-  letter-spacing: normal;
-}
-.text-26-semibold{
-  @apply text-2xl font-semibold;
-  letter-spacing: normal;
-}
-.text-26-bold{
-  @apply text-2xl font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 28px */
-.text-28-light{
-  @apply text-3xl font-normal;
-  letter-spacing: normal;
-}
-.text-28{
-  @apply text-3xl font-medium;
-  letter-spacing: normal;
-}
-.text-28-semibold{
-  @apply text-3xl font-semibold;
-  letter-spacing: normal;
-}
-.text-28-bold{
-  @apply text-3xl font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 36px */
-.text-36-light{
-  @apply text-4xl font-normal;
-  letter-spacing: normal;
-}
-.text-36{
-  @apply text-4xl font-medium;
-  letter-spacing: normal;
-}
-.text-36-semibold{
-  @apply text-4xl font-semibold;
-  letter-spacing: normal;
-}
-.text-36-bold{
-  @apply text-4xl font-bold;
-  letter-spacing: normal;
-}
-
-/* Text 40px */
-.text-40-light{
-  @apply text-5xl font-normal;
-  letter-spacing: normal;
-}
-.text-40{
-  @apply text-5xl font-medium;
-  letter-spacing: normal;
-}
-.text-40-semibold{
-  @apply text-5xl font-semibold;
-  letter-spacing: normal;
-}
-.text-40-bold{
-  @apply text-5xl font-bold;
-  letter-spacing: normal;
 }

@@ -1,0 +1,39 @@
+.search-pa > div:first-of-type {
+  @apply flex flex-row-reverse bg-white rounded-lg;
+}
+
+.search-pa > div:first-of-type input {
+  @apply pl-[6px];
+}
+
+.RaSidebar-fixed ul{
+  @apply gap-4
+}
+
+.RaLayout-content{
+  @apply !bg-neutral-100 !p-8;
+}
+
+.RaList-main{
+  @apply gap-4;
+}
+
+.RaDatagrid-tableWrapper .RaDatagrid-headerCell:first-child{
+  @apply !rounded-tl-lg
+}
+
+.RaDatagrid-tableWrapper .RaDatagrid-headerCell:last-child{
+  @apply !rounded-tr-lg
+}
+
+.RaList-content{
+  @apply !rounded-lg
+}
+
+.MuiTableSortLabel-root span{
+  @apply text-sm font-bold whitespace-nowrap
+}
+
+.RaSidebar-fixed a{
+  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-sm hover:font-bold hover:text-primary-400
+}

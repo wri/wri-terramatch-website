@@ -25,7 +25,13 @@ input[type="radio"]:focus {
   @apply !border-primary-500 text-transparent;
   box-shadow: none;
 }
+.text-14-bold{
+  @apply !text-sm !font-bold;
+  letter-spacing: normal;
+}
+
 
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
 @import url("./extended-components.css");
+@import url("./custom-admin-page-styles.css");

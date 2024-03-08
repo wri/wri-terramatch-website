@@ -1,4 +1,4 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useState } from "react";
 import {
   BooleanField,
@@ -19,13 +19,14 @@ import {
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import Text from "@/components/elements/Text/Text";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
 import { userTypesChoices } from "../const";
 
 const filters = [
-  <SearchInput key="s" source="search" alwaysOn />,
+  <SearchInput key="s" source="search" alwaysOn className="search-pa" />,
   <SelectInput
     key="c"
     label="User Status"
@@ -47,7 +48,7 @@ const UserDataGrid = () => {
   return (
     <Datagrid rowClick="show">
       <FunctionField
-        label="Name and last name"
+        label="Name"
         source="first_name"
         render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
       />
@@ -63,7 +64,7 @@ const UserDataGrid = () => {
       <TextField source="email_address" label="Email" />
       <BooleanField source="verified" label="Verified" sortBy="email_address_verified_at" />
       <SelectField source="user_type" label="Type" choices={userTypesChoices} />
-      <DateField source="last_logged_in_at" label="Last Login Date" locales="en-GB" />
+      <DateField source="last_logged_in_at" label="Last Login" locales="en-GB" />
       <DateField source="created_at" label="Date Added" locales="en-GB" />
       <ShowButton />
       <EditButton />
@@ -85,9 +86,7 @@ export const UserList = () => {
   return (
     <>
       <Stack gap={1} py={2}>
-        <Typography variant="h5">Users</Typography>
-
-        <Divider />
+        <Text variant="text-36-bold">Users</Text>
       </Stack>
 
       <List actions={<ListActions onExport={handleExport} />} filters={filters}>
