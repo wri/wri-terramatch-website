@@ -60,7 +60,7 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
                   disabled={item.disabled}
                 >
                   <Text
-                    variant={selected ? "text-heading-200" : "text-heading-100"}
+                    variant={selected ? "text-16-bold" : "text-16-light"}
                     className={classNames("whitespace-nowrap", "text-black")}
                   >
                     {item.title}

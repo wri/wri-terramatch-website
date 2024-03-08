@@ -8,12 +8,13 @@
   .scroll-indicator-hide::-webkit-scrollbar {
     display: none;
   }
+
   ::-webkit-scrollbar {
     width: 5px;
     height: 5PX;
     margin-left: 5px;
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background-color: #AEAEAE;
     border-radius: 10px;
@@ -63,7 +64,8 @@
 
   .text-heading-500 {
     @apply text-2xl font-bold font-primary wide:text-4xl;
-    line-height: 2rem; /* 32px */
+    line-height: 2rem;
+    /* 32px */
     letter-spacing: 1.12408px;
   }
 
@@ -93,12 +95,14 @@
 
   .text-heading-400 {
     @apply text-xl font-light font-primary wide:text-3xl;
-    line-height: 1.5rem; /* 32px */
+    line-height: 1.5rem;
+    /* 32px */
   }
 
   .text-heading-300 {
     @apply text-lg font-bold font-primary wide:text-2xl;
-    line-height: 1.625rem; /* 26px */
+    line-height: 1.625rem;
+    /* 26px */
     letter-spacing: 0.4px;
   }
 
@@ -131,29 +135,34 @@
   /* Body */
   .text-body-1200 {
     @apply text-base font-bold font-primary wide:text-lg;
-    line-height: 1.375rem; /* 22px */
+    line-height: 1.375rem;
+    /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-1100 {
     @apply text-base font-bold font-secondary wide:text-lg;
-    line-height: 1.5rem; /* 24px */
+    line-height: 1.5rem;
+    /* 24px */
   }
 
   .text-body-1000 {
     @apply text-base font-normal font-secondary wide:text-lg;
-    line-height: 1.5rem; /* 24px */
+    line-height: 1.5rem;
+    /* 24px */
   }
 
   .text-body-900 {
     @apply text-base font-bold font-primary wide:text-lg;
-    line-height: 1.375rem; /* 22px */
+    line-height: 1.375rem;
+    /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-800 {
     @apply text-base font-normal font-primary wide:text-lg;
-    line-height: 1.5rem; /* 24px */
+    line-height: 1.5rem;
+    /* 24px */
   }
 
   .text-body-700 {
@@ -163,7 +172,8 @@
 
   .text-body-600 {
     @apply text-base font-light font-primary wide:text-lg;
-    line-height: 1.375rem; /* 22px */
+    line-height: 1.375rem;
+    /* 22px */
   }
 
   .text-body-500 {
@@ -177,7 +187,7 @@
   }
 
   .text-body-300 {
-    @apply text-sm font-light font-primary wide:text-md ;
+    @apply text-sm font-light font-primary wide:text-md;
     letter-spacing: normal;
   }
 
@@ -191,12 +201,14 @@
 
   .text-body-200 {
     @apply text-sm font-normal font-secondary wide:text-md;
-    line-height: 1.188rem; /* 19px */
+    line-height: 1.188rem;
+    /* 19px */
   }
 
   .text-body-100 {
     @apply text-xs font-bold font-primary wide:text-base;
-    line-height: 1.188rem; /* 19px */
+    line-height: 1.188rem;
+    /* 19px */
   }
 
   /* Button */
@@ -207,14 +219,16 @@
 
   .text-button-400 {
     @apply text-base font-bold font-primary wide:text-lg;
-    line-height: 1rem; /* 16px */
+    line-height: 1rem;
+    /* 16px */
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
   .text-button-300 {
     @apply text-sm font-bold font-primary wide:text-md;
-    line-height: 1rem; /* 16px */
+    line-height: 1rem;
+    /* 16px */
     text-transform: uppercase;
   }
 
@@ -225,7 +239,8 @@
 
   .text-button-100 {
     @apply text-xs font-bold font-primary wide:text-base;
-    line-height: 1.188rem; /* 19px */
+    line-height: 1.188rem;
+    /* 19px */
   }
 
   /* Swiper */
@@ -258,15 +273,16 @@
   }
 
   /* With-inner-html */
-  .with-inner-html > * {
+  .with-inner-html>* {
     font-family: inherit;
     font-size: inherit;
     font-style: inherit;
   }
 
-  .with-inner-html > *:not(strong, b) {
+  .with-inner-html>*:not(strong, b) {
     font-weight: inherit;
   }
+
   .with-inner-html a {
     @apply underline text-primary;
   }
@@ -295,280 +311,295 @@
   .with-inner-html ol {
     @apply space-y-3;
   }
-  .with-inner-html ul > li {
+
+  .with-inner-html ul>li {
     @apply flex gap-3;
   }
 
-  .with-inner-html ul > li::before {
+  .with-inner-html ul>li::before {
     content: "●";
     @apply text-xl leading-none text-secondary wide:text-3xl;
   }
 
-  .with-inner-html ol > li {
+  .with-inner-html ol>li {
     @apply ml-3 list-decimal;
   }
 
   /* new Text Styles */
 
   /* Text 8px */
-  .text-8-light{
-    @apply text-[8px] font-normal;
+  .text-8-light {
+    @apply text-[8px] font-normal lg:text-[10px] wide:text-xs;
     letter-spacing: normal;
   }
-  .text-8{
-    @apply text-[8px] font-medium;
+
+  .text-8 {
+    @apply text-[8px] font-medium lg:text-[10px] wide:text-xs;
     letter-spacing: normal;
   }
-  .text-8-semibold{
-    @apply text-[8px] font-semibold;
+
+  .text-8-semibold {
+    @apply text-[8px] font-semibold lg:text-[10px] wide:text-xs;
     letter-spacing: normal;
   }
-  .text-8-bold{
-    @apply text-[8px] font-bold;
+
+  .text-8-bold {
+    @apply text-[8px] font-bold lg:text-[10px] wide:text-xs;
     letter-spacing: normal;
   }
 
   /* Text 10px */
-  .text-10-light{
-    @apply text-[10px] font-normal;
+  .text-10-light {
+    @apply text-[10px] font-normal lg:text-xs wide:text-sm;
     letter-spacing: normal;
   }
-  .text-10{
-    @apply text-[10px] font-medium;
+
+  .text-10 {
+    @apply text-[10px] font-medium lg:text-xs wide:text-sm;
     letter-spacing: normal;
   }
-  .text-10-semibold{
-    @apply text-[10px] font-semibold;
+
+  .text-10-semibold {
+    @apply text-[10px] font-semibold lg:text-xs wide:text-sm;
     letter-spacing: normal;
   }
-  .text-10-bold{
-    @apply text-[10px] font-bold;
+
+  .text-10-bold {
+    @apply text-[10px] font-bold lg:text-xs wide:text-sm;
     letter-spacing: normal;
   }
 
   /* Text 12px */
-  .text-12-light{
-    @apply text-xs font-normal;
+  .text-12-light {
+    @apply text-xs font-normal lg:text-sm wide:text-base;
     letter-spacing: normal;
   }
-  .text-12{
-    @apply text-xs font-medium;
+
+  .text-12 {
+    @apply text-xs font-medium lg:text-sm wide:text-base;
     letter-spacing: normal;
   }
-  .text-12-semibold{
-    @apply text-xs font-semibold;
+
+  .text-12-semibold {
+    @apply text-xs font-semibold lg:text-sm wide:text-base;
     letter-spacing: normal;
   }
-  .text-12-bold{
-    @apply text-xs font-bold;
+
+  .text-12-bold {
+    @apply text-xs font-bold lg:text-sm wide:text-base;
     letter-spacing: normal;
   }
 
   /* Text 13px */
-  .text-13-light{
-    @apply font-normal;
-    font-size: 13px;
+  .text-13-light {
+    @apply text-[13px] font-normal lg:text-[15px] wide:text-[17px];
     letter-spacing: normal;
   }
-  .text-13{
-    @apply font-medium;
-    font-size: 13px;
+
+  .text-13 {
+    @apply text-[13px] font-medium lg:text-[15px] wide:text-[17px];
     letter-spacing: normal;
   }
-  .text-13-semibold{
-    @apply font-semibold;
-    font-size: 13px;
+
+  .text-13-semibold {
+    @apply text-[13px] font-semibold lg:text-[15px] wide:text-[17px];
     letter-spacing: normal;
   }
-  .text-13-bold{
-    @apply font-bold;
-    font-size: 13px;
+
+  .text-13-bold {
+    @apply text-[13px] font-bold lg:text-[15px] wide:text-[17px];
     letter-spacing: normal;
   }
 
 
   /* Text 14px */
-  .text-14-light{
-    @apply text-sm font-normal;
+  .text-14-light {
+    @apply text-sm font-normal lg:text-base wide:text-md;
     letter-spacing: normal;
   }
-  .text-14{
-    @apply text-sm font-medium;
+
+  .text-14 {
+    @apply text-sm font-medium lg:text-base wide:text-md;
     letter-spacing: normal;
   }
-  .text-14-semibold{
-    @apply text-sm font-semibold;
+
+  .text-14-semibold {
+    @apply text-sm font-semibold lg:text-base wide:text-md;
     letter-spacing: normal;
   }
-  .text-14-bold{
-    @apply !text-sm !font-bold;
+
+  .text-14-bold {
+    @apply text-sm font-bold lg:text-base wide:text-md;
     letter-spacing: normal;
   }
 
   /* Text 16px */
-  .text-16-light{
-    @apply text-base font-normal;
+  .text-16-light {
+    @apply text-base font-normal lg:text-md wide:text-lg;
     letter-spacing: normal;
   }
-  .text-16{
-    @apply text-base font-medium;
+
+  .text-16 {
+    @apply text-base font-medium lg:text-md wide:text-lg;
     letter-spacing: normal;
   }
-  .text-16-semibold{
-    @apply text-base font-semibold;
+
+  .text-16-semibold {
+    @apply text-base font-semibold lg:text-md wide:text-lg;
     letter-spacing: normal;
   }
-  .text-16-bold{
-    @apply text-base font-bold;
+
+  .text-16-bold {
+    @apply text-base font-bold lg:text-md wide:text-lg;
     letter-spacing: normal;
   }
 
   /* Text 18px */
-  .text-18-light{
-    @apply font-normal text-md;
+  .text-18-light {
+    @apply font-normal text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
-  .text-18{
-    @apply font-medium text-md;
+
+  .text-18 {
+    @apply font-medium text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
-  .text-18-semibold{
-    @apply font-semibold text-md;
+
+  .text-18-semibold {
+    @apply font-semibold text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
-  .text-18-bold{
-    @apply font-bold text-md;
+
+  .text-18-bold {
+    @apply font-bold text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
 
   /* Text 20px */
-  .text-20-light{
-    @apply text-lg font-normal;
+  .text-20-light {
+    @apply text-lg font-normal lg:text-xl wide:text-2xl;
     letter-spacing: normal;
   }
-  .text-20{
-    @apply text-lg font-medium;
+
+  .text-20 {
+    @apply text-lg font-medium lg:text-xl wide:text-2xl;
     letter-spacing: normal;
   }
-  .text-20-semibold{
-    @apply text-lg font-semibold;
+
+  .text-20-semibold {
+    @apply text-lg font-semibold lg:text-xl wide:text-2xl;
     letter-spacing: normal;
   }
-  .text-20-bold{
-    @apply text-lg font-bold;
+
+  .text-20-bold {
+    @apply text-lg font-bold lg:text-xl wide:text-2xl;
     letter-spacing: normal;
   }
 
   /* Text 24px */
-  .text-24-light{
-    @apply text-xl font-normal;
+  .text-24-light {
+    @apply text-xl font-normal lg:text-2xl wide:text-3xl;
     letter-spacing: normal;
   }
-  .text-24{
-    @apply text-xl font-medium;
+
+  .text-24 {
+    @apply text-xl font-medium lg:text-2xl wide:text-3xl;
     letter-spacing: normal;
   }
-  .text-24-semibold{
-    @apply text-xl font-semibold;
+
+  .text-24-semibold {
+    @apply text-xl font-semibold lg:text-2xl wide:text-3xl;
     letter-spacing: normal;
   }
-  .text-24-bold{
-    @apply text-xl font-bold;
+
+  .text-24-bold {
+    @apply text-xl font-bold lg:text-2xl wide:text-3xl;
     letter-spacing: normal;
   }
 
   /* Text 26px */
-  .text-26-light{
-    @apply text-2xl font-normal;
+  .text-26-light {
+    @apply text-2xl font-normal lg:text-3xl wide:text-4xl;
     letter-spacing: normal;
   }
-  .text-26{
-    @apply text-2xl font-medium;
+
+  .text-26 {
+    @apply text-2xl font-medium lg:text-3xl wide:text-4xl;
     letter-spacing: normal;
   }
-  .text-26-semibold{
-    @apply text-2xl font-semibold;
+
+  .text-26-semibold {
+    @apply text-2xl font-semibold lg:text-3xl wide:text-4xl;
     letter-spacing: normal;
   }
-  .text-26-bold{
-    @apply text-2xl font-bold;
+
+  .text-26-bold {
+    @apply text-2xl font-bold lg:text-3xl wide:text-4xl;
     letter-spacing: normal;
   }
 
   /* Text 28px */
-  .text-28-light{
-    @apply text-3xl font-normal;
+  .text-28-light {
+    @apply text-3xl font-normal lg:text-4xl wide:text-5xl;
     letter-spacing: normal;
   }
-  .text-28{
-    @apply text-3xl font-medium;
+
+  .text-28 {
+    @apply text-3xl font-medium lg:text-4xl wide:text-5xl;
     letter-spacing: normal;
   }
-  .text-28-semibold{
-    @apply text-3xl font-semibold;
+
+  .text-28-semibold {
+    @apply text-3xl font-semibold lg:text-4xl wide:text-5xl;
     letter-spacing: normal;
   }
-  .text-28-bold{
-    @apply text-3xl font-bold;
+
+  .text-28-bold {
+    @apply text-3xl font-bold lg:text-4xl wide:text-5xl;
     letter-spacing: normal;
   }
 
   /* Text 36px */
-  .text-36-light{
-    @apply text-4xl font-normal;
+  .text-36-light {
+    @apply text-4xl font-normal lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
-  .text-36{
-    @apply text-4xl font-medium;
+
+  .text-36 {
+    @apply text-4xl font-medium lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
-  .text-36-semibold{
-    @apply text-4xl font-semibold;
+
+  .text-36-semibold {
+    @apply text-4xl font-semibold lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
-  .text-36-bold{
-    @apply text-4xl font-bold;
+
+  .text-36-bold {
+    @apply text-4xl font-bold lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
 
   /* Text 40px */
-  .text-40-light{
-    @apply text-5xl font-normal;
-    letter-spacing: normal;
-  }
-  .text-40{
-    @apply text-5xl font-medium;
-    letter-spacing: normal;
-  }
-  .text-40-semibold{
-    @apply text-5xl font-semibold;
-    letter-spacing: normal;
-  }
-  .text-40-bold{
-    @apply text-5xl font-bold;
+  .text-40-light {
+    @apply text-5xl font-normal lg:text-6xl wide:text-7xl;
     letter-spacing: normal;
   }
 
-  .filter-button-pa span {
-    @apply text-neutral-950 text-14-bold opacity-100; 
-  }
-  .filter-button-pa button {
-    @apply text-neutral-950 text-14-bold px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white; 
-  }
-  .filter-button-pa span {
-    @apply text-neutral-950 text-14-bold opacity-100; 
-  }
-  .filter-button-pa button {
-    @apply text-neutral-950 text-14-bold px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white; 
+  .text-40 {
+    @apply text-5xl font-medium lg:text-6xl wide:text-7xl;
+    letter-spacing: normal;
   }
 
-  .button-pa{
-    @apply !text-neutral-950 !bg-white text-14-bold !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300; 
-  }
-  .button-pa span{
-    @apply text-neutral-950 text-14-bold; 
+  .text-40-semibold {
+    @apply text-5xl font-semibold lg:text-6xl wide:text-7xl;
+    letter-spacing: normal;
   }
 
+  .text-40-bold {
+    @apply text-5xl font-bold lg:text-6xl wide:text-7xl;
+    letter-spacing: normal;
+  }
 }
 
 
@@ -579,6 +610,6 @@
 }
 
 /* mapbox-gl */
-.mapboxgl-map{
+.mapboxgl-map {
   border-radius: 10px;
 }

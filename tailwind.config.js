@@ -7,7 +7,8 @@ module.exports = {
       screens: {
         sx: "460px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
-        wide: "2500px"
+        wide: "2500px",
+        lg: "1900px"
       },
       width: {
         "fit-content": "fit-content"
@@ -73,6 +74,7 @@ module.exports = {
         600: "#888888",
         500: "#9B9B9B",
         400: "#B1B1B1",
+        450: "#CCD4D6",
         300: "#D8D8D8",
         200: "#E3E3E3",
         150: "#F5F7F9",
@@ -96,7 +98,8 @@ module.exports = {
         100: "#FFF2F2"
       },
       grey: {
-        200: "#1976d2"
+        200: "#1976d2",
+        300: "#E9EDF0"
       }
     },
 
