@@ -11,7 +11,7 @@ export interface StepProgressbarProps extends DetailedHTMLProps<HTMLAttributes<H
 
 const StepProgressbar = ({ value, color = "primary", labels, className, ...rest }: StepProgressbarProps) => {
   const countLabels = labels?.length || 0;
-  console.log(countLabels, "countLabels");
+
   return (
     <div className="w-full">
       <div className="relative w-full">
