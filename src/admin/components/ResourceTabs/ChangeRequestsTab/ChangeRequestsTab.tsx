@@ -1,14 +1,24 @@
-import { Check, Close } from "@mui/icons-material";
+import { Check, PriorityHigh } from "@mui/icons-material";
 import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
+import { pink } from "@mui/material/colors";
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
-import { FunctionField, Labeled, TabbedShowLayout, TabProps, TextField, useShowContext } from "react-admin";
+import { FC, useMemo, useState } from "react";
+import {
+  FunctionField,
+  Labeled,
+  TabbedShowLayout,
+  TabProps,
+  TextField,
+  useShowContext,
+  WrapperField
+} from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
+import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
+import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
-import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetV2FormsENTITYUUID, useGetV2UpdateRequestsENTITYUUID } from "@/generated/apiComponents";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { getCustomFormSteps } from "@/helpers/customForms";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import ChangeRequestRequestMoreInfoModal, { IStatus } from "./MoreInformationModal";
@@ -18,56 +28,6 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity: EntityName;
   singularEntity: SingularEntityName;
 }
-
-interface IChangeRowProps extends Omit<FormSummaryRowProps, "values"> {
-  currentValues: any;
-  changedValues: any;
-}
-
-const ChangeRow = ({ index, ...props }: IChangeRowProps) => {
-  const currentEntries = useGetFormEntries({ values: props.currentValues, nullText: "-", ...props });
-  const changedEntries = useGetFormEntries({ values: props.changedValues, nullText: "-", ...props });
-
-  return (
-    <Card sx={{ padding: 4 }}>
-      <Typography variant="h5" component="h3" className="capitalize">
-        {props.step.title}
-      </Typography>
-      <List
-        className="my-4 flex flex-col gap-4"
-        items={changedEntries}
-        render={entry => {
-          const currentEntry = currentEntries.find(e => e.title === entry.title);
-          const currentValue = currentEntry?.value || "-";
-          const newValue = entry.value || "-";
-
-          return (
-            <div>
-              <Typography variant="h6" component="h4" className="capitalize">
-                {entry?.title}
-              </Typography>
-              <If condition={typeof entry?.value === "string" || typeof entry?.value === "number"}>
-                <Then>
-                  <p className="mb-2">
-                    New Value: <Typography variant="body2" dangerouslySetInnerHTML={{ __html: newValue }} />
-                  </p>
-                  <p className="mb-2">
-                    Old Value: <Typography variant="body2" dangerouslySetInnerHTML={{ __html: currentValue }} />
-                  </p>
-                </Then>
-                <Else>
-                  <p className="mb-2">
-                    New Value: {newValue} <br /> Old Value: {currentValue}
-                  </p>
-                </Else>
-              </If>
-            </div>
-          );
-        }}
-      />
-    </Card>
-  );
-};
 
 const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest }) => {
   const ctx = useShowContext();
@@ -103,19 +63,34 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   // @ts-ignore
   const current = currentValues?.data?.answers;
   // @ts-ignore
+  const status = changeRequest?.data?.status;
+  // @ts-ignore
   const form = currentValues?.data?.form;
 
-  const formSteps = form && getCustomFormSteps(form, t);
-  const currentValueData = normalizedFormDefaultValue(current, formSteps);
-  const changedValueData = normalizedFormDefaultValue(changes, formSteps);
+  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t)), [form, t]);
+  const formChanges = useFormChanges(current, changes, formSteps ?? []);
+  const numFieldsAffected = useMemo(
+    () =>
+      formChanges.reduce((sum, stepChange) => {
+        return sum + stepChange.changes.filter(({ newValue }) => newValue != null).length;
+      }, 0),
+    [formChanges]
+  );
 
   const handleStatusUpdate = (type: IStatus) => {
     setStatusToChangeTo(type);
   };
 
+  const icon = status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
+
   return (
     <When condition={!ctx.isLoading}>
-      <TabbedShowLayout.Tab label={label ?? "Change Requests"} {...rest}>
+      <TabbedShowLayout.Tab
+        style={{ flexDirection: "row", minHeight: "unset" }}
+        icon={icon}
+        label={label ?? "Change Requests"}
+        {...rest}
+      >
         {/* @ts-ignore */}
         <If condition={changeRequest?.data && !isError}>
           <Then>
@@ -124,17 +99,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                 <Grid item xs={8}>
                   <List
                     className="space-y-8"
-                    items={formSteps || []}
-                    render={(step, index) => (
-                      <ChangeRow
-                        index={index}
-                        // @ts-ignore
-                        step={step}
-                        currentValues={currentValueData}
-                        changedValues={changedValueData}
-                        steps={formSteps}
-                      />
-                    )}
+                    items={formChanges}
+                    render={stepChange => <ChangeRow key={stepChange.step.title} stepChange={stepChange} />}
                   />
                 </Grid>
               )}
@@ -158,6 +124,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                           render={() => {
                             // @ts-ignore
                             switch (changeRequest?.data?.status) {
+                              case "draft":
+                                return "Draft";
                               case "awaiting-approval":
                                 return "Awaiting Approval";
                               case "more-information":
@@ -165,10 +133,6 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                                 return "More information requested";
                               case "approved":
                                 return "Approved";
-                              case "rejected":
-                                return "Rejected";
-                              case "draft":
-                                return "Draft";
                               default:
                                 return "-";
                             }
@@ -179,23 +143,13 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
 
                     <Grid xs={6} item>
                       <Labeled label="Fields Affected">
-                        <FunctionField render={() => Object.keys(changes || {}).length} />
+                        <WrapperField>{numFieldsAffected}</WrapperField>
                       </Labeled>
                     </Grid>
                   </Grid>
 
                   <Box pt={2}>
                     <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
-                      <Button
-                        variant="contained"
-                        color="error"
-                        startIcon={<Close />}
-                        // @ts-ignore
-                        disabled={["rejected", "draft"].includes(changeRequest?.data?.status)}
-                        onClick={() => handleStatusUpdate("reject")}
-                      >
-                        Reject
-                      </Button>
                       <Button
                         variant="contained"
                         startIcon={<Check />}

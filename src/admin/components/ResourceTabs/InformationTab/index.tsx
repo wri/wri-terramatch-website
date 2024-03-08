@@ -1,14 +1,15 @@
-import { Card, Grid, Stack } from "@mui/material";
+import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import List from "@/components/extensive/List/List";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 
 import TreeSpeciesTable from "../../Tables/TreeSpeciesTable";
@@ -87,25 +88,40 @@ const InformationTab: FC<IProps> = props => {
       <TabbedShowLayout.Tab label={tabTitle} {...props}>
         <Grid spacing={2} container>
           <Grid xs={8} item>
-            <Stack gap={4}>
-              <Card sx={{ padding: 4 }}>
-                <List
-                  className="space-y-8"
-                  items={formSteps}
-                  render={(step, index) => (
-                    <InformationTabRow index={index} step={step} values={values} steps={formSteps} />
-                  )}
-                />
-              </Card>
+            <If condition={record.nothing_to_report}>
+              <Then>
+                <Card sx={{ padding: 4 }}>
+                  <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
+                    Nothing to Report
+                  </Typography>
+                  <Typography>
+                    The project has indicated that there is no activity to report on for this{" "}
+                    {pluralEntityNameToSingular(props.type).split("-")[0]} during this reporting period.
+                  </Typography>
+                </Card>
+              </Then>
+              <Else>
+                <Stack gap={4}>
+                  <Card sx={{ padding: 4 }}>
+                    <List
+                      className="space-y-8"
+                      items={formSteps}
+                      render={(step, index) => (
+                        <InformationTabRow index={index} step={step} values={values} steps={formSteps} />
+                      )}
+                    />
+                  </Card>
 
-              <When condition={record}>
-                <TreeSpeciesTable uuid={record.uuid} entity={resource} />
-              </When>
+                  <When condition={record}>
+                    <TreeSpeciesTable uuid={record.uuid} entity={resource} />
+                  </When>
 
-              <When condition={props.type === "projects"}>
-                <MonitoringPartnersTable projectUUID={record?.uuid} />
-              </When>
-            </Stack>
+                  <When condition={props.type === "projects"}>
+                    <MonitoringPartnersTable projectUUID={record?.uuid} />
+                  </When>
+                </Stack>
+              </Else>
+            </If>
           </Grid>
 
           <Grid xs={4} item>

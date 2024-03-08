@@ -27,7 +27,7 @@ const StatusBar = ({ entity, entityName }: EntityStatusBarProps) => {
   //@ts-ignore
   const updateRequest = updateRequestData?.data;
 
-  if (updateRequest) {
+  if (updateRequest != null && updateRequest.status !== "draft") {
     return <UpdateRequestStatusBar entityName={entityName} entityUUID={entity.uuid} updateRequest={updateRequest} />;
   } else {
     return <EntityStatusBar entityName={entityName} entity={entity} />;

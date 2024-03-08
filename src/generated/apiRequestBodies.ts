@@ -206,6 +206,7 @@ export type GetV2FundingProgrammeIDBody = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
