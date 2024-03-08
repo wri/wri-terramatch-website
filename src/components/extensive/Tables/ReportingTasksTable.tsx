@@ -109,13 +109,17 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
       status: "edit",
       statusText: t("Started")
     },
-    completed: {
+    approved: {
       status: "success",
-      statusText: t("Completed")
+      statusText: t("Approved")
     },
     "nothing-to-report": {
       status: "warning",
       statusText: t("Nothing Reported")
+    },
+    "awaiting-approval": {
+      status: "success",
+      statusText: t("Submitted for approval")
     }
   };
 };

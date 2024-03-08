@@ -107,16 +107,19 @@ const ReportingTaskPage = () => {
   const reports = useMemo(() => {
     const reports =
       reportsData?.data?.map((report: any) => {
-        let completion_status = "completed";
+        let completion_status = "started";
+        const statuses = [report.status, report.update_request_status] as string[];
 
-        if (report.status === "needs-more-information") {
+        if (statuses.includes("needs-more-information")) {
           completion_status = "needs-more-information";
         } else if (report.nothing_to_report) {
           completion_status = "nothing-to-report";
-        } else if (report.completion === 0) {
+        } else if (statuses.includes("awaiting-approval")) {
+          completion_status = "awaiting-approval";
+        } else if (report.status === "approved") {
+          completion_status = "approved";
+        } else if (report.status === "due") {
           completion_status = "not-started";
-        } else if (report.status === "started") {
-          completion_status = "started";
         }
 
         return {
@@ -243,7 +246,7 @@ const ReportingTaskPage = () => {
       accessorKey: "completion_status",
       header: t("Status"),
       cell: props => {
-        const value = props.getValue() as number;
+        const value = props.getValue() as string;
         const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
         if (!status) return null;
 
@@ -296,7 +299,7 @@ const ReportingTaskPage = () => {
                   {t("Write report")}
                 </Button>
               </Case>
-              <Case condition={record.completion_status === "completed"}>
+              <Case condition={["approved", "awaiting-approval"].includes(record.completion_status)}>
                 <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
                   {t("View Completed Report")}
                 </Button>
