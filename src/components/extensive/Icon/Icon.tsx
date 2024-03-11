@@ -11,6 +11,7 @@ export enum IconNames {
   CHEVRON_LEFT = "chevron-left",
   CHEVRON_LEFT_CIRCLE = "chevron-left-circle",
   CHEVRON_DOWN = "chevron-down",
+  CHECK_PROGRESSBAR = "check-progressbar",
   CROSS = "cross",
   CROSS_CIRCLE = "cross-circle",
   CLOCK = "clock",
@@ -87,6 +88,9 @@ export enum IconNames {
   REFRESH_CIRCLE = "refresh-circle",
   SITE_CIRCLE = "site-circle",
   NURSERY_CIRCLE = "nursery-circle",
+  IC_ERROR = "ic-error",
+  IC_WARNING = "ic-warning",
+  IC_SUCCESS = "ic-success",
   FILTER = "filter"
 }
 
