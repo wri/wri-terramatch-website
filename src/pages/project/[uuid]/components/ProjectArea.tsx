@@ -51,7 +51,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   return (
     <div className="flex h-[500px]">
       <MapSidePanel
-        title={t("Project Sites")}
+        title={t("Sites")}
         items={
           (sites?.map(item => ({
             ...item,
@@ -61,7 +61,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="h-full w-[300px]"
+        className="absolute z-20 h-[500px] w-[23%] p-8 backdrop-blur-xl"
         onLoadMore={fetchNextPage}
         emptyText={t("No results found or no sites in this project. Try refining your search or create a new site.")}
       />

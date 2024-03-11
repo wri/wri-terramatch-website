@@ -39,7 +39,7 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
 
   return (
     <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
-      <HTab.List {...divProps} className={classNames(className, "h-12 w-full border-b border-neutral-400 bg-white")}>
+      <HTab.List {...divProps} className={classNames(className, "h-12 w-full border-b-2 border-neutral-200 bg-white")}>
         <List
           as="div"
           className={classNames(

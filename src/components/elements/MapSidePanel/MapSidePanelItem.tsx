@@ -15,17 +15,21 @@ const MapSidePanelItem = ({ title, subtitle, isSelected, className, ...props }: 
   return (
     <div
       {...props}
-      className={classNames(className, "flex items-center gap-6 rounded-lg border-2 p-3", {
-        "border-primary-500": isSelected,
-        "border-neutral-100 hover:border-neutral-800": !isSelected
-      })}
+      className={classNames(
+        className,
+        "flex items-center gap-2 rounded-lg border-2 border-2 border-transparent bg-white p-2 hover:border-primary",
+        {
+          "border-primary-500": isSelected,
+          "border-neutral-500 hover:border-neutral-800": !isSelected
+        }
+      )}
     >
       <Icon name={IconNames.MAP_THUMBNAIL} className="h-11 w-11 rounded-lg bg-neutral-300" />
       <div className="flex flex-1 flex-col">
-        <Text variant="text-bold-caption-200" className="line-clamp-3">
+        <Text variant="text-14-bold" className="">
           {title}
         </Text>
-        <Text variant="text-light-caption-200">{subtitle}</Text>
+        <Text variant="text-14-light">{subtitle}</Text>
       </div>
     </div>
   );

@@ -13,14 +13,14 @@ export interface GoalProgressCardItemProps extends DetailedHTMLProps<HTMLAttribu
 const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({ iconName, label, value: _val, className, ...rest }) => {
   const value = _val || 0;
   return (
-    <div {...rest} className={classNames("flex items-center justify-between", className)}>
-      <Icon name={iconName} className="mr-4 h-5 w-5 fill-primary-500" />
+    <div {...rest} className={classNames("flex w-full items-center", className)}>
+      <Icon name={iconName} className="mr-4 h-10 w-10" />
 
-      <Text variant="text-bold-caption-200" className="mr-auto whitespace-nowrap">
+      <Text variant="text-16-light" className="w-[13vw] whitespace-nowrap">
         {label}
       </Text>
 
-      <Text variant="text-bold-subtitle-500" className="ml-4">
+      <Text variant="text-14-bold" className="">
         {value}
       </Text>
     </div>

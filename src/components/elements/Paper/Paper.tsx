@@ -7,7 +7,7 @@ export interface PaperProps
 
 const Paper = ({ children, className, ...props }: PaperProps) => {
   return (
-    <div {...props} className={twMerge("w-full rounded-xl bg-white p-8 shadow", className)}>
+    <div {...props} className={twMerge("w-full rounded-xl border border-neutral-200 bg-white p-8", className)}>
       {children}
     </div>
   );
