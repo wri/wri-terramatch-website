@@ -27,7 +27,7 @@
 }
 
 .button-pa:hover {
-  @apply !bg-grey-300
+  @apply !bg-grey-800
 }
 
 .button-pa span {
@@ -58,6 +58,10 @@
   @apply !rounded-lg
 }
 
+.RaSidebar-fixed a {
+  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400;
+}
+
 .MuiTableSortLabel-root span {
   @apply text-sm font-bold lg:text-base wide:text-md tracking-normal whitespace-nowrap
 }
@@ -71,7 +75,7 @@
 }
 
 .MuiTablePagination-toolbar {
-  @apply !pl-0
+  @apply !pl-0 after:content-['Per\00a0page'] after:order-2 after:-ml-6 after:text-neutral-1000 after:text-base after:font-bold after:lg:text-md after:wide:text-lg
 }
 
 .MuiTablePagination-spacer {
@@ -91,7 +95,7 @@
 }
 
 .MuiTablePagination-selectLabel {
-  @apply order-2
+  @apply hidden
 }
 
 .MuiTablePagination-displayedRows {
@@ -102,6 +106,27 @@
   @apply order-3 !ml-auto
 }
 
-.RaSidebar-fixed a {
-  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400;
+.MuiPagination-text li:first-child button{
+  @apply text-primary-500 w-6 h-6
+}
+
+.MuiPagination-text li:first-child button svg{
+  @apply w-6 h-6
+}
+
+.MuiPagination-text li:last-child button{
+  @apply text-primary-500 w-6 h-6
+}
+
+.MuiPagination-text li:last-child button svg{
+  @apply w-6 h-6
+}
+
+.MuiPaginationItem-page{
+  @apply !text-grey-600 !text-base !font-bold lg:text-md wide:text-lg
+}
+
+
+.MuiPagination-text li .Mui-selected{
+  @apply !bg-transparent !text-neutral-1000 text-base font-bold lg:text-md wide:text-lg
 }
