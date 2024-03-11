@@ -19,7 +19,10 @@ import {
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
@@ -44,9 +47,20 @@ const filters = [
   />
 ];
 
+const tableMenu = [
+  {
+    id: "1",
+    render: () => <EditButton />
+  },
+  {
+    id: "2",
+    render: () => <ShowButton />
+  }
+];
+
 const UserDataGrid = () => {
   return (
-    <Datagrid rowClick="show">
+    <Datagrid>
       <FunctionField
         label="Name"
         source="first_name"
@@ -66,8 +80,9 @@ const UserDataGrid = () => {
       <SelectField source="user_type" label="Type" choices={userTypesChoices} />
       <DateField source="last_logged_in_at" label="Last Login" locales="en-GB" />
       <DateField source="created_at" label="Date Added" locales="en-GB" />
-      <ShowButton />
-      <EditButton />
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+      </Menu>
     </Datagrid>
   );
 };

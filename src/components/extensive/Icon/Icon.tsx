@@ -91,7 +91,8 @@ export enum IconNames {
   IC_ERROR = "ic-error",
   IC_WARNING = "ic-warning",
   IC_SUCCESS = "ic-success",
-  FILTER = "filter"
+  FILTER = "filter",
+  ELIPSES = "elipses"
 }
 
 export interface IconProps {
