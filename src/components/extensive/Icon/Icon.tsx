@@ -92,7 +92,19 @@ export enum IconNames {
   IC_WARNING = "ic-warning",
   IC_SUCCESS = "ic-success",
   FILTER = "filter",
-  ELIPSES = "elipses"
+  ELIPSES = "elipses",
+  airtable = "airtable",
+  REPORTS = "reports",
+  NURSERIES = "nurseries",
+  SITES = "sites",
+  PROJECTS = "projects",
+  FORMS = "forms",
+  APPLICATIONS = "applications",
+  REPORTING_FRAMEWORKS = "reporting-frameworks",
+  FUJDING_PROGRAMMES = "funding-programmes",
+  PITCHES = "pitches",
+  ORGANISATIONS = "organisations",
+  USERS = "users"
 }
 
 export interface IconProps {

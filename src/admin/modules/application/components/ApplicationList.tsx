@@ -1,4 +1,4 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useState } from "react";
 import {
   AutocompleteInput,
@@ -17,6 +17,10 @@ import {
 
 import ListActions from "@/admin/components/Actions/ListActions";
 import ApplicationsExportModal from "@/admin/modules/application/components/ApplicationsExportModal";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
+import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
@@ -27,6 +31,17 @@ export const statusChoices = [
   { id: "approved", name: "Approved" },
   { id: "requires-more-information", name: "Requires More Information" },
   { id: "rejected", name: "Rejected" }
+];
+
+const tableMenu = [
+  {
+    id: "1",
+    render: () => <ShowButton />
+  },
+  {
+    id: "2",
+    render: () => <DeleteWithConfirmButton />
+  }
 ];
 
 const ApplicationDataGrid = () => {
@@ -61,8 +76,9 @@ const ApplicationDataGrid = () => {
       />
       <DateField source="created_at" label="Created" showTime locales="en-GB" />
       <DateField source="updated_at" label="Last Edited" showTime locales="en-GB" />
-      <ShowButton />
-      <DeleteWithConfirmButton />
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+      </Menu>
     </Datagrid>
   );
 };
@@ -71,7 +87,7 @@ export const ApplicationList = () => {
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
 
   const filters = [
-    <SearchInput key="s" source="search" alwaysOn />,
+    <SearchInput key="s" source="search" alwaysOn className="search-pa" />,
     <ReferenceInput
       key="fp"
       source="funding_programme_uuid"
@@ -88,10 +104,10 @@ export const ApplicationList = () => {
 
   return (
     <>
-      <Stack gap={1} py={2}>
-        <Typography variant="h5">Applications</Typography>
-
-        <Divider />
+      <Stack gap={1} className="pb-6">
+        <Text variant="text-36-bold" className="leading-none">
+          Applications
+        </Text>
       </Stack>
 
       <List actions={<ListActions onExport={() => setExportModalOpen(true)} />} filters={filters}>

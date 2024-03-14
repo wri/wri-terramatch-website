@@ -1,4 +1,4 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { FC, useState } from "react";
 import {
   AutocompleteInput,
@@ -17,6 +17,10 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
+import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
@@ -24,6 +28,17 @@ import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
+
+const tableMenu = [
+  {
+    id: "1",
+    render: () => <ShowButton />
+  },
+  {
+    id: "2",
+    render: () => <EditButton />
+  }
+];
 
 const NurseryReportDataGrid: FC = () => {
   return (
@@ -41,8 +56,9 @@ const NurseryReportDataGrid: FC = () => {
       <DateField source="due_at" label="Due Date" locales="en-GB" />
       <DateField source="updated_at" label="Last Updated" locales="en-GB" />
       <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
-      <ShowButton />
-      <EditButton />
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+      </Menu>
     </Datagrid>
   );
 };
@@ -51,7 +67,7 @@ export const NurseryReportsList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
 
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn />,
+    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
     <ReferenceInput
       key="project"
       source="project_uuid"
@@ -103,10 +119,10 @@ export const NurseryReportsList: FC = () => {
 
   return (
     <>
-      <Stack gap={1} py={2}>
-        <Typography variant="h5">Nursery Reports</Typography>
-
-        <Divider />
+      <Stack gap={1} className="pb-6">
+        <Text variant="text-36-bold" className="leading-none">
+          Nursery Reports
+        </Text>
       </Stack>
 
       <List actions={<ListActions onExport={handleExport} />} filters={filters}>

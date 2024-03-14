@@ -1,4 +1,4 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import {
   AutocompleteInput,
@@ -22,6 +22,10 @@ import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAle
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import FrameworkSelectionDialog from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
+import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
@@ -39,6 +43,24 @@ const monitoringDataChoices = [
   {
     id: "1",
     name: "Yes"
+  }
+];
+const tableMenu = [
+  {
+    id: "1",
+    render: () => <ShowButton />
+  },
+  {
+    id: "2",
+    render: () => <EditButton />
+  },
+  {
+    id: "3",
+    render: () => (
+      <WrapperField>
+        <CustomDeleteWithConfirmButton source="name" />
+      </WrapperField>
+    )
   }
 ];
 
@@ -78,11 +100,9 @@ const SiteDataGrid: FC = () => {
         sortable={false}
       />
       <BooleanField source="has_monitoring_data" label="Monitored Data" sortable={false} looseValue />
-      <ShowButton />
-      <EditButton />
-      <WrapperField>
-        <CustomDeleteWithConfirmButton source="name" />
-      </WrapperField>
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+      </Menu>
     </Datagrid>
   );
 };
@@ -104,7 +124,7 @@ export const SitesList: FC = () => {
     fetchData();
   }, []);
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn />,
+    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
     <SelectInput key="country" label="Country" source="country" choices={optionToChoices(getCountriesOptions())} />,
     <ReferenceInput
       key="organisation"
@@ -173,10 +193,10 @@ export const SitesList: FC = () => {
 
   return (
     <>
-      <Stack gap={1} py={2}>
-        <Typography variant="h5">Sites</Typography>
-
-        <Divider />
+      <Stack gap={1} className="pb-6">
+        <Text variant="text-36-bold" className="leading-none">
+          Sites
+        </Text>
       </Stack>
 
       <List actions={<ListActions onExport={handleExportOpen} />} filters={filters}>

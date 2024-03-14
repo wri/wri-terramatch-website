@@ -6,6 +6,10 @@
   @apply pl-[6px];
 }
 
+.filter-button-pa{
+  @apply !mb-4
+}
+
 .filter-button-pa span {
   @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal opacity-100;
 }
@@ -23,7 +27,7 @@
 }
 
 .button-pa {
-  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300;
+  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
 }
 
 .button-pa:hover {
@@ -34,6 +38,33 @@
   @apply !text-neutral-950 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
 }
 
+.RaCreateButton-root{
+  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
+}
+
+.RaCreateButton-root:hover {
+  @apply !bg-grey-800
+}
+
+.RaCreateButton-root span {
+  @apply !text-neutral-950 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
+}
+
+.RaMenuItemLink-icon{
+ color: inherit !important
+}
+
+.MuiToolbar-regular > div{
+  @apply items-center !p-0 !items-end
+}
+.MuiToolbar-regular form{
+  @apply items-center !p-0 !items-end
+}
+
+.MuiToolbar-regular form .ra-input{
+  @apply !m-0 !mb-4
+}
+
 .RaSidebar-fixed ul {
   @apply gap-4
 }
@@ -42,8 +73,12 @@
   @apply !bg-neutral-100 !p-8;
 }
 
-.RaList-main {
-  @apply gap-4;
+.RaList-main > span {
+  @apply mt-4;
+}
+
+.RaList-main div {
+  @apply min-h-0;
 }
 
 .RaDatagrid-tableWrapper .RaDatagrid-headerCell:first-child {
@@ -59,10 +94,18 @@
 }
 
 .RaSidebar-fixed a {
-  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400;
+  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-grey-300 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400;
 }
 
-.MuiTableSortLabel-root span {
+/* .MuiTableSortLabel-root span {
+  @apply text-sm font-bold lg:text-base wide:text-md tracking-normal whitespace-nowrap
+} */
+
+.RaAppBar-toolbar {
+  @apply !bg-grey-300
+}
+
+.RaDatagrid-headerCell span {
   @apply text-sm font-bold lg:text-base wide:text-md tracking-normal whitespace-nowrap
 }
 

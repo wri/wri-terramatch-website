@@ -100,8 +100,10 @@ export const UserList = () => {
 
   return (
     <>
-      <Stack gap={1} py={2}>
-        <Text variant="text-36-bold">Users</Text>
+      <Stack gap={1} className="pb-6">
+        <Text variant="text-36-bold" className="leading-none">
+          Users
+        </Text>
       </Stack>
 
       <List actions={<ListActions onExport={handleExport} />} filters={filters}>
