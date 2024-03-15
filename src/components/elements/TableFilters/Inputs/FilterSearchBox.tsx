@@ -22,12 +22,12 @@ const FilterSearchBox = ({
 }: PropsWithChildren<FilterSearchBoxProps>) => {
   return (
     <div {...props} className={classNames(className, "relative")}>
-      <Icon name={IconNames.SEARCH} width={20} className="absolute top-[6.25px] left-1.5 fill-neutral-900" />
+      <Icon name={IconNames.SEARCH} width={20} className="absolute top-[11px] left-4" />
       <input
         type="search"
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="placeholder:text-light-subtitle-400 text-light-subtitle-400 h-8 w-full rounded-lg border border-neutral-100 pl-8 text-neutral-1000 placeholder:text-neutral-1000"
+        className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
       />
     </div>
   );

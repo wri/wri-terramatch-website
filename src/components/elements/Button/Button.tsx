@@ -29,7 +29,7 @@ const Button: FC<IButtonProps> = props => {
 
   const variantClasses = useMemo(() => {
     const nonTextClasses =
-      "rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8";
+      "rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10";
     const nonTextSpanClasses = "flex items-center text-bold-caption-200";
     const newText =
       "flex items-center font-inter font-bold text-16 leading-snug tracking-tighter uppercase text-primary";
@@ -37,14 +37,14 @@ const Button: FC<IButtonProps> = props => {
     switch (variant) {
       case "primary":
         return {
-          container: classNames("h-fit bg-primary-500 hover:bg-primary-400 py-2  text-white", nonTextClasses),
+          container: classNames("bg-primary-500 hover:bg-primary-400 py-2  text-white", nonTextClasses),
           span: nonTextSpanClasses
         };
 
       case "secondary":
         return {
           container: classNames(
-            "bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75",
+            "bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-[10.5px]",
             nonTextClasses
           ),
           span: nonTextSpanClasses

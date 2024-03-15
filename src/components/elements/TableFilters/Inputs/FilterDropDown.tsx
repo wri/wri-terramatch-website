@@ -41,14 +41,14 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
           <div className="relative">
             <Listbox.Button
               as="div"
-              className="flex h-8 items-center justify-center gap-1 rounded-md border bg-white px-10"
+              className="pitems-center flex justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-11"
             >
               <Text variant="text-bold-caption-200" className="mt-1 w-full uppercase line-clamp-1">
                 {formatOptionsList(props.options, toArray<any>(value)) || props.placeholder}
               </Text>
               <Icon
                 name={IconNames.CHEVRON_DOWN}
-                className={classNames("mb-[2px] fill-neutral-900 transition", open && "rotate-180")}
+                className={classNames("absolute top-3 right-4 fill-neutral-900 transition", open && "rotate-180")}
                 width={20}
               />
             </Listbox.Button>

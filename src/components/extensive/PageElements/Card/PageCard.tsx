@@ -32,7 +32,7 @@ const PageCard = ({
       <When condition={!!title || !!headerChildren}>
         <div className="flex flex-wrap justify-between">
           <When condition={!!title}>
-            <Text variant="text-bold-headline-1000" className="flex-1">
+            <Text variant="text-24-bold" className="flex-1">
               {title}
             </Text>
           </When>
