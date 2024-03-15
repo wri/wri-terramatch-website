@@ -34,6 +34,7 @@ const filters = [
     key="c"
     label="User Status"
     source="verified"
+    className="select-pa"
     choices={[
       {
         id: true,

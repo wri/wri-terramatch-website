@@ -78,7 +78,7 @@ export const NurseryReportsList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" />
+      <AutocompleteInput optionText="name" label="Project" className="select-pa" />
     </ReferenceInput>,
     <ReferenceInput
       key="nursery"
@@ -90,15 +90,28 @@ export const NurseryReportsList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Nursery" />
+      <AutocompleteInput optionText="name" label="Nursery" className="select-pa" />
     </ReferenceInput>,
-    <SelectInput key="country" label="Country" source="country" choices={optionToChoices(getCountriesOptions())} />,
-    <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getReportStatusOptions())} />,
+    <SelectInput
+      key="country"
+      label="Country"
+      source="country"
+      choices={optionToChoices(getCountriesOptions())}
+      className="select-pa"
+    />,
+    <SelectInput
+      key="status"
+      label="Status"
+      source="status"
+      choices={optionToChoices(getReportStatusOptions())}
+      className="select-pa"
+    />,
     <SelectInput
       key="update_request_status"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
+      className="select-pa"
     />
   ];
 

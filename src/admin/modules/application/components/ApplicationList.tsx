@@ -94,12 +94,18 @@ export const ApplicationList = () => {
       reference={modules.fundingProgramme.ResourceName}
       label="Funding Programme"
     >
-      <AutocompleteInput optionText="name" label="Funding Programme" />
+      <AutocompleteInput optionText="name" label="Funding Programme" className="select-pa" />
     </ReferenceInput>,
     <ReferenceInput key="st" source="current_submission.uuid" reference={modules.stage.ResourceName} label="Stage">
-      <AutocompleteInput optionText="name" label="Stage" optionValue="uuid" />
+      <AutocompleteInput optionText="name" label="Stage" optionValue="uuid" className="select-pa" />
     </ReferenceInput>,
-    <SelectInput key="status" label="Status" source="current_submission_status" choices={statusChoices} />
+    <SelectInput
+      key="status"
+      label="Status"
+      source="current_submission_status"
+      choices={statusChoices}
+      className="select-pa"
+    />
   ];
 
   return (

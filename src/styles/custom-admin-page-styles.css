@@ -26,6 +26,10 @@
   @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white;
 }
 
+.select-pa div{
+ @apply !bg-white !rounded-lg
+}
+
 .button-pa {
   @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
 }
@@ -89,6 +93,14 @@
   @apply !rounded-tr-lg
 }
 
+.RaDatagrid-headerCell span {
+  @apply text-sm font-bold lg:text-base wide:text-md tracking-normal whitespace-nowrap
+}
+
+.RaDatagrid-rowCell span{
+  @apply text-sm font-normal lg:text-base wide:text-md tracking-normal text-grey-300
+}
+
 .RaList-content {
   @apply !rounded-lg
 }
@@ -97,16 +109,12 @@
   @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-grey-300 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400;
 }
 
-/* .MuiTableSortLabel-root span {
-  @apply text-sm font-bold lg:text-base wide:text-md tracking-normal whitespace-nowrap
-} */
-
 .RaAppBar-toolbar {
   @apply !bg-grey-300
 }
 
-.RaDatagrid-headerCell span {
-  @apply text-sm font-bold lg:text-base wide:text-md tracking-normal whitespace-nowrap
+.RaFilterFormInput-hideButton{
+  @apply !mb-4
 }
 
 .MuiTableCell-root {
@@ -172,4 +180,35 @@
 
 .MuiPagination-text li .Mui-selected{
   @apply !bg-transparent !text-neutral-1000 text-base font-bold lg:text-md wide:text-lg
+}
+
+.MuiTabs-flexContainer a{
+  @apply text-grey-300 text-sm lg:text-base wide:text-md capitalize !mx-4 !px-0 
+}
+
+.MuiTabs-flexContainer .Mui-selected{
+  @apply font-bold !text-grey-300
+}
+
+.MuiTabs-indicator {
+  @apply !h-1 !bg-primary-500
+}
+
+.map-field-pa > :nth-child(7) {
+  @apply col-span-3
+}
+
+.test :nth-child(1) > ul > :nth-child(7){
+  @apply col-span-3
+}
+.test :nth-child(7) > ul > :nth-child(1){
+  @apply col-span-3
+}
+
+.label-field-aside p span{
+ @apply text-sm font-normal lg:text-base wide:text-md text-grey-700
+}
+
+.label-field-aside > span{
+ @apply text-sm font-medium lg:text-base wide:text-md text-grey-300 font-primary
 }

@@ -33,12 +33,14 @@ const filters = [
   <SelectInput
     key="i"
     label="Intervention Type"
+    className="select-pa"
     source="restoration_intervention_types"
     choices={optionToChoices(getRestorationInterventionTypeOptions())}
   />,
   <SelectInput
     key="c"
     label="Project country"
+    className="select-pa"
     source="project_country"
     choices={optionToChoices(getCountriesOptions())}
   />

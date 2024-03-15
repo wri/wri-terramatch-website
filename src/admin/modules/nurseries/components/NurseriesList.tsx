@@ -76,7 +76,13 @@ export const NurseriesList: FC = () => {
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
-    <SelectInput key="country" label="Country" source="country" choices={optionToChoices(getCountriesOptions())} />,
+    <SelectInput
+      key="country"
+      label="Country"
+      source="country"
+      choices={optionToChoices(getCountriesOptions())}
+      className="select-pa"
+    />,
     <ReferenceInput
       key="organisation"
       source="organisation_uuid"
@@ -87,14 +93,21 @@ export const NurseriesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Organization" />
+      <AutocompleteInput optionText="name" label="Organization" className="select-pa" />
     </ReferenceInput>,
-    <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getStatusOptions())} />,
+    <SelectInput
+      key="status"
+      label="Status"
+      source="status"
+      choices={optionToChoices(getStatusOptions())}
+      className="select-pa"
+    />,
     <SelectInput
       key="update_request_status"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
+      className="select-pa"
     />,
     <ReferenceInput
       key="project"
@@ -106,7 +119,7 @@ export const NurseriesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" />
+      <AutocompleteInput optionText="name" label="Project" className="select-pa" />
     </ReferenceInput>
   ];
 

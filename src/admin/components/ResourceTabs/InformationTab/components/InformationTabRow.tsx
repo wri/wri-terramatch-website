@@ -1,8 +1,9 @@
-import { Divider, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { LabeledClasses } from "react-admin";
-import { Else, If, Then, When } from "react-if";
+import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
+import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 
@@ -11,23 +12,26 @@ const InformationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
 
   return (
     <>
-      <When condition={index}>
-        <Divider sx={{ marginRight: -16, marginLeft: -16 }} />
-      </When>
-      <Typography variant="h6" component="h3" marginTop={index !== 0 ? 2 : 0} className="capitalize">
+      <Text variant="text-16-semibold" className="text-grey-300">
         {props.step.title}
-      </Typography>
+      </Text>
       <List
-        className="mt-4 flex flex-col gap-4"
+        className="mt-4 grid grid-cols-3 gap-4"
         items={entries}
         render={entry => (
           <div>
             <Typography className={LabeledClasses.label}>
-              <span className="capitalize">{entry.title}</span>
+              <Text variant="text-14-light" className="capitalize text-grey-700">
+                {entry.title}
+              </Text>
             </Typography>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
-                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }} />
+                <Text
+                  variant="text-14-semibold"
+                  className="text-grey-300"
+                  dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }}
+                />
               </Then>
               <Else>{formatEntryValue(entry.value)}</Else>
             </If>

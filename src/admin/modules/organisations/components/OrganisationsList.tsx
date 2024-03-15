@@ -41,6 +41,7 @@ const filters = [
     key="c"
     label="Organisation Type"
     source="type"
+    className="select-pa"
     choices={optionToChoices(getOrganisationTypeOptions())}
   />
 ];

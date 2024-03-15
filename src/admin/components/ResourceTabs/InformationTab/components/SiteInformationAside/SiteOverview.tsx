@@ -1,10 +1,11 @@
-import { Check } from "@mui/icons-material";
-import { Button, Card, Grid, Stack, Typography } from "@mui/material";
+import { Card, Grid, Stack } from "@mui/material";
 import { FC, useState } from "react";
 import { BooleanField, FunctionField, Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import Button from "@/components/elements/Button/Button";
+import Text from "@/components/elements/Text/Text";
 
 const SiteOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
@@ -14,24 +15,24 @@ const SiteOverview: FC = () => {
   return (
     <>
       <Card sx={{ padding: 3.75 }}>
-        <Typography variant="h5" marginBottom={3.75}>
+        <Text variant="text-16-semibold" className="mb-6 text-grey-300">
           Site Overview
-        </Typography>
+        </Text>
 
         <Stack gap={3}>
-          <Labeled label="Site">
+          <Labeled label="Site" className="label-field-aside">
             <TextField source="name" />
           </Labeled>
 
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={6} item>
-              <Labeled label="Framework">
+              <Labeled label="Framework" className="label-field-aside">
                 <FrameworkField />
               </Labeled>
             </Grid>
 
             <Grid xs={6} item>
-              <Labeled label="Site Type">
+              <Labeled label="Site Type" className="label-field-aside">
                 <FunctionField
                   source="control_site"
                   label="Site Type"
@@ -41,13 +42,13 @@ const SiteOverview: FC = () => {
             </Grid>
 
             <Grid xs={6} item>
-              <Labeled label="Monitored Data">
+              <Labeled label="Monitored Data" className="label-field-aside">
                 <BooleanField source="has_monitoring_data" looseValue />
               </Labeled>
             </Grid>
 
             <Grid xs={6} item>
-              <Labeled label="Status">
+              <Labeled label="Status" className="label-field-aside">
                 <TextField source="readable_status" />
               </Labeled>
             </Grid>
@@ -55,15 +56,15 @@ const SiteOverview: FC = () => {
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
-              variant="outlined"
+              variant="secondary-blue"
               disabled={record?.status === "needs-more-information"}
               onClick={() => setStatusModal("moreinfo")}
             >
               Request More Info
             </Button>
             <Button
-              variant="contained"
-              startIcon={<Check />}
+              variant="secondary-blue"
+              // startIcon={<Check />}
               disabled={record?.status === "approved"}
               onClick={() => setStatusModal("approve")}
             >

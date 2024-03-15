@@ -90,14 +90,13 @@ const InformationTab: FC<IProps> = props => {
             <Stack gap={4}>
               <Card sx={{ padding: 4 }}>
                 <List
-                  className="space-y-8"
+                  className="test space-y-12"
                   items={formSteps}
                   render={(step, index) => (
                     <InformationTabRow index={index} step={step} values={values} steps={formSteps} />
                   )}
                 />
               </Card>
-
               <When condition={record}>
                 <TreeSpeciesTable uuid={record.uuid} entity={resource} />
               </When>
