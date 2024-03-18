@@ -23,7 +23,6 @@ import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler"
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFramework } from "@/hooks/useFramework";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
-import CompletedReportsTab from "@/pages/project/[uuid]/tabs/CompletedReports";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import GoalsAndProgressTab from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
@@ -169,11 +168,6 @@ const ProjectDetailPage = () => {
                 reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
               />
             )
-          },
-          {
-            key: "completed-tasks",
-            title: t("Completed Reports"),
-            body: <CompletedReportsTab project={project} />
           }
         ]}
         containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
