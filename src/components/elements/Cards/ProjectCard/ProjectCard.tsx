@@ -97,7 +97,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
             </Then>
             <Else>
               <Button as={Link} variant="secondary" href={`/project/${project.uuid}?tab=reporting-tasks`}>
-                {t("View reporting tasks ({count})", { count: project.total_reporting_tasks })}
+                {t("View reporting tasks")}
               </Button>
               <Button as={Link} href={`/project/${project.uuid}`}>
                 {t("View Project")}
