@@ -29,7 +29,7 @@ export function ServerSideTable<TData extends RowData>({
 }: ServerSideTableProps<TData>) {
   const defaultPageSize = 5;
 
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(props.initialTableState?.sorting ?? []);
   const [filters, setFilter] = useState<FilterValue[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);

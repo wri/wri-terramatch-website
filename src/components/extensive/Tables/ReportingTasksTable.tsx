@@ -28,7 +28,8 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
     },
     {
       keepPreviousData: true,
-      onSuccess: onFetch
+      onSuccess: onFetch,
+      enabled: queryParams != null
     }
   );
 
@@ -38,6 +39,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
       data={reportingTasks?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      initialTableState={{ sorting: [{ id: "due_at", desc: true }] }}
       columns={[
         {
           accessorKey: "due_at",
@@ -53,6 +55,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
           }
         },
         {
+          id: "title",
           accessorKey: "due_at",
           header: t("Title"),
           enableSorting: false,
