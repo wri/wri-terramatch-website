@@ -305,7 +305,7 @@ const ReportingTaskPage = () => {
                 </Button>
               </Case>
               <Case condition={record.completion_status === "needs-more-information"}>
-                <Button as={Link} href={`/entity/${record.type}s/edit/${record.uuid}?mode=provide-feedback-entity`}>
+                <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
                   {t("Provide Feedback")}
                 </Button>
               </Case>
