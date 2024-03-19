@@ -108,17 +108,21 @@ const ReportingTaskPage = () => {
     const reports =
       reportsData?.data?.map((report: any) => {
         let completion_status = "started";
-        const statuses = [report.status, report.update_request_status] as string[];
+        const { status: reportStatus, update_request_status: urStatus } = report;
+        // If there is no submitted update request in play, then the report status is the source of
+        // truth, otherwise update the UI in accordance with the active update request's status.
+        const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(urStatus);
+        const status = hasSubmittedUpdateRequest ? urStatus : reportStatus;
 
-        if (statuses.includes("needs-more-information")) {
+        if (status === "needs-more-information") {
           completion_status = "needs-more-information";
         } else if (report.nothing_to_report) {
           completion_status = "nothing-to-report";
-        } else if (statuses.includes("awaiting-approval")) {
+        } else if (status === "awaiting-approval") {
           completion_status = "awaiting-approval";
-        } else if (report.status === "approved") {
+        } else if (status === "approved") {
           completion_status = "approved";
-        } else if (report.status === "due") {
+        } else if (status === "due") {
           completion_status = "not-started";
         }
 
