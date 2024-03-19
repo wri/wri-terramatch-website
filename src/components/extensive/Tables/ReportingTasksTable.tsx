@@ -5,17 +5,16 @@ import { useState } from "react";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { GetV2ProjectsUUIDSitesResponse, useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
+import { useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import { useGetReportingWindow } from "@/hooks/useGetReportingWindow";
 
 interface ReportingTasksTableProps {
   projectUUID: string;
   reportingPeriod: "quarterly" | "bi-annually";
-  onFetch?: (data: GetV2ProjectsUUIDSitesResponse) => void;
 }
 
-const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: ReportingTasksTableProps) => {
+const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTableProps) => {
   const t = useT();
   const { format } = useDate();
   const [queryParams, setQueryParams] = useState();
@@ -28,7 +27,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
     },
     {
       keepPreviousData: true,
-      onSuccess: onFetch
+      enabled: queryParams != null
     }
   );
 
@@ -38,6 +37,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
       data={reportingTasks?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      initialTableState={{ sorting: [{ id: "due_at", desc: true }] }}
       columns={[
         {
           accessorKey: "due_at",
@@ -53,6 +53,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
           }
         },
         {
+          id: "title",
           accessorKey: "due_at",
           header: t("Title"),
           enableSorting: false,
