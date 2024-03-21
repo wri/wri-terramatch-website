@@ -14,7 +14,7 @@ const QuickActions: FC = () => {
   const [invitePartnerDialogOpen, setInvitePartnerDialogOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleExport = (entity: "project-reports" | "sites" | "nurseries") => {
+  const handleExport = (entity: "project-reports" | "sites" | "nurseries" | "shapefiles") => {
     if (!record) return;
 
     fetchGetV2ProjectsUUIDENTITYExport({
@@ -23,7 +23,11 @@ const QuickActions: FC = () => {
         entity
       }
     }).then((response: any) => {
-      downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
+      if (entity === "shapefiles") {
+        downloadFileBlob(response, `${record.name} shapefiles.zip`);
+      } else {
+        downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
+      }
     });
   };
 
@@ -64,6 +68,9 @@ const QuickActions: FC = () => {
         </Button>
         <Button variant="outlined" onClick={() => handleExport("sites")}>
           Export Site Reports
+        </Button>
+        <Button variant="outlined" onClick={() => handleExport("shapefiles")}>
+          Export Shapefiles
         </Button>
         <Divider sx={{ marginBottom: 2 }} />
       </Stack>

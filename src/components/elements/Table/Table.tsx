@@ -65,7 +65,7 @@ function Table<TData extends RowData>({
   ...props
 }: TableProps<TData>) {
   const t = useT();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(initialTableState?.sorting ?? []);
   const [filters, setFilters] = useState<FilterValue[]>([]);
 
   const {
