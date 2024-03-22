@@ -104,7 +104,8 @@ export enum IconNames {
   FUJDING_PROGRAMMES = "funding-programmes",
   PITCHES = "pitches",
   ORGANISATIONS = "organisations",
-  USERS = "users"
+  USERS = "users",
+  CHEVRON_LEFT_PA = "chevron-left-pa"
 }
 
 export interface IconProps {

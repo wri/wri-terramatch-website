@@ -11,38 +11,25 @@ import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generat
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { EntityName } from "@/types/common";
 
-import TreeSpeciesTable from "../../Tables/TreeSpeciesTable";
-import InformationTabRow from "./components/InformationTabRow";
-import NurseryInformationAside from "./components/NurseryInformationAside";
-import ProjectInformationAside from "./components/ProjectInformationAside";
-import ReportInformationAside from "./components/ReportInformationAside";
-import SiteInformationAside from "./components/SiteInformationAside";
+import InformationTabRow from "../InformationTab/components/InformationTabRow";
+import PolygonValidationAside from "./PolygonValidationAside";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
+  label: string;
 }
 
 const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
   switch (type) {
-    case "projects":
-      return <ProjectInformationAside />;
     case "sites":
-      return <SiteInformationAside />;
-    case "nurseries":
-      return <NurseryInformationAside />;
-    case "project-reports":
-      return <ReportInformationAside type={type} />;
-    case "site-reports":
-      return <ReportInformationAside type={type} parent={{ label: "Site", source: "site.name" }} />;
-    case "nursery-reports":
-      return <ReportInformationAside type={type} parent={{ label: "Nursery", source: "nursery.name" }} />;
+      return <PolygonValidationAside />;
     default:
       return null;
   }
 };
 
-const InformationTab: FC<IProps> = props => {
-  const { isLoading: ctxLoading, record, resource } = useShowContext();
+const PolygonValidationTab: FC<IProps> = props => {
+  const { isLoading: ctxLoading, record } = useShowContext();
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -63,28 +50,9 @@ const InformationTab: FC<IProps> = props => {
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
     : normalizedFormDefaultValue(response?.data.answers!, formSteps);
 
-  const tabTitle = (() => {
-    switch (props.type) {
-      case "projects":
-        return "Project Information";
-      case "sites":
-        return "Site Information";
-      case "nurseries":
-        return "Nursery Information";
-      case "project-reports":
-        return "Reported Data";
-      case "site-reports":
-        return "Reported Data";
-      case "nursery-reports":
-        return "Reported Data";
-      default:
-        return "Information";
-    }
-  })();
-
   return (
     <When condition={!isLoading}>
-      <TabbedShowLayout.Tab label={tabTitle} {...props}>
+      <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={8} item>
             <Stack gap={4}>
@@ -97,10 +65,6 @@ const InformationTab: FC<IProps> = props => {
                   )}
                 />
               </Card>
-              <When condition={record}>
-                <TreeSpeciesTable uuid={record.uuid} entity={resource} />
-              </When>
-
               <When condition={props.type === "projects"}>
                 <MonitoringPartnersTable projectUUID={record?.uuid} />
               </When>
@@ -116,4 +80,4 @@ const InformationTab: FC<IProps> = props => {
   );
 };
 
-export default InformationTab;
+export default PolygonValidationTab;

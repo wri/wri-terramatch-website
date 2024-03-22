@@ -1,10 +1,10 @@
-import { Card, Grid, Stack } from "@mui/material";
+import { Check } from "@mui/icons-material";
+import { Button, Card, Grid, Stack } from "@mui/material";
 import { FC, useState } from "react";
 import { BooleanField, FunctionField, Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
-import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 
 const SiteOverview: FC = () => {
@@ -14,7 +14,7 @@ const SiteOverview: FC = () => {
 
   return (
     <>
-      <Card sx={{ padding: 3.75 }}>
+      <Card sx={{ padding: 3.75 }} className="!shadow-none">
         <Text variant="text-16-semibold" className="mb-6 text-grey-300">
           Site Overview
         </Text>
@@ -56,15 +56,15 @@ const SiteOverview: FC = () => {
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
-              variant="secondary-blue"
+              className="button-aside-pa"
               disabled={record?.status === "needs-more-information"}
               onClick={() => setStatusModal("moreinfo")}
             >
               Request More Info
             </Button>
             <Button
-              variant="secondary-blue"
-              // startIcon={<Check />}
+              className="button-aside-pa"
+              startIcon={<Check />}
               disabled={record?.status === "approved"}
               onClick={() => setStatusModal("approve")}
             >

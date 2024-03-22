@@ -105,13 +105,18 @@ module.exports = {
         300: "#353535",
         600: "#797A7B",
         700: "#868686",
-        800: "#E9EDF0"
+        730: "#B8C3C6",
+        740: "#E0E0E0",
+        750: "#E6EAEB",
+        800: "#E9EDF0",
+        900: "#F6FAFD"
       }
     },
 
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
-      "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px
+      "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
+      none: "0 0 #0000"
     },
     fontFamily: {
       primary: ["Inter"],

@@ -7,6 +7,7 @@ import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab
 import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab";
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
+import PolygonValidationTab from "@/admin/components/ResourceTabs/PolygonValidationTab";
 import ShowTitle from "@/admin/components/ShowTitle";
 
 const SiteShow: FC = () => {
@@ -14,9 +15,11 @@ const SiteShow: FC = () => {
     <Show
       title={<ShowTitle moduleName="Site" getTitle={record => record?.name} />}
       actions={<ShowActions titleSource="name" resourceName="site" />}
+      className="-mt-[50px] bg-neutral-100"
     >
       <TabbedShowLayout>
         <InformationTab type="sites" />
+        <PolygonValidationTab label="Polygon Validation" type={"sites"} />
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />
         <ChangeRequestsTab entity="sites" singularEntity="site" />

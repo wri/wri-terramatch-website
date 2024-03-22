@@ -51,8 +51,9 @@ const Button: FC<IButtonProps> = props => {
         };
       case "secondary-blue":
         return {
-          container: "bg-white border border-primary-500 disabled:border-neutral-1000 px-4 py-[10.5px]",
-          span: "text-primary-500"
+          container:
+            "group bg-white border border-primary-500 uppercase leading-[normal] px-4 py-[10.5px] rounded-lg hover:bg-grey-900 disabled:border-transparent disabled:bg-grey-750",
+          span: "text-primary-500 text-12-bold group-disabled:text-grey-730"
         };
       case "white":
         return {
