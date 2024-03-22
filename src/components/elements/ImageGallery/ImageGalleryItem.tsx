@@ -42,7 +42,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           height: 211,
           width: 1440
         }}
-        className="h-[211px] w-full"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg"
       >
         <div className="flex justify-between p-3">
           {/* Left */}
@@ -68,11 +68,11 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
         </div>
       </ImageWithChildren>
 
-      <div className="px-8 py-4">
-        <Text variant="text-bold-body-300">{data.label}</Text>
+      <div className="px-2 py-4">
+        <Text variant="text-16-bold">{data.label}</Text>
 
         {data.subtitle && (
-          <Text variant="text-light-body-300" className="mt-2">
+          <Text variant="text-16-light" className="mt-2">
             {data.subtitle}
           </Text>
         )}

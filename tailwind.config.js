@@ -8,7 +8,8 @@ module.exports = {
         sx: "460px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
         wide: "2500px",
-        lg: "1900px"
+        lg: "1900px",
+        sm: "1200px"
       },
       width: {
         "fit-content": "fit-content"
@@ -32,6 +33,25 @@ module.exports = {
       },
       backgroundImage: {
         imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)"
+      },
+      gridTemplateColumns: {
+        1: "repeat(1, minmax(0, 1fr))",
+        2: "repeat(2, minmax(0, 1fr))",
+        3: "repeat(3, minmax(0, 1fr))",
+        4: "repeat(4, minmax(0, 1fr))",
+        5: "repeat(5, minmax(0, 1fr))",
+        6: "repeat(6, minmax(0, 1fr))",
+        7: "repeat(7, minmax(0, 1fr))",
+        8: "repeat(8, minmax(0, 1fr))",
+        9: "repeat(9, minmax(0, 1fr))",
+        10: "repeat(10, minmax(0, 1fr))",
+        11: "repeat(11, minmax(0, 1fr))",
+        12: "repeat(12, minmax(0, 1fr))",
+        13: "repeat(13, minmax(0, 1fr))",
+        14: "repeat(14, minmax(0, 1fr))",
+        15: "repeat(15, minmax(0, 1fr))",
+        16: "repeat(16, minmax(0, 1fr))",
+        17: "repeat(17, minmax(0, 1fr))"
       }
     },
     colors: {
@@ -60,6 +80,7 @@ module.exports = {
         DEFAULT: "#009344",
         600: "#29C499",
         500: "#009344",
+        450: "#3BAE5B",
         400: "#9EDD8F",
         300: "#C7ECC4",
         200: "#E0F3E9",
@@ -83,6 +104,7 @@ module.exports = {
       tertiary: {
         DEFAULT: "#F0AB00",
         600: "#FF8938",
+        550: "#FFA160",
         500: "#F0AB00",
         400: "#F3C148",
         300: "#F6D279",
@@ -97,9 +119,11 @@ module.exports = {
         300: "#F9D7D7",
         200: "#FBE6E6",
         100: "#FFF2F2"
+      },
+      blueCustom: {
+        DEFAULT: "#13487A"
       }
     },
-
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
       "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px

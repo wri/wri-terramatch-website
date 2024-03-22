@@ -6,6 +6,8 @@ import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyFi
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 
+import Icon, { IconNames } from "../../Icon/Icon";
+
 export interface PageCardProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
@@ -15,6 +17,7 @@ export interface PageCardProps
   isEmpty?: boolean;
   emptyStateProps?: EmptyFieldProps;
   gap?: 4 | 8;
+  tooltip?: string;
 }
 
 const PageCard = ({
@@ -25,6 +28,7 @@ const PageCard = ({
   emptyStateProps,
   isEmpty,
   gap = 8,
+  tooltip,
   ...props
 }: PageCardProps) => {
   return (
@@ -32,8 +36,12 @@ const PageCard = ({
       <When condition={!!title || !!headerChildren}>
         <div className="flex flex-wrap justify-between">
           <When condition={!!title}>
-            <Text variant="text-24-bold" className="flex-1">
+            <Text variant="text-24-bold" className="flex flex-1 items-baseline">
               {title}
+              <When condition={!!tooltip}>
+                &nbsp;
+                <Icon name={IconNames.IC_INFO} className="h-3 w-3 lg:h-4 lg:w-4" />
+              </When>
             </Text>
           </When>
           <When condition={!!title}>{headerChildren}</When>

@@ -85,32 +85,44 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             </Button>
           }
         >
-          <div className="flex w-full flex-wrap gap-6">
-            <When condition={isPPC}>
-              <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} className="w-[170px]" />
-            </When>
-            <GoalProgressCard
-              label={t("Hectares Restored Goal")}
-              value={site.hectares_to_restore_goal}
-              className="w-[170px]"
-            />
-            <GoalProgressCard
-              label={t("Trees restored")}
-              hasProgress={false}
-              items={[
-                { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: site.trees_planted_count },
-                { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: site.seeds_planted_count },
-                {
-                  iconName: IconNames.REFRESH_CIRCLE,
-                  label: t("Trees Regenerating"),
-                  value: site.regenerated_trees_count
-                }
-              ]}
-              className="flex-1"
-            />
+          <div className="flex w-full">
+            <div className="grid w-[50%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
+              <When condition={isPPC}>
+                <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} className="" />
+              </When>
+              <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
+              <When condition={isPPC}>
+                <GoalProgressCard
+                  label={t("Trees Restored ")}
+                  value={site.workday_count}
+                  labelValue={t("of 2,500,000")}
+                />
+              </When>
+              <GoalProgressCard
+                label={t("Hectares Restored")}
+                value={site.hectares_to_restore_goal}
+                labelValue={t("out of 2,500")}
+              />
+            </div>
+            <div>
+              <GoalProgressCard
+                label={t("Trees restored")}
+                hasProgress={false}
+                items={[
+                  { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: site.trees_planted_count },
+                  { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: site.seeds_planted_count },
+                  {
+                    iconName: IconNames.REFRESH_CIRCLE,
+                    label: t("Trees Regenerating"),
+                    value: site.regenerated_trees_count
+                  }
+                ]}
+                className="flex-1"
+              />
+            </div>
           </div>
         </PageCard>
-        <PageCard title={t("Site Area")}>
+        <PageCard title={t("Project Area")}>
           <Map className="rounded-lg" geojson={geoJSON} imageLayerGeojson={imagesGeoJson} />
         </PageCard>
       </PageRow>

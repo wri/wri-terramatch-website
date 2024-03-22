@@ -44,6 +44,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   additionalPolygonProperties?: AdditionalPolygonProperties;
   captureAdditionalPolygonProperties?: boolean;
   hasControls?: boolean;
+  siteData?: boolean;
 }
 
 export const Map = ({
@@ -57,8 +58,10 @@ export const Map = ({
   hasControls = true,
   additionalPolygonProperties,
   captureAdditionalPolygonProperties,
+  siteData = false,
   ...props
 }: MapProps) => {
+  console.log(siteData, "SiTEEEEEEEEEEE");
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
 
   const validateGeoJSON = function (map: IMap, source: string) {
@@ -152,7 +155,7 @@ export const Map = ({
           </When>
         </ControlGroup>
         <When condition={!editable}>
-          <ControlGroup position="bottom-left">
+          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />
           </ControlGroup>
           <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} />
@@ -162,6 +165,9 @@ export const Map = ({
         <ControlGroup position="bottom-right">
           <FeatureDetailCard editable={editable} additionalPolygonProperties={additionalPolygonProperties} />
         </ControlGroup>
+      </When>
+      <When condition={!!siteData}>
+        <div className="absolute z-10 h-full w-[22vw] backdrop-blur-xl" />
       </When>
     </MapProvider>
   );

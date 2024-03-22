@@ -28,16 +28,12 @@ const NavbarItem = (props: NavbarItemProps) => {
       <Link href={props.disabled ? "#" : props.href} onClick={handleClose}>
         <div className={classNames("flex items-center", props.disabled && "cursor-default")}>
           <When condition={props.iconName}>
-            <Icon name={props.iconName!} width={16} className="mr-2 hidden fill-neutral-700 lg:block" />
+            <Icon name={props.iconName!} width={16} className="mr-2 hidden fill-neutral-700 sm:block" />
           </When>
           <Text
             as="span"
-            variant={props.active ? "text-heading-500" : "text-heading-400"}
-            className={classNames(
-              "whitespace-nowrap text-white",
-              props.active ? "lg:text-body-500" : "lg:text-body-300",
-              props.disabled && "cursor-default"
-            )}
+            variant={props.active ? "text-14-bold" : "text-14-light"}
+            className={classNames("whitespace-nowrap text-white", props.disabled && "cursor-default")}
           >
             {props.children}
           </Text>

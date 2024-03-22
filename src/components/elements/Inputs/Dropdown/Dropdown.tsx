@@ -177,7 +177,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Listbox.Options as="div" className="border-light  mt-2 max-h-[400px] overflow-auto rounded-lg">
+              <Listbox.Options
+                as="div"
+                className="border-light absolute mt-2 max-h-[400px] w-full overflow-auto rounded-lg bg-white"
+              >
                 {options.map(option => {
                   let isSelected;
                   if (typeof selected === "string" || Array.isArray(selected)) {

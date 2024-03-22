@@ -176,7 +176,10 @@ function Table<TData extends RowData>({
               {getRowModel().rows.map(row => (
                 <tr
                   key={row.id}
-                  className={classNames("rounded-lg", variant === "primary" ? "bg-white shadow" : "bg-neutral-50")}
+                  className={classNames(
+                    "rounded-lg",
+                    variant === "primary" ? "border-2 border-neutral-200 " : "bg-neutral-50"
+                  )}
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell<TData> key={cell.id} cell={cell} />

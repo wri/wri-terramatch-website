@@ -29,7 +29,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   ...rest
 }) => {
   const value = _val || 0;
-  const valueText = !limit ? value : `${value}/${limit}`;
+  const valueText = value;
 
   // Calculates percentage and clamps between 0 and 100
   const progressValue = !limit ? 0 : Math.min(Math.max((value / limit) * 100, 0), 100);
@@ -44,6 +44,9 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           </Text>
           <Text variant="text-24-bold" className="flex w-full items-baseline">
             {valueText}&nbsp;
+            <When condition={!!limit}>
+              <Text variant="text-16-light">of {limit}</Text>
+            </When>
             <Text variant="text-16-light">{labelValue}</Text>
           </Text>
           <LinerProgressbar

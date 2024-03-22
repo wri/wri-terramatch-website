@@ -90,7 +90,15 @@ export enum IconNames {
   NURSERY_CIRCLE = "nursery-circle",
   IC_ERROR = "ic-error",
   IC_WARNING = "ic-warning",
-  IC_SUCCESS = "ic-success"
+  IC_SUCCESS = "ic-success",
+  IC_INFO = "ic-info",
+  GRAPH1 = "graph-1",
+  GRAPH2 = "graph-2",
+  GRAPH3 = "graph-3",
+  GRAPH4 = "graph-4",
+  GRAPH5 = "graph-5",
+  IC_MORE_OUTLINED = "ic-more-outlined",
+  IC_SITE_VIEW = "ic-site-view"
 }
 
 export interface IconProps {

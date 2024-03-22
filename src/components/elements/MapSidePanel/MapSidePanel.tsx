@@ -35,14 +35,14 @@ const MapSidePanel = ({
           {title}
         </Text>
       </div>
-      <div className="h-[calc(100%-59px)] rounded-bl-lg">
+      <div className="h-[calc(100%-38px)] rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-light-subtitle-400" className="mt-8 text-center">
             {emptyText || t("No result")}
           </Text>
         )}
         <div
-          className="h-[calc(100%-16px)] space-y-4 overflow-y-auto py-4"
+          className="h-full space-y-4 overflow-y-auto"
           onScroll={e => {
             //@ts-ignore
             const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
