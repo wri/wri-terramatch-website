@@ -5,7 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 interface IProps {
-  moduleName: string;
+  moduleName?: string;
   getTitle: (record: RaRecord) => string;
 }
 
