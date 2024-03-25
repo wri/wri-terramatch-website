@@ -88,6 +88,7 @@ export enum IconNames {
   REFRESH_CIRCLE = "refresh-circle",
   SITE_CIRCLE = "site-circle",
   NURSERY_CIRCLE = "nursery-circle",
+  CLEAR = "clear",
   IC_ERROR = "ic-error",
   IC_WARNING = "ic-warning",
   IC_SUCCESS = "ic-success"
