@@ -10,10 +10,10 @@ export const DrawerFooterPolygon = (props: DrawerFooterPolygonProps) => {
   const t = useT();
   return (
     <div className="mt-auto flex items-center justify-end gap-5">
-      <Button variant="semiRed" onClick={onDelete}>
+      <Button variant="semi-red" onClick={onDelete}>
         {t("Delete")}
       </Button>
-      <Button variant="semiBlack" onClick={onCreate}>
+      <Button variant="semi-black" onClick={onCreate}>
         {t("Create")}
       </Button>
     </div>

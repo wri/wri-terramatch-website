@@ -8,7 +8,7 @@ import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
 export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
   as?: ElementType;
   iconProps?: IconProps;
-  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky" | "semiBlack" | "semiRed";
+  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky" | "semi-black" | "semi-red";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -65,14 +65,14 @@ const Button: FC<IButtonProps> = props => {
       case "link":
         return { container: "", span: "text-light-body-300 uppercase underline" };
 
-      case "semiBlack":
+      case "semi-black":
         return {
           container:
             "group bg-white border-[3px] w-full border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-14-bold text-neutral-1000 group-hover:text-primary-500"
         };
 
-      case "semiRed":
+      case "semi-red":
         return {
           container:
             "group bg-white border-[3px] w-full border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
