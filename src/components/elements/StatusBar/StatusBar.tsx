@@ -44,7 +44,7 @@ const StatusBar = ({ title, status, children, description = "", className, ...pr
 
   return (
     <div {...props} className={classnames(className, statusProps.classNames, "w-full")}>
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-4 px-10 xl:px-0">
+      <div className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-4 px-10 xl:px-0">
         <div className="flex flex-1 items-start">
           <StatusPill status={status} />
           <div>

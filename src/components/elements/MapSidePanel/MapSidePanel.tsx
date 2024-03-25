@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Fragment, HTMLAttributes, useState } from "react";
 
 import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
-import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 
@@ -31,11 +30,12 @@ const MapSidePanel = ({
 
   return (
     <div {...props} className={classNames(className)}>
-      <div className="rounded-tl-lg bg-primary-200 px-5 py-4">
-        <Text variant="text-bold-subtitle-400">{title}</Text>
+      <div className="mb-3 rounded-tl-lg">
+        <Text variant="text-16-bold" className="text-white">
+          {title}
+        </Text>
       </div>
-      <div className="h-[calc(100%-59px)] rounded-bl-lg border-2 border-t-0 border-neutral-100 p-4">
-        <FilterSearchBox onChange={onSearch} className="w-full flex-shrink-0" placeholder={t("Search")} />
+      <div className="h-[calc(100%-59px)] rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-light-subtitle-400" className="mt-8 text-center">
             {emptyText || t("No result")}
