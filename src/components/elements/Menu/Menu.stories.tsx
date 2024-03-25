@@ -34,7 +34,7 @@ const itemsPrimaryMenu = [
 export const Primary: Story = {
   args: {
     menu: itemsPrimaryMenu,
-    isOpen: true
+    isDefaultOpen: true
   },
   decorators: [
     StoryComponent => (
@@ -50,7 +50,7 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     menu: itemsPrimaryMenu,
-    isOpen: true,
+    isDefaultOpen: true,
     variant: MENU_VARIANT_BORDER_B_ORANGE
   },
   decorators: [
@@ -67,7 +67,7 @@ export const Secondary: Story = {
 export const PlacementBottomRight: Story = {
   args: {
     menu: itemsPrimaryMenu,
-    isOpen: true,
+    isDefaultOpen: true,
     placement: MENU_PLACEMENT_BOTTOM_RIGHT
   },
   decorators: [
@@ -84,7 +84,7 @@ export const PlacementBottomRight: Story = {
 export const PlacementBottomLeft: Story = {
   args: {
     menu: itemsPrimaryMenu,
-    isOpen: true,
+    isDefaultOpen: true,
     placement: MENU_PLACEMENT_BOTTOM_LEFT
   },
   decorators: [
@@ -101,7 +101,7 @@ export const PlacementBottomLeft: Story = {
 export const PlacementRightTop: Story = {
   args: {
     menu: itemsPrimaryMenu,
-    isOpen: true,
+    isDefaultOpen: true,
     placement: MENU_PLACEMENT_RIGHT_TOP
   },
   decorators: [
