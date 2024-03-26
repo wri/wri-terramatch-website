@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { ReactNode, useState } from "react";
 import { When } from "react-if";
 
@@ -20,6 +21,7 @@ export interface MenuProps {
   variant?: string;
   menuItemVariant?: string;
   children: ReactNode;
+  className?: string;
 }
 
 const Menu = (props: MenuProps) => {
@@ -29,11 +31,12 @@ const Menu = (props: MenuProps) => {
     menuItemVariant = MENU_ITEM_VARIANT_BLUE,
     variant,
     children,
-    isDefaultOpen
+    isDefaultOpen,
+    className
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   return (
-    <div className="relative" onClick={() => setIsOpen(!isOpen)}>
+    <div className={classNames(className, "relative")} onClick={() => setIsOpen(!isOpen)}>
       {children}
       <When condition={isOpen}>
         <div

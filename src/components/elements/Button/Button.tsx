@@ -8,7 +8,7 @@ import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
 export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
   as?: ElementType;
   iconProps?: IconProps;
-  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky" | "secondary-blue";
+  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky" | "secondary-blue" | "sky-pa" | "white-pa";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -37,7 +37,7 @@ const Button: FC<IButtonProps> = props => {
     switch (variant) {
       case "primary":
         return {
-          container: classNames("bg-primary-500 hover:bg-primary-400 py-2  text-white", nonTextClasses),
+          container: classNames("bg-primary-500 hover:bg-primary-400 py-2 text-white", nonTextClasses),
           span: nonTextSpanClasses
         };
 
@@ -60,10 +60,21 @@ const Button: FC<IButtonProps> = props => {
           container: classNames("h-fit bg-white py-4 rounded-lg"),
           span: newText
         };
+      case "white-pa":
+        return {
+          container: "py-2 px-3 bg-white rounded-lg text-grey-400 border border-grey-750 hover:bg-grey-900",
+          span: "flex items-center text-bold-caption-200 text-inherit uppercase"
+        };
       case "sky":
         return {
           container: classNames("h-fit py-4 bg-primary-200 rounded-lg"),
           span: newText
+        };
+      case "sky-pa":
+        return {
+          container:
+            "group py-2 px-3 bg-primary-200 rounded-lg text-grey-400 border border-grey-750 hover:text-primary-500",
+          span: "flex items-center text-bold-caption-200 text-inherit uppercase"
         };
       case "text":
         return { container: "", span: "text-bold-body-300" };

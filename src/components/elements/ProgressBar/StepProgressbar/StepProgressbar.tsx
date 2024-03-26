@@ -13,7 +13,7 @@ const StepProgressbar = ({ value, color = "primary", labels, className, ...rest 
   const countLabels = labels?.length || 0;
 
   return (
-    <div className="w-full">
+    <div className="h-fit w-full">
       <div className="relative w-full">
         <div className="absolute top-[-5px] w-full">
           <div className="flex w-full justify-between">

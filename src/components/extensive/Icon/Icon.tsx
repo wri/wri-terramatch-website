@@ -105,7 +105,14 @@ export enum IconNames {
   PITCHES = "pitches",
   ORGANISATIONS = "organisations",
   USERS = "users",
-  CHEVRON_LEFT_PA = "chevron-left-pa"
+  CHEVRON_LEFT_PA = "chevron-left-pa",
+  TRASH_PA = "trash-pa",
+  EDIT = "edit",
+  PLUS_PA = "plus-pa",
+  DOWNLOAD_PA = "download-pa",
+  PLUS_CIRCLE = "plus-circle",
+  POLYGON = "polygon",
+  SEARCH_PA = "search-pa"
 }
 
 export interface IconProps {
