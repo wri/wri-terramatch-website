@@ -113,7 +113,9 @@ export enum IconNames {
   DOWNLOAD_PA = "download-pa",
   PLUS_CIRCLE = "plus-circle",
   POLYGON = "polygon",
-  SEARCH_PA = "search-pa"
+  SEARCH_PA = "search-pa",
+  SEND = "send",
+  LINK_PA = "link-pa"
 }
 
 export interface IconProps {

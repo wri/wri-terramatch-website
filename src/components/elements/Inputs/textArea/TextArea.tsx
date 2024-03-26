@@ -1,8 +1,10 @@
 import cn from "classnames";
-import { DetailedHTMLProps, TextareaHTMLAttributes, useId } from "react";
+import { ChangeEvent, DetailedHTMLProps, TextareaHTMLAttributes, useId, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
+
+import { useTextAreaAuto } from "./TextArea.hooks";
 
 export interface TextAreaProps
   extends InputWrapperProps,
@@ -11,17 +13,26 @@ export interface TextAreaProps
   formHook?: UseFormReturn<any>;
 }
 
-const TextArea = ({ formHook, className, ...inputWrapperProps }: TextAreaProps) => {
+const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWrapperProps }: TextAreaProps) => {
   const { label, description, containerClassName, error, required, feedbackRequired, ...inputProps } =
     inputWrapperProps;
   const id = useId();
   const inputClasses = cn(
     "min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent",
-    { className: className },
+    className,
     { "border-light ": !error },
     { ["border border-error focus:border-error"]: error }
   );
 
+  const [textValue, setTextValue] = useState("");
+  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    if (externalOnChange) {
+      externalOnChange(event);
+    }
+    setTextValue(event.target.value);
+  };
+  const { textareaProps } = useTextAreaAuto(handleTextAreaChange, textValue?.toString());
+  const mergedProps = { ...inputProps, ...textareaProps };
   return (
     <InputWrapper
       inputId={id}
@@ -32,7 +43,13 @@ const TextArea = ({ formHook, className, ...inputWrapperProps }: TextAreaProps) 
       required={required}
       feedbackRequired={feedbackRequired}
     >
-      <textarea {...inputProps} {...formHook?.register(inputWrapperProps.name)} id={id} className={inputClasses} />
+      <textarea
+        {...mergedProps}
+        onChange={handleTextAreaChange}
+        {...formHook?.register(inputWrapperProps.name)}
+        id={id}
+        className={inputClasses}
+      />
     </InputWrapper>
   );
 };
