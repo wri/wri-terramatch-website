@@ -39,7 +39,7 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
 
   return (
     <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
-      <HTab.List {...divProps} className={classNames(className, "h-12 w-full border-b-2 border-neutral-200 bg-white")}>
+      <HTab.List {...divProps} className={classNames(className, "h-max w-full border-b-2 border-neutral-200 bg-white")}>
         <List
           as="div"
           className={classNames(
@@ -53,7 +53,7 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
             <HTab as={Fragment}>
               {({ selected }) => (
                 <button
-                  className={classNames("h-full border-b-[3px] px-4 pt-[3px] outline-none", {
+                  className={classNames("mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none", {
                     "border-primary": selected,
                     "border-transparent": !selected
                   })}

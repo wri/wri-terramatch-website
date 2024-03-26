@@ -52,7 +52,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <LinerProgressbar
             color="primary"
             value={progressValue}
-            className={classNames("bg-primary-200", {
+            className={classNames("mt-2 bg-primary-200", {
               "opacity-0": !progressValue
             })}
           />
@@ -60,7 +60,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
       </When>
       {/* Right */}
       {items && (
-        <div className="w-full space-y-3 pl-6">
+        <div className="w-full space-y-3 pl-6 ">
           {items.map(item => (
             <GoalProgressCardItem key={item.label} {...item} />
           ))}

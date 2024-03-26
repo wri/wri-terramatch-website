@@ -8,7 +8,7 @@ import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
 export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
   as?: ElementType;
   iconProps?: IconProps;
-  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky";
+  variant?: "primary" | "secondary" | "text" | "link" | "white" | "sky" | "group" | "group-active";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -64,6 +64,12 @@ const Button: FC<IButtonProps> = props => {
 
       case "link":
         return { container: "", span: "text-light-body-300 uppercase underline" };
+
+      case "group":
+        return { container: "", span: "text-14-light px-3 py-1 opacity-60 rounded-lg" };
+
+      case "group-active":
+        return { container: "", span: "text-14-semibold px-3 py-1 bg-white rounded-lg" };
 
       default:
         return { container: "", span: "" };

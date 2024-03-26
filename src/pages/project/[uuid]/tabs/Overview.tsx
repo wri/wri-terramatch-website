@@ -12,12 +12,9 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useFramework } from "@/hooks/useFramework";
 import ProjectArea from "@/pages/project/[uuid]/components/ProjectArea";
-
-import { ProjectMonitoring } from "./MockedData";
 
 interface ProjectOverviewTabProps {
   project: any;
@@ -45,7 +42,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             </Button>
           }
         >
-          <div className="flex w-full">
+          <div className="flex w-full text-darkCustom">
             <div className="grid w-[50%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
               <If condition={isPPC}>
                 <Then>
@@ -102,7 +99,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 variant="secondary"
                 href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
               >
-                {t("Add Site")}
+                {t("expand view")}
               </Button>
             }
           >
@@ -114,7 +111,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Project Monitoring")} tooltip=" ">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between text-darkCustom">
               <Text variant="text-14-light" className="w-[65%]">
                 Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
                 metrics useful for assessing the impact of the restoration effort.
@@ -138,17 +135,97 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 />
               </div>
             </div>
-            <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3 first:!col-span-4">
-              {ProjectMonitoring.map((item, index) => {
-                console.log(item, "item");
-                return <ItemMonitoringCards item={item} key={index} />;
-              })}
+            <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3">
+              <ItemMonitoringCards
+                title={t("Tree Count")}
+                titleColor="text-tertiary-550"
+                className="col-span-4"
+                value="462"
+              />
+              <ItemMonitoringCards title={t("Tree Cover 2024")} className="col-span-3" value="53.23%" />
+              <ItemMonitoringCards
+                title={t("Total Area (ha)")}
+                titleColor="text-success-450"
+                className="col-span-3"
+                value="300.12"
+              />
+              <ItemMonitoringCards
+                title={t("Lookback Disturbance")}
+                titleColor="text-neutral-500"
+                className="col-span-3"
+                value="2.1%"
+              />
+              <ItemMonitoringCards className="col-span-4" type="map" />
+              <ItemMonitoringCards
+                title={t("Tree Count")}
+                className="col-span-4"
+                type="graph"
+                img={IconNames.GRAPH1}
+                leyends={[
+                  {
+                    color: "bg-blueCustom",
+                    title: t("Average Number of Trees per hectare")
+                  },
+                  {
+                    color: "bg-primary",
+                    title: t("Number of Trees")
+                  }
+                ]}
+              />
+              <ItemMonitoringCards
+                title={t("EMA SNOVO")}
+                type="graph-button"
+                className="col-span-9 row-span-2"
+                img={IconNames.GRAPH2}
+              />
+              <ItemMonitoringCards
+                title={t("Tree Cover Loss (ha)")}
+                className="col-span-4"
+                type="graph"
+                img={IconNames.GRAPH3}
+              />
+              <ItemMonitoringCards
+                title={t("Interventions (ha)")}
+                className="col-span-4"
+                type="graph"
+                leyends={[
+                  {
+                    color: "bg-black",
+                    title: t("Agroforestry")
+                  },
+                  {
+                    color: "bg-blueCustom",
+                    title: t("Silvipasture")
+                  },
+                  {
+                    color: "bg-primary",
+                    title: t("Tree Planting")
+                  }
+                ]}
+                img={IconNames.GRAPH4}
+              />
+              <ItemMonitoringCards
+                title={t("Tree Cover Loss")}
+                className="col-span-4"
+                type="graph"
+                leyends={[
+                  {
+                    color: "bg-blueCustom",
+                    title: t("Tree Cover Loss by Fires (ha)")
+                  },
+                  {
+                    color: "bg-primary",
+                    title: t("Tree Cover Loss by Non-Fires (ha)")
+                  }
+                ]}
+                img={IconNames.GRAPH5}
+              />
             </PageRow>
           </PageCard>
         </PageColumn>
       </PageRow>
       <br />
-      <PageFooter />
+      <br />
     </PageBody>
   );
 };

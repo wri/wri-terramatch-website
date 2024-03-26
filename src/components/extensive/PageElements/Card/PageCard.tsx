@@ -36,11 +36,11 @@ const PageCard = ({
       <When condition={!!title || !!headerChildren}>
         <div className="flex flex-wrap justify-between">
           <When condition={!!title}>
-            <Text variant="text-24-bold" className="flex flex-1 items-baseline">
+            <Text variant="text-24-bold" className="flex flex-1 items-baseline text-darkCustom">
               {title}
               <When condition={!!tooltip}>
                 &nbsp;
-                <Icon name={IconNames.IC_INFO} className="h-3 w-3 lg:h-4 lg:w-4" />
+                <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
               </When>
             </Text>
           </When>
@@ -48,7 +48,7 @@ const PageCard = ({
         </div>
       </When>
       <When condition={!!subtitle}>
-        <Text variant="text-light-subtitle-400" className="mt-3">
+        <Text variant="text-light-subtitle-400" className="mt-3 text-darkCustom">
           {subtitle}
         </Text>
       </When>

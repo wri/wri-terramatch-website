@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -17,6 +17,7 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
 const MapSidePanelItem = ({ title, subtitle, isSelected, className, ...props }: MapSidePanelItemProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
+  const ref = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -24,32 +25,42 @@ const MapSidePanelItem = ({ title, subtitle, isSelected, className, ...props }: 
     setMenuVisible(!menuVisible);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current?.contains(event.target as Node)) {
+        setMenuVisible(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+
   const itemsPrimaryMenu = [
     {
       id: "1",
       render: () => (
-        <Text variant="text-14-semibold" className="flex">
-          <Icon
-            name={IconNames.IC_SITE_VIEW}
-            className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
-          />
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 rounded-lg lg:h-5 lg:w-5" />
           &nbsp; View Site
         </Text>
       ),
-      onClick: () => {}
+      onClick: () => {
+        setMenuVisible(false);
+      }
     },
     {
       id: "2",
       render: () => (
-        <Text variant="text-14-semibold" className="flex">
-          <Icon
-            name={IconNames.SEARCH}
-            className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
-          />
-          &nbsp;Zoom to
+        <Text variant="text-14-semibold" className="flex items-start">
+          <Icon name={IconNames.SEARCH} className="h-4 w-4 rounded-lg lg:h-5 lg:w-5" />
+          &nbsp; Zoom to
         </Text>
       ),
-      onClick: () => {}
+      onClick: () => {
+        setMenuVisible(false);
+      }
     }
   ];
 
@@ -70,7 +81,7 @@ const MapSidePanelItem = ({ title, subtitle, isSelected, className, ...props }: 
             </Text>
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
-          <div className="flex" onClick={toggleMenu}>
+          <div className="flex h-full self-start " onClick={toggleMenu}>
             <Icon
               name={IconNames.IC_MORE_OUTLINED}
               className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
@@ -80,6 +91,7 @@ const MapSidePanelItem = ({ title, subtitle, isSelected, className, ...props }: 
       </div>
       {menuVisible && (
         <div
+          ref={ref}
           className="fixed  z-10 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
           style={{ left: menuPosition.left + 30, top: menuPosition.top }}
         >

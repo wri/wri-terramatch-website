@@ -42,7 +42,7 @@ const MapSidePanel = ({
           </Text>
         )}
         <div
-          className="h-full space-y-4 overflow-y-auto"
+          className="mr-[-12px] h-full space-y-4 overflow-y-auto pr-3"
           onScroll={e => {
             //@ts-ignore
             const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;

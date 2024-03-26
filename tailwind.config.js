@@ -121,7 +121,12 @@ module.exports = {
         100: "#FFF2F2"
       },
       blueCustom: {
-        DEFAULT: "#13487A"
+        DEFAULT: "#13487A",
+        600: "#33525c"
+      },
+      darkCustom: {
+        DEFAULT: "#353535",
+        100: "#637579"
       }
     },
     boxShadow: {
@@ -168,7 +173,8 @@ module.exports = {
       support: "url('/images/support.webp')",
       leavesWithOverlay: "url('/images/leaves-with-overlay.webp')",
       treesHeaderWithOverlay:
-        "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')"
+        "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
+      mapsImg: "url('/images/Maps.svg')"
     }
   },
   plugins: [

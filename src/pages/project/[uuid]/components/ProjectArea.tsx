@@ -49,7 +49,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const sites = usePaginatedResult<any>(data);
 
   return (
-    <div className="relative flex h-[500px]">
+    <div className="flex h-[500px] text-darkCustom">
       <MapSidePanel
         title={t("Sites")}
         items={
@@ -61,7 +61,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="absolute z-20 h-[500px] w-[22vw] p-8"
+        className="absolute z-20 h-[500px] w-[23vw] p-8"
         onLoadMore={fetchNextPage}
         emptyText={t("No results found or no sites in this project. Try refining your search or create a new site.")}
       />

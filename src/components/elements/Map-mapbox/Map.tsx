@@ -61,7 +61,6 @@ export const Map = ({
   siteData = false,
   ...props
 }: MapProps) => {
-  console.log(siteData, "SiTEEEEEEEEEEE");
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
 
   const validateGeoJSON = function (map: IMap, source: string) {
@@ -167,7 +166,7 @@ export const Map = ({
         </ControlGroup>
       </When>
       <When condition={!!siteData}>
-        <div className="absolute z-10 h-full w-[22vw] backdrop-blur-xl" />
+        <div className="absolute z-10 h-full w-[23vw] backdrop-blur-xl" />
       </When>
     </MapProvider>
   );
