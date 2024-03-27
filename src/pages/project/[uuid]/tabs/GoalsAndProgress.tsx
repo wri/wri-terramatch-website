@@ -21,28 +21,23 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const { isPPC } = useFramework(project);
 
   return (
-    <PageBody>
+    <PageBody className="text-darkCustom">
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap gap-6">
+          <div className="flex w-full flex-wrap items-start gap-8">
             <If condition={isPPC}>
               <Then>
-                <GoalProgressCard label={t("Workday (PPC)")} value={project.workday_count} className="w-[170px]" />
+                <GoalProgressCard label={t("Workday (PPC)")} value={project.workday_count} />
               </Then>
               <Else>
                 <GoalProgressCard
                   label={t("Jobs Created")}
                   value={project.total_jobs_created}
                   limit={project.jobs_created_goal}
-                  className="w-[170px]"
                 />
               </Else>
             </If>
-            <GoalProgressCard
-              label={t("Hectares Restored Goal")}
-              value={project.total_hectares_restored_goal}
-              className="w-[170px]"
-            />
+            <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
             <GoalProgressCard
               label={t("Trees restored")}
               value={project.trees_restored_count}
@@ -56,7 +51,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   value: project.regenerated_trees_count
                 }
               ]}
-              className="flex-1"
+              className="flex-1 !items-start"
             />
           </div>
         </PageCard>
@@ -85,12 +80,15 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TextField label={t("Year 5 Grown Cover Goal (PPC)")} value={project.year_five_crown_cover} />
             </When>
             <TextField label={t("Survival Rate (Goal)")} value={project.survival_rate} />
+            <br />
             <GenericField label={t("Tree Species")}>
               <TreeSpeciesTable modelName="project" modelUUID={project.uuid} />
             </GenericField>
           </PageCard>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

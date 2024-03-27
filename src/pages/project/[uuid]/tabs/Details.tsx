@@ -13,7 +13,6 @@ import List from "@/components/extensive/List/List";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { useModalContext } from "@/context/modal.provider";
@@ -213,7 +212,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
         </PageColumn>
       </PageRow>
       <br />
-      <PageFooter />
+      <br />
     </PageBody>
   );
 };

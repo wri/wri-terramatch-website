@@ -35,7 +35,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
   };
 
   return (
-    <div {...rest} className={classNames("relative overflow-hidden rounded-lg shadow", className)}>
+    <div {...rest} className={classNames("relative overflow-hidden rounded-lg border border-neutral-200", className)}>
       <ImageWithChildren
         imageSrc={{
           src: data.thumbnailImageUrl,
@@ -51,7 +51,12 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           {/* Right */}
           <div className="ml-auto flex items-center">
             <Link href={data.downloadUrl ?? data.fullImageUrl} target="_blank" className="z-10 mr-2.5">
-              <Icon name={IconNames.DOWNLOAD_CIRCLE} height={32} width={32} className="fill-primary-500" />
+              <Icon
+                name={IconNames.DOWNLOAD_CIRCLE}
+                height={32}
+                width={32}
+                className="fill-primary-500 hover:opacity-60"
+              />
             </Link>
 
             <IconButton
@@ -62,7 +67,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
                 className: "fill-error"
               }}
               onClick={handleDelete}
-              className="z-10"
+              className="z-10 hover:opacity-60"
             />
           </div>
         </div>

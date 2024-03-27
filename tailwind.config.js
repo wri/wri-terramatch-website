@@ -99,7 +99,8 @@ module.exports = {
         200: "#E3E3E3",
         150: "#F5F7F9",
         100: "#F2F2F2",
-        50: "#FAFAFA"
+        50: "#FAFAFA",
+        40: "#f2f4f5"
       },
       tertiary: {
         DEFAULT: "#F0AB00",
@@ -122,7 +123,8 @@ module.exports = {
       },
       blueCustom: {
         DEFAULT: "#13487A",
-        600: "#33525c"
+        600: "#33525c",
+        50: "#f1fafd"
       },
       darkCustom: {
         DEFAULT: "#353535",

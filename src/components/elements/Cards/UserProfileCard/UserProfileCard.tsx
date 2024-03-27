@@ -44,14 +44,14 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
       <div className="mt-4 space-y-2 px-3">
         {statusProps && (
           <StatusPill status={statusProps.status} className="my-4 mt-4 w-fit">
-            <Text variant="text-12-semibold" className="pt-0.5">
+            <Text variant="text-12-semibold" className="">
               {statusProps.text}
             </Text>
           </StatusPill>
         )}
         <Text variant="text-14-bold">{username}</Text>
         <Text variant="text-14-light">{organisation}</Text>
-        <Text variant="text-14-light" className="truncate line-clamp-1" title={email}>
+        <Text variant="text-14-light" className="one-line-text" title={email}>
           {email}
         </Text>
       </div>
