@@ -150,7 +150,7 @@ const PolygonValidationTab: FC<IProps> = props => {
                     </Button>
                     <Button className="flex-1 px-3">approve polygons</Button>
                   </div>
-                  <div className="mt-4 rounded-lg  border border-grey-750 p-4">
+                  <div className="mt-4 rounded-lg border border-grey-750 p-4">
                     <Text variant="text-14" className="text-grey-250">
                       Polygon Status
                     </Text>
