@@ -104,7 +104,13 @@ const PolygonValidationTab: FC<IProps> = props => {
       label: "Polygon 2321340884"
     }
   ];
-
+  const polygonStatusLabels = [
+    { id: "1", label: "Site Approved" },
+    { id: "2", label: "Polygons Submitted" },
+    { id: "3", label: "Polygons Approved" },
+    { id: "4", label: "Planting Complete" },
+    { id: "5", label: "Monitoring Begins" }
+  ];
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab {...props}>
@@ -151,11 +157,11 @@ const PolygonValidationTab: FC<IProps> = props => {
                     <Button className="flex-1 px-3">approve polygons</Button>
                   </div>
                   <div className="mt-4 rounded-lg border border-grey-750 p-4">
-                    <Text variant="text-14" className="text-grey-250">
+                    <Text variant="text-14" className="mb-3 text-grey-250">
                       Polygon Status
                     </Text>
                     <div className="h-fit w-full">
-                      <StepProgressbar color="primary" value={50} labels={["Step 1", "Step 2", "Step 3", "Step 4"]} />
+                      <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} />
                     </div>
                   </div>
                 </Grid>
