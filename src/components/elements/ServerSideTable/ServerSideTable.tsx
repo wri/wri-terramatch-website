@@ -7,6 +7,8 @@ import Pagination from "@/components/extensive/Pagination";
 import { getQueryParams } from "@/helpers/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
+import { VARIANT_TABLE_SECONDARY_WHITE } from "../Table/TableVariants";
+
 export interface ServerSideTableState {
   page: number;
   pageSize: number;
@@ -50,6 +52,7 @@ export function ServerSideTable<TData extends RowData>({
           setSorting(state.sorting);
           setFilter(state.filters);
         }}
+        variant={VARIANT_TABLE_SECONDARY_WHITE}
       >
         {children}
       </Table>
