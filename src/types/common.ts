@@ -100,7 +100,7 @@ export enum FileType {
   Pdf = "application/pdf",
   Video = "video/mp4, video/quicktime",
   Csv = "text/csv",
-  ShapeFiles = "application/zip, application/x-zip-compressed, .kml, .json, .geojson, .kml, .shp, .dbf, .shx",
+  ShapeFiles = "application/zip, application/x-zip-compressed, .kml, .json, .geojson, .shp, .dbf, .shx, .prj",
   Document = "application/pdf, application/msword",
   Xlsx = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
   CsvExcel = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
