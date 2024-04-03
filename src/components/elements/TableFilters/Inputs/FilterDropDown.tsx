@@ -34,16 +34,16 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
       {({ open, value }) => (
         <div className="flex items-center gap-3">
           <When condition={!!props.label}>
-            <Listbox.Label as={Text} variant="text-bold-subtitle-500">
+            <Listbox.Label as={Text} variant="text-16-bold">
               {props.label}
             </Listbox.Label>
           </When>
           <div className="relative">
             <Listbox.Button
               as="div"
-              className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-11"
+              className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
             >
-              <Text variant="text-bold-caption-200" className="w-full uppercase line-clamp-1">
+              <Text variant="text-14-bold" className="w-full uppercase line-clamp-1">
                 {formatOptionsList(props.options, toArray<any>(value)) || props.placeholder}
               </Text>
               <Icon
