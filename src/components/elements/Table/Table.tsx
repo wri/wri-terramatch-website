@@ -23,6 +23,8 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 
+import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
+
 export interface TableProps<TData>
   extends DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>,
     PropsWithChildren {
@@ -31,7 +33,7 @@ export interface TableProps<TData>
   columnFilters?: ColumnFilter[];
   serverSideData?: boolean;
   initialTableState?: InitialTableState;
-  variant?: "primary" | "secondary";
+  variant?: TableVariant;
   hasPagination?: boolean;
   onTableStateChange?: (state: TableState) => void;
   isLoading?: boolean;
@@ -58,7 +60,7 @@ function Table<TData extends RowData>({
   serverSideData,
   onTableStateChange,
   initialTableState,
-  variant = "primary",
+  variant = VARIANT_TABLE_PRIMARY,
   children,
   isLoading,
   hasPagination = true,
@@ -160,7 +162,7 @@ function Table<TData extends RowData>({
             </Then>
             <Else>
               {getRowModel().rows.length === 0 && (
-                <tr className={classNames("rounded-lg", variant === "primary" ? "bg-white shadow" : "bg-neutral-50")}>
+                <tr className={classNames("rounded-lg", variant.trHeader)}>
                   <td
                     className={classNames(
                       "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
@@ -174,10 +176,7 @@ function Table<TData extends RowData>({
                 </tr>
               )}
               {getRowModel().rows.map(row => (
-                <tr
-                  key={row.id}
-                  className={classNames("rounded-lg", variant === "primary" ? "bg-white shadow" : "bg-neutral-50")}
-                >
+                <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
                   {row.getVisibleCells().map(cell => (
                     <TableCell<TData> key={cell.id} cell={cell} />
                   ))}

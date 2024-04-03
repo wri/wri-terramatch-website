@@ -19,7 +19,12 @@ export const Default: Story = {
   args: {
     color: "primary",
     value: 25,
-    labels: ["Step 1", "Step 2", "Step 3", "Step 4"]
+    labels: [
+      { id: "Step 1", label: "Step 1" },
+      { id: "Step 2", label: "Step 2" },
+      { id: "Step 3", label: "Step 3" },
+      { id: "Step 4", label: "Step 4" }
+    ]
   }
 };
 
@@ -27,7 +32,12 @@ export const Secondary = {
   args: {
     color: "secondary",
     value: 50,
-    labels: ["Step 1", "Step 2", "Step 3", "Step 4"]
+    labels: [
+      { id: "Step 1", label: "Step 1" },
+      { id: "Step 2", label: "Step 2" },
+      { id: "Step 3", label: "Step 3" },
+      { id: "Step 4", label: "Step 4" }
+    ]
   }
 };
 
@@ -35,7 +45,12 @@ export const Tertiary: Story = {
   args: {
     color: "tertiary",
     value: 50,
-    labels: [{ id: "1", label: "Step 1" }, "Step 2", "Step 3", "Step 4"]
+    labels: [
+      { id: "Step 1", label: "Step 1" },
+      { id: "Step 2", label: "Step 2" },
+      { id: "Step 3", label: "Step 3" },
+      { id: "Step 4", label: "Step 4" }
+    ]
   }
 };
 
@@ -43,7 +58,12 @@ export const Success: Story = {
   args: {
     color: "success",
     value: 50,
-    labels: ["Step 1", "Step 2", "Step 3", "Step 4"]
+    labels: [
+      { id: "Step 1", label: "Step 1" },
+      { id: "Step 2", label: "Step 2" },
+      { id: "Step 3", label: "Step 3" },
+      { id: "Step 4", label: "Step 4" }
+    ]
   }
 };
 
@@ -51,6 +71,11 @@ export const Error: Story = {
   args: {
     color: "error",
     value: 50,
-    labels: ["Step 1", "Step 2", "Step 3", "Step 4"]
+    labels: [
+      { id: "Step 1", label: "Step 1" },
+      { id: "Step 2", label: "Step 2" },
+      { id: "Step 3", label: "Step 3" },
+      { id: "Step 4", label: "Step 4" }
+    ]
   }
 };
