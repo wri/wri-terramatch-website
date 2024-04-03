@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { TableVariant } from "@/components/elements/Table/TableVariants";
 import { GetV2TreeSpeciesEntityUUIDResponse, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 export interface TreeSpeciesTableProps {
@@ -9,9 +10,10 @@ export interface TreeSpeciesTableProps {
   modelUUID: string;
   collection?: string;
   onFetch?: (data: GetV2TreeSpeciesEntityUUIDResponse) => void;
+  variantTable?: TableVariant;
 }
 
-const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpeciesTableProps) => {
+const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch, variantTable }: TreeSpeciesTableProps) => {
   const t = useT();
 
   const [queryParams, setQueryParams] = useState<any>();
@@ -45,6 +47,7 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
         isLoading={isLoading}
         treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
+        variant={variantTable}
         columns={[
           {
             accessorKey: "name",

@@ -26,6 +26,7 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
 export function ServerSideTable<TData extends RowData>({
   onTableStateChange,
   onQueryParamChange,
+  variant,
   children,
   ...props
 }: ServerSideTableProps<TData>) {
@@ -52,7 +53,7 @@ export function ServerSideTable<TData extends RowData>({
           setSorting(state.sorting);
           setFilter(state.filters);
         }}
-        variant={VARIANT_TABLE_SECONDARY_WHITE}
+        variant={variant ? variant : VARIANT_TABLE_SECONDARY_WHITE}
       >
         {children}
       </Table>

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -81,6 +82,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
       data={sites?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {
           accessorKey: "name",

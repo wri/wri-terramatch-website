@@ -25,7 +25,6 @@ export interface ItemMonitoringCardsProps
   key?: number;
   className?: string;
   img?: IconNames;
-  titleColor?: string;
   type?: "graph" | "map" | "graph-button";
   leyends?: LeyendItemMonitoringCardsProps[];
 }
@@ -39,7 +38,6 @@ const ItemMonitoringCards = ({
   gap = 8,
   tooltip,
   className,
-  titleColor,
   type,
   img,
   item,
@@ -55,7 +53,7 @@ const ItemMonitoringCards = ({
           <When condition={!!title && title}>
             <Text
               variant="text-14"
-              className={`flex items-center tracking-[-0.154px] ${titleColor} ${
+              className={`flex items-center tracking-[-0.154px] ${
                 type === "graph" ? "w-full justify-center" : type === "graph-button" ? "pl-[7.2%]" : ""
               }`}
             >

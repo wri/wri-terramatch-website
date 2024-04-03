@@ -56,19 +56,13 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   />
                 </Else>
               </If>
-              <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
               <GoalProgressCard
                 label={t("Trees Restored")}
                 value={project.trees_restored_count}
                 limit={project.trees_grown_goal}
                 className="flex-1"
               />
-              <GoalProgressCard
-                label={t("Hectares Restored")}
-                value={project.trees_restored_count}
-                limit={project.trees_grown_goal}
-                className="flex-1"
-              />
+              <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
             </div>
             <div>
               <GoalProgressCard
@@ -136,25 +130,10 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               </div>
             </div>
             <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3">
-              <ItemMonitoringCards
-                title={t("Tree Count")}
-                titleColor="text-tertiary-550"
-                className="col-span-4"
-                value="462"
-              />
+              <ItemMonitoringCards title={t("Tree Count")} className="col-span-4" value="462" />
               <ItemMonitoringCards title={t("Tree Cover 2024")} className="col-span-3" value="53.23%" />
-              <ItemMonitoringCards
-                title={t("Total Area (ha)")}
-                titleColor="text-success-450"
-                className="col-span-3"
-                value="300.12"
-              />
-              <ItemMonitoringCards
-                title={t("Lookback Disturbance")}
-                titleColor="text-neutral-500"
-                className="col-span-3"
-                value="2.1%"
-              />
+              <ItemMonitoringCards title={t("Total Area (ha)")} className="col-span-3" value="300.12" />
+              <ItemMonitoringCards title={t("Lookback Disturbance")} className="col-span-3" value="2.1%" />
               <ItemMonitoringCards className="col-span-4" type="map" />
               <ItemMonitoringCards
                 title={t("Tree Count")}

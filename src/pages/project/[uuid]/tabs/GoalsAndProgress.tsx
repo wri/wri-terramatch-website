@@ -4,6 +4,7 @@ import { Else, If, Then, When } from "react-if";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import GenericField from "@/components/elements/Field/GenericField";
 import TextField from "@/components/elements/Field/TextField";
+import { VARIANT_TABLE_BORDER } from "@/components/elements/Table/TableVariants";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -82,7 +83,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <TextField label={t("Survival Rate (Goal)")} value={project.survival_rate} />
             <br />
             <GenericField label={t("Tree Species")}>
-              <TreeSpeciesTable modelName="project" modelUUID={project.uuid} />
+              <TreeSpeciesTable modelName="project" modelUUID={project.uuid} variantTable={VARIANT_TABLE_BORDER} />
             </GenericField>
           </PageCard>
         </PageColumn>

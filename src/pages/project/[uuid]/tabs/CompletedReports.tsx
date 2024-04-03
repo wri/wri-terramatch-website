@@ -53,6 +53,8 @@ const CompletedReportsTab = ({ project }: ReportingTasksProps) => {
           </LoadingContainer>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

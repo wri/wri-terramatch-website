@@ -124,6 +124,7 @@ module.exports = {
       blueCustom: {
         DEFAULT: "#13487A",
         600: "#33525c",
+        100: "#cfe6f4",
         50: "#f1fafd"
       },
       darkCustom: {

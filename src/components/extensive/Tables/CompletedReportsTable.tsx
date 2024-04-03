@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
@@ -40,6 +41,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
       data={reports?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {
           accessorKey: "due_at",
@@ -64,7 +66,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
             const title = props.row.original.title;
 
             return (
-              <Text variant="text-light-subtitle-400" className="whitespace-normal">
+              <Text variant="text-14-light" className="whitespace-normal">
                 {report_title || title}
               </Text>
             );
