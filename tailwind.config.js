@@ -112,7 +112,10 @@ module.exports = {
         750: "#E6EAEB",
         800: "#E9EDF0",
         900: "#F6FAFD"
-      }
+      },
+      purple: "#E468EF",
+      blue: "#2398D8",
+      green: "#72D961"
     },
 
     boxShadow: {

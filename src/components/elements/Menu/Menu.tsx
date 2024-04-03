@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import { ReactNode, useState } from "react";
-import { When } from "react-if";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import React from "react";
 
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
-import { MENU_PLACEMENT_BOTTOM_RIGHT } from "./MenuVariant";
+import { MENU_PLACEMENT_BOTTOM_RIGHT, MENU_PLACEMENT_LEFT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "./MenuVariant";
 
 interface MenuItemProps {
   id: string;
@@ -22,6 +22,7 @@ export interface MenuProps {
   menuItemVariant?: string;
   children: ReactNode;
   className?: string;
+  container?: HTMLDivElement | null;
 }
 
 const Menu = (props: MenuProps) => {
@@ -32,15 +33,109 @@ const Menu = (props: MenuProps) => {
     variant,
     children,
     isDefaultOpen,
-    className
+    className,
+    container
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const hideMenu = () => {
+      if (menuContainerRef.current) {
+        setIsOpen(false);
+      }
+    };
+    container?.addEventListener("scroll", hideMenu);
+    window.addEventListener("scroll", hideMenu);
+    hideMenu();
+
+    return () => {
+      container?.addEventListener("scroll", hideMenu);
+      window.removeEventListener("scroll", hideMenu);
+    };
+  }, [container]);
+
+  const calculateMenuStyleForBottom = () => {
+    if (!menuContainerRef.current) {
+      return {};
+    }
+    const rect = menuContainerRef.current.getBoundingClientRect();
+    const top = rect.top;
+    const height = rect.height;
+    const width = rect.width;
+    return {
+      top: top + height,
+      marginTop: "5px",
+      minWidth: width
+    };
+  };
+
+  const calculateMenuStyleForHorizontalTop = () => {
+    if (!menuContainerRef.current) {
+      return {};
+    }
+    if (!menuRef.current) {
+      return {};
+    }
+    const bottom = menuContainerRef.current.getBoundingClientRect().bottom;
+    const heightMenu = menuRef.current.getBoundingClientRect().height;
+
+    return {
+      top: bottom - heightMenu
+    };
+  };
+
+  const calculateMenuStyleForHorizontalBottom = () => {
+    if (!menuContainerRef.current) {
+      return {};
+    }
+    const top = menuContainerRef.current.getBoundingClientRect().top ?? 0;
+    return {
+      top: top
+    };
+  };
+
+  const calculateMenuStyle = () => {
+    const placeMap: { [key: string]: string } = {
+      [MENU_PLACEMENT_RIGHT_TOP]: "horizontalTop",
+      [MENU_PLACEMENT_LEFT_BOTTOM]: "hotizontalBottom"
+    };
+    console.log(placement);
+
+    const place = placeMap[placement] || "bottom";
+    console.log(place);
+    let styles;
+    switch (place) {
+      case "horizontalTop":
+        styles = calculateMenuStyleForHorizontalTop();
+        break;
+      case "hotizontalBottom":
+        styles = calculateMenuStyleForHorizontalBottom();
+        break;
+      default:
+        styles = calculateMenuStyleForBottom();
+        break;
+    }
+
+    return styles;
+  };
+
   return (
-    <div className={classNames(className, "relative")} onClick={() => setIsOpen(!isOpen)}>
+    <div
+      ref={menuContainerRef}
+      className={classNames(className, "relative w-fit-content")}
+      onClick={() => setIsOpen(!isOpen)}
+    >
       {children}
-      <When condition={isOpen}>
+      <div
+        className={`absolute z-40 ${placement} ${isOpen ? "visible" : "invisible"}`}
+        style={{ width: `${menuRef.current?.clientWidth}px` }}
+      >
         <div
-          className={`absolute z-10 flex min-w-full flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] ${placement} ${variant}`}
+          ref={menuRef}
+          className={`fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] ${variant}`}
+          style={calculateMenuStyle()}
         >
           {menu.map(item => (
             <MenuItem
@@ -51,7 +146,7 @@ const Menu = (props: MenuProps) => {
             />
           ))}
         </div>
-      </When>
+      </div>
     </div>
   );
 };

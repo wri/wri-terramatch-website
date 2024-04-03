@@ -115,7 +115,9 @@ export enum IconNames {
   POLYGON = "polygon",
   SEARCH_PA = "search-pa",
   SEND = "send",
-  LINK_PA = "link-pa"
+  LINK_PA = "link-pa",
+  REQUEST = "request",
+  COMMENT = "comment"
 }
 
 export interface IconProps {

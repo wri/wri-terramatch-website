@@ -6,7 +6,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Button from "../Button/Button";
 
 export interface DrawerProps {
-  isOpen: boolean;
+  isOpen?: boolean;
   title: ReactNode;
   children: ReactNode;
   setIsOpen: (isOpen: boolean) => void;
@@ -18,7 +18,7 @@ const Drawer = (props: DrawerProps) => {
   return (
     <div
       className={classNames(
-        "absolute left-full z-40 ml-2 flex h-[-webkit-fill-available] w-96 flex-col overflow-auto bg-white p-6 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all",
+        "fixed left-full top-0 z-50 mt-[70px] ml-2 flex h-[-webkit-fill-available] w-96 flex-col overflow-auto bg-white p-6 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all",
         { "translate-x-[-24.5rem]": isOpen }
       )}
     >

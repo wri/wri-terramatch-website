@@ -22,7 +22,7 @@ const ComentaryBox = (props: IComentaryBox) => {
       <TextArea
         placeholder="Add a comment"
         name=""
-        className="max-h-72 min-h-0 resize-none border-none !p-0 text-xs"
+        className="max-h-72 !min-h-0 resize-none border-none !p-0 text-xs"
         containerClassName="w-full"
         rows={1}
       />

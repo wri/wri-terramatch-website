@@ -35,7 +35,7 @@ export const Tertiary: Story = {
   args: {
     color: "tertiary",
     value: 50,
-    labels: ["Step 1", "Step 2", "Step 3", "Step 4"]
+    labels: [{ id: "1", label: "Step 1" }, "Step 2", "Step 3", "Step 4"]
   }
 };
 
