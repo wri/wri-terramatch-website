@@ -121,7 +121,7 @@ function Table<TData extends RowData>({
       <table {...props} className={classNames(className, "w-full border-separate border-spacing-y-4")}>
         <thead className="bg-[#CFE6F4]">
           {getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
+            <tr key={headerGroup.id} className={variant.trHeader}>
               {headerGroup.headers.map(
                 header =>
                   !header.isPlaceholder && (
@@ -131,7 +131,7 @@ function Table<TData extends RowData>({
                       onClick={header.column.getToggleSortingHandler()}
                       className={classNames(
                         "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-                        "text-bold-subtitle-500 whitespace-nowrap px-6 py-4",
+                        `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
                         header.column.getCanSort() && "cursor-pointer"
                       )}
                       align="left"
@@ -166,7 +166,7 @@ function Table<TData extends RowData>({
                   <td
                     className={classNames(
                       "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-                      "text-normal-subtitle-400 px-6 py-4"
+                      `text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`
                     )}
                     align={"center"}
                     colSpan={columns.length}
@@ -178,7 +178,7 @@ function Table<TData extends RowData>({
               {getRowModel().rows.map(row => (
                 <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
                   {row.getVisibleCells().map(cell => (
-                    <TableCell<TData> key={cell.id} cell={cell} />
+                    <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
                   ))}
                 </tr>
               ))}
@@ -208,7 +208,7 @@ function Table<TData extends RowData>({
 
 export default Table;
 
-function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown> }) {
+function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData, unknown>; variant: TableVariant }) {
   const cellContent = useMemo(
     () => flexRender(cell.column.columnDef.cell, cell.getContext()),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,8 +218,8 @@ function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown>
   return (
     <td
       className={classNames(
-        "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-        "text-normal-subtitle-400 px-6 py-4"
+        "text-normal-subtitle-400 px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
+        variant.tdBody
       )}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}

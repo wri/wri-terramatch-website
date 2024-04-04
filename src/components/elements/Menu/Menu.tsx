@@ -37,6 +37,17 @@ const Menu = (props: MenuProps) => {
     container
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuContainerRef.current && !menuContainerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
