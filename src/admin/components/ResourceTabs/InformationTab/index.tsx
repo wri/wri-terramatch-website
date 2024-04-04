@@ -5,6 +5,7 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
+import SeedingsTable from "@/admin/components/Tables/SeedingsTable";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import List from "@/components/extensive/List/List";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
@@ -114,6 +115,10 @@ const InformationTab: FC<IProps> = props => {
 
                   <When condition={record}>
                     <TreeSpeciesTable uuid={record.uuid} entity={resource} />
+                  </When>
+
+                  <When condition={props.type === "sites" || props.type === "site-reports"}>
+                    <SeedingsTable uuid={record.uuid} entity={resource} />
                   </When>
 
                   <When condition={props.type === "projects"}>
