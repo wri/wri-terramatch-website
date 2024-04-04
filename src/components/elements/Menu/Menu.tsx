@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import { MenuItem } from "../MenuItem/MenuItem";
@@ -31,9 +31,21 @@ const Menu = (props: MenuProps) => {
     children,
     isDefaultOpen
   } = props;
+  const ref = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
   return (
-    <div className="relative" onClick={() => setIsOpen(!isOpen)}>
+    <div className="relative" onClick={() => setIsOpen(!isOpen)} ref={ref}>
       {children}
       <When condition={isOpen}>
         <div
