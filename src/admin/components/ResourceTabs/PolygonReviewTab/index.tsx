@@ -12,23 +12,23 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
 
-import SitePolygonValidationAside from "./components/PolygonValidationAside";
+import SitePolygonReviewAside from "./components/PolygonReviewAside";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
   label: string;
 }
 
-const PolygonValidationAside: FC<{ type: EntityName }> = ({ type }) => {
+const PolygonReviewAside: FC<{ type: EntityName }> = ({ type }) => {
   switch (type) {
     case "sites":
-      return <SitePolygonValidationAside />;
+      return <SitePolygonReviewAside />;
     default:
       return null;
   }
 };
 
-const PolygonValidationTab: FC<IProps> = props => {
+const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
 
   const { isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
@@ -65,8 +65,7 @@ const PolygonValidationTab: FC<IProps> = props => {
     { id: "1", label: "Site Approved" },
     { id: "2", label: "Polygons Submitted" },
     { id: "3", label: "Polygons Approved" },
-    { id: "4", label: "Planting Complete" },
-    { id: "5", label: "Monitoring Begins" }
+    { id: "4", label: "Monitoring Begins" }
   ];
   return (
     <When condition={!isLoading}>
@@ -78,7 +77,7 @@ const PolygonValidationTab: FC<IProps> = props => {
                 <div className="w-full">
                   <div className="mb-2">
                     <Text variant="text-16-bold" className="mb-2 text-grey-300">
-                      Polygon Validation
+                      Polygon Review
                     </Text>
                     <Text variant="text-14-light" className="text-grey-300">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
@@ -138,7 +137,7 @@ const PolygonValidationTab: FC<IProps> = props => {
             </Stack>
           </Grid>
           <Grid xs={4} className="pt-9 pl-8 pr-4">
-            <PolygonValidationAside type={props.type} />
+            <PolygonReviewAside type={props.type} />
           </Grid>
         </Grid>
       </TabbedShowLayout.Tab>
@@ -146,4 +145,4 @@ const PolygonValidationTab: FC<IProps> = props => {
   );
 };
 
-export default PolygonValidationTab;
+export default PolygonReviewTab;

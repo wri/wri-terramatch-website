@@ -7,7 +7,8 @@ import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab
 import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab";
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
-import PolygonValidationTab from "@/admin/components/ResourceTabs/PolygonValidationTab";
+import PolygonReviewTab from "@/admin/components/ResourceTabs/PolygonReviewTab";
+import PolygonDrawer from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import ShowTitle from "@/admin/components/ShowTitle";
 import Drawer from "@/components/elements/Drawer/Drawer";
 
@@ -19,12 +20,12 @@ const SiteShow: FC = () => {
       actions={<ShowActions titleSource="name" resourceName="site" />}
       className="-mt-[50px] bg-neutral-100"
     >
-      <Drawer title={undefined} isOpen={isOpen} setIsOpen={setIsOpen}>
-        asgasw
+      <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
+        <PolygonDrawer />
       </Drawer>
       <TabbedShowLayout>
         <InformationTab type="sites" />
-        <PolygonValidationTab label="Polygon Validation" type={"sites"} />
+        <PolygonReviewTab label="Polygon Validation" type={"sites"} />
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />
         <ChangeRequestsTab entity="sites" singularEntity="site" />

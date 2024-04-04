@@ -117,7 +117,10 @@ export enum IconNames {
   SEND = "send",
   LINK_PA = "link-pa",
   REQUEST = "request",
-  COMMENT = "comment"
+  COMMENT = "comment",
+  CHEVRON_DOWN_PA = "chevron-down-pa",
+  PAPER_CLIP = "paper-clip",
+  CHECK_PROGRESSBAR_NULL = "check-progressbar-null"
 }
 
 export interface IconProps {

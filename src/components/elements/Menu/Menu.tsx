@@ -101,10 +101,8 @@ const Menu = (props: MenuProps) => {
       [MENU_PLACEMENT_RIGHT_TOP]: "horizontalTop",
       [MENU_PLACEMENT_LEFT_BOTTOM]: "hotizontalBottom"
     };
-    console.log(placement);
 
     const place = placeMap[placement] || "bottom";
-    console.log(place);
     let styles;
     switch (place) {
       case "horizontalTop":

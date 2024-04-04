@@ -1,14 +1,18 @@
 import Text from "@/components/elements/Text/Text";
-
+export interface IComentaryFiles {
+  id: string;
+  file: string;
+}
 export interface IComentary {
   name: string;
   lastName: string;
   date: string;
   comentary: string;
+  files?: IComentaryFiles[];
 }
 
 const Comentary = (props: IComentary) => {
-  const { name, lastName, date, comentary } = props;
+  const { name, lastName, date, comentary, files = [] } = props;
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
@@ -33,6 +37,15 @@ const Comentary = (props: IComentary) => {
       >
         {comentary}
       </Text>
+      <div className="flex flex-wrap gap-2">
+        {files.map(file => (
+          <div key={file.id} className="rounded-xl bg-neutral-150 px-2 py-1">
+            <Text variant="text-14-light" className="text-grey-700">
+              {file.file}
+            </Text>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

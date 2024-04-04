@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import Button from "../Button/Button";
 import Drawer from "./Drawer";
-import { DrawerFooterPolygon } from "./DrawerFooter";
 
 const meta: Meta<typeof Drawer> = {
   /* 👇 The title prop is optional.
@@ -30,7 +29,6 @@ export const Primary: Story = () => {
     <div className="relative h-full">
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen} title={"Drawer Title"}>
         Primary Content
-        <DrawerFooterPolygon onDelete={() => {}} onCreate={() => {}} />
       </Drawer>
       <Button onClick={() => setIsOpen(true)}>Open</Button>
     </div>

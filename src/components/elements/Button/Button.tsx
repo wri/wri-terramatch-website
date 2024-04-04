@@ -19,7 +19,9 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "semi-red"
     | "secondary-blue"
     | "sky-pa"
-    | "white-pa";
+    | "white-pa"
+    | "white-toggle"
+    | "transparent-toggle";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -40,7 +42,7 @@ const Button: FC<IButtonProps> = props => {
 
   const variantClasses = useMemo(() => {
     const nonTextClasses =
-      "rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10";
+      "rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10";
     const nonTextSpanClasses = "flex items-center text-bold-caption-200";
     const newText =
       "flex items-center font-inter font-bold text-16 leading-snug tracking-tighter uppercase text-primary";
@@ -96,15 +98,27 @@ const Button: FC<IButtonProps> = props => {
       case "semi-black":
         return {
           container:
-            "group bg-white border-[3px] w-full border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
+            "group bg-white border-[3px] border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-14-bold text-neutral-1000 group-hover:text-primary-500"
         };
 
       case "semi-red":
         return {
           container:
-            "group bg-white border-[3px] w-full border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
+            "group bg-white border-[3px] border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-error text-14-bold group-hover:text-primary-500 leading-150"
+        };
+
+      case "white-toggle":
+        return {
+          container: "group bg-white py-1 px-3 rounded",
+          span: "text-14-semibold text-grey-300"
+        };
+
+      case "transparent-toggle":
+        return {
+          container: "group bg-transparent px-3 py-1 rounded",
+          span: "text-14-light text-grey-400"
         };
 
       default:
