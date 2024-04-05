@@ -12,7 +12,7 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   title: string;
   subtitle: string;
   isSelected?: boolean;
-  refContainer: React.RefObject<HTMLDivElement>;
+  refContainer: React.RefObject<HTMLDivElement> | null;
 }
 
 const MapSidePanelItem = ({
@@ -71,7 +71,7 @@ const MapSidePanelItem = ({
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
           <div className="lex h-full self-start">
-            <Menu container={refContainer.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
+            <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
                 className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
