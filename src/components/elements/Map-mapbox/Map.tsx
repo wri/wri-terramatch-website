@@ -154,7 +154,7 @@ export const Map = ({
           </When>
         </ControlGroup>
         <ControlGroup position={"top-left"}>
-          <PolygonStatus></PolygonStatus>
+          <PolygonStatus />
         </ControlGroup>
         <When condition={!editable}>
           <ControlGroup position="bottom-left">

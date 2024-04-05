@@ -7,9 +7,10 @@ import { ModalBase, ModalProps } from "./Modal";
 
 export interface ModalConfirmProps extends ModalProps {
   onClose: () => void;
+  onConfirm: () => void;
 }
 
-const ModalConfirm: FC<ModalConfirmProps> = ({ title, content, children, onClose, ...rest }) => {
+const ModalConfirm: FC<ModalConfirmProps> = ({ title, content, children, onClose, onConfirm, ...rest }) => {
   return (
     <ModalBase {...rest} className="p-5">
       <div className="flex flex-col gap-2">
@@ -27,7 +28,13 @@ const ModalConfirm: FC<ModalConfirmProps> = ({ title, content, children, onClose
             Cancel
           </Text>
         </Button>
-        <Button className="w-full">
+        <Button
+          className="w-full"
+          onClick={() => {
+            onConfirm();
+            onClose();
+          }}
+        >
           <Text variant="text-12-bold" className="capitalize">
             Confirm
           </Text>

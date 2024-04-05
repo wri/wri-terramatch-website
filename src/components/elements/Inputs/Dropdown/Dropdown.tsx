@@ -13,15 +13,16 @@ import InputLabel from "@/components/elements/Inputs/InputElements/InputLabel";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { formatOptionsList } from "@/utils/options";
+import { formatOptionsList, statusColor } from "@/utils/options";
 
 import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
+
 export interface DropdownProps {
   label?: string;
   description?: string;
   placeholder?: string;
-  value: OptionValue[];
+  value?: OptionValue[];
   options: Option[];
   iconName?: IconNames;
   className?: string;
@@ -69,7 +70,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       updateControl.current++;
     }
   }, [props.value, props.options, props.hasOtherOptions]);
-  const onChange = (value: OptionValue | OptionValue[], _otherValue?: string) => {
+  const onChange = async (value: OptionValue | OptionValue[], _otherValue?: string) => {
     let otherStr = typeof _otherValue === "string" ? _otherValue : otherValue;
     if (Array.isArray(value)) {
       setSelected(value);
@@ -115,6 +116,40 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return error;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherIsSelected, otherValue, t]);
+
+  function getColorStatus(option: string): string {
+    const colorMap: { [key: string]: string } = {
+      Approved: "bg-secondary",
+      Submitted: "bg-blue",
+      Draft: "bg-purple",
+      "Under Review": "bg-tertiary-600"
+    };
+
+    return colorMap[option] || "";
+  }
+
+  function getColorStatusText(option: string): string {
+    const colorMap: { [key: string]: string } = {
+      Approved: "text-secondary",
+      Submitted: "text-blue",
+      Draft: "text-purple",
+      "Under Review": "text-tertiary-600"
+    };
+
+    return colorMap[option] || "";
+  }
+
+  function getColorStatusBg(option: string): string {
+    const colorMap: { [key: string]: string } = {
+      Approved: "bg-secondary-200",
+      Submitted: "bg-blue-200",
+      Draft: "bg-purple-200",
+      "Under Review": "bg-tertiary-50"
+    };
+
+    return colorMap[option] || "";
+  }
+
   return (
     <div className={classNames("space-y-2", props.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
@@ -139,9 +174,19 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 props.className
               )}
             >
-              <span className="w-full line-clamp-1">
-                {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
-              </span>
+              <div className="flex items-center gap-2">
+                <When condition={options[0].meta}>
+                  <div
+                    className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
+                      statusColor(options, toArray<any>(value)) ?? ""
+                    )}`}
+                  />
+                </When>
+                <Text variant="text-14-light" className="w-full line-clamp-1">
+                  {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
+                </Text>
+              </div>
+
               <Icon
                 name={props.iconName || IconNames.CHEVRON_DOWN}
                 className={classNames("fill-neutral-900 transition", open && "rotate-180")}
@@ -189,7 +234,25 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                           />
                         </Then>
                         <Else>
-                          <Text variant="text-body-600">{option.title}</Text>
+                          <div className="flex items-center gap-2">
+                            <Text variant="text-14-light" className="w-[65%] break-words">
+                              {option.title}
+                            </Text>
+                            <When condition={option.meta}>
+                              <div
+                                className={`flex w-[35%] items-center justify-center rounded-xl py-1 px-[6px] ${getColorStatusBg(
+                                  option.meta
+                                )}`}
+                              >
+                                <Text
+                                  variant="text-12-semibold"
+                                  className={`w-fit whitespace-nowrap ${getColorStatusText(option.meta)}`}
+                                >
+                                  {option.meta}
+                                </Text>
+                              </div>
+                            </When>
+                          </div>
                         </Else>
                       </If>
                     </Listbox.Option>

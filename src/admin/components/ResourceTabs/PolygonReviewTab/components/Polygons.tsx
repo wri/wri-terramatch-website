@@ -1,5 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
+import Drawer from "@/components/elements/Drawer/Drawer";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -7,6 +8,8 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
+
+import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
@@ -26,6 +29,7 @@ const statusColor = {
 };
 
 const Polygons = (props: IPolygonProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const openFormModalHandler = () => {
@@ -34,7 +38,8 @@ const Polygons = (props: IPolygonProps) => {
         title={"Confirm Polygon Deletion"}
         content="Do you want to delete this polgyon?"
         onClose={closeModal}
-      ></ModalConfirm>
+        onConfirm={() => {}}
+      />
     );
   };
 
@@ -46,7 +51,10 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.POLYGON} className="h-6 w-6" />
           <Text variant="text-12-bold">Edit Polygon</Text>
         </div>
-      )
+      ),
+      onClick: () => {
+        setIsOpen(true);
+      }
     },
     {
       id: "2",
@@ -98,6 +106,9 @@ const Polygons = (props: IPolygonProps) => {
 
   return (
     <div>
+      <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
+        <PolygonDrawer />
+      </Drawer>
       <Text variant="text-16-bold" className="mb-4 px-2 text-grey-300">
         Polygons
       </Text>

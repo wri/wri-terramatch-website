@@ -6,8 +6,10 @@ import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import Comentary from "@/components/elements/Comentary/Comentary";
 import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { toArray } from "@/utils/array";
 
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
@@ -56,11 +58,32 @@ const polygonValidationItems = [
   }
 ];
 
-const polygonStatusLabels = [
-  { id: "1", label: "Site Approved" },
-  { id: "2", label: "Polygons Submitted" },
-  { id: "3", label: "Polygons Approved" },
-  { id: "4", label: "Monitoring Begins" }
+const dropdownPolygonOptions = [
+  {
+    title: "Aerobic Agroforestry",
+    value: "1",
+    meta: "Approved"
+  },
+  {
+    title: "Mexico_FONCET_ANP_FRAILESCAN",
+    value: "2",
+    meta: "Submitted"
+  },
+  {
+    title: "Philippines_CI_Philippines",
+    value: "3",
+    meta: "Draft"
+  },
+  {
+    title: "Portugal_ReForest_Action_(Proenca-a-Nova)",
+    value: "4",
+    meta: "Under Review"
+  },
+  {
+    title: "Spain_ReForest_Action_(Palencia)",
+    value: "5",
+    meta: "Approved"
+  }
 ];
 
 const comentaryFiles = [
@@ -104,36 +127,38 @@ const PolygonDrawer = () => {
           variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setButtonToogle(!buttonToogle)}
         >
-          Attributes
+          Polygon Status
         </Button>
         <Button
           variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
           onClick={() => setButtonToogle(!buttonToogle)}
         >
-          Polygon Status
+          Attributes
         </Button>
       </div>
       <If condition={buttonToogle}>
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <Accordion variant="drawer" title={"Validation"}>
-              <PolygonValidation menu={polygonValidationItems} />
-            </Accordion>
-            <Divider />
-            <Accordion variant="drawer" title={"Attribute Information"}>
-              <AttributeInformation />
-            </Accordion>
-            <Divider />
-            <Accordion variant="drawer" title={"Version History"}>
-              <VersionHistory />
-            </Accordion>
-            <Divider />
-          </div>
-        </Then>
-        <Else>
-          <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} labelsPlaceTop />
+            <div className="flex h-fit flex-col gap-2">
+              <Text variant="text-16-bold">Select Polygon</Text>
+              <Dropdown
+                defaultValue={toArray(dropdownPolygonOptions[0].value)}
+                placeholder="Select Polygon"
+                options={dropdownPolygonOptions}
+                onChange={() => {}}
+              />
+            </div>
+
             <div className="flex flex-wrap items-center gap-4">
+              <div className="flex w-full items-center gap-2">
+                <Text variant="text-16-bold">Status:</Text>
+                <div className="flex items-center gap-[6px] rounded-xl bg-secondary-200 py-[2px] px-[6px]">
+                  <Icon name={IconNames.STATUS_APPROVED} className="h-4 w-4" />
+                  <Text variant="text-12-semibold" className="text-green-500">
+                    Approved
+                  </Text>
+                </div>
+              </div>
               <Button variant="semi-black" className="flex-1 whitespace-nowrap">
                 Request change
               </Button>
@@ -151,6 +176,22 @@ const PolygonDrawer = () => {
                 files={item.files}
               />
             ))}
+          </div>
+        </Then>
+        <Else>
+          <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+            <Accordion variant="drawer" title={"Validation"}>
+              <PolygonValidation menu={polygonValidationItems} />
+            </Accordion>
+            <Divider />
+            <Accordion variant="drawer" title={"Attribute Information"}>
+              <AttributeInformation />
+            </Accordion>
+            <Divider />
+            <Accordion variant="drawer" title={"Version History"}>
+              <VersionHistory />
+            </Accordion>
+            <Divider />
           </div>
         </Else>
       </If>

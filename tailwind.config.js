@@ -89,7 +89,8 @@ module.exports = {
         400: "#F3C148",
         300: "#F6D279",
         200: "#FAEAC1",
-        100: "#FDFAF2"
+        100: "#FDFAF2",
+        50: "#FFF4EC"
       },
       error: {
         DEFAULT: "#D50000",
@@ -113,9 +114,18 @@ module.exports = {
         800: "#E9EDF0",
         900: "#F6FAFD"
       },
-      purple: "#E468EF",
-      blue: "#2398D8",
-      green: "#72D961"
+      purple: {
+        DEFAULT: "#E468EF",
+        200: "#FDF0FE"
+      },
+      blue: {
+        DEFAULT: "#2398D8",
+        200: "#E9F5FC"
+      },
+      green: {
+        DEFAULT: "#72D961",
+        500: "#198E2B"
+      }
     },
 
     boxShadow: {
