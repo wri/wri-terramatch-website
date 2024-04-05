@@ -25,12 +25,16 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     <PageBody>
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap gap-6">
+          <div className="flex w-full flex-wrap items-start gap-8">
             <When condition={isPPC}>
               <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} className="w-[170px]" />
             </When>
+            <GoalProgressCard label={t("Hectares Restored Goal")} value={site.total_hectares_restored_goal} />
+
             <GoalProgressCard
               label={t("Trees restored")}
+              value={site.trees_restored_count}
+              limit={site.trees_grown_goal}
               hasProgress={false}
               items={[
                 { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: site.trees_planted_count },
@@ -83,6 +87,8 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
           </PageCard>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

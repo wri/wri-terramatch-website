@@ -35,7 +35,7 @@ export const FilterControl = () => {
     <div className="">
       <When condition={showFilters}>
         <div className="relative">
-          <div className="absolute bottom-1 w-max rounded bg-white p-2 shadow">
+          <div className="absolute bottom-1 w-max rounded-lg bg-white p-2 shadow">
             <Button
               variant="text"
               className="text-12-bold text-nowrap h-fit w-full !justify-start rounded-lg bg-white p-2"

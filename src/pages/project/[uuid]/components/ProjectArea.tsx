@@ -63,7 +63,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         onSearch={setQuery}
         className="absolute z-20 h-[500px] w-[23vw] p-8"
         onLoadMore={fetchNextPage}
-        emptyText={t("No results found or no sites in this project. Try refining your search or create a new site.")}
+        emptyText={t("No polygons are available.")}
       />
       <Map geojson={geoJSON} siteData={true} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" />
     </div>

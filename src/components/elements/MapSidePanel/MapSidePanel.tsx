@@ -46,7 +46,7 @@ const MapSidePanel = ({
               <Icon name={IconNames.IC_FILTER} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
             </div>
             <When condition={openMenu}>
-              <div className="absolute z-10 mt-1 grid w-max gap-3 rounded bg-white p-3 shadow">
+              <div className="absolute z-10 mt-1 grid w-max gap-3 rounded-lg bg-white p-3 shadow">
                 <Checkbox
                   name=""
                   label={t("Draft")}
@@ -81,7 +81,7 @@ const MapSidePanel = ({
       </div>
       <div className="h-[calc(100%-38px)] rounded-bl-lg">
         {items.length === 0 && (
-          <Text variant="text-light-subtitle-400" className="mt-8 text-center">
+          <Text variant="text-16-light" className="mt-8 text-white">
             {emptyText || t("No result")}
           </Text>
         )}
