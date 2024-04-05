@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -38,19 +37,6 @@ const AuditLog = ({ project }: ReportingTasksProps) => {
                     {t("Update the site status, view updates, or add comments")}
                   </Text>
                 </div>
-
-                <StepProgressbar
-                  color="primary"
-                  value={50}
-                  labels={[
-                    "Started",
-                    "Awaiting Approval",
-                    "Needs More Information",
-                    "Awaiting Polygon Validation",
-                    "Awaiting Polygon Acceptance",
-                    "Approved"
-                  ]}
-                />
                 <Text variant="text-16-bold" className="mt-8">
                   Audit Log
                 </Text>
