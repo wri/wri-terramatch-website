@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useState } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, useRef, useState } from "react";
 
 import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
 import Text from "@/components/elements/Text/Text";
@@ -27,6 +27,7 @@ const MapSidePanel = ({
 }: MapSidePanelProps) => {
   const t = useT();
   const [selected, setSelected] = useState<MapSidePanelItemProps>();
+  const refContainer = useRef<HTMLDivElement>(null);
 
   return (
     <div {...props} className={classNames(className)}>
@@ -42,6 +43,7 @@ const MapSidePanel = ({
           </Text>
         )}
         <div
+          ref={refContainer}
           className="mr-[-12px] h-full space-y-4 overflow-y-auto pr-3"
           onScroll={e => {
             //@ts-ignore
@@ -63,6 +65,7 @@ const MapSidePanel = ({
                   onSelectItem(item);
                 }}
                 isSelected={selected?.uuid === item.uuid}
+                refContainer={refContainer}
               />
             )}
           />

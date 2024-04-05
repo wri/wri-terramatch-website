@@ -70,7 +70,7 @@ const Button: FC<IButtonProps> = props => {
           span: newText
         };
       case "text":
-        return { container: "", span: "text-bold-body-300" };
+        return { container: "", span: "text-12-bold" };
 
       case "link":
         return { container: "", span: "text-light-body-300 uppercase underline" };

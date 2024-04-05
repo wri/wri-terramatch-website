@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 //@ts-ignore
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
+import { t } from "@transifex/native";
 import mapboxgl, { Map as IMap } from "mapbox-gl";
 //@ts-ignore
 import { CircleMode, DirectMode, DragCircleMode, SimpleSelectMode } from "mapbox-gl-draw-circle";
@@ -26,6 +27,7 @@ import {
   user_shapePropertiesValidationSchema
 } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import MapProvider from "@/context/map.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -159,6 +161,16 @@ export const Map = ({
           </ControlGroup>
           <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} />
         </When>
+        <ControlGroup position="top-right" className="top-48">
+          <button type="button" className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 ">
+            <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
+          </button>
+        </ControlGroup>
+        <ControlGroup position="bottom-right" className="bottom-8">
+          <button className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200">
+            {t("View Images")}
+          </button>
+        </ControlGroup>
       </When>
       <When condition={captureAdditionalPolygonProperties}>
         <ControlGroup position="bottom-right">

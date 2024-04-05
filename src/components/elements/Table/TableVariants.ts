@@ -21,7 +21,8 @@ export const VARIANT_TABLE_SECONDARY = {
 export const VARIANT_TABLE_SECONDARY_WHITE = {
   name: "secondary-white",
   trHeader: "bg-neutral-50",
-  trBody: "bg-white"
+  trBody: "bg-white",
+  tdBody: "border-0"
 };
 
 export const VARIANT_TABLE_BORDER = {

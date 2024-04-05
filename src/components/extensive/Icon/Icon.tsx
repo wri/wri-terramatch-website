@@ -100,7 +100,8 @@ export enum IconNames {
   GRAPH5 = "graph-5",
   IC_MORE_OUTLINED = "ic-more-outlined",
   IC_SITE_VIEW = "ic-site-view",
-  IC_EARTH_MAP = "earth-map"
+  IC_EARTH_MAP = "earth-map",
+  IC_DOWNLOAD_MENU = "download-menu"
 }
 
 export interface IconProps {

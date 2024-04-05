@@ -124,12 +124,19 @@ module.exports = {
       blueCustom: {
         DEFAULT: "#13487A",
         600: "#33525c",
+        200: "#2398D8",
         100: "#cfe6f4",
         50: "#f1fafd"
       },
       darkCustom: {
         DEFAULT: "#353535",
         100: "#637579"
+      },
+      pinkCustom: {
+        DEFAULT: "#E468EF"
+      },
+      greenCustom: {
+        200: "#72D961"
       }
     },
     boxShadow: {
