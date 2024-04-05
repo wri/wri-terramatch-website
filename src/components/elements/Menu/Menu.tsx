@@ -12,7 +12,6 @@ interface MenuItemProps {
   MenuItemVariant?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
-
 export interface MenuProps {
   menu: MenuItemProps[];
   setSelected?: (id: string) => void;
@@ -24,7 +23,6 @@ export interface MenuProps {
   className?: string;
   container?: HTMLDivElement | null;
 }
-
 const Menu = (props: MenuProps) => {
   const {
     menu,
