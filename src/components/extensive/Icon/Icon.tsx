@@ -101,7 +101,9 @@ export enum IconNames {
   IC_MORE_OUTLINED = "ic-more-outlined",
   IC_SITE_VIEW = "ic-site-view",
   IC_EARTH_MAP = "earth-map",
-  IC_DOWNLOAD_MENU = "download-menu"
+  IC_DOWNLOAD_MENU = "download-menu",
+  IC_FILTER = "ic-filter",
+  IC_SORT = "ic-sort"
 }
 
 export interface IconProps {

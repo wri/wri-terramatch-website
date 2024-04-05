@@ -1,10 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, Fragment, HTMLAttributes, useRef, useState } from "react";
+import { When } from "react-if";
 
 import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+
+import Checkbox from "../Inputs/Checkbox/Checkbox";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
@@ -28,13 +32,52 @@ const MapSidePanel = ({
   const t = useT();
   const [selected, setSelected] = useState<MapSidePanelItemProps>();
   const refContainer = useRef<HTMLDivElement>(null);
+  const [openMenu, setOpenMenu] = useState(false);
 
   return (
     <div {...props} className={classNames(className)}>
-      <div className="mb-3 rounded-tl-lg">
+      <div className="mb-3 flex items-start justify-between rounded-tl-lg">
         <Text variant="text-16-bold" className="text-white">
           {title}
         </Text>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
+              <Icon name={IconNames.IC_FILTER} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
+            </div>
+            <When condition={openMenu}>
+              <div className="absolute z-10 mt-1 grid w-max gap-3 rounded bg-white p-3 shadow">
+                <Checkbox
+                  name=""
+                  label={t("Draft")}
+                  className="flex-row-reverse items-center justify-end gap-3"
+                  textClassName="text-10-semibold"
+                />
+                <Checkbox
+                  name=""
+                  label={t("Submitted")}
+                  className="flex-row-reverse items-center justify-end gap-3"
+                  textClassName="text-10-semibold"
+                />
+                <Checkbox
+                  name=""
+                  label={t("Approved")}
+                  className="flex-row-reverse items-center justify-end gap-3"
+                  textClassName="text-10-semibold"
+                />
+                <Checkbox
+                  name=""
+                  label={t("Needs More Info")}
+                  className="flex-row-reverse items-center justify-end gap-3"
+                  textClassName="text-10-semibold"
+                />
+              </div>
+            </When>
+          </div>
+          <div className="rounded bg-white p-1.5">
+            <Icon name={IconNames.IC_SORT} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
+          </div>
+        </div>
       </div>
       <div className="h-[calc(100%-38px)] rounded-bl-lg">
         {items.length === 0 && (

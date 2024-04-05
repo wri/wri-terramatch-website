@@ -123,6 +123,7 @@ module.exports = {
       },
       blueCustom: {
         DEFAULT: "#13487A",
+        900: "#002633",
         600: "#33525c",
         200: "#2398D8",
         100: "#cfe6f4",
