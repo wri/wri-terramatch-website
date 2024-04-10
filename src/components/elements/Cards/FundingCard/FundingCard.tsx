@@ -87,7 +87,7 @@ const FundingCard = (props: FundingCardProps) => {
         <Button
           as={Link}
           variant="white"
-          iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
+          // iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
           className="w-full flex-1"
           href={secondaryLink}
           disabled={!secondaryLink}
