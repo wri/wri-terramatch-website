@@ -6,7 +6,11 @@ module.exports = {
     extend: {
       screens: {
         sx: "460px",
-        "screen-height-sm": { raw: "(max-height: 768px)" }
+        "screen-height-sm": { raw: "(max-height: 768px)" },
+        sm: "640px",
+        md: "1400px",
+        lg: "1900px",
+        wide: "2500px"
       },
       width: {
         "fit-content": "fit-content"
@@ -156,7 +160,9 @@ module.exports = {
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
       "4xl": "2.25rem", //36px
-      "5xl": "2.5rem" //40px
+      "5xl": "2.5rem", //40px
+      "6xl": "44px",
+      "7xl": "48px"
     },
     listStyleType: {
       none: "none",
