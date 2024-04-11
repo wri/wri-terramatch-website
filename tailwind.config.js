@@ -145,6 +145,7 @@ module.exports = {
 
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
+      "inset-blue": "0px -30px 0px -27px rgb(212 238 249) inset",
       "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px
     },
     fontFamily: {

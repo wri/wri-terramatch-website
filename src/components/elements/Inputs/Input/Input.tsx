@@ -1,5 +1,14 @@
 import cn from "classnames";
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
+import {
+  ChangeEvent,
+  DetailedHTMLProps,
+  forwardRef,
+  InputHTMLAttributes,
+  KeyboardEvent,
+  Ref,
+  useId,
+  useState
+} from "react";
 import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { IconNames } from "src/components/extensive/Icon/Icon";
@@ -58,6 +67,7 @@ const Input = forwardRef(
       inputWrapperProps;
     const id = useId();
     const customVariantClasses = customVariant ? customVariant : {};
+    const [inputValue, setInputValue] = useState<string>("");
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
@@ -69,10 +79,10 @@ const Input = forwardRef(
         "border-b-neutral-400": !error
       },
       login: {
-        "h-full relative z-[1] bg-transparent border-b-2 hover:border-blue-300 border-grey-400 hover:shadow-inset-blue w-full input-login pb-3.5 outline-none":
+        "border-0 h-full relative z-[1] bg-transparent border-b-2 hover:border-blue-300 focus:border-blue-300 border-grey-400 hover:shadow-inset-blue focus:shadow-inset-blue w-full input-login pb-3.5 outline-none":
           true,
         "pl-4": inputProps.type === "number",
-        "border-b-neutral-400": !error
+        "border-b-neutral-300": !error
       }
     };
 
@@ -109,6 +119,9 @@ const Input = forwardRef(
         onClick: () => clearInput()
       };
     }
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setInputValue(e.target.value);
+    };
 
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
@@ -118,7 +131,7 @@ const Input = forwardRef(
         inputId={id}
         label={label}
         description={description}
-        containerClassName={containerClassName}
+        containerClassName={inputValue.length > 0 ? "input-content-login" : containerClassName}
         error={!hideErrorMessage ? error : undefined}
         required={required}
         feedbackRequired={feedbackRequired}
@@ -135,6 +148,8 @@ const Input = forwardRef(
             aria-invalid={!!error}
             aria-errormessage={error?.message}
             aria-describedby={`${id}-description`}
+            onChange={handleInputChange}
+            value={inputValue}
           />
           <When condition={!!iconButtonProps}>
             <IconButton {...iconButtonProps!} className="absolute right-3 top-[50%] translate-y-[-50%]" />
