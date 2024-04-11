@@ -5,13 +5,12 @@ import { UseFormReturn } from "react-hook-form";
 
 import Button from "@/components/componentsToLogin/Button/Button";
 import { BUTTON_VARIANT_BLUE, BUTTON_VARIANT_WHITE } from "@/components/componentsToLogin/Button/ButtonVariant";
-// import Input from "@/components/componentsToLogin/Input/Input";
-// import { INPUT_SIGNUP_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
+import { INPUT_SIGNUP_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
 import Text from "@/components/componentsToLogin/Text/Text";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Input from "@/components/elements/Inputs/Input/Input";
-// import Form from "@/components/extensive/Form/Form";
 import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
+// import Form from "@/components/extensive/Form/Form";
 import { privacyPolicyLink, termsAndConditionsLink } from "@/constants/links";
 
 import { SignUpFormData } from "../index.page";
@@ -45,18 +44,21 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
               type="text"
               label="First Name"
               error={errors.first_name}
-              // variant={INPUT_SIGNUP_VARIANT}
+              variant={"signup"}
               required
               placeholder="Add First Name"
+              labelClassName={INPUT_SIGNUP_VARIANT.label}
+              containerClassName={INPUT_SIGNUP_VARIANT.content}
             />
             <Input
               name="last_name"
               type="text"
               label="Last Name"
               error={errors.last_name}
-              // variant={INPUT_SIGNUP_VARIANT}
+              variant={"signup"}
               required
               placeholder="Add Last Name"
+              labelClassName={INPUT_SIGNUP_VARIANT.label}
             />
           </div>
           <Input
@@ -64,9 +66,10 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
             type="text"
             label="Job Title"
             error={errors.job_role}
-            // variant={INPUT_SIGNUP_VARIANT}
+            variant={"signup"}
             required
             placeholder="Add Job Title"
+            labelClassName={INPUT_SIGNUP_VARIANT.label}
             description={"Please enter your job role or position within your organizations."}
           />
           <Input
@@ -74,9 +77,10 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
             type="number"
             label="Professional Phone Number"
             error={errors.phone_number}
-            // variant={INPUT_SIGNUP_VARIANT}
+            variant={"signup"}
             required
             placeholder="Add Phone Number"
+            labelClassName={INPUT_SIGNUP_VARIANT.label}
             description={"Please provide a professional phone number where you can be contacted"}
           />
           <Input
@@ -84,9 +88,10 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
             type="text"
             label="Professional Email Address"
             error={errors.email_address}
-            // variant={INPUT_SIGNUP_VARIANT}
+            variant={"signup"}
             required
             placeholder="Add Email Address"
+            labelClassName={INPUT_SIGNUP_VARIANT.label}
             description={
               "This is the email address you will use to log into TerraMatch. To verify your email, we will send a verification email to this address."
             }
@@ -99,6 +104,8 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
               type="password"
               label={t("Password")}
               required
+              variant={"signup"}
+              labelClassName={INPUT_SIGNUP_VARIANT.label}
             />
             <PasswordStrength password={form.watch("password")} />
           </div>
@@ -106,9 +113,10 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
             name="confirm_password"
             type="password"
             label="Repeat Password"
-            // variant={INPUT_SIGNUP_VARIANT}
+            variant={"signup"}
             error={errors.confirm_password}
             required
+            labelClassName={INPUT_SIGNUP_VARIANT.label}
             placeholder="Repeat Password"
           />
           <div className="mt-7 flex flex-col gap-8">
