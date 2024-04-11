@@ -29,6 +29,8 @@ import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
 import MapProvider from "@/context/map.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 
+import PolygonStatus from "./MapControls/PolygonStatus";
+
 mapboxgl.accessToken =
   process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
   "pk.eyJ1IjoiM3NpZGVkY3ViZSIsImEiOiJjam55amZrdjIwaWY3M3FueDAzZ3ZjeGR2In0.DhSsxs-8XhbTgoVmFcs94Q";
@@ -150,6 +152,9 @@ export const Map = ({
           <When condition={editable}>
             <EditControl />
           </When>
+        </ControlGroup>
+        <ControlGroup position={"top-left"}>
+          <PolygonStatus />
         </ControlGroup>
         <When condition={!editable}>
           <ControlGroup position="bottom-left">

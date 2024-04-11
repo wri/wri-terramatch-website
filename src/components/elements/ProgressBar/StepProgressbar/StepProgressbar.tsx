@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Colors } from "@/types/common";
@@ -14,9 +15,19 @@ export interface StepProgressbarProps extends DetailedHTMLProps<HTMLAttributes<H
   color?: Colors;
   value: number;
   labels?: labelProps[];
+  labelsPlaceTop?: boolean;
+  classNameLabels?: string;
 }
 
-const StepProgressbar = ({ value, color = "primary", labels = [], className, ...rest }: StepProgressbarProps) => {
+const StepProgressbar = ({
+  value,
+  color = "primary",
+  labels = [],
+  className,
+  labelsPlaceTop,
+  classNameLabels,
+  ...rest
+}: StepProgressbarProps) => {
   const [lastSelected, setLastSelected] = useState<number>(-1);
   const differentialThreshold = 100 / (labels.length - 1);
   useEffect(() => {
@@ -30,18 +41,33 @@ const StepProgressbar = ({ value, color = "primary", labels = [], className, ...
   return (
     <div className="px-4">
       <div className="relative w-full">
-        <div className="mb-12 w-full">
+        <div
+          className={classNames("w-full", {
+            "mt-12": labelsPlaceTop,
+            "mb-12": !labelsPlaceTop
+          })}
+        >
           <div className="flex w-full justify-between">
             {labels?.map((item, index) => (
               <div key={item.id} className="">
                 <div className="relative flex flex-col items-center">
-                  <Icon name={IconNames.CHECK_PROGRESSBAR} className="z-10 h-5 w-5" />
+                  <Icon
+                    name={index > lastSelected ? IconNames.CHECK_PROGRESSBAR_NULL : IconNames.CHECK_PROGRESSBAR}
+                    className={`z-10 h-5 w-5 text-${color}`}
+                  />
                   <Text
                     variant="text-12"
                     className={classNames(
-                      lastSelected == index && "!font-bold",
-                      index > lastSelected && "opacity-50",
-                      "absolute top-[calc(100%_+_16px)] min-w-[64px] text-center"
+                      tw(
+                        lastSelected === index && "!font-bold",
+                        index > lastSelected && "opacity-50",
+                        "absolute min-w-[64px] text-center",
+                        classNameLabels
+                      ),
+                      {
+                        "bottom-[calc(100%_+_16px)]": labelsPlaceTop,
+                        "top-[calc(100%_+_16px)]": !labelsPlaceTop
+                      }
                     )}
                   >
                     {item.label}

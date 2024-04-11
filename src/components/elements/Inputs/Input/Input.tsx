@@ -46,6 +46,8 @@ const Input = forwardRef(
       className,
       iconButtonProps,
       hideErrorMessage,
+      labelVariant,
+      labelClassname,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -106,6 +108,8 @@ const Input = forwardRef(
       <InputWrapper
         inputId={id}
         label={label}
+        labelVariant={labelVariant}
+        labelClassname={labelClassname}
         description={description}
         containerClassName={containerClassName}
         error={!hideErrorMessage ? error : undefined}

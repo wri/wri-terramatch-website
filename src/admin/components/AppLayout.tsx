@@ -11,7 +11,6 @@ export const AppLayout = (props: LayoutProps) => {
   const regex = new RegExp("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "gi");
 
   const isDetailPage = regex.test(window.location.hash);
-
   return (
     <ExportProvider>
       <Layout {...props} appBar={AppBar}>
