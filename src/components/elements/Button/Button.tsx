@@ -117,25 +117,16 @@ const Button: FC<IButtonProps> = props => {
             "group bg-white border-[3px] border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-error text-14-bold group-hover:text-primary-500 leading-150"
         };
-      case "tertiary-transparent":
-        return {
-          container:
-            "group bg-white border-[3px] w-full border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
-          span: "uppercase text-error text-14-bold group-hover:text-primary-500 leading-150"
-        };
-
       case "white-toggle":
         return {
           container: "group bg-white py-1 px-3 rounded",
           span: "text-14-semibold text-grey-300"
         };
-
       case "transparent-toggle":
         return {
           container: "group bg-transparent px-3 py-1 rounded",
           span: "text-14-light text-grey-400"
         };
-
       default:
         return { container: "", span: "" };
     }
