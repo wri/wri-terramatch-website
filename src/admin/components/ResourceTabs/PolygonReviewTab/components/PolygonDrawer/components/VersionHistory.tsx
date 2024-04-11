@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import Text from "@/components/elements/Text/Text";
 
 const dropdownOptions = [
   {
@@ -18,17 +17,15 @@ const VersionHistory = () => {
   const t = useT();
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex h-fit flex-col gap-1">
-        <Text variant="text-14-light" className="opacity-60">
-          Polygon Version
-        </Text>
-        <Dropdown
-          placeholder="Planting Complete"
-          options={dropdownOptions}
-          value={["Planting Complete"]}
-          onChange={() => {}}
-        />
-      </div>
+      <Dropdown
+        label="Polygon Version"
+        labelClassName="capitalize"
+        labelVariant="text-14-light"
+        placeholder="Planting Complete"
+        options={dropdownOptions}
+        value={["Planting Complete"]}
+        onChange={() => {}}
+      />
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full">
           {t("Delete")}

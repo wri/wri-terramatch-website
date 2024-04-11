@@ -11,7 +11,7 @@ import Input from "@/components/elements/Inputs/Input/Input";
 import InputDescription from "@/components/elements/Inputs/InputElements/InputDescription";
 import InputLabel from "@/components/elements/Inputs/InputElements/InputLabel";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { Option, OptionValue } from "@/types/common";
+import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { formatOptionsList, statusColor } from "@/utils/options";
 
@@ -20,6 +20,8 @@ import Checkbox from "../Checkbox/Checkbox";
 
 export interface DropdownProps {
   label?: string;
+  labelClassName?: string;
+  labelVariant?: TextVariants;
   description?: string;
   placeholder?: string;
   value?: OptionValue[];
@@ -35,6 +37,8 @@ export interface DropdownProps {
   optionsFilter?: string;
   feedbackRequired?: boolean;
   formHook?: UseFormReturn;
+  onChangeConfirm?: boolean;
+  setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
 }
@@ -73,7 +77,12 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const onChange = async (value: OptionValue | OptionValue[], _otherValue?: string) => {
     let otherStr = typeof _otherValue === "string" ? _otherValue : otherValue;
     if (Array.isArray(value)) {
-      setSelected(value);
+      if (props.onChangeConfirm) {
+        setSelected(value);
+        if (props.setOnChangeConfirm) {
+          props.setOnChangeConfirm(false);
+        }
+      }
       const allowedValues = getAllowedValues(value, props.options);
       props.onChange(
         props.hasOtherOptions && otherStr && value.includes(otherKey) ? [...allowedValues, otherStr] : allowedValues
@@ -157,7 +166,12 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
           <>
             <When condition={!!props.label}>
               <Listbox.Label as={Fragment}>
-                <InputLabel required={props.required} feedbackRequired={props.feedbackRequired}>
+                <InputLabel
+                  required={props.required}
+                  feedbackRequired={props.feedbackRequired}
+                  className={props.labelClassName}
+                  labelVariant={props.labelVariant}
+                >
                   {props.label}
                 </InputLabel>
               </Listbox.Label>

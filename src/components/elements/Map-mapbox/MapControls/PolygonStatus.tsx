@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -25,6 +27,7 @@ const dropdownOptions = [
 
 const PolygonStatus = () => {
   const { openModal, closeModal } = useModalContext();
+  const [confirmChange, setConfirmChange] = useState(true);
 
   const openFormModalHandler = () => {
     openModal(
@@ -32,7 +35,10 @@ const PolygonStatus = () => {
         title={"Confirm Polygon Deletion"}
         content="Do you want to delete this polgyon?"
         onClose={closeModal}
-        onConfirm={() => {}}
+        onConfirm={() => {
+          setConfirmChange(true);
+          closeModal;
+        }}
       />
     );
   };
@@ -42,7 +48,13 @@ const PolygonStatus = () => {
       <Text variant="text-14-light" className="opacity-60">
         Polygon Status
       </Text>
-      <Dropdown placeholder="PolygonStatus" options={dropdownOptions} onChange={openFormModalHandler} />
+      <Dropdown
+        placeholder="PolygonStatus"
+        options={dropdownOptions}
+        onChange={openFormModalHandler}
+        onChangeConfirm={confirmChange}
+        setOnChangeConfirm={setConfirmChange}
+      />
     </div>
   );
 };

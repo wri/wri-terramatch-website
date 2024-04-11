@@ -14,8 +14,17 @@ export interface TextAreaProps
 }
 
 const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWrapperProps }: TextAreaProps) => {
-  const { label, description, containerClassName, error, required, feedbackRequired, ...inputProps } =
-    inputWrapperProps;
+  const {
+    label,
+    description,
+    containerClassName,
+    error,
+    required,
+    feedbackRequired,
+    labelClassname,
+    labelVariant,
+    ...inputProps
+  } = inputWrapperProps;
   const id = useId();
   const inputClasses = cn(
     "min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent",
@@ -37,6 +46,8 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     <InputWrapper
       inputId={id}
       label={label}
+      labelClassname={labelClassname}
+      labelVariant={labelVariant}
       description={description}
       containerClassName={containerClassName}
       error={error}

@@ -30,6 +30,14 @@ input[type="radio"]:focus {
   letter-spacing: normal;
 }
 
+.lastRow:last-child>:last-child{
+  @apply rounded-br-lg
+}
+
+.lastRow:last-child>:first-child{
+  @apply rounded-bl-lg
+}
+
 
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");

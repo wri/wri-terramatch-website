@@ -1,5 +1,5 @@
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import Text from "@/components/elements/Text/Text";
+import Input from "@/components/elements/Inputs/Input/Input";
 
 const dropdownOptions = [
   {
@@ -14,61 +14,50 @@ const dropdownOptions = [
 const AttributeInformation = () => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex h-fit flex-col gap-1">
-        <Text variant="text-14-light" className="opacity-60">
-          Polygon ID
-        </Text>
-        <Dropdown
-          placeholder="Planting Complete"
-          options={dropdownOptions}
-          value={["Planting Complete"]}
-          onChange={() => {}}
-        />
-      </div>
-      <div className="flex h-fit flex-col gap-1">
-        <Text variant="text-14-light" className="opacity-60">
-          Restoration Practice*
-        </Text>
-        <Dropdown
-          placeholder="Planting Complete"
-          options={dropdownOptions}
-          value={["Planting Complete"]}
-          onChange={() => {}}
-        />
-      </div>
-      <div className="flex h-fit flex-col gap-1">
-        <Text variant="text-14-light" className="opacity-60">
-          Target Land Use System
-        </Text>
-        <Dropdown
-          placeholder="Planting Complete"
-          options={dropdownOptions}
-          value={["Planting Complete"]}
-          onChange={() => {}}
-        />
-      </div>
-      <div className="flex h-fit flex-col gap-1">
-        <Text variant="text-14-light" className="opacity-60">
-          Tree Distribution
-        </Text>
-        <Dropdown
-          placeholder="Planting Complete"
-          options={dropdownOptions}
-          value={["Planting Complete"]}
-          onChange={() => {}}
-        />
-      </div>
-      <div className="flex h-fit flex-col gap-1">
-        <Text variant="text-14-light" className="opacity-60">
-          Source
-        </Text>
-        <Dropdown
-          placeholder="Planting Complete"
-          options={dropdownOptions}
-          value={["Planting Complete"]}
-          onChange={() => {}}
-        />
-      </div>
+      <Input
+        label="Polygon ID"
+        labelClassname="capitalize"
+        labelVariant="text-14-light"
+        placeholder="Planting Complete"
+        type="text"
+        name=""
+      />
+      <Dropdown
+        label="Restoration Practice*"
+        labelClassName="capitalize"
+        labelVariant="text-14-light"
+        placeholder="Planting Complete"
+        options={dropdownOptions}
+        value={["Planting Complete"]}
+        onChange={() => {}}
+      />
+      <Dropdown
+        label="Target Land Use System"
+        labelClassName="capitalize"
+        labelVariant="text-14-light"
+        placeholder="Planting Complete"
+        options={dropdownOptions}
+        value={["Planting Complete"]}
+        onChange={() => {}}
+      />
+      <Dropdown
+        label="Tree Distribution"
+        labelClassName="capitalize"
+        labelVariant="text-14-light"
+        placeholder="Planting Complete"
+        options={dropdownOptions}
+        value={["Planting Complete"]}
+        onChange={() => {}}
+      />
+      <Dropdown
+        label="Source"
+        labelClassName="capitalize"
+        labelVariant="text-14-light"
+        placeholder="Planting Complete"
+        options={dropdownOptions}
+        value={["Planting Complete"]}
+        onChange={() => {}}
+      />
     </div>
   );
 };

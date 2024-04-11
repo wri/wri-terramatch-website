@@ -94,7 +94,7 @@ export enum IconNames {
   IC_SUCCESS = "ic-success",
   FILTER = "filter",
   ELIPSES = "elipses",
-  airtable = "airtable",
+  AIRTABLE = "airtable",
   REPORTS = "reports",
   NURSERIES = "nurseries",
   SITES = "sites",
@@ -120,7 +120,11 @@ export enum IconNames {
   COMMENT = "comment",
   CHEVRON_DOWN_PA = "chevron-down-pa",
   PAPER_CLIP = "paper-clip",
-  CHECK_PROGRESSBAR_NULL = "check-progressbar-null"
+  CHECK_PROGRESSBAR_NULL = "check-progressbar-null",
+  UPLOAD_CLOUD = "upload-cloud",
+  CHECK_POLYGON = "check-polygon",
+  ELLIPSE_POLYGON = "ellipse-polygon",
+  LEAF = "leaf"
 }
 
 export interface IconProps {

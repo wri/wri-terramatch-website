@@ -45,18 +45,14 @@ const PolygonReviewTab: FC<IProps> = props => {
   const addMenuItems = [
     {
       id: "1",
-      render: () => <Text variant="text-12-bold">Connect to Flority</Text>
-    },
-    {
-      id: "2",
       render: () => <Text variant="text-12-bold">Create Polygons</Text>
     },
     {
-      id: "3",
+      id: "2",
       render: () => <Text variant="text-12-bold">Add Polygon Data</Text>
     },
     {
-      id: "4",
+      id: "3",
       render: () => <Text variant="text-12-bold">Upload Images</Text>
     }
   ];

@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { ElementType, FC, HTMLProps, useMemo } from "react";
 import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
 
@@ -131,10 +132,12 @@ const Button: FC<IButtonProps> = props => {
       {...rest}
       disabled={disabled}
       className={classNames(
-        className,
-        variantClasses.container,
-        "flex items-center justify-center gap-1.5 tracking-wide",
-        fullWidth ? "w-full justify-center" : "w-fit-content"
+        tw(
+          variantClasses.container,
+          "flex items-center justify-center gap-1.5 tracking-wide",
+          fullWidth ? "w-full justify-center" : "w-fit-content",
+          className
+        )
       )}
     >
       <When condition={!!iconProps}>

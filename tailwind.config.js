@@ -108,6 +108,7 @@ module.exports = {
         400: "#637579",
         600: "#797A7B",
         700: "#868686",
+        720: "#94A3A8",
         730: "#B8C3C6",
         740: "#E0E0E0",
         750: "#E6EAEB",
@@ -120,11 +121,16 @@ module.exports = {
       },
       blue: {
         DEFAULT: "#2398D8",
+        100: "#1B59F8",
         200: "#E9F5FC"
       },
       green: {
         DEFAULT: "#72D961",
         500: "#198E2B"
+      },
+      yellow: {
+        DEFAULT: "#FCFBE8",
+        500: "#F3EFB0"
       }
     },
 

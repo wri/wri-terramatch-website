@@ -37,7 +37,9 @@ const ComentaryBox = (props: IComentaryBox) => {
         </label>
       </div>
       <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}>
-        SEND
+        <Text variant="text-12-bold" className="text-white">
+          SEND
+        </Text>
       </Button>
     </div>
   );

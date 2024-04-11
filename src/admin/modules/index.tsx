@@ -10,6 +10,7 @@ import { StageCreate } from "@/admin/modules/stages/StageCreate";
 import { StageEdit } from "@/admin/modules/stages/StageEdit";
 import { StageShow } from "@/admin/modules/stages/StageShow";
 
+import AirtableList from "./airtable/components/AirtableList";
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
 import FundingProgrammeCreate from "./fundingProgrammes/components/FundingProgrammeCreate";
@@ -137,6 +138,13 @@ const nurseryReport = {
   Edit: EntityEdit
 };
 
+const airtable = {
+  ResourceName: "Airtable",
+  List: AirtableList
+  // Show: NurseryReportShow,
+  // Edit: EntityEdit
+};
+
 const audit = {
   ResourceName: "audit"
 };
@@ -156,6 +164,7 @@ const modules = {
   projectReport,
   siteReport,
   nurseryReport,
+  airtable,
   audit
 };
 

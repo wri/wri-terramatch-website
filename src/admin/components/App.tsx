@@ -139,6 +139,14 @@ const App = () => {
         icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
         options={{ label: "Nursery Reports" }}
       />
+      <Resource
+        name={modules.airtable.ResourceName}
+        list={modules.airtable.List}
+        // show={modules.nurseryReport.Show}
+        // edit={modules.nurseryReport.Edit}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.AIRTABLE} />}
+        options={{ label: "Airtables" }}
+      />
       <Resource name={modules.audit.ResourceName} />
     </Admin>
   );

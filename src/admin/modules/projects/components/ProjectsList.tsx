@@ -126,11 +126,18 @@ export const ProjectsList: FC = () => {
   }, []);
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
-    <SelectInput key="country" label="Country" source="country" choices={optionToChoices(getCountriesOptions())} />,
+    <SelectInput
+      key="country"
+      label="Country"
+      source="country"
+      className="select-pa"
+      choices={optionToChoices(getCountriesOptions())}
+    />,
     <SelectInput
       key="monitoring_data"
       label="Monitored Data"
       source="monitoring_data"
+      className="select-pa"
       choices={monitoringDataChoices}
     />,
     <ReferenceInput
@@ -138,21 +145,35 @@ export const ProjectsList: FC = () => {
       source="organisation_uuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
+      className="select-pa"
       sort={{
         field: "name",
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Organization" />
+      <AutocompleteInput optionText="name" label="Organization" className="select-pa" />
     </ReferenceInput>,
-    <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getStatusOptions())} />,
+    <SelectInput
+      key="status"
+      label="Status"
+      source="status"
+      choices={optionToChoices(getStatusOptions())}
+      className="select-pa"
+    />,
     <SelectInput
       key="update_request_status"
+      className="select-pa"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
     />,
-    <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />
+    <SelectInput
+      key="framework_key"
+      label="Framework"
+      source="framework_key"
+      choices={frameworkChoices}
+      className="select-pa"
+    />
   ];
 
   const handleExportOpen = () => {
