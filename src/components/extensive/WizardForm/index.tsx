@@ -167,7 +167,7 @@ function WizardForm(props: WizardFormProps) {
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
     body: (
       <div className="h-[calc(100vh-287px)] overflow-auto">
-        {index === 0 && (
+        {index === 0 && step.title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
             <div className="flex gap-4 rounded-lg bg-tertiary-80 p-6">
               <Text variant="text-16-bold" className="text-white">
@@ -274,7 +274,7 @@ function WizardForm(props: WizardFormProps) {
           title={props.title}
         />
       </When>
-      <div className={twMerge("mx-auto mt-0 max-w-7xl px-6 py-10 xl:px-0", props.className)}>
+      <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0", props.className)}>
         <Tabs
           onChangeSelected={setSelectedStepIndex}
           selectedIndex={selectedStepIndex}
