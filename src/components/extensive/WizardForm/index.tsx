@@ -21,6 +21,7 @@ import { downloadAnswersCSV, getSchema, getStepIndexByValues } from "./utils";
 export interface WizardFormProps {
   steps: FormStepSchema[];
   defaultValues?: any;
+  values?: any;
   onStepChange?: (values: any, step: FormStepSchema) => void;
   onChange?: (values: any) => void;
   onSubmit?: (values: any) => void;
@@ -75,6 +76,7 @@ function WizardForm(props: WizardFormProps) {
       ? {
           resolver: yupResolver(selectedValidationSchema),
           defaultValues: props.defaultValues,
+          values: props.values,
           mode: "onTouched"
         }
       : { mode: "onTouched" }

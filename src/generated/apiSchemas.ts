@@ -76,6 +76,16 @@ export type EntityFormRead = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    status?: string;
+    content?: Record<string, any>;
+    feedback?: string;
+    feedback_fields?: string[];
+  };
 };
 
 export type UserRead = {

@@ -78,7 +78,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
         {...rest}
       >
         {/* @ts-ignore */}
-        <If condition={currentValue?.data && !isError}>
+        <If condition={currentValues?.data}>
           <Then>
             <Grid container spacing={2}>
               {formSteps && (

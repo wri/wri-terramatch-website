@@ -2,16 +2,11 @@ import { notFound } from "next/navigation";
 import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
+import useFormData from "@/admin/components/EntityEdit/useFormData";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2FormsENTITYUUID, usePutV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
-import {
-  useGetCustomFormSteps,
-  useNormalizedFormDefaultValue
-} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { EntityName } from "@/types/common";
 
 export const EntityEdit = () => {
@@ -33,28 +28,12 @@ export const EntityEdit = () => {
   const entityName = ResourceEntityMapping[resource] as EntityName;
   const entityUUID = id as string;
 
-  const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
-
-  const {
-    data: formResponse,
-    isLoading,
-    isError
-  } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  //@ts-ignore
-
-  const formData = (formResponse?.data || {}) as GetV2FormsENTITYUUIDResponse;
-
-  const formSteps = useGetCustomFormSteps(formData.form, {
-    entityName: pluralEntityNameToSingular(entityName),
+  const { isLoading, loadError, isUpdating, isSuccess, error, updateEntity, formSteps, values, title } = useFormData(
+    entityName,
     entityUUID
-  });
+  );
 
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData.updateRequest?.content ?? formData.answers, formSteps);
-
-  if (isError) {
+  if (loadError) {
     return notFound();
   }
 
@@ -73,8 +52,8 @@ export const EntityEdit = () => {
           }
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
-          defaultValues={defaultValues}
-          title={formData.form_title}
+          values={values}
+          title={title}
           tabOptions={{
             markDone: true,
             disableFutureTabs: true

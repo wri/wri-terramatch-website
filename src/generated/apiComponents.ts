@@ -7356,6 +7356,16 @@ export type GetV2FormsENTITYUUIDResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    status?: string;
+    content?: Record<string, any>;
+    feedback?: string;
+    feedback_fields?: string[];
+  };
 };
 
 export type GetV2FormsENTITYUUIDVariables = {
@@ -7404,6 +7414,16 @@ export type PutV2FormsENTITYUUIDResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    status?: string;
+    content?: Record<string, any>;
+    feedback?: string;
+    feedback_fields?: string[];
+  };
 };
 
 export type PutV2FormsENTITYUUIDRequestBody = {
@@ -7466,6 +7486,16 @@ export type PutV2FormsENTITYUUIDSubmitResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    status?: string;
+    content?: Record<string, any>;
+    feedback?: string;
+    feedback_fields?: string[];
+  };
 };
 
 export type PutV2FormsENTITYUUIDSubmitVariables = {
@@ -7523,6 +7553,16 @@ export type PostV2FormsENTITYResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    status?: string;
+    content?: Record<string, any>;
+    feedback?: string;
+    feedback_fields?: string[];
+  };
 };
 
 export type PostV2FormsENTITYVariables = {
@@ -7568,6 +7608,16 @@ export type PostV2FormsProjectsUUIDResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    status?: string;
+    content?: Record<string, any>;
+    feedback?: string;
+    feedback_fields?: string[];
+  };
 };
 
 export type PostV2FormsProjectsUUIDVariables = {

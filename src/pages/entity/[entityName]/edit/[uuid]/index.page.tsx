@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
@@ -10,7 +10,6 @@ import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2ENTITYUUID,
   useGetV2FormsENTITYUUID,
-  useGetV2UpdateRequestsENTITYUUID,
   usePutV2FormsENTITYUUID,
   usePutV2FormsENTITYUUIDSubmit
 } from "@/generated/apiComponents";
@@ -41,26 +40,13 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data: updateRequestData, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      retry(failureCount: number, error: any): boolean {
-        // avoid retries on a 404; that's expected in most cases for this form.
-        return error.statusCode !== 404 && failureCount < 3;
-      },
-      onError() {
-        // To override error toast
-      }
-    }
-  );
-  //@ts-ignore
-  const updateRequest = updateRequestData?.data;
-  const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
+  const {
+    mutate: updateEntity,
+    data: updateData,
+    error,
+    isSuccess,
+    isLoading: isUpdating
+  } = usePutV2FormsENTITYUUID({});
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
       if (mode === "edit" || mode?.includes("provide-feedback")) {
@@ -70,11 +56,10 @@ const EditEntityPage = () => {
       }
     }
   });
-  const feedbackFields = updateRequest?.feedback_fields || entity?.feedback_fields || [];
 
   const {
     data,
-    isLoading: formDataLoading,
+    isLoading: isLoading,
     isError
   } = useGetV2FormsENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID },
@@ -82,6 +67,19 @@ const EditEntityPage = () => {
   });
   //@ts-ignore
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+
+  // updateData will briefly be null while the update is in progress, and during that period we want
+  // to make sure to keep using the previous value, so we need to use a ref to track that state
+  const contentDataRef = useRef<GetV2FormsENTITYUUIDResponse | null>(null);
+  if (contentDataRef.current == null && formData?.answers != null) {
+    contentDataRef.current = formData;
+  } else if (updateData != null) {
+    // @ts-ignore
+    contentDataRef.current = updateData?.data;
+  }
+
+  const feedbackFields =
+    contentDataRef.current?.update_request?.feedback_fields ?? contentDataRef.current?.feedback_fields ?? [];
 
   const formSteps = useGetCustomFormSteps(
     formData.form,
@@ -93,9 +91,8 @@ const EditEntityPage = () => {
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
 
-  const isLoading = updateRequestLoading || formDataLoading;
-  const defaultValues = useNormalizedFormDefaultValue(
-    updateRequest?.content ?? formData.answers,
+  const values = useNormalizedFormDefaultValue(
+    contentDataRef.current?.update_request?.content ?? contentDataRef.current?.answers,
     formSteps,
     entity.migrated
   );
@@ -149,7 +146,7 @@ const EditEntityPage = () => {
             })
           }
           submitButtonDisable={isSubmitting}
-          defaultValues={defaultValues}
+          values={values}
           title={formTitle}
           tabOptions={{
             markDone: true,
