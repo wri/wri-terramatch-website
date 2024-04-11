@@ -192,7 +192,7 @@ const AirtableList: FC = () => {
           Airtable Management
         </Text>
         <Button
-          variant="white-pa"
+          variant="white-page-admin"
           iconProps={{ name: IconNames.PLUS_PA, className: "text-neutral-950 w-5 h-5" }}
           onClick={openFormModalHandler}
         >

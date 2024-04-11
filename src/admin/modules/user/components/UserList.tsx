@@ -29,12 +29,12 @@ import modules from "../..";
 import { userTypesChoices } from "../const";
 
 const filters = [
-  <SearchInput key="s" source="search" alwaysOn className="search-pa" />,
+  <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
   <SelectInput
     key="c"
     label="User Status"
     source="verified"
-    className="select-pa"
+    className="select-page-admin"
     choices={[
       {
         id: true,

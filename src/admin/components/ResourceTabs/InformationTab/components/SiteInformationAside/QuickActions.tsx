@@ -49,7 +49,7 @@ const QuickActions: FC = () => {
 
       <Box paddingX={3.75} paddingY={2}>
         <Button
-          className="button-aside-pa"
+          className="button-aside-page-admin"
           component={Link}
           to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
           fullWidth
@@ -66,18 +66,18 @@ const QuickActions: FC = () => {
             <NumberField source="overdue_site_reports_total" />
           </Labeled>
           <Button
-            className="button-aside-pa"
+            className="button-aside-page-admin"
             component={Link}
             to={getNavigationPath("siteReport")}
             label="View Site Reports"
           />
           <Button
-            className="button-aside-pa"
+            className="button-aside-page-admin"
             component={Link}
             to={getNavigationPath("./4")}
             label="Add Monitored Data"
           />
-          <Button className="button-aside-pa" onClick={downloadShapefile} label="Download Shapefile" />
+          <Button className="button-aside-page-admin" onClick={downloadShapefile} label="Download Shapefile" />
         </Stack>
       </Box>
     </Card>

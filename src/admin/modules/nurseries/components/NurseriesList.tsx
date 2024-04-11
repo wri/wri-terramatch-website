@@ -75,13 +75,13 @@ export const NurseriesList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
 
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
+    <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <SelectInput
       key="country"
       label="Country"
       source="country"
       choices={optionToChoices(getCountriesOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <ReferenceInput
       key="organisation"
@@ -93,21 +93,21 @@ export const NurseriesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Organization" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
       key="status"
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="update_request_status"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <ReferenceInput
       key="project"
@@ -119,7 +119,7 @@ export const NurseriesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>
   ];
 

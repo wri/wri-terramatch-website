@@ -1,48 +1,48 @@
-.search-pa>div:first-of-type {
+.search-page-admin>div:first-of-type {
   @apply flex flex-row-reverse bg-white rounded-lg;
 }
 
-.search-pa>div:first-of-type input {
+.search-page-admin>div:first-of-type input {
   @apply pl-[6px];
 }
 
-.filter-button-pa{
+.filter-button-page-admin{
   @apply !mb-4
 }
 
-.filter-button-pa span {
+.filter-button-page-admin span {
   @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal opacity-100;
 }
 
-.filter-button-pa button {
-  @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white;
+.filter-button-page-admin button {
+  @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md font-primary !leading-[normal] tracking-normal px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white h-[42px];
 }
 
-.filter-button-pa span {
-  @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal opacity-100;
+.filter-button-page-admin svg {
+  @apply w-5 h-5;
 }
 
-.filter-button-pa button {
-  @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white;
-}
-
-.select-pa div{
+.select-page-admin div{
  @apply !bg-white !rounded-lg
 }
 
-.button-aside-pa {
+.button-aside-page-admin {
   @apply !w-full !bg-white !border !border-solid !border-primary-500 !uppercase !leading-[normal] !px-4 !py-[10.5px] !rounded-lg hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 !text-primary-500 disabled:!text-grey-730 !text-xs !font-bold lg:!text-sm wide:!text-base;
 }
 
-.button-pa {
-  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
+.button-page-admin {
+  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px];
 }
 
-.button-pa:hover {
+.button-page-admin:hover {
   @apply !bg-grey-800
 }
 
-.button-pa span {
+.button-page-admin svg{
+  @apply w-5 h-5
+}
+
+.button-page-admin span {
   @apply !text-neutral-950 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
 }
 
@@ -70,7 +70,11 @@
 }
 
 .MuiToolbar-regular form .ra-input{
-  @apply !m-0 !mb-4
+  @apply !m-0 !mb-4 h-10
+}
+
+.MuiToolbar-regular form .ra-input > div{
+  @apply !mt-0
 }
 
 .RaLayout-appFrame {
@@ -121,7 +125,7 @@
 }
 
 .RaFilterFormInput-hideButton{
-  @apply !mb-4
+  @apply !mb-[18px]
 }
 
 .MuiTableCell-root {
@@ -205,7 +209,7 @@
   @apply !h-1 !bg-primary-500
 }
 
-.map-field-pa > :nth-child(7) {
+/* .map-field-page > :nth-child(7) {
   @apply col-span-3
 }
 
@@ -214,7 +218,7 @@
 }
 .test :nth-child(7) > ul > :nth-child(1){
   @apply col-span-3
-}
+} */
 
 .label-field-aside{
   @apply !flex !flex-col

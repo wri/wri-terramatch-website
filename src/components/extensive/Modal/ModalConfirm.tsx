@@ -31,7 +31,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({ title, content, children, onClose
         {children}
       </div>
       <div className="mt-4 flex w-full gap-4">
-        <Button variant="white-pa" className="w-full" onClick={onClose}>
+        <Button variant="white-page-admin" className="w-full" onClick={onClose}>
           <Text variant="text-12-bold" className="capitalize">
             Cancel
           </Text>

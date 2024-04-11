@@ -36,12 +36,12 @@ const tabs = [
 ];
 
 const filters = [
-  <SearchInput key="s" source="search" alwaysOn className="search-pa" />,
+  <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
   <SelectInput
     key="c"
     label="Organisation Type"
     source="type"
-    className="select-pa"
+    className="select-page-admin"
     choices={optionToChoices(getOrganisationTypeOptions())}
   />
 ];

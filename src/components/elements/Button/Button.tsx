@@ -19,8 +19,8 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "semi-black"
     | "semi-red"
     | "secondary-blue"
-    | "sky-pa"
-    | "white-pa"
+    | "sky-page-admin"
+    | "white-page-admin"
     | "white-toggle"
     | "transparent-toggle";
   fullWidth?: boolean;
@@ -74,7 +74,7 @@ const Button: FC<IButtonProps> = props => {
           container: classNames("h-fit bg-white py-4 rounded-lg"),
           span: newText
         };
-      case "white-pa":
+      case "white-page-admin":
         return {
           container: "py-2 px-3 bg-white rounded-lg text-grey-400 border border-grey-750 hover:bg-grey-900",
           span: "flex items-center text-bold-caption-200 text-inherit uppercase"
@@ -84,7 +84,7 @@ const Button: FC<IButtonProps> = props => {
           container: classNames("h-fit py-4 bg-primary-200 rounded-lg"),
           span: newText
         };
-      case "sky-pa":
+      case "sky-page-admin":
         return {
           container:
             "group py-2 px-3 bg-primary-200 rounded-lg text-grey-400 border border-grey-750 hover:text-primary-500",
