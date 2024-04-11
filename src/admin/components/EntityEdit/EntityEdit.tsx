@@ -5,11 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import {
-  useGetV2FormsENTITYUUID,
-  useGetV2UpdateRequestsENTITYUUID,
-  usePutV2FormsENTITYUUID
-} from "@/generated/apiComponents";
+import { useGetV2FormsENTITYUUID, usePutV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import {
@@ -39,29 +35,9 @@ export const EntityEdit = () => {
 
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
 
-  const { data: updateRequestResponse, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      retry(failureCount: number, error: any): boolean {
-        // avoid retries on a 404; that's expected in most cases for this form
-        return error.statusCode !== 404 && failureCount < 3;
-      },
-      onError() {
-        // To override error toast
-      }
-    }
-  );
-  // @ts-ignore
-  const updateRequest = updateRequestResponse?.data;
-
   const {
     data: formResponse,
-    isLoading: formDataLoading,
+    isLoading,
     isError
   } = useGetV2FormsENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
@@ -75,9 +51,8 @@ export const EntityEdit = () => {
     entityUUID
   });
 
-  const isLoading = updateRequestLoading || formDataLoading;
   //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(updateRequest?.content ?? formData.answers, formSteps);
+  const defaultValues = useNormalizedFormDefaultValue(formData.updateRequest?.content ?? formData.answers, formSteps);
 
   if (isError) {
     return notFound();
