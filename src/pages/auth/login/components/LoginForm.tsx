@@ -4,14 +4,14 @@ import { UseFormReturn } from "react-hook-form";
 
 import Button from "@/components/componentsToLogin/Button/Button";
 import { BUTTON_VARIANT_BLUE } from "@/components/componentsToLogin/Button/ButtonVariant";
-import Input from "@/components/componentsToLogin/Input/Input";
-import { INPUT_LOGIN_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
+// import Input from "@/components/componentsToLogin/Input/Input";
+// import { INPUT_LOGIN_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
 import Text from "@/components/componentsToLogin/Text/Text";
-
 // import Button from "@/components/elements/Button/Button";
-// import Input from "@/components/elements/Inputs/Input/Input";
+import Input from "@/components/elements/Inputs/Input/Input";
 // import Text from "@/components/elements/Text/Text";
-// import Form from "@/components/extensive/Form/Form";
+import Form from "@/components/extensive/Form/Form";
+
 import { LoginFormData } from "../index.page";
 
 type LoginFormProps = {
@@ -22,10 +22,10 @@ type LoginFormProps = {
 
 const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
   const t = useT();
-  // const errors = form.formState.errors;
+  const errors = form.formState.errors;
 
   return (
-    <div>
+    <Form>
       <div className="w-[30vw]">
         <Text variant="text-32-bold">{t("Sign in")}</Text>
         <Text variant="text-12-light" className="flex">
@@ -38,24 +38,26 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
         </Text>
         <div className="mt-11 mb-6 flex flex-col gap-12">
           <Input
+            name="email"
             type="text"
             label={t("Email Address")}
-            variant={INPUT_LOGIN_VARIANT}
+            variant={"login"}
             required={true}
             placeholder=" "
             id="email"
-            // formHook={form}
-            // error={errors.email}
+            formHook={form}
+            error={errors.email}
           />
           <Input
+            name="password"
             type="password"
             label={t("Enter Password")}
-            variant={INPUT_LOGIN_VARIANT}
+            variant={"login"}
             required={true}
             placeholder=" "
             id="password"
-            // formHook={form}
-            // error={errors.password}
+            formHook={form}
+            error={errors.password}
           />
         </div>
         <Link href="/auth/reset-password">
@@ -67,7 +69,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
           {t("Sign in")}
         </Button>
       </div>
-    </div>
+    </Form>
     // <Form>
     //   <Form.Header title={t("Log In")}>
     //     <div className="flex flex-col items-center">

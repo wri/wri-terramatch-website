@@ -1,22 +1,22 @@
-// import { useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 // import Link from "next/link";
-import { useState } from "react";
+// import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import Button from "@/components/componentsToLogin/Button/Button";
 import { BUTTON_VARIANT_BLUE, BUTTON_VARIANT_WHITE } from "@/components/componentsToLogin/Button/ButtonVariant";
-import Input from "@/components/componentsToLogin/Input/Input";
-import { INPUT_SIGNUP_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
+// import Input from "@/components/componentsToLogin/Input/Input";
+// import { INPUT_SIGNUP_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
 import Text from "@/components/componentsToLogin/Text/Text";
-
-// import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
-// import Input from "@/components/elements/Inputs/Input/Input";
+import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
+import Input from "@/components/elements/Inputs/Input/Input";
 // import Form from "@/components/extensive/Form/Form";
-// import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
-// import { privacyPolicyLink, termsAndConditionsLink } from "@/constants/links";
+import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
+import { privacyPolicyLink, termsAndConditionsLink } from "@/constants/links";
+
 import { SignUpFormData } from "../index.page";
-import PasswordValidation from "./PasswordValidation";
-import Terms from "./Terms";
+// import PasswordValidation from "./PasswordValidation";
+// import Terms from "./Terms";
 
 type SignUpFormProps = {
   form: UseFormReturn<SignUpFormData>;
@@ -25,9 +25,9 @@ type SignUpFormProps = {
 };
 
 const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
-  // const t = useT();
-  // const errors = form.formState.errors;
-  const [inputValue, setInputValue] = useState("");
+  const t = useT();
+  const errors = form.formState.errors;
+  // const [inputValue, setInputValue] = useState("");
 
   return (
     <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
@@ -41,81 +41,110 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
         <div className="absolute m-[-2px] mb-8 flex flex-col gap-5 p-1">
           <div className="grid w-full grid-cols-2 items-start gap-4">
             <Input
+              name="first_name"
               type="text"
               label="First Name"
-              variant={INPUT_SIGNUP_VARIANT}
-              required={false}
+              error={errors.first_name}
+              // variant={INPUT_SIGNUP_VARIANT}
+              required
               placeholder="Add First Name"
             />
             <Input
+              name="last_name"
               type="text"
               label="Last Name"
-              variant={INPUT_SIGNUP_VARIANT}
-              required={false}
+              error={errors.last_name}
+              // variant={INPUT_SIGNUP_VARIANT}
+              required
               placeholder="Add Last Name"
             />
           </div>
           <Input
+            name="job_role"
             type="text"
             label="Job Title"
-            variant={INPUT_SIGNUP_VARIANT}
-            required={false}
+            error={errors.job_role}
+            // variant={INPUT_SIGNUP_VARIANT}
+            required
             placeholder="Add Job Title"
-            description={
-              <Text variant="text-12-light" className="opacity-60">
-                Please enter your job role or position within your organizations
-              </Text>
-            }
+            description={"Please enter your job role or position within your organizations."}
           />
           <Input
+            name="phone_number"
             type="number"
             label="Professional Phone Number"
-            variant={INPUT_SIGNUP_VARIANT}
-            required={false}
+            error={errors.phone_number}
+            // variant={INPUT_SIGNUP_VARIANT}
+            required
             placeholder="Add Phone Number"
-            description={
-              <Text variant="text-12-light" className="opacity-60">
-                Please provide a professional phone number where you can be contacted
-              </Text>
-            }
+            description={"Please provide a professional phone number where you can be contacted"}
           />
           <Input
+            name="email_address"
             type="text"
             label="Professional Email Address"
-            variant={INPUT_SIGNUP_VARIANT}
-            required={false}
+            error={errors.email_address}
+            // variant={INPUT_SIGNUP_VARIANT}
+            required
             placeholder="Add Email Address"
             description={
-              <Text variant="text-12-light" className="opacity-60">
-                This is the email address you will use to log into TerraMatch. To verify your email, we will send a
-                verification email to this address.
-              </Text>
+              "This is the email address you will use to log into TerraMatch. To verify your email, we will send a verification email to this address."
             }
           />
+          <div className="flex flex-col gap-3">
+            <Input
+              name="password"
+              formHook={form}
+              error={errors.password}
+              type="password"
+              label={t("Password")}
+              required
+            />
+            <PasswordStrength password={form.watch("password")} />
+          </div>
           <Input
-            type="password"
-            label="Password"
-            description={<PasswordValidation password={inputValue} />}
-            variant={INPUT_SIGNUP_VARIANT}
-            required={false}
-            onInputChange={setInputValue}
-            placeholder="Add Password"
-          />
-          <Input
+            name="confirm_password"
             type="password"
             label="Repeat Password"
-            variant={INPUT_SIGNUP_VARIANT}
-            required={false}
+            // variant={INPUT_SIGNUP_VARIANT}
+            error={errors.confirm_password}
+            required
             placeholder="Repeat Password"
           />
-          <Terms />
+          <div className="mt-7 flex flex-col gap-8">
+            <Checkbox
+              name="terms"
+              form={form}
+              label={t(
+                `I agree to the <a href="{termsAndConditionsLink}">Terms of Service</a> and <a href="{privacyPolicyLink}">Privacy Policy</a>`,
+                {
+                  termsAndConditionsLink,
+                  privacyPolicyLink
+                }
+              )}
+              error={errors.terms}
+              required
+            />
+            <Checkbox
+              name="consent"
+              form={form}
+              label={t(
+                "I consent to my contact information being shared with other users via terramatch for the purposes of connecting with interested parties"
+              )}
+              error={errors.consent}
+              required
+            />
+          </div>
         </div>
       </div>
-      <Button variant={BUTTON_VARIANT_BLUE} className="mb-4">
+      <Button variant={BUTTON_VARIANT_BLUE} className="mb-4" onClick={form.handleSubmit(handleSave)}>
         Sign up
       </Button>
-      <Button variant={BUTTON_VARIANT_WHITE}>Cancel</Button>
+      <Button variant={BUTTON_VARIANT_WHITE} onClick={() => (window.location.href = "/auth/login")}>
+        Cancel
+      </Button>
     </div>
+
     // <Form>
     //   <Form.Header
     //     title={t("Sign Up")}
