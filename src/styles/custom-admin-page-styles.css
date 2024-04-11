@@ -209,16 +209,16 @@
   @apply !h-1 !bg-primary-500
 }
 
-/* .map-field-page > :nth-child(7) {
+.map-field-page > :nth-child(7) {
   @apply col-span-3
 }
 
-.test :nth-child(1) > ul > :nth-child(7){
+.map-span-3 :nth-child(1) > ul > :nth-child(7){
   @apply col-span-3
 }
-.test :nth-child(7) > ul > :nth-child(1){
+.map-span-3 :nth-child(7) > ul > :nth-child(1){
   @apply col-span-3
-} */
+}
 
 .label-field-aside{
   @apply !flex !flex-col

@@ -90,7 +90,7 @@ const InformationTab: FC<IProps> = props => {
             <Stack gap={4}>
               <Card sx={{ padding: 4 }} className="!shadow-none">
                 <List
-                  className={`${props.type == "sites" && "test"} space-y-12`}
+                  className={`${props.type == "sites" && "map-span-3"} space-y-12`}
                   items={formSteps}
                   render={(step, index) => (
                     <InformationTabRow index={index} step={step} values={values} steps={formSteps} type={props.type} />
