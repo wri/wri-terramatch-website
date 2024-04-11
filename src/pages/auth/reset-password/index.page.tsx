@@ -3,10 +3,12 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import ContentLayout from "@/components/generic/Layout/ContentLayout";
+// import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
+// import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { usePostAuthReset } from "@/generated/apiComponents";
 import RequestResetForm from "@/pages/auth/reset-password/components/RequestResetForm";
+
+import LoginLayout from "../layout";
 
 const RequestResetDataSchema = yup.object({
   email: yup.string().email().required()
@@ -45,11 +47,14 @@ const RequestResetPage = () => {
   };
 
   return (
-    <BackgroundLayout>
-      <ContentLayout>
-        <RequestResetForm form={form} loading={isLoading} handleSave={handleSave} apiError={error} />
-      </ContentLayout>
-    </BackgroundLayout>
+    <LoginLayout>
+      <RequestResetForm form={form} loading={isLoading} handleSave={handleSave} apiError={error} />
+    </LoginLayout>
+    // <BackgroundLayout>
+    //   <ContentLayout>
+    //     <RequestResetForm form={form} loading={isLoading} handleSave={handleSave} apiError={error} />
+    //   </ContentLayout>
+    // </BackgroundLayout>
   );
 };
 
