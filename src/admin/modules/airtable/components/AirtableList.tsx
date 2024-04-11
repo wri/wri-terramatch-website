@@ -69,6 +69,41 @@ const dropdownOptionsCohort = [
   }
 ];
 
+const tableData = [
+  {
+    name: {
+      name: "Harit Bharat Fund Base - 2023",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    date: "9 January 2024"
+  },
+  {
+    name: {
+      name: "Harit Bharat Fund Base - 2023",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    date: "9 January 2024"
+  },
+  {
+    name: {
+      name: "Harit Bharat Fund Base - 2023",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    date: "9 January 2024"
+  },
+  {
+    name: {
+      name: "Harit Bharat Fund Base - 2023",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    date: "9 January 2024"
+  }
+];
+
 const AirtableList: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
@@ -226,6 +261,7 @@ const AirtableList: FC = () => {
                 {
                   header: "Project Name",
                   accessorKey: "name",
+                  enableSorting: false,
                   cell: props => {
                     const value = props.getValue() as tableProjectItemProps;
                     return (
@@ -248,10 +284,11 @@ const AirtableList: FC = () => {
                     );
                   }
                 },
-                { header: "Last Updated", accessorKey: "date" },
+                { header: "Last Updated", accessorKey: "date", enableSorting: false },
                 {
                   header: "",
                   accessorKey: "ellipse",
+                  enableSorting: false,
                   cell: () => (
                     <Menu menu={airtableItemMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
                       <div className="p-1 hover:bg-primary-200">
@@ -264,40 +301,7 @@ const AirtableList: FC = () => {
                   )
                 }
               ]}
-              data={[
-                {
-                  name: {
-                    name: "Harit Bharat Fund Base - 2023",
-                    description:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                  },
-                  date: "9 January 2024"
-                },
-                {
-                  name: {
-                    name: "Harit Bharat Fund Base - 2023",
-                    description:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                  },
-                  date: "9 January 2024"
-                },
-                {
-                  name: {
-                    name: "Harit Bharat Fund Base - 2023",
-                    description:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                  },
-                  date: "9 January 2024"
-                },
-                {
-                  name: {
-                    name: "Harit Bharat Fund Base - 2023",
-                    description:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                  },
-                  date: "9 January 2024"
-                }
-              ]}
+              data={tableData}
             ></Table>
           </div>
         </When>

@@ -15,7 +15,7 @@ export const useTextAreaAuto = (
       const { current: textarea } = textAreaRef;
       textarea.style.height = "inherit";
       const { scrollHeight } = textarea;
-      textarea.style.height = `${scrollHeight}px`;
+      textarea.style.height = `calc(${scrollHeight}px + 2px)`;
     }
   }, [value]);
 

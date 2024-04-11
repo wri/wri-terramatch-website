@@ -5,11 +5,11 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 
 const dropdownOptions = [
   {
-    title: "All Polygons",
+    title: "1213023412",
     value: 1
   },
   {
-    title: "All Polygons2",
+    title: "1213023414",
     value: 2
   }
 ];
@@ -23,7 +23,7 @@ const VersionHistory = () => {
         labelVariant="text-14-light"
         placeholder="Planting Complete"
         options={dropdownOptions}
-        value={["Planting Complete"]}
+        defaultValue={[1]}
         onChange={() => {}}
       />
       <div className="mt-auto flex items-center justify-end gap-5">
