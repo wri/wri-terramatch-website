@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
+import Button from "@/components/elements/Button/Button";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
+import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
@@ -158,45 +160,60 @@ function WizardForm(props: WizardFormProps) {
   }, [selectedStepIndex]);
 
   const stepTabItems = props.steps.map((step, index) => ({
-    title: step.tabTitle || t(`Step {number}<br/> {title}`, { number: index + 1, title: step.title }),
+    title:
+      step.tabTitle ||
+      t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title: step.title }),
     done: props.tabOptions?.markDone && index < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
     body: (
-      <FormStep
-        id="step"
-        formHook={formHook}
-        fields={step.fields}
-        title={step.title}
-        subtitle={step.subtitle}
-        onChange={onChange}
-        className="h-[calc(100vh-287px)] overflow-auto"
-      >
-        <FormFooter
-          className="mt-12"
-          backButtonProps={
-            !props.hideBackButton
-              ? {
-                  children: props.backButtonText || t("Back"),
-                  onClick: () => {
-                    if (selectedStepIndex > 0) {
-                      setSelectedStepIndex(n => n - 1);
-                    } else {
-                      props.onBackFirstStep();
+      <>
+        {index === 0 && (
+          <div className="w-full bg-white px-16 pt-8">
+            <div className="flex gap-4 rounded-lg bg-tertiary-600 p-6">
+              <Text variant="text-16-bold" className="text-white">
+                Note: Project polygons are editable through a new geometry-focused workflow that is accessible by
+                clicking on this link.
+              </Text>
+              <Button variant="text">edit polygon</Button>
+            </div>
+          </div>
+        )}
+        <FormStep
+          id="step"
+          formHook={formHook}
+          fields={step.fields}
+          title={step.title}
+          subtitle={step.subtitle}
+          onChange={onChange}
+          className="h-[calc(100vh-287px)] overflow-auto"
+        >
+          <FormFooter
+            className="mt-12"
+            backButtonProps={
+              !props.hideBackButton
+                ? {
+                    children: props.backButtonText || t("Back"),
+                    onClick: () => {
+                      if (selectedStepIndex > 0) {
+                        setSelectedStepIndex(n => n - 1);
+                      } else {
+                        props.onBackFirstStep();
+                      }
                     }
                   }
-                }
-              : undefined
-          }
-          submitButtonProps={{
-            children:
-              selectedStepIndex < lastIndex
-                ? props.nextButtonText || t("Save and continue")
-                : props.submitButtonText || t("Submit"),
-            onClick: formHook.handleSubmit(onSubmitStep),
-            disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
-          }}
-        />
-      </FormStep>
+                : undefined
+            }
+            submitButtonProps={{
+              children:
+                selectedStepIndex < lastIndex
+                  ? props.nextButtonText || t("Save and continue")
+                  : props.submitButtonText || t("Submit"),
+              onClick: formHook.handleSubmit(onSubmitStep),
+              disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
+            }}
+          />
+        </FormStep>
+      </>
     )
   }));
 

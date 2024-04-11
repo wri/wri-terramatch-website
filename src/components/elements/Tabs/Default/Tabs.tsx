@@ -76,12 +76,12 @@ const Tabs = (props: TabsProps) => {
                   index={index}
                   className={classNames(
                     "flex min-h-[70px] w-full items-center justify-start py-4 px-6",
-                    props.rounded && "first:rounded-tl-lg"
+                    props.rounded && "first:rounded-tl-2xl"
                   )}
                   item={item}
                   selected={selected}
                   lastItem={array.length - 1 === index}
-                  textVariant="text-bold-caption-200"
+                  textVariant="text-14-bold"
                   disabled={item.disabled}
                 />
               )}

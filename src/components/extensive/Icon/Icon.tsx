@@ -103,7 +103,8 @@ export enum IconNames {
   IC_EARTH_MAP = "earth-map",
   IC_DOWNLOAD_MENU = "download-menu",
   IC_FILTER = "ic-filter",
-  IC_SORT = "ic-sort"
+  IC_SORT = "ic-sort",
+  APPROVED_COLORLESS = "status/approved-colorless"
 }
 
 export interface IconProps {

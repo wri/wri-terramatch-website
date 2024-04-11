@@ -137,7 +137,9 @@ module.exports = {
         DEFAULT: "#E468EF"
       },
       greenCustom: {
-        200: "#72D961"
+        200: "#72D961",
+        100: "#28C499",
+        50: "rgba(40, 196, 153, 0.10)"
       }
     },
     boxShadow: {
