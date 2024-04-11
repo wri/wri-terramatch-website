@@ -1,4 +1,4 @@
-// import { useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
@@ -7,11 +7,11 @@ import { BUTTON_VARIANT_BLUE } from "@/components/componentsToLogin/Button/Butto
 import Input from "@/components/componentsToLogin/Input/Input";
 import { INPUT_LOGIN_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
 import Text from "@/components/componentsToLogin/Text/Text";
-
 // import Button from "@/components/elements/Button/Button";
 // import Input from "@/components/elements/Inputs/Input/Input";
 // import Text from "@/components/elements/Text/Text";
-// import Form from "@/components/extensive/Form/Form";
+import Form from "@/components/extensive/Form/Form";
+
 import { LoginFormData } from "../index.page";
 
 type LoginFormProps = {
@@ -21,47 +21,53 @@ type LoginFormProps = {
 };
 
 const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
-  // const t = useT();
+  const t = useT();
   // const errors = form.formState.errors;
 
   return (
-    <div className="w-[30vw]">
-      <Text variant="text-32-bold">Sign in</Text>
-      <Text variant="text-12-light" className="flex">
-        New to TerraMatch’s Dashboards?&nbsp;
-        <Link href={"/create-account"}>
-          <Text variant="text-12-bold" className="text-blue-300 underline underline-offset-4">
-            Sign Up for free
+    <Form>
+      <div className="w-[30vw]">
+        <Text variant="text-32-bold">{t("Sign in")}</Text>
+        <Text variant="text-12-light" className="flex">
+          New to TerraMatch’s Dashboards?&nbsp;
+          <Link href={"/auth/create-account"}>
+            <Text variant="text-12-bold" className="text-blue-300 underline underline-offset-4">
+              Sign Up for free
+            </Text>
+          </Link>
+        </Text>
+        <div className="mt-11 mb-6 flex flex-col gap-12">
+          <Input
+            type="text"
+            label={t("Email Address")}
+            variant={INPUT_LOGIN_VARIANT}
+            required={true}
+            placeholder=" "
+            id="email"
+            // formHook={form}
+            // error={errors.email}
+          />
+          <Input
+            type="password"
+            label={t("Enter Password")}
+            variant={INPUT_LOGIN_VARIANT}
+            required={true}
+            placeholder=" "
+            id="password"
+            // formHook={form}
+            // error={errors.password}
+          />
+        </div>
+        <Link href="/auth/reset-password">
+          <Text variant="text-12-bold" className="mb-6 decoration-slice text-blue-300">
+            Forgot Password?
           </Text>
         </Link>
-      </Text>
-      <div className="mt-11 mb-6 flex flex-col gap-12">
-        <Input
-          type="text"
-          label="Email Address"
-          variant={INPUT_LOGIN_VARIANT}
-          required={false}
-          placeholder=" "
-          id="email"
-        />
-        <Input
-          type="password"
-          label="Enter Password"
-          variant={INPUT_LOGIN_VARIANT}
-          required={false}
-          placeholder=" "
-          id="password"
-        />
+        <Button variant={BUTTON_VARIANT_BLUE} onClick={form.handleSubmit(handleSave)}>
+          {t("Sign in")}
+        </Button>
       </div>
-      <Link href={"/forgot-password"}>
-        <Text variant="text-12-bold" className="text-blue-300 mb-6 decoration-slice">
-          Forgot Password?
-        </Text>
-      </Link>
-      <Button variant={BUTTON_VARIANT_BLUE} onClick={() => {}}>
-        Sign In
-      </Button>
-    </div>
+    </Form>
     // <Form>
     //   <Form.Header title={t("Log In")}>
     //     <div className="flex flex-col items-center">

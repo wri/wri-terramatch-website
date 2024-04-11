@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import ContentLayout from "@/components/generic/Layout/ContentLayout";
+// import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
+// import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { useAuthContext } from "@/context/auth.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 
+import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
 
 export const LoginFormDataSchema = yup.object({
@@ -50,12 +51,16 @@ const LoginPage = () => {
   };
 
   return (
-    <BackgroundLayout>
-      <ContentLayout>
+    // <BackgroundLayout>
+    //   <ContentLayout>
+    //     <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
+    //   </ContentLayout>
+    // </BackgroundLayout>
+    <>
+      <LoginLayout>
         <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
-      </ContentLayout>
-    </BackgroundLayout>
+      </LoginLayout>
+    </>
   );
 };
-
 export default LoginPage;

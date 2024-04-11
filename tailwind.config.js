@@ -7,9 +7,9 @@ module.exports = {
       screens: {
         sx: "460px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
-        sm: "640px",
-        md: "1400px",
-        lg: "1900px",
+        // sm: "640px",
+        // md: "1400px",
+        // lg: "1900px",
         wide: "2500px"
       },
       width: {
@@ -33,7 +33,8 @@ module.exports = {
         12: "0.12"
       },
       backgroundImage: {
-        imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)"
+        imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
+        "square-pattern": "url('/icons/ic-bg.svg')"
       }
     },
     colors: {

@@ -26,6 +26,15 @@ input[type="radio"]:focus {
   box-shadow: none;
 }
 
+.content-login:focus-within .label-login,
+.input-login:not(:placeholder-shown) + .label-login {
+  transform: translate(0, -108%) scale(1);
+}
+
+.input-content-login .label-login {
+  transform: translate(0, -108%) scale(1) !important;
+}
+
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
 @import url("./extended-components.css");

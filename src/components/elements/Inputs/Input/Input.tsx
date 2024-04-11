@@ -19,6 +19,7 @@ export interface InputProps
   iconButtonProps?: IconButtonProps;
   type: HtmlInputType;
   hideErrorMessage?: boolean;
+  customVariant?: any;
 }
 
 export type HtmlInputType =
@@ -46,6 +47,7 @@ const Input = forwardRef(
       className,
       iconButtonProps,
       hideErrorMessage,
+      customVariant,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -53,7 +55,7 @@ const Input = forwardRef(
     const { label, description, containerClassName, error, required, feedbackRequired, ...inputProps } =
       inputWrapperProps;
     const id = useId();
-
+    const customVariantClasses = customVariant ? customVariant : {};
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
@@ -70,7 +72,8 @@ const Input = forwardRef(
       className,
       "w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent",
       { ...variantClasses[variant] },
-      { ["border border-error focus:border-error"]: error }
+      { ["border border-error focus:border-error"]: error },
+      customVariantClasses
     );
 
     const clearInput = () => formHook?.setValue(inputWrapperProps.name, "");

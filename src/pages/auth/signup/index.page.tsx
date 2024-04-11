@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
-import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import ContentLayout from "@/components/generic/Layout/ContentLayout";
+// import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
+// import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { usePostUsers } from "@/generated/apiComponents";
 
+import LoginLayout from "../layout";
 import SignUpForm from "./components/SignupForm";
 
 const SignUpFormDataSchema = (t: any) =>
@@ -87,11 +88,14 @@ const SignUpPage = () => {
   };
 
   return (
-    <BackgroundLayout>
-      <ContentLayout>
-        <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
-      </ContentLayout>
-    </BackgroundLayout>
+    // <BackgroundLayout>
+    //   <ContentLayout>
+    //     <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
+    //   </ContentLayout>
+    // </BackgroundLayout>
+    <LoginLayout>
+      <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
+    </LoginLayout>
   );
 };
 
