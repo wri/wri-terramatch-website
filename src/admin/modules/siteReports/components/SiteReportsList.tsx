@@ -106,7 +106,7 @@ export const SiteReportsList: FC = () => {
     fetchData();
   }, []);
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
+    <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
       key="project"
       source="project_uuid"
@@ -117,7 +117,7 @@ export const SiteReportsList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
     <ReferenceInput
       key="site"
@@ -129,35 +129,35 @@ export const SiteReportsList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Site" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Site" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
       key="country"
       label="Country"
       source="country"
       choices={optionToChoices(getCountriesOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="status"
       label="Status"
       source="status"
       choices={optionToChoices(getReportStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="update_request_status"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="framework_key"
       label="Framework"
       source="framework_key"
       choices={frameworkChoices}
-      className="select-pa"
+      className="select-page-admin"
     />
   ];
 

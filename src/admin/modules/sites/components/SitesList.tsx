@@ -124,13 +124,13 @@ export const SitesList: FC = () => {
     fetchData();
   }, []);
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
+    <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <SelectInput
       key="country"
       label="Country"
       source="country"
       choices={optionToChoices(getCountriesOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <ReferenceInput
       key="organisation"
@@ -142,7 +142,7 @@ export const SitesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Organization" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
     <ReferenceInput
       key="project"
@@ -154,35 +154,35 @@ export const SitesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
       key="framework_key"
       label="Framework"
       source="framework_key"
       choices={frameworkChoices}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="status"
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="update_request_status"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="monitoring_data"
       label="Monitored Data"
       source="monitoring_data"
       choices={monitoringDataChoices}
-      className="select-pa"
+      className="select-page-admin"
     />
   ];
 

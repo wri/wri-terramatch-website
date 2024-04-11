@@ -84,7 +84,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="flex flex-wrap gap-3">
                     <Menu menu={addMenuItems} className="flex-1">
                       <Button
-                        variant="sky-pa"
+                        variant="sky-page-admin"
                         className="h-fit w-full whitespace-nowrap"
                         iconProps={{
                           className: "w-4 h-4",
@@ -95,7 +95,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       </Button>
                     </Menu>
                     <Button
-                      variant="white-pa"
+                      variant="white-page-admin"
                       className="flex-1"
                       iconProps={{
                         className: "w-4 h-4 group-hover-text-primary-500",

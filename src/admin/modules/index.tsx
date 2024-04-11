@@ -141,8 +141,6 @@ const nurseryReport = {
 const airtable = {
   ResourceName: "Airtable",
   List: AirtableList
-  // Show: NurseryReportShow,
-  // Edit: EntityEdit
 };
 
 const audit = {

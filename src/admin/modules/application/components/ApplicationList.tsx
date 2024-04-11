@@ -87,24 +87,24 @@ export const ApplicationList = () => {
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
 
   const filters = [
-    <SearchInput key="s" source="search" alwaysOn className="search-pa" />,
+    <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
       key="fp"
       source="funding_programme_uuid"
       reference={modules.fundingProgramme.ResourceName}
       label="Funding Programme"
     >
-      <AutocompleteInput optionText="name" label="Funding Programme" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Funding Programme" className="select-page-admin" />
     </ReferenceInput>,
     <ReferenceInput key="st" source="current_submission.uuid" reference={modules.stage.ResourceName} label="Stage">
-      <AutocompleteInput optionText="name" label="Stage" optionValue="uuid" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Stage" optionValue="uuid" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
       key="status"
       label="Status"
       source="current_submission_status"
       choices={statusChoices}
-      className="select-pa"
+      className="select-page-admin"
     />
   ];
 

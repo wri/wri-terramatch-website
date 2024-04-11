@@ -8,9 +8,9 @@ interface ListActionsCreateProps {
 
 const ListActionsCreate = (props: ListActionsCreateProps) => (
   <TopToolbar>
-    <CreateButton className="filter-button-pa" />
+    <CreateButton className="filter-button-page-admin" />
     <When condition={!!props.onExport}>
-      <Button className="button-pa" label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
+      <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
     </When>
   </TopToolbar>
 );

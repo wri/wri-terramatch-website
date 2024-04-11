@@ -125,19 +125,19 @@ export const ProjectsList: FC = () => {
     fetchData();
   }, []);
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
+    <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <SelectInput
       key="country"
       label="Country"
       source="country"
-      className="select-pa"
+      className="select-page-admin"
       choices={optionToChoices(getCountriesOptions())}
     />,
     <SelectInput
       key="monitoring_data"
       label="Monitored Data"
       source="monitoring_data"
-      className="select-pa"
+      className="select-page-admin"
       choices={monitoringDataChoices}
     />,
     <ReferenceInput
@@ -145,24 +145,24 @@ export const ProjectsList: FC = () => {
       source="organisation_uuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
-      className="select-pa"
+      className="select-page-admin"
       sort={{
         field: "name",
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Organization" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
       key="status"
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="update_request_status"
-      className="select-pa"
+      className="select-page-admin"
       label="Change Request Status"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
@@ -172,7 +172,7 @@ export const ProjectsList: FC = () => {
       label="Framework"
       source="framework_key"
       choices={frameworkChoices}
-      className="select-pa"
+      className="select-page-admin"
     />
   ];
 

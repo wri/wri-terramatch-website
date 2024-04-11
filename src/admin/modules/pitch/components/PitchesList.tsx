@@ -29,18 +29,18 @@ import { optionToChoices } from "@/utils/options";
 import modules from "../..";
 
 const filters = [
-  <SearchInput key="s" source="search" alwaysOn className="search-pa" />,
+  <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
   <SelectInput
     key="i"
     label="Intervention Type"
-    className="select-pa"
+    className="select-page-admin"
     source="restoration_intervention_types"
     choices={optionToChoices(getRestorationInterventionTypeOptions())}
   />,
   <SelectInput
     key="c"
     label="Project country"
-    className="select-pa"
+    className="select-page-admin"
     source="project_country"
     choices={optionToChoices(getCountriesOptions())}
   />

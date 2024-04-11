@@ -105,7 +105,7 @@ export const ProjectReportsList: FC = () => {
     fetchData();
   }, []);
   const filters = [
-    <SearchInput key="search" source="search" alwaysOn className="search-pa" />,
+    <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
       key="project"
       source="project_uuid"
@@ -116,21 +116,21 @@ export const ProjectReportsList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-pa" />
+      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
       key="country"
       label="Country"
       source="country"
       choices={optionToChoices(getCountriesOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="status"
       label="Status"
       source="status"
       choices={optionToChoices(getReportStatusOptions())}
-      className="select-pa"
+      className="select-page-admin"
     />,
     <SelectInput
       key="update_request_status"
@@ -143,7 +143,7 @@ export const ProjectReportsList: FC = () => {
       label="Framework"
       source="framework_key"
       choices={frameworkChoices}
-      className="select-pa"
+      className="select-page-admin"
     />
   ];
 

@@ -56,14 +56,14 @@ const SiteOverview: FC = () => {
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
-              className="button-aside-pa"
+              className="button-aside-page-admin"
               disabled={record?.status === "needs-more-information"}
               onClick={() => setStatusModal("moreinfo")}
             >
               Request More Info
             </Button>
             <Button
-              className="button-aside-pa"
+              className="button-aside-page-admin"
               startIcon={<Check />}
               disabled={record?.status === "approved"}
               onClick={() => setStatusModal("approve")}
