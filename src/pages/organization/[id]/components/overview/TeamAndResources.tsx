@@ -3,6 +3,7 @@ import React from "react";
 import { When } from "react-if";
 
 import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 
@@ -14,7 +15,7 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
   const t = useT();
 
   return (
-    <section className="my-10 rounded-lg bg-neutral-150  p-8">
+    <section className="my-10 rounded-lg bg-neutral-150 p-8">
       <Text variant="text-heading-300">{t("Team and Resources")}</Text>
       <div className="mt-10 flex flex-col gap-12">
         <When condition={organization?.leadership_team && organization?.leadership_team.length > 0}>
@@ -57,9 +58,11 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
               role: member.position,
               gender: member.gender
             }))}
+            variant={VARIANT_TABLE_BORDER_ALL}
           />
         </When>
         <Table
+          variant={VARIANT_TABLE_BORDER_ALL}
           columns={[
             {
               accessorKey: "label",

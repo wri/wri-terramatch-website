@@ -26,10 +26,10 @@ const TaskList = (props: TaskListProps) => {
   return (
     <div className="w-[82vw] max-w-[82vw] overflow-hidden">
       <div className="bg-white p-8">
-        <Text variant="text-heading-700" className="text-center">
+        <Text variant="text-36-bold" className="text-center" containHtml={true}>
           {props.title}
         </Text>
-        <Text variant="text-bold-subtitle-400" className="mt-2 text-center">
+        <Text variant="text-16" className="mt-2 text-center">
           {props.subtitle}
         </Text>
       </div>

@@ -40,7 +40,7 @@ const HomePage = () => {
         <title>{t("Home")}</title>
       </Head>
       <PageSection>
-        <Text variant="text-heading-700" className="text-center">
+        <Text variant="text-36-bold" className="text-center">
           {t("What would you like to do?")}
         </Text>
       </PageSection>
@@ -68,7 +68,7 @@ const HomePage = () => {
       <When condition={!!myOrg}>
         <PageSection className="flex justify-center bg-white pb-10" hasFull>
           <TaskList
-            title={<>{t("Get Ready for Funding Opportunities")}</>}
+            title={t(`Get Ready for <br> Funding Opportunities`)}
             subtitle={t("Keep your information updated to have more chances of having a successful application.")}
             items={[
               {

@@ -7,7 +7,7 @@ import Pagination from "@/components/extensive/Pagination";
 import { getQueryParams } from "@/helpers/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
-import { VARIANT_TABLE_SECONDARY_WHITE } from "../Table/TableVariants";
+import { VARIANT_TABLE_BORDER_ALL } from "../Table/TableVariants";
 
 export interface ServerSideTableState {
   page: number;
@@ -53,7 +53,7 @@ export function ServerSideTable<TData extends RowData>({
           setSorting(state.sorting);
           setFilter(state.filters);
         }}
-        variant={variant ? variant : VARIANT_TABLE_SECONDARY_WHITE}
+        variant={variant ? variant : VARIANT_TABLE_BORDER_ALL}
       >
         {children}
       </Table>

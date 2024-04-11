@@ -171,8 +171,8 @@ function WizardForm(props: WizardFormProps) {
           <div className="w-full bg-white px-16 pt-8">
             <div className="flex gap-4 rounded-lg bg-tertiary-80 p-6">
               <Text variant="text-16-bold" className="text-white">
-                Note: Project polygons are editable through a new geometry-focused workflow that is accessible by
-                clicking on this link.
+                {t(`Note: Project polygons are editable through a new geometry-focused workflow that is accessible by
+                clicking on this link.`)}
               </Text>
               <Button
                 variant="text"
