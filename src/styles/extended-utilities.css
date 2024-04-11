@@ -19,45 +19,45 @@
 
   /* Heading */
   .text-heading-2000 {
-    @apply font-primary text-5xl font-bold;
+    @apply text-5xl font-bold font-primary;
     letter-spacing: normal;
   }
 
   .text-heading-1000 {
-    @apply font-primary text-4xl font-bold;
+    @apply text-4xl font-bold font-primary;
     letter-spacing: normal;
   }
 
   .text-bold-headline-1000 {
-    @apply font-primary text-4xl font-bold;
+    @apply text-4xl font-bold font-primary;
     letter-spacing: normal;
   }
 
   .text-bold-headline-800 {
-    @apply font-primary text-3xl font-bold;
+    @apply text-3xl font-bold font-primary;
     letter-spacing: normal;
   }
 
   .text-heading-700 {
-    @apply font-primary text-4xl font-bold;
+    @apply text-4xl font-bold font-primary;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
   }
 
   .text-heading-600 {
-    @apply font-primary text-3xl font-bold;
+    @apply text-3xl font-bold font-primary;
     letter-spacing: normal;
   }
 
   .text-heading-500 {
-    @apply font-primary text-2xl font-bold;
+    @apply text-2xl font-bold font-primary;
     line-height: 2rem; /* 32px */
     letter-spacing: 1.12408px;
   }
 
   .text-bold-subtitle-400 {
-    @apply font-primary text-lg font-bold;
+    @apply text-lg font-bold font-primary;
   }
 
   .text-bold-subtitle-500 {
@@ -65,7 +65,7 @@
   }
 
   .text-bold-subtitle-600 {
-    @apply font-primary text-2xl font-bold;
+    @apply text-2xl font-bold font-primary;
   }
 
   .text-light-subtitle-400 {
@@ -73,96 +73,96 @@
   }
 
   .text-bold-subtitle-400 {
-    @apply text-md font-bold leading-normal;
+    @apply font-bold leading-normal text-md;
   }
 
   .text-heading-400 {
-    @apply font-primary text-xl font-light;
+    @apply text-xl font-light font-primary;
     line-height: 1.5rem; /* 32px */
   }
 
   .text-heading-300 {
-    @apply font-primary text-lg font-bold;
+    @apply text-lg font-bold font-primary;
     line-height: 1.625rem; /* 26px */
     letter-spacing: 0.4px;
   }
 
   .text-heading-200 {
-    @apply font-primary text-md font-bold;
+    @apply font-bold font-primary text-md;
     letter-spacing: normal;
   }
 
   .text-heading-100 {
-    @apply font-primary text-md font-light;
+    @apply font-light font-primary text-md;
     letter-spacing: 0.45px;
   }
 
   /* Caption */
   .text-bold-caption-200 {
-    @apply font-primary text-sm font-bold leading-5;
+    @apply text-sm font-bold leading-5 font-primary;
     font-style: normal;
   }
 
   .text-light-caption-200 {
-    @apply font-primary text-sm font-light leading-5;
+    @apply text-sm font-light leading-5 font-primary;
     font-style: normal;
   }
 
   .text-bold-caption-100 {
-    @apply font-primary text-xs font-bold leading-5;
+    @apply text-xs font-bold leading-5 font-primary;
     font-style: normal;
   }
 
   /* Body */
   .text-body-1200 {
-    @apply font-primary text-base font-bold;
+    @apply text-base font-bold font-primary;
     line-height: 1.375rem; /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-1100 {
-    @apply font-secondary text-base font-bold;
+    @apply text-base font-bold font-secondary;
     line-height: 1.5rem; /* 24px */
   }
 
   .text-body-1000 {
-    @apply font-secondary text-base font-normal;
+    @apply text-base font-normal font-secondary;
     line-height: 1.5rem; /* 24px */
   }
 
   .text-body-900 {
-    @apply font-primary text-base font-bold;
+    @apply text-base font-bold font-primary;
     line-height: 1.375rem; /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-800 {
-    @apply font-primary text-base font-normal;
+    @apply text-base font-normal font-primary;
     line-height: 1.5rem; /* 24px */
   }
 
   .text-body-700 {
-    @apply font-primary text-base font-light;
+    @apply text-base font-light font-primary;
     letter-spacing: 0.666667px;
   }
 
   .text-body-600 {
-    @apply font-primary text-base font-light;
+    @apply text-base font-light font-primary;
     line-height: 1.375rem; /* 22px */
   }
 
   .text-body-500 {
-    @apply font-primary text-sm font-bold;
+    @apply text-sm font-bold font-primary;
     letter-spacing: normal;
   }
 
   .text-body-400 {
-    @apply font-primary text-sm font-normal;
+    @apply text-sm font-normal font-primary;
     letter-spacing: normal;
   }
 
   .text-body-300 {
-    @apply font-primary text-sm font-light;
+    @apply text-sm font-light font-primary;
     letter-spacing: normal;
   }
 
@@ -175,47 +175,47 @@
   }
 
   .text-body-200 {
-    @apply font-secondary text-sm font-normal;
+    @apply text-sm font-normal font-secondary;
     line-height: 1.188rem; /* 19px */
   }
 
   .text-body-100 {
-    @apply font-primary text-xs font-bold;
+    @apply text-xs font-bold font-primary;
     line-height: 1.188rem; /* 19px */
   }
 
   /* Button */
   .text-button-400 {
-    @apply font-primary text-base font-bold;
+    @apply text-base font-bold font-primary;
     line-height: 1rem; /* 16px */
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
   .text-button-300 {
-    @apply font-primary text-sm font-bold;
+    @apply text-sm font-bold font-primary;
     line-height: 1rem; /* 16px */
     text-transform: uppercase;
   }
 
   .text-button-200 {
-    @apply font-primary text-sm font-light;
+    @apply text-sm font-light font-primary;
     letter-spacing: normal;
   }
 
   .text-button-100 {
-    @apply font-primary text-xs font-bold;
+    @apply text-xs font-bold font-primary;
     line-height: 1.188rem; /* 19px */
   }
 
   .text-bold-caption-200 {
-    @apply font-primary text-sm font-bold;
+    @apply text-sm font-bold font-primary;
   }
 
   /* Swiper */
   .swiper-button-next,
   .swiper-button-prev {
-    @apply flex items-center justify-center rounded-full border border-solid border-primary-400 bg-neutral-900;
+    @apply flex items-center justify-center border border-solid rounded-full border-primary-400 bg-neutral-900;
   }
 
   .swiper-button-next:after,
@@ -234,7 +234,7 @@
 
   .border-medium {
     border-width: 1.6px;
-    @apply border-neutral-500 border-opacity-25;
+    @apply border-opacity-25 border-neutral-500;
   }
 
   /* With-inner-html */
@@ -248,19 +248,19 @@
     font-weight: inherit;
   }
   .with-inner-html a {
-    @apply text-primary underline;
+    @apply underline text-primary;
   }
 
   .with-inner-html h1 {
-    @apply text-bold-headline-1000 mb-2;
+    @apply mb-2 text-bold-headline-1000;
   }
 
   .with-inner-html h2 {
-    @apply text-bold-subtitle-500 mb-4;
+    @apply mb-4 text-bold-subtitle-500;
   }
 
   .with-inner-html p {
-    @apply text-light-body-300 mb-8;
+    @apply mb-8 text-light-body-300;
   }
 
   .with-inner-html p:last-child {

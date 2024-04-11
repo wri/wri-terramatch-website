@@ -20,6 +20,7 @@ export interface InputProps
   type: HtmlInputType;
   hideErrorMessage?: boolean;
   customVariant?: any;
+  labelClassName?: string;
 }
 
 export type HtmlInputType =
@@ -48,6 +49,7 @@ const Input = forwardRef(
       iconButtonProps,
       hideErrorMessage,
       customVariant,
+      labelClassName,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -67,7 +69,8 @@ const Input = forwardRef(
         "border-b-neutral-400": !error
       },
       login: {
-        "border-0 border-b py-[10px] px-0": true,
+        "h-full relative z-[1] bg-transparent border-b-2 hover:border-blue-300 border-grey-400 hover:shadow-inset-blue w-full input-login pb-3.5 outline-none":
+          true,
         "pl-4": inputProps.type === "number",
         "border-b-neutral-400": !error
       }
@@ -119,6 +122,7 @@ const Input = forwardRef(
         error={!hideErrorMessage ? error : undefined}
         required={required}
         feedbackRequired={feedbackRequired}
+        labelClassName={labelClassName}
       >
         <div className="relative">
           <input

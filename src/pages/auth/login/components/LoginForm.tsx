@@ -36,7 +36,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             </Text>
           </Link>
         </Text>
-        <div className="mt-11 mb-6 flex flex-col gap-12">
+        <div className="mb-6 mt-11 flex flex-col gap-12">
           <Input
             name="email"
             type="text"
@@ -47,6 +47,10 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             id="email"
             formHook={form}
             error={errors.email}
+            containerClassName="flex flex-col gap-2 bg-white"
+            labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
+            transition-transform duration-[0.3s,color] delay-[0.3s]
+            absolute label-login text-14-light"
           />
           <Input
             name="password"
@@ -77,7 +81,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
     //         {t("Sign in to TerraMatch with your professional email address.")}
     //       </Text>
     //       <div className="flex gap-1">
-    //         <Text variant="text-light-body-300" className="color-error text-right">
+    //         <Text variant="text-light-body-300" className="text-right color-error">
     //           {t("Don’t have an account?")}
     //         </Text>
     //         <Button as={Link} href="/auth/signup" variant="link">
@@ -90,7 +94,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
     //   <Input name="email" formHook={form} error={errors.email} type="text" label={t("Email")} required />
     //   <Input name="password" formHook={form} error={errors.password} type="password" label={t("Password")} required />
 
-    //   <div className="mt-6 flex items-center justify-center">
+    //   <div className="flex items-center justify-center mt-6">
     //     <Button as={Link} href="/auth/reset-password" variant="link">
     //       {t("Reset password")}
     //     </Button>

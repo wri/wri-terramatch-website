@@ -15,12 +15,18 @@ export interface InputWrapperProps {
   error?: FieldError;
   required?: boolean;
   feedbackRequired?: boolean;
+  labelClassName?: string;
 }
 
 const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
   return (
     <div className={classNames(props.containerClassName, "relative space-y-2")}>
-      <InputLabel htmlFor={props.inputId} required={props.required} feedbackRequired={props.feedbackRequired}>
+      <InputLabel
+        htmlFor={props.inputId}
+        required={props.required}
+        feedbackRequired={props.feedbackRequired}
+        className={props.labelClassName}
+      >
         {props.label}
       </InputLabel>
       <InputDescription id={props.inputId && `${props.inputId}-description`}>{props.description}</InputDescription>
