@@ -41,6 +41,7 @@ export const Primary: Story = {
     children: <Button>Open/Close</Button>
   }
 };
+
 export const Secondary: Story = {
   args: {
     menu: itemsLargeMenu,
@@ -49,6 +50,7 @@ export const Secondary: Story = {
     children: <Button>Open/Close</Button>
   }
 };
+
 export const PlacementBottomRight: Story = {
   args: {
     menu: itemsLargeMenu,
@@ -57,6 +59,7 @@ export const PlacementBottomRight: Story = {
     children: <Button>Open/Close</Button>
   }
 };
+
 export const PlacementBottomLeft: Story = {
   args: {
     menu: itemsLargeMenu,
@@ -65,6 +68,7 @@ export const PlacementBottomLeft: Story = {
     children: <Button>Open/Close</Button>
   }
 };
+
 export const PlacementRightTop: Story = {
   args: {
     menu: itemsLargeMenu,
@@ -73,6 +77,7 @@ export const PlacementRightTop: Story = {
     children: <Button>Open/Close</Button>
   }
 };
+
 export const PlacementLeftBottom: Story = {
   args: {
     menu: itemsLargeMenu,

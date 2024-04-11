@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { ElementType, FC, HTMLProps, useMemo } from "react";
 import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
 
@@ -19,7 +20,11 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "group-active"
     | "semi-black"
     | "semi-red"
-    | "tertiary-transparent";
+    | "secondary-blue"
+    | "sky-page-admin"
+    | "white-page-admin"
+    | "white-toggle"
+    | "transparent-toggle";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -40,7 +45,7 @@ const Button: FC<IButtonProps> = props => {
 
   const variantClasses = useMemo(() => {
     const nonTextClasses =
-      "rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10";
+      "rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10";
     const nonTextSpanClasses = "flex items-center text-bold-caption-200";
     const newText =
       "flex items-center font-inter font-bold text-16 leading-snug tracking-tighter uppercase text-primary";
@@ -48,7 +53,7 @@ const Button: FC<IButtonProps> = props => {
     switch (variant) {
       case "primary":
         return {
-          container: classNames("bg-primary-500 hover:bg-primary-400 py-2  text-white", nonTextClasses),
+          container: classNames("bg-primary-500 hover:bg-primary-400 py-2 text-white", nonTextClasses),
           span: nonTextSpanClasses
         };
 
@@ -60,15 +65,32 @@ const Button: FC<IButtonProps> = props => {
           ),
           span: nonTextSpanClasses
         };
+      case "secondary-blue":
+        return {
+          container:
+            "group bg-white border border-primary-500 uppercase leading-[normal] px-4 py-[10.5px] rounded-lg hover:bg-grey-900 disabled:border-transparent disabled:bg-grey-750",
+          span: "text-primary-500 text-12-bold group-disabled:text-grey-730"
+        };
       case "white":
         return {
           container: classNames("h-fit bg-white py-4 rounded-lg"),
           span: newText
         };
+      case "white-page-admin":
+        return {
+          container: "py-2 px-3 bg-white rounded-lg text-grey-400 border border-grey-750 hover:bg-grey-900",
+          span: "flex items-center text-bold-caption-200 text-inherit uppercase"
+        };
       case "sky":
         return {
           container: classNames("h-fit py-4 bg-primary-200 rounded-lg"),
           span: newText
+        };
+      case "sky-page-admin":
+        return {
+          container:
+            "group py-2 px-3 bg-primary-200 rounded-lg text-grey-400 border border-grey-750 hover:text-primary-500",
+          span: "flex items-center text-bold-caption-200 text-inherit uppercase"
         };
       case "text":
         return { container: "", span: "text-12-bold" };
@@ -85,14 +107,14 @@ const Button: FC<IButtonProps> = props => {
       case "semi-black":
         return {
           container:
-            "group bg-white border-[3px] w-full border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
+            "group bg-white border-[3px] border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-14-bold text-neutral-1000 group-hover:text-primary-500"
         };
 
       case "semi-red":
         return {
           container:
-            "group bg-white border-[3px] w-full border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
+            "group bg-white border-[3px] border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-error text-14-bold group-hover:text-primary-500 leading-150"
         };
       case "tertiary-transparent":
@@ -100,6 +122,18 @@ const Button: FC<IButtonProps> = props => {
           container:
             "group bg-white border-[3px] w-full border-error hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-error text-14-bold group-hover:text-primary-500 leading-150"
+        };
+
+      case "white-toggle":
+        return {
+          container: "group bg-white py-1 px-3 rounded",
+          span: "text-14-semibold text-grey-300"
+        };
+
+      case "transparent-toggle":
+        return {
+          container: "group bg-transparent px-3 py-1 rounded",
+          span: "text-14-light text-grey-400"
         };
 
       default:
@@ -112,10 +146,12 @@ const Button: FC<IButtonProps> = props => {
       {...rest}
       disabled={disabled}
       className={classNames(
-        className,
-        variantClasses.container,
-        "flex items-center justify-center gap-1.5 tracking-wide",
-        fullWidth ? "w-full justify-center" : "w-fit-content"
+        tw(
+          variantClasses.container,
+          "flex items-center justify-center gap-1.5 tracking-wide",
+          fullWidth ? "w-full justify-center" : "w-fit-content",
+          className
+        )
       )}
     >
       <When condition={!!iconProps}>

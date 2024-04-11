@@ -23,22 +23,32 @@ export const ModalBaseWithClose: FC<ModalBaseProps> = ({ children, className, ..
   );
 };
 
-const ModalCloseLogo: FC<ModalProps> = ({
+export interface ModalCloseProps extends ModalProps {
+  onCLose: () => void;
+}
+
+const ModalCloseLogo: FC<ModalCloseProps> = ({
   iconProps,
   title,
   content,
   primaryButtonProps,
   secondaryButtonProps,
   children,
+  onCLose,
   ...rest
 }) => {
   return (
     <ModalBaseWithClose {...rest}>
-      <div className="relative w-full">
-        <div className="absolute right-0">
+      <div className="mb-6 flex w-full items-center justify-between">
+        <Text variant="text-24-bold" className="whitespace-nowrap !font-[900]">
+          {title}
+        </Text>
+        <Button variant="transparent-toggle" onClick={onCLose}>
           <Icon name={IconNames.CROSS} width={24} height={24} />
-        </div>
+        </Button>
       </div>
+
+      {children}
       <When condition={!!iconProps}>
         <Icon
           {...iconProps!}
@@ -47,16 +57,14 @@ const ModalCloseLogo: FC<ModalProps> = ({
           style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
         />
       </When>
-      <Text variant="text-bold-headline-1000" className="text-center uppercase">
-        {title}
-      </Text>
+
       <When condition={!!content}>
         <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
           {content}
         </Text>
       </When>
       <div
-        className={classNames("mt-15 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-center")}
+        className={classNames("mt-6 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-center")}
       >
         <When condition={!!secondaryButtonProps}>
           <Button {...secondaryButtonProps!} variant="secondary" />

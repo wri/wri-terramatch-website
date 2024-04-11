@@ -23,11 +23,16 @@ export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...
   );
 };
 
-const ModalWithLogo: FC<ModalProps> = ({
+export interface ModalWithLogoProps extends ModalProps {
+  primaryButtonText?: string;
+}
+
+const ModalWithLogo: FC<ModalWithLogoProps> = ({
   iconProps,
   title,
   content,
   primaryButtonProps,
+  primaryButtonText,
   secondaryButtonProps,
   children,
   ...rest
@@ -46,21 +51,22 @@ const ModalWithLogo: FC<ModalProps> = ({
             style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
           />
         </When>
-        <Text variant="text-bold-headline-1000" className="text-center uppercase">
-          {title}
-        </Text>
+        <Text variant="text-20-bold">{title}</Text>
         <When condition={!!content}>
-          <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
+          <Text variant="text-12-light" className="mt-2" containHtml>
             {content}
           </Text>
         </When>
-        <div
-          className={classNames("mt-15 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-center")}
-        >
+        {children}
+        <div className={classNames("flex w-full justify-end gap-3")}>
           <When condition={!!secondaryButtonProps}>
             <Button {...secondaryButtonProps!} variant="secondary" />
           </When>
-          <Button {...primaryButtonProps} />
+          <Button {...primaryButtonProps}>
+            <Text variant="text-14-bold" className="capitalize text-white">
+              {primaryButtonText}
+            </Text>
+          </Button>
         </div>
       </div>
     </ModalBaseWithLogo>

@@ -17,6 +17,7 @@ import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import { EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -25,6 +26,7 @@ import { getAnswer, getFormattedAnswer } from "./utils";
 const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
 
 export interface FormSummaryRowProps extends FormSummaryProps {
+  type?: EntityName;
   step: FormStepSchema;
   index: number;
   nullText?: string;

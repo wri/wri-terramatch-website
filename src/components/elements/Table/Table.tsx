@@ -118,7 +118,7 @@ function Table<TData extends RowData>({
         />
       </When>
       {children}
-      <table {...props} className={classNames(className, "w-full border-separate border-spacing-y-4")}>
+      <table {...props} className={classNames(className, "w-full", variant.table)}>
         <thead className="bg-[#CFE6F4]">
           {getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id} className={variant.trHeader}>
@@ -130,7 +130,6 @@ function Table<TData extends RowData>({
                       colSpan={header.colSpan}
                       onClick={header.column.getToggleSortingHandler()}
                       className={classNames(
-                        "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
                         `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
                         header.column.getCanSort() && "cursor-pointer"
                       )}
@@ -155,19 +154,16 @@ function Table<TData extends RowData>({
             </tr>
           ))}
         </thead>
-        <tbody className="space-y-4">
+        <tbody className={variant.tBody}>
           <If condition={isLoading}>
             <Then>
               <LoadingCell />
             </Then>
             <Else>
               {getRowModel().rows.length === 0 && (
-                <tr className={classNames("rounded-lg", variant.trHeader)}>
+                <tr className={variant.trHeader}>
                   <td
-                    className={classNames(
-                      "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-                      `text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`
-                    )}
+                    className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
                     align={"center"}
                     colSpan={columns.length}
                   >
@@ -217,10 +213,7 @@ function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData,
 
   return (
     <td
-      className={classNames(
-        "text-normal-subtitle-400 px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-        variant.tdBody
-      )}
+      className={classNames("text-normal-subtitle-400", variant.tdBody)}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}
     >

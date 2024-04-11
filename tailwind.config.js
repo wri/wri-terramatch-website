@@ -89,12 +89,14 @@ module.exports = {
       neutral: {
         DEFAULT: "#9B9B9B",
         1000: "#000000",
+        950: "#002633",
         900: "#3A3A3A",
         800: "#5A5A5A",
         700: "#737373",
         600: "#888888",
         500: "#9B9B9B",
         400: "#B1B1B1",
+        450: "#CCD4D6",
         300: "#D8D8D8",
         200: "#E3E3E3",
         150: "#F5F7F9",
@@ -111,7 +113,8 @@ module.exports = {
         300: "#F6D279",
         200: "#FAEAC1",
         100: "#FDFAF2",
-        80: "#ffa060"
+        80: "#ffa060",
+        50: "#FFF4EC"
       },
       error: {
         DEFAULT: "#D50000",
@@ -141,11 +144,43 @@ module.exports = {
         200: "#72D961",
         100: "#28C499",
         50: "rgba(40, 196, 153, 0.10)"
+      },
+      grey: {
+        200: "#1976d2",
+        250: "#11093C",
+        300: "#353535",
+        400: "#637579",
+        600: "#797A7B",
+        700: "#868686",
+        720: "#94A3A8",
+        730: "#B8C3C6",
+        740: "#E0E0E0",
+        750: "#E6EAEB",
+        800: "#E9EDF0",
+        900: "#F6FAFD"
+      },
+      purple: {
+        DEFAULT: "#E468EF",
+        200: "#FDF0FE"
+      },
+      blue: {
+        DEFAULT: "#2398D8",
+        100: "#1B59F8",
+        200: "#E9F5FC"
+      },
+      green: {
+        DEFAULT: "#72D961",
+        500: "#198E2B"
+      },
+      yellow: {
+        DEFAULT: "#FCFBE8",
+        500: "#F3EFB0"
       }
     },
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
-      "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px
+      "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
+      none: "0 0 #0000"
     },
     fontFamily: {
       primary: ["Inter"],

@@ -5,6 +5,7 @@ import React from "react";
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
 import { MENU_PLACEMENT_BOTTOM_RIGHT, MENU_PLACEMENT_LEFT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "./MenuVariant";
+
 interface MenuItemProps {
   id: string;
   render: () => ReactNode;
@@ -47,6 +48,7 @@ const Menu = (props: MenuProps) => {
   });
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const hideMenu = () => {
       if (menuContainerRef.current) {
@@ -56,11 +58,13 @@ const Menu = (props: MenuProps) => {
     container?.addEventListener("scroll", hideMenu);
     window.addEventListener("scroll", hideMenu);
     hideMenu();
+
     return () => {
       container?.addEventListener("scroll", hideMenu);
       window.removeEventListener("scroll", hideMenu);
     };
   }, [container]);
+
   const calculateMenuStyleForBottom = () => {
     if (!menuContainerRef.current) {
       return {};
@@ -75,6 +79,7 @@ const Menu = (props: MenuProps) => {
       minWidth: width
     };
   };
+
   const calculateMenuStyleForHorizontalTop = () => {
     if (!menuContainerRef.current) {
       return {};
@@ -84,10 +89,12 @@ const Menu = (props: MenuProps) => {
     }
     const bottom = menuContainerRef.current.getBoundingClientRect().bottom;
     const heightMenu = menuRef.current.getBoundingClientRect().height;
+
     return {
       top: bottom - heightMenu
     };
   };
+
   const calculateMenuStyleForHorizontalBottom = () => {
     if (!menuContainerRef.current) {
       return {};
@@ -97,11 +104,13 @@ const Menu = (props: MenuProps) => {
       top: top
     };
   };
+
   const calculateMenuStyle = () => {
     const placeMap: { [key: string]: string } = {
       [MENU_PLACEMENT_RIGHT_TOP]: "horizontalTop",
       [MENU_PLACEMENT_LEFT_BOTTOM]: "hotizontalBottom"
     };
+
     const place = placeMap[placement] || "bottom";
     let styles;
     switch (place) {
@@ -115,8 +124,10 @@ const Menu = (props: MenuProps) => {
         styles = calculateMenuStyleForBottom();
         break;
     }
+
     return styles;
   };
+
   return (
     <div
       ref={menuContainerRef}
