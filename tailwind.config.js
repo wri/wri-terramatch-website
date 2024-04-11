@@ -110,7 +110,8 @@ module.exports = {
         400: "#F3C148",
         300: "#F6D279",
         200: "#FAEAC1",
-        100: "#FDFAF2"
+        100: "#FDFAF2",
+        80: "#ffa060"
       },
       error: {
         DEFAULT: "#D50000",

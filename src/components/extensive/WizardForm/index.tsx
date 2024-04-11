@@ -166,15 +166,20 @@ function WizardForm(props: WizardFormProps) {
     done: props.tabOptions?.markDone && index < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
     body: (
-      <>
+      <div className="h-[calc(100vh-287px)] overflow-auto">
         {index === 0 && (
           <div className="w-full bg-white px-16 pt-8">
-            <div className="flex gap-4 rounded-lg bg-tertiary-600 p-6">
+            <div className="flex gap-4 rounded-lg bg-tertiary-80 p-6">
               <Text variant="text-16-bold" className="text-white">
                 Note: Project polygons are editable through a new geometry-focused workflow that is accessible by
                 clicking on this link.
               </Text>
-              <Button variant="text">edit polygon</Button>
+              <Button
+                variant="text"
+                className="text-14-bold nowrap whitespace-nowrap rounded-lg border-2 border-transparent bg-[#ffb88891] px-4 py-0 uppercase text-white hover:border-white"
+              >
+                edit polygon
+              </Button>
             </div>
           </div>
         )}
@@ -185,7 +190,7 @@ function WizardForm(props: WizardFormProps) {
           title={step.title}
           subtitle={step.subtitle}
           onChange={onChange}
-          className="h-[calc(100vh-287px)] overflow-auto"
+          className=""
         >
           <FormFooter
             className="mt-12"
@@ -213,7 +218,7 @@ function WizardForm(props: WizardFormProps) {
             }}
           />
         </FormStep>
-      </>
+      </div>
     )
   }));
 
