@@ -6,7 +6,6 @@ import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import {
-  useGetV2ENTITYUUID,
   useGetV2FormsENTITYUUID,
   useGetV2UpdateRequestsENTITYUUID,
   usePutV2FormsENTITYUUID
@@ -39,11 +38,6 @@ export const EntityEdit = () => {
   const entityUUID = id as string;
 
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
-
-  const { data: entityResponse } = useGetV2ENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  const entity = entityResponse?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
   const { data: updateRequestResponse, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
     {
@@ -84,7 +78,6 @@ export const EntityEdit = () => {
   const isLoading = updateRequestLoading || formDataLoading;
   //@ts-ignore
   const defaultValues = useNormalizedFormDefaultValue(updateRequest?.content ?? formData.answers, formSteps);
-  const formTitle = entity.report_title || entity.title || entity.name;
 
   if (isError) {
     return notFound();
@@ -106,7 +99,7 @@ export const EntityEdit = () => {
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}
-          title={formTitle}
+          title={formData.form_title}
           tabOptions={{
             markDone: true,
             disableFutureTabs: true
