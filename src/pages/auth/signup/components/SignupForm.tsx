@@ -9,8 +9,8 @@ import { INPUT_SIGNUP_VARIANT } from "@/components/componentsToLogin/Input/Input
 import Text from "@/components/componentsToLogin/Text/Text";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Input from "@/components/elements/Inputs/Input/Input";
-import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
 // import Form from "@/components/extensive/Form/Form";
+import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
 import { privacyPolicyLink, termsAndConditionsLink } from "@/constants/links";
 
 import { SignUpFormData } from "../index.page";
@@ -42,6 +42,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
             <Input
               name="first_name"
               type="text"
+              formHook={form}
               label="First Name"
               error={errors.first_name}
               variant={"signup"}
@@ -53,6 +54,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
             <Input
               name="last_name"
               type="text"
+              formHook={form}
               label="Last Name"
               error={errors.last_name}
               variant={"signup"}
@@ -64,34 +66,40 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
           <Input
             name="job_role"
             type="text"
+            formHook={form}
             label="Job Title"
             error={errors.job_role}
             variant={"signup"}
             required
             placeholder="Add Job Title"
             labelClassName={INPUT_SIGNUP_VARIANT.label}
+            descriptionClassName={INPUT_SIGNUP_VARIANT.description}
             description={"Please enter your job role or position within your organizations."}
           />
           <Input
             name="phone_number"
             type="number"
+            formHook={form}
             label="Professional Phone Number"
             error={errors.phone_number}
             variant={"signup"}
             required
             placeholder="Add Phone Number"
             labelClassName={INPUT_SIGNUP_VARIANT.label}
+            descriptionClassName={INPUT_SIGNUP_VARIANT.description}
             description={"Please provide a professional phone number where you can be contacted"}
           />
           <Input
             name="email_address"
             type="text"
+            formHook={form}
             label="Professional Email Address"
             error={errors.email_address}
             variant={"signup"}
             required
             placeholder="Add Email Address"
             labelClassName={INPUT_SIGNUP_VARIANT.label}
+            descriptionClassName={INPUT_SIGNUP_VARIANT.description}
             description={
               "This is the email address you will use to log into TerraMatch. To verify your email, we will send a verification email to this address."
             }
@@ -112,6 +120,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
           <Input
             name="confirm_password"
             type="password"
+            formHook={form}
             label="Repeat Password"
             variant={"signup"}
             error={errors.confirm_password}
@@ -152,7 +161,6 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
         Cancel
       </Button>
     </div>
-
     // <Form>
     //   <Form.Header
     //     title={t("Sign Up")}

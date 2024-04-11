@@ -30,6 +30,7 @@ export interface InputProps
   hideErrorMessage?: boolean;
   customVariant?: any;
   labelClassName?: string;
+  descriptionClassName?: string;
 }
 
 export type HtmlInputType =
@@ -59,6 +60,7 @@ const Input = forwardRef(
       hideErrorMessage,
       customVariant,
       labelClassName,
+      descriptionClassName,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -85,7 +87,7 @@ const Input = forwardRef(
         "border-b-neutral-300": !error
       },
       signup: {
-        "p-3 border border-grey-400 rounded-xl w-full hover:border-blue-300 hover:shadow-blue-border text-dark-700 opacity-60":
+        "p-3 border border-grey-400 rounded-xl w-full hover:border-blue-300 hover:shadow-blue-border text-dark-700 opacity-60 outline-none":
           true,
         "pl-4": inputProps.type === "number",
         "border-neutral-300": !error
@@ -142,6 +144,7 @@ const Input = forwardRef(
         required={required}
         feedbackRequired={feedbackRequired}
         labelClassName={labelClassName}
+        descriptionClassName={descriptionClassName}
       >
         <div className="relative">
           <input

@@ -22,9 +22,9 @@ export const INPUT_SIGNUP_VARIANT: InputVariant = {
   name: "SIGNUP",
   input: `p-3 border border-grey-400 rounded-xl w-full hover:border-blue-300
           hover:shadow-blue-border text-dark-700 opacity-60`,
-  label: `text-14-light text-dark-500`,
+  label: `text-14-light normal-case text-dark-500`,
   content: `flex flex-col gap-1`,
-  description: `text-12-light text-dark-500 text-dark-200`
+  description: `opacity-60 text-12-light`
 };
 
 export const INPUT_MODAL_VARIANT: InputVariant = {

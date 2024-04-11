@@ -16,6 +16,7 @@ export interface InputWrapperProps {
   required?: boolean;
   feedbackRequired?: boolean;
   labelClassName?: string;
+  descriptionClassName?: string;
 }
 
 const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
@@ -29,7 +30,9 @@ const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
       >
         {props.label}
       </InputLabel>
-      <InputDescription id={props.inputId && `${props.inputId}-description`}>{props.description}</InputDescription>
+      <InputDescription id={props.inputId && `${props.inputId}-description`} className={props.descriptionClassName}>
+        {props.description}
+      </InputDescription>
       {props.children}
       <ErrorMessage error={props.error} className="mt-2" />
     </div>
