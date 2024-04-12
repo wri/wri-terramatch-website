@@ -17,7 +17,7 @@ import { Else, If, Then, When } from "react-if";
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
-import { useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2FormsENTITYUUID, useGetV2UpdateRequestsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps } from "@/helpers/customForms";
 import { EntityName, SingularEntityName } from "@/types/common";
 
@@ -34,8 +34,22 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const t = useT();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
+  // Change Request
+  const {
+    data: changeRequest,
+    refetch,
+    isError
+  } = useGetV2UpdateRequestsENTITYUUID(
+    {
+      pathParams: { entity: singularEntity, uuid: ctx?.record?.uuid }
+    },
+    {
+      enabled: !!ctx?.record?.uuid
+    }
+  );
+
   // Current values
-  const { data: currentValues, refetch } = useGetV2FormsENTITYUUID(
+  const { data: currentValues } = useGetV2FormsENTITYUUID(
     {
       pathParams: { entity: entity, uuid: ctx?.record?.uuid }
     },
@@ -45,11 +59,11 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   );
 
   // @ts-ignore
-  const changeRequest = currentValues?.data?.update_request;
-  const changes = changeRequest?.content;
+  const changes = changeRequest?.data?.content;
   // @ts-ignore
   const current = currentValues?.data?.answers;
-  const status = changeRequest?.status;
+  // @ts-ignore
+  const status = changeRequest?.data?.status;
   // @ts-ignore
   const form = currentValues?.data?.form;
 
@@ -78,7 +92,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
         {...rest}
       >
         {/* @ts-ignore */}
-        <If condition={currentValues?.data}>
+        <If condition={changeRequest?.data && !isError}>
           <Then>
             <Grid container spacing={2}>
               {formSteps && (
@@ -178,7 +192,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
           open
           status={statusToChangeTo}
           // @ts-ignore
-          uuid={changeRequest?.uuid}
+          uuid={changeRequest?.data.uuid}
           handleClose={() => {
             setStatusToChangeTo(undefined);
             refetch();
