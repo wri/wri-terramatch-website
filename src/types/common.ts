@@ -71,7 +71,13 @@ export type BodyTextVariants =
   | "text-body-200"
   | "text-body-100"
   | "text-light-body-300"
-  | "text-bold-body-300";
+  | "text-bold-body-300"
+  | "text-14-light"
+  | "text-14-bold"
+  | "text-dark-500"
+  | "text-32-bold"
+  | "text-12-light"
+  | "text-12-bold";
 
 export type CaptionTextVariants = "text-bold-caption-200" | "text-light-caption-200" | "text-bold-caption-100";
 

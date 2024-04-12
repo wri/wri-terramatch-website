@@ -1,14 +1,5 @@
 import cn from "classnames";
-import {
-  ChangeEvent,
-  DetailedHTMLProps,
-  forwardRef,
-  InputHTMLAttributes,
-  KeyboardEvent,
-  Ref,
-  useId,
-  useState
-} from "react";
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { IconNames } from "src/components/extensive/Icon/Icon";
@@ -31,6 +22,7 @@ export interface InputProps
   customVariant?: any;
   labelClassName?: string;
   descriptionClassName?: string;
+  descriptionFooter?: string;
 }
 
 export type HtmlInputType =
@@ -65,11 +57,18 @@ const Input = forwardRef(
     }: InputProps,
     ref?: Ref<HTMLInputElement>
   ) => {
-    const { label, description, containerClassName, error, required, feedbackRequired, ...inputProps } =
-      inputWrapperProps;
+    const {
+      label,
+      description,
+      descriptionFooter,
+      containerClassName,
+      error,
+      required,
+      feedbackRequired,
+      ...inputProps
+    } = inputWrapperProps;
     const id = useId();
     const customVariantClasses = customVariant ? customVariant : {};
-    const [inputValue, setInputValue] = useState<string>("");
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
@@ -127,19 +126,18 @@ const Input = forwardRef(
         onClick: () => clearInput()
       };
     }
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setInputValue(e.target.value);
-    };
 
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
-
     return (
       <InputWrapper
         inputId={id}
         label={label}
         description={description}
-        containerClassName={inputValue.length > 0 ? "input-content-login" : containerClassName}
+        descriptionFooter={descriptionFooter}
+        containerClassName={
+          formHook?.getValues(inputWrapperProps.name)?.length > 0 ? "input-content-login" : containerClassName
+        }
         error={!hideErrorMessage ? error : undefined}
         required={required}
         feedbackRequired={feedbackRequired}
@@ -157,8 +155,6 @@ const Input = forwardRef(
             aria-invalid={!!error}
             aria-errormessage={error?.message}
             aria-describedby={`${id}-description`}
-            onChange={handleInputChange}
-            value={inputValue}
           />
           <When condition={!!iconButtonProps}>
             <IconButton {...iconButtonProps!} className="absolute right-3 top-[50%] translate-y-[-50%]" />

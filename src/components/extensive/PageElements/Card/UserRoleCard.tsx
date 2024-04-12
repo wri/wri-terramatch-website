@@ -3,7 +3,7 @@ import React from "react";
 
 import Icon from "@/components/componentsToLogin/Icon/Icon";
 import { ICON_VARIANT_AVATAR, ICON_VARIANT_SUCCESS } from "@/components/componentsToLogin/Icon/IconVariant";
-import Text from "@/components/componentsToLogin/Text/Text";
+import Text from "@/components/elements/Text/Text";
 
 interface UserRoleCardProps {
   title: string;
@@ -16,10 +16,10 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
     <article
       className={clsx("flex cursor-pointer items-center gap-2 rounded-lg border-2 p-3", {
         "border-blue-300": selected,
-        "border-gray-300": !selected
+        "border-grey-300": !selected
       })}
     >
-      <div className="border-gray-300 rounded-lg border p-2">
+      <div className="rounded-lg border border-grey-300 p-2">
         <Icon variant={ICON_VARIANT_AVATAR} src={"/icons/ic-user.svg"} alt={"success status"} />
       </div>
       <div className="flex flex-1 flex-col items-start gap-1">

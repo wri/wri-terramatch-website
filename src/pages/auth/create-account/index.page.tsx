@@ -2,13 +2,13 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-import Button from "@/components/componentsToLogin/Button/Button";
-import { BUTTON_VARIANT_BLUE } from "@/components/componentsToLogin/Button/ButtonVariant";
-import Text from "@/components/componentsToLogin/Text/Text";
+import Button from "@/components/elements/Button/Button";
+import ButtonUserRole from "@/components/elements/Button/ButtonUserRole";
+import Text from "@/components/elements/Text/Text";
+import UserRoleCard from "@/components/extensive/PageElements/Card/UserRoleCard";
 
 import LoginLayout from "../layout";
 import { UserRolInfo } from "./MockedData";
-import UserRoleCard from "./UserRoleCard";
 
 const Page = () => {
   const [selected, setSelected] = useState<string>();
@@ -25,13 +25,18 @@ const Page = () => {
         </div>
         <div className="mb-6 flex flex-col gap-2 lg:gap-3">
           {UserRolInfo.map(item => (
-            <Button key={item.id} onClick={() => setSelected(item.id)}>
+            <ButtonUserRole key={item.id} onClick={() => setSelected(item.id)} className="h-full w-full">
               <UserRoleCard selected={selected == item.id} title={item.title} description={item.description} />
-            </Button>
+            </ButtonUserRole>
           ))}
         </div>
         <Link href={"/auth/signup"}>
-          <Button variant={BUTTON_VARIANT_BLUE}>Continue</Button>
+          <Button
+            className="text-14-bold flex w-full items-center justify-center rounded-lg border-2
+                                    border-blue-300 bg-blue-300 py-6.5 text-white hover:border-white"
+          >
+            Continue
+          </Button>
         </Link>
       </div>
     </LoginLayout>

@@ -1,16 +1,11 @@
-// import { useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
+import { When } from "react-if";
 
-// import { When } from "react-if";
-import Button from "@/components/componentsToLogin/Button/Button";
-import { BUTTON_VARIANT_BLUE } from "@/components/componentsToLogin/Button/ButtonVariant";
-import Input from "@/components/componentsToLogin/Input/Input";
-import { INPUT_LOGIN_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
-// import Text from "@/components/elements/Text/Text";
-import Text from "@/components/componentsToLogin/Text/Text";
-// import Input from "@/components/elements/Inputs/Input/Input";
-// import Form from "@/components/extensive/Form/Form";
+import Input from "@/components/elements/Inputs/Input/Input";
+import Text from "@/components/elements/Text/Text";
+import Form from "@/components/extensive/Form/Form";
 import { PostAuthLoginError } from "@/generated/apiComponents";
 
 import { RequestResetData } from "../index.page";
@@ -24,11 +19,11 @@ type RequestResetProps = {
 };
 
 const RequestResetForm = ({ form, handleSave, loading, apiError, success }: RequestResetProps) => {
-  // const t = useT();
-  // const errors = form.formState.errors;
+  const t = useT();
+  const errors = form.formState.errors;
 
   return (
-    <div>
+    <Form formType="reset-password">
       <div className="w-[30vw] overflow-auto">
         <div className="mb-10 flex flex-col gap-2">
           <Text variant="text-32-bold" className="text-blue-700">
@@ -44,13 +39,36 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
               </Text>
             </Link>
           </div>
-          <Input type="text" label="Email Address" variant={INPUT_LOGIN_VARIANT} required={false} placeholder=" " />
+          <Input
+            name="email"
+            formHook={form}
+            error={errors.email}
+            type="text"
+            label={t("Email Address")}
+            required
+            variant={"login"}
+            containerClassName="flex flex-col gap-2 bg-white"
+            labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
+            transition-transform duration-[0.3s,color] delay-[0.3s]
+            absolute label-login text-14-light z-20"
+          />
+          <When condition={!!apiError}>
+            <Text variant="text-12-light" className="text-right">
+              {t("Cant verify your email address.")}
+            </Text>
+          </When>
         </div>
-        <Button variant={BUTTON_VARIANT_BLUE} onClick={() => {}}>
-          Reset Password
-        </Button>
+        <Form.Footer
+          primaryButtonProps={{
+            children: t("Reset Password"),
+            onClick: form.handleSubmit(handleSave),
+            disabled: loading,
+            className:
+              "bg-blue-300 py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white"
+          }}
+        />
       </div>
-    </div>
+    </Form>
     // <Form>
     //   <Form.Header title="Reset Password" />
     //   <Input name="email" formHook={form} error={errors.email} type="text" label={t("Email")} required />

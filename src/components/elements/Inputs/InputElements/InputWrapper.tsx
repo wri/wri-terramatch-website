@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { PropsWithChildren } from "react";
 import { FieldError } from "react-hook-form";
+import { When } from "react-if";
 
 import ErrorMessage from "@/components/elements/ErrorMessage/ErrorMessage";
 
@@ -11,6 +12,7 @@ export interface InputWrapperProps {
   inputId?: string;
   label?: string;
   description?: string;
+  descriptionFooter?: string;
   containerClassName?: string;
   error?: FieldError;
   required?: boolean;
@@ -34,6 +36,11 @@ const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
         {props.description}
       </InputDescription>
       {props.children}
+      <When condition={props.descriptionFooter}>
+        <InputDescription id={props.inputId && `${props.inputId}-description`} className={props.descriptionClassName}>
+          {props.descriptionFooter}
+        </InputDescription>
+      </When>
       <ErrorMessage error={props.error} className="mt-2" />
     </div>
   );

@@ -2,14 +2,8 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
-import Button from "@/components/componentsToLogin/Button/Button";
-import { BUTTON_VARIANT_BLUE } from "@/components/componentsToLogin/Button/ButtonVariant";
-// import Input from "@/components/componentsToLogin/Input/Input";
-// import { INPUT_LOGIN_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
-import Text from "@/components/componentsToLogin/Text/Text";
-// import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
-// import Text from "@/components/elements/Text/Text";
+import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
 
 import { LoginFormData } from "../index.page";
@@ -25,7 +19,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
   const errors = form.formState.errors;
 
   return (
-    <Form>
+    <Form formType={"login"}>
       <div className="w-[30vw]">
         <Text variant="text-32-bold">{t("Sign in")}</Text>
         <Text variant="text-12-light" className="flex">
@@ -50,7 +44,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             containerClassName="flex flex-col gap-2 bg-white"
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
-            absolute label-login text-14-light z-20"
+            absolute label-login text-14-light z-20 normal-case"
           />
           <Input
             name="password"
@@ -65,7 +59,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             containerClassName="flex flex-col gap-2 bg-white"
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
-            absolute label-login text-14-light z-20"
+            absolute label-login text-14-light z-20 normal-case"
           />
         </div>
         <Link href="/auth/reset-password">
@@ -73,9 +67,15 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             Forgot Password?
           </Text>
         </Link>
-        <Button variant={BUTTON_VARIANT_BLUE} onClick={form.handleSubmit(handleSave)}>
-          {t("Sign in")}
-        </Button>
+        <Form.Footer
+          primaryButtonProps={{
+            children: t("Sign in"),
+            onClick: form.handleSubmit(handleSave),
+            disabled: loading,
+            className:
+              "mb-4 bg-blue-300 py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white"
+          }}
+        />
       </div>
     </Form>
     // <Form>
