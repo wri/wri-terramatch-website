@@ -20,6 +20,7 @@ const SignUpFormDataSchema = (t: any) =>
     phone_number: yup.string().required(),
     job_role: yup.string().required(),
     password: yup.string().required(),
+    role_id: yup.string().required(),
     confirm_password: yup.string().oneOf([yup.ref("password")], t("Passwords must match.")),
     terms: yup.boolean().isTrue(t("Please accept terms and conditions.")),
     consent: yup.boolean().isTrue(t("Please accept consent."))
@@ -30,6 +31,7 @@ export type SignUpFormData = yup.InferType<ReturnType<typeof SignUpFormDataSchem
 const SignUpPage = () => {
   const t = useT();
   const router = useRouter();
+  const { role_id } = router.query;
 
   const { mutate: signUp, isLoading } = usePostUsers({
     onSuccess(data) {
@@ -83,6 +85,7 @@ const SignUpPage = () => {
         phone_number: data.phone_number,
         job_role: data.job_role,
         callback_url: window.location.origin + "/auth/verify/email/"
+        // role_id: role_id // to be added when role_id is available in the api component
       }
     });
   };
@@ -94,7 +97,7 @@ const SignUpPage = () => {
     //   </ContentLayout>
     // </BackgroundLayout>
     <LoginLayout>
-      <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
+      <SignUpForm form={form} handleSave={handleSave} loading={isLoading} roleId={role_id as string} />
     </LoginLayout>
   );
 };

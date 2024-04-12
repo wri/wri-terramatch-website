@@ -30,7 +30,7 @@ const Page = () => {
             </ButtonUserRole>
           ))}
         </div>
-        <Link href={"/auth/signup"}>
+        <Link href={`/auth/signup?role_id=${selected}`}>
           <Button
             className="text-14-bold flex w-full items-center justify-center rounded-lg border-2
                                     border-blue-300 bg-blue-300 py-6.5 text-white hover:border-white"

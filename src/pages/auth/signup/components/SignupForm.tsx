@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -15,11 +16,15 @@ type SignUpFormProps = {
   form: UseFormReturn<SignUpFormData>;
   handleSave: (data: SignUpFormData) => Promise<any>;
   loading?: boolean;
+  roleId: string;
 };
 
-const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
+const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
   const t = useT();
   const errors = form.formState.errors;
+  useEffect(() => {
+    form.setValue("role_id", roleId);
+  }, []);
 
   return (
     <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
