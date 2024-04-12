@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
-import { INPUT_SIGNUP_VARIANT } from "@/components/componentsToLogin/Input/InputVariant";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
@@ -43,8 +42,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
                 required
                 variant={"signup"}
                 placeholder="Add First Name"
-                labelClassName={INPUT_SIGNUP_VARIANT.label}
-                containerClassName={INPUT_SIGNUP_VARIANT.content}
+                labelClassName={"text-14-light normal-case text-dark-500"}
               />
               <Input
                 name="last_name"
@@ -55,7 +53,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
                 required
                 variant={"signup"}
                 placeholder="Add Last Name"
-                labelClassName={INPUT_SIGNUP_VARIANT.label}
+                labelClassName={"text-14-light normal-case text-dark-500"}
               />
             </div>
             <Input
@@ -67,8 +65,8 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
               required
               variant={"signup"}
               placeholder="Add Job Title"
-              labelClassName={INPUT_SIGNUP_VARIANT.label}
-              descriptionClassName={INPUT_SIGNUP_VARIANT.description}
+              labelClassName={"text-14-light normal-case text-dark-500"}
+              descriptionClassName={"opacity-60 text-12-light"}
               descriptionFooter={"Please enter your job role or position within your organizations."}
             />
             <Input
@@ -80,8 +78,8 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
               required
               variant={"signup"}
               placeholder="Add Phone Number"
-              labelClassName={INPUT_SIGNUP_VARIANT.label}
-              descriptionClassName={INPUT_SIGNUP_VARIANT.description}
+              labelClassName={"text-14-light normal-case text-dark-500"}
+              descriptionClassName={"opacity-60 text-12-light"}
               descriptionFooter={"Please provide a professional phone number where you can be contacted"}
             />
             <Input
@@ -93,8 +91,8 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
               required
               variant={"signup"}
               placeholder="Add Email Address"
-              labelClassName={INPUT_SIGNUP_VARIANT.label}
-              descriptionClassName={INPUT_SIGNUP_VARIANT.description}
+              labelClassName={"text-14-light normal-case text-dark-500"}
+              descriptionClassName={"opacity-60 text-12-light"}
               descriptionFooter={
                 "This is the email address you will use to log into TerraMatch. To verify your email, we will send a verification email to this address."
               }
@@ -108,7 +106,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
                 label={t("Password")}
                 required
                 variant={"signup"}
-                labelClassName={INPUT_SIGNUP_VARIANT.label}
+                labelClassName={"text-14-light normal-case text-dark-500"}
               />
               <PasswordStrength password={form.watch("password")} />
             </div>
@@ -120,7 +118,7 @@ const SignUpForm = ({ form, loading, handleSave }: SignUpFormProps) => {
               label="Repeat Password"
               required
               variant={"signup"}
-              labelClassName={INPUT_SIGNUP_VARIANT.label}
+              labelClassName={"text-14-light normal-case text-dark-500"}
               placeholder="Repeat Password"
             />
             <div className={`mt-7 flex flex-col ${errors.terms ? "gap-7" : "gap-1"}`}>

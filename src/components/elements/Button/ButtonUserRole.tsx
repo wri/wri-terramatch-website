@@ -1,6 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
-import { BUTTON_VARIANT_TRASNPARENT } from "../../componentsToLogin/Button/ButtonVariant";
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: string;
   className?: string;
@@ -9,7 +8,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
 }
 const ButtonUserRole = (props: ButtonProps) => {
-  const { variant = BUTTON_VARIANT_TRASNPARENT, className, children, type = "button", onClick, ...restProps } = props;
+  const { variant = "bg-transparent", className, children, type = "button", onClick, ...restProps } = props;
 
   return (
     <button className={`${variant} ${className}`} type={type} onClick={onClick} {...restProps}>

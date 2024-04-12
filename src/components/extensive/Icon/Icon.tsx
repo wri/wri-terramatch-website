@@ -85,7 +85,9 @@ export enum IconNames {
   SITE_CIRCLE = "site-circle",
   NURSERY_CIRCLE = "nursery-circle",
   SUCCESS = "ic-success",
-  CRITICAL = "ic-critical"
+  CRITICAL = "ic-critical",
+  USER_ROLE = "user-role",
+  NO_SUCCESS = "no-success"
 }
 
 export interface IconProps {

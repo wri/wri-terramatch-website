@@ -1,9 +1,8 @@
 import clsx from "clsx";
 import React from "react";
 
-import Icon from "@/components/componentsToLogin/Icon/Icon";
-import { ICON_VARIANT_AVATAR, ICON_VARIANT_SUCCESS } from "@/components/componentsToLogin/Icon/IconVariant";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 interface UserRoleCardProps {
   title: string;
@@ -20,7 +19,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
       })}
     >
       <div className="rounded-lg border border-grey-300 p-2">
-        <Icon variant={ICON_VARIANT_AVATAR} src={"/icons/ic-user.svg"} alt={"success status"} />
+        <Icon name={IconNames.USER_ROLE} className="h-10 w-10 lg:h-11 lg:w-11 wide:h-12 wide:w-12" />
       </div>
       <div className="flex flex-1 flex-col items-start gap-1">
         <Text variant="text-12-bold" className="text-dark-500">
@@ -31,10 +30,8 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
         </Text>
       </div>
       <Icon
-        variant={ICON_VARIANT_SUCCESS}
-        src={`${selected ? "/icons/ic-success.svg" : "/icons/ic-no-success.svg"}`}
-        alt={"success status"}
-        className="self-start"
+        name={selected ? IconNames.SUCCESS : IconNames.NO_SUCCESS}
+        className="h-6 w-6 self-start lg:h-7 lg:w-7 wide:h-8 wide:w-8"
       />
     </article>
   );
