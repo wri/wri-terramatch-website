@@ -3830,24 +3830,8 @@ export type V2FileGalleryLite = {
   };
 };
 
-export type V2TreeSpeciesCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
 export type V2TreeSpeciesRead = {
   uuid?: string;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type V2TreeSpeciesUpdate = {
   name?: string;
   amount?: number;
   type?: string;
