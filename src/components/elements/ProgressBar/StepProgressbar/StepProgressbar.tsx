@@ -39,7 +39,7 @@ const StepProgressbar = ({
   }, [labels.length, value, differentialThreshold]);
 
   return (
-    <div className="px-4">
+    <div className={tw("px-4", className)}>
       <div className="relative w-full">
         <div
           className={classNames("w-full", {
@@ -78,11 +78,7 @@ const StepProgressbar = ({
           </div>
         </div>
 
-        <div
-          {...rest}
-          className={`absolute top-[5px] h-[9px] w-full rounded-full bg-neutral-200 ${className || ""}`}
-          role="progressbar"
-        >
+        <div {...rest} className={`absolute top-[5px] h-[9px] w-full rounded-full bg-neutral-200`} role="progressbar">
           <div
             className={`h-full bg-${color} rounded-full transition-all duration-300`}
             style={{ width: `${value}%` }}

@@ -137,7 +137,8 @@ export enum IconNames {
   IC_DOWNLOAD_MENU = "download-menu",
   IC_FILTER = "ic-filter",
   IC_SORT = "ic-sort",
-  APPROVED_COLORLESS = "status/approved-colorless"
+  APPROVED_COLORLESS = "status/approved-colorless",
+  IMAGE = "image"
 }
 
 export interface IconProps {

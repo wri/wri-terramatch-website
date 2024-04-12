@@ -40,14 +40,18 @@ const polygonData = [
 
 const Polygons = (props: IPolygonProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { openModal, closeModal } = useModalContext();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { openModal, closeModal } = useModalContext();
 
   const openFormModalHandlerAdd = () => {
     openModal(
       <ModalWithLogo
         title="Add Polygons"
-        content="Start by adding polygons to your site."
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
+            Start by adding polygons to your site.
+          </Text>
+        }
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >

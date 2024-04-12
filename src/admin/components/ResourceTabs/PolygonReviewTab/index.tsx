@@ -104,7 +104,11 @@ const PolygonReviewTab: FC<IProps> = props => {
                     >
                       Download
                     </Button>
-                    <Button className="flex-1 px-3">approve polygons</Button>
+                    <Button className="flex-1 px-3">
+                      <Text variant="text-14-bold" className="text-white">
+                        approve polygons
+                      </Text>
+                    </Button>
                   </div>
                 </div>
                 <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">

@@ -170,12 +170,14 @@ module.exports = {
       },
       green: {
         DEFAULT: "#72D961",
+        400: "#1BA631",
         500: "#198E2B"
       },
       yellow: {
         DEFAULT: "#FCFBE8",
         500: "#F3EFB0"
-      }
+      },
+      red: "#FF6464"
     },
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -14,7 +14,7 @@ export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...
     <div
       {...rest}
       className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white pb-8",
+        "margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white pb-8",
         className
       )}
     >
@@ -25,6 +25,7 @@ export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...
 
 export interface ModalWithLogoProps extends ModalProps {
   primaryButtonText?: string;
+  toogleButton?: boolean;
 }
 
 const ModalWithLogo: FC<ModalWithLogoProps> = ({
@@ -34,15 +35,17 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   primaryButtonProps,
   primaryButtonText,
   secondaryButtonProps,
+  toogleButton,
   children,
   ...rest
 }) => {
+  const [buttonToogle, setButtonToogle] = useState(true);
   return (
     <ModalBaseWithLogo {...rest}>
       <div className="w-full border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
       </div>
-      <div className="px-8 pt-8">
+      <div className="w-full px-8 pt-8">
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
@@ -51,12 +54,28 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
             style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
           />
         </When>
-        <Text variant="text-20-bold">{title}</Text>
-        <When condition={!!content}>
-          <Text variant="text-12-light" className="mt-2" containHtml>
-            {content}
-          </Text>
-        </When>
+        <div className="flex items-center justify-between">
+          <Text variant="text-24-bold">{title}</Text>
+          <When condition={toogleButton}>
+            <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
+              <Button
+                variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
+                onClick={() => setButtonToogle(!buttonToogle)}
+                className="w-[111px]"
+              >
+                <Text variant="text-14-semibold">Comments</Text>
+              </Button>
+              <Button
+                variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
+                onClick={() => setButtonToogle(!buttonToogle)}
+                className="w-[111px]"
+              >
+                <Text variant="text-14-semibold">History</Text>
+              </Button>
+            </div>
+          </When>
+        </div>
+        <When condition={!!content}>{content}</When>
         {children}
         <div className={classNames("flex w-full justify-end gap-3")}>
           <When condition={!!secondaryButtonProps}>
