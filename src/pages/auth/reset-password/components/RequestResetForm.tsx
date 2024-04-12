@@ -50,7 +50,7 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
             containerClassName="flex flex-col gap-2 bg-white"
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
-            absolute label-login text-14-light z-20"
+            absolute label-login text-14-light z-20 normal-case"
           />
           <When condition={!!apiError}>
             <Text variant="text-12-light" className="text-right">
