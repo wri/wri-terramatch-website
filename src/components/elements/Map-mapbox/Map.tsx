@@ -49,6 +49,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   captureAdditionalPolygonProperties?: boolean;
   hasControls?: boolean;
   siteData?: boolean;
+  status?: boolean;
 }
 
 export const Map = ({
@@ -63,6 +64,7 @@ export const Map = ({
   additionalPolygonProperties,
   captureAdditionalPolygonProperties,
   siteData = false,
+  status = false,
   ...props
 }: MapProps) => {
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
@@ -157,9 +159,11 @@ export const Map = ({
             <EditControl />
           </When>
         </ControlGroup>
-        <ControlGroup position={"top-left"}>
-          <PolygonStatus />
-        </ControlGroup>
+        <When condition={status}>
+          <ControlGroup position="top-left">
+            <PolygonStatus />
+          </ControlGroup>
+        </When>
         <When condition={!editable}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />

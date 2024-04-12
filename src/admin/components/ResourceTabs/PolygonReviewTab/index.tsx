@@ -68,7 +68,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={8}>
-            <Stack gap={4} className="pt-9 pl-8">
+            <Stack gap={4} className="pl-8 pt-9">
               <div className="flex items-start gap-3">
                 <div className="w-full">
                   <div className="mb-2">
@@ -117,7 +117,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
               </div>
 
-              <Map className="rounded-lg" />
+              <Map className="rounded-lg" status={true} />
               <div>
                 <div>
                   <Text variant="text-16-bold" className="mb-2 text-grey-300">
@@ -132,7 +132,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
             </Stack>
           </Grid>
-          <Grid xs={4} className="pt-9 pl-8 pr-4">
+          <Grid xs={4} className="pl-8 pr-4 pt-9">
             <PolygonReviewAside type={props.type} />
           </Grid>
         </Grid>
