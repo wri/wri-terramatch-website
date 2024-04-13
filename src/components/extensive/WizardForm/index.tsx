@@ -91,9 +91,9 @@ function WizardForm(props: WizardFormProps) {
   const formHasError = Object.values(formHook.formState.errors || {}).filter(item => !!item).length > 0;
 
   if (process.env.NODE_ENV === "development") {
-    console.log("Form Steps", props.steps);
-    console.log("Form Values", formHook.watch());
-    console.log("Form Errors", formHook.formState.errors);
+    console.debug("Form Steps", props.steps);
+    console.debug("Form Values", formHook.watch());
+    console.debug("Form Errors", formHook.formState.errors);
   }
 
   const onChange = useDebounce(() => !formHasError && props.onChange && props.onChange(formHook.getValues()));
