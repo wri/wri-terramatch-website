@@ -3,7 +3,6 @@ import _ from "lodash";
 import { PropsWithChildren, useCallback } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { useDebounce } from "@/hooks/useDebounce";
 import { updateArrayState } from "@/utils/array";
 
 import TreeSpeciesInput, { TreeSpeciesInputProps, TreeSpeciesValue } from "./TreeSpeciesInput";
@@ -30,8 +29,6 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   } = useController(props);
   const { formHook } = props;
 
-  const onChangeCapture = useDebounce(props.onChangeCapture, 1000);
-
   const createTreeSpecies = useCallback(
     (treeValue: TreeSpeciesValue) => {
       onChange([...(value ?? []), treeValue]);
@@ -45,7 +42,6 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   const updateTreeSpecies = useCallback(
     (treeValue: TreeSpeciesValue) => {
       onChange(updateArrayState(value, treeValue, "uuid"));
-      onChangeCapture();
       formHook?.clearErrors(props.name);
     },
     [value, onChange, formHook]
@@ -56,7 +52,6 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
       if (uuid != null) {
         _.remove(value, (v: TreeSpeciesValue) => v.uuid == uuid);
         onChange(value);
-        onChangeCapture();
         formHook?.clearErrors(props.name);
       }
     },
