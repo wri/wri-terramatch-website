@@ -18,12 +18,15 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "sky"
     | "group"
     | "group-active"
+    | "group-polygon"
+    | "group-active-polygon"
     | "semi-black"
     | "semi-red"
     | "secondary-blue"
     | "sky-page-admin"
     | "white-page-admin"
     | "white-toggle"
+    | "white-border"
     | "transparent-toggle";
   fullWidth?: boolean;
   shallow?: boolean;
@@ -53,7 +56,7 @@ const Button: FC<IButtonProps> = props => {
     switch (variant) {
       case "primary":
         return {
-          container: classNames("bg-primary-500 hover:bg-primary-400 py-2 text-white", nonTextClasses),
+          container: classNames("bg-primary-500 hover:bg-primary-400 py-2 !text-white", nonTextClasses),
           span: nonTextSpanClasses
         };
 
@@ -61,6 +64,14 @@ const Button: FC<IButtonProps> = props => {
         return {
           container: classNames(
             "bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-[10.5px]",
+            nonTextClasses
+          ),
+          span: nonTextSpanClasses
+        };
+      case "white-border":
+        return {
+          container: classNames(
+            "bg-white border border-neutral-200 hover:bg-neutral-200 py-2 !text-darkCustom-100",
             nonTextClasses
           ),
           span: nonTextSpanClasses
@@ -103,6 +114,11 @@ const Button: FC<IButtonProps> = props => {
 
       case "group-active":
         return { container: "", span: "text-14-semibold px-3 py-1 bg-white rounded-lg" };
+      case "group-polygon":
+        return { container: "", span: "text-14-light px-3 py-1 opacity-60 rounded-lg" };
+
+      case "group-active-polygon":
+        return { container: "bg-white rounded-lg", span: "text-14-semibold px-3 py-1 bg-white rounded-lg" };
 
       case "semi-black":
         return {
