@@ -2,11 +2,20 @@ import { notFound } from "next/navigation";
 import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
-import useFormData from "@/admin/components/EntityEdit/useFormData";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import {
+  GetV2FormsENTITYUUIDResponse,
+  useGetV2FormsENTITYUUID,
+  usePutV2FormsENTITYUUID
+} from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
+import { pluralEntityNameToSingular } from "@/helpers/entity";
+import {
+  useGetCustomFormSteps,
+  useNormalizedFormDefaultValue
+} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { EntityName } from "@/types/common";
 
 export const EntityEdit = () => {
@@ -28,10 +37,29 @@ export const EntityEdit = () => {
   const entityName = ResourceEntityMapping[resource] as EntityName;
   const entityUUID = id as string;
 
-  const { isLoading, loadError, isUpdating, isSuccess, error, updateEntity, formSteps, values, title } = useFormData(
-    entityName,
+  const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
+
+  const {
+    data: formResponse,
+    isLoading,
+    isError: loadError
+  } = useGetV2FormsENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
+
+  // @ts-ignore
+  const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
+
+  const formSteps = useGetCustomFormSteps(formData.form, {
+    entityName: pluralEntityNameToSingular(entityName),
     entityUUID
+  });
+
+  const defaultValues = useNormalizedFormDefaultValue(
+    formData?.update_request?.content ?? formData?.answers,
+    formSteps
   );
+
+  // @ts-ignore
+  const { form_title: title } = formData;
 
   if (loadError) {
     return notFound();
@@ -52,7 +80,7 @@ export const EntityEdit = () => {
           }
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
-          values={values}
+          defaultValues={defaultValues}
           title={title}
           tabOptions={{
             markDone: true,
