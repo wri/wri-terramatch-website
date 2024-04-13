@@ -3,6 +3,7 @@ import _ from "lodash";
 import { PropsWithChildren, useCallback } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import { useDebounce } from "@/hooks/useDebounce";
 import { updateArrayState } from "@/utils/array";
 
 import TreeSpeciesInput, { TreeSpeciesInputProps, TreeSpeciesValue } from "./TreeSpeciesInput";
@@ -27,12 +28,15 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   const {
     field: { value, onChange }
   } = useController(props);
-  const { formHook, onChangeCapture } = props;
+  const { formHook } = props;
+
+  const onChangeCapture = useDebounce(props.onChangeCapture, 1000);
 
   const createTreeSpecies = useCallback(
     (treeValue: TreeSpeciesValue) => {
       onChange([...(value ?? []), treeValue]);
-      onChangeCapture();
+      // Specifically avoiding `onChangeCapture()` here because it's too easy to lose progress
+      // typing a name or amount when the server response comes back.
       formHook?.clearErrors(props.name);
     },
     [value, onChange, formHook]
