@@ -62,6 +62,7 @@ const EditEntityPage = () => {
   //@ts-ignore
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
 
+  // @ts-ignore
   const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
 
   const formSteps = useGetCustomFormSteps(
@@ -75,6 +76,7 @@ const EditEntityPage = () => {
   );
 
   const defaultValues = useNormalizedFormDefaultValue(
+    // @ts-ignore
     formData?.update_request?.content ?? formData?.answers,
     formSteps,
     entity.migrated

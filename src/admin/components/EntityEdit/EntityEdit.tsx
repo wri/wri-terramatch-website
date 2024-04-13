@@ -54,6 +54,7 @@ export const EntityEdit = () => {
   });
 
   const defaultValues = useNormalizedFormDefaultValue(
+    // @ts-ignore
     formData?.update_request?.content ?? formData?.answers,
     formSteps
   );
