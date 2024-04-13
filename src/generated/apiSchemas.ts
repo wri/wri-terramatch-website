@@ -81,10 +81,15 @@ export type EntityFormRead = {
   feedback_fields?: string[];
   update_request?: {
     uuid?: string;
+    framework_key?: string;
     status?: string;
-    content?: Record<string, any>;
+    readable_status?: string;
+    content?: string;
     feedback?: string;
     feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
   };
 };
 
@@ -22891,7 +22896,8 @@ export type UpdateRequestRead = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;

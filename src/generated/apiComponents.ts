@@ -7361,10 +7361,15 @@ export type GetV2FormsENTITYUUIDResponse = {
   feedback_fields?: string[];
   update_request?: {
     uuid?: string;
+    framework_key?: string;
     status?: string;
-    content?: Record<string, any>;
+    readable_status?: string;
+    content?: string;
     feedback?: string;
     feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
   };
 };
 
@@ -7419,10 +7424,15 @@ export type PutV2FormsENTITYUUIDResponse = {
   feedback_fields?: string[];
   update_request?: {
     uuid?: string;
+    framework_key?: string;
     status?: string;
-    content?: Record<string, any>;
+    readable_status?: string;
+    content?: string;
     feedback?: string;
     feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
   };
 };
 
@@ -7491,10 +7501,15 @@ export type PutV2FormsENTITYUUIDSubmitResponse = {
   feedback_fields?: string[];
   update_request?: {
     uuid?: string;
+    framework_key?: string;
     status?: string;
-    content?: Record<string, any>;
+    readable_status?: string;
+    content?: string;
     feedback?: string;
     feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
   };
 };
 
@@ -7558,10 +7573,15 @@ export type PostV2FormsENTITYResponse = {
   feedback_fields?: string[];
   update_request?: {
     uuid?: string;
+    framework_key?: string;
     status?: string;
-    content?: Record<string, any>;
+    readable_status?: string;
+    content?: string;
     feedback?: string;
     feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
   };
 };
 
@@ -7613,10 +7633,15 @@ export type PostV2FormsProjectsUUIDResponse = {
   feedback_fields?: string[];
   update_request?: {
     uuid?: string;
+    framework_key?: string;
     status?: string;
-    content?: Record<string, any>;
+    readable_status?: string;
+    content?: string;
     feedback?: string;
     feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
   };
 };
 
@@ -7859,7 +7884,8 @@ export type PutV2AdminUpdateRequestsUUIDSTATUSResponse = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
@@ -7960,7 +7986,8 @@ export type GetV2UpdateRequestsUUIDResponse = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
@@ -8046,7 +8073,8 @@ export type GetV2UpdateRequestsENTITYUUIDResponse = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
