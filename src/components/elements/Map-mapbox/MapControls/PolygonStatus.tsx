@@ -4,6 +4,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
 import Dropdown from "../../Inputs/Dropdown/Dropdown";
+import TextArea from "../../Inputs/textArea/TextArea";
 import Text from "../../Text/Text";
 
 const dropdownOptions = [
@@ -22,6 +23,10 @@ const dropdownOptions = [
   {
     title: "Monitoring Begins",
     value: 4
+  },
+  {
+    title: "Planting Complete",
+    value: 5
   }
 ];
 
@@ -32,14 +37,27 @@ const PolygonStatus = () => {
   const openFormModalHandler = () => {
     openModal(
       <ModalConfirm
-        title={"Confirm Polygon Deletion"}
-        content="Do you want to delete this polgyon?"
+        className="w-[300px]"
+        title={"Confirm Polygon Status Change"}
+        content={
+          <Text variant="text-14-light" className="text-center">
+            Are you sure you want to change the polgyon status to Planting Complete?
+          </Text>
+        }
         onClose={closeModal}
         onConfirm={() => {
           setConfirmChange(true);
           closeModal;
         }}
-      />
+      >
+        <TextArea
+          placeholder="Type comment here..."
+          name=""
+          className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
+          containerClassName="w-full"
+          rows={4}
+        />
+      </ModalConfirm>
     );
   };
 

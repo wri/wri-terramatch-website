@@ -102,7 +102,6 @@ const AttributeInformation = () => {
         labelVariant="text-14-light"
         placeholder="Select Restoration Practice"
         options={dropdownOptionsRestoration}
-        value={["Planting Complete"]}
         onChange={() => {}}
       />
       <Dropdown
@@ -111,7 +110,6 @@ const AttributeInformation = () => {
         labelVariant="text-14-light"
         placeholder="Select Target Land Use System"
         options={dropdownOptionsTarget}
-        value={["Planting Complete"]}
         onChange={() => {}}
       />
       <Dropdown
@@ -120,7 +118,6 @@ const AttributeInformation = () => {
         labelVariant="text-14-light"
         placeholder="Select Tree Distribution"
         options={dropdownOptionsTree}
-        value={["Planting Complete"]}
         onChange={() => {}}
       />
       <Input

@@ -5,10 +5,11 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 //@ts-ignore
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
 import { t } from "@transifex/native";
+import classNames from "classnames";
 import mapboxgl, { Map as IMap } from "mapbox-gl";
 //@ts-ignore
 import { CircleMode, DirectMode, DragCircleMode, SimpleSelectMode } from "mapbox-gl-draw-circle";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -28,9 +29,13 @@ import {
 } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import MapProvider from "@/context/map.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
+import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
+import Text from "../Text/Text";
 import PolygonStatus from "./MapControls/PolygonStatus";
 
 mapboxgl.accessToken =
@@ -50,6 +55,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   hasControls?: boolean;
   siteData?: boolean;
   status?: boolean;
+  editPolygon?: boolean;
 }
 
 export const Map = ({
@@ -65,9 +71,12 @@ export const Map = ({
   captureAdditionalPolygonProperties,
   siteData = false,
   status = false,
+  editPolygon = false,
   ...props
 }: MapProps) => {
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
+  const [viewImages, setViewImages] = useState(false);
+  const { openModal, closeModal } = useModalContext();
 
   const validateGeoJSON = function (map: IMap, source: string) {
     if (!editable) return;
@@ -123,6 +132,77 @@ export const Map = ({
     }
   };
 
+  const openFormModalHandlerUploadImages = () => {
+    openModal(
+      <ModalWithLogo
+        title="Upload Images"
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
+            Start by adding images for processing.
+          </Text>
+        }
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        <div className="mb-8 flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8 px-[215px]">
+          <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
+          <div className="flex flex-col">
+            <Text variant="text-12-bold" className="text-center text-primary">
+              Click to upload
+            </Text>
+            <Text variant="text-12-light" className="text-center">
+              or
+            </Text>
+            <Text variant="text-12-light" className="max-w-[210px] text-center">
+              Drag and drop.
+            </Text>
+          </div>
+        </div>
+        <div>
+          <div className="mb-4 flex justify-between">
+            <Text variant="text-12-bold">Uploaded Files</Text>
+            <Text variant="text-12-bold" className="w-[146px] whitespace-nowrap pr-6 text-primary">
+              Confirming Geolocation
+            </Text>
+          </div>
+          <div className="mb-6 flex flex-col gap-4">
+            {uploadImageData.map(image => (
+              <div
+                key={image.id}
+                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+              >
+                <div className="flex gap-3">
+                  <div className="rounded-lg bg-neutral-150 p-2">
+                    <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
+                  </div>
+                  <div>
+                    <Text variant="text-12">{image.name}</Text>
+                    <Text variant="text-12" className="opacity-50">
+                      {image.status}
+                    </Text>
+                  </div>
+                </div>
+                <div
+                  className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                    "border-green-400": image.isVerified,
+                    "border-red": !image.isVerified
+                  })}
+                >
+                  <Text
+                    variant="text-12-bold"
+                    className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  >
+                    {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                  </Text>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ModalWithLogo>
+    );
+  };
+
   return (
     <MapProvider
       {...props}
@@ -159,12 +239,37 @@ export const Map = ({
             <EditControl />
           </When>
         </ControlGroup>
-        <When condition={status}>
+        <When condition={!!status}>
           <ControlGroup position="top-left">
             <PolygonStatus />
           </ControlGroup>
         </When>
-        <When condition={!editable}>
+        <When condition={!!viewImages}>
+          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+            <div className="flex gap-4">
+              <button
+                className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
+                onClick={() => setViewImages(!viewImages)}
+              >
+                {t("Close Images")}
+              </button>
+              <button
+                className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
+                onClick={openFormModalHandlerUploadImages}
+              >
+                {t("Add Images")}
+              </button>
+            </div>
+          </ControlGroup>
+        </When>
+        <When condition={editPolygon}>
+          <ControlGroup position="top-right" className="top-64">
+            <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
+              <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
+            </button>
+          </ControlGroup>
+        </When>
+        <When condition={!editable && !viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />
           </ControlGroup>
@@ -176,7 +281,10 @@ export const Map = ({
           </button>
         </ControlGroup>
         <ControlGroup position="bottom-right" className="bottom-8">
-          <button className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200">
+          <button
+            className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
+            onClick={() => setViewImages(!viewImages)}
+          >
             {t("View Images")}
           </button>
         </ControlGroup>
@@ -187,7 +295,7 @@ export const Map = ({
         </ControlGroup>
       </When>
       <When condition={!!siteData}>
-        <div className="absolute z-10 h-full w-[23vw] backdrop-blur-xl" />
+        <div className="absolute z-10 h-full w-[23vw] bg-[#ffffff26] backdrop-blur-md" />
       </When>
     </MapProvider>
   );

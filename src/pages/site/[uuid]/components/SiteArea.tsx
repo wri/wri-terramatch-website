@@ -1,9 +1,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useState } from "react";
+import { When } from "react-if";
 
+import Button from "@/components/elements/Button/Button";
 import Map from "@/components/elements/Map-mapbox/Map";
-import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import MapPolygonPanel from "@/components/elements/MapPolygonPanel/MapPolygonPanel";
+import Text from "@/components/elements/Text/Text";
 import { fetchGetV2ProjectsUUIDSitePolygons } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
@@ -19,6 +22,8 @@ const SiteArea = ({ sites }: SiteAreaProps) => {
   const { format } = useDate();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<any>();
+  const [stateViewPanel, setStateViewPanel] = useState(false);
+  const [editPolygon, setEditPolygon] = useState(false);
 
   const { data, fetchNextPage } = useInfiniteQuery<any>({
     queryKey: ["sites", query],
@@ -49,8 +54,8 @@ const SiteArea = ({ sites }: SiteAreaProps) => {
   const Polygon = usePaginatedResult<any>(data);
 
   return (
-    <div className="flex h-[500px] text-darkCustom">
-      <MapSidePanel
+    <div className="relative flex h-[500px] text-darkCustom">
+      <MapPolygonPanel
         title={t("Sites")}
         items={
           (Polygon?.map(item => ({
@@ -64,8 +69,30 @@ const SiteArea = ({ sites }: SiteAreaProps) => {
         className="absolute z-20 h-[500px] w-[23vw] p-8"
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
+        setStateViewPanel={setStateViewPanel}
+        stateViewPanel={stateViewPanel}
+        setEditPolygon={setEditPolygon}
       />
-      <Map geojson={geoJSON} siteData={true} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" />
+      <When condition={!stateViewPanel}>
+        <div className="absolute left-[24vw] top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
+          <Text variant="text-10-light">Your polygons have been updated</Text>
+          <Button
+            variant="text"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg bg-tertiary-600 p-2"
+            onClick={() => {}}
+          >
+            Check Polygons
+          </Button>
+          <Text variant="text-10-bold">Request Support</Text>
+        </div>
+      </When>
+      <Map
+        geojson={geoJSON}
+        siteData={true}
+        imageLayerGeojson={imagesGeoJson}
+        editPolygon={editPolygon}
+        className="flex-1 rounded-r-lg"
+      />
     </div>
   );
 };

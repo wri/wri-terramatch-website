@@ -6,8 +6,11 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -16,7 +19,8 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
-import ProjectArea from "@/pages/project/[uuid]/components/ProjectArea";
+
+import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
   site: any;
@@ -27,6 +31,66 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const router = useRouter();
   // const { format } = useDate();
   const { isPPC } = useFramework(site);
+
+  const polygonStatusLabels = [
+    { id: "1", label: "Site Approved" },
+    { id: "2", label: "Polygons Submitted" },
+    { id: "3", label: "Polygons Approved" },
+    { id: "4", label: "Monitoring Begins" }
+  ];
+
+  const itemsPrimaryMenu = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Connect to Flority
+        </Text>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Create Polygons
+        </Text>
+      )
+    },
+    {
+      id: "3",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Upload Data
+        </Text>
+      )
+    },
+    {
+      id: "4",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Upload Images
+        </Text>
+      )
+    }
+  ];
+  const itemsSubmitPolygon = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Request Support
+        </Text>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Submit for Review
+        </Text>
+      )
+    }
+  ];
 
   // const landUseTypesOptions = useGetOptions(site.land_use_types);
   // const restorationStrategyOptions = useGetOptions(site.restoration_strategy);
@@ -114,7 +178,39 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Site Area")} tooltip=" ">
-            <ProjectArea project={site} />
+            <div className="flex gap-11 ">
+              <div className="w-[54%]">
+                <Text variant="text-14-light" className="mb-6">
+                  Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported,
+                  modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
+                </Text>
+                <div className="flex w-full gap-3">
+                  <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsPrimaryMenu}>
+                    <Button variant="white-border" className="" onChange={() => {}}>
+                      <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+                      &nbsp; Add Data
+                    </Button>
+                  </Menu>
+                  <Button variant="white-border" className="" onChange={() => {}}>
+                    <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
+                    &nbsp; Download
+                  </Button>
+                  <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
+                    <Button variant="primary" className="" onChange={() => {}}>
+                      SUBMIT Polygons
+                    </Button>
+                  </Menu>
+                </div>
+              </div>
+
+              <div className="w-[46%] rounded border border-neutral-200 p-4">
+                <Text variant="text-14" className="mb-2">
+                  Polygon Status
+                </Text>
+                <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} classNameLabels="" />
+              </div>
+            </div>
+            <SiteArea sites={site} />
           </PageCard>
         </PageColumn>
       </PageRow>

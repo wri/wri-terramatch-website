@@ -35,7 +35,7 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { data: reports, isLoading } = useGetV2ENTITYUUIDReports(
     {
-      pathParams: { entity: "projects", uuid: project.uuid }
+      pathParams: { entity: "projects", uuid: "1" }
     },
     { keepPreviousData: true }
   );

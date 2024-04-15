@@ -21,7 +21,6 @@ const VersionHistory = () => {
         label="Polygon Version"
         labelClassName="capitalize"
         labelVariant="text-14-light"
-        placeholder="Planting Complete"
         options={dropdownOptions}
         defaultValue={[1]}
         onChange={() => {}}
