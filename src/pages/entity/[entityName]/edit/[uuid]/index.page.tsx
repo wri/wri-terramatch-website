@@ -10,7 +10,6 @@ import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2ENTITYUUID,
   useGetV2FormsENTITYUUID,
-  useGetV2UpdateRequestsENTITYUUID,
   usePutV2FormsENTITYUUID,
   usePutV2FormsENTITYUUIDSubmit
 } from "@/generated/apiComponents";
@@ -41,25 +40,6 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data: updateRequestData, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      retry(failureCount: number, error: any): boolean {
-        // avoid retries on a 404; that's expected in most cases for this form.
-        return error.statusCode !== 404 && failureCount < 3;
-      },
-      onError() {
-        // To override error toast
-      }
-    }
-  );
-  //@ts-ignore
-  const updateRequest = updateRequestData?.data;
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
@@ -70,11 +50,10 @@ const EditEntityPage = () => {
       }
     }
   });
-  const feedbackFields = updateRequest?.feedback_fields || entity?.feedback_fields || [];
 
   const {
     data,
-    isLoading: formDataLoading,
+    isLoading: isLoading,
     isError
   } = useGetV2FormsENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID },
@@ -82,6 +61,9 @@ const EditEntityPage = () => {
   });
   //@ts-ignore
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+
+  // @ts-ignore
+  const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
 
   const formSteps = useGetCustomFormSteps(
     formData.form,
@@ -93,9 +75,9 @@ const EditEntityPage = () => {
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
 
-  const isLoading = updateRequestLoading || formDataLoading;
   const defaultValues = useNormalizedFormDefaultValue(
-    updateRequest?.content ?? formData.answers,
+    // @ts-ignore
+    formData?.update_request?.content ?? formData?.answers,
     formSteps,
     entity.migrated
   );
