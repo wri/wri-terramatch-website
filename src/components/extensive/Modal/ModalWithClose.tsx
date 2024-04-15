@@ -63,9 +63,7 @@ const ModalCloseLogo: FC<ModalCloseProps> = ({
           {content}
         </Text>
       </When>
-      <div
-        className={classNames("mt-6 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-center")}
-      >
+      <div className={classNames("mt-6 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-end")}>
         <When condition={!!secondaryButtonProps}>
           <Button {...secondaryButtonProps!} variant="secondary" />
         </When>

@@ -9,18 +9,19 @@ import { polygonData } from "@/admin/components/ResourceTabs/PolygonReviewTab/co
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
+import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import Input from "@/components/elements/Inputs/Input/Input";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
-import ModalCloseLogo from "@/components/extensive/Modal/ModalWithClose";
+import { dataSubmitPolygons, uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
+import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -178,7 +179,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     );
   };
 
-  const openFormModalHandlerSubmitReview = () => {
+  const openFormModalHandlerSubmitReviewConfirm = () => {
     openModal(
       <ModalConfirm
         className="max-w-xs"
@@ -206,58 +207,99 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     );
   };
 
-  const openFormModalHandlerRequestSupport = () => {
+  const openFormModalHandlerRequestPolygonSupport = () => {
     openModal(
-      <ModalCloseLogo
-        className="w-[556px]"
+      <ModalWithMap
         title="Request Support"
         onCLose={closeModal}
-        primaryButtonProps={{ children: "Submit", className: "text-white capitalize" }}
+        content={
+          <Text variant="text-16-bold" className="mt-1 mb-8" containHtml>
+            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
+          </Text>
+        }
+        primaryButtonText="Submit"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
-        <div className="flex w-full flex-col gap-4">
-          <Input
-            labelVariant="text-14-light"
-            labelClassname="capitalize"
-            label="Project"
-            placeholder="Input Project"
-            value="Mekalanga"
-            name=""
-            type="text"
-            hideErrorMessage
-            readOnly
-          />
-          <Input
-            label="Site"
-            labelClassname="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Input Site"
-            value="Iseme"
-            name=""
-            type="text"
-            readOnly
-          />
-          <Input
-            label="Creator"
-            labelClassname="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Input Creator"
-            value="Ricardo Saavedra"
-            name=""
-            type="text"
-            readOnly
-          />
-          <TextArea
-            label="Description"
-            labelVariant="text-14-light"
-            labelClassname="capitalize"
-            placeholder="Insert my comment"
-            name=""
-            className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
-            containerClassName="w-full"
-            rows={3}
-          />
+        <div className="mb-[72px]">
+          <StepProgressbar value={80} labels={polygonStatusLabels} />
         </div>
-      </ModalCloseLogo>
+        <TextArea
+          name={""}
+          label="Comment"
+          labelVariant="text-12-light"
+          labelClassname="capitalize "
+          className="text-12-light max-h-72 !min-h-0 resize-none"
+          placeholder="Insert my comment"
+          rows={4}
+        />
+        <Text variant="text-12-light" className="mt-6 mb-2">
+          Attachments
+        </Text>
+        <DragAndDrop
+          description={
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-bold" className="whitespace-nowrap text-center text-primary">
+                documents or images to help reviewer
+              </Text>
+            </div>
+          }
+        />
+      </ModalWithMap>
+    );
+  };
+
+  const openFormModalHandlerSubmitPolygon = () => {
+    openModal(
+      <ModalWithLogo
+        title="Submit Polygons"
+        onCLose={closeModal}
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-8" containHtml>
+            Project Developers may submit one or all polygons for review.
+          </Text>
+        }
+        primaryButtonText="Next"
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            closeModal();
+            openFormModalHandlerSubmitReviewConfirm();
+          }
+        }}
+        secondaryButtonText="Cancel"
+        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+      >
+        <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
+          <header className="flex items-center bg-neutral-150 px-4 py-2">
+            <Text variant="text-12" className="flex-[2]">
+              Name
+            </Text>
+            <Text variant="text-12" className="flex flex-1 items-center justify-center">
+              Status
+            </Text>
+            <Text variant="text-12" className="flex flex-1 items-center justify-center">
+              Submit
+            </Text>
+          </header>
+          {dataSubmitPolygons.map(item => (
+            <div key={item.id} className="flex items-center px-4 py-2">
+              <Text variant="text-12" className="flex-[2]">
+                {item.name}
+              </Text>
+              <div className="flex flex-1 items-center justify-center">
+                <Status status={item.status} />
+              </div>
+              <div className="flex flex-1 items-center justify-center">
+                <Checkbox name={""} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </ModalWithLogo>
     );
   };
 
@@ -316,7 +358,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           Request Support
         </Text>
       ),
-      onClick: () => openFormModalHandlerRequestSupport()
+      onClick: () => openFormModalHandlerRequestPolygonSupport()
     },
     {
       id: "2",
@@ -325,7 +367,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           Submit for Review
         </Text>
       ),
-      onClick: () => openFormModalHandlerSubmitReview()
+      onClick: () => openFormModalHandlerSubmitPolygon()
     }
   ];
 

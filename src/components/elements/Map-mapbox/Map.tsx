@@ -29,6 +29,8 @@ import {
 } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/MockedData";
+import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import MapProvider from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -136,6 +138,7 @@ export const Map = ({
     openModal(
       <ModalWithLogo
         title="Upload Images"
+        onCLose={closeModal}
         content={
           <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
             Start by adding images for processing.
@@ -203,6 +206,10 @@ export const Map = ({
     );
   };
 
+  const openFormModalHandlerImageGallery = () => {
+    openModal(<ModalImageGallery onCLose={closeModal} tabItems={dataImageGallery} title={""} />);
+  };
+
   return (
     <MapProvider
       {...props}
@@ -258,6 +265,12 @@ export const Map = ({
                 onClick={openFormModalHandlerUploadImages}
               >
                 {t("Add Images")}
+              </button>
+              <button
+                className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
+                onClick={openFormModalHandlerImageGallery}
+              >
+                {t("Edit Images")}
               </button>
             </div>
           </ControlGroup>

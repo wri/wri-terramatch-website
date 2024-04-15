@@ -43,10 +43,11 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
 
   //TODO MODALS
-  const openFormModalHandlerAddComentary = () => {
+  const openFormModalHandlerAddCommentary = () => {
     openModal(
       <ModalWithLogo
         title="Blue Forest"
+        onCLose={closeModal}
         toogleButton
         content={
           <Text variant="text-12-bold" className="mt-1 mb-8" containHtml>
@@ -118,7 +119,7 @@ const MapSidePanel = ({
             </When>
           </div>
           <div className="rounded bg-white p-1.5">
-            <Button variant="text" onClick={openFormModalHandlerAddComentary}>
+            <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
               <Icon name={IconNames.IC_SORT} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
             </Button>
           </div>
