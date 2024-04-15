@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -31,6 +32,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const router = useRouter();
   // const { format } = useDate();
   const { isPPC } = useFramework(site);
+  const [editPolygon, setEditPolygon] = useState(false);
 
   const polygonStatusLabels = [
     { id: "1", label: "Site Approved" },
@@ -44,20 +46,16 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "1",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Connect to Flority
+          Create Polygons
         </Text>
-      )
+      ),
+      onClick: () => {
+        console.log("Create Polygons");
+        setEditPolygon(true);
+      }
     },
     {
       id: "2",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Create Polygons
-        </Text>
-      )
-    },
-    {
-      id: "3",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
           Upload Data
@@ -65,7 +63,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       )
     },
     {
-      id: "4",
+      id: "3",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
           Upload Images
@@ -210,7 +208,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} classNameLabels="" />
               </div>
             </div>
-            <SiteArea sites={site} />
+            <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
           </PageCard>
         </PageColumn>
       </PageRow>

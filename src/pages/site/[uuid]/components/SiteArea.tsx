@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -15,15 +15,16 @@ import { usePaginatedResult } from "@/hooks/usePaginatedResult";
 
 interface SiteAreaProps {
   sites: any;
+  editPolygon: boolean;
+  setEditPolygon: Dispatch<SetStateAction<boolean>>;
 }
 
-const SiteArea = ({ sites }: SiteAreaProps) => {
+const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<any>();
   const [stateViewPanel, setStateViewPanel] = useState(false);
-  const [editPolygon, setEditPolygon] = useState(false);
 
   const { data, fetchNextPage } = useInfiniteQuery<any>({
     queryKey: ["sites", query],
@@ -72,6 +73,7 @@ const SiteArea = ({ sites }: SiteAreaProps) => {
         setStateViewPanel={setStateViewPanel}
         stateViewPanel={stateViewPanel}
         setEditPolygon={setEditPolygon}
+        editPolygon={editPolygon}
       />
       <When condition={!stateViewPanel}>
         <div className="absolute left-[24vw] top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
