@@ -48,6 +48,7 @@ const Input = forwardRef(
       hideErrorMessage,
       labelVariant,
       labelClassname,
+      readOnly,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -59,7 +60,8 @@ const Input = forwardRef(
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
-        "border border-neutral-200": !error
+        "border border-neutral-200": !error,
+        "bg-neutral-150": readOnly
       },
       secondary: {
         "border-0 border-b py-[10px] px-0": true,

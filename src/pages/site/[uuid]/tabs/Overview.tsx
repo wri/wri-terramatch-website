@@ -1,21 +1,31 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { When } from "react-if";
 
+import { polygonData } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
+import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import Input from "@/components/elements/Inputs/Input/Input";
+import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
+import ModalCloseLogo from "@/components/extensive/Modal/ModalWithClose";
+import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useModalContext } from "@/context/modal.provider";
 import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
@@ -31,6 +41,223 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const router = useRouter();
   // const { format } = useDate();
   const { isPPC } = useFramework(site);
+  const { openModal, closeModal } = useModalContext();
+  const openFormModalHandlerAddPolygon = () => {
+    openModal(
+      <ModalWithLogo
+        title="Add Data"
+        onCLose={closeModal}
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
+            Start by adding polygons to your site.
+          </Text>
+        }
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        <DragAndDrop
+          description={
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-light" className="text-center">
+                or
+              </Text>
+              <Text variant="text-12-light" className="max-w-[210px] text-center">
+                Drag and drop a GeoJSON files only to store and display on TerraMatch.
+              </Text>
+            </div>
+          }
+        />
+        <div>
+          <div className="m-2 flex">
+            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
+            <Text variant="text-12-light">50 MB per upload</Text>
+          </div>
+          <div className="mb-6 flex flex-col gap-4">
+            {polygonData.map(polygon => (
+              <div
+                key={polygon.id}
+                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+              >
+                <div className="flex gap-3">
+                  <div className="rounded-lg bg-neutral-150 p-2">
+                    <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
+                  </div>
+                  <div>
+                    <Text variant="text-12">{polygon.name}</Text>
+                    <Text variant="text-12" className="opacity-50">
+                      {polygon.status}
+                    </Text>
+                  </div>
+                </div>
+                <Icon
+                  name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
+                  className="h-6 w-6"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </ModalWithLogo>
+    );
+  };
+  const openFormModalHandlerUploadImages = () => {
+    openModal(
+      <ModalWithLogo
+        title="Upload Images"
+        onCLose={closeModal}
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
+            Start by adding images for processing.
+          </Text>
+        }
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        <DragAndDrop
+          description={
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-light" className="text-center">
+                or
+              </Text>
+              <Text variant="text-12-light" className="max-w-[210px] text-center">
+                Drag and drop.
+              </Text>
+            </div>
+          }
+        />
+        <div>
+          <div className="mb-4 flex justify-between">
+            <Text variant="text-12-bold">Uploaded Files</Text>
+            <Text variant="text-12-bold" className="w-[146px] whitespace-nowrap pr-6 text-primary">
+              Confirming Geolocation
+            </Text>
+          </div>
+          <div className="mb-6 flex flex-col gap-4">
+            {uploadImageData.map(image => (
+              <div
+                key={image.id}
+                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+              >
+                <div className="flex gap-3">
+                  <div className="rounded-lg bg-neutral-150 p-2">
+                    <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
+                  </div>
+                  <div>
+                    <Text variant="text-12">{image.name}</Text>
+                    <Text variant="text-12" className="opacity-50">
+                      {image.status}
+                    </Text>
+                  </div>
+                </div>
+                <div
+                  className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                    "border-green-400": image.isVerified,
+                    "border-red": !image.isVerified
+                  })}
+                >
+                  <Text
+                    variant="text-12-bold"
+                    className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  >
+                    {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                  </Text>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ModalWithLogo>
+    );
+  };
+
+  const openFormModalHandlerSubmitReview = () => {
+    openModal(
+      <ModalConfirm
+        className="max-w-xs"
+        title={"Confirm Polygon Submission"}
+        content={
+          <Text variant="text-12-light" as="p" className="text-center">
+            Are your sure you want to submit your polygons for the site <b style={{ fontSize: "inherit" }}>Iseme.</b>?
+          </Text>
+        }
+        onClose={closeModal}
+        onConfirm={() => {
+          closeModal;
+        }}
+      >
+        <div className="rounded-lg border border-grey-750 p-3">
+          <TextArea
+            placeholder="Type comment here..."
+            name=""
+            className="max-h-72 !min-h-0 resize-none border-none !p-0 text-xs"
+            containerClassName="w-full"
+            rows={4}
+          />
+        </div>
+      </ModalConfirm>
+    );
+  };
+
+  const openFormModalHandlerRequestSupport = () => {
+    openModal(
+      <ModalCloseLogo
+        className="w-[556px]"
+        title="Request Support"
+        onCLose={closeModal}
+        primaryButtonProps={{ children: "Submit", className: "text-white capitalize" }}
+      >
+        <div className="flex w-full flex-col gap-4">
+          <Input
+            labelVariant="text-14-light"
+            labelClassname="capitalize"
+            label="Project"
+            placeholder="Input Project"
+            value="Mekalanga"
+            name=""
+            type="text"
+            hideErrorMessage
+            readOnly
+          />
+          <Input
+            label="Site"
+            labelClassname="capitalize"
+            labelVariant="text-14-light"
+            placeholder="Input Site"
+            value="Iseme"
+            name=""
+            type="text"
+            readOnly
+          />
+          <Input
+            label="Creator"
+            labelClassname="capitalize"
+            labelVariant="text-14-light"
+            placeholder="Input Creator"
+            value="Ricardo Saavedra"
+            name=""
+            type="text"
+            readOnly
+          />
+          <TextArea
+            label="Description"
+            labelVariant="text-14-light"
+            labelClassname="capitalize"
+            placeholder="Insert my comment"
+            name=""
+            className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
+            containerClassName="w-full"
+            rows={3}
+          />
+        </div>
+      </ModalCloseLogo>
+    );
+  };
 
   const polygonStatusLabels = [
     { id: "1", label: "Site Approved" },
@@ -62,7 +289,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         <Text variant="text-14-semibold" className="flex items-center ">
           Upload Data
         </Text>
-      )
+      ),
+      onClick: () => openFormModalHandlerAddPolygon()
     },
     {
       id: "4",
@@ -70,7 +298,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         <Text variant="text-14-semibold" className="flex items-center ">
           Upload Images
         </Text>
-      )
+      ),
+      onClick: () => openFormModalHandlerUploadImages()
     }
   ];
   const itemsSubmitPolygon = [
@@ -80,7 +309,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         <Text variant="text-14-semibold" className="flex items-center ">
           Request Support
         </Text>
-      )
+      ),
+      onClick: () => openFormModalHandlerRequestSupport()
     },
     {
       id: "2",
@@ -88,7 +318,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         <Text variant="text-14-semibold" className="flex items-center ">
           Submit for Review
         </Text>
-      )
+      ),
+      onClick: () => openFormModalHandlerSubmitReview()
     }
   ];
 

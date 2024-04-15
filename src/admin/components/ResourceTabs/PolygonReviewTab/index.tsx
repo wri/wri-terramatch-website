@@ -205,19 +205,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     },
     {
       id: "2",
-      render: () => (
-        <Button variant="text" onClick={openFormModalHandlerAddPolygon}>
-          <Text variant="text-12-bold">Add Polygon Data</Text>
-        </Button>
-      )
+      render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
+      onClick: () => openFormModalHandlerAddPolygon()
     },
     {
       id: "3",
-      render: () => (
-        <Button variant="text" onClick={openFormModalHandlerUploadImages}>
-          <Text variant="text-12-bold">Upload Images</Text>
-        </Button>
-      )
+      render: () => <Text variant="text-12-bold">Upload Images</Text>,
+      onClick: () => openFormModalHandlerUploadImages()
     }
   ];
 
