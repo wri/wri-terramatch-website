@@ -24,11 +24,12 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
   const errors = form.formState.errors;
   useEffect(() => {
     form.setValue("role_id", roleId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
-      <Form formType="signUp">
+    <Form formType="signUp">
+      <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
         <Text variant="text-32-bold" className="mb-2 text-blue-700">
           Sign up
         </Text>
@@ -174,8 +175,8 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
               "bg-white py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-700 text-blue-700 text-14-bold hover:border-blue-300 hover:text-blue-300"
           }}
         />
-      </Form>
-    </div>
+      </div>
+    </Form>
     // <Form>
     //   <Form.Header
     //     title={t("Sign Up")}

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { ValidationStrength } from "./constants";
-
 interface UsePasswordStrengthProps {
   password: string;
 }
@@ -17,6 +15,12 @@ interface UsePasswordStrengthResult {
   validationCount: number;
 }
 
+const ValidationStrength = {
+  STRONG: 4,
+  FAIR: 3,
+  WEAK: 2,
+  VERY_WEAK: 1
+};
 const usePasswordStrength = (props: UsePasswordStrengthProps): UsePasswordStrengthResult => {
   const { password } = props;
   const [passwordStrength, setPasswordStrength] = useState("Very Weak");
