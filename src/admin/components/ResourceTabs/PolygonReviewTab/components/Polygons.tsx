@@ -1,13 +1,18 @@
 import React, { useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
+import Comentary from "@/components/elements/Comentary/Comentary";
+import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
+import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Drawer from "@/components/elements/Drawer/Drawer";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { comentariesItems, polygonStatusLabels } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -18,11 +23,9 @@ export interface IPolygonItem {
   status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
   label: string;
 }
-
 export interface IPolygonProps {
   menu: IPolygonItem[];
 }
-
 const statusColor = {
   Draft: "bg-purple",
   Submitted: "bg-blue",
@@ -30,7 +33,7 @@ const statusColor = {
   "Needs More Info": "bg-tertiary-600"
 };
 
-const polygonData = [
+export const polygonData = [
   { id: "1", name: "Site-polygon001.geojson", status: "We are processing your polygon", isUploaded: false },
   { id: "2", name: "Site-polygon002.geojson", status: "We are processing your polygon", isUploaded: false },
   { id: "3", name: "Site-polygon003.geojson", status: "We are processing your polygon", isUploaded: true },
@@ -43,10 +46,11 @@ const Polygons = (props: IPolygonProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
 
-  const openFormModalHandlerAdd = () => {
+  const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalWithLogo
         title="Add Polygons"
+        onCLose={closeModal}
         content={
           <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
             Start by adding polygons to your site.
@@ -55,20 +59,21 @@ const Polygons = (props: IPolygonProps) => {
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
-        <div className="mb-8 flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8 px-[215px]">
-          <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
-          <div className="flex flex-col">
-            <Text variant="text-12-bold" className="text-center text-primary">
-              Click to upload
-            </Text>
-            <Text variant="text-12-light" className="text-center">
-              or
-            </Text>
-            <Text variant="text-12-light" className="max-w-[210px] text-center">
-              Drag and drop a GeoJSON files only to store and display on TerraMatch.
-            </Text>
-          </div>
-        </div>
+        <DragAndDrop
+          description={
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-light" className="text-center">
+                or
+              </Text>
+              <Text variant="text-12-light" className="max-w-[210px] text-center">
+                Drag and drop a GeoJSON files only to store and display on TerraMatch.
+              </Text>
+            </div>
+          }
+        />
         <div>
           <div className="m-2 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -114,6 +119,41 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
+  const openFormModalHandlerAddComentary = () => {
+    openModal(
+      <ModalWithLogo
+        title="Blue Forest"
+        onCLose={closeModal}
+        status="Under Review"
+        toogleButton
+        content={
+          <Text variant="text-12-bold" className="mt-1 mb-8" containHtml>
+            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
+          </Text>
+        }
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        <div className="mb-[72px] px-20">
+          <StepProgressbar value={80} labels={polygonStatusLabels} />
+        </div>
+        <div className="flex flex-col gap-4">
+          <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
+          {comentariesItems.map(item => (
+            <Comentary
+              key={item.id}
+              name={item.name}
+              lastName={item.lastName}
+              date={item.date}
+              comentary={item.comentary}
+              files={item.files}
+              status={item.status}
+            />
+          ))}
+        </div>
+      </ModalWithLogo>
+    );
+  };
   const polygonMenuItems = [
     {
       id: "1",
@@ -152,7 +192,8 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.COMMENT} className="h-6 w-6" />
           <Text variant="text-12-bold">Comment</Text>
         </div>
-      )
+      ),
+      onClick: openFormModalHandlerAddComentary
     },
     {
       id: "5",
@@ -187,7 +228,7 @@ const Polygons = (props: IPolygonProps) => {
         <Text variant="text-14" className="px-2 text-grey-250">
           Add Polygon
         </Text>
-        <Button variant="text" onClick={openFormModalHandlerAdd}>
+        <Button variant="text" onClick={openFormModalHandlerAddPolygon}>
           <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
         </Button>
       </div>

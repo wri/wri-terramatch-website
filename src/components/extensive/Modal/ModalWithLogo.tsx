@@ -4,6 +4,7 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
+import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -25,7 +26,10 @@ export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...
 
 export interface ModalWithLogoProps extends ModalProps {
   primaryButtonText?: string;
+  secondaryButtonText?: string;
   toogleButton?: boolean;
+  status?: "Under Review" | "Approved" | "Draft" | "Submitted";
+  onCLose?: () => void;
 }
 
 const ModalWithLogo: FC<ModalWithLogoProps> = ({
@@ -35,17 +39,28 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   primaryButtonProps,
   primaryButtonText,
   secondaryButtonProps,
+  secondaryButtonText,
   toogleButton,
   children,
+  status,
+  onCLose,
   ...rest
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   return (
     <ModalBaseWithLogo {...rest}>
-      <div className="w-full border-b border-b-neutral-200 px-8 py-5">
+      <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
-      </div>
-      <div className="w-full px-8 pt-8">
+        <div className="flex items-center">
+          <When condition={status}>
+            <Status status={status ? status : "Draft"} />
+          </When>
+          <Button variant="transparent-toggle" onClick={onCLose}>
+            <Icon name={IconNames.CROSS} width={24} height={24} />
+          </Button>
+        </div>
+      </header>
+      <div className="max-h-[100%] w-full overflow-auto px-8 pt-8">
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
@@ -79,7 +94,11 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         {children}
         <div className={classNames("flex w-full justify-end gap-3")}>
           <When condition={!!secondaryButtonProps}>
-            <Button {...secondaryButtonProps!} variant="secondary" />
+            <Button {...secondaryButtonProps!} variant="white-page-admin">
+              <Text variant="text-14-bold" className="capitalize">
+                {secondaryButtonText}
+              </Text>
+            </Button>
           </When>
           <Button {...primaryButtonProps}>
             <Text variant="text-14-bold" className="capitalize text-white">

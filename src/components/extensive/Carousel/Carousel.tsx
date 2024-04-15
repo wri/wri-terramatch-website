@@ -47,7 +47,7 @@ const Carousel = <T extends Record<any, any>>({
 
   return (
     <div className={classNames("relative mx-auto", className)}>
-      <div className={classNames("flex items-center justify-center", smallSwiperButtons ? "gap-1.5" : "gap-4")}>
+      <div className={classNames("flex h-full items-center justify-center", smallSwiperButtons ? "gap-1.5" : "gap-4")}>
         <button
           className={classNames(
             "swiper-button-prev",
