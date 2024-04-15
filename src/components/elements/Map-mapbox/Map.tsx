@@ -295,7 +295,7 @@ export const Map = ({
         </ControlGroup>
       </When>
       <When condition={!!siteData}>
-        <div className="absolute z-10 h-full w-[23vw] backdrop-blur-xl" />
+        <div className="absolute z-10 h-full w-[23vw] bg-[#ffffff26] backdrop-blur-md" />
       </When>
     </MapProvider>
   );

@@ -74,7 +74,7 @@ const SiteArea = ({ sites }: SiteAreaProps) => {
         setEditPolygon={setEditPolygon}
       />
       <When condition={!stateViewPanel}>
-        <div className="absolute left-[24vw] top-6 z-20 p-2 text-center text-white backdrop-blur-xl">
+        <div className="absolute left-[24vw] top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
           <Text variant="text-10-light">Your polygons have been updated</Text>
           <Button
             variant="text"

@@ -1,3 +1,4 @@
+import { MapPolygonCheckPanelItemProps } from "@/components/elements/MapPolygonPanel/MapPolygonCheckPanelItem";
 import { MapPolygonPanelItemProps } from "@/components/elements/MapPolygonPanel/MapPolygonPanelItem";
 
 export const uploadImageData = [
@@ -68,5 +69,34 @@ export const PolygonData: MapPolygonPanelItemProps[] = [
     uuid: "5",
     title: "Polygon 5",
     subtitle: "Created 15/12/2023"
+  }
+];
+
+export const PolygonAvailableData: MapPolygonCheckPanelItemProps[] = [
+  {
+    uuid: "1",
+    title: "Durrell",
+    status: "Submitted"
+  },
+  {
+    uuid: "2",
+    title: "Ecofix",
+    status: "Approved"
+  },
+  {
+    uuid: "3",
+    title: "Env Coffee Forest Forum",
+    status: "Needs More Info",
+    polygon: ["Not WGS 84 projection", "Not WGS 84 projection", "Overlapping polygons identified"]
+  },
+  {
+    uuid: "4",
+    title: "Env Found Afr Sl",
+    status: "Submitted"
+  },
+  {
+    uuid: "5",
+    title: "Justdiggit",
+    status: "Draft"
   }
 ];
