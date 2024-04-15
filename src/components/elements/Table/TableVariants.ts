@@ -70,3 +70,13 @@ export const VARIANT_TABLE_AIRTABLE = {
   trBody: "bg-white border-y border-neutral-200 lastRow",
   tdBody: "text-16-light px-6 py-3"
 };
+
+export const VARIANT_TABLE_VERSION = {
+  table: "border-collapse",
+  name: "border-airtable",
+  trHeader: "bg-transparent",
+  thHeader: "text-10-light",
+  tBody: "",
+  trBody: "bg-transparent border-y border-neutral-200 lastRow",
+  tdBody: "text-16-bold"
+};

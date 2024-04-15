@@ -31,7 +31,7 @@ const Drawer = (props: DrawerProps) => {
             setIsOpen(false);
           }}
         >
-          <Icon name={IconNames.CLEAR} className="h-5 w-5 opacity-50" />
+          <Icon name={IconNames.CLEAR} className="h-5 w-5 text-blueCustom-900 opacity-50" />
         </Button>
       </div>
       {children}

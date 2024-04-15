@@ -131,7 +131,8 @@ module.exports = {
         600: "#33525c",
         200: "#2398D8",
         100: "#cfe6f4",
-        50: "#f1fafd"
+        50: "#f1fafd",
+        10: "#eaf7fc"
       },
       darkCustom: {
         DEFAULT: "#353535",
