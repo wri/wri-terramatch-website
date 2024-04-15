@@ -45,7 +45,7 @@ const MapPolygonCheckPanelItem = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center text-black">
+        <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.SEARCH} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Zoom to
         </Text>
@@ -54,7 +54,7 @@ const MapPolygonCheckPanelItem = ({
     {
       id: "3",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center text-black">
+        <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Download
         </Text>
@@ -63,8 +63,8 @@ const MapPolygonCheckPanelItem = ({
     {
       id: "4",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center text-black">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.COMMENT} className="h-5 w-4 lg:h-6 lg:w-6" />
           &nbsp; Comment
         </Text>
       )
@@ -72,8 +72,8 @@ const MapPolygonCheckPanelItem = ({
     {
       id: "5",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center text-black">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.REQUEST} className="h-5 w-4 lg:h-6 lg:w-6" />
           &nbsp; Request Support
         </Text>
       )
@@ -82,7 +82,7 @@ const MapPolygonCheckPanelItem = ({
       id: "6",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center text-black">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.TRASH_PA} className="h-5 w-4 lg:h-6 lg:w-6" />
           &nbsp; Delete Polygon
         </Text>
       )
@@ -114,11 +114,11 @@ const MapPolygonCheckPanelItem = ({
               {title}
             </Text>
           </div>
-          <div className="lex h-full self-start">
+          <div className="lex h-full self-start text-black">
             <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
-                className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
+                className="h-4 w-4 rounded-lg text-white hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
               />
             </Menu>
           </div>

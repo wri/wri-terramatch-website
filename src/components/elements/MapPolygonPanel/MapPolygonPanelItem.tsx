@@ -62,7 +62,7 @@ const MapPolygonPanelItem = ({
       id: "4",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.COMMENT} className="h-5 w-4 lg:h-6 lg:w-6 " />
           &nbsp; Comment
         </Text>
       )
@@ -71,7 +71,7 @@ const MapPolygonPanelItem = ({
       id: "5",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.REQUEST} className="h-5 w-4 lg:h-6 lg:w-6 " />
           &nbsp; Request Support
         </Text>
       )
@@ -80,7 +80,7 @@ const MapPolygonPanelItem = ({
       id: "6",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.TRASH_PA} className="h-5 w-4 lg:h-6 lg:w-6 " />
           &nbsp; Delete Polygon
         </Text>
       )

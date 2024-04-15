@@ -6,6 +6,8 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -35,6 +37,59 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     { id: "2", label: "Polygons Submitted" },
     { id: "3", label: "Polygons Approved" },
     { id: "4", label: "Monitoring Begins" }
+  ];
+
+  const itemsPrimaryMenu = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Connect to Flority
+        </Text>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Create Polygons
+        </Text>
+      )
+    },
+    {
+      id: "3",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Upload Data
+        </Text>
+      )
+    },
+    {
+      id: "4",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Upload Images
+        </Text>
+      )
+    }
+  ];
+  const itemsSubmitPolygon = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Request Support
+        </Text>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Submit for Review
+        </Text>
+      )
+    }
   ];
 
   // const landUseTypesOptions = useGetOptions(site.land_use_types);
@@ -130,17 +185,21 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
                 </Text>
                 <div className="flex w-full gap-3">
-                  <Button variant="white-border" className="" onChange={() => {}}>
-                    <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-                    &nbsp; Add Data
-                  </Button>
+                  <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsPrimaryMenu}>
+                    <Button variant="white-border" className="" onChange={() => {}}>
+                      <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+                      &nbsp; Add Data
+                    </Button>
+                  </Menu>
                   <Button variant="white-border" className="" onChange={() => {}}>
                     <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
                     &nbsp; Download
                   </Button>
-                  <Button variant="primary" className="" onChange={() => {}}>
-                    SUBMIT Polygons
-                  </Button>
+                  <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
+                    <Button variant="primary" className="" onChange={() => {}}>
+                      SUBMIT Polygons
+                    </Button>
+                  </Menu>
                 </div>
               </div>
 
