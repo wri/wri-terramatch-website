@@ -28,8 +28,8 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
   }, []);
 
   return (
-    <Form formType="signUp">
-      <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
+    <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
+      <Form formType="signUp">
         <Text variant="text-32-bold" className="mb-2 text-blue-700">
           Sign up
         </Text>
@@ -175,8 +175,8 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
               "bg-white py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-700 text-blue-700 text-14-bold hover:border-blue-300 hover:text-blue-300"
           }}
         />
-      </div>
-    </Form>
+      </Form>
+    </div>
     // <Form>
     //   <Form.Header
     //     title={t("Sign Up")}
