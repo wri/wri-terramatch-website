@@ -5,17 +5,12 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
-import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Map from "@/components/elements/Map-mapbox/Map";
 import MapPolygonPanel from "@/components/elements/MapPolygonPanel/MapPolygonPanel";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { dataSubmitPolygons } from "@/components/extensive/Modal/ModalContent/MockedData";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
 import { fetchGetV2ProjectsUUIDSitePolygons } from "@/generated/apiComponents";
@@ -112,86 +107,6 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
     );
   };
 
-  const openFormModalHandlerSubmitReviewConfirm = () => {
-    openModal(
-      <ModalConfirm
-        className="max-w-xs"
-        title={"Confirm Polygon Submission"}
-        content={
-          <Text variant="text-12-light" as="p" className="text-center">
-            Are your sure you want to submit your polygons for the site <b style={{ fontSize: "inherit" }}>Iseme.</b>?
-          </Text>
-        }
-        onClose={closeModal}
-        onConfirm={() => {
-          closeModal;
-        }}
-      >
-        <div className="rounded-lg border border-grey-750 p-3">
-          <TextArea
-            placeholder="Type comment here..."
-            name=""
-            className="max-h-72 !min-h-0 resize-none border-none !p-0 text-xs"
-            containerClassName="w-full"
-            rows={4}
-          />
-        </div>
-      </ModalConfirm>
-    );
-  };
-
-  const openFormModalHandlerSubmitPolygon = () => {
-    openModal(
-      <ModalWithLogo
-        title="Submit Polygons"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-8" containHtml>
-            Project Developers may submit one or all polygons for review.
-          </Text>
-        }
-        primaryButtonText="Next"
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => {
-            closeModal();
-            openFormModalHandlerSubmitReviewConfirm();
-          }
-        }}
-        secondaryButtonText="Cancel"
-        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
-      >
-        <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
-          <header className="flex items-center bg-neutral-150 px-4 py-2">
-            <Text variant="text-12" className="flex-[2]">
-              Name
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Status
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Submit
-            </Text>
-          </header>
-          {dataSubmitPolygons.map(item => (
-            <div key={item.id} className="flex items-center px-4 py-2">
-              <Text variant="text-12" className="flex-[2]">
-                {item.name}
-              </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <Status status={item.status} />
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <Checkbox name={""} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </ModalWithLogo>
-    );
-  };
-
   return (
     <div className="relative flex h-[500px] text-darkCustom">
       <MapPolygonPanel
@@ -221,7 +136,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           <Button
             variant="text"
             className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-            onClick={() => openFormModalHandlerSubmitPolygon()}
+            onClick={() => {}}
           >
             Check Polygons
           </Button>
