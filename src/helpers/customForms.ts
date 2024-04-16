@@ -154,7 +154,6 @@ export const apiQuestionsToFormFields = (questions: any, t: typeof useT, entity?
     })
     .filter(field => !!field) as FormField[];
 
-//TODO: add tree species input_type when endpoint is updated
 export const apiFormQuestionToFormField = (
   question: FormQuestionRead,
   t: typeof useT,

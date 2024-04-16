@@ -6,9 +6,8 @@ import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import {
-  useGetV2ENTITYUUID,
+  GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
-  useGetV2UpdateRequestsENTITYUUID,
   usePutV2FormsENTITYUUID
 } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
@@ -40,53 +39,30 @@ export const EntityEdit = () => {
 
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
 
-  const { data: entityResponse } = useGetV2ENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  const entity = entityResponse?.data || {}; //Do not abuse this since forms should stay entity agnostic!
-
-  const { data: updateRequestResponse, isLoading: updateRequestLoading } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      retry(failureCount: number, error: any): boolean {
-        // avoid retries on a 404; that's expected in most cases for this form
-        return error.statusCode !== 404 && failureCount < 3;
-      },
-      onError() {
-        // To override error toast
-      }
-    }
-  );
-  // @ts-ignore
-  const updateRequest = updateRequestResponse?.data;
-
   const {
     data: formResponse,
-    isLoading: formDataLoading,
-    isError
-  } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  //@ts-ignore
+    isLoading,
+    isError: loadError
+  } = useGetV2FormsENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
-  const formData = (formResponse?.data || {}) as GetV2FormsENTITYUUIDResponse;
+  // @ts-ignore
+  const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
   const formSteps = useGetCustomFormSteps(formData.form, {
     entityName: pluralEntityNameToSingular(entityName),
     entityUUID
   });
 
-  const isLoading = updateRequestLoading || formDataLoading;
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(updateRequest?.content ?? formData.answers, formSteps);
-  const formTitle = entity.report_title || entity.title || entity.name;
+  const defaultValues = useNormalizedFormDefaultValue(
+    // @ts-ignore
+    formData?.update_request?.content ?? formData?.answers,
+    formSteps
+  );
 
-  if (isError) {
+  // @ts-ignore
+  const { form_title: title } = formData;
+
+  if (loadError) {
     return notFound();
   }
 
@@ -106,7 +82,7 @@ export const EntityEdit = () => {
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}
-          title={formTitle}
+          title={title}
           tabOptions={{
             markDone: true,
             disableFutureTabs: true

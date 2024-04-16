@@ -17,7 +17,7 @@ import { Else, If, Then, When } from "react-if";
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
-import { useGetV2FormsENTITYUUID, useGetV2UpdateRequestsENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps } from "@/helpers/customForms";
 import { EntityName, SingularEntityName } from "@/types/common";
 
@@ -34,22 +34,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const t = useT();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
-  // Change Request
-  const {
-    data: changeRequest,
-    refetch,
-    isError
-  } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: { entity: singularEntity, uuid: ctx?.record?.uuid }
-    },
-    {
-      enabled: !!ctx?.record?.uuid
-    }
-  );
-
   // Current values
-  const { data: currentValues } = useGetV2FormsENTITYUUID(
+  const { data: currentValues, refetch } = useGetV2FormsENTITYUUID(
     {
       pathParams: { entity: entity, uuid: ctx?.record?.uuid }
     },
@@ -59,11 +45,12 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   );
 
   // @ts-ignore
-  const changes = changeRequest?.data?.content;
+  const changeRequest = currentValues?.data?.update_request;
+  const changes = changeRequest?.content;
   // @ts-ignore
   const current = currentValues?.data?.answers;
   // @ts-ignore
-  const status = changeRequest?.data?.status;
+  const status = changeRequest?.status;
   // @ts-ignore
   const form = currentValues?.data?.form;
 
@@ -91,8 +78,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
         label={label ?? "Change Requests"}
         {...rest}
       >
-        {/* @ts-ignore */}
-        <If condition={changeRequest?.data && !isError}>
+        <If condition={changeRequest != null}>
           <Then>
             <Grid container spacing={2}>
               {formSteps && (
@@ -123,7 +109,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                         <FunctionField
                           render={() => {
                             // @ts-ignore
-                            switch (changeRequest?.data?.status) {
+                            switch (status) {
                               case "draft":
                                 return "Draft";
                               case "awaiting-approval":
@@ -154,7 +140,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                         variant="contained"
                         startIcon={<Check />}
                         // @ts-ignore
-                        disabled={["approved", "draft"].includes(changeRequest?.data?.status)}
+                        disabled={["approved", "draft"].includes(status)}
                         onClick={() => handleStatusUpdate("approve")}
                       >
                         Approve
@@ -162,7 +148,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                       <Button
                         variant="outlined"
                         // @ts-ignore
-                        disabled={["more-information", "draft"].includes(changeRequest?.data?.status)}
+                        disabled={["more-information", "draft"].includes(status)}
                         onClick={() => handleStatusUpdate("moreinfo")}
                       >
                         Request More Information
@@ -192,7 +178,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
           open
           status={statusToChangeTo}
           // @ts-ignore
-          uuid={changeRequest?.data.uuid}
+          uuid={changeRequest?.uuid}
           handleClose={() => {
             setStatusToChangeTo(undefined);
             refetch();
