@@ -279,7 +279,7 @@ export const Map = ({
           </ControlGroup>
         </When>
         {/* Toltip Map */}
-        <When condition={!editPolygon}>
+        <When condition={!editPolygon && !!siteData}>
           <div className="absolute left-2/3 top-6.5 z-20 rounded border-t-4 border-t-primary bg-white p-3">
             <div className="text-10 flex items-center justify-center gap-1">
               <Text variant="text-10">ISEME SITE </Text>
