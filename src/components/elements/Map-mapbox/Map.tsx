@@ -235,7 +235,7 @@ export const Map = ({
         styles: mapStyles
       }}
       onLoadMap={onLoadMap}
-      className={twMerge("h-[500px]", className)}
+      className={twMerge("h-[500px] wide:h-[700px]", className)}
     >
       <GeoJSONLayer geojson={geojson} />
       <When condition={hasControls}>

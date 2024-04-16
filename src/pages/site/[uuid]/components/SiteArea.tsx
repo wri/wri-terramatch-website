@@ -109,7 +109,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   };
 
   return (
-    <div className="relative flex h-[500px] text-darkCustom">
+    <div className="relative flex h-[500px] text-darkCustom wide:h-[700px]">
       <MapPolygonPanel
         title={t("Sites")}
         items={
@@ -121,7 +121,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="absolute z-20 h-[500px] w-[23vw] p-8"
+        className="absolute z-20 h-[500px] w-[23vw] p-8 wide:h-[700px]"
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
         setStateViewPanel={setStateViewPanel}
@@ -132,25 +132,23 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         setTabEditPolygon={setTabEditPolygon}
         setPreviewVersion={setPreviewVersion}
       />
-      <When condition={!stateViewPanel}>
-        <div className="absolute left-[24vw] top-5 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
-          <Text variant="text-10-light">Your polygons have been updated</Text>
-          <Button
-            variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-            onClick={() => {}}
-          >
-            Check Polygons
-          </Button>
-          <Button
-            variant="text"
-            className="text-10-bold mt-2 flex w-full justify-center rounded-lg border border-transparent p-2 hover:border-white"
-            onClick={() => openFormModalHandlerRequestPolygonSupport()}
-          >
-            Request Support
-          </Button>
-        </div>
-      </When>
+      <div className="absolute left-[24vw] top-5 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
+        <Text variant="text-10-light">Your polygons have been updated</Text>
+        <Button
+          variant="text"
+          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+          onClick={() => setStateViewPanel(true)}
+        >
+          Check Polygons
+        </Button>
+        <Button
+          variant="text"
+          className="text-10-bold mt-2 flex w-full justify-center rounded-lg border border-transparent p-2 hover:border-white"
+          onClick={() => openFormModalHandlerRequestPolygonSupport()}
+        >
+          Request Support
+        </Button>
+      </div>
       <When condition={tabEditPolygon === "Version" && !editPolygon}>
         <Button variant="primary" className=" absolute top-5 left-[58%] z-20 lg:left-[60%]" onClick={() => {}}>
           {t("Confirm Version")}
@@ -159,8 +157,8 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
       </When>
       <When condition={!!previewVersion}>
         <div className="absolute bottom-8 right-44 z-20 rounded bg-white p-3">
-          <button className="absolute top-4 right-4" onClick={() => setPreviewVersion(false)}>
-            <Icon name={IconNames.CLEAR} className="h-4 w-4" />
+          <button className="absolute top-3 right-4 hover:opacity-60" onClick={() => setPreviewVersion(false)}>
+            <Icon name={IconNames.CLEAR} className="h-3 w-3 wide:h-4 wide:w-4" />
           </button>
           <Text variant="text-10-bold" className="mb-4 text-center">
             Preview Attributes
