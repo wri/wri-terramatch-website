@@ -312,43 +312,7 @@ export const Map = ({
             <hr className="my-2 border border-grey-750" />
           </div>
         </When>
-        <When condition={editPolygon}>
-          <div className="absolute bottom-8 right-44 z-20 rounded bg-white p-3">
-            <Text variant="text-10-bold" className="mb-4 text-center">
-              Preview Attributes
-            </Text>
-            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
-              <Text variant="text-10-light" className="opacity-60">
-                Polygon ID
-              </Text>
-              <Text variant="text-10-light">1213023412</Text>
-            </div>
-            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
-              <Text variant="text-10-light" className="opacity-60">
-                Restoration Practice*
-              </Text>
-              <Text variant="text-10-light">1213023412</Text>
-            </div>
-            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
-              <Text variant="text-10-light" className="opacity-60">
-                Target Land Use System
-              </Text>
-              <Text variant="text-10-light">Riparian Area or Wetl...</Text>
-            </div>
-            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
-              <Text variant="text-10-light" className="opacity-60">
-                Tree Distribution
-              </Text>
-              <Text variant="text-10-light">Single Line</Text>
-            </div>
-            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
-              <Text variant="text-10-light" className="opacity-60">
-                Source
-              </Text>
-              <Text variant="text-10-light">Flority</Text>
-            </div>
-          </div>
-        </When>
+
         <When condition={!editable && !viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />

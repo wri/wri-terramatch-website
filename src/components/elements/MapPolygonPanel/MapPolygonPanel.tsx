@@ -34,6 +34,7 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   editPolygon: boolean;
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
+  setPreviewVersion: Dispatch<SetStateAction<boolean>>;
 }
 
 const MapPolygonPanel = ({
@@ -50,6 +51,7 @@ const MapPolygonPanel = ({
   editPolygon,
   tabEditPolygon,
   setTabEditPolygon,
+  setPreviewVersion,
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
@@ -191,7 +193,9 @@ const MapPolygonPanel = ({
           <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
             <When condition={tabEditPolygon === "Attributes"}>{AttributeInformation}</When>
             <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
-            <When condition={tabEditPolygon === "Version"}>{VersionInformation}</When>
+            <When condition={tabEditPolygon === "Version"}>
+              <VersionInformation setPreviewVersion={setPreviewVersion} />
+            </When>
           </div>
         </Then>
         <Else>
