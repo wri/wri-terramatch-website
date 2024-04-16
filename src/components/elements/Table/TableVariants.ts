@@ -6,6 +6,7 @@ export interface TableVariant {
   trBody: string;
   tdBody?: string;
   thHeader?: string;
+  thead?: string;
 }
 
 export const VARIANT_TABLE_PRIMARY = {
@@ -15,7 +16,8 @@ export const VARIANT_TABLE_PRIMARY = {
   thHeader: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
   tBody: "space-y-4",
   trBody: "border-2 border-neutral-200 rounded-lg",
-  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
+  thead: "bg-blueCustom-100"
 };
 
 export const VARIANT_TABLE_SECONDARY = {
@@ -25,7 +27,8 @@ export const VARIANT_TABLE_SECONDARY = {
   thHeader: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
   tBody: "space-y-4",
   trBody: "bg-neutral-50 rounded-lg",
-  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
+  thead: "bg-blueCustom-100"
 };
 
 export const VARIANT_TABLE_SECONDARY_WHITE = {
@@ -35,7 +38,8 @@ export const VARIANT_TABLE_SECONDARY_WHITE = {
   thHeader: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
   tBody: "space-y-4",
   trBody: "bg-white rounded-lg",
-  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
+  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0",
+  thead: "bg-blueCustom-100"
 };
 
 export const VARIANT_TABLE_BORDER = {
@@ -46,7 +50,8 @@ export const VARIANT_TABLE_BORDER = {
   tBody: "space-y-4",
   trBody: "bg-white border rounded-lg",
   tdBody:
-    "border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+    "border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
+  thead: "bg-blueCustom-100"
 };
 
 export const VARIANT_TABLE_BORDER_ALL = {
@@ -58,7 +63,8 @@ export const VARIANT_TABLE_BORDER_ALL = {
   tBody: "space-y-4",
   trBody: "bg-white rounded-lg",
   tdBody:
-    "border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+    "border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
+  thead: "bg-blueCustom-100"
 };
 
 export const VARIANT_TABLE_AIRTABLE = {
@@ -68,15 +74,17 @@ export const VARIANT_TABLE_AIRTABLE = {
   thHeader: "first:rounded-tl-lg last:rounded-tr-lg border-y border-neutral-200 text-14-semibold",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 lastRow",
-  tdBody: "text-16-light px-6 py-3"
+  tdBody: "text-16-light px-6 py-3",
+  thead: "bg-blueCustom-100"
 };
 
 export const VARIANT_TABLE_VERSION = {
   table: "border-collapse",
   name: "border-airtable",
-  trHeader: "bg-transparent",
-  thHeader: "text-10-light",
+  trHeader: "!bg-transparent",
+  thHeader: "text-10-light text-white !px-0 !py-2",
   tBody: "",
-  trBody: "bg-transparent border-y border-neutral-200 lastRow",
-  tdBody: "text-16-bold"
+  trBody: "bg-transparent border-y border-neutral-200 lastRow !group hover:bg-[#ffffff33] py-0.5",
+  tdBody: "first:rounded-l-lg last:rounded-r-lg text-10-bold text-white",
+  thead: "bg-transparent"
 };

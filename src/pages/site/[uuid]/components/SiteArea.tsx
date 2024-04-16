@@ -23,6 +23,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [query, setQuery] = useState("");
+  const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [selected, setSelected] = useState<any>();
   const [stateViewPanel, setStateViewPanel] = useState(false);
 
@@ -74,6 +75,8 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         stateViewPanel={stateViewPanel}
         setEditPolygon={setEditPolygon}
         editPolygon={editPolygon}
+        tabEditPolygon={tabEditPolygon}
+        setTabEditPolygon={setTabEditPolygon}
       />
       <When condition={!stateViewPanel}>
         <div className="absolute left-[24vw] top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
@@ -86,6 +89,11 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
             Check Polygons
           </Button>
           <Text variant="text-10-bold">Request Support</Text>
+        </div>
+      </When>
+      <When condition={tabEditPolygon === "Version"}>
+        <div className="absolute right-0 top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
+          aaaaaa{" "}
         </div>
       </When>
       <Map

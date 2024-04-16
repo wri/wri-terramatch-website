@@ -119,7 +119,7 @@ function Table<TData extends RowData>({
       </When>
       {children}
       <table {...props} className={classNames(className, "w-full", variant.table)}>
-        <thead className="bg-[#CFE6F4]">
+        <thead className={variant.thead}>
           {getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id} className={variant.trHeader}>
               {headerGroup.headers.map(

@@ -32,6 +32,8 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   stateViewPanel: boolean;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
   editPolygon: boolean;
+  tabEditPolygon: string;
+  setTabEditPolygon: Dispatch<SetStateAction<string>>;
 }
 
 const MapPolygonPanel = ({
@@ -46,6 +48,8 @@ const MapPolygonPanel = ({
   stateViewPanel,
   setEditPolygon,
   editPolygon,
+  tabEditPolygon,
+  setTabEditPolygon,
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
@@ -53,7 +57,6 @@ const MapPolygonPanel = ({
   const { openModal, closeModal } = useModalContext();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
-  const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
