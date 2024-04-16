@@ -278,6 +278,77 @@ export const Map = ({
             </button>
           </ControlGroup>
         </When>
+        {/* Toltip Map */}
+        <When condition={!editPolygon}>
+          <div className="absolute left-2/3 top-6.5 z-20 rounded border-t-4 border-t-primary bg-white p-3">
+            <div className="text-10 flex items-center justify-center gap-1">
+              <Text variant="text-10">ISEME SITE </Text>
+              <div className="text-10">&#8226;</div>
+              <Text variant="text-10"> FAJA LOB PROJECT</Text>
+            </div>
+            <Text variant="text-10-bold" className="text-center">
+              Elom
+            </Text>
+            <hr className="my-2 border border-grey-750" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Text variant="text-10-light">Restoration Practice</Text>
+                <Text variant="text-10-bold">Tree Planting</Text>
+              </div>
+              <div>
+                <Text variant="text-10-light">Target Land Use System</Text>
+                <Text variant="text-10-bold">Riparian Area</Text>
+              </div>
+              <div>
+                <Text variant="text-10-light">Tree Distribution</Text>
+                <Text variant="text-10-bold">Single Line</Text>
+              </div>
+              <div>
+                <Text variant="text-10-light">Planting Start Date</Text>
+                <Text variant="text-10-bold">March 26, 2024</Text>
+              </div>
+            </div>
+
+            <hr className="my-2 border border-grey-750" />
+          </div>
+        </When>
+        <When condition={editPolygon}>
+          <div className="absolute bottom-8 right-44 z-20 rounded bg-white p-3">
+            <Text variant="text-10-bold" className="mb-4 text-center">
+              Preview Attributes
+            </Text>
+            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+              <Text variant="text-10-light" className="opacity-60">
+                Polygon ID
+              </Text>
+              <Text variant="text-10-light">1213023412</Text>
+            </div>
+            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+              <Text variant="text-10-light" className="opacity-60">
+                Restoration Practice*
+              </Text>
+              <Text variant="text-10-light">1213023412</Text>
+            </div>
+            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+              <Text variant="text-10-light" className="opacity-60">
+                Target Land Use System
+              </Text>
+              <Text variant="text-10-light">Riparian Area or Wetl...</Text>
+            </div>
+            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+              <Text variant="text-10-light" className="opacity-60">
+                Tree Distribution
+              </Text>
+              <Text variant="text-10-light">Single Line</Text>
+            </div>
+            <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+              <Text variant="text-10-light" className="opacity-60">
+                Source
+              </Text>
+              <Text variant="text-10-light">Flority</Text>
+            </div>
+          </div>
+        </When>
         <When condition={!editable && !viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />
