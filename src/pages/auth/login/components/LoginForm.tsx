@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { isEmpty } from "lodash";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
@@ -39,7 +40,9 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             id="email"
             formHook={form}
             error={errors.email}
-            containerClassName="flex flex-col gap-2 bg-white"
+            containerClassName={`flex flex-col gap-2 bg-white ${
+              !isEmpty(form.getValues("email")) ? "input-content-login" : ""
+            }`}
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
             absolute label-login text-14-light z-20 normal-case"
@@ -54,7 +57,9 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             id="password"
             formHook={form}
             error={errors.password}
-            containerClassName="flex flex-col gap-2 bg-white"
+            containerClassName={`flex flex-col gap-2 bg-white ${
+              !isEmpty(form.getValues("password")) ? "input-content-login" : ""
+            }`}
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
             absolute label-login text-14-light z-20 normal-case"
