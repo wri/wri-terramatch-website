@@ -138,7 +138,8 @@ export enum IconNames {
   IC_FILTER = "ic-filter",
   IC_SORT = "ic-sort",
   APPROVED_COLORLESS = "status/approved-colorless",
-  IMAGE = "image"
+  IMAGE = "image",
+  IC_INFO_WHITE = "ic-info-white"
 }
 
 export interface IconProps {

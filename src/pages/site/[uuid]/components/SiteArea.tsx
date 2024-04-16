@@ -7,6 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import Map from "@/components/elements/Map-mapbox/Map";
 import MapPolygonPanel from "@/components/elements/MapPolygonPanel/MapPolygonPanel";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { fetchGetV2ProjectsUUIDSitePolygons } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
@@ -79,7 +80,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         setTabEditPolygon={setTabEditPolygon}
       />
       <When condition={!stateViewPanel}>
-        <div className="absolute left-[24vw] top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
+        <div className="absolute left-[24vw] top-5 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
           <Text variant="text-10-light">Your polygons have been updated</Text>
           <Button
             variant="text"
@@ -98,9 +99,10 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         </div>
       </When>
       <When condition={tabEditPolygon === "Version"}>
-        <div className="absolute right-0 top-6 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
-          aaaaaa{" "}
-        </div>
+        <Button variant="primary" className=" absolute top-5 left-[58%] z-20 lg:left-[60%]" onClick={() => {}}>
+          {t("Confirm Version")}
+          <Icon name={IconNames.IC_INFO_WHITE} className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
+        </Button>
       </When>
       <Map
         geojson={geoJSON}
