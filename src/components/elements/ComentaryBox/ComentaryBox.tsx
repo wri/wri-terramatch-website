@@ -1,3 +1,5 @@
+import { When } from "react-if";
+
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
@@ -6,10 +8,11 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 export interface IComentaryBox {
   name: string;
   lastName: string;
+  buttonSendOnBox?: boolean;
 }
 
 const ComentaryBox = (props: IComentaryBox) => {
-  const { name, lastName } = props;
+  const { name, lastName, buttonSendOnBox } = props;
 
   return (
     <div className="flex flex-col gap-4">
@@ -35,12 +38,17 @@ const ComentaryBox = (props: IComentaryBox) => {
           />
           <Icon name={IconNames.PAPER_CLIP} className="h-4 w-4" />
         </label>
+        <When condition={buttonSendOnBox}>
+          <Button variant="text" iconProps={{ name: IconNames.SEND, className: "h-4 w-4 text-darkCustom" }} />
+        </When>
       </div>
-      <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}>
-        <Text variant="text-12-bold" className="text-white">
-          SEND
-        </Text>
-      </Button>
+      <When condition={!buttonSendOnBox}>
+        <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}>
+          <Text variant="text-12-bold" className="text-white">
+            SEND
+          </Text>
+        </Button>
+      </When>
     </div>
   );
 };

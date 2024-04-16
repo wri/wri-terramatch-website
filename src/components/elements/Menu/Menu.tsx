@@ -4,7 +4,12 @@ import React from "react";
 
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
-import { MENU_PLACEMENT_BOTTOM_RIGHT, MENU_PLACEMENT_LEFT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "./MenuVariant";
+import {
+  MENU_PLACEMENT_BOTTOM_RIGHT,
+  MENU_PLACEMENT_LEFT_BOTTOM,
+  MENU_PLACEMENT_LEFT_HALF_TOP,
+  MENU_PLACEMENT_RIGHT_TOP
+} from "./MenuVariant";
 
 interface MenuItemProps {
   id: string;
@@ -105,10 +110,27 @@ const Menu = (props: MenuProps) => {
     };
   };
 
+  const calculateMenuStyleForLeftHalfTop = () => {
+    if (!menuContainerRef.current) {
+      return {};
+    }
+    if (!menuRef.current) {
+      return {};
+    }
+    const rect = menuContainerRef.current.getBoundingClientRect();
+    const top = rect.top ?? 0;
+    const height = rect.height ?? 0;
+    const heightMenu = menuRef.current.getBoundingClientRect().height;
+    return {
+      top: top - (heightMenu - height)
+    };
+  };
+
   const calculateMenuStyle = () => {
     const placeMap: { [key: string]: string } = {
       [MENU_PLACEMENT_RIGHT_TOP]: "horizontalTop",
-      [MENU_PLACEMENT_LEFT_BOTTOM]: "hotizontalBottom"
+      [MENU_PLACEMENT_LEFT_BOTTOM]: "horizontalBottom",
+      [MENU_PLACEMENT_LEFT_HALF_TOP]: "leftHalfTop"
     };
 
     const place = placeMap[placement] || "bottom";
@@ -117,8 +139,11 @@ const Menu = (props: MenuProps) => {
       case "horizontalTop":
         styles = calculateMenuStyleForHorizontalTop();
         break;
-      case "hotizontalBottom":
+      case "horizontalBottom":
         styles = calculateMenuStyleForHorizontalBottom();
+        break;
+      case "leftHalfTop":
+        styles = calculateMenuStyleForLeftHalfTop();
         break;
       default:
         styles = calculateMenuStyleForBottom();

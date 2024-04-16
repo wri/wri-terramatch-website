@@ -1,12 +1,25 @@
 import classNames from "classnames";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { useModalContext } from "@/context/modal.provider";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import Text from "../Text/Text";
 
 const VersionInformation = () => {
+  const { openModal, closeModal } = useModalContext();
+  const openFormModalHandlerConfirm = () => {
+    openModal(
+      <ModalConfirm
+        title={"Confirm Version Delete?"}
+        content="Do you want to delete this version?"
+        onClose={closeModal}
+        onConfirm={() => {}}
+      />
+    );
+  };
   const itemsPrimaryMenu = [
     {
       id: "1",
@@ -24,7 +37,8 @@ const VersionInformation = () => {
           <Icon name={IconNames.TRASH_PA} className="h-5 w-4 lg:h-6 lg:w-6 " />
           &nbsp; Delete Version
         </Text>
-      )
+      ),
+      onClick: () => openFormModalHandlerConfirm()
     }
   ];
   const data = [

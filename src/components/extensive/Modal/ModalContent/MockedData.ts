@@ -17,8 +17,66 @@ export const dataSubmitPolygons: IDataSubmitPolygons[] = [
 ];
 
 export const dataImageGallery = [
-  { id: "1", title: "Non-Geotagged Images", images: ["image1.svg", " image2.svg"] },
-  { id: "2", title: "geoTagged Images", images: ["image3.svg", " image4.svg"] }
+  {
+    id: "1",
+    title: "Non-Geotagged Images",
+    images: [
+      {
+        id: "1",
+        src: "/Images/image-modal-main.png"
+      },
+      {
+        id: "2",
+        src: "/Images/image-modal-1.png"
+      },
+      {
+        id: "3",
+        src: "/Images/image-modal-2.png"
+      },
+      {
+        id: "4",
+        src: "/Images/image-modal-3.png"
+      },
+      {
+        id: "5",
+        src: "/Images/image-modal-4.png"
+      },
+      {
+        id: "6",
+        src: "/Images/image-modal-5.png"
+      }
+    ]
+  },
+  {
+    id: "2",
+    title: "geoTagged Images",
+    images: [
+      {
+        id: "1",
+        src: "/Images/image-modal-main.png"
+      },
+      {
+        id: "2",
+        src: "/Images/image-modal-1.png"
+      },
+      {
+        id: "3",
+        src: "/Images/image-modal-2.png"
+      },
+      {
+        id: "4",
+        src: "/Images/image-modal-3.png"
+      },
+      {
+        id: "5",
+        src: "/Images/image-modal-4.png"
+      },
+      {
+        id: "6",
+        src: "/Images/image-modal-5.png"
+      }
+    ]
+  }
 ];
 
 export const uploadImageData = [

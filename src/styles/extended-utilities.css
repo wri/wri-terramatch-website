@@ -254,6 +254,26 @@
     content: "" !important;
   }
 
+  .test .swiper-button-next{
+    right: var(--swiper-navigation-sides-offset, 55px);
+    top: calc(100% - 20px);
+    @apply bg-[#00000025] border-transparent
+  }
+
+  .test .swiper-button-next svg{
+    scale: 1.2;
+  }
+
+  .test .swiper-button-prev{
+    left: var(--swiper-navigation-sides-offset, 55px);
+    top: calc(100% - 20px);
+    @apply bg-[#00000025] border-transparent
+  }
+
+  .test .swiper-button-prev svg{
+    scale: 1.2;
+  }
+
   .swiper-pagination-bullet {
     @apply !bg-white !opacity-100;
   }

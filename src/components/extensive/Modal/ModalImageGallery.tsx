@@ -4,6 +4,7 @@ import { Navigation } from "swiper";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
+import ImageWithPlaceholder from "@/components/elements/ImageWithPlaceholder/ImageWithPlaceholder";
 import Text from "@/components/elements/Text/Text";
 
 import Carousel from "../Carousel/Carousel";
@@ -24,10 +25,15 @@ export const ModalBaseImageGallery: FC<ModalBaseProps> = ({ children, className,
   );
 };
 
-export interface TabImagesItem extends ModalProps {
+export interface ImageItem {
+  id: string;
+  src: string;
+}
+
+export interface TabImagesItem {
   id: string;
   title: string;
-  images: string[];
+  images: ImageItem[];
 }
 
 export interface ModalImageGalleryProps extends ModalProps {
@@ -44,6 +50,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
   ...rest
 }) => {
   const [selectedTab, setSelectedTab] = useState(tabItems[0].id);
+  const [selectecImage, setSelectecImage] = useState(0);
 
   return (
     <ModalBaseImageGallery {...rest}>
@@ -69,14 +76,19 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
       <div className="flex h-full max-h-[calc(100%_-_62px)] w-full gap-6">
         <div className="flex-[2] overflow-auto">
           <div className="grid-col-2 grid grid-flow-row auto-rows-[100px] gap-4 overflow-auto">
-            <div className="flex items-center justify-center rounded-xl bg-primary-200">No Image Available</div>
-            <div className="flex items-center justify-center rounded-xl bg-primary-200">No Image Available</div>
-            <div className="col-span-2 row-span-2 flex items-center justify-center rounded-xl bg-primary-200">
-              {" "}
-              No Image Available{" "}
-            </div>
-            <div className="flex items-center justify-center rounded-xl bg-primary-200">No Image Available</div>
-            <div className="flex items-center justify-center rounded-xl bg-primary-200">No Image Available</div>
+            {tabItems
+              .find(tab => tab.id === selectedTab)
+              ?.images.map((image: ImageItem, index: number) => (
+                <ImageWithPlaceholder
+                  key={image.id}
+                  className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200", {
+                    "col-span-2 row-span-2": (index + 1) % 3 === 0,
+                    "!border-black": selectecImage === index
+                  })}
+                  alt={"image no available"}
+                  imageUrl={image.src}
+                ></ImageWithPlaceholder>
+              ))}
           </div>
         </div>
 
@@ -85,28 +97,24 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             className="h-full"
             swiperClassName="h-full"
             swiperSlideClassName="h-full"
-            carouselItem={item => (
-              <div className="h-full rounded px-24">
-                <div className="h-full bg-primary-200">{item.key}</div>
-              </div>
-            )}
-            items={[
-              {
-                key: 1
-              },
-              {
-                key: 2
-              },
-              {
-                key: 3
-              },
-              {
-                key: 4
-              },
-              {
-                key: 5
-              }
-            ]}
+            setSelectecImage={setSelectecImage}
+            carouselItem={item => {
+              return (
+                <div className="relative h-full px-24">
+                  <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
+                    <Text variant="text-13" className="text-white">
+                      {selectecImage + 1} of {tabItems.find(tab => tab.id === selectedTab)?.images.length}
+                    </Text>
+                  </div>
+                  <ImageWithPlaceholder
+                    className="h-full rounded-xl bg-primary-200"
+                    alt={"image no available"}
+                    imageUrl={item.src}
+                  ></ImageWithPlaceholder>
+                </div>
+              );
+            }}
+            items={tabItems.find(tab => tab.id === selectedTab)?.images || []}
             modules={[Navigation]}
             slidesPerView={1}
             spaceBetween={10}
