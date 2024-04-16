@@ -98,7 +98,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           </Button>
         </div>
       </When>
-      <When condition={tabEditPolygon === "Version"}>
+      <When condition={tabEditPolygon === "Version" && !editPolygon}>
         <Button variant="primary" className=" absolute top-5 left-[58%] z-20 lg:left-[60%]" onClick={() => {}}>
           {t("Confirm Version")}
           <Icon name={IconNames.IC_INFO_WHITE} className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
