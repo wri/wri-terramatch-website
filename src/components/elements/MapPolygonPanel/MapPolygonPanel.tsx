@@ -138,7 +138,7 @@ const MapPolygonPanel = ({
               <Text variant="text-12-light" className="text-white ">
                 Faja Lobi Project
               </Text>
-              <Text variant="text-20-bold" className="text-white">
+              <Text variant="text-20-bold" className="mb-4 text-white">
                 Iseme Site
               </Text>
             </div>
@@ -188,7 +188,7 @@ const MapPolygonPanel = ({
               Version
             </button>
           </div>
-          <div className="mr-[-10px] mt-4 h-[calc(100%-104px)] overflow-y-auto pr-2">
+          <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
             <When condition={tabEditPolygon === "Attributes"}>{AttributeInformation}</When>
             <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
             <When condition={tabEditPolygon === "Version"}>{VersionInformation}</When>
