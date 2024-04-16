@@ -83,12 +83,18 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           <Text variant="text-10-light">Your polygons have been updated</Text>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg bg-tertiary-600 p-2"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
             onClick={() => {}}
           >
             Check Polygons
           </Button>
-          <Text variant="text-10-bold">Request Support</Text>
+          <Button
+            variant="text"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-transparent bg-transparent p-2 hover:border-white"
+            onClick={() => {}}
+          >
+            Request Support
+          </Button>
         </div>
       </When>
       <When condition={tabEditPolygon === "Version"}>
