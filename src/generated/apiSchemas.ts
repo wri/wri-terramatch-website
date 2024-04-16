@@ -4941,26 +4941,6 @@ export type V2WorkdayRead = {
   indigeneity?: string;
 };
 
-export type V2WorkdayCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdayUpdate = {
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
 export type V2WorkdaysPaginated = {
   data?: {
     uuid?: string;
