@@ -67,6 +67,7 @@ const PolygonStatus = () => {
         Polygon Status
       </Text>
       <Dropdown
+        optionClassName="w-full whitespace-nowrap"
         placeholder="PolygonStatus"
         options={dropdownOptions}
         onChange={openFormModalHandler}

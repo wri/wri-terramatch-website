@@ -5,6 +5,7 @@ import { uniq } from "lodash";
 import { ChangeEvent, Fragment, PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorOption, FieldError, UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import ErrorMessage from "@/components/elements/ErrorMessage/ErrorMessage";
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -29,6 +30,7 @@ export interface DropdownProps {
   options: Option[];
   iconName?: IconNames;
   className?: string;
+  optionClassName?: string;
   containerClassName?: string;
   defaultValue?: OptionValue[];
   required?: boolean;
@@ -197,7 +199,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             >
               <Listbox.Options
                 as="div"
-                className="border-light absolute mt-2 max-h-[400px] w-full overflow-auto rounded-lg bg-white"
+                className="border-light absolute mt-2 max-h-[400px] overflow-auto rounded-lg bg-white "
               >
                 {options.map(option => {
                   let isSelected;
@@ -212,7 +214,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       key={option.value}
                       value={option.value}
                       className={classNames(
-                        "cursor-pointer hover:bg-primary-100",
+                        "w-fit cursor-pointer hover:bg-primary-100",
                         props.multiSelect ? "p-3.5" : "p-3",
                         isSelected && !props.multiSelect && "bg-primary-100"
                       )}
@@ -228,7 +230,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
-                            <Text variant="text-14-light" className="w-[65%] break-words">
+                            <Text variant="text-14-light" className={tw("w-[65%] break-words", props.optionClassName)}>
                               {option.title}
                             </Text>
                             <When condition={option.meta}>
