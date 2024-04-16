@@ -329,19 +329,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         <Text variant="text-14-semibold" className="flex items-center ">
           Upload Data
         </Text>
-      )
-    },
-    {
-      id: "3",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Data
-        </Text>
       ),
       onClick: () => openFormModalHandlerAddPolygon()
     },
     {
-      id: "4",
+      id: "3",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
           Upload Images
