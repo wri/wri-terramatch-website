@@ -34,6 +34,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [selected, setSelected] = useState<any>();
   const [stateViewPanel, setStateViewPanel] = useState(false);
+  const [previewVersion, setPreviewVersion] = useState(false);
 
   const { data, fetchNextPage } = useInfiniteQuery<any>({
     queryKey: ["sites", query],
@@ -129,6 +130,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         editPolygon={editPolygon}
         tabEditPolygon={tabEditPolygon}
         setTabEditPolygon={setTabEditPolygon}
+        setPreviewVersion={setPreviewVersion}
       />
       <When condition={!stateViewPanel}>
         <div className="absolute left-[24vw] top-5 z-20 rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
@@ -154,6 +156,46 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           {t("Confirm Version")}
           <Icon name={IconNames.IC_INFO_WHITE} className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
         </Button>
+      </When>
+      <When condition={!!previewVersion}>
+        <div className="absolute bottom-8 right-44 z-20 rounded bg-white p-3">
+          <button className="absolute top-4 right-4" onClick={() => setPreviewVersion(false)}>
+            <Icon name={IconNames.CLEAR} className="h-4 w-4" />
+          </button>
+          <Text variant="text-10-bold" className="mb-4 text-center">
+            Preview Attributes
+          </Text>
+          <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+            <Text variant="text-10-light" className="opacity-60">
+              Polygon ID
+            </Text>
+            <Text variant="text-10-light">1213023412</Text>
+          </div>
+          <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+            <Text variant="text-10-light" className="opacity-60">
+              Restoration Practice*
+            </Text>
+            <Text variant="text-10-light">1213023412</Text>
+          </div>
+          <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+            <Text variant="text-10-light" className="opacity-60">
+              Target Land Use System
+            </Text>
+            <Text variant="text-10-light">Riparian Area or Wetl...</Text>
+          </div>
+          <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+            <Text variant="text-10-light" className="opacity-60">
+              Tree Distribution
+            </Text>
+            <Text variant="text-10-light">Single Line</Text>
+          </div>
+          <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
+            <Text variant="text-10-light" className="opacity-60">
+              Source
+            </Text>
+            <Text variant="text-10-light">Flority</Text>
+          </div>
+        </div>
       </When>
       <Map
         geojson={geoJSON}

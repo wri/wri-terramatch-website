@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { Dispatch, SetStateAction } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -8,7 +9,7 @@ import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import Text from "../Text/Text";
 
-const VersionInformation = () => {
+const VersionInformation = ({ setPreviewVersion }: { setPreviewVersion: Dispatch<SetStateAction<boolean>> }) => {
   const { openModal, closeModal } = useModalContext();
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -28,7 +29,8 @@ const VersionInformation = () => {
           <Icon name={IconNames.SEARCH} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Preview Version
         </Text>
-      )
+      ),
+      onClick: () => setPreviewVersion(true)
     },
     {
       id: "2",
