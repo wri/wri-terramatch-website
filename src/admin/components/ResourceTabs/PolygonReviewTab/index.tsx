@@ -225,7 +225,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
-          <Grid xs={8}>
+          <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
               <div className="flex items-start gap-3">
                 <div className="w-full">
@@ -239,7 +239,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       application.
                     </Text>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex gap-3">
                     <Menu menu={addMenuItems} className="flex-1">
                       <Button
                         variant="sky-page-admin"
@@ -294,7 +294,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
             </Stack>
           </Grid>
-          <Grid xs={4} className="pl-8 pr-4 pt-9">
+          <Grid xs={3} className="pl-8 pr-4 pt-9">
             <PolygonReviewAside type={props.type} />
           </Grid>
         </Grid>
