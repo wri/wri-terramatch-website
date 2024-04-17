@@ -14,10 +14,8 @@ import { PolygonAvailableData, PolygonData } from "@/pages/site/[uuid]/component
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
-import AttributeInformation from "./AttributeInformation";
-import ChecklistInformation from "./ChecklistInformation";
+import MapEditPolygonPanel from "./MapEditPolygonPanel";
 import MapPolygonCheckPanelItem from "./MapPolygonCheckPanelItem";
-import VersionInformation from "./VersionInformation";
 
 export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
@@ -61,68 +59,12 @@ const MapPolygonPanel = ({
     <div {...props} className={classNames(className)}>
       <If condition={!!editPolygon}>
         <Then>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <Text variant="text-12-light" className="text-white ">
-                Faja Lobi Project
-              </Text>
-              <Text variant="text-20-bold" className="mb-4 text-white">
-                Iseme Site
-              </Text>
-            </div>
-
-            <Button variant="text" onClick={() => setEditPolygon(false)} className="text-white hover:text-primary">
-              <Icon name={IconNames.CLEAR} className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="flex rounded-lg bg-white">
-            <button
-              className={classNames(
-                "text-12-semibold w-1/3 rounded-l-lg border border-neutral-300 p-3 hover:bg-neutral-100",
-                tabEditPolygon === "Attributes"
-                  ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
-                  : "border border-neutral-300"
-              )}
-              onClick={() => {
-                setTabEditPolygon("Attributes");
-              }}
-            >
-              Attributes
-            </button>
-            <button
-              className={classNames(
-                "text-12-semibold w-1/3 border border-neutral-300 p-3 hover:bg-neutral-100",
-                tabEditPolygon === "Checklist"
-                  ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
-                  : "border border-neutral-300"
-              )}
-              onClick={() => {
-                setTabEditPolygon("Checklist");
-              }}
-            >
-              Checklist
-            </button>
-            <button
-              className={classNames(
-                "text-12-semibold w-1/3 rounded-r-lg border border-neutral-300 p-3 hover:bg-neutral-100",
-                tabEditPolygon === "Version"
-                  ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
-                  : "border border-neutral-300"
-              )}
-              onClick={() => {
-                setTabEditPolygon("Version");
-              }}
-            >
-              Version
-            </button>
-          </div>
-          <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
-            <When condition={tabEditPolygon === "Attributes"}>{AttributeInformation}</When>
-            <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
-            <When condition={tabEditPolygon === "Version"}>
-              <VersionInformation setPreviewVersion={setPreviewVersion} />
-            </When>
-          </div>
+          <MapEditPolygonPanel
+            setEditPolygon={setEditPolygon}
+            tabEditPolygon={tabEditPolygon}
+            setTabEditPolygon={setTabEditPolygon}
+            setPreviewVersion={setPreviewVersion}
+          />
         </Then>
         <Else>
           <div className="mb-4 flex rounded-lg bg-neutral-100 p-1">
