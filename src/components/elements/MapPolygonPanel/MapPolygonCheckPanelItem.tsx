@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction } from "react";
+import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -35,10 +36,12 @@ const MapPolygonCheckPanelItem = ({
   className,
   refContainer,
   setEditPolygon,
+  polygon,
   status,
   ...props
 }: MapPolygonCheckPanelItemProps) => {
   const { openModal, closeModal } = useModalContext();
+  const [openCollapse, setOpenCollapse] = useState(true);
   const openFormModalHandlerRequestPolygonSupport = () => {
     openModal(
       <ModalWithMap
@@ -131,7 +134,7 @@ const MapPolygonCheckPanelItem = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center text-black">
+        <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Edit Polygon
         </Text>
@@ -186,7 +189,7 @@ const MapPolygonCheckPanelItem = ({
       id: "6",
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerConfirm}>
-          <Text variant="text-14-semibold" className="flex items-center text-black">
+          <Text variant="text-14-semibold" className="flex items-center ">
             <Icon name={IconNames.TRASH_PA} className="h-5 w-4 lg:h-6 lg:w-6" />
             &nbsp; Delete Polygon
           </Text>
@@ -213,14 +216,30 @@ const MapPolygonCheckPanelItem = ({
   return (
     <div>
       <div {...props} className={className}>
-        <div className="flex items-center gap-2 text-white">
+        <div className="flex items-center gap-2">
           <div className={classNames("h-4 w-4 rounded-full", dynamicClasses(status))} />{" "}
           <div className="flex flex-1 flex-col">
-            <Text variant="text-14-light" className="">
+            <Text variant="text-14-light" className="text-white">
               {title}
             </Text>
           </div>
-          <div className="lex h-full self-start text-black">
+          <div className="flex h-full items-start self-start">
+            <When condition={!!polygon}>
+              <button
+                onClick={() => {
+                  setOpenCollapse(!openCollapse);
+                }}
+              >
+                <Icon
+                  name={IconNames.CHEVRON_DOWN}
+                  className={classNames(
+                    "h-3 w-3 rounded-lg text-white hover:fill-primary hover:text-primary lg:h-4 lg:w-4",
+                    { "rotate-180 transform": !!openCollapse }
+                  )}
+                />
+              </button>
+            </When>
+
             <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
@@ -229,6 +248,18 @@ const MapPolygonCheckPanelItem = ({
             </Menu>
           </div>
         </div>
+        <When condition={!!polygon && !!openCollapse}>
+          <div className="my-3 grid gap-3 px-4">
+            {polygon?.map((item, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Icon name={IconNames.ERROR_WHITE_BORDER_RED} className="h-4 w-4 rounded-lg text-white lg:h-5 lg:w-5" />
+                <Text variant="text-14-light" className="text-white">
+                  {item}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </When>
       </div>
     </div>
   );

@@ -52,6 +52,7 @@ const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }
                 refContainer={refContainer}
                 setEditPolygon={setEditPolygon}
                 status={item.status}
+                polygon={item.polygon}
               />
             )}
           />
