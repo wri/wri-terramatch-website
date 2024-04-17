@@ -474,7 +474,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 </div>
               </div>
 
-              <div className="w-[46%] rounded border border-neutral-200 p-4">
+              <div className="w-[46%] rounded-lg border border-neutral-200 p-4">
                 <Text variant="text-14" className="mb-2">
                   Polygon Status
                 </Text>
