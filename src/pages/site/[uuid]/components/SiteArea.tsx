@@ -149,11 +149,21 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           Request Support
         </Button>
       </div>
-      <When condition={tabEditPolygon === "Version" && !editPolygon}>
-        <Button variant="primary" className=" absolute top-5 left-[58%] z-20 lg:left-[60%]" onClick={() => {}}>
-          {t("Confirm Version")}
-          <Icon name={IconNames.IC_INFO_WHITE} className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
-        </Button>
+      <When condition={tabEditPolygon === "Version" && !!editPolygon}>
+        <div className="absolute top-5 left-[58%] z-20 text-center lg:left-[60%]">
+          <Button variant="primary" className="" onClick={() => {}}>
+            {t("Confirm Version")}
+            <Icon name={IconNames.IC_INFO_WHITE} className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
+          </Button>
+          <br />
+          <Button
+            variant="text"
+            className="text-12-bold m-auto rounded-lg bg-[#a2a295b5] px-4 py-1 text-black underline underline-offset-2 hover:text-white"
+            onClick={() => {}}
+          >
+            {t("Cancel")}
+          </Button>
+        </div>
       </When>
       <When condition={!!previewVersion}>
         <div className="absolute bottom-8 right-44 z-20 rounded bg-white p-3">
