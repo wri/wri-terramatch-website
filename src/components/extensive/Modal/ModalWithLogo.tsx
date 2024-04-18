@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
@@ -15,7 +14,7 @@ export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...
     <div
       {...rest}
       className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white pb-8",
+        "margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
         className
       )}
     >
@@ -53,14 +52,14 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
           <When condition={status}>
-            <Status status={status ? status : "Draft"} />
+            <Status status={status ? status : "Draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
           </When>
           <Button variant="transparent-toggle" onClick={onCLose}>
             <Icon name={IconNames.CROSS} width={24} height={24} />
           </Button>
         </div>
       </header>
-      <div className="max-h-[100%] w-full overflow-auto px-8 pt-8">
+      <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
@@ -92,20 +91,20 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         </div>
         <When condition={!!content}>{content}</When>
         {children}
-        <div className={classNames("flex w-full justify-end gap-3")}>
-          <When condition={!!secondaryButtonProps}>
-            <Button {...secondaryButtonProps!} variant="white-page-admin">
-              <Text variant="text-14-bold" className="capitalize">
-                {secondaryButtonText}
-              </Text>
-            </Button>
-          </When>
-          <Button {...primaryButtonProps}>
-            <Text variant="text-14-bold" className="capitalize text-white">
-              {primaryButtonText}
+      </div>
+      <div className="flex w-full justify-end gap-3 py-4 px-8">
+        <When condition={!!secondaryButtonProps}>
+          <Button {...secondaryButtonProps!} variant="white-page-admin">
+            <Text variant="text-14-bold" className="capitalize">
+              {secondaryButtonText}
             </Text>
           </Button>
-        </div>
+        </When>
+        <Button {...primaryButtonProps}>
+          <Text variant="text-14-bold" className="capitalize text-white">
+            {primaryButtonText}
+          </Text>
+        </Button>
       </div>
     </ModalBaseWithLogo>
   );

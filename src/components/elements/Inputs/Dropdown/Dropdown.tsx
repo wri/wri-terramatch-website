@@ -199,7 +199,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             >
               <Listbox.Options
                 as="div"
-                className="border-light absolute mt-2 max-h-[400px] overflow-auto rounded-lg bg-white "
+                className="border-light absolute mt-2 max-h-[400px] min-w-full overflow-auto rounded-lg bg-white"
               >
                 {options.map(option => {
                   let isSelected;
@@ -214,7 +214,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       key={option.value}
                       value={option.value}
                       className={classNames(
-                        "w-fit cursor-pointer hover:bg-primary-100",
+                        "w-full cursor-pointer hover:bg-primary-100",
                         props.multiSelect ? "p-3.5" : "p-3",
                         isSelected && !props.multiSelect && "bg-primary-100"
                       )}

@@ -16,6 +16,7 @@ import classNames from "classnames";
 import Lottie from "lottie-react";
 import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useMemo, useState } from "react";
 import { Else, If, Then, When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import SpinnerLottie from "@/assets/animations/spinner.json";
 import TableFilter, { ColumnFilter, FilterValue } from "@/components/elements/TableFilters/TableFilter";
@@ -130,24 +131,36 @@ function Table<TData extends RowData>({
                       colSpan={header.colSpan}
                       onClick={header.column.getToggleSortingHandler()}
                       className={classNames(
-                        `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
-                        header.column.getCanSort() && "cursor-pointer"
+                        tw(
+                          `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
+                          header.column.getCanSort() && "cursor-pointer"
+                        )
                       )}
                       align="left"
                     >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      <When condition={header.column.getCanSort()}>
-                        <Icon
-                          name={
-                            { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
-                              header.column.getIsSorted() as string
-                            ] || IconNames.SORT
-                          }
-                          className="ml-2 inline fill-neutral-900"
-                          width={11}
-                          height={14}
-                        />
-                      </When>
+                      <div
+                        className="flex items-center"
+                        style={{
+                          fontSize: "inherit",
+                          fontWeight: "inherit",
+                          color: "currentColor",
+                          fontFamily: "inherit"
+                        }}
+                      >
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        <When condition={header.column.getCanSort()}>
+                          <Icon
+                            name={
+                              { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
+                                header.column.getIsSorted() as string
+                              ] || IconNames.SORT
+                            }
+                            className="ml-2 inline fill-neutral-900"
+                            width={11}
+                            height={14}
+                          />
+                        </When>
+                      </div>
                     </th>
                   )
               )}

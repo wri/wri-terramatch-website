@@ -205,14 +205,11 @@ const Polygons = (props: IPolygonProps) => {
     {
       id: "1",
       render: () => (
-        <div className="flex items-center gap-2">
+        <button className="flex items-center gap-2" onClick={() => setIsOpen(true)}>
           <Icon name={IconNames.POLYGON} className="h-6 w-6" />
           <Text variant="text-12-bold">Edit Polygon</Text>
-        </div>
-      ),
-      onClick: () => {
-        setIsOpen(true);
-      }
+        </button>
+      )
     },
     {
       id: "2",
@@ -245,12 +242,11 @@ const Polygons = (props: IPolygonProps) => {
     {
       id: "5",
       render: () => (
-        <div className="flex items-center gap-2">
+        <button className="flex items-center gap-2" onClick={openFormModalHandlerRequestPolygonSupport}>
           <Icon name={IconNames.REQUEST} className="h-6 w-6" />
-          <Text variant="text-12-bold">Request Support</Text>
-        </div>
-      ),
-      onCLick: openFormModalHandlerRequestPolygonSupport
+          <Text variant="text-12-bold">Request Supporta</Text>
+        </button>
+      )
     },
     {
       id: "6",

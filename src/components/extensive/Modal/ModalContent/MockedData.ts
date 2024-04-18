@@ -49,7 +49,7 @@ export const dataImageGallery = [
   },
   {
     id: "2",
-    title: "geoTagged Images",
+    title: "GeoTagged Images",
     images: [
       {
         id: "1",

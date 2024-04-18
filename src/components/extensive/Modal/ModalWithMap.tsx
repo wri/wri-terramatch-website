@@ -15,7 +15,7 @@ export const ModalBaseWithMap: FC<ModalBaseProps> = ({ children, className, ...r
     <div
       {...rest}
       className={twMerge(
-        "margin-4 z-50 m-auto flex h-[700px] max-h-full w-[1200px] flex-col items-center justify-start overflow-hidden rounded-lg border-2 border-neutral-100 bg-white",
+        "margin-4 z-50 m-auto flex h-[700px] max-h-full w-[80vw] flex-col items-center justify-start overflow-hidden rounded-lg border-2 border-neutral-100 bg-white",
         className
       )}
     >
@@ -51,9 +51,6 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
               <When condition={status}>
                 <Status status={status ? status : "Draft"} />
               </When>
-              <Button variant="transparent-toggle" onClick={onCLose}>
-                <Icon name={IconNames.CROSS} width={24} height={24} />
-              </Button>
             </div>
           </header>
           <div className="max-h-[100%] w-full flex-[1_1_0] overflow-auto px-8 py-8">
@@ -62,16 +59,21 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             </div>
             <When condition={!!content}>{content}</When>
             {children}
-            <div className="flex w-full justify-end">
-              <Button {...primaryButtonProps}>
-                <Text variant="text-14-bold" className="capitalize text-white">
-                  {primaryButtonText}
-                </Text>
-              </Button>
-            </div>
+          </div>
+          <div className="flex w-full justify-end py-4 px-8">
+            <Button {...primaryButtonProps}>
+              <Text variant="text-14-bold" className="capitalize text-white">
+                {primaryButtonText}
+              </Text>
+            </Button>
           </div>
         </div>
-        <Map className="h-[700px] w-[60%]" hasControls={false} />
+        <div className="relative h-[700px] w-[60%]">
+          <Map className="h-full w-full" hasControls={false} />
+          <button onClick={onCLose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
+            <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
+          </button>
+        </div>
       </div>
     </ModalBaseWithMap>
   );

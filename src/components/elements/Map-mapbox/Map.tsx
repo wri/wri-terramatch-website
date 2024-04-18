@@ -331,18 +331,26 @@ export const Map = ({
                 hidden: !viewImages
               })}
             >
-              <Carousel
-                className="test mb-2 h-[calc(100%_-_48px)]"
-                swiperClassName="h-full"
-                swiperSlideClassName="h-full"
-                items={dataImageGallery[0].images}
-                carouselItem={item => <img className="h-full" alt="" src={item.src} />}
-                modules={[Navigation]}
-                slidesPerView={1}
-                spaceBetween={10}
-                hidePaginationBullet
-                smallSwiperButtons
-              />
+              <div className="relative h-[calc(100%_-_48px)]">
+                <Carousel
+                  className="test mb-2 h-full"
+                  swiperClassName="h-full"
+                  swiperSlideClassName="h-full"
+                  items={dataImageGallery[0].images}
+                  carouselItem={item => <img className="h-full" alt="" src={item.src} />}
+                  modules={[Navigation]}
+                  slidesPerView={1}
+                  spaceBetween={10}
+                  hidePaginationBullet
+                  smallSwiperButtons
+                />
+                <button
+                  onClick={() => setViewImages(false)}
+                  className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md"
+                >
+                  <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
+                </button>
+              </div>
               <button onClick={openFormModalHandlerImageGallery}>
                 <Text variant="text-12-bold">TerraMatch Sample</Text>
                 <Text variant="text-12-light"> December 29, 2023</Text>

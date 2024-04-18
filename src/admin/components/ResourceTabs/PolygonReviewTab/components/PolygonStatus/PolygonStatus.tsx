@@ -79,7 +79,7 @@ const PolygonStatus = () => {
       <Button variant="semi-black" className="flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>
         Request change
       </Button>
-      <Button className="flex-1" onClick={openFormModalHandlerStatus}>
+      <Button className="flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
         change status
       </Button>
     </div>

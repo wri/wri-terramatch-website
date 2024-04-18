@@ -8,7 +8,10 @@ import Button from "@/components/elements/Button/Button";
 import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Map from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -221,6 +224,28 @@ const PolygonReviewTab: FC<IProps> = props => {
     { id: "3", label: "Polygons Approved" },
     { id: "4", label: "Monitoring Begins" }
   ];
+
+  const tableData = [
+    {
+      "polygon-id": "ipsum lorem",
+      "restoration-practice": "ipsum lorem",
+      "target-land-use-system": "ipsum lorem",
+      "tree-distribution": "ipsum lorem",
+      "planting-start-date": "ipsum lorem",
+      source: "ipsum lorem",
+      ellipse: ""
+    },
+    {
+      "polygon-id": "ipsum lorem",
+      "restoration-practice": "ipsum lorem",
+      "target-land-use-system": "ipsum lorem",
+      "tree-distribution": "ipsum lorem",
+      "planting-start-date": "ipsum lorem",
+      source: "ipsum lorem",
+      ellipse: ""
+    }
+  ];
+
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab {...props}>
@@ -281,7 +306,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
               <Map className="rounded-lg" status={true} />
               <div>
-                <div>
+                <div className="mb-4">
                   <Text variant="text-16-bold" className="mb-2 text-grey-300">
                     Site Attribute Table
                   </Text>
@@ -290,7 +315,36 @@ const PolygonReviewTab: FC<IProps> = props => {
                     and edit the attributes in the map above.
                   </Text>
                 </div>
-                {/*TODO TABLE*/}
+                <Table
+                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  columns={[
+                    { header: "Polygon ID", accessorKey: "polygon-id" },
+                    { header: "Restoration Practice", accessorKey: "restoration-practice" },
+                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
+                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
+                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
+                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "",
+                      accessorKey: "ellipse",
+                      enableSorting: false,
+                      cell: () => (
+                        <Menu
+                          menu={[{ id: "1", render: () => <p>lorem ipsum</p> }]}
+                          placement={MENU_PLACEMENT_LEFT_BOTTOM}
+                        >
+                          <div className="rounded p-1 hover:bg-primary-200">
+                            <Icon
+                              name={IconNames.ELIPSES}
+                              className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
+                            />
+                          </div>
+                        </Menu>
+                      )
+                    }
+                  ]}
+                  data={tableData}
+                ></Table>
               </div>
             </Stack>
           </Grid>

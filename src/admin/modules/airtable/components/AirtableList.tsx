@@ -291,7 +291,7 @@ const AirtableList: FC = () => {
                   enableSorting: false,
                   cell: () => (
                     <Menu menu={airtableItemMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-                      <div className="p-1 hover:bg-primary-200">
+                      <div className="rounded p-1 hover:bg-primary-200">
                         <Icon
                           name={IconNames.ELIPSES}
                           className="roudn h-4 w-4 rounded-sm text-primary-500 hover:bg-primary-200"

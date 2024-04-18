@@ -1,6 +1,7 @@
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import TextArea from "@/components/elements/Inputs/textArea/TextArea";
+
+import Text from "../Text/Text";
 
 const dropdownOptionsRestoration = [
   {
@@ -76,26 +77,26 @@ const AttributeInformation = () => {
         type="text"
         name=""
       />
-      <TextArea
-        label="Plant Start Date"
-        labelClassname="capitalize text-white"
-        labelVariant="text-14-light"
-        placeholder="Input Plant Start Date"
-        className="max-h-72 !min-h-0 resize-none"
-        name=""
-        containerClassName="w-full"
-        rows={1}
-      />
-      <TextArea
-        label="Plant End Date"
-        labelClassname="capitalize text-white"
-        labelVariant="text-14-light"
-        className="max-h-72 !min-h-0 resize-none"
-        placeholder="Input Plant Start Date"
-        name=""
-        containerClassName="w-full"
-        rows={1}
-      />
+      <label className="flex flex-col gap-2">
+        <Text variant="text-14-light" className="text-white">
+          Plant Start Date
+        </Text>
+        <input
+          type="date"
+          className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
+          placeholder="Input Plant Start Date"
+        />
+      </label>
+      <label className="flex flex-col gap-2">
+        <Text variant="text-14-light" className="text-white">
+          Plant End Date
+        </Text>
+        <input
+          type="date"
+          className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
+          placeholder="Input Plant Start Date"
+        />
+      </label>
       <Dropdown
         label="Restoration Practice*"
         labelClassName="capitalize text-white"

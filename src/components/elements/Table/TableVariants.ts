@@ -78,6 +78,18 @@ export const VARIANT_TABLE_AIRTABLE = {
   thead: "bg-blueCustom-100"
 };
 
+export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
+  table: "border-collapse",
+  name: "border-airtable",
+  trHeader: "bg-neutral-150",
+  thHeader:
+    "first:rounded-tl-lg first:pl-4 first:pr-2 last:rounded-tr-lg last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2",
+  tBody: "",
+  trBody: "bg-white border-y border-neutral-200 lastRow",
+  tdBody: "text-16-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap",
+  thead: "bg-blueCustom-100"
+};
+
 export const VARIANT_TABLE_VERSION = {
   table: "border-collapse",
   name: "border-airtable",
