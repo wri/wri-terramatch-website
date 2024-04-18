@@ -1,14 +1,15 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { remove } from "lodash";
+import { PropsWithChildren, useCallback } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { getAgeOptions } from "@/constants/options/age";
 import { getGenderOptionsWithUndefined } from "@/constants/options/gender";
 import { getIndigeneityOptionsWithUndefined } from "@/constants/options/indigeneity";
-import { useDeleteV2WorkdaysUUID, usePostV2Workdays } from "@/generated/apiComponents";
 import { Entity, Option } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
@@ -64,46 +65,33 @@ const RHFWorkdaysTable = ({
   ...props
 }: PropsWithChildren<RHFWorkdaysTableProps>) => {
   const t = useT();
-  const { field } = useController(props);
-  const value = field?.value || [];
+  const {
+    field: { value, onChange }
+  } = useController(props);
 
-  const { mutate: createStrata } = usePostV2Workdays({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-    }
-  });
+  const createWorkday = useCallback(
+    (data: any) => {
+      onChange([...(value ?? []), { ...data, uuid: uuidv4(), collection }]);
+    },
+    [value, onChange]
+  );
 
-  const { mutate: removeStrata } = useDeleteV2WorkdaysUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
+  const deleteWorkday = useCallback(
+    (uuid: string | undefined) => {
+      if (uuid != null) {
+        remove(value, (v: any) => v.uuid === uuid);
+        onChange(value);
+      }
+    },
+    [value, onChange]
+  );
 
   return (
     <DataTable
       {...props}
-      value={value}
-      handleCreate={data => {
-        createStrata({
-          body: {
-            ...data,
-            collection,
-            model_type: entity?.entityName,
-            //@ts-ignore
-            model_uuid: entity?.entityUUID
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeStrata({ pathParams: { uuid } });
-        }
-      }}
+      value={value ?? []}
+      handleCreate={createWorkday}
+      handleDelete={deleteWorkday}
       addButtonCaption={t("Add Workdays")}
       tableColumns={getWorkdaysTableColumns(t, ethnicityOptions)}
       fields={[
