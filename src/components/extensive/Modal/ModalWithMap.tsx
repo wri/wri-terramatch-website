@@ -69,7 +69,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
           </div>
         </div>
         <div className="relative h-[700px] w-[60%]">
-          <Map className="h-full w-full" hasControls={false} />
+          <Map className="h-full w-full" hasControls={false} polygonChecks />
           <button onClick={onCLose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
             <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
           </button>

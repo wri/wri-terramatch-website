@@ -31,10 +31,8 @@ const Drawer = (props: DrawerProps) => {
 
       if (isScrollingDown) {
         setIsScrollingDown(true);
-        console.log("Scrolling down");
       } else {
         setIsScrollingDown(false);
-        console.log("Scrolling up");
       }
     };
 
