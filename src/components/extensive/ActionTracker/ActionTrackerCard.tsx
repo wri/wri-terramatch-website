@@ -16,10 +16,6 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     status: "edit",
     statusText: t("Draft")
   },
-  rejected: {
-    status: "error",
-    statusText: t("Rejected")
-  },
   approved: {
     status: "success",
     statusText: t("Approved")

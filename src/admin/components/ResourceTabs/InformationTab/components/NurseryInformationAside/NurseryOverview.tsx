@@ -1,5 +1,5 @@
 import { Check } from "@mui/icons-material";
-import { Button, Card, Stack, Typography } from "@mui/material";
+import { Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { Labeled, TextField, useShowContext } from "react-admin";
 
@@ -18,13 +18,23 @@ const NurseryOverview: FC = () => {
         </Typography>
 
         <Stack gap={3}>
-          <Labeled label="Project">
-            <TextField source="project.name" />
-          </Labeled>
-
-          <Labeled label="Status">
-            <TextField source="readable_status" />
-          </Labeled>
+          <Grid spacing={2} marginBottom={2} container>
+            <Grid xs={12} item>
+              <Labeled label="Project">
+                <TextField source="project.name" />
+              </Labeled>
+            </Grid>
+            <Grid xs={4} item>
+              <Labeled label="Status">
+                <TextField source="readable_status" />
+              </Labeled>
+            </Grid>
+            <Grid xs={4} item>
+              <Labeled label="Change Request Status">
+                <TextField source="readable_update_request_status" />
+              </Labeled>
+            </Grid>
+          </Grid>
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button

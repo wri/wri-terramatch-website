@@ -52,6 +52,12 @@ const SiteOverview: FC = () => {
                 <TextField source="readable_status" />
               </Labeled>
             </Grid>
+
+            <Grid xs={4} item>
+              <Labeled label="Change Request Status">
+                <TextField source="readable_update_request_status" />
+              </Labeled>
+            </Grid>
           </Grid>
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">

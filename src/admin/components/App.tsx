@@ -1,3 +1,4 @@
+import SummarizeIcon from "@mui/icons-material/Summarize";
 import { useEffect, useState } from "react";
 import { Admin, Resource } from "react-admin";
 
@@ -114,6 +115,13 @@ const App = () => {
         show={modules.nursery.Show}
         edit={modules.nursery.Edit}
         icon={() => <Icon className="h-8 w-8" name={IconNames.NURSERIES} />}
+      />
+      <Resource
+        name={modules.task.ResourceName}
+        list={modules.task.List}
+        show={modules.task.Show}
+        icon={SummarizeIcon}
+        options={{ label: "Tasks" }}
       />
       <Resource
         name={modules.projectReport.ResourceName}

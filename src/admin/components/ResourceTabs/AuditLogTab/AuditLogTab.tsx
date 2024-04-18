@@ -22,6 +22,27 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: Entity["entityName"];
 }
 
+interface FeedbackProps {
+  comment: string | undefined;
+}
+
+const Feedback: FC<FeedbackProps> = ({ comment }) => {
+  if (comment == null) {
+    return <>-</>;
+  }
+
+  return (
+    <>
+      {comment.split("\n").map(fragment => (
+        <>
+          {fragment}
+          <br />
+        </>
+      ))}
+    </>
+  );
+};
+
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const ctx = useShowContext();
   const resource = entity ?? ctx.resource;
@@ -62,7 +83,10 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 return str.replaceAll("-", " ");
               }}
             />
-            <FunctionField label="Comments" render={(record: any) => record?.new_values?.feedback ?? "-"} />
+            <FunctionField
+              label="Comments"
+              render={(record: any) => <Feedback comment={record?.new_values?.feedback} />}
+            />
           </Datagrid>
         </ReferenceManyField>
       </TabbedShowLayout.Tab>

@@ -104,7 +104,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   };
   useEffect(() => {
     props.formHook?.trigger();
-  }, [props.formHook, selected]);
+  }, [selected, props.formHook]);
+
   const options = useMemo(() => {
     const output = [...props.options];
     if (props.hasOtherOptions) {

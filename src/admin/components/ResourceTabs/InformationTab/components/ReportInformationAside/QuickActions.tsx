@@ -42,6 +42,13 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
           <Button
             variant="outlined"
             component={Link}
+            to={createPath({ resource: modules.task.ResourceName, type: "show", id: record.task_uuid })}
+            fullWidth
+            label="View Task"
+          />
+          <Button
+            variant="outlined"
+            component={Link}
             to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
             fullWidth
             label="Back To Project"

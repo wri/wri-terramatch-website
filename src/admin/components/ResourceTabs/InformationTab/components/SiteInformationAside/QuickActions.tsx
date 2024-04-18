@@ -32,7 +32,7 @@ const QuickActions: FC = () => {
   const downloadShapefile = async () => {
     try {
       if (record && record.name && record.boundary_geojson) {
-        downloadFileBlob(record.boundary_geojson, `${record.name}_shapefile.json`);
+        downloadFileBlob(record.boundary_geojson, `${record.name}_shapefile.geojson`);
       }
     } catch (error) {
       console.error("Error downloading shapefile:", error);

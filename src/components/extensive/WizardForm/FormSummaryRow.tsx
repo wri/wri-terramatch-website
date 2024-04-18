@@ -32,31 +32,39 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   nullText?: string;
 }
 
-export const useGetFormEntries = (props: Omit<FormSummaryRowProps, "index">) => {
+export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
+
+export interface FormEntry {
+  title?: string;
+  type: FieldType;
+  value: any;
+}
+
+export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   return useMemo<any[]>(() => getFormEntries(props, t), [props, t]);
 };
 
-export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typeof useT) => {
-  const { step } = props;
-
-  const outputArr: any[] = [];
+export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, t: typeof useT) => {
+  const outputArr: FormEntry[] = [];
 
   step.fields.forEach(f => {
     switch (f.type) {
       case FieldType.TreeSpecies:
       case FieldType.SeedingsTableInput: {
         //If it was tree species
-        const value = getAnswer(f, props.values) as TreeSpeciesValue[] | null;
+        const value = getAnswer(f, values) as TreeSpeciesValue[] | null;
         outputArr.push({
           title: t("Total {label}", { label: f.label ?? "" }),
-          value: value?.length ?? props.nullText ?? t("Answer Not Provided")
+          type: f.type,
+          value: value?.length ?? nullText ?? t("Answer Not Provided")
         });
         if (f.fieldProps.withNumbers) {
           //If tree species included numbers
           outputArr.push({
             title: t("Total {label} Count", { label: f.label ?? "" }),
-            value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? props.nullText ?? t("Answer Not Provided")
+            type: f.type,
+            value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? nullText ?? t("Answer Not Provided")
           });
         }
         break;
@@ -65,7 +73,8 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.Map: {
         outputArr.push({
           title: f.label,
-          value: <Map geojson={props.values[f.name]} className="h-[240px] flex-1" hasControls={false} />
+          type: f.type,
+          value: <Map geojson={values[f.name]} className="h-[240px] flex-1" hasControls={false} />
         });
         break;
       }
@@ -73,8 +82,9 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.InputTable: {
         outputArr.push({
           title: f.label,
+          type: f.type,
           value: f.fieldProps.rows
-            .map(row => `${row.label}: ${props.values[f.name]?.[row.name] ?? t("Answer Not Provided")}`)
+            .map(row => `${row.label}: ${values[f.name]?.[row.name] ?? t("Answer Not Provided")}`)
             .join("<br/>")
         });
         break;
@@ -100,8 +110,8 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
           headers = getWorkdaysTableColumns(t, f.fieldProps.ethnicityOptions);
         else if (f.type === FieldType.SeedingsDataTable) headers = getSeedingTableColumns(t, f.fieldProps.captureCount);
 
-        const values: string[] = [];
-        props.values?.[f.name]?.forEach((entry: any) => {
+        const stringValues: string[] = [];
+        values?.[f.name]?.forEach((entry: any) => {
           const row: (string | undefined)[] = [];
 
           Object.values(headers).forEach(h => {
@@ -109,12 +119,13 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
             //@ts-ignore
             row.push(h.cell?.({ getValue: () => value }) || value);
           });
-          values.push(row.join(", "));
+          stringValues.push(row.join(", "));
         });
 
         outputArr.push({
           title: f.label,
-          value: values.join("<br/>")
+          type: f.type,
+          value: stringValues.join("<br/>")
         });
         break;
       }
@@ -122,14 +133,16 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.Conditional: {
         outputArr.push({
           title: f.label ?? "",
-          value: getFormattedAnswer(f, props.values) ?? props.nullText ?? t("Answer Not Provided")
+          type: f.type,
+          value: getFormattedAnswer(f, values) ?? nullText ?? t("Answer Not Provided")
         });
         const children = getFormEntries(
           {
-            ...props,
+            values,
+            nullText,
             step: {
-              ...props.step,
-              fields: f.fieldProps.fields.filter(child => child.condition === props.values[f.name])
+              ...step,
+              fields: f.fieldProps.fields.filter(child => child.condition === values[f.name])
             }
           },
           t
@@ -141,7 +154,8 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       default: {
         outputArr.push({
           title: f.label ?? "",
-          value: getFormattedAnswer(f, props.values) ?? props.nullText ?? t("Answer Not Provided")
+          type: f.type,
+          value: getFormattedAnswer(f, values) ?? nullText ?? t("Answer Not Provided")
         });
       }
     }

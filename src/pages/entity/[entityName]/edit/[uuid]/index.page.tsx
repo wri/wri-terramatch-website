@@ -10,7 +10,6 @@ import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2ENTITYUUID,
   useGetV2FormsENTITYUUID,
-  useGetV2UpdateRequestsENTITYUUID,
   usePutV2FormsENTITYUUID,
   usePutV2FormsENTITYUUIDSubmit
 } from "@/generated/apiComponents";
@@ -41,19 +40,6 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data: updateRequestData } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      enabled: mode === "provide-feedback-change-request"
-    }
-  );
-  //@ts-ignore
-  const updateRequest = updateRequestData?.data;
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
@@ -64,14 +50,20 @@ const EditEntityPage = () => {
       }
     }
   });
-  const feedbackFields = updateRequest?.feedback_fields || entity?.feedback_fields || [];
 
-  const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
+  const {
+    data,
+    isLoading: isLoading,
+    isError
+  } = useGetV2FormsENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID },
     queryParams: { lang: router.locale }
   });
   //@ts-ignore
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+
+  // @ts-ignore
+  const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
 
   const formSteps = useGetCustomFormSteps(
     formData.form,
@@ -82,8 +74,13 @@ const EditEntityPage = () => {
     //@ts-ignore
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData.answers, formSteps, entity.migrated);
+
+  const defaultValues = useNormalizedFormDefaultValue(
+    // @ts-ignore
+    formData?.update_request?.content ?? formData?.answers,
+    formSteps,
+    entity.migrated
+  );
 
   const formTitle = useMemo(() => {
     const reportingWindow = getReportingWindow(
