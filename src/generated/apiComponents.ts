@@ -7356,6 +7356,21 @@ export type GetV2FormsENTITYUUIDResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type GetV2FormsENTITYUUIDVariables = {
@@ -7404,6 +7419,21 @@ export type PutV2FormsENTITYUUIDResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type PutV2FormsENTITYUUIDRequestBody = {
@@ -7466,6 +7496,21 @@ export type PutV2FormsENTITYUUIDSubmitResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type PutV2FormsENTITYUUIDSubmitVariables = {
@@ -7523,6 +7568,21 @@ export type PostV2FormsENTITYResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type PostV2FormsENTITYVariables = {
@@ -7568,6 +7628,21 @@ export type PostV2FormsProjectsUUIDResponse = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type PostV2FormsProjectsUUIDVariables = {
@@ -7809,7 +7884,8 @@ export type PutV2AdminUpdateRequestsUUIDSTATUSResponse = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
@@ -7910,7 +7986,8 @@ export type GetV2UpdateRequestsUUIDResponse = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
@@ -7996,7 +8073,8 @@ export type GetV2UpdateRequestsENTITYUUIDResponse = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
@@ -8038,141 +8116,6 @@ export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTI
       ...options,
       ...queryOptions
     }
-  );
-};
-
-export type PostV2WorkdaysError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2WorkdaysResponse = {
-  uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type PostV2WorkdaysRequestBody = {
-  model_type?: string;
-  model_uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type PostV2WorkdaysVariables = {
-  body?: PostV2WorkdaysRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2Workdays = (variables: PostV2WorkdaysVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysRequestBody, {}, {}, {}>({
-    url: "/v2/workdays",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2Workdays = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysVariables>(
-    (variables: PostV2WorkdaysVariables) => fetchPostV2Workdays({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2WorkdaysUUIDPathParams = {
-  uuid: string;
-};
-
-export type PatchV2WorkdaysUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2WorkdaysUUIDResponse = {
-  data?: {
-    uuid?: string;
-    amount?: number;
-    collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
-    indigeneity?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type PatchV2WorkdaysUUIDVariables = {
-  pathParams: PatchV2WorkdaysUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2WorkdaysUUID = (variables: PatchV2WorkdaysUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, undefined, {}, {}, PatchV2WorkdaysUUIDPathParams>({
-    url: "/v2/workdays/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
-
-export const usePatchV2WorkdaysUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, PatchV2WorkdaysUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, PatchV2WorkdaysUUIDVariables>(
-    (variables: PatchV2WorkdaysUUIDVariables) => fetchPatchV2WorkdaysUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2WorkdaysUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2WorkdaysUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2WorkdaysUUIDVariables = {
-  pathParams: DeleteV2WorkdaysUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2WorkdaysUUID = (variables: DeleteV2WorkdaysUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2WorkdaysUUIDError, undefined, {}, {}, DeleteV2WorkdaysUUIDPathParams>({
-    url: "/v2/workdays/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2WorkdaysUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2WorkdaysUUIDError, DeleteV2WorkdaysUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2WorkdaysUUIDError, DeleteV2WorkdaysUUIDVariables>(
-    (variables: DeleteV2WorkdaysUUIDVariables) => fetchDeleteV2WorkdaysUUID({ ...fetcherOptions, ...variables }),
-    options
   );
 };
 
@@ -16079,157 +16022,6 @@ export const useDeleteV2FilesUUID = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<undefined, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>(
     (variables: DeleteV2FilesUUIDVariables) => fetchDeleteV2FilesUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TreeSpeciesError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TreeSpeciesResponse = {
-  uuid?: string;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type PostV2TreeSpeciesRequestBody = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type PostV2TreeSpeciesVariables = {
-  body?: PostV2TreeSpeciesRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2TreeSpecies = (variables: PostV2TreeSpeciesVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2TreeSpeciesResponse, PostV2TreeSpeciesError, PostV2TreeSpeciesRequestBody, {}, {}, {}>({
-    url: "/v2/tree-species",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2TreeSpecies = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PostV2TreeSpeciesResponse, PostV2TreeSpeciesError, PostV2TreeSpeciesVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2TreeSpeciesResponse, PostV2TreeSpeciesError, PostV2TreeSpeciesVariables>(
-    (variables: PostV2TreeSpeciesVariables) => fetchPostV2TreeSpecies({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2TreeSpeciesUUIDPathParams = {
-  uuid: string;
-};
-
-export type PatchV2TreeSpeciesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2TreeSpeciesUUIDResponse = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type PatchV2TreeSpeciesUUIDRequestBody = {
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type PatchV2TreeSpeciesUUIDVariables = {
-  body?: PatchV2TreeSpeciesUUIDRequestBody;
-  pathParams: PatchV2TreeSpeciesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2TreeSpeciesUUID = (variables: PatchV2TreeSpeciesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PatchV2TreeSpeciesUUIDResponse,
-    PatchV2TreeSpeciesUUIDError,
-    PatchV2TreeSpeciesUUIDRequestBody,
-    {},
-    {},
-    PatchV2TreeSpeciesUUIDPathParams
-  >({ url: "/v2/tree-species/{uuid}", method: "patch", ...variables, signal });
-
-export const usePatchV2TreeSpeciesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2TreeSpeciesUUIDResponse,
-      PatchV2TreeSpeciesUUIDError,
-      PatchV2TreeSpeciesUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2TreeSpeciesUUIDResponse,
-    PatchV2TreeSpeciesUUIDError,
-    PatchV2TreeSpeciesUUIDVariables
-  >(
-    (variables: PatchV2TreeSpeciesUUIDVariables) => fetchPatchV2TreeSpeciesUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2TreeSpeciesUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2TreeSpeciesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2TreeSpeciesUUIDResponse = {
-  uuid?: string;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type DeleteV2TreeSpeciesUUIDVariables = {
-  pathParams: DeleteV2TreeSpeciesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2TreeSpeciesUUID = (variables: DeleteV2TreeSpeciesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    DeleteV2TreeSpeciesUUIDResponse,
-    DeleteV2TreeSpeciesUUIDError,
-    undefined,
-    {},
-    {},
-    DeleteV2TreeSpeciesUUIDPathParams
-  >({ url: "/v2/tree-species/{uuid}", method: "delete", ...variables, signal });
-
-export const useDeleteV2TreeSpeciesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      DeleteV2TreeSpeciesUUIDResponse,
-      DeleteV2TreeSpeciesUUIDError,
-      DeleteV2TreeSpeciesUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    DeleteV2TreeSpeciesUUIDResponse,
-    DeleteV2TreeSpeciesUUIDError,
-    DeleteV2TreeSpeciesUUIDVariables
-  >(
-    (variables: DeleteV2TreeSpeciesUUIDVariables) => fetchDeleteV2TreeSpeciesUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };

@@ -76,6 +76,21 @@ export type EntityFormRead = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type UserRead = {
@@ -3820,24 +3835,8 @@ export type V2FileGalleryLite = {
   };
 };
 
-export type V2TreeSpeciesCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
 export type V2TreeSpeciesRead = {
   uuid?: string;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type V2TreeSpeciesUpdate = {
   name?: string;
   amount?: number;
   type?: string;
@@ -4934,26 +4933,6 @@ export type V2SeedingPaginated = {
 
 export type V2WorkdayRead = {
   uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdayCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdayUpdate = {
   amount?: number;
   collection?: string;
   gender?: string;
@@ -22897,7 +22876,8 @@ export type UpdateRequestRead = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;

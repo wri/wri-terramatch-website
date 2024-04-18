@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { Fragment, KeyboardEvent, useId, useRef } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
 import { When } from "react-if";
+import { v4 as uuidv4 } from "uuid";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -53,8 +54,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const addValue = (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (!props.error) {
-      //To stop user from creating lot's of empty records
-      handleCreate?.({ name: undefined, amount: undefined });
+      handleCreate?.({ uuid: uuidv4(), name: undefined, amount: undefined });
       lastInputRef.current && lastInputRef.current.focus();
     }
   };
