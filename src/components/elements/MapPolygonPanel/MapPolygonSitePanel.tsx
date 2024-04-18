@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, Fragment, SetStateAction, useRef, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -29,9 +29,22 @@ const MapPlygonSitePanel = ({
   setSelected
 }: MapPolygonSitePanelProps) => {
   const t = useT();
-
+  const menuRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const refContainer = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current?.contains(event.target as Node)) {
+        setOpenMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+
   return (
     <>
       <FilterSearchBox placeholder={"Search"} className="mb-4 w-full" onChange={() => {}} />
@@ -41,7 +54,7 @@ const MapPlygonSitePanel = ({
           &nbsp; new Polygon
         </Text>
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="relative" ref={menuRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
               <Icon name={IconNames.IC_FILTER} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
             </div>
