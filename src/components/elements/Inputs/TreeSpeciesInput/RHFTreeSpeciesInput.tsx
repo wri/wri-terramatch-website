@@ -32,8 +32,6 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   const createTreeSpecies = useCallback(
     (treeValue: TreeSpeciesValue) => {
       onChange([...(value ?? []), treeValue]);
-      // Specifically avoiding `onChangeCapture()` here because it's too easy to lose progress
-      // typing a name or amount when the server response comes back.
       formHook?.clearErrors(props.name);
     },
     [value, onChange, formHook]
