@@ -11,7 +11,7 @@ import {
   MENU_PLACEMENT_RIGHT_TOP
 } from "./MenuVariant";
 
-interface MenuItemProps {
+export interface MenuItemProps {
   id: string;
   render: () => ReactNode;
   MenuItemVariant?: string;

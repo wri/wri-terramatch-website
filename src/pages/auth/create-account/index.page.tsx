@@ -30,7 +30,7 @@ const Page = () => {
                 selected={selected == item.id}
                 title={item.title}
                 description={item.description}
-                options={item.option}
+                options={item.options}
                 titleOptions={item.titleOption}
               />
             </ButtonUserRole>

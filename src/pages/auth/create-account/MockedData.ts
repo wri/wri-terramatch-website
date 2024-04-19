@@ -8,7 +8,7 @@ export const UserRolInfo = [
     id: "2",
     title: "I’m a Government Official",
     description: "Monitor project performance to inform effective governance and resourcing.",
-    option: [
+    options: [
       {
         id: "1",
         render: () => "Kenya"
@@ -36,7 +36,7 @@ export const UserRolInfo = [
     id: "3",
     title: "I’m a Funder/Investor",
     description: "Evaluate ROI, aid strategic investment decisions and guide funding priorities.",
-    option: [
+    options: [
       {
         id: "1",
         render: () => "PPC"

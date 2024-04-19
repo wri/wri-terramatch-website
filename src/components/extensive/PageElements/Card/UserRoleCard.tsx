@@ -2,8 +2,7 @@ import clsx from "clsx";
 import React from "react";
 import { When } from "react-if";
 
-import Menu from "@/components/elements/Menu/Menu";
-import { MenuItemProps } from "@/components/elements/MenuItem/MenuItem";
+import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -16,10 +15,14 @@ interface UserRoleCardProps {
 }
 
 const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selected, options, titleOptions }) => {
-  const menuDefauld = [
+  const MenuOption: MenuItemProps[] = options || [
     {
       id: "1",
-      render: () => "PPC"
+      render: () => (
+        <Text variant="text-12-bold" className="text-primary">
+          Select Fund
+        </Text>
+      )
     }
   ];
 
@@ -40,8 +43,8 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
         <Text variant="text-12-light" className="text-left leading-normal text-dark-300">
           {description}
         </Text>
-        <When condition={!!options}>
-          <Menu menu={options ? options : menuDefauld}>
+        <When condition={!!titleOptions}>
+          <Menu menu={MenuOption}>
             <Text variant="text-12-bold" className="text-primary">
               {titleOptions || "Select Fund"}
             </Text>
