@@ -8119,6 +8119,141 @@ export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTI
   );
 };
 
+export type PostV2WorkdaysError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2WorkdaysResponse = {
+  uuid?: string;
+  amount?: number;
+  collection?: string;
+  gender?: string;
+  age?: string;
+  ethnicity?: string;
+  indigeneity?: string;
+};
+
+export type PostV2WorkdaysRequestBody = {
+  model_type?: string;
+  model_uuid?: string;
+  amount?: number;
+  collection?: string;
+  gender?: string;
+  age?: string;
+  ethnicity?: string;
+  indigeneity?: string;
+};
+
+export type PostV2WorkdaysVariables = {
+  body?: PostV2WorkdaysRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2Workdays = (variables: PostV2WorkdaysVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysRequestBody, {}, {}, {}>({
+    url: "/v2/workdays",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2Workdays = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysVariables>(
+    (variables: PostV2WorkdaysVariables) => fetchPostV2Workdays({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PatchV2WorkdaysUUIDPathParams = {
+  uuid: string;
+};
+
+export type PatchV2WorkdaysUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2WorkdaysUUIDResponse = {
+  data?: {
+    uuid?: string;
+    amount?: number;
+    collection?: string;
+    gender?: string;
+    age?: string;
+    ethnicity?: string;
+    indigeneity?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+    unfiltered_total?: number;
+  };
+};
+
+export type PatchV2WorkdaysUUIDVariables = {
+  pathParams: PatchV2WorkdaysUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2WorkdaysUUID = (variables: PatchV2WorkdaysUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, undefined, {}, {}, PatchV2WorkdaysUUIDPathParams>({
+    url: "/v2/workdays/{uuid}",
+    method: "patch",
+    ...variables,
+    signal
+  });
+
+export const usePatchV2WorkdaysUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, PatchV2WorkdaysUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, PatchV2WorkdaysUUIDVariables>(
+    (variables: PatchV2WorkdaysUUIDVariables) => fetchPatchV2WorkdaysUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2WorkdaysUUIDPathParams = {
+  uuid: string;
+};
+
+export type DeleteV2WorkdaysUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2WorkdaysUUIDVariables = {
+  pathParams: DeleteV2WorkdaysUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2WorkdaysUUID = (variables: DeleteV2WorkdaysUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2WorkdaysUUIDError, undefined, {}, {}, DeleteV2WorkdaysUUIDPathParams>({
+    url: "/v2/workdays/{uuid}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2WorkdaysUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2WorkdaysUUIDError, DeleteV2WorkdaysUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2WorkdaysUUIDError, DeleteV2WorkdaysUUIDVariables>(
+    (variables: DeleteV2WorkdaysUUIDVariables) => fetchDeleteV2WorkdaysUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2WorkdaysENTITYUUIDPathParams = {
   /**
    * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
