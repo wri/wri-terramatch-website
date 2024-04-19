@@ -41,7 +41,7 @@ const PageCard = ({
               {title}
               <When condition={!!tooltip}>
                 &nbsp;
-                <ToolTip content={tooltip} placement="top" width="w-[13.5vw]" title={title}>
+                <ToolTip content={tooltip} placement="top" width="w-56" title={title}>
                   <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
                 </ToolTip>
               </When>

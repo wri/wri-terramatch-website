@@ -5,6 +5,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
 
 import Icon, { IconNames } from "../../Icon/Icon";
 
@@ -58,7 +59,9 @@ const ItemMonitoringCards = ({
               }`}
             >
               {title}&nbsp;
-              <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
+              <ToolTip content={tooltip} placement="top" width="w-56" title={title}>
+                <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
+              </ToolTip>
             </Text>
           </When>
           <When condition={!!type && type === "graph-button"}>
