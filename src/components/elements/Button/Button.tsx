@@ -123,8 +123,8 @@ const Button: FC<IButtonProps> = props => {
       case "semi-black":
         return {
           container:
-            "group bg-white border-[3px] border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
-          span: "uppercase text-14-bold text-neutral-1000 group-hover:text-primary-500"
+            "group bg-white border-[3px] border-grey-500 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
+          span: "uppercase text-14-bold text-grey-500 group-hover:text-primary-500"
         };
 
       case "semi-red":

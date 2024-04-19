@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import React from "react";
+import { twMerge as tw } from "tailwind-merge";
 
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
@@ -8,6 +9,7 @@ import {
   MENU_PLACEMENT_BOTTOM_RIGHT,
   MENU_PLACEMENT_LEFT_BOTTOM,
   MENU_PLACEMENT_LEFT_HALF_TOP,
+  MENU_PLACEMENT_RIGHT_BOTTOM,
   MENU_PLACEMENT_RIGHT_TOP
 } from "./MenuVariant";
 
@@ -130,6 +132,7 @@ const Menu = (props: MenuProps) => {
     const placeMap: { [key: string]: string } = {
       [MENU_PLACEMENT_RIGHT_TOP]: "horizontalTop",
       [MENU_PLACEMENT_LEFT_BOTTOM]: "horizontalBottom",
+      [MENU_PLACEMENT_RIGHT_BOTTOM]: "horizontalBottom",
       [MENU_PLACEMENT_LEFT_HALF_TOP]: "leftHalfTop"
     };
 
@@ -166,7 +169,10 @@ const Menu = (props: MenuProps) => {
       >
         <div
           ref={menuRef}
-          className={`fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] ${variant}`}
+          className={tw(
+            "fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
+            variant
+          )}
           style={calculateMenuStyle()}
         >
           {menu.map(item => (

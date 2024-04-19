@@ -54,9 +54,9 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           <When condition={status}>
             <Status status={status ? status : "Draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
           </When>
-          <Button variant="transparent-toggle" onClick={onCLose}>
-            <Icon name={IconNames.CROSS} width={24} height={24} />
-          </Button>
+          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+            <Icon name={IconNames.CLEAR} width={16} height={16} className="text-grey-400" />
+          </button>
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">

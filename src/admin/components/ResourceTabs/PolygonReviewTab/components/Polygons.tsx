@@ -8,6 +8,7 @@ import Drawer from "@/components/elements/Drawer/Drawer";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -244,12 +245,17 @@ const Polygons = (props: IPolygonProps) => {
       render: () => (
         <button className="flex items-center gap-2" onClick={openFormModalHandlerRequestPolygonSupport}>
           <Icon name={IconNames.REQUEST} className="h-6 w-6" />
-          <Text variant="text-12-bold">Request Supporta</Text>
+          <Text variant="text-12-bold">Request Support</Text>
         </button>
       )
     },
     {
       id: "6",
+      render: () => <div className="h-[1px] w-full bg-grey-750" />,
+      MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
+    },
+    {
+      id: "7",
       render: () => (
         <div className="flex items-center gap-2">
           <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
@@ -265,18 +271,15 @@ const Polygons = (props: IPolygonProps) => {
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
         <PolygonDrawer />
       </Drawer>
-      <Text variant="text-16-bold" className="mb-4 px-2 text-grey-300">
-        Polygons
-      </Text>
       <div className="mb-4 flex items-center gap-1">
-        <Text variant="text-14" className="px-2 text-grey-250">
-          Add Polygon
+        <Text variant="text-16-bold" className="pl-2 text-grey-300">
+          Polygons
         </Text>
         <Button variant="text" onClick={openFormModalHandlerAddPolygon}>
           <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
         </Button>
       </div>
-      <div ref={containerRef} className="flex max-h-[168px] flex-col overflow-auto">
+      <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
         {props.menu.map(item => (
           <div
             key={item.id}

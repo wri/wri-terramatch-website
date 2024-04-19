@@ -9,10 +9,7 @@ export interface MenuItemProps {
 export const MenuItem = (props: MenuItemProps) => {
   const { MenuItemVariant, onClick, render } = props;
   return (
-    <div
-      onClick={onClick}
-      className={`shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 ${MenuItemVariant} `}
-    >
+    <div onClick={onClick} className={MenuItemVariant}>
       {render()}
     </div>
   );

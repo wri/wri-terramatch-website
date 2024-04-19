@@ -63,12 +63,15 @@ const PolygonStatus = () => {
 
   return (
     <div className="flex h-fit flex-col gap-1 rounded-lg bg-white p-3 shadow">
-      <Text variant="text-14-light" className="opacity-60">
+      <Text variant="text-12-light" className="opacity-60">
         Polygon Status
       </Text>
       <Dropdown
-        optionClassName="w-full whitespace-nowrap"
+        optionClassName="py-[6px] px-3"
+        optionTextClassName="w-full whitespace-nowrap"
+        optionVariant="text-12-light"
         placeholder="PolygonStatus"
+        inputVariant="text-12-light"
         options={dropdownOptions}
         onChange={openFormModalHandler}
         onChangeConfirm={confirmChange}

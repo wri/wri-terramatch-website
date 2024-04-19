@@ -121,7 +121,15 @@
 }
 
 .RaAppBar-toolbar {
-  @apply !bg-grey-300
+  @apply !bg-white
+}
+
+.RaLoadingIndicator-loadedIcon{
+  @apply !text-darkCustom
+}
+
+.RaUserMenu-userButton{
+  @apply !text-darkCustom
 }
 
 .RaFilterFormInput-hideButton{

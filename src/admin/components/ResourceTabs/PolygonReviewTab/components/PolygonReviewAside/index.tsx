@@ -1,7 +1,6 @@
 import { Stack } from "@mui/material";
 
 import Polygons, { IPolygonItem } from "../Polygons";
-import StatusLeyend from "../StatusLeyend";
 
 const criteriaMenuItems: IPolygonItem[] = [
   {
@@ -49,7 +48,6 @@ const SitePolygonReviewAside = () => {
   return (
     <Stack gap={8} className="h-full">
       <Polygons menu={criteriaMenuItems} />
-      <StatusLeyend />
     </Stack>
   );
 };

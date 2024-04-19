@@ -8,7 +8,7 @@ import Button from "@/components/elements/Button/Button";
 import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Map from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
-import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
@@ -233,7 +233,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       "tree-distribution": "ipsum lorem",
       "planting-start-date": "ipsum lorem",
       source: "ipsum lorem",
-      ellipse: ""
+      ellipse: false
     },
     {
       "polygon-id": "ipsum lorem",
@@ -242,7 +242,37 @@ const PolygonReviewTab: FC<IProps> = props => {
       "tree-distribution": "ipsum lorem",
       "planting-start-date": "ipsum lorem",
       source: "ipsum lorem",
-      ellipse: ""
+      ellipse: true
+    }
+  ];
+
+  const tableItemMenu = [
+    {
+      id: "1",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.POLYGON} className="h-6 w-6" />
+          <Text variant="text-12-bold">Open Polygon</Text>
+        </div>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.SEARCH_PA} className="h-6 w-6" />
+          <Text variant="text-12-bold">Zoom to</Text>
+        </div>
+      )
+    },
+    {
+      id: "3",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
+          <Text variant="text-12-bold">Delete Polygon</Text>
+        </div>
+      )
     }
   ];
 
@@ -305,7 +335,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
 
               <Map className="rounded-lg" status={true} />
-              <div>
+              <div className="mb-6">
                 <div className="mb-4">
                   <Text variant="text-16-bold" className="mb-2 text-grey-300">
                     Site Attribute Table
@@ -328,10 +358,12 @@ const PolygonReviewTab: FC<IProps> = props => {
                       header: "",
                       accessorKey: "ellipse",
                       enableSorting: false,
-                      cell: () => (
+                      cell: props => (
                         <Menu
-                          menu={[{ id: "1", render: () => <p>lorem ipsum</p> }]}
-                          placement={MENU_PLACEMENT_LEFT_BOTTOM}
+                          menu={tableItemMenu}
+                          placement={
+                            (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
+                          }
                         >
                           <div className="rounded p-1 hover:bg-primary-200">
                             <Icon

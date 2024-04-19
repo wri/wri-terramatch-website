@@ -30,7 +30,10 @@ export interface DropdownProps {
   options: Option[];
   iconName?: IconNames;
   className?: string;
+  inputVariant?: TextVariants;
   optionClassName?: string;
+  optionTextClassName?: string;
+  optionVariant?: TextVariants;
   containerClassName?: string;
   defaultValue?: OptionValue[];
   required?: boolean;
@@ -178,7 +181,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     )}`}
                   />
                 </When>
-                <Text variant="text-14-light" className="w-full line-clamp-1">
+                <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>
@@ -215,9 +218,12 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       key={option.value}
                       value={option.value}
                       className={classNames(
-                        "w-full cursor-pointer hover:bg-primary-100",
-                        props.multiSelect ? "p-3.5" : "p-3",
-                        isSelected && !props.multiSelect && "bg-primary-100"
+                        tw(
+                          "w-full cursor-pointer hover:bg-primary-100",
+                          props.multiSelect ? "p-3.5" : "p-3",
+                          isSelected && !props.multiSelect && "bg-primary-100",
+                          props.optionClassName
+                        )
                       )}
                     >
                       <If condition={props.multiSelect}>
@@ -231,7 +237,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
-                            <Text variant="text-14-light" className={tw("w-[65%] break-words", props.optionClassName)}>
+                            <Text
+                              variant={`${props.optionVariant ?? "text-14-light"}`}
+                              className={tw("w-[65%] break-words", props.optionTextClassName)}
+                            >
                               {option.title}
                             </Text>
                             <When condition={option.meta}>
