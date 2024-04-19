@@ -26,7 +26,13 @@ const Page = () => {
         <div className="mb-6 flex flex-col gap-2 lg:gap-3">
           {UserRolInfo.map(item => (
             <ButtonUserRole key={item.id} onClick={() => setSelected(item.id)} className="h-full w-full">
-              <UserRoleCard selected={selected == item.id} title={item.title} description={item.description} />
+              <UserRoleCard
+                selected={selected == item.id}
+                title={item.title}
+                description={item.description}
+                options={item.option}
+                titleOptions={item.titleOption}
+              />
             </ButtonUserRole>
           ))}
         </div>

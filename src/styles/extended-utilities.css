@@ -9,6 +9,18 @@
     display: none;
   }
 
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5PX;
+    margin-left: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #AEAEAE;
+    border-radius: 10px;
+    padding-left: 5px;
+  }
+  
   .font-inherit {
     font-size: inherit;
     font-weight: inherit;
@@ -322,19 +334,19 @@
 
   /* Text 18px */
   .text-18-light {
-    @apply text-md font-normal lg:text-lg wide:text-xl;
+    @apply font-normal text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
   .text-18 {
-    @apply text-md font-medium lg:text-lg wide:text-xl;
+    @apply font-medium text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
   .text-18-semibold {
-    @apply text-md font-semibold lg:text-lg wide:text-xl;
+    @apply font-semibold text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
   .text-18-bold {
-    @apply text-md font-bold lg:text-lg wide:text-xl;
+    @apply font-bold text-md lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
 

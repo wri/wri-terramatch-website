@@ -1,6 +1,9 @@
 import clsx from "clsx";
 import React from "react";
+import { When } from "react-if";
 
+import Menu from "@/components/elements/Menu/Menu";
+import { MenuItemProps } from "@/components/elements/MenuItem/MenuItem";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -8,9 +11,18 @@ interface UserRoleCardProps {
   title: string;
   description: string;
   selected: boolean;
+  options?: MenuItemProps[];
+  titleOptions?: string;
 }
 
-const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selected }) => {
+const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selected, options, titleOptions }) => {
+  const menuDefauld = [
+    {
+      id: "1",
+      render: () => "PPC"
+    }
+  ];
+
   return (
     <article
       className={clsx("flex cursor-pointer items-center gap-2 rounded-lg border-2 p-3", {
@@ -28,6 +40,13 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
         <Text variant="text-12-light" className="text-left leading-normal text-dark-300">
           {description}
         </Text>
+        <When condition={!!options}>
+          <Menu menu={options ? options : menuDefauld}>
+            <Text variant="text-12-bold" className="text-primary">
+              {titleOptions || "Select Fund"}
+            </Text>
+          </Menu>
+        </When>
       </div>
       <Icon
         name={selected ? IconNames.SUCCESS : IconNames.NO_SUCCESS}
