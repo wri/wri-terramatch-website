@@ -19,7 +19,7 @@ const nextConfig = {
   publicRuntimeConfig: {
     TxNativePublicToken: process.env.TRANSIFEX_TOKEN
   },
-  images: { domains: ["s3-eu-west-1.amazonaws.com"] },
+  images: { domains: process.env.IMAGE_DOMAINS?.split(',') ?? ["s3-eu-west-1.amazonaws.com"] },
   // webpack5: true,
   webpack(config) {
     config.module.rules.push({
