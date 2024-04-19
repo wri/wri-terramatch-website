@@ -60,7 +60,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
           <NavbarItem
             href={item.url}
             active={router.asPath === item.url || router.asPath === `${item.url}#`}
-            className={classNames("sm:mr-2", item.tourTarget)}
+            className={classNames("text-darkCustom sm:mr-2", item.tourTarget)}
             onClick={handleClose}
             disabled={linksDisabled}
           >

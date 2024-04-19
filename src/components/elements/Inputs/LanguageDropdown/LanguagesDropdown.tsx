@@ -36,7 +36,9 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
     <Popover className={classNames(props.className, "relative w-fit")}>
       <Popover.Button ref={buttonRef} className="flex items-center justify-between p-2">
         <Icon name={IconNames.EARTH} width={16} className="mr-2 fill-neutral-700" />
-        <span className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-white">{selected?.title}</span>
+        <span className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom">
+          {selected?.title}
+        </span>
         <Icon
           name={IconNames.TRIANGLE_DOWN}
           width={8}

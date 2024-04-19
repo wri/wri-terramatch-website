@@ -33,7 +33,7 @@ const NavbarItem = (props: NavbarItemProps) => {
           <Text
             as="span"
             variant={props.active ? "text-14-bold" : "text-14-light"}
-            className={classNames("whitespace-nowrap text-white", props.disabled && "cursor-default")}
+            className={classNames("whitespace-nowrap text-darkCustom", props.disabled && "cursor-default")}
           >
             {props.children}
           </Text>
