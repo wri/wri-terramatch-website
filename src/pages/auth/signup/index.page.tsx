@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 // import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 // import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { usePostUsers } from "@/generated/apiComponents";
+import { usePostUsersRegister } from "@/generated/apiComponents";
 
 import LoginLayout from "../layout";
 import SignUpForm from "./components/SignupForm";
@@ -33,7 +33,7 @@ const SignUpPage = () => {
   const router = useRouter();
   const { role_id } = router.query;
 
-  const { mutate: signUp, isLoading } = usePostUsers({
+  const { mutate: signUp, isLoading } = usePostUsersRegister({
     onSuccess(data) {
       //@ts-ignore
       const email = data.data.email_address;
@@ -84,8 +84,8 @@ const SignUpPage = () => {
         password: data.password,
         phone_number: data.phone_number,
         job_role: data.job_role,
-        callback_url: window.location.origin + "/auth/verify/email/"
-        // role_id: role_id // to be added when role_id is available in the api component
+        callback_url: window.location.origin + "/auth/verify/email/",
+        role_id: role_id as string
       }
     });
   };

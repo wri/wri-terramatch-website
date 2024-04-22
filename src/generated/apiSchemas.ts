@@ -4941,26 +4941,6 @@ export type V2WorkdayRead = {
   indigeneity?: string;
 };
 
-export type V2WorkdayCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdayUpdate = {
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
 export type V2WorkdaysPaginated = {
   data?: {
     uuid?: string;
@@ -22982,4 +22962,51 @@ export type V2ProjectInviteRead = {
 
 export type V2ProjectInviteCreate = {
   email_address?: string;
+};
+
+export type RoleUserCreate = {
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  password?: string;
+  job_role?: string;
+  role_id?: string;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  phone_number?: string;
+  whatsapp_phone?: string;
+  callback_url?: string;
+};
+
+export type RoleUserRead = {
+  id?: number;
+  organisation_id?: number;
+  organisation_name?: string;
+  my_organisation?: V2AdminOrganisationRead;
+  my_monitoring_organisations?: V2MonitoringOrganisationRead[];
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * @format date-time
+   */
+  email_address_verified_at?: string;
+  role?: string;
+  role_id?: string;
+  /**
+   * @format date-time
+   */
+  last_logged_in_at?: string;
+  job_role?: string;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  avatar?: string;
+  phone_number?: string;
+  whatsapp_phone?: string;
+  has_ppc_projects?: boolean;
+  has_terrafund_projects?: boolean;
 };

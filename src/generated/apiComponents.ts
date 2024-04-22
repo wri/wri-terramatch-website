@@ -7,6 +7,7 @@ import * as reactQuery from "@tanstack/react-query";
 import { useApiContext, ApiContext } from "./apiContext";
 import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
+import type * as Schemas from "./apiSchemas";
 import type * as RequestBodies from "./apiRequestBodies";
 
 export type GetV2TreeSpeciesEntityUUIDPathParams = {
@@ -8119,141 +8120,6 @@ export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTI
   );
 };
 
-export type PostV2WorkdaysError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2WorkdaysResponse = {
-  uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type PostV2WorkdaysRequestBody = {
-  model_type?: string;
-  model_uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type PostV2WorkdaysVariables = {
-  body?: PostV2WorkdaysRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2Workdays = (variables: PostV2WorkdaysVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysRequestBody, {}, {}, {}>({
-    url: "/v2/workdays",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2Workdays = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2WorkdaysResponse, PostV2WorkdaysError, PostV2WorkdaysVariables>(
-    (variables: PostV2WorkdaysVariables) => fetchPostV2Workdays({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2WorkdaysUUIDPathParams = {
-  uuid: string;
-};
-
-export type PatchV2WorkdaysUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2WorkdaysUUIDResponse = {
-  data?: {
-    uuid?: string;
-    amount?: number;
-    collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
-    indigeneity?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type PatchV2WorkdaysUUIDVariables = {
-  pathParams: PatchV2WorkdaysUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2WorkdaysUUID = (variables: PatchV2WorkdaysUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, undefined, {}, {}, PatchV2WorkdaysUUIDPathParams>({
-    url: "/v2/workdays/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
-
-export const usePatchV2WorkdaysUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, PatchV2WorkdaysUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2WorkdaysUUIDResponse, PatchV2WorkdaysUUIDError, PatchV2WorkdaysUUIDVariables>(
-    (variables: PatchV2WorkdaysUUIDVariables) => fetchPatchV2WorkdaysUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2WorkdaysUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2WorkdaysUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2WorkdaysUUIDVariables = {
-  pathParams: DeleteV2WorkdaysUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2WorkdaysUUID = (variables: DeleteV2WorkdaysUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2WorkdaysUUIDError, undefined, {}, {}, DeleteV2WorkdaysUUIDPathParams>({
-    url: "/v2/workdays/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2WorkdaysUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2WorkdaysUUIDError, DeleteV2WorkdaysUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2WorkdaysUUIDError, DeleteV2WorkdaysUUIDVariables>(
-    (variables: DeleteV2WorkdaysUUIDVariables) => fetchDeleteV2WorkdaysUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2WorkdaysENTITYUUIDPathParams = {
   /**
    * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
@@ -16033,7 +15899,7 @@ export type PostV2FileUploadMODELCOLLECTIONUUIDRequestBody = {
   lat?: number;
   lng?: number;
   /**
-   * @default false
+   * @default true
    */
   is_public?: boolean;
 };
@@ -16074,6 +15940,87 @@ export const usePostV2FileUploadMODELCOLLECTIONUUID = (
   >(
     (variables: PostV2FileUploadMODELCOLLECTIONUUIDVariables) =>
       fetchPostV2FileUploadMODELCOLLECTIONUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlPathParams = {
+  uuid: string;
+};
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlResponse = {
+  uuid?: string;
+  url?: string;
+  thumb_url?: string;
+  collection_name?: string;
+  title?: string;
+  file_name?: string;
+  mime_type?: string;
+  size?: number;
+  lat?: number;
+  lng?: number;
+  is_public?: boolean;
+  created_at?: string;
+}[];
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody = {
+  download_url?: string;
+  /**
+   * @default Name of image
+   */
+  title?: string;
+  /**
+   * @default null
+   */
+  lat?: number;
+  /**
+   * @default null
+   */
+  lng?: number;
+  /**
+   * @default true
+   */
+  is_public?: boolean;
+}[];
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlVariables = {
+  body?: PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody;
+  pathParams: PostV2FileUploadSitePhotosUUIDBulkUrlPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2FileUploadSitePhotosUUIDBulkUrl = (
+  variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+    PostV2FileUploadSitePhotosUUIDBulkUrlError,
+    PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody,
+    {},
+    {},
+    PostV2FileUploadSitePhotosUUIDBulkUrlPathParams
+  >({ url: "/v2/file/upload/site/photos/{uuid}/bulk_url", method: "post", ...variables, signal });
+
+export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+      PostV2FileUploadSitePhotosUUIDBulkUrlError,
+      PostV2FileUploadSitePhotosUUIDBulkUrlVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+    PostV2FileUploadSitePhotosUUIDBulkUrlError,
+    PostV2FileUploadSitePhotosUUIDBulkUrlVariables
+  >(
+    (variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables) =>
+      fetchPostV2FileUploadSitePhotosUUIDBulkUrl({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -31451,6 +31398,33 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
       ...options,
       ...queryOptions
     }
+  );
+};
+
+export type PostUsersRegisterError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostUsersRegisterVariables = {
+  body?: Schemas.RoleUserCreate;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostUsersRegister = (variables: PostUsersRegisterVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.RoleUserRead, PostUsersRegisterError, Schemas.RoleUserCreate, {}, {}, {}>({
+    url: "/users-register",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostUsersRegister = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.RoleUserRead, PostUsersRegisterError, PostUsersRegisterVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Schemas.RoleUserRead, PostUsersRegisterError, PostUsersRegisterVariables>(
+    (variables: PostUsersRegisterVariables) => fetchPostUsersRegister({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 
