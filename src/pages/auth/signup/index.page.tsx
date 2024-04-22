@@ -9,7 +9,6 @@ import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hoo
 // import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { usePostUsersRegister } from "@/generated/apiComponents";
 
-import LoginLayout from "../layout";
 import SignUpForm from "./components/SignupForm";
 
 const SignUpFormDataSchema = (t: any) =>
@@ -28,10 +27,9 @@ const SignUpFormDataSchema = (t: any) =>
 
 export type SignUpFormData = yup.InferType<ReturnType<typeof SignUpFormDataSchema>>;
 
-const SignUpPage = () => {
+const SignUpPage = ({ role_id }: { role_id: string }) => {
   const t = useT();
   const router = useRouter();
-  const { role_id } = router.query;
 
   const { mutate: signUp, isLoading } = usePostUsersRegister({
     onSuccess(data) {
@@ -96,9 +94,7 @@ const SignUpPage = () => {
     //     <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
     //   </ContentLayout>
     // </BackgroundLayout>
-    <LoginLayout>
-      <SignUpForm form={form} handleSave={handleSave} loading={isLoading} roleId={role_id as string} />
-    </LoginLayout>
+    <SignUpForm form={form} handleSave={handleSave} loading={isLoading} roleId={role_id as string} />
   );
 };
 
