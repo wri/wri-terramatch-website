@@ -31,6 +31,7 @@ export interface DropdownProps {
   iconName?: IconNames;
   className?: string;
   inputVariant?: TextVariants;
+  optionsClassName?: string;
   optionClassName?: string;
   optionTextClassName?: string;
   optionVariant?: TextVariants;
@@ -193,6 +194,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               />
             </Listbox.Button>
             <Transition
+              className="relative z-50 !m-0"
               show={open}
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"
@@ -203,7 +205,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             >
               <Listbox.Options
                 as="div"
-                className="border-light absolute mt-2 max-h-[400px] min-w-full overflow-auto rounded-lg bg-white"
+                className={tw(
+                  "border-light absolute mt-2 max-h-[400px] min-w-full overflow-auto rounded-lg bg-white",
+                  props.optionsClassName
+                )}
               >
                 {options.map(option => {
                   let isSelected;
@@ -239,7 +244,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                           <div className="flex items-center gap-2">
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
-                              className={tw("w-[65%] break-words", props.optionTextClassName)}
+                              className={tw("w-[63%] break-words", props.optionTextClassName)}
                             >
                               {option.title}
                             </Text>

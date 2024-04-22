@@ -35,6 +35,7 @@ const SelectPolygon = () => {
     <div className="flex h-fit flex-col gap-2">
       <Text variant="text-16-bold">Select Polygon</Text>
       <Dropdown
+        optionsClassName="max-w-full"
         defaultValue={toArray(dropdownPolygonOptions[0].value)}
         placeholder="Select Polygon"
         options={dropdownPolygonOptions}

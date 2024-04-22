@@ -1,4 +1,3 @@
-import { Search } from "@mui/icons-material";
 import classNames from "classnames";
 import { FC, useState } from "react";
 import { When } from "react-if";
@@ -11,6 +10,8 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE } from "@/components/elements/Table/TableVariants";
+import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
+import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -163,7 +164,7 @@ const AirtableList: FC = () => {
             onChange={() => {}}
           />
           <Input
-            label="Publish Fo"
+            label="Publish For"
             labelClassname="capitalize"
             labelVariant="text-14-light"
             placeholder="Input Publish For"
@@ -207,7 +208,7 @@ const AirtableList: FC = () => {
             <Text variant="text-24-bold">AFR100 References</Text>
             <Text variant="text-16-light">Access publicly available curated infographics and dashboards. </Text>
           </div>
-          <Search></Search>
+          <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
         </div>
         <div className="mb-4 flex items-center gap-8">
           <Button variant="text" onClick={() => setSelected(tabIndex.TERRAFUND)}>
@@ -270,9 +271,6 @@ const AirtableList: FC = () => {
                         <div>
                           <div className="flex items-center gap-1">
                             <Text variant="text-14-semibold">{value.name}</Text>
-                            <Text variant="text-14-light" className="text-neutral-950 opacity-80">
-                              Airtable
-                            </Text>
                             <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-neutral-950" />
                           </div>
 
@@ -284,7 +282,19 @@ const AirtableList: FC = () => {
                     );
                   }
                 },
-                { header: "Last Updated", accessorKey: "date", enableSorting: false },
+                {
+                  header: "Last Updated",
+                  accessorKey: "date",
+                  enableSorting: false,
+                  cell: props => {
+                    const value = props.getValue() as string;
+                    return (
+                      <Text variant="text-14-light" className="whitespace-nowrap">
+                        {value}
+                      </Text>
+                    );
+                  }
+                },
                 {
                   header: "",
                   accessorKey: "ellipse",

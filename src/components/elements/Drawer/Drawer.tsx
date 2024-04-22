@@ -58,7 +58,7 @@ const Drawer = (props: DrawerProps) => {
         {title}
         <Button
           variant="text"
-          className="ml-auto"
+          className="ml-auto rounded p-1 hover:bg-grey-800"
           onClick={() => {
             setIsOpen(false);
           }}

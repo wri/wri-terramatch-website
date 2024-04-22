@@ -347,9 +347,22 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
                 <Table
                   variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  classNameWrapper="max-h-[176px]"
                   columns={[
                     { header: "Polygon ID", accessorKey: "polygon-id" },
-                    { header: "Restoration Practice", accessorKey: "restoration-practice" },
+                    {
+                      header: "Restoration Practice",
+                      accessorKey: "restoration-practice",
+                      cell: props => {
+                        const placeholder = props.getValue() as string;
+                        return (
+                          <input
+                            placeholder={placeholder}
+                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                          />
+                        );
+                      }
+                    },
                     { header: "Target Land Use System", accessorKey: "target-land-use-system" },
                     { header: "Tree Distribution", accessorKey: "tree-distribution" },
                     { header: "Planting Start Date", accessorKey: "planting-start-date" },

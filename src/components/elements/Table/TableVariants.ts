@@ -1,4 +1,5 @@
 export interface TableVariant {
+  tableWrapper?: string;
   name: string;
   table?: string;
   trHeader: string;
@@ -81,6 +82,7 @@ export const VARIANT_TABLE_AIRTABLE = {
 export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   table: "border-collapse",
   name: "border-airtable",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-hidden",
   trHeader: "bg-neutral-150",
   thHeader:
     "first:rounded-tl-lg first:pl-4 first:pr-2 last:rounded-tr-lg last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2",
