@@ -23,9 +23,6 @@ const Page = () => {
             <Text variant="text-32-bold" className="text-blue-700">
               Create an account
             </Text>
-            <Text variant="text-12-light" className="text-blue-700">
-              Create new account TerraMatch’s Pulse
-            </Text>
           </div>
           <div className="mb-6 flex flex-col gap-2 lg:gap-3">
             {UserRolInfo.map(item => (

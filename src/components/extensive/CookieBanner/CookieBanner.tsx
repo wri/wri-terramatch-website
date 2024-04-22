@@ -20,7 +20,7 @@ const CookieBanner = () => {
     return null;
   } else {
     return (
-      <div className="sticky bottom-0 right-0 left-0 z-50 flex w-full flex-col items-center justify-center gap-4 bg-black py-4 px-8  md:flex-row">
+      <div className="flex w-full flex-col items-center justify-center gap-4 bg-black py-4 px-8  md:flex-row">
         <Text
           variant="text-heading-200"
           containHtml
