@@ -104,7 +104,10 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
 
       <PageRow>
         <PageColumn>
-          <PageCard title={t("Project Monitoring")} tooltip=" ">
+          <PageCard
+            title={t("Project Monitoring")}
+            tooltip="Lorem ipsum dolor sit amet, urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero."
+          >
             <div className="flex items-center justify-between text-darkCustom">
               <Text variant="text-14-light" className="w-[65%]">
                 Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
