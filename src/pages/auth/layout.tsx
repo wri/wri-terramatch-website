@@ -16,7 +16,7 @@ const LoginLayout: React.FC<LoginLayoutProps> = props => {
 
   return (
     <div className="relative flex h-full w-full bg-square-pattern bg-contain bg-right bg-no-repeat">
-      <div className="flex w-[45%] flex-col items-center justify-between pt-9">
+      <div className="flex w-[45%] flex-col items-center justify-center">
         {children}
         <When condition={pathname !== "/sign-up"}>
           {/* <Button variant="transparent" className="self-start pt-4 pb-8 px-9 lg:px-14 lg:pb-10">
@@ -24,7 +24,7 @@ const LoginLayout: React.FC<LoginLayoutProps> = props => {
               English (United Kingdom)
             </Text>
           </Button> */}
-          <div className="self-start px-9 py-2 lg:px-14">
+          <div className="absolute bottom-[1.5vh] left-6">
             <Button>
               <Text variant="text-12-bold" className="text-blue-300">
                 English (United Kingdom)

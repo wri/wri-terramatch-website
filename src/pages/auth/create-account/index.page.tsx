@@ -19,12 +19,12 @@ const Page = () => {
         <SignUpPage role_id={selected as string} />
       ) : (
         <div className="mb-auto mt-auto w-[30vw]">
-          <div className="mb-8 flex flex-col gap-2">
+          <div className="mb-1 flex flex-col gap-2">
             <Text variant="text-32-bold" className="text-blue-700">
               Create an account
             </Text>
           </div>
-          <div className="mb-6 flex flex-col gap-2 lg:gap-3">
+          <div className="mb-6 flex max-h-[calc(100vh-324px)] flex-col gap-2 overflow-y-auto lg:gap-3">
             {UserRolInfo.map(item => (
               <ButtonUserRole key={item.id} onClick={() => setSelected(item.id)} className="h-full w-full">
                 <UserRoleCard
