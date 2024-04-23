@@ -106,7 +106,7 @@ const ProjectDetailPage = () => {
         title={project.name}
         subtitles={[
           `${t("Organisation")}: ${project.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : isTerrafund ? t("Terrafund") : reportingFramework.name
+          isPPC ? t("Priceless Planet Coalition") : isTerrafund ? t("TerraFund") : reportingFramework.name
         ]}
         hasBackButton={false}
       >
