@@ -40,7 +40,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
 import Text from "../Text/Text";
-import PolygonStatus from "./MapControls/PolygonStatus";
+import SiteStatus from "./MapControls/SiteStatus";
 
 mapboxgl.accessToken =
   process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
@@ -300,7 +300,7 @@ export const Map = ({
         </ControlGroup>
         <When condition={!!status}>
           <ControlGroup position="top-left">
-            <PolygonStatus />
+            <SiteStatus />
           </ControlGroup>
         </When>
         <When condition={!!viewImages}>

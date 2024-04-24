@@ -146,7 +146,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   };
 
   return (
-    <div className={classNames("space-y-2", props.containerClassName)}>
+    <div className={tw("space-y-2", props.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
         {({ open, value }) => (
           <>

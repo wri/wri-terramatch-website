@@ -4,44 +4,43 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
 import Dropdown from "../../Inputs/Dropdown/Dropdown";
-import TextArea from "../../Inputs/textArea/TextArea";
 import Text from "../../Text/Text";
 
 const dropdownOptions = [
   {
-    title: "Site Approved",
+    title: "Draft",
     value: 1
   },
   {
-    title: "Polygons Submitted",
+    title: "Awaiting Approval",
     value: 2
   },
   {
-    title: "Polygons Approved",
+    title: "Needs More Information",
     value: 3
   },
   {
-    title: "Monitoring Begins",
+    title: "Planting In Progress",
     value: 4
   },
   {
-    title: "Planting Complete",
+    title: "Approved",
     value: 5
   }
 ];
 
-const PolygonStatus = () => {
+const SiteStatus = () => {
   const { openModal, closeModal } = useModalContext();
   const [confirmChange, setConfirmChange] = useState(true);
 
   const openFormModalHandler = () => {
     openModal(
       <ModalConfirm
-        className="w-[300px]"
-        title={"Confirm Polygon Status Change"}
+        title={"Confirm Site Status Change"}
+        commentArea
         content={
           <Text variant="text-14-light" className="text-center">
-            Are you sure you want to change the polgyon status to Planting Complete?
+            Are you sure you want to change the site status to Planting In Progress?
           </Text>
         }
         onClose={closeModal}
@@ -49,28 +48,21 @@ const PolygonStatus = () => {
           setConfirmChange(true);
           closeModal;
         }}
-      >
-        <TextArea
-          placeholder="Type comment here..."
-          name=""
-          className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
-          containerClassName="w-full"
-          rows={4}
-        />
-      </ModalConfirm>
+      />
     );
   };
 
   return (
-    <div className="flex h-fit flex-col gap-1 rounded-lg bg-white p-3 shadow">
-      <Text variant="text-12-light" className="opacity-60">
-        Polygon Status
-      </Text>
+    <div className="rounded-lg bg-white p-3 shadow">
       <Dropdown
+        label="Site Status"
+        labelClassName="opacity-60 capitalize"
+        labelVariant="text-12-light"
         optionClassName="py-[6px] px-3"
         optionTextClassName="w-full whitespace-nowrap"
         optionVariant="text-12-light"
-        placeholder="PolygonStatus"
+        containerClassName="space-y-0"
+        placeholder="Site Status"
         inputVariant="text-12-light"
         options={dropdownOptions}
         onChange={openFormModalHandler}
@@ -81,4 +73,4 @@ const PolygonStatus = () => {
   );
 };
 
-export default PolygonStatus;
+export default SiteStatus;

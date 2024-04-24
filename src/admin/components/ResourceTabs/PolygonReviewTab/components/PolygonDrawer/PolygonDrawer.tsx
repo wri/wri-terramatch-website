@@ -7,7 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 
 import ComentarySection from "../ComentarySection/ComentarySection";
-import PolygonStatus from "../PolygonStatus/PolygonStatus";
+import StatusDisplay from "../PolygonStatus/StatusDisplay ";
 import SelectPolygon from "../SelectPolygon/SelectPolygon";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
@@ -85,7 +85,7 @@ const PolygonDrawer = () => {
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <SelectPolygon></SelectPolygon>
-            <PolygonStatus></PolygonStatus>
+            <StatusDisplay />
             <ComentarySection></ComentarySection>
           </div>
         </Then>

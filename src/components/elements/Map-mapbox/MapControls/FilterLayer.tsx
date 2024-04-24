@@ -42,16 +42,6 @@ export const FilterControl = () => {
               onClick={() => {}}
             >
               <div className="text-12-semibold flex items-center">
-                <div className="mr-2 h-3 w-3 rounded-sm bg-pinkCustom lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
-                {t("Draft")}
-              </div>
-            </Button>
-            <Button
-              variant="text"
-              className="text-12-bold text-nowrap h-fit w-full !justify-start rounded-lg bg-white p-2"
-              onClick={() => {}}
-            >
-              <div className="text-12-semibold flex items-center">
                 <div className="mr-2 h-3 w-3 rounded-sm bg-blueCustom-200 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
                 {t("Submitted")}
               </div>
@@ -62,8 +52,8 @@ export const FilterControl = () => {
               onClick={() => {}}
             >
               <div className="text-12-semibold flex items-center">
-                <div className="mr-2 h-3 w-3 rounded-sm bg-greenCustom-200 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
-                {t("Approved")}
+                <div className="mr-2 h-3 w-3 rounded-sm bg-tertiary-600 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
+                {t("Needs More Info")}
               </div>
             </Button>
             <Button
@@ -72,8 +62,8 @@ export const FilterControl = () => {
               onClick={() => {}}
             >
               <div className="text-12-semibold flex items-center">
-                <div className="mr-2 h-3 w-3 rounded-sm bg-tertiary-600 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
-                {t("Needs More Info")}
+                <div className="mr-2 h-3 w-3 rounded-sm bg-greenCustom-200 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
+                {t("Approved")}
               </div>
             </Button>
           </div>

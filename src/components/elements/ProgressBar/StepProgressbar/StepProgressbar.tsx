@@ -3,7 +3,7 @@ import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { Colors } from "@/types/common";
+import { Colors, TextVariants } from "@/types/common";
 
 import Text from "../../Text/Text";
 
@@ -15,6 +15,7 @@ export interface StepProgressbarProps extends DetailedHTMLProps<HTMLAttributes<H
   color?: Colors;
   value: number;
   labels?: labelProps[];
+  labelVariant?: TextVariants;
   labelsPlaceTop?: boolean;
   classNameLabels?: string;
 }
@@ -24,6 +25,7 @@ const StepProgressbar = ({
   color = "primary",
   labels = [],
   className,
+  labelVariant = "text-12",
   labelsPlaceTop,
   classNameLabels,
   ...rest
@@ -49,14 +51,14 @@ const StepProgressbar = ({
         >
           <div className="flex w-full justify-between">
             {labels?.map((item, index) => (
-              <div key={item.id} className="">
+              <div key={item.id}>
                 <div className="relative flex flex-col items-center">
                   <Icon
                     name={index > lastSelected ? IconNames.CHECK_PROGRESSBAR_NULL : IconNames.CHECK_PROGRESSBAR}
                     className={`z-10 h-5 w-5 text-${color}`}
                   />
                   <Text
-                    variant="text-12"
+                    variant={labelVariant}
                     className={classNames(
                       tw(
                         lastSelected === index && "!font-bold",

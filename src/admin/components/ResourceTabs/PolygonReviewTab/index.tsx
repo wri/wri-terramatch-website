@@ -113,11 +113,19 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
+  const contentForApproval = (
+    <Text variant="text-12-light" as="p" className="text-center">
+      Are you sure you want to approve the polygons for&nbsp;
+      <b style={{ fontSize: "inherit" }}>Native Seed Centre Shrub SPA</b>?
+    </Text>
+  );
+
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
         title={"Confirm Polygon Approval"}
-        content="Do you want to approve this polgyon?"
+        content={contentForApproval}
+        commentArea
         onClose={closeModal}
         onConfirm={() => {}}
       />
@@ -219,10 +227,11 @@ const PolygonReviewTab: FC<IProps> = props => {
   ];
 
   const polygonStatusLabels = [
-    { id: "1", label: "Site Approved" },
-    { id: "2", label: "Polygons Submitted" },
-    { id: "3", label: "Polygons Approved" },
-    { id: "4", label: "Monitoring Begins" }
+    { id: "1", label: "Draft" },
+    { id: "2", label: "Awaiting Approval" },
+    { id: "3", label: "Needs More Information" },
+    { id: "4", label: "Planting In Progress" },
+    { id: "5", label: "Approved" }
   ];
 
   const tableData = [
@@ -290,7 +299,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Text>
                     <Text variant="text-14-light" className="text-grey-300">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
-                      below; exported, moified in QGIS or ArcGIS and imported again; or fed through the mobile
+                      below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
                       application.
                     </Text>
                   </div>
@@ -326,10 +335,10 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
                 <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
                   <Text variant="text-14" className="mb-3 text-grey-250">
-                    Polygon Status
+                    Site Status
                   </Text>
                   <div className="h-fit w-full">
-                    <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} />
+                    <StepProgressbar color="primary" value={50} labels={polygonStatusLabels} labelVariant="text-10" />
                   </div>
                 </div>
               </div>

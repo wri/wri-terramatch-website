@@ -1,5 +1,5 @@
 import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
-import PolygonStatus from "../../PolygonReviewTab/components/PolygonStatus/PolygonStatus";
+import PolygonStatus from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 import SelectPolygon from "../../PolygonReviewTab/components/SelectPolygon/SelectPolygon";
 
 const SiteAuditLogPolygonStatusSide = () => {

@@ -1,19 +1,16 @@
-import Button from "@/components/elements/Button/Button";
-import Text from "@/components/elements/Text/Text";
-
 import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
+import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
 const SiteAuditLogSiteStatusSide = () => {
   return (
-    <div>
-      <Text variant="text-16-bold" className="mb-4">
-        Site Status
-      </Text>
-      <Button disabled className="mb-6">
+    <div className="flex flex-col gap-6">
+      <StatusDisplay titleStatus="Site" />
+      {/*for inactive?*/}
+      {/* <Button disabled className="mb-6">
         <Text variant="text-12-bold" className="text-white">
           NOT APPLICABLE
         </Text>
-      </Button>
+      </Button> */}
       <ComentarySection />
     </div>
   );
