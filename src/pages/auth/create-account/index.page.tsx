@@ -24,7 +24,7 @@ const Page = () => {
               Create an account
             </Text>
           </div>
-          <div className="mb-6 mr-[-10px] flex max-h-[calc(100vh-417px)] flex-col gap-2 overflow-y-auto pr-2.5 lg:gap-3">
+          <div className="mb-6 mr-[-10px] flex max-h-[calc(100vh-323px)] flex-col gap-2 overflow-y-auto pr-2.5 lg:gap-3">
             {UserRolInfo.map(item => (
               <ButtonUserRole key={item.id} onClick={() => setSelected(item.id)} className="h-full w-full">
                 <UserRoleCard
