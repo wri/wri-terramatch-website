@@ -17,7 +17,7 @@ interface MenuItemProps {
   id: string;
   render: () => ReactNode;
   MenuItemVariant?: string;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onClick?: () => void;
 }
 export interface MenuProps {
   menu: MenuItemProps[];

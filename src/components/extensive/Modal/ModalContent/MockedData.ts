@@ -88,10 +88,9 @@ export const uploadImageData = [
 ];
 
 export const polygonStatusLabels = [
-  { id: "1", label: "Site Approved" },
-  { id: "2", label: "Polygons Submitted" },
-  { id: "3", label: "Polygons Approved" },
-  { id: "4", label: "Monitoring Begins" }
+  { id: "1", label: "Submitted" },
+  { id: "2", label: "Needs More Information" },
+  { id: "3", label: "Approved" }
 ];
 
 export const comentaryFiles = [

@@ -115,7 +115,7 @@ const Polygons = (props: IPolygonProps) => {
     openModal(
       <ModalConfirm
         title={"Confirm Polygon Deletion"}
-        content="Do you want to delete this polgyon?"
+        content="Do you want to delete this polygon?"
         onClose={closeModal}
         onConfirm={() => {}}
       />
@@ -138,7 +138,7 @@ const Polygons = (props: IPolygonProps) => {
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
         <div className="mb-[72px] px-20">
-          <StepProgressbar value={80} labels={polygonStatusLabels} />
+          <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
         </div>
         <div className="flex flex-col gap-4">
           <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
@@ -172,7 +172,7 @@ const Polygons = (props: IPolygonProps) => {
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
         <div className="mb-[72px]">
-          <StepProgressbar value={80} labels={polygonStatusLabels} />
+          <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
         </div>
         <TextArea
           name={""}
@@ -206,11 +206,14 @@ const Polygons = (props: IPolygonProps) => {
     {
       id: "1",
       render: () => (
-        <button className="flex items-center gap-2" onClick={() => setIsOpen(true)}>
+        <div className="flex w-full items-center gap-2">
           <Icon name={IconNames.POLYGON} className="h-6 w-6" />
           <Text variant="text-12-bold">Edit Polygon</Text>
-        </button>
-      )
+        </div>
+      ),
+      onClick: () => {
+        setIsOpen(true);
+      }
     },
     {
       id: "2",
@@ -243,11 +246,12 @@ const Polygons = (props: IPolygonProps) => {
     {
       id: "5",
       render: () => (
-        <button className="flex items-center gap-2" onClick={openFormModalHandlerRequestPolygonSupport}>
+        <div className="flex items-center gap-2">
           <Icon name={IconNames.REQUEST} className="h-6 w-6" />
           <Text variant="text-12-bold">Request Support</Text>
-        </button>
-      )
+        </div>
+      ),
+      onClick: openFormModalHandlerRequestPolygonSupport
     },
     {
       id: "6",

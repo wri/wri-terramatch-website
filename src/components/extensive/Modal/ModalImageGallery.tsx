@@ -69,9 +69,9 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             </Button>
           ))}
         </div>
-        <Button variant="transparent-toggle" onClick={onCLose}>
-          <Icon name={IconNames.CROSS} width={24} height={24} />
-        </Button>
+        <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <Icon name={IconNames.CLEAR} width={16} height={16} className="text-grey-400" />
+        </button>
       </header>
       <div className="flex h-full max-h-[calc(100%_-_62px)] w-full gap-6">
         <div className="flex-[2] overflow-auto">

@@ -66,7 +66,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
           Project Status and Comments
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          Update the project status, view updates, or add comment
+          Update the project status, view updates, or add comments
         </Text>
         <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
           <Text variant="text-16-bold">Change Requested</Text>

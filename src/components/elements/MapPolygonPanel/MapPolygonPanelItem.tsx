@@ -118,7 +118,7 @@ const MapPolygonPanelItem = ({
     openModal(
       <ModalConfirm
         title={"Confirm Polygon Deletion"}
-        content="Do you want to delete this polgyon?"
+        content="Do you want to delete this polygon?"
         onClose={closeModal}
         onConfirm={() => {}}
       />
