@@ -579,9 +579,21 @@
     letter-spacing: normal;
   }
 
-  /* Text 36px */
-  .text-36-light {
+  /* Text 32px */
+  .text-32-light {
     @apply text-4xl font-normal lg:text-5xl wide:text-6xl;
+    letter-spacing: normal;
+  }
+  .text-32 {
+    @apply text-4xl font-medium lg:text-5xl wide:text-6xl;
+    letter-spacing: normal;
+  }
+  .text-32-semibold {
+    @apply text-4xl font-semibold lg:text-5xl wide:text-6xl;
+    letter-spacing: normal;
+  }
+  .text-32-bold {
+    @apply text-4xl font-bold lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
 

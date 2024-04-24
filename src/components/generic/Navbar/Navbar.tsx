@@ -28,7 +28,7 @@ const Navbar = (props: NavbarProps): JSX.Element => {
   return (
     <header
       className={classNames(
-        "sticky top-0 z-50 flex w-full flex-col justify-center border-b-4 border-primary bg-white px-4 sm:flex-row",
+        "sticky top-0 z-50 flex w-full flex-col justify-center bg-white px-4 sm:flex-row",
         isOpen && "border-none"
       )}
     >
