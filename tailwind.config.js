@@ -32,7 +32,8 @@ module.exports = {
         12: "0.12"
       },
       backgroundImage: {
-        imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)"
+        imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
+        "square-pattern": "url('/icons/ic-bg.svg')"
       },
       gridTemplateColumns: {
         1: "repeat(1, minmax(0, 1fr))",
