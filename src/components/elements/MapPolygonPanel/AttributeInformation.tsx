@@ -98,7 +98,8 @@ const AttributeInformation = () => {
         />
       </label>
       <Dropdown
-        label="Restoration Practice*"
+        multiSelect
+        label="Restoration Practice"
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder="Select Restoration Practice"
@@ -118,6 +119,7 @@ const AttributeInformation = () => {
         className="bg-white"
       />
       <Dropdown
+        multiSelect
         label="Tree Distribution"
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"

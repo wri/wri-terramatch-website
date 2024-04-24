@@ -238,6 +238,11 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             checked={isSelected}
                             label={option.title}
                             className="flex-row-reverse justify-end gap-3"
+                            onChange={() => {
+                              !isSelected
+                                ? setSelected([...selected, option.value])
+                                : setSelected(selected.filter(value => value !== option.value));
+                            }}
                           />
                         </Then>
                         <Else>
