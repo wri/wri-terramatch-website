@@ -211,7 +211,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 )}
               >
                 {options.map(option => {
-                  let isSelected;
+                  let isSelected = false;
                   if (typeof selected === "string" || Array.isArray(selected)) {
                     isSelected = selected?.includes(option.value);
                   } else {
