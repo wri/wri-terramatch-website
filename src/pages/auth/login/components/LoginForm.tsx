@@ -29,7 +29,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             Sign Up for free
           </Link>
         </Text>
-        <div className="mb-6 mt-11 flex flex-col gap-12">
+        <div className="mb-5 mt-[6vh] flex flex-col gap-12">
           <Input
             name="email"
             type="text"
