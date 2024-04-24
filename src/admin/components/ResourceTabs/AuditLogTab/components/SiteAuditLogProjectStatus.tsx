@@ -84,7 +84,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
           value={80}
           labels={projectStatusLabels}
           classNameLabels="min-w-[111px]"
-          className="w-[60%]"
+          className="w-[62%]"
         />
       </div>
       <Text variant="text-16-bold">History for Aerobic Agroforestry</Text>

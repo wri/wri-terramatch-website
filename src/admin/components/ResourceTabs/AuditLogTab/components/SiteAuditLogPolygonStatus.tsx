@@ -37,7 +37,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
           value={80}
           labels={polygonStatusLabels}
           classNameLabels="min-w-[111px]"
-          className="w-[40%]"
+          className="w-[44%]"
         />
       </div>
       <Text variant="text-16-bold">History for Faja Lobi Project</Text>
