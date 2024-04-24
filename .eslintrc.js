@@ -55,9 +55,9 @@ module.exports = {
     "react-hooks/exhaustive-deps": "warn",
     "prettier/prettier": [
       "error",
-      {},
       {
-        usePrettierrc: true
+        usePrettierrc: true,
+        endOfLine: "auto"
       }
     ],
     "react/react-in-jsx-scope": "off",

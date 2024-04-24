@@ -25,9 +25,9 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
   }
 
   return (
-    <section className="my-10 bg-neutral-150 p-8">
+    <section className="my-10 rounded-lg bg-neutral-150  p-8">
       <Text variant="text-heading-300">{t("Environmental Impact")}</Text>
-      <div className="mt-10 flex flex-col gap-3">
+      <div className="mt-10 flex flex-col gap-4">
         <TextRow
           name={t("Years of relevant restoration experience:")}
           value={organization?.relevant_experience_years}
@@ -65,7 +65,8 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
             "In which areas of this country have you worked in the past, and what are their characteristics of these landscapes?:"
           )}
           value={organization?.restored_areas_description}
-          nameClassName="w-1/3"
+          nameClassName="w-1/3 "
+          valueClassName="h-[260px] overflow-auto"
         />
         <TextRow
           name={t("How have you monitored and evaluated the progress of your past projects?:")}
@@ -89,8 +90,12 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
           condition={!!organization?.historic_monitoring_geojson}
         >
           <div>
-            <Text variant="text-body-500" className="w-1/3">
-              {t("Historic Monitoring Shapefile Upload:")}
+            <Text variant="text-body-900" className="w-1/3">
+              <>
+                Historic Monitoring Shapefile Upload:
+                <br />
+                <br />
+              </>
             </Text>
             <Map geojson={projectBoundary} />
           </div>

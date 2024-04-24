@@ -30,10 +30,10 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
   return (
     <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
       <Form formType="signUp">
-        <Text variant="text-32-bold" className="mb-2 text-blue-700">
+        <Text variant="text-32-bold" className="text-blue-700 mb-2">
           Sign up
         </Text>
-        <Text variant="text-12-light" className="mb-8 text-blue-700">
+        <Text variant="text-12-light" className="text-blue-700 mb-8">
           Sign up to Terramatch with your professional email address
         </Text>
         <div className="relative mb-8 h-[calc(100vh-436px)] flex-1 overflow-y-auto overflow-x-hidden">

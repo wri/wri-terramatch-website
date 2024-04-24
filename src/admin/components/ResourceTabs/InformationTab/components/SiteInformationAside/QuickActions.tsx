@@ -1,10 +1,10 @@
-import { Box, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Card, Stack, SxProps, Theme } from "@mui/material";
 import { FC } from "react";
 import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } from "react-admin";
 
 import modules from "@/admin/modules";
+import Text from "@/components/elements/Text/Text";
 import { downloadFileBlob } from "@/utils/network";
-
 const QuickActions: FC = () => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
@@ -40,16 +40,16 @@ const QuickActions: FC = () => {
   };
 
   return (
-    <Card>
+    <Card className="!shadow-none">
       <Box paddingX={3.75} paddingY={2}>
-        <Typography variant="h5">Quick Actions</Typography>
+        <Text variant="text-16-semibold" className="text-grey-300">
+          Quick Actions
+        </Text>
       </Box>
-
-      <Divider />
 
       <Box paddingX={3.75} paddingY={2}>
         <Button
-          variant="outlined"
+          className="button-aside-page-admin"
           component={Link}
           to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
           fullWidth
@@ -57,19 +57,27 @@ const QuickActions: FC = () => {
         />
       </Box>
 
-      <Divider />
-
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          <Labeled label="Total Site Reports" sx={inlineLabelSx}>
+          <Labeled label="Total Site Reports" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="site_reports_total" />
           </Labeled>
-          <Labeled label="Total Overdue Site Reports" sx={inlineLabelSx}>
+          <Labeled label="Total Overdue Site Reports" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="overdue_site_reports_total" />
           </Labeled>
-          <Button variant="outlined" component={Link} to={getNavigationPath("siteReport")} label="View Site Reports" />
-          <Button variant="outlined" component={Link} to={getNavigationPath("./4")} label="Add Monitored Data" />
-          <Button variant="outlined" onClick={downloadShapefile} label="Download Shapefile" />
+          <Button
+            className="button-aside-page-admin"
+            component={Link}
+            to={getNavigationPath("siteReport")}
+            label="View Site Reports"
+          />
+          <Button
+            className="button-aside-page-admin"
+            component={Link}
+            to={getNavigationPath("./4")}
+            label="Add Monitored Data"
+          />
+          <Button className="button-aside-page-admin" onClick={downloadShapefile} label="Download Shapefile" />
         </Stack>
       </Box>
     </Card>

@@ -65,14 +65,14 @@ const Checkbox = ({
         type="checkbox"
         className={twMerge(
           classNames(
-            "h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400",
+            "h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5",
             { "absolute opacity-0": labelIsComponent }
           ),
           inputClassName
         )}
       />
       <When condition={!!error}>
-        <Text variant="text-body-500" className="absolute -bottom-6 right-0 w-full text-right text-error">
+        <Text variant="text-body-500" className="absolute right-0 -bottom-6 w-full text-right text-error">
           {error?.message ?? ""}
         </Text>
       </When>

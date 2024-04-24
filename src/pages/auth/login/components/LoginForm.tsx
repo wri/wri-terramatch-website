@@ -66,7 +66,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
           />
         </div>
         <Link href="/auth/reset-password">
-          <Text variant="text-12-bold" className="mb-6 decoration-slice text-blue-300">
+          <Text variant="text-12-bold" className="text-blue-300 mb-6 decoration-slice">
             Forgot Password?
           </Text>
         </Link>

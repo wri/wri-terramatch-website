@@ -9,6 +9,7 @@ import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
@@ -30,6 +31,8 @@ import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
+
+import AuditLog from "./tabs/AuditLog";
 
 const ProjectDetailPage = () => {
   const t = useT();
@@ -106,7 +109,7 @@ const ProjectDetailPage = () => {
         title={project.name}
         subtitles={[
           `${t("Organisation")}: ${project.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : isTerrafund ? t("Terrafund") : reportingFramework.name
+          isPPC ? t("Priceless Planet Coalition") : isTerrafund ? t("TerraFund") : reportingFramework.name
         ]}
         hasBackButton={false}
       >
@@ -168,10 +171,16 @@ const ProjectDetailPage = () => {
                 reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
               />
             )
+          },
+          {
+            key: "audit-log",
+            title: t("Audit Log"),
+            body: <AuditLog project={project} />
           }
         ]}
-        containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
+        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
       />
+      <PageFooter />
     </LoadingContainer>
   );
 };

@@ -1,6 +1,4 @@
-<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="ic-success">
-<circle id="Ellipse 229" cx="12" cy="12.5" r="9" fill="#27A9E0"/>
-<path id="Vector" d="M15.75 10L10.5938 15.1563L8.25 12.8125" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="9" fill="#29C499"/>
+<path d="M15.75 9.5L10.5938 14.6563L8.25 12.3125" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

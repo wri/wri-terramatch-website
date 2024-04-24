@@ -49,9 +49,9 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const sites = usePaginatedResult<any>(data);
 
   return (
-    <div className="flex h-[500px]">
+    <div className="flex h-[500px] text-darkCustom">
       <MapSidePanel
-        title={t("Project Sites")}
+        title={t("Sites")}
         items={
           (sites?.map(item => ({
             ...item,
@@ -61,11 +61,11 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="h-full w-[300px]"
+        className="absolute z-20 h-[500px] w-[23vw] p-8"
         onLoadMore={fetchNextPage}
-        emptyText={t("No results found or no sites in this project. Try refining your search or create a new site.")}
+        emptyText={t("No polygons are available.")}
       />
-      <Map geojson={geoJSON} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" />
+      <Map geojson={geoJSON} siteData={true} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" />
     </div>
   );
 };

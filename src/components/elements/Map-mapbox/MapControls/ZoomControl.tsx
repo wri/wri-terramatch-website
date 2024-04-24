@@ -8,24 +8,26 @@ export const ZoomControl = () => {
   const { map } = useMapContext();
 
   return (
-    <ControlButtonsGroup direction="col">
+    <ControlButtonsGroup direction="col" className="w-auto">
       <IconButton
         iconProps={{
           name: IconNames.ZoomIn,
-          width: 16
+          width: 24,
+          height: 24
         }}
         onClick={() => map?.zoomIn()}
-        className="h-8 w-8 rounded-b-none rounded-t-lg"
+        className="rounded-b-none rounded-t-lg p-[10px]"
         aria-label="Zoom in"
       />
-      <ControlDivider direction="horizontal" />
+      <ControlDivider direction="horizontal" className="m-0 w-auto bg-neutral-200" />
       <IconButton
         iconProps={{
           name: IconNames.ZoomOut,
-          width: 16
+          width: 24,
+          height: 24
         }}
         onClick={() => map?.zoomOut()}
-        className="h-8 w-8 rounded-t-none rounded-b-lg"
+        className="rounded-t-none rounded-b-lg p-[10px]"
         aria-label="Zoom out"
       />
     </ControlButtonsGroup>

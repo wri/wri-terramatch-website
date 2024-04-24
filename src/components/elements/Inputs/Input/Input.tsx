@@ -53,6 +53,8 @@ const Input = forwardRef(
       customVariant,
       labelClassName,
       descriptionClassName,
+      labelVariant,
+      readOnly,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -72,7 +74,8 @@ const Input = forwardRef(
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
-        "border border-neutral-400": !error
+        "border border-neutral-200": !error,
+        "bg-neutral-150": readOnly
       },
       secondary: {
         "border-0 border-b py-[10px] px-0": true,
@@ -137,6 +140,7 @@ const Input = forwardRef(
       <InputWrapper
         inputId={id}
         label={label}
+        labelVariant={labelVariant}
         description={description}
         descriptionFooter={descriptionFooter}
         containerClassName={containerClassName}

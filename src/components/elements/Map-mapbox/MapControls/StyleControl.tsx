@@ -13,29 +13,29 @@ export const StyleControl = () => {
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
 
   return (
-    <ControlButtonsGroup direction="row">
+    <ControlButtonsGroup direction="row" className="h-auto">
       <button
         onClick={() => {
           map?.setStyle(MapStyle.Street);
           setCurrentStyle(MapStyle.Street);
         }}
         className={classNames(
-          "w-16 rounded-l-lg px-1",
-          currentStyle === MapStyle.Street ? "text-body-500 underline" : "text-body-400"
+          "h-fit w-21 rounded-l-lg py-2",
+          currentStyle === MapStyle.Street ? "text-body-500" : "text-body-400"
         )}
         aria-label="Map street style"
       >
         {t("Map")}
       </button>
-      <ControlDivider direction="vertical" />
+      <ControlDivider direction="vertical" className="m-0 h-auto bg-neutral-200" />
       <button
         onClick={() => {
           map?.setStyle(MapStyle.Satellite);
           setCurrentStyle(MapStyle.Satellite);
         }}
         className={classNames(
-          "w-16 rounded-r-lg px-1",
-          currentStyle === MapStyle.Satellite ? "text-body-500 underline" : "text-body-400"
+          "h-fit w-21 rounded-r-lg py-2",
+          currentStyle === MapStyle.Satellite ? "text-body-500" : "text-body-400"
         )}
         aria-label="Map satellite style"
       >
