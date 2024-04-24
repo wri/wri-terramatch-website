@@ -27,11 +27,11 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   const {
     field: { value, onChange }
   } = useController(props);
-  const { formHook } = props;
+  const { formHook, collection } = props;
 
   const createTreeSpecies = useCallback(
     (treeValue: TreeSpeciesValue) => {
-      onChange([...(value ?? []), treeValue]);
+      onChange([...(value ?? []), { ...treeValue, collection }]);
       formHook?.clearErrors(props.name);
     },
     [value, onChange, formHook]
