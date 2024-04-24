@@ -90,16 +90,16 @@ const StatusDisplay = ({ titleStatus = "Polygon" }: StatusProps) => {
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>Malanga.</b>?
+      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>Malanga</b>?
     </Text>
   );
 
   const openFormModalHandlerStatus = () => {
     openModal(
       <ModalConfirm
-        title="Polygon Status Change"
+        title={`${titleStatus} Status Change`}
         commentArea
-        menuLabel="New Polygon Status"
+        menuLabel={`New ${titleStatus} Status`}
         menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}

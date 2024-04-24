@@ -1,8 +1,17 @@
 import { Fragment } from "react";
 
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 
 import { gridData, SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+
+const siteStatusLabels = [
+  { id: "1", label: "Draft" },
+  { id: "2", label: "Awaiting Approval" },
+  { id: "3", label: "Needs More Information" },
+  { id: "4", label: "Planting in Progress" },
+  { id: "4", label: "Approved" }
+];
 
 const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
   return (
@@ -12,6 +21,16 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
           Site Status and Comments
         </Text>
         <Text variant="text-14-light">Update the site status, view updates, or add comment</Text>
+      </div>
+      <div className="flex flex-col gap-4">
+        <Text variant="text-16-bold">Site Status</Text>
+        <StepProgressbar
+          color="secondary"
+          value={80}
+          labels={siteStatusLabels}
+          classNameLabels="min-w-[111px]"
+          className="w-[80%]"
+        />
       </div>
       <Text variant="text-16-bold">History for Native Seed Centre Shrub SPA</Text>
       {/*OLD TABLE*/}

@@ -53,7 +53,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               optionClassName="py-[6px] px-3"
               optionTextClassName="w-full whitespace-nowrap"
               optionVariant="text-12-light"
-              placeholder="Site Status"
+              placeholder="New Status"
               inputVariant="text-12-light"
               options={menu}
               onChange={() => {}}

@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 
 export interface SiteAuditLogTable {
@@ -50,6 +51,13 @@ export const gridData = [
   }
 ];
 
+const projectStatusLabels = [
+  { id: "1", label: "Draft" },
+  { id: "2", label: "Awaiting Approval" },
+  { id: "3", label: "Needs More Information" },
+  { id: "4", label: "Approved" }
+];
+
 const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   return (
     <div className="flex flex-col gap-6">
@@ -68,6 +76,16 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
             ea commodo consequat.
           </Text>
         </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <Text variant="text-16-bold">Project Status</Text>
+        <StepProgressbar
+          color="secondary"
+          value={80}
+          labels={projectStatusLabels}
+          classNameLabels="min-w-[111px]"
+          className="w-[60%]"
+        />
       </div>
       <Text variant="text-16-bold">History for Aerobic Agroforestry</Text>
       {/*OLD TABLE*/}

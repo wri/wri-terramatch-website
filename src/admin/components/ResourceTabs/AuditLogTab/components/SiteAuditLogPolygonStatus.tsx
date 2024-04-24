@@ -6,12 +6,9 @@ import Text from "@/components/elements/Text/Text";
 import { gridData, SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
 
 const polygonStatusLabels = [
-  { id: "1", label: "Started" },
-  { id: "2", label: "Awaiting Approval" },
-  { id: "3", label: "Needs More Information" },
-  { id: "4", label: "Awaiting Polygon Validation" },
-  { id: "5", label: "Awaiting Polygon Acceptance" },
-  { id: "6", label: "Approved" }
+  { id: "1", label: "Submitted" },
+  { id: "2", label: "Needs More Information" },
+  { id: "3", label: "Approved" }
 ];
 
 const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
@@ -33,7 +30,16 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
           </Text>
         </div>
       </div>
-      <StepProgressbar color="secondary" value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
+      <div className="flex flex-col gap-4">
+        <Text variant="text-16-bold">Polygon Status</Text>
+        <StepProgressbar
+          color="secondary"
+          value={80}
+          labels={polygonStatusLabels}
+          classNameLabels="min-w-[111px]"
+          className="w-[40%]"
+        />
+      </div>
       <Text variant="text-16-bold">History for Faja Lobi Project</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
