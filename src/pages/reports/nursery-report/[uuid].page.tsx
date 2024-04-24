@@ -76,7 +76,7 @@ const NurseryReportDetailPage = () => {
         title={reportTitle}
         subtitles={[
           `${t("Organisation")}: ${nurseryReport.organisation?.name}`,
-          nurseryReport.framework_key === "ppc" ? t("Priceless Planet Coalition") : t("Terrafund")
+          nurseryReport.framework_key === "ppc" ? t("Priceless Planet Coalition") : t("TerraFund")
         ]}
         hasBackButton={false}
       >
