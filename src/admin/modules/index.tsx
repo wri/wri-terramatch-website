@@ -147,7 +147,7 @@ const nurseryReport = {
 };
 
 const airtable = {
-  ResourceName: "Airtable",
+  ResourceName: "airtable",
   List: AirtableList
 };
 
