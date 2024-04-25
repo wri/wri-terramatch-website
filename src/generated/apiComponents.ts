@@ -15944,6 +15944,87 @@ export const usePostV2FileUploadMODELCOLLECTIONUUID = (
   );
 };
 
+export type PostV2FileUploadSitePhotosUUIDBulkUrlPathParams = {
+  uuid: string;
+};
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlResponse = {
+  uuid?: string;
+  url?: string;
+  thumb_url?: string;
+  collection_name?: string;
+  title?: string;
+  file_name?: string;
+  mime_type?: string;
+  size?: number;
+  lat?: number;
+  lng?: number;
+  is_public?: boolean;
+  created_at?: string;
+}[];
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody = {
+  download_url?: string;
+  /**
+   * @default Name of image
+   */
+  title?: string;
+  /**
+   * @default null
+   */
+  lat?: number;
+  /**
+   * @default null
+   */
+  lng?: number;
+  /**
+   * @default true
+   */
+  is_public?: boolean;
+}[];
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlVariables = {
+  body?: PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody;
+  pathParams: PostV2FileUploadSitePhotosUUIDBulkUrlPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2FileUploadSitePhotosUUIDBulkUrl = (
+  variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+    PostV2FileUploadSitePhotosUUIDBulkUrlError,
+    PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody,
+    {},
+    {},
+    PostV2FileUploadSitePhotosUUIDBulkUrlPathParams
+  >({ url: "/v2/file/upload/site/photos/{uuid}/bulk_url", method: "post", ...variables, signal });
+
+export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+      PostV2FileUploadSitePhotosUUIDBulkUrlError,
+      PostV2FileUploadSitePhotosUUIDBulkUrlVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+    PostV2FileUploadSitePhotosUUIDBulkUrlError,
+    PostV2FileUploadSitePhotosUUIDBulkUrlVariables
+  >(
+    (variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables) =>
+      fetchPostV2FileUploadSitePhotosUUIDBulkUrl({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PutV2FilesUUIDPathParams = {
   uuid: string;
 };
@@ -31347,6 +31428,47 @@ export const usePostUsersRegister = (
   );
 };
 
+export type GetV2SitesSitePolygonPathParams = {
+  /**
+   * The ID of the site
+   */
+  site: string;
+};
+
+export type GetV2SitesSitePolygonError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitesSitePolygonVariables = {
+  pathParams: GetV2SitesSitePolygonPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitesSitePolygon = (variables: GetV2SitesSitePolygonVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.SitePolygonsDataResponse,
+    GetV2SitesSitePolygonError,
+    undefined,
+    {},
+    {},
+    GetV2SitesSitePolygonPathParams
+  >({ url: "/v2/sites/{site}/polygon", method: "get", ...variables, signal });
+
+export const useGetV2SitesSitePolygon = <TData = Schemas.SitePolygonsDataResponse>(
+  variables: GetV2SitesSitePolygonVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.SitePolygonsDataResponse, GetV2SitesSitePolygonError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.SitePolygonsDataResponse, GetV2SitesSitePolygonError, TData>(
+    queryKeyFn({ path: "/v2/sites/{site}/polygon", operationId: "getV2SitesSitePolygon", variables }),
+    ({ signal }) => fetchGetV2SitesSitePolygon({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -31797,4 +31919,9 @@ export type QueryOperation =
       path: "/v2/{ENTITY}/{UUID}/export";
       operationId: "getV2ENTITYUUIDExport";
       variables: GetV2ENTITYUUIDExportVariables;
+    }
+  | {
+      path: "/v2/sites/{site}/polygon";
+      operationId: "getV2SitesSitePolygon";
+      variables: GetV2SitesSitePolygonVariables;
     };

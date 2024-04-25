@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
 export enum MapStyle {
-  Street = "mapbox://styles/mapbox/streets-v9",
-  Satellite = "mapbox://styles/mapbox/satellite-v9"
+  Street = "mapbox://styles/terramatch/clve3yxzq01w101pefkkg3rci",
+  Satellite = "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu"
 }

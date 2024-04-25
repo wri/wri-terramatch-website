@@ -18,7 +18,12 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import {
+  GetV2FormsENTITYUUIDResponse,
+  useGetV2FormsENTITYUUID,
+  useGetV2SitesSitePolygon
+} from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 import { EntityName } from "@/types/common";
 
@@ -30,10 +35,10 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   label: string;
 }
 
-const PolygonReviewAside: FC<{ type: EntityName }> = ({ type }) => {
+const PolygonReviewAside: FC<{ type: EntityName; data: any }> = ({ type, data }) => {
   switch (type) {
     case "sites":
-      return <SitePolygonReviewAside />;
+      return <SitePolygonReviewAside data={data} />;
     default:
       return null;
   }
@@ -48,6 +53,20 @@ const PolygonReviewTab: FC<IProps> = props => {
       entity: props.type
     }
   });
+
+  const { data: sitePolygonData } = useGetV2SitesSitePolygon<{
+    data: SitePolygonsDataResponse;
+  }>({
+    pathParams: {
+      site: record.uuid
+    }
+  });
+
+  const transformedSiteDataForList = ((sitePolygonData ?? []) as any).map((data: any, index: number) => ({
+    id: (index + 1).toString(),
+    status: data.status,
+    label: data.poly_name || `Unnamed Polygon ${index + 1}`
+  }));
 
   const { openModal, closeModal } = useModalContext();
 
@@ -368,7 +387,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             </Stack>
           </Grid>
           <Grid xs={3} className="pl-8 pr-4 pt-9">
-            <PolygonReviewAside type={props.type} />
+            <PolygonReviewAside type={props.type} data={transformedSiteDataForList} />
           </Grid>
         </Grid>
       </TabbedShowLayout.Tab>
