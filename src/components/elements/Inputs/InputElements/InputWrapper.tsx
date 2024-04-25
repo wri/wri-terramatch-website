@@ -4,6 +4,7 @@ import { FieldError } from "react-hook-form";
 import { When } from "react-if";
 
 import ErrorMessage from "@/components/elements/ErrorMessage/ErrorMessage";
+import { TextVariants } from "@/types/common";
 
 import InputDescription from "./InputDescription";
 import InputLabel from "./InputLabel";
@@ -14,6 +15,8 @@ export interface InputWrapperProps {
   description?: string;
   descriptionFooter?: string;
   containerClassName?: string;
+  labelVariant?: TextVariants;
+  labelClassname?: string;
   error?: FieldError;
   required?: boolean;
   feedbackRequired?: boolean;
@@ -28,7 +31,8 @@ const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
         htmlFor={props.inputId}
         required={props.required}
         feedbackRequired={props.feedbackRequired}
-        className={props.labelClassName}
+        labelVariant={props.labelVariant}
+        className={props.labelClassname}
       >
         {props.label}
       </InputLabel>

@@ -1,4 +1,4 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useState } from "react";
 import {
   BooleanField,
@@ -19,17 +19,22 @@ import {
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
+import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
 import { userTypesChoices } from "../const";
 
 const filters = [
-  <SearchInput key="s" source="search" alwaysOn />,
+  <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
   <SelectInput
     key="c"
     label="User Status"
     source="verified"
+    className="select-page-admin"
     choices={[
       {
         id: true,
@@ -43,11 +48,22 @@ const filters = [
   />
 ];
 
+const tableMenu = [
+  {
+    id: "1",
+    render: () => <EditButton />
+  },
+  {
+    id: "2",
+    render: () => <ShowButton />
+  }
+];
+
 const UserDataGrid = () => {
   return (
-    <Datagrid rowClick="show">
+    <Datagrid>
       <FunctionField
-        label="Name and last name"
+        label="Name"
         source="first_name"
         render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
       />
@@ -63,10 +79,11 @@ const UserDataGrid = () => {
       <TextField source="email_address" label="Email" />
       <BooleanField source="verified" label="Verified" sortBy="email_address_verified_at" />
       <SelectField source="user_type" label="Type" choices={userTypesChoices} />
-      <DateField source="last_logged_in_at" label="Last Login Date" locales="en-GB" />
+      <DateField source="last_logged_in_at" label="Last Login" locales="en-GB" />
       <DateField source="created_at" label="Date Added" locales="en-GB" />
-      <ShowButton />
-      <EditButton />
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+      </Menu>
     </Datagrid>
   );
 };
@@ -84,10 +101,10 @@ export const UserList = () => {
 
   return (
     <>
-      <Stack gap={1} py={2}>
-        <Typography variant="h5">Users</Typography>
-
-        <Divider />
+      <Stack gap={1} className="pb-6">
+        <Text variant="text-36-bold" className="leading-none">
+          Users
+        </Text>
       </Stack>
 
       <List actions={<ListActions onExport={handleExport} />} filters={filters}>

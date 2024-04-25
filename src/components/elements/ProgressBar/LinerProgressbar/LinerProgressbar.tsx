@@ -17,13 +17,9 @@ const LinerProgressbar = ({
   className,
   ...rest
 }: LinerProgressbarProps) => {
-  const colorProgressClass = colorProgress ? colorProgress : `bg-${color}`;
   return (
-    <div {...rest} className={`h-[9px] w-full ${className || ""}`} role="progressbar">
-      <div
-        className={`h-full ${colorProgressClass} transition-all duration-300 ${textColor} rounded-lg`}
-        style={{ width: `${value}%` }}
-      />
+    <div {...rest} className={`h-[9px] w-full rounded-full bg-neutral-200 ${className || ""}`} role="progressbar">
+      <div className={`h-full bg-${color} rounded-full transition-all duration-300`} style={{ width: `${value}%` }} />
     </div>
   );
 };

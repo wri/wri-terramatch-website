@@ -5,20 +5,16 @@ import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
-import LongTextField from "@/components/elements/Field/LongTextField";
-import SelectImageListField from "@/components/elements/Field/SelectImageListField";
-import TextField from "@/components/elements/Field/TextField";
+import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { getCountriesOptions } from "@/constants/options/countries";
-import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
-import { useGetOptions } from "@/hooks/useGetOptions";
 import ProjectArea from "@/pages/project/[uuid]/components/ProjectArea";
-import { formatOptionsList } from "@/utils/options";
 
 interface ProjectOverviewTabProps {
   project: any;
@@ -28,9 +24,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
   const { isPPC } = useFramework(project);
-  const { format } = useDate();
-  const landUseTypesOptions = useGetOptions(project.land_use_types);
-  const restorationStrategyOptions = useGetOptions(project.restoration_strategy);
 
   return (
     <PageBody>
@@ -49,76 +42,46 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             </Button>
           }
         >
-          <div className="flex w-full flex-wrap gap-6">
-            <If condition={isPPC}>
-              <Then>
-                <GoalProgressCard label={t("Workday (PPC)")} value={project.workday_count} className="w-[170px]" />
-              </Then>
-              <Else>
-                <GoalProgressCard
-                  label={t("Jobs Created")}
-                  value={project.total_jobs_created}
-                  limit={project.jobs_created_goal}
-                  className="w-[170px]"
-                />
-              </Else>
-            </If>
-            <GoalProgressCard
-              label={t("Hectares Restored Goal")}
-              value={project.total_hectares_restored_goal}
-              className="w-[170px]"
-            />
-            <GoalProgressCard
-              label={t("Trees restored")}
-              value={project.trees_restored_count}
-              limit={project.trees_grown_goal}
-              items={[
-                { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: project.trees_planted_count },
-                { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: project.seeds_planted_count },
-                {
-                  iconName: IconNames.REFRESH_CIRCLE,
-                  label: t("Trees Regenerating"),
-                  value: project.regenerated_trees_count
-                }
-              ]}
-              className="flex-1"
-            />
+          <div className="flex w-full text-darkCustom">
+            <div className="grid w-[50%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
+              <If condition={isPPC}>
+                <Then>
+                  <GoalProgressCard label={t("Workday Count (PPC)")} value={project.workday_count} />
+                </Then>
+                <Else>
+                  <GoalProgressCard
+                    label={t("Jobs Created")}
+                    value={project.total_jobs_created}
+                    limit={project.jobs_created_goal}
+                  />
+                </Else>
+              </If>
+              <GoalProgressCard
+                label={t("Trees Restored")}
+                value={project.trees_restored_count}
+                limit={project.trees_grown_goal}
+                className="flex-1"
+              />
+              <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
+            </div>
+            <div>
+              <GoalProgressCard
+                label={t("Hectares Restored")}
+                hasProgress={false}
+                items={[
+                  { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: project.trees_planted_count },
+                  { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: project.seeds_planted_count },
+                  {
+                    iconName: IconNames.REFRESH_CIRCLE,
+                    label: t("Trees Regenerating"),
+                    value: project.regenerated_trees_count
+                  }
+                ]}
+                className="flex-1"
+              />
+            </div>
           </div>
         </PageCard>
-      </PageRow>
-
-      <PageRow>
-        <PageColumn>
-          <PageCard title={t("Project Information")} gap={8}>
-            <LongTextField title={t("Description of Timeline")}>
-              {project.description_of_project_timeline}
-            </LongTextField>
-            <LongTextField title={t("History of Project Area")}>{project.history}</LongTextField>
-            <SelectImageListField
-              title={t("Target Land Use Types")}
-              options={landUseTypesOptions}
-              selectedValues={project.land_use_types}
-            />
-            <SelectImageListField
-              title={t("Restoration Strategies")}
-              options={restorationStrategyOptions}
-              selectedValues={project.restoration_strategy}
-            />
-          </PageCard>
-        </PageColumn>
-
-        <PageColumn>
-          <PageCard title={t("Project Details")} gap={4}>
-            <TextField
-              label={t("Country:")}
-              value={project.country && formatOptionsList(getCountriesOptions(t), project.country)}
-            />
-            <TextField label={t("District:")} value={project.project_county_district} />
-            <TextField label={t("Planting Start Date:")} value={format(project.planting_start_date)} />
-            <TextField label={t("Planting End Date:")} value={format(project.planting_end_date)} />
-            <TextField label={t("Project Last Updated:")} value={format(project.updated_at)} />
-          </PageCard>
-        </PageColumn>
       </PageRow>
       <PageRow>
         <PageColumn>
@@ -130,7 +93,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 variant="secondary"
                 href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
               >
-                {t("Add Site")}
+                {t("expand view")}
               </Button>
             }
           >
@@ -138,6 +101,113 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           </PageCard>
         </PageColumn>
       </PageRow>
+
+      <PageRow>
+        <PageColumn>
+          <PageCard
+            title={t("Project Monitoring")}
+            tooltip="Lorem ipsum dolor sit amet, urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero."
+          >
+            <div className="flex items-center justify-between text-darkCustom">
+              <Text variant="text-14-light" className="w-[65%]">
+                Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
+                metrics useful for assessing the impact of the restoration effort.
+              </Text>
+              <div className="relative w-[25%]">
+                <Dropdown
+                  containerClassName="w-full"
+                  placeholder="All Polygons"
+                  options={[
+                    {
+                      title: "All Polygons",
+                      value: 1
+                    },
+                    {
+                      title: "All Polygons2",
+                      value: 2
+                    }
+                  ]}
+                  value={["All Polygons"]}
+                  onChange={() => {}}
+                />
+              </div>
+            </div>
+            <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3">
+              <ItemMonitoringCards title={t("Tree Count")} className="col-span-4" value="462" />
+              <ItemMonitoringCards title={t("Tree Cover 2024")} className="col-span-3" value="53.23%" />
+              <ItemMonitoringCards title={t("Total Area (ha)")} className="col-span-3" value="300.12" />
+              <ItemMonitoringCards title={t("Lookback Disturbance")} className="col-span-3" value="2.1%" />
+              <ItemMonitoringCards className="col-span-4" type="map" />
+              <ItemMonitoringCards
+                title={t("Tree Count")}
+                className="col-span-4"
+                type="graph"
+                img={IconNames.GRAPH1}
+                leyends={[
+                  {
+                    color: "bg-blueCustom",
+                    title: t("Average Number of Trees per hectare")
+                  },
+                  {
+                    color: "bg-primary",
+                    title: t("Number of Trees")
+                  }
+                ]}
+              />
+              <ItemMonitoringCards
+                title={t("EMA SNOVO")}
+                type="graph-button"
+                className="col-span-9 row-span-2"
+                img={IconNames.GRAPH2}
+              />
+              <ItemMonitoringCards
+                title={t("Tree Cover Loss (ha)")}
+                className="col-span-4"
+                type="graph"
+                img={IconNames.GRAPH3}
+              />
+              <ItemMonitoringCards
+                title={t("Interventions (ha)")}
+                className="col-span-4"
+                type="graph"
+                leyends={[
+                  {
+                    color: "bg-black",
+                    title: t("Agroforestry")
+                  },
+                  {
+                    color: "bg-blueCustom",
+                    title: t("Silvipasture")
+                  },
+                  {
+                    color: "bg-primary",
+                    title: t("Tree Planting")
+                  }
+                ]}
+                img={IconNames.GRAPH4}
+              />
+              <ItemMonitoringCards
+                title={t("Tree Cover Loss")}
+                className="col-span-4"
+                type="graph"
+                leyends={[
+                  {
+                    color: "bg-blueCustom",
+                    title: t("Tree Cover Loss by Fires (ha)")
+                  },
+                  {
+                    color: "bg-primary",
+                    title: t("Tree Cover Loss by Non-Fires (ha)")
+                  }
+                ]}
+                img={IconNames.GRAPH5}
+              />
+            </PageRow>
+          </PageCard>
+        </PageColumn>
+      </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

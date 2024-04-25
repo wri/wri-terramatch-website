@@ -32,7 +32,8 @@ const ModalRoot = () => {
         >
           <Dialog.Panel
             className={classNames(
-              !coverToolbar && "pt-20",
+              // need review in all the modals
+              // !coverToolbar && "pt-20",
               "fixed inset-0 flex w-full items-center justify-center p-4"
             )}
           >

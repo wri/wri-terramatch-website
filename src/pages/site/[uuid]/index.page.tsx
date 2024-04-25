@@ -10,6 +10,7 @@ import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
@@ -24,6 +25,8 @@ import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
+
+import AuditLog from "./tabs/AuditLog";
 
 const SiteDetailPage = () => {
   const t = useT();
@@ -96,7 +99,7 @@ const SiteDetailPage = () => {
         title={site.name}
         subtitles={[
           `${t("Organisation")}: ${site.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : t("Terrafund")
+          isPPC ? t("Priceless Planet Coalition") : t("TerraFund")
         ]}
         hasBackButton={false}
       >
@@ -146,10 +149,16 @@ const SiteDetailPage = () => {
             key: "completed-tasks",
             title: t("Completed Reports"),
             body: <SiteCompletedReportsTab siteUUID={site.uuid} />
+          },
+          {
+            key: "audit-log",
+            title: t("Audit Log"),
+            body: <AuditLog project={site} />
           }
         ]}
-        containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
+        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
       />
+      <PageFooter />
     </LoadingContainer>
   );
 };

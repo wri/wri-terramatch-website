@@ -28,16 +28,16 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
   }, []);
 
   return (
-    <div className="text-14 mb-[6vh] flex w-[31vw] flex-1 flex-col p-1">
+    <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
       <Form formType="signUp">
-        <Text variant="text-32-bold" className="mb-2 text-blue-700">
+        <Text variant="text-32-bold" className="text-blue-700 mb-2">
           Sign up
         </Text>
-        <Text variant="text-12-light" className="mb-8 text-blue-700">
+        <Text variant="text-12-light" className="text-blue-700 mb-8">
           Sign up to Terramatch with your professional email address
         </Text>
-        <div className="relative mb-8 flex-1 overflow-y-auto overflow-x-hidden" style={{ height: "50vh" }}>
-          <div className="m-[-2px] mb-8 flex flex-col gap-5 p-1">
+        <div className="relative mb-8 h-[calc(100vh-436px)] flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="m-[-2px] mb-6 flex flex-col gap-5 p-1">
             <div className="grid w-full grid-cols-2 items-start gap-4">
               <Input
                 name="first_name"
@@ -164,7 +164,7 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
             onClick: form.handleSubmit(handleSave),
             disabled: loading,
             className:
-              "mb-4 bg-blue-300 py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white"
+              "mb-4 bg-blue-300 py-5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white"
           }}
           secondaryButtonProps={{
             children: t("Cancel"),
@@ -172,7 +172,7 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
             href: "/",
             disabled: loading,
             className:
-              "bg-white py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-700 text-blue-700 text-14-bold hover:border-blue-300 hover:text-blue-300"
+              "bg-white py-5 flex items-center justify-center rounded-lg w-full border-2 border-blue-700 text-blue-700 text-14-bold hover:border-blue-300 hover:text-blue-300"
           }}
         />
       </Form>
@@ -185,7 +185,7 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
     //     )}
     //   />
     //   {/* Inputs */}
-    //   <div className="flex w-full flex-col gap-8 sm:flex-row">
+    //   <div className="flex flex-col w-full gap-8 sm:flex-row">
     //     <Input
     //       name="first_name"
     //       formHook={form}
@@ -249,7 +249,7 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
     //     required
     //   />
     //   {/* Terms */}
-    //   <div className="mt-7 flex flex-col gap-8">
+    //   <div className="flex flex-col gap-8 mt-7">
     //     <Checkbox
     //       name="terms"
     //       form={form}

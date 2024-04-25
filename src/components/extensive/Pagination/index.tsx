@@ -1,5 +1,7 @@
 import classNames from "classnames";
 
+import { TextVariants } from "@/types/common";
+
 import PageSelector, { PageSelectorProps } from "./PageSelector";
 import PerPageSelector from "./PerPageSelector";
 
@@ -9,6 +11,7 @@ export interface PaginationProps extends PageSelectorProps {
   defaultPageSize?: number;
   setPageSize?: (count: number) => void;
   treeSpeciesShow?: boolean;
+  variantText?: TextVariants;
 }
 
 function Pagination(props: PaginationProps) {
@@ -22,6 +25,7 @@ function Pagination(props: PaginationProps) {
         <PerPageSelector
           label="Per page"
           options={[5, 10, 15, 20, 50]}
+          variantText={props.variantText}
           defaultValue={props.defaultPageSize}
           onChange={props.setPageSize!}
         />

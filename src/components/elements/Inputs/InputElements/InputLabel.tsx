@@ -5,23 +5,25 @@ import { When } from "react-if";
 
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
+import { TextVariants } from "@/types/common";
 
 export interface InputLabelProps extends HTMLProps<HTMLLabelElement> {
   required?: boolean;
   children?: string | number;
   feedbackRequired?: boolean;
+  labelVariant?: TextVariants;
 }
 
 const InputLabel = (props: InputLabelProps) => {
   const t = useT();
-  const { feedbackRequired, required, children, className, ...labelProps } = props;
+  const { feedbackRequired, required, children, className, labelVariant, ...labelProps } = props;
 
   return (
     <When condition={!!props.children}>
       <Text<HTMLLabelElement>
         {...labelProps}
         as="label"
-        variant="text-bold-body-300"
+        variant={labelVariant || "text-bold-body-300"}
         className={classNames("mr-2 inline uppercase", className)}
       >
         {`${children} ${required ? "*" : ""}`}

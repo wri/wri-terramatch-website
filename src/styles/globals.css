@@ -35,6 +35,16 @@ input[type="radio"]:focus {
   transform: translate(0, -108%) scale(1) !important;
 }
 
+.lastRow:last-child>:last-child{
+  @apply rounded-br-lg
+}
+
+.lastRow:last-child>:first-child{
+  @apply rounded-bl-lg
+}
+
+
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
 @import url("./extended-components.css");
+@import url("./custom-admin-page-styles.css");

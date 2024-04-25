@@ -40,7 +40,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
         <Text variant="text-12-bold" className="text-dark-500">
           {title}
         </Text>
-        <Text variant="text-12-light" className="text-left leading-normal text-dark-300">
+        <Text variant="text-12-light" className="text-dark-300 text-left leading-normal">
           {description}
         </Text>
         <When condition={!!titleOptions}>

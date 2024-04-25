@@ -103,16 +103,21 @@ const InformationTab: FC<IProps> = props => {
               </Then>
               <Else>
                 <Stack gap={4}>
-                  <Card sx={{ padding: 4 }}>
+                  <Card sx={{ padding: 4 }} className="!shadow-none">
                     <List
-                      className="space-y-8"
+                      className={`${props.type == "sites" && "map-span-3"} space-y-12`}
                       items={formSteps}
                       render={(step, index) => (
-                        <InformationTabRow index={index} step={step} values={values} steps={formSteps} />
+                        <InformationTabRow
+                          index={index}
+                          step={step}
+                          values={values}
+                          steps={formSteps}
+                          type={props.type}
+                        />
                       )}
                     />
                   </Card>
-
                   <When condition={record}>
                     <TreeSpeciesTable uuid={record.uuid} entity={resource} />
                   </When>

@@ -29,7 +29,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             Sign Up for free
           </Link>
         </Text>
-        <div className="mb-6 mt-11 flex flex-col gap-12">
+        <div className="mb-5 mt-[6vh] flex flex-col gap-12">
           <Input
             name="email"
             type="text"
@@ -41,7 +41,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             formHook={form}
             error={errors.email}
             containerClassName={`flex flex-col gap-2 bg-white ${
-              !isEmpty(form.getValues("email")) ? "input-content-login" : ""
+              !isEmpty(form.getValues("email")) ? "input-content-login" : "input-content-login"
             }`}
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
@@ -58,7 +58,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             formHook={form}
             error={errors.password}
             containerClassName={`flex flex-col gap-2 bg-white ${
-              !isEmpty(form.getValues("password")) ? "input-content-login" : ""
+              !isEmpty(form.getValues("password")) ? "input-content-login" : "input-content-login"
             }`}
             labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]

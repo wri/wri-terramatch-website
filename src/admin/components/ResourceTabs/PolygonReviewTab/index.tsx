@@ -1,0 +1,414 @@
+import { Grid, Stack } from "@mui/material";
+import classNames from "classnames";
+import { FC } from "react";
+import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { When } from "react-if";
+
+import Button from "@/components/elements/Button/Button";
+import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
+import Map from "@/components/elements/Map-mapbox/Map";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
+import Text from "@/components/elements/Text/Text";
+import Icon from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
+import { useModalContext } from "@/context/modal.provider";
+import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
+import { EntityName } from "@/types/common";
+
+import SitePolygonReviewAside from "./components/PolygonReviewAside";
+import { polygonData } from "./components/Polygons";
+
+interface IProps extends Omit<TabProps, "label" | "children"> {
+  type: EntityName;
+  label: string;
+}
+
+const PolygonReviewAside: FC<{ type: EntityName }> = ({ type }) => {
+  switch (type) {
+    case "sites":
+      return <SitePolygonReviewAside />;
+    default:
+      return null;
+  }
+};
+
+const PolygonReviewTab: FC<IProps> = props => {
+  const { isLoading: ctxLoading, record } = useShowContext();
+
+  const { isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
+    pathParams: {
+      uuid: record.uuid,
+      entity: props.type
+    }
+  });
+
+  const { openModal, closeModal } = useModalContext();
+
+  const openFormModalHandlerAddPolygon = () => {
+    openModal(
+      <ModalWithLogo
+        title="Add Polygons"
+        onCLose={closeModal}
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
+            Start by adding polygons to your site.
+          </Text>
+        }
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        <DragAndDrop
+          description={
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-light" className="text-center">
+                or
+              </Text>
+              <Text variant="text-12-light" className="max-w-[210px] text-center">
+                Drag and drop a GeoJSON files only to store and display on TerraMatch.
+              </Text>
+            </div>
+          }
+        />
+        <div>
+          <div className="m-2 flex">
+            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
+            <Text variant="text-12-light">50 MB per upload</Text>
+          </div>
+          <div className="mb-6 flex flex-col gap-4">
+            {polygonData.map(polygon => (
+              <div
+                key={polygon.id}
+                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+              >
+                <div className="flex gap-3">
+                  <div className="rounded-lg bg-neutral-150 p-2">
+                    <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
+                  </div>
+                  <div>
+                    <Text variant="text-12">{polygon.name}</Text>
+                    <Text variant="text-12" className="opacity-50">
+                      {polygon.status}
+                    </Text>
+                  </div>
+                </div>
+                <Icon
+                  name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
+                  className="h-6 w-6"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </ModalWithLogo>
+    );
+  };
+
+  const contentForApproval = (
+    <Text variant="text-12-light" as="p" className="text-center">
+      Are you sure you want to approve the polygons for&nbsp;
+      <b style={{ fontSize: "inherit" }}>Native Seed Centre Shrub SPA</b>?
+    </Text>
+  );
+
+  const openFormModalHandlerConfirm = () => {
+    openModal(
+      <ModalConfirm
+        title={"Confirm Polygon Approval"}
+        content={contentForApproval}
+        commentArea
+        onClose={closeModal}
+        onConfirm={() => {}}
+      />
+    );
+  };
+
+  const openFormModalHandlerUploadImages = () => {
+    openModal(
+      <ModalWithLogo
+        title="Upload Images"
+        onCLose={closeModal}
+        content={
+          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
+            Start by adding images for processing.
+          </Text>
+        }
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        <DragAndDrop
+          description={
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-light" className="text-center">
+                or
+              </Text>
+              <Text variant="text-12-light" className="max-w-[210px] text-center">
+                Drag and drop.
+              </Text>
+            </div>
+          }
+        />
+        <div>
+          <div className="mb-4 flex justify-between">
+            <Text variant="text-12-bold">Uploaded Files</Text>
+            <Text variant="text-12-bold" className="w-[146px] whitespace-nowrap pr-6 text-primary">
+              Confirming Geolocation
+            </Text>
+          </div>
+          <div className="mb-6 flex flex-col gap-4">
+            {uploadImageData.map(image => (
+              <div
+                key={image.id}
+                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+              >
+                <div className="flex gap-3">
+                  <div className="rounded-lg bg-neutral-150 p-2">
+                    <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
+                  </div>
+                  <div>
+                    <Text variant="text-12">{image.name}</Text>
+                    <Text variant="text-12" className="opacity-50">
+                      {image.status}
+                    </Text>
+                  </div>
+                </div>
+                <div
+                  className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                    "border-green-400": image.isVerified,
+                    "border-red": !image.isVerified
+                  })}
+                >
+                  <Text
+                    variant="text-12-bold"
+                    className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  >
+                    {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                  </Text>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ModalWithLogo>
+    );
+  };
+
+  const isLoading = ctxLoading || queryLoading;
+
+  if (isLoading) return null;
+
+  const addMenuItems = [
+    {
+      id: "1",
+      render: () => <Text variant="text-12-bold">Create Polygons</Text>
+    },
+    {
+      id: "2",
+      render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
+      onClick: () => openFormModalHandlerAddPolygon()
+    },
+    {
+      id: "3",
+      render: () => <Text variant="text-12-bold">Upload Images</Text>,
+      onClick: () => openFormModalHandlerUploadImages()
+    }
+  ];
+
+  const polygonStatusLabels = [
+    { id: "1", label: "Draft" },
+    { id: "2", label: "Awaiting Approval" },
+    { id: "3", label: "Needs More Information" },
+    { id: "4", label: "Planting In Progress" },
+    { id: "5", label: "Approved" }
+  ];
+
+  const tableData = [
+    {
+      "polygon-id": "ipsum lorem",
+      "restoration-practice": "ipsum lorem",
+      "target-land-use-system": "ipsum lorem",
+      "tree-distribution": "ipsum lorem",
+      "planting-start-date": "ipsum lorem",
+      source: "ipsum lorem",
+      ellipse: false
+    },
+    {
+      "polygon-id": "ipsum lorem",
+      "restoration-practice": "ipsum lorem",
+      "target-land-use-system": "ipsum lorem",
+      "tree-distribution": "ipsum lorem",
+      "planting-start-date": "ipsum lorem",
+      source: "ipsum lorem",
+      ellipse: true
+    }
+  ];
+
+  const tableItemMenu = [
+    {
+      id: "1",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.POLYGON} className="h-6 w-6" />
+          <Text variant="text-12-bold">Open Polygon</Text>
+        </div>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.SEARCH_PA} className="h-6 w-6" />
+          <Text variant="text-12-bold">Zoom to</Text>
+        </div>
+      )
+    },
+    {
+      id: "3",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
+          <Text variant="text-12-bold">Delete Polygon</Text>
+        </div>
+      )
+    }
+  ];
+
+  return (
+    <When condition={!isLoading}>
+      <TabbedShowLayout.Tab {...props}>
+        <Grid spacing={2} container>
+          <Grid xs={9}>
+            <Stack gap={4} className="pl-8 pt-9">
+              <div className="flex items-start gap-3">
+                <div className="w-full">
+                  <div className="mb-2">
+                    <Text variant="text-16-bold" className="mb-2 text-grey-300">
+                      Polygon Review
+                    </Text>
+                    <Text variant="text-14-light" className="text-grey-300">
+                      Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
+                      below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
+                      application.
+                    </Text>
+                  </div>
+                  <div className="flex gap-3">
+                    <Menu menu={addMenuItems} className="flex-1">
+                      <Button
+                        variant="sky-page-admin"
+                        className="h-fit w-full whitespace-nowrap"
+                        iconProps={{
+                          className: "w-4 h-4",
+                          name: IconNames.PLUS_PA
+                        }}
+                      >
+                        Add Data
+                      </Button>
+                    </Menu>
+                    <Button
+                      variant="white-page-admin"
+                      className="flex-1"
+                      iconProps={{
+                        className: "w-4 h-4 group-hover-text-primary-500",
+                        name: IconNames.DOWNLOAD_PA
+                      }}
+                    >
+                      Download
+                    </Button>
+                    <Button className="flex-1 px-3" onClick={openFormModalHandlerConfirm}>
+                      <Text variant="text-14-bold" className="text-white">
+                        approve polygons
+                      </Text>
+                    </Button>
+                  </div>
+                </div>
+                <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
+                  <Text variant="text-14" className="mb-3 text-grey-250">
+                    Site Status
+                  </Text>
+                  <div className="h-fit w-full">
+                    <StepProgressbar color="primary" value={50} labels={polygonStatusLabels} labelVariant="text-10" />
+                  </div>
+                </div>
+              </div>
+
+              <Map className="rounded-lg" status={true} />
+              <div className="mb-6">
+                <div className="mb-4">
+                  <Text variant="text-16-bold" className="mb-2 text-grey-300">
+                    Site Attribute Table
+                  </Text>
+                  <Text variant="text-14-light" className="text-grey-300">
+                    Edit attribute table for all polygons quickly through the table below. Alternatively, open a polygon
+                    and edit the attributes in the map above.
+                  </Text>
+                </div>
+                <Table
+                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  classNameWrapper="max-h-[176px]"
+                  columns={[
+                    { header: "Polygon ID", accessorKey: "polygon-id" },
+                    {
+                      header: "Restoration Practice",
+                      accessorKey: "restoration-practice",
+                      cell: props => {
+                        const placeholder = props.getValue() as string;
+                        return (
+                          <input
+                            placeholder={placeholder}
+                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                          />
+                        );
+                      }
+                    },
+                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
+                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
+                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
+                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "",
+                      accessorKey: "ellipse",
+                      enableSorting: false,
+                      cell: props => (
+                        <Menu
+                          menu={tableItemMenu}
+                          placement={
+                            (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
+                          }
+                        >
+                          <div className="rounded p-1 hover:bg-primary-200">
+                            <Icon
+                              name={IconNames.ELIPSES}
+                              className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
+                            />
+                          </div>
+                        </Menu>
+                      )
+                    }
+                  ]}
+                  data={tableData}
+                ></Table>
+              </div>
+            </Stack>
+          </Grid>
+          <Grid xs={3} className="pl-8 pr-4 pt-9">
+            <PolygonReviewAside type={props.type} />
+          </Grid>
+        </Grid>
+      </TabbedShowLayout.Tab>
+    </When>
+  );
+};
+
+export default PolygonReviewTab;
