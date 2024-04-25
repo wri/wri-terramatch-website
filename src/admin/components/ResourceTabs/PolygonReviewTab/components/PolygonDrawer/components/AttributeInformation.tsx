@@ -5,15 +5,15 @@ import Text from "@/components/elements/Text/Text";
 const dropdownOptionsRestoration = [
   {
     title: "Tree Planting",
-    value: 1
+    value: "1x"
   },
   {
     title: "Direct Seeding",
-    value: 2
+    value: "2x"
   },
   {
     title: "Assisted Natural Regeneration",
-    value: 3
+    value: "3x"
   }
 ];
 const dropdownOptionsTarget = [
@@ -93,12 +93,13 @@ const AttributeInformation = () => {
         />
       </label>
       <Dropdown
-        label="Restoration Practice*"
+        label="Restoration Practice"
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Select Restoration Practice"
-        options={dropdownOptionsRestoration}
+        multiSelect
         onChange={() => {}}
+        options={dropdownOptionsRestoration}
       />
       <Dropdown
         label="Target Land Use System"
@@ -109,6 +110,7 @@ const AttributeInformation = () => {
         onChange={() => {}}
       />
       <Dropdown
+        multiSelect
         label="Tree Distribution"
         labelClassName="capitalize"
         labelVariant="text-14-light"

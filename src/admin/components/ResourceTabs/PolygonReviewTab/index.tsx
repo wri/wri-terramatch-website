@@ -5,7 +5,7 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
-import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Map from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
@@ -15,8 +15,8 @@ import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/T
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
@@ -53,63 +53,46 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
-      <ModalWithLogo
+      <ModalAdd
         title="Add Polygons"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
-            Start by adding polygons to your site.
-          </Text>
-        }
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-light" className="text-center">
-                or
-              </Text>
-              <Text variant="text-12-light" className="max-w-[210px] text-center">
-                Drag and drop a GeoJSON files only to store and display on TerraMatch.
-              </Text>
-            </div>
-          }
-        />
-        <div>
-          <div className="m-2 flex">
+        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionList={
+          <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
-          <div className="mb-6 flex flex-col gap-4">
-            {polygonData.map(polygon => (
-              <div
-                key={polygon.id}
-                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-              >
-                <div className="flex gap-3">
-                  <div className="rounded-lg bg-neutral-150 p-2">
-                    <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
-                  </div>
-                  <div>
-                    <Text variant="text-12">{polygon.name}</Text>
-                    <Text variant="text-12" className="opacity-50">
-                      {polygon.status}
-                    </Text>
-                  </div>
+        }
+        onCLose={closeModal}
+        content="Start by adding polygons to your site."
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        {/* Next div is only Mocked data delete this children later*/}
+        <div className="mb-6 flex flex-col gap-4">
+          {polygonData.map(polygon => (
+            <div
+              key={polygon.id}
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+            >
+              <div className="flex gap-3">
+                <div className="rounded-lg bg-neutral-150 p-2">
+                  <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
                 </div>
-                <Icon
-                  name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
-                  className="h-6 w-6"
-                />
+                <div>
+                  <Text variant="text-12">{polygon.name}</Text>
+                  <Text variant="text-12" className="opacity-50">
+                    {polygon.status}
+                  </Text>
+                </div>
               </div>
-            ))}
-          </div>
+              <Icon
+                name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
+                className="h-6 w-6"
+              />
+            </div>
+          ))}
         </div>
-      </ModalWithLogo>
+      </ModalAdd>
     );
   };
 
@@ -134,74 +117,56 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
-      <ModalWithLogo
+      <ModalAdd
         title="Upload Images"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
-            Start by adding images for processing.
+        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+        descriptionInput="Drag and drop."
+        descriptionListStatus="Confirming Geolocation"
+        descriptionList={
+          <Text variant="text-12-bold" className="mt-9 ">
+            Uploaded Files
           </Text>
         }
-        primaryButtonText="Close"
+        onCLose={closeModal}
+        content="Start by adding images for processing."
+        primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-light" className="text-center">
-                or
-              </Text>
-              <Text variant="text-12-light" className="max-w-[210px] text-center">
-                Drag and drop.
-              </Text>
-            </div>
-          }
-        />
-        <div>
-          <div className="mb-4 flex justify-between">
-            <Text variant="text-12-bold">Uploaded Files</Text>
-            <Text variant="text-12-bold" className="w-[146px] whitespace-nowrap pr-6 text-primary">
-              Confirming Geolocation
-            </Text>
-          </div>
-          <div className="mb-6 flex flex-col gap-4">
-            {uploadImageData.map(image => (
-              <div
-                key={image.id}
-                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-              >
-                <div className="flex gap-3">
-                  <div className="rounded-lg bg-neutral-150 p-2">
-                    <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                  </div>
-                  <div>
-                    <Text variant="text-12">{image.name}</Text>
-                    <Text variant="text-12" className="opacity-50">
-                      {image.status}
-                    </Text>
-                  </div>
+        {/* Next div is only Mocked data delete this children later*/}
+        <div className="mb-6 flex flex-col gap-4">
+          {uploadImageData.map(image => (
+            <div
+              key={image.id}
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
+            >
+              <div className="flex gap-3">
+                <div className="rounded-lg bg-neutral-150 p-2">
+                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
                 </div>
-                <div
-                  className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                    "border-green-400": image.isVerified,
-                    "border-red": !image.isVerified
-                  })}
-                >
-                  <Text
-                    variant="text-12-bold"
-                    className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
-                  >
-                    {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                <div>
+                  <Text variant="text-12">{image.name}</Text>
+                  <Text variant="text-12" className="opacity-50">
+                    {image.status}
                   </Text>
                 </div>
               </div>
-            ))}
-          </div>
+              <div
+                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                  "border-green-400": image.isVerified,
+                  "border-red": !image.isVerified
+                })}
+              >
+                <Text
+                  variant="text-12-bold"
+                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                >
+                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                </Text>
+              </div>
+            </div>
+          ))}
         </div>
-      </ModalWithLogo>
+      </ModalAdd>
     );
   };
 
@@ -217,12 +182,12 @@ const PolygonReviewTab: FC<IProps> = props => {
     {
       id: "2",
       render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
-      onClick: () => openFormModalHandlerAddPolygon()
+      onClick: openFormModalHandlerAddPolygon
     },
     {
       id: "3",
       render: () => <Text variant="text-12-bold">Upload Images</Text>,
-      onClick: () => openFormModalHandlerUploadImages()
+      onClick: openFormModalHandlerUploadImages
     }
   ];
 

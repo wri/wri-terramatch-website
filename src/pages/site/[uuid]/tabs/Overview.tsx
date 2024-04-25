@@ -11,6 +11,7 @@ import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalP
 import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
@@ -18,6 +19,7 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { dataSubmitPolygons, uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
@@ -47,135 +49,100 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { openModal, closeModal } = useModalContext();
   const openFormModalHandlerAddPolygon = () => {
     openModal(
-      <ModalWithLogo
-        title="Add Data"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
-            Start by adding polygons to your site.
-          </Text>
-        }
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-light" className="text-center">
-                or
-              </Text>
-              <Text variant="text-12-light" className="max-w-[210px] text-center">
-                Drag and drop a GeoJSON files only to store and display on TerraMatch.
-              </Text>
-            </div>
-          }
-        />
-        <div>
-          <div className="m-2 flex">
+      <ModalAdd
+        title="Add Polygons"
+        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionList={
+          <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
-          <div className="mb-6 flex flex-col gap-4">
-            {polygonData.map(polygon => (
-              <div
-                key={polygon.id}
-                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-              >
-                <div className="flex gap-3">
-                  <div className="rounded-lg bg-neutral-150 p-2">
-                    <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
-                  </div>
-                  <div>
-                    <Text variant="text-12">{polygon.name}</Text>
-                    <Text variant="text-12" className="opacity-50">
-                      {polygon.status}
-                    </Text>
-                  </div>
+        }
+        onCLose={closeModal}
+        content="Start by adding polygons to your site."
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        {/* Next div is only Mocked data delete this children later*/}
+        <div className="mb-6 flex flex-col gap-4">
+          {polygonData.map(polygon => (
+            <div
+              key={polygon.id}
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+            >
+              <div className="flex gap-3">
+                <div className="rounded-lg bg-neutral-150 p-2">
+                  <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
                 </div>
-                <Icon
-                  name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
-                  className="h-6 w-6"
-                />
+                <div>
+                  <Text variant="text-12">{polygon.name}</Text>
+                  <Text variant="text-12" className="opacity-50">
+                    {polygon.status}
+                  </Text>
+                </div>
               </div>
-            ))}
-          </div>
+              <Icon
+                name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
+                className="h-6 w-6"
+              />
+            </div>
+          ))}
         </div>
-      </ModalWithLogo>
+      </ModalAdd>
     );
   };
   const openFormModalHandlerUploadImages = () => {
     openModal(
-      <ModalWithLogo
+      <ModalAdd
         title="Upload Images"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
-            Start by adding images for processing.
+        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+        descriptionInput="Drag and drop."
+        descriptionListStatus="Confirming Geolocation"
+        descriptionList={
+          <Text variant="text-12-bold" className="mt-9 ">
+            Uploaded Files
           </Text>
         }
-        primaryButtonText="Close"
+        onCLose={closeModal}
+        content="Start by adding images for processing."
+        primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-light" className="text-center">
-                or
-              </Text>
-              <Text variant="text-12-light" className="max-w-[210px] text-center">
-                Drag and drop.
-              </Text>
-            </div>
-          }
-        />
-        <div>
-          <div className="mb-4 flex justify-between">
-            <Text variant="text-12-bold">Uploaded Files</Text>
-            <Text variant="text-12-bold" className="w-[146px] whitespace-nowrap pr-6 text-primary">
-              Confirming Geolocation
-            </Text>
-          </div>
-          <div className="mb-6 flex flex-col gap-4">
-            {uploadImageData.map(image => (
-              <div
-                key={image.id}
-                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-              >
-                <div className="flex gap-3">
-                  <div className="rounded-lg bg-neutral-150 p-2">
-                    <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                  </div>
-                  <div>
-                    <Text variant="text-12">{image.name}</Text>
-                    <Text variant="text-12" className="opacity-50">
-                      {image.status}
-                    </Text>
-                  </div>
+        {/* Next div is only Mocked data delete this children later*/}
+        <div className="mb-6 flex flex-col gap-4">
+          {uploadImageData.map(image => (
+            <div
+              key={image.id}
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
+            >
+              <div className="flex gap-3">
+                <div className="rounded-lg bg-neutral-150 p-2">
+                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
                 </div>
-                <div
-                  className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                    "border-green-400": image.isVerified,
-                    "border-red": !image.isVerified
-                  })}
-                >
-                  <Text
-                    variant="text-12-bold"
-                    className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
-                  >
-                    {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                <div>
+                  <Text variant="text-12">{image.name}</Text>
+                  <Text variant="text-12" className="opacity-50">
+                    {image.status}
                   </Text>
                 </div>
               </div>
-            ))}
-          </div>
+              <div
+                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                  "border-green-400": image.isVerified,
+                  "border-red": !image.isVerified
+                })}
+              >
+                <Text
+                  variant="text-12-bold"
+                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                >
+                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                </Text>
+              </div>
+            </div>
+          ))}
         </div>
-      </ModalWithLogo>
+      </ModalAdd>
     );
   };
 

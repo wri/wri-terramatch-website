@@ -181,7 +181,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           </div>
           <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
             <Text variant="text-10-light" className="opacity-60">
-              Restoration Practice*
+              Restoration Practice
             </Text>
             <Text variant="text-10-light">1213023412</Text>
           </div>
