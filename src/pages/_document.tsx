@@ -32,6 +32,7 @@ export default function Document() {
             gtag("config", "G-2K60BYCCPY");
           }}
         />
+        <title>New! TerraMatch Site</title>
       </Head>
       <body>
         <noscript
