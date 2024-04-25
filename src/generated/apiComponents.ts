@@ -7,6 +7,7 @@ import * as reactQuery from "@tanstack/react-query";
 import { useApiContext, ApiContext } from "./apiContext";
 import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
+import type * as Schemas from "./apiSchemas";
 import type * as RequestBodies from "./apiRequestBodies";
 
 export type GetV2TreeSpeciesEntityUUIDPathParams = {
@@ -16024,34 +16025,6 @@ export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
   );
 };
 
-export type DeleteV2MediaQueryParams = {
-  ["uuids[]"]: string[];
-};
-
-export type DeleteV2MediaError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2MediaVariables = {
-  queryParams: DeleteV2MediaQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2Media = (variables: DeleteV2MediaVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2MediaError, undefined, {}, DeleteV2MediaQueryParams, {}>({
-    url: "/v2/media",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2Media = (
-  options?: Omit<reactQuery.UseMutationOptions<undefined, DeleteV2MediaError, DeleteV2MediaVariables>, "mutationFn">
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2MediaError, DeleteV2MediaVariables>(
-    (variables: DeleteV2MediaVariables) => fetchDeleteV2Media({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PutV2FilesUUIDPathParams = {
   uuid: string;
 };
@@ -31455,46 +31428,40 @@ export const usePostUsersRegister = (
   );
 };
 
-export type GetV2DashboardCountriesQueryParams = {
+export type GetV2SitesSitePolygonPathParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * The ID of the site
    */
-  country?: string;
+  site: string;
 };
 
-export type GetV2DashboardCountriesError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2SitesSitePolygonError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2DashboardCountriesVariables = {
-  queryParams?: GetV2DashboardCountriesQueryParams;
+export type GetV2SitesSitePolygonVariables = {
+  pathParams: GetV2SitesSitePolygonPathParams;
 } & ApiContext["fetcherOptions"];
 
-/**
- * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
- */
-export const fetchGetV2DashboardCountries = (variables: GetV2DashboardCountriesVariables, signal?: AbortSignal) =>
+export const fetchGetV2SitesSitePolygon = (variables: GetV2SitesSitePolygonVariables, signal?: AbortSignal) =>
   apiFetch<
-    Schemas.DashboardCountriesResponse,
-    GetV2DashboardCountriesError,
+    Schemas.SitePolygonsDataResponse,
+    GetV2SitesSitePolygonError,
     undefined,
     {},
-    GetV2DashboardCountriesQueryParams,
-    {}
-  >({ url: "/v2/dashboard/countries", method: "get", ...variables, signal });
+    {},
+    GetV2SitesSitePolygonPathParams
+  >({ url: "/v2/sites/{site}/polygon", method: "get", ...variables, signal });
 
-/**
- * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
- */
-export const useGetV2DashboardCountries = <TData = Schemas.DashboardCountriesResponse>(
-  variables: GetV2DashboardCountriesVariables,
+export const useGetV2SitesSitePolygon = <TData = Schemas.SitePolygonsDataResponse>(
+  variables: GetV2SitesSitePolygonVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<Schemas.DashboardCountriesResponse, GetV2DashboardCountriesError, TData>,
+    reactQuery.UseQueryOptions<Schemas.SitePolygonsDataResponse, GetV2SitesSitePolygonError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Schemas.DashboardCountriesResponse, GetV2DashboardCountriesError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/countries", operationId: "getV2DashboardCountries", variables }),
-    ({ signal }) => fetchGetV2DashboardCountries({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<Schemas.SitePolygonsDataResponse, GetV2SitesSitePolygonError, TData>(
+    queryKeyFn({ path: "/v2/sites/{site}/polygon", operationId: "getV2SitesSitePolygon", variables }),
+    ({ signal }) => fetchGetV2SitesSitePolygon({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -31954,7 +31921,7 @@ export type QueryOperation =
       variables: GetV2ENTITYUUIDExportVariables;
     }
   | {
-      path: "/v2/dashboard/countries";
-      operationId: "getV2DashboardCountries";
-      variables: GetV2DashboardCountriesVariables;
+      path: "/v2/sites/{site}/polygon";
+      operationId: "getV2SitesSitePolygon";
+      variables: GetV2SitesSitePolygonVariables;
     };

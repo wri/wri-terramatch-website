@@ -18,16 +18,16 @@ import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
-  status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
+  status: "draft" | "submitted" | "approved" | "Needs More Info";
   label: string;
 }
 export interface IPolygonProps {
   menu: IPolygonItem[];
 }
 const statusColor = {
-  Draft: "bg-purple",
-  Submitted: "bg-blue",
-  Approved: "bg-green",
+  draft: "bg-purple",
+  submitted: "bg-blue",
+  approved: "bg-green",
   "Needs More Info": "bg-tertiary-600"
 };
 
