@@ -3,12 +3,16 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
+import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
+import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Map from "@/components/elements/Map-mapbox/Map";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBaseProps, ModalProps } from "./Modal";
+import { polygonStatusLabels } from "./ModalContent/MockedData";
 
 export const ModalBaseWithMap: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
   return (
@@ -57,8 +61,38 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             <div className="flex items-center justify-between">
               <Text variant="text-24-bold">{title}</Text>
             </div>
-            <When condition={!!content}>{content}</When>
-            {children}
+            <When condition={!!content}>
+              <Text as="div" variant="text-12-bold" className="mt-1 mb-8" containHtml>
+                {content}
+              </Text>
+            </When>
+            <div className="mb-[72px]">
+              <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
+            </div>
+            <TextArea
+              name={""}
+              label="Comment"
+              labelVariant="text-12-light"
+              labelClassname="capitalize "
+              className="text-12-light max-h-72 !min-h-0 resize-none"
+              placeholder="Insert my comment"
+              rows={4}
+            />
+            <Text variant="text-12-light" className="mt-6 mb-2">
+              Attachments
+            </Text>
+            <DragAndDrop
+              description={
+                <div className="flex flex-col">
+                  <Text variant="text-12-bold" className="text-center text-primary">
+                    Click to upload
+                  </Text>
+                  <Text variant="text-12-bold" className="whitespace-nowrap text-center text-primary">
+                    documents or images to help reviewer
+                  </Text>
+                </div>
+              }
+            />
           </div>
           <div className="flex w-full justify-end py-4 px-8">
             <Button {...primaryButtonProps}>

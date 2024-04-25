@@ -1,12 +1,8 @@
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
-import { polygonStatusLabels } from "@/pages/site/[uuid]/components/MockecData";
 
 import Button from "../Button/Button";
-import DragAndDrop from "../DragAndDrop/DragAndDrop";
-import TextArea from "../Inputs/textArea/TextArea";
-import StepProgressbar from "../ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "../Text/Text";
 
 const ChecklistInformation = () => {
@@ -16,42 +12,10 @@ const ChecklistInformation = () => {
       <ModalWithMap
         title="Request Support"
         onCLose={closeModal}
-        content={
-          <Text variant="text-16-bold" className="mt-1 mb-8" containHtml>
-            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
-          </Text>
-        }
+        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <div className="mb-[72px]">
-          <StepProgressbar value={80} labels={polygonStatusLabels} />
-        </div>
-        <TextArea
-          name={""}
-          label="Comment"
-          labelVariant="text-12-light"
-          labelClassname="capitalize "
-          className="text-12-light max-h-72 !min-h-0 resize-none"
-          placeholder="Insert my comment"
-          rows={4}
-        />
-        <Text variant="text-12-light" className="mt-6 mb-2">
-          Attachments
-        </Text>
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-bold" className="whitespace-nowrap text-center text-primary">
-                documents or images to help reviewer
-              </Text>
-            </div>
-          }
-        />
-      </ModalWithMap>
+      ></ModalWithMap>
     );
   };
   return (
