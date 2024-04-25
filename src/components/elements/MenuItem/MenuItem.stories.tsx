@@ -25,6 +25,6 @@ export const Primary: Story = {
   args: {
     MenuItemVariant: MENU_ITEM_VARIANT_BLUE,
     onClick: () => {},
-    render: () => <div>Test1</div>
+    render: "<div>Test1</div>"
   }
 };
