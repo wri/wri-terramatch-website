@@ -1,14 +1,17 @@
-import { FC } from "react";
+import { remove } from "lodash";
+import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
-import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
+import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Map from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBaseProps, ModalProps } from "./Modal";
@@ -45,6 +48,8 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   onCLose,
   ...rest
 }) => {
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+
   return (
     <ModalBaseWithMap {...rest}>
       <div className="flex h-full w-full">
@@ -81,17 +86,33 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             <Text variant="text-12-light" className="mt-6 mb-2">
               Attachments
             </Text>
-            <DragAndDrop
-              description={
-                <div className="flex flex-col">
-                  <Text variant="text-12-bold" className="text-center text-primary">
-                    Click to upload
-                  </Text>
-                  <Text variant="text-12-bold" className="whitespace-nowrap text-center text-primary">
-                    documents or images to help reviewer
-                  </Text>
-                </div>
+            <FileInput
+              descriptionInput="Drag and drop documents or images to help reviewer"
+              variant={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+              onDelete={file =>
+                setFiles(state => {
+                  const tmp = [...state];
+                  remove(tmp, f => f.uuid === file.uuid);
+                  return tmp;
+                })
               }
+              onChange={files =>
+                setFiles(f => [
+                  ...f,
+                  ...files.map(file => ({
+                    title: file.name,
+                    file_name: file.name,
+                    mime_type: file.type,
+                    collection_name: "storybook",
+                    size: file.size,
+                    url: "https://google.com",
+                    created_at: "now",
+                    uuid: file.name,
+                    is_public: true
+                  }))
+                ])
+              }
+              files={files}
             />
           </div>
           <div className="flex w-full justify-end py-4 px-8">

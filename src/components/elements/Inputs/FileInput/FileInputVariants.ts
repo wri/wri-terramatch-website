@@ -89,7 +89,7 @@ export const VARIANT_FILE_INPUT_DEFAULT: FileInputVariant = {
 export const VARIANT_FILE_INPUT_MODAL_ADD: FileInputVariant = {
   container: "flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8",
   snapshotPanel: true,
-  listPreview: "flex flex-col gap-4 w-full mt-2",
+  listPreview: "flex flex-col gap-4 w-full mt-2 mb-4",
   listPreviewDescription: "flex items-center justify-between",
   filePreviewVariant: VARIANT_FILE_PREVIEW_CARD_MODAL
 };
@@ -97,7 +97,7 @@ export const VARIANT_FILE_INPUT_MODAL_ADD: FileInputVariant = {
 export const VARIANT_FILE_INPUT_MODAL_ADD_IMAGES: FileInputVariant = {
   container: "flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8",
   snapshotPanel: true,
-  listPreview: "flex flex-col gap-4 w-full mt-2",
+  listPreview: "flex flex-col gap-4 w-full mt-2 mb-4",
   listPreviewDescription: "flex items-center justify-between",
   filePreviewVariant: VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES
 };
