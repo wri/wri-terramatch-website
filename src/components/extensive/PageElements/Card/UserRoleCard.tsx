@@ -11,10 +11,19 @@ interface UserRoleCardProps {
   description: string;
   selected: boolean;
   options?: MenuItemProps[];
+  menu?: MenuItemProps[];
   titleOptions?: string;
+  setSelectedOption?: any;
 }
 
-const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selected, options, titleOptions }) => {
+const UserRoleCard: React.FC<UserRoleCardProps> = ({
+  title,
+  description,
+  selected,
+  options,
+  titleOptions,
+  setSelectedOption
+}) => {
   const MenuOption: MenuItemProps[] = options || [
     {
       id: "1",
@@ -44,7 +53,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({ title, description, selecte
           {description}
         </Text>
         <When condition={!!titleOptions}>
-          <Menu menu={MenuOption}>
+          <Menu menu={MenuOption} setSelectedOption={setSelectedOption}>
             <Text variant="text-12-bold" className="text-primary">
               {titleOptions || "Select Fund"}
             </Text>

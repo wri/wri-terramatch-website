@@ -20,6 +20,8 @@ const SignUpFormDataSchema = (t: any) =>
     job_role: yup.string().required(),
     password: yup.string().required(),
     role_id: yup.string().required(),
+    country: yup.string(),
+    program: yup.string(),
     confirm_password: yup.string().oneOf([yup.ref("password")], t("Passwords must match.")),
     terms: yup.boolean().isTrue(t("Please accept terms and conditions.")),
     consent: yup.boolean().isTrue(t("Please accept consent."))
@@ -27,7 +29,15 @@ const SignUpFormDataSchema = (t: any) =>
 
 export type SignUpFormData = yup.InferType<ReturnType<typeof SignUpFormDataSchema>>;
 
-const SignUpPage = ({ role_id }: { role_id: string }) => {
+const SignUpPage = ({
+  role_id,
+  selectedOption,
+  selectedTitleOption
+}: {
+  role_id: string;
+  selectedOption: string;
+  selectedTitleOption: string;
+}) => {
   const t = useT();
   const router = useRouter();
 
@@ -83,7 +93,9 @@ const SignUpPage = ({ role_id }: { role_id: string }) => {
         phone_number: data.phone_number,
         job_role: data.job_role,
         callback_url: window.location.origin + "/auth/verify/email/",
-        role_id: role_id as string
+        role_id: role_id as string,
+        country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
+        program: selectedTitleOption == "Select Framework" ? (selectedOption as any) : null
       }
     });
   };

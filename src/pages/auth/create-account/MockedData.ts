@@ -8,43 +8,16 @@ export const UserRolInfo = [
     id: "2",
     title: "I’m a Government Official",
     description: "Monitor project performance to inform effective governance and resourcing.",
-    options: [
-      {
-        id: "1",
-        render: () => "Kenya"
-      },
-      {
-        id: "2",
-        render: () => "Nigeria"
-      },
-      {
-        id: "3",
-        render: () => "Mozambique"
-      },
-      {
-        id: "4",
-        render: () => "Sierra Leone"
-      },
-      {
-        id: "5",
-        render: () => "Tanzania"
-      }
-    ],
+    menu: [],
     titleOption: "Select Country"
   },
   {
     id: "3",
     title: "I’m a Funder/Investor",
     description: "Evaluate ROI, aid strategic investment decisions and guide funding priorities.",
-    options: [
-      {
-        id: "1",
-        render: () => "PPC"
-      },
-      {
-        id: "2",
-        render: () => "TerraFund"
-      }
+    menu: [
+      { id: "1", data: { label: "PPC" } },
+      { id: "2", data: { label: "TerraFund" } }
     ],
     titleOption: "Select Framework"
   },
