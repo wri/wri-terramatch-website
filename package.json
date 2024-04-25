@@ -27,6 +27,7 @@
     "@mapbox/geojson-normalize": "^0.0.1",
     "@mapbox/mapbox-gl-draw": "^1.4.2",
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.7",
     "@mui/x-data-grid": "^6.16.1",
