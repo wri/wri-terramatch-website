@@ -35,6 +35,13 @@ input[type="radio"]:focus {
   transform: translate(0, -108%) scale(1) !important;
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
 .lastRow:last-child>:last-child{
   @apply rounded-br-lg
 }

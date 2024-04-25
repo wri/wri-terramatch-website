@@ -34,7 +34,7 @@ const Checkbox = ({
 
   return (
     <div
-      className={classNames(className, `relative flex items-start gap-4`, {
+      className={classNames(className, `relative flex items-center gap-4`, {
         "justify-between": !className?.includes("justify")
       })}
     >
