@@ -70,7 +70,7 @@ const AttributeInformation = () => {
     <div className="flex flex-col gap-4">
       <Input
         label="Polygon Name"
-        labelClassname="capitalize"
+        labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Polygon Name"
         type="text"
@@ -120,18 +120,20 @@ const AttributeInformation = () => {
       />
       <Input
         label="Trees Planted"
-        labelClassname="capitalize"
+        labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Trees Planted"
         type="text"
+        format="number"
         name=""
       />
       <Input
         label="Estimated Area"
-        labelClassname="capitalize"
+        labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Estimated Area"
         type="text"
+        format="number"
         name=""
       />
     </div>

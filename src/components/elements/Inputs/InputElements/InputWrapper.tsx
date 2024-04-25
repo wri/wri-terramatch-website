@@ -16,7 +16,6 @@ export interface InputWrapperProps {
   descriptionFooter?: string;
   containerClassName?: string;
   labelVariant?: TextVariants;
-  labelClassname?: string;
   error?: FieldError;
   required?: boolean;
   feedbackRequired?: boolean;
@@ -32,7 +31,7 @@ const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
         required={props.required}
         feedbackRequired={props.feedbackRequired}
         labelVariant={props.labelVariant}
-        className={props.labelClassname}
+        className={props.labelClassName}
       >
         {props.label}
       </InputLabel>
