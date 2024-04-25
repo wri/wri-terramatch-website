@@ -132,6 +132,7 @@ export const Map = ({
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
   const { openModal, closeModal } = useModalContext();
+  const [tooltipOpen, setTooltipOpen] = useState(true);
 
   const validateGeoJSON = function (map: IMap, source: string) {
     if (!editable) return;
@@ -312,8 +313,17 @@ export const Map = ({
           </ControlGroup>
         </When>
         {/* Toltip Map */}
-        <When condition={!editPolygon && !!siteData}>
+        <When condition={!editPolygon && !!siteData && tooltipOpen}>
           <div className="absolute left-2/4 top-36 z-20 rounded border-t-4 border-t-primary bg-white p-3">
+            <button
+              onClick={() => {
+                setTooltipOpen(false);
+              }}
+              className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800"
+            >
+              <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
+            </button>
+
             <div className="text-10 flex items-center justify-center gap-1">
               <Text variant="text-10">ISEME SITE </Text>
               <div className="text-10">&#8226;</div>
