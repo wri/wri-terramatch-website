@@ -23,6 +23,7 @@ export interface InputProps
   labelClassName?: string;
   descriptionClassName?: string;
   descriptionFooter?: string;
+  format?: "number";
 }
 
 export type HtmlInputType =
@@ -55,6 +56,7 @@ const Input = forwardRef(
       descriptionClassName,
       labelVariant,
       readOnly,
+      format,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -136,6 +138,24 @@ const Input = forwardRef(
 
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+
+    const formatNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const input = event.target as HTMLInputElement;
+      const value = input.value.replace(/[^\d.]/g, "");
+
+      const [integerPart, decimalPart] = value.split(".");
+
+      const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+      let formattedValue = formattedIntegerPart;
+      if (decimalPart !== undefined) {
+        formattedValue += "." + decimalPart.slice(0, 2);
+      }
+      console.log(formattedValue);
+
+      input.value = formattedValue;
+    };
+
     return (
       <InputWrapper
         inputId={id}
@@ -155,6 +175,7 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
+            onChange={format === "number" ? formatNumber : undefined}
             ref={registeredFormProps?.ref || ref}
             id={id}
             className={inputClasses}

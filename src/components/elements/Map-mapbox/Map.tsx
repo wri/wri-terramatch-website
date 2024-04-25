@@ -192,8 +192,7 @@ export const Map = ({
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop."
-        descriptionListStatus="Confirming Geolocation"
+        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road.."
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -224,13 +223,13 @@ export const Map = ({
               </div>
               <div
                 className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-green-400": image.isVerified,
+                  "border-blue": image.isVerified,
                   "border-red": !image.isVerified
                 })}
               >
                 <Text
                   variant="text-12-bold"
-                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  className={classNames({ "text-blue": image.isVerified, "text-red": !image.isVerified })}
                 >
                   {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
                 </Text>

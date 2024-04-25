@@ -1,6 +1,6 @@
 import Button from "@/components/elements/Button/Button";
+import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -61,6 +61,7 @@ const menuProjectOptions = [
 
 export interface StatusProps {
   titleStatus?: "Site" | "Project" | "Polygon";
+  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info" | "Planting in Progress";
 }
 
 const menuOptionsMap = {
@@ -81,7 +82,7 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon" }: StatusProps) => {
+const StatusDisplay = ({ titleStatus = "Polygon", status }: StatusProps) => {
   const { openModal, closeModal } = useModalContext();
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
@@ -126,13 +127,8 @@ const StatusDisplay = ({ titleStatus = "Polygon" }: StatusProps) => {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-full items-center gap-2">
-        <Text variant="text-16-bold">Status{titleStatus === "Polygon" ? "" : ` ${titleStatus}`}:</Text>
-        <div className="flex items-center gap-[6px] rounded-xl bg-secondary-200 py-[2px] px-[6px]">
-          <Icon name={IconNames.STATUS_APPROVED} className="h-4 w-4" />
-          <Text variant="text-12-semibold" className="text-green-500">
-            Approved
-          </Text>
-        </div>
+        <Text variant="text-16-bold">{titleStatus === "Polygon" ? "" : `${titleStatus} `}Status:</Text>
+        <Status status={status} className="py-[2px] px-[6px]"></Status>
       </div>
       <div className="flex w-full items-center gap-4">
         <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>

@@ -20,15 +20,17 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-24-bold" className="mb-1">
           Site Status and Comments
         </Text>
-        <Text variant="text-14-light">Update the site status, view updates, or add comments</Text>
-      </div>
-      <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-        <Text variant="text-16-bold">Change Requested</Text>
-        <Text variant="text-14-semibold">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.
+        <Text variant="text-14-light" className="mb-4">
+          Update the site status, view updates, or add comments
         </Text>
+        <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
+          <Text variant="text-16-bold">Change Requested</Text>
+          <Text variant="text-14-semibold">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat.
+          </Text>
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         <Text variant="text-16-bold">Site Status</Text>
@@ -40,7 +42,7 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
           className="w-[80%]"
         />
       </div>
-      <Text variant="text-16-bold">History for Native Seed Centre Shrub SPA</Text>
+      <Text variant="text-16-bold">History for Tannous/Brayton Road</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}

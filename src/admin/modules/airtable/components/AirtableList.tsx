@@ -119,7 +119,7 @@ const AirtableList: FC = () => {
         <div className="flex w-full flex-col gap-4">
           <Input
             labelVariant="text-14-light"
-            labelClassname="capitalize"
+            labelClassName="capitalize"
             label="Name"
             placeholder="Input Name"
             name="other"
@@ -128,7 +128,7 @@ const AirtableList: FC = () => {
           />
           <Input
             label="Submitted by"
-            labelClassname="capitalize"
+            labelClassName="capitalize"
             labelVariant="text-14-light"
             placeholder="Input Submitted by"
             value="Ricardo Saavedra, November 14, 2023"
@@ -138,7 +138,7 @@ const AirtableList: FC = () => {
           <TextArea
             label="Description"
             labelVariant="text-14-light"
-            labelClassname="capitalize"
+            labelClassName="capitalize"
             placeholder="Input Description"
             name=""
             className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
@@ -165,7 +165,7 @@ const AirtableList: FC = () => {
           />
           <Input
             label="Publish For"
-            labelClassname="capitalize"
+            labelClassName="capitalize"
             labelVariant="text-14-light"
             placeholder="Input Publish For"
             onChange={() => {}}
@@ -174,7 +174,7 @@ const AirtableList: FC = () => {
           />
           <Input
             label="URL"
-            labelClassname="capitalize"
+            labelClassName="capitalize"
             labelVariant="text-14-light"
             placeholder="Input URL"
             onChange={() => {}}

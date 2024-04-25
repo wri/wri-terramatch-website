@@ -40,7 +40,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
           className="w-[44%]"
         />
       </div>
-      <Text variant="text-16-bold">History for Faja Lobi Project</Text>
+      <Text variant="text-16-bold">History for Aerobic Agroforestry</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}
@@ -83,7 +83,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
           User
         </Text>
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Site
+          Polygon
         </Text>
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Status

@@ -1,21 +1,15 @@
 import React, { useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import Comentary from "@/components/elements/Comentary/Comentary";
-import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
-import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Drawer from "@/components/elements/Drawer/Drawer";
-import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { comentariesItems, polygonStatusLabels } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
@@ -54,7 +48,7 @@ const Polygons = (props: IPolygonProps) => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -113,32 +107,10 @@ const Polygons = (props: IPolygonProps) => {
         onCLose={closeModal}
         status="Under Review"
         toogleButton
-        content={
-          <Text variant="text-12-bold" className="mt-1 mb-8" containHtml>
-            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
-          </Text>
-        }
+        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <div className="mb-[72px] px-20">
-          <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
-        </div>
-        <div className="flex flex-col gap-4">
-          <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
-          {comentariesItems.map(item => (
-            <Comentary
-              key={item.id}
-              name={item.name}
-              lastName={item.lastName}
-              date={item.date}
-              comentary={item.comentary}
-              files={item.files}
-              status={item.status}
-            />
-          ))}
-        </div>
-      </ModalWithLogo>
+      />
     );
   };
 
@@ -147,42 +119,10 @@ const Polygons = (props: IPolygonProps) => {
       <ModalWithMap
         title="Request Support"
         onCLose={closeModal}
-        content={
-          <Text variant="text-16-bold" className="mt-1 mb-8" containHtml>
-            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
-          </Text>
-        }
+        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <div className="mb-[72px]">
-          <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
-        </div>
-        <TextArea
-          name={""}
-          label="Comment"
-          labelVariant="text-12-light"
-          labelClassname="capitalize "
-          className="text-12-light max-h-72 !min-h-0 resize-none"
-          placeholder="Insert my comment"
-          rows={4}
-        />
-        <Text variant="text-12-light" className="mt-6 mb-2">
-          Attachments
-        </Text>
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-bold" className="whitespace-nowrap text-center text-primary">
-                documents or images to help reviewer
-              </Text>
-            </div>
-          }
-        />
-      </ModalWithMap>
+      ></ModalWithMap>
     );
   };
 

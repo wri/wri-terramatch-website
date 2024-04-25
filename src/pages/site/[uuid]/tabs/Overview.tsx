@@ -8,7 +8,6 @@ import { When } from "react-if";
 import { polygonData } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
-import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
@@ -51,7 +50,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -96,8 +95,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop."
-        descriptionListStatus="Confirming Geolocation"
+        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -128,13 +126,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               </div>
               <div
                 className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-green-400": image.isVerified,
+                  "border-blue": image.isVerified,
                   "border-red": !image.isVerified
                 })}
               >
                 <Text
                   variant="text-12-bold"
-                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  className={classNames({ "text-blue": image.isVerified, "text-red": !image.isVerified })}
                 >
                   {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
                 </Text>
@@ -179,42 +177,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <ModalWithMap
         title="Request Support"
         onCLose={closeModal}
-        content={
-          <Text variant="text-16-bold" className="mt-1 mb-8" containHtml>
-            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
-          </Text>
-        }
+        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <div className="mb-[72px]">
-          <StepProgressbar value={80} labels={polygonStatusLabels} />
-        </div>
-        <TextArea
-          name={""}
-          label="Comment"
-          labelVariant="text-12-light"
-          labelClassname="capitalize "
-          className="text-12-light max-h-72 !min-h-0 resize-none"
-          placeholder="Insert my comment"
-          rows={4}
-        />
-        <Text variant="text-12-light" className="mt-6 mb-2">
-          Attachments
-        </Text>
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-bold" className="whitespace-nowrap text-center text-primary">
-                documents or images to help reviewer
-              </Text>
-            </div>
-          }
-        />
-      </ModalWithMap>
+      ></ModalWithMap>
     );
   };
 

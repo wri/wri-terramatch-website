@@ -21,7 +21,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     error,
     required,
     feedbackRequired,
-    labelClassname,
+    labelClassName,
     labelVariant,
     ...inputProps
   } = inputWrapperProps;
@@ -46,7 +46,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     <InputWrapper
       inputId={id}
       label={label}
-      labelClassname={labelClassname}
+      labelClassName={labelClassName}
       labelVariant={labelVariant}
       description={description}
       containerClassName={containerClassName}

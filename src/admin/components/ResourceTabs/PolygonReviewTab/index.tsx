@@ -17,6 +17,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import { useModalContext } from "@/context/modal.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
@@ -91,7 +92,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -132,13 +133,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
-  const contentForApproval = (
-    <Text variant="text-12-light" as="p" className="text-center">
-      Are you sure you want to approve the polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>Native Seed Centre Shrub SPA</b>?
-    </Text>
-  );
-
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
@@ -156,8 +150,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop."
-        descriptionListStatus="Confirming Geolocation"
+        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -188,13 +181,13 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
               <div
                 className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-green-400": image.isVerified,
+                  "border-blue": image.isVerified,
                   "border-red": !image.isVerified
                 })}
               >
                 <Text
                   variant="text-12-bold"
-                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  className={classNames({ "text-blue": image.isVerified, "text-red": !image.isVerified })}
                 >
                   {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
                 </Text>
@@ -203,6 +196,27 @@ const PolygonReviewTab: FC<IProps> = props => {
           ))}
         </div>
       </ModalAdd>
+    );
+  };
+
+  const openFormModalHandlerSubmitPolygon = () => {
+    openModal(
+      <ModalSubmit
+        title="Submit Polygons"
+        onCLose={closeModal}
+        content="Project Developers may submit one or all polygons for review."
+        primaryButtonText="Next"
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            closeModal();
+            openFormModalHandlerConfirm();
+          }
+        }}
+        secondaryButtonText="Cancel"
+        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+      ></ModalSubmit>
     );
   };
 
@@ -265,6 +279,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   ];
 
+  const contentForApproval = (
+    <Text variant="text-12-light" as="p" className="text-center">
+      Are you sure you want to approve the polygons for&nbsp;
+      <b style={{ fontSize: "inherit" }}>Tannous/Brayrton Road</b>?
+    </Text>
+  );
+
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab {...props}>
@@ -306,7 +327,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     >
                       Download
                     </Button>
-                    <Button className="flex-1 px-3" onClick={openFormModalHandlerConfirm}>
+                    <Button className="flex-1 px-3" onClick={openFormModalHandlerSubmitPolygon}>
                       <Text variant="text-14-bold" className="text-white">
                         approve polygons
                       </Text>
