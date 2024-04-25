@@ -23080,3 +23080,7 @@ export type SitePolygon = {
   status?: string;
   country?: string;
 };
+
+export type SitePolygonsBboxResponse = {
+  bbox?: any[];
+};

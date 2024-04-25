@@ -6,7 +6,7 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import Map from "@/components/elements/Map-mapbox/Map";
+import MapSite from "@/components/elements/Map-mapbox/MapSites";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
@@ -22,6 +22,7 @@ import { useModalContext } from "@/context/modal.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
+  useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -68,6 +69,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   });
 
+  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
+    pathParams: {
+      site: record.uuid
+    }
+  });
+
+  const siteBbox = sitePolygonBbox?.bbox;
   const sitePolygonDataTable = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map((data: SitePolygon) => ({
     "polygon-id": data.id,
     "restoration-practice": data.practice,
@@ -85,6 +93,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       label: data.poly_name || `Unnamed Polygon`
     })
   );
+  const sitePolygonsIds = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(item => item?.poly_id);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -344,7 +353,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
               </div>
 
-              <Map className="rounded-lg" status={true} />
+              <MapSite polygonsData={sitePolygonsIds} bbox={siteBbox} />
               <div className="mb-6">
                 <div className="mb-4">
                   <Text variant="text-16-bold" className="mb-2 text-grey-300">

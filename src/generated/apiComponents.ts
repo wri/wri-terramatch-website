@@ -31516,6 +31516,45 @@ export const useGetV2DashboardCountries = <TData = Schemas.DashboardCountriesRes
   );
 };
 
+export type GetV2SitesSiteBboxPathParams = {
+  /**
+   * The ID of the site
+   */
+  site: string;
+};
+
+export type GetV2SitesSiteBboxError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitesSiteBboxVariables = {
+  pathParams: GetV2SitesSiteBboxPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitesSiteBbox = (variables: GetV2SitesSiteBboxVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.SitePolygonsBboxResponse, GetV2SitesSiteBboxError, undefined, {}, {}, GetV2SitesSiteBboxPathParams>({
+    url: "/v2/sites/{site}/bbox",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2SitesSiteBbox = <TData = Schemas.SitePolygonsBboxResponse>(
+  variables: GetV2SitesSiteBboxVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.SitePolygonsBboxResponse, GetV2SitesSiteBboxError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.SitePolygonsBboxResponse, GetV2SitesSiteBboxError, TData>(
+    queryKeyFn({ path: "/v2/sites/{site}/bbox", operationId: "getV2SitesSiteBbox", variables }),
+    ({ signal }) => fetchGetV2SitesSiteBbox({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -31976,4 +32015,9 @@ export type QueryOperation =
       path: "/v2/dashboard/countries";
       operationId: "getV2DashboardCountries";
       variables: GetV2DashboardCountriesVariables;
+    }
+  | {
+      path: "/v2/sites/{site}/bbox";
+      operationId: "getV2SitesSiteBbox";
+      variables: GetV2SitesSiteBboxVariables;
     };
