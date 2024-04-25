@@ -23,7 +23,7 @@ import {
   useGetV2FormsENTITYUUID,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 import { EntityName } from "@/types/common";
 
@@ -34,8 +34,13 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
   label: string;
 }
+export interface IPolygonItem {
+  id: string;
+  status: "draft" | "submitted" | "approved" | "Needs More Info";
+  label: string;
+}
 
-const PolygonReviewAside: FC<{ type: EntityName; data: any }> = ({ type, data }) => {
+const PolygonReviewAside: FC<{ type: EntityName; data: IPolygonItem[] }> = ({ type, data }) => {
   switch (type) {
     case "sites":
       return <SitePolygonReviewAside data={data} />;
@@ -62,11 +67,23 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   });
 
-  const transformedSiteDataForList = ((sitePolygonData ?? []) as any).map((data: any, index: number) => ({
-    id: (index + 1).toString(),
-    status: data.status,
-    label: data.poly_name || `Unnamed Polygon ${index + 1}`
+  const sitePolygonDataTable = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map((data: SitePolygon) => ({
+    "polygon-id": data.id,
+    "restoration-practice": data.practice,
+    "target-land-use-system": data.target_sys,
+    "tree-distribution": data.distr,
+    "planting-start-date": data.plantstart,
+    source: data.org_name,
+    ellipse: false
   }));
+
+  const transformedSiteDataForList = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(
+    (data: SitePolygon, index: number) => ({
+      id: (index + 1).toString(),
+      status: data.status,
+      label: data.poly_name || `Unnamed Polygon`
+    })
+  );
 
   const { openModal, closeModal } = useModalContext();
 
@@ -218,27 +235,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     { id: "5", label: "Approved" }
   ];
 
-  const tableData = [
-    {
-      "polygon-id": "ipsum lorem",
-      "restoration-practice": "ipsum lorem",
-      "target-land-use-system": "ipsum lorem",
-      "tree-distribution": "ipsum lorem",
-      "planting-start-date": "ipsum lorem",
-      source: "ipsum lorem",
-      ellipse: false
-    },
-    {
-      "polygon-id": "ipsum lorem",
-      "restoration-practice": "ipsum lorem",
-      "target-land-use-system": "ipsum lorem",
-      "tree-distribution": "ipsum lorem",
-      "planting-start-date": "ipsum lorem",
-      source: "ipsum lorem",
-      ellipse: true
-    }
-  ];
-
   const tableItemMenu = [
     {
       id: "1",
@@ -381,14 +377,12 @@ const PolygonReviewTab: FC<IProps> = props => {
                       )
                     }
                   ]}
-                  data={tableData}
+                  data={sitePolygonDataTable}
                 ></Table>
               </div>
             </Stack>
           </Grid>
-          <Grid xs={3} className="pl-8 pr-4 pt-9">
-            <PolygonReviewAside type={props.type} data={transformedSiteDataForList} />
-          </Grid>
+          <PolygonReviewAside type={props.type} data={transformedSiteDataForList as IPolygonItem[]} />
         </Grid>
       </TabbedShowLayout.Tab>
     </When>

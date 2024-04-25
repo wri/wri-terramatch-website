@@ -1,8 +1,8 @@
 import { Stack } from "@mui/material";
 
-import Polygons from "../Polygons";
+import Polygons, { IPolygonItem } from "../Polygons";
 
-const SitePolygonReviewAside = (data: any) => {
+const SitePolygonReviewAside = (data: { data: IPolygonItem[] }) => {
   return (
     <Stack gap={8} className="h-full">
       <Polygons menu={data?.data} />
