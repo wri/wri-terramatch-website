@@ -30,12 +30,12 @@ const criteriaMenuItems: IPolygonItem[] = [
   },
   {
     id: "6",
-    status: "Draft",
+    status: "Submitted",
     label: "Polygon 2321340882"
   },
   {
     id: "7",
-    status: "Draft",
+    status: "Needs More Info",
     label: "Polygon 2321340883"
   },
   {

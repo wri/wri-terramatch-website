@@ -50,7 +50,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -95,7 +95,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop."
+        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -126,13 +126,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               </div>
               <div
                 className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-green-400": image.isVerified,
+                  "border-blue": image.isVerified,
                   "border-red": !image.isVerified
                 })}
               >
                 <Text
                   variant="text-12-bold"
-                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  className={classNames({ "text-blue": image.isVerified, "text-red": !image.isVerified })}
                 >
                   {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
                 </Text>

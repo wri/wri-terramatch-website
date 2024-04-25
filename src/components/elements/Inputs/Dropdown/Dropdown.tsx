@@ -139,7 +139,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       Approved: "bg-greenCustom-200",
       Submitted: "bg-blue",
       Draft: "bg-purple",
-      "Under Review": "bg-tertiary-600"
+      "Under Review": "bg-tertiary-600",
+      "Needs More Info": "bg-tertiary-600"
     };
 
     return colorMap[option] || "";

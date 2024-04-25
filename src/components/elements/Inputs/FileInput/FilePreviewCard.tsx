@@ -75,20 +75,20 @@ const FilePreviewCard = ({
               iconProps={{
                 name:
                   variant.type === "image" || variant.type === "geoFile" ? IconNames.TRASH_PA : IconNames.TRASH_CIRCLE,
-                className: "fill-error text-error",
+                className: "fill-error text-grey-700",
                 width: 32
               }}
             />
             <When condition={variant.type === "image"}>
               <div
                 className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-green-400": image.isVerified,
+                  "border-blue": image.isVerified,
                   "border-red": !image.isVerified
                 })}
               >
                 <Text
                   variant="text-12-bold"
-                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                  className={classNames({ "text-blue": image.isVerified, "text-red": !image.isVerified })}
                 >
                   {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
                 </Text>

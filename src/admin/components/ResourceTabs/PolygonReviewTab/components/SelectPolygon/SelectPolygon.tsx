@@ -16,12 +16,12 @@ const dropdownPolygonOptions = [
   {
     title: "Philippines_CI_Philippines",
     value: "3",
-    meta: "Draft"
+    meta: "Submitted"
   },
   {
     title: "Portugal_ReForest_Action_(Proenca-a-Nova)",
     value: "4",
-    meta: "Under Review"
+    meta: "Needs More Info"
   },
   {
     title: "Spain_ReForest_Action_(Palencia)",

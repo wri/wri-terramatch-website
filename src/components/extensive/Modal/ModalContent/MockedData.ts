@@ -1,19 +1,19 @@
 interface IDataSubmitPolygons {
   id: string;
   name: string;
-  status: "Draft" | "Submitted" | "Approved" | "Under Review";
+  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info";
   isSubmitted: boolean;
 }
 
 export const dataSubmitPolygons: IDataSubmitPolygons[] = [
   { id: "1", name: "Aerobic-agroforestry", status: "Approved", isSubmitted: true },
-  { id: "2", name: "Arcos", status: "Under Review", isSubmitted: false },
+  { id: "2", name: "Arcos", status: "Needs More Info", isSubmitted: false },
   { id: "3", name: "Bccp", status: "Submitted", isSubmitted: false },
   { id: "4", name: "Blue-forest", status: "Approved", isSubmitted: true },
-  { id: "5", name: "Durrell", status: "Draft", isSubmitted: false },
-  { id: "6", name: "Ecofix", status: "Draft", isSubmitted: true },
+  { id: "5", name: "Durrell", status: "Submitted", isSubmitted: false },
+  { id: "6", name: "Ecofix", status: "Submitted", isSubmitted: true },
   { id: "7", name: "Env-coffee-forest-forum", status: "Submitted", isSubmitted: false },
-  { id: "8", name: "Env-found-afr-sl", status: "Under Review", isSubmitted: true }
+  { id: "8", name: "Env-found-afr-sl", status: "Needs More Info", isSubmitted: true }
 ];
 
 export const dataImageGallery = [

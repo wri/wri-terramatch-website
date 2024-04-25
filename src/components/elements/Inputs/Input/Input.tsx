@@ -143,19 +143,14 @@ const Input = forwardRef(
       const input = event.target as HTMLInputElement;
       const value = input.value.replace(/[^\d.]/g, "");
 
-      // Split the value into integer and decimal parts
       const [integerPart, decimalPart] = value.split(".");
 
-      // Format the integer part with commas every three digits
       const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-      // Combine the formatted integer part with the decimal part
       let formattedValue = formattedIntegerPart;
       if (decimalPart !== undefined) {
-        formattedValue += "." + decimalPart.slice(0, 2); // Limit decimal part to two digits
+        formattedValue += "." + decimalPart.slice(0, 2);
       }
-
-      // Update the input value with the formatted number
       console.log(formattedValue);
 
       input.value = formattedValue;

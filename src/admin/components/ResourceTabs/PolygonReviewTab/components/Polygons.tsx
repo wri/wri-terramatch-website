@@ -48,7 +48,7 @@ const Polygons = (props: IPolygonProps) => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
