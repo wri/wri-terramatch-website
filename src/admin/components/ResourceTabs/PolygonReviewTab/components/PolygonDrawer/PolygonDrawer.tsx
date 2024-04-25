@@ -85,7 +85,7 @@ const PolygonDrawer = () => {
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <SelectPolygon></SelectPolygon>
-            <StatusDisplay />
+            <StatusDisplay status={"Approved"} />
             <ComentarySection></ComentarySection>
           </div>
         </Then>
