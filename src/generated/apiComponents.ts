@@ -7,6 +7,7 @@ import * as reactQuery from "@tanstack/react-query";
 import { useApiContext, ApiContext } from "./apiContext";
 import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
+import type * as Schemas from "./apiSchemas";
 import type * as RequestBodies from "./apiRequestBodies";
 
 export type GetV2TreeSpeciesEntityUUIDPathParams = {
@@ -16020,34 +16021,6 @@ export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
   >(
     (variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables) =>
       fetchPostV2FileUploadSitePhotosUUIDBulkUrl({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2MediaQueryParams = {
-  ["uuids[]"]: string[];
-};
-
-export type DeleteV2MediaError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2MediaVariables = {
-  queryParams: DeleteV2MediaQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2Media = (variables: DeleteV2MediaVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2MediaError, undefined, {}, DeleteV2MediaQueryParams, {}>({
-    url: "/v2/media",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2Media = (
-  options?: Omit<reactQuery.UseMutationOptions<undefined, DeleteV2MediaError, DeleteV2MediaVariables>, "mutationFn">
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2MediaError, DeleteV2MediaVariables>(
-    (variables: DeleteV2MediaVariables) => fetchDeleteV2Media({ ...fetcherOptions, ...variables }),
     options
   );
 };
