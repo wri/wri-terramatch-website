@@ -22971,6 +22971,8 @@ export type RoleUserCreate = {
   password?: string;
   job_role?: string;
   role_id?: string;
+  country?: string;
+  program?: string;
   facebook?: string;
   twitter?: string;
   instagram?: string;
@@ -22995,6 +22997,8 @@ export type RoleUserRead = {
   email_address_verified_at?: string;
   role?: string;
   role_id?: string;
+  country?: string;
+  program?: string;
   /**
    * @format date-time
    */
@@ -23009,6 +23013,21 @@ export type RoleUserRead = {
   whatsapp_phone?: string;
   has_ppc_projects?: boolean;
   has_terrafund_projects?: boolean;
+};
+
+export type DashboardCountriesResponse = {
+  data?: DashboardCountryData[];
+};
+
+export type DashboardCountryData = {
+  id?: number;
+  country_slug?: string;
+  data?: DashboardCountryInfo;
+};
+
+export type DashboardCountryInfo = {
+  label?: string;
+  icon?: string;
 };
 
 export type SitePolygonsDataResponse = SitePolygon[];
