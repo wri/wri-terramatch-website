@@ -21,7 +21,7 @@ const Files = ({ files, title }: FilesProps) => {
         </Text>
       </When>
       <List
-        className="grid w-full grid-cols-2 gap-5"
+        className="grid-cols-2 grid w-full gap-5"
         items={files}
         render={file => <FilePreviewCard file={file as UploadedFile} onDownload={f => downloadFile(f.url)} />}
       />

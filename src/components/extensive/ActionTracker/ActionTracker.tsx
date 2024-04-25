@@ -42,7 +42,7 @@ const ActionTracker = () => {
 
   return (
     <LoadingContainer loading={isLoadingApplications || isLoadingActions}>
-      <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-3">
+      <div className="grid-cols-1 md:grid-cols-3 grid w-full gap-8">
         <ApplicationsCard applications={myApplications?.data} />
         <ProjectsCard actions={projectActions} />
         <ReportsCard actions={reportActions} />
