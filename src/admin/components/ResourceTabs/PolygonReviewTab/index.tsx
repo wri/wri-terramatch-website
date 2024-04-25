@@ -403,7 +403,9 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
             </Stack>
           </Grid>
-          <PolygonReviewAside type={props.type} data={transformedSiteDataForList as IPolygonItem[]} />
+          <Grid xs={3} className="pl-8 pr-4 pt-9">
+            <PolygonReviewAside type={props.type} data={transformedSiteDataForList as IPolygonItem[]} />
+          </Grid>
         </Grid>
       </TabbedShowLayout.Tab>
     </When>
