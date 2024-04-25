@@ -70,6 +70,7 @@ export enum IconNames {
   STATUS_AWAITING_REVIEW = "status/awaiting-review",
   ROUND_RED_CROSS = "round-red-cross",
   ROUND_GREEN_TICK = "round-green-tick",
+  ROUND_CUSTOM_TICK = "round-custom-tick",
   WARNING = "warning",
   IMAGE_PLACEHOLDER = "image-placeholder",
   ZoomIn = "zoom-in",
@@ -83,7 +84,8 @@ export enum IconNames {
   LEAF_CIRCLE = "leaf-circle",
   REFRESH_CIRCLE = "refresh-circle",
   SITE_CIRCLE = "site-circle",
-  NURSERY_CIRCLE = "nursery-circle"
+  NURSERY_CIRCLE = "nursery-circle",
+  IC_ARROW_COLLAPSE = "ic-arrow-collapse"
 }
 
 export interface IconProps {

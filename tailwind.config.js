@@ -6,7 +6,10 @@ module.exports = {
     extend: {
       screens: {
         sx: "460px",
-        "screen-height-sm": { raw: "(max-height: 768px)" }
+        "screen-height-sm": { raw: "(max-height: 768px)" },
+        wide: "2500px",
+        lg: "1900px",
+        sm: "1200px"
       },
       width: {
         "fit-content": "fit-content"
@@ -69,17 +72,21 @@ module.exports = {
         800: "#5A5A5A",
         700: "#737373",
         600: "#888888",
+        550: "#979797",
         500: "#9B9B9B",
+        450: "#efefef",
         400: "#B1B1B1",
         300: "#D8D8D8",
         200: "#E3E3E3",
         150: "#F5F7F9",
         100: "#F2F2F2",
+        75: "#F7F7F7",
         50: "#FAFAFA"
       },
       tertiary: {
         DEFAULT: "#F0AB00",
         500: "#F0AB00",
+        450: "#F0B354",
         400: "#F3C148",
         300: "#F6D279",
         200: "#FAEAC1",
@@ -92,12 +99,26 @@ module.exports = {
         300: "#F9D7D7",
         200: "#FBE6E6",
         100: "#FFF2F2"
+      },
+      customGreen: {
+        300: "#268F8C",
+        200: "#28C499",
+        100: "#28c4991a"
+      },
+      customBlue: {
+        100: "#002633",
+        75: "#27a9e01a",
+        50: "#00263399"
       }
+    },
+    gridTemplateColumns: {
+      15: "repeat(15, minmax(0, 1fr))"
     },
 
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
-      "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px
+      "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
+      "blue-border-input": "rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(212 238 249) 0px 0px 0px 2px"
     },
     fontFamily: {
       primary: ["Acumin Pro"],
@@ -113,7 +134,10 @@ module.exports = {
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
       "4xl": "2.25rem", //36px
-      "5xl": "2.5rem" //40px
+      "5xl": "2.5rem", //40px
+      //Wide extra
+      "6xl": "2.75rem", //44px
+      "7xl": "3rem" //48px
     },
     listStyleType: {
       none: "none",
