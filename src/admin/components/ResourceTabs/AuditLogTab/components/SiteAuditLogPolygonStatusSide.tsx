@@ -6,7 +6,7 @@ const SiteAuditLogPolygonStatusSide = () => {
   return (
     <div className="flex flex-col gap-6">
       <SelectPolygon />
-      <PolygonStatus />
+      <PolygonStatus status="Approved" />
       <ComentarySection />
     </div>
   );

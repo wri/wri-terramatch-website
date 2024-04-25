@@ -87,7 +87,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
           className="w-[62%]"
         />
       </div>
-      <Text variant="text-16-bold">History for Aerobic Agroforestry</Text>
+      <Text variant="text-16-bold">History for Tannous/Brayton Road</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}

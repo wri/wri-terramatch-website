@@ -3,11 +3,15 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
+import Comentary from "@/components/elements/Comentary/Comentary";
+import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBaseProps, ModalProps } from "./Modal";
+import { comentariesItems, polygonStatusLabels } from "./ModalContent/MockedData";
 
 export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
   return (
@@ -89,8 +93,28 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
             </div>
           </When>
         </div>
-        <When condition={!!content}>{content}</When>
-        {children}
+        <When condition={!!content}>
+          <Text as="div" variant="text-12-bold" className="mt-1 mb-8" containHtml>
+            {content}
+          </Text>
+        </When>
+        <div className="mb-[72px] px-20">
+          <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
+        </div>
+        <div className="flex flex-col gap-4">
+          <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
+          {comentariesItems.map(item => (
+            <Comentary
+              key={item.id}
+              name={item.name}
+              lastName={item.lastName}
+              date={item.date}
+              comentary={item.comentary}
+              files={item.files}
+              status={item.status}
+            />
+          ))}
+        </div>
       </div>
       <div className="flex w-full justify-end gap-3 py-4 px-8">
         <When condition={!!secondaryButtonProps}>

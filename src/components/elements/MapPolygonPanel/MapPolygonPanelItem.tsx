@@ -7,11 +7,9 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
-import { comentariesItems, polygonStatusLabels } from "@/pages/site/[uuid]/components/MockecData";
+import { polygonStatusLabels } from "@/pages/site/[uuid]/components/MockecData";
 
 import Button from "../Button/Button";
-import Comentary from "../Comentary/Comentary";
-import ComentaryBox from "../ComentaryBox/ComentaryBox";
 import DragAndDrop from "../DragAndDrop/DragAndDrop";
 import TextArea from "../Inputs/textArea/TextArea";
 import Menu from "../Menu/Menu";
@@ -85,33 +83,12 @@ const MapPolygonPanelItem = ({
       <ModalWithLogo
         title="Blue Forest"
         onCLose={closeModal}
+        status="Under Review"
         toogleButton
-        content={
-          <Text variant="text-12-bold" className="mt-1 mb-8" containHtml>
-            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
-          </Text>
-        }
+        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <div className="mb-[72px] px-20">
-          <StepProgressbar value={80} labels={polygonStatusLabels} />
-        </div>
-        <div className="flex flex-col gap-4">
-          <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
-          {comentariesItems.map(item => (
-            <Comentary
-              key={item.id}
-              name={item.name}
-              lastName={item.lastName}
-              date={item.date}
-              comentary={item.comentary}
-              files={item.files}
-              status={item.status}
-            />
-          ))}
-        </div>
-      </ModalWithLogo>
+      />
     );
   };
   const openFormModalHandlerConfirm = () => {

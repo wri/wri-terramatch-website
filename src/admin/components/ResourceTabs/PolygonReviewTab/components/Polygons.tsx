@@ -1,8 +1,6 @@
 import React, { useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import Comentary from "@/components/elements/Comentary/Comentary";
-import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
 import DragAndDrop from "@/components/elements/DragAndDrop/DragAndDrop";
 import Drawer from "@/components/elements/Drawer/Drawer";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
@@ -15,7 +13,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { comentariesItems, polygonStatusLabels } from "@/components/extensive/Modal/ModalContent/MockedData";
+import { polygonStatusLabels } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
@@ -113,32 +111,10 @@ const Polygons = (props: IPolygonProps) => {
         onCLose={closeModal}
         status="Under Review"
         toogleButton
-        content={
-          <Text variant="text-12-bold" className="mt-1 mb-8" containHtml>
-            Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition
-          </Text>
-        }
+        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <div className="mb-[72px] px-20">
-          <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
-        </div>
-        <div className="flex flex-col gap-4">
-          <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
-          {comentariesItems.map(item => (
-            <Comentary
-              key={item.id}
-              name={item.name}
-              lastName={item.lastName}
-              date={item.date}
-              comentary={item.comentary}
-              files={item.files}
-              status={item.status}
-            />
-          ))}
-        </div>
-      </ModalWithLogo>
+      />
     );
   };
 

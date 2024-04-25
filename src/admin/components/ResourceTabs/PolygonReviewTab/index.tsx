@@ -121,7 +121,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
         descriptionInput="Drag and drop."
-        descriptionListStatus="Confirming Geolocation"
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files

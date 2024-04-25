@@ -4,7 +4,7 @@ import Status from "../../PolygonReviewTab/components/PolygonStatus/StatusDispla
 const SiteAuditLogProjectStatusSide = () => {
   return (
     <div className="flex flex-col gap-6">
-      <Status titleStatus="Project" />
+      <Status titleStatus="Project" status="Needs More Info" />
       <ComentarySection />
     </div>
   );

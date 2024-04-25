@@ -8,7 +8,7 @@ import Text from "../Text/Text";
 
 export interface StatusProps {
   className?: string;
-  status: "Draft" | "Submitted" | "Approved" | "Under Review";
+  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info" | "Planting in Progress";
   textVariant?: TextVariants;
 }
 
@@ -20,7 +20,9 @@ const Status = (props: StatusProps) => {
       Approved: "text-green-500",
       Submitted: "text-blue",
       Draft: "text-purple",
-      "Under Review": "text-tertiary-600"
+      "Under Review": "text-tertiary-600",
+      "Needs More Info": "text-tertiary-600",
+      "Planting in Progress": "text-blue"
     };
 
     return colorMap[status] || "";
@@ -31,7 +33,9 @@ const Status = (props: StatusProps) => {
       Approved: "bg-secondary-200",
       Submitted: "bg-blue-200",
       Draft: "bg-purple-200",
-      "Under Review": "bg-tertiary-50"
+      "Under Review": "bg-tertiary-50",
+      "Needs More Info": "bg-tertiary-50",
+      "Planting in Progress": "bg-blue-200"
     };
 
     return colorMap[status] || "";
