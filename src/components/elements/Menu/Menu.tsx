@@ -184,7 +184,7 @@ const Menu = (props: MenuProps) => {
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
               key={item.id}
-              render={item?.data?.label}
+              render={item?.data?.label || item?.render()}
               onClick={() => {
                 setSelectedOption(item?.country_slug || item?.data?.label);
               }}
