@@ -18,6 +18,9 @@ export interface MenuItemProps {
   render: () => ReactNode;
   MenuItemVariant?: string;
   onClick?: () => void;
+  country_slug?: string | null;
+  program?: string | null;
+  data?: any;
 }
 export interface MenuProps {
   menu: MenuItemProps[];
@@ -29,6 +32,7 @@ export interface MenuProps {
   children: ReactNode;
   className?: string;
   container?: HTMLDivElement | null;
+  setSelectedOption?: any;
 }
 const Menu = (props: MenuProps) => {
   const {
@@ -39,7 +43,8 @@ const Menu = (props: MenuProps) => {
     children,
     isDefaultOpen,
     className,
-    container
+    container,
+    setSelectedOption
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -170,7 +175,7 @@ const Menu = (props: MenuProps) => {
         <div
           ref={menuRef}
           className={tw(
-            "fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
+            "fixed z-40 flex max-h-[270px] flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
             variant
           )}
           style={calculateMenuStyle()}
@@ -179,8 +184,10 @@ const Menu = (props: MenuProps) => {
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
               key={item.id}
-              render={item.render}
-              onClick={item.onClick}
+              render={item?.data?.label || item?.render()}
+              onClick={() => {
+                setSelectedOption(item?.country_slug || item?.data?.label);
+              }}
             />
           ))}
         </div>
