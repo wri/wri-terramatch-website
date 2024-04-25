@@ -31347,6 +31347,53 @@ export const usePostUsersRegister = (
   );
 };
 
+export type GetV2DashboardCountriesQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2DashboardCountriesError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardCountriesVariables = {
+  queryParams?: GetV2DashboardCountriesQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+ */
+export const fetchGetV2DashboardCountries = (variables: GetV2DashboardCountriesVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.DashboardCountriesResponse,
+    GetV2DashboardCountriesError,
+    undefined,
+    {},
+    GetV2DashboardCountriesQueryParams,
+    {}
+  >({ url: "/v2/dashboard/countries", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+ */
+export const useGetV2DashboardCountries = <TData = Schemas.DashboardCountriesResponse>(
+  variables: GetV2DashboardCountriesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.DashboardCountriesResponse, GetV2DashboardCountriesError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.DashboardCountriesResponse, GetV2DashboardCountriesError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/countries", operationId: "getV2DashboardCountries", variables }),
+    ({ signal }) => fetchGetV2DashboardCountries({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -31797,4 +31844,9 @@ export type QueryOperation =
       path: "/v2/{ENTITY}/{UUID}/export";
       operationId: "getV2ENTITYUUIDExport";
       variables: GetV2ENTITYUUIDExportVariables;
+    }
+  | {
+      path: "/v2/dashboard/countries";
+      operationId: "getV2DashboardCountries";
+      variables: GetV2DashboardCountriesVariables;
     };
