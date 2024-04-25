@@ -13,6 +13,7 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { comentariesItems, polygonStatusLabels } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
@@ -51,63 +52,46 @@ const Polygons = (props: IPolygonProps) => {
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
-      <ModalWithLogo
+      <ModalAdd
         title="Add Polygons"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
-            Start by adding polygons to your site.
-          </Text>
-        }
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        <DragAndDrop
-          description={
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
-              </Text>
-              <Text variant="text-12-light" className="text-center">
-                or
-              </Text>
-              <Text variant="text-12-light" className="max-w-[210px] text-center">
-                Drag and drop a GeoJSON files only to store and display on TerraMatch.
-              </Text>
-            </div>
-          }
-        />
-        <div>
-          <div className="m-2 flex">
+        descriptionInput="Drag and drop a GeoJSON files only to store and display on TerraMatch."
+        descriptionList={
+          <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
-          <div className="mb-6 flex flex-col gap-4">
-            {polygonData.map(polygon => (
-              <div
-                key={polygon.id}
-                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-              >
-                <div className="flex gap-3">
-                  <div className="rounded-lg bg-neutral-150 p-2">
-                    <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
-                  </div>
-                  <div>
-                    <Text variant="text-12">{polygon.name}</Text>
-                    <Text variant="text-12" className="opacity-50">
-                      {polygon.status}
-                    </Text>
-                  </div>
+        }
+        onCLose={closeModal}
+        content="Start by adding polygons to your site."
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      >
+        {/* Next div is only Mocked data delete this children later*/}
+        <div className="mb-6 flex flex-col gap-4">
+          {polygonData.map(polygon => (
+            <div
+              key={polygon.id}
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
+            >
+              <div className="flex gap-3">
+                <div className="rounded-lg bg-neutral-150 p-2">
+                  <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
                 </div>
-                <Icon
-                  name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
-                  className="h-6 w-6"
-                />
+                <div>
+                  <Text variant="text-12">{polygon.name}</Text>
+                  <Text variant="text-12" className="opacity-50">
+                    {polygon.status}
+                  </Text>
+                </div>
               </div>
-            ))}
-          </div>
+              <Icon
+                name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
+                className="h-6 w-6"
+              />
+            </div>
+          ))}
         </div>
-      </ModalWithLogo>
+      </ModalAdd>
     );
   };
 

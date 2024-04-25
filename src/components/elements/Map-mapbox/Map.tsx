@@ -31,14 +31,15 @@ import {
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
 import Carousel from "@/components/extensive/Carousel/Carousel";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import MapProvider from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "../Inputs/FileInput/FileInputVariants";
 import Text from "../Text/Text";
 import SiteStatus from "./MapControls/SiteStatus";
 
@@ -188,73 +189,56 @@ export const Map = ({
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
-      <ModalWithLogo
+      <ModalAdd
         title="Upload Images"
-        onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-4" containHtml>
-            Start by adding images for processing.
+        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+        descriptionInput="Drag and drop."
+        descriptionListStatus="Confirming Geolocation"
+        descriptionList={
+          <Text variant="text-12-bold" className="mt-9 ">
+            Uploaded Files
           </Text>
         }
-        primaryButtonText="Close"
+        onCLose={closeModal}
+        content="Start by adding images for processing."
+        primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       >
-        <div className="mb-8 flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8 px-[215px]">
-          <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
-          <div className="flex flex-col">
-            <Text variant="text-12-bold" className="text-center text-primary">
-              Click to upload
-            </Text>
-            <Text variant="text-12-light" className="text-center">
-              or
-            </Text>
-            <Text variant="text-12-light" className="max-w-[210px] text-center">
-              Drag and drop.
-            </Text>
-          </div>
-        </div>
-        <div>
-          <div className="mb-4 flex justify-between">
-            <Text variant="text-12-bold">Uploaded Files</Text>
-            <Text variant="text-12-bold" className="w-[146px] whitespace-nowrap pr-6 text-primary">
-              Confirming Geolocation
-            </Text>
-          </div>
-          <div className="mb-6 flex flex-col gap-4">
-            {uploadImageData.map(image => (
-              <div
-                key={image.id}
-                className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-              >
-                <div className="flex gap-3">
-                  <div className="rounded-lg bg-neutral-150 p-2">
-                    <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                  </div>
-                  <div>
-                    <Text variant="text-12">{image.name}</Text>
-                    <Text variant="text-12" className="opacity-50">
-                      {image.status}
-                    </Text>
-                  </div>
+        {/* Next div is only Mocked data delete this children later*/}
+        <div className="mb-6 flex flex-col gap-4">
+          {uploadImageData.map(image => (
+            <div
+              key={image.id}
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
+            >
+              <div className="flex gap-3">
+                <div className="rounded-lg bg-neutral-150 p-2">
+                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
                 </div>
-                <div
-                  className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                    "border-green-400": image.isVerified,
-                    "border-red": !image.isVerified
-                  })}
-                >
-                  <Text
-                    variant="text-12-bold"
-                    className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
-                  >
-                    {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                <div>
+                  <Text variant="text-12">{image.name}</Text>
+                  <Text variant="text-12" className="opacity-50">
+                    {image.status}
                   </Text>
                 </div>
               </div>
-            ))}
-          </div>
+              <div
+                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                  "border-green-400": image.isVerified,
+                  "border-red": !image.isVerified
+                })}
+              >
+                <Text
+                  variant="text-12-bold"
+                  className={classNames({ "text-green-400": image.isVerified, "text-red": !image.isVerified })}
+                >
+                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                </Text>
+              </div>
+            </div>
+          ))}
         </div>
-      </ModalWithLogo>
+      </ModalAdd>
     );
   };
 

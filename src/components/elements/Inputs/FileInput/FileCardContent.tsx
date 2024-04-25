@@ -1,16 +1,20 @@
 import classNames from "classnames";
 import { ChangeEvent, useState } from "react";
 import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon from "@/components/extensive/Icon/Icon";
 import { UploadedFile } from "@/types/common";
+
+import { FileCardContentVariant, VARIANT_FILE_CARD_DEFAULT } from "./FileInputVariants";
 
 interface FileCardContentProps {
   title: string;
   subtitle?: string;
   errorMessage?: string;
+  variant?: FileCardContentVariant;
   file?: UploadedFile;
   thumbnailClassName?: string;
   thumbnailContainerClassName?: string;
@@ -23,6 +27,7 @@ export const FileCardContent = ({
   subtitle,
   errorMessage,
   file,
+  variant = VARIANT_FILE_CARD_DEFAULT,
   thumbnailClassName,
   thumbnailContainerClassName,
   showPrivateCheckbox,
@@ -40,28 +45,23 @@ export const FileCardContent = ({
   return (
     <>
       <div
-        className={classNames(
-          thumbnailContainerClassName,
-          "flex h-15 w-15 items-center justify-center rounded-lg bg-cover bg-no-repeat"
-        )}
+        className={tw(thumbnailContainerClassName, variant.iconContainer)}
         style={hasPreview ? { backgroundImage: `url(${file?.url})` } : {}}
       >
         <Icon
-          name={IconNames.DOCUMENT}
-          className={classNames(thumbnailClassName, !!hasPreview && "hidden")}
-          width={24}
-          height={32}
+          name={variant.iconName}
+          className={tw(thumbnailClassName, !!hasPreview && variant.iconHasPreview, variant.iconClassName)}
         />
       </div>
       <div className="flex-1">
-        <Text variant="text-bold-subtitle-400" className="mb-1 line-clamp-1" title={title}>
+        <Text variant={variant.titleVariant} className={variant.titleClassName} title={title}>
           {title}
         </Text>
         <When condition={errorMessage || subtitle}>
           <Text
-            variant="text-light-body-300"
+            variant={variant.subTitletitleVariant}
             containHtml
-            className={classNames("line-clamp-1", errorMessage && "text-error first-letter:capitalize")}
+            className={classNames(errorMessage && "text-error first-letter:capitalize", variant.subTitleClassName)}
             title={errorMessage || subtitle}
           >
             {errorMessage || subtitle}

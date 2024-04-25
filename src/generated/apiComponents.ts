@@ -15898,7 +15898,7 @@ export type PostV2FileUploadMODELCOLLECTIONUUIDRequestBody = {
   lat?: number;
   lng?: number;
   /**
-   * @default false
+   * @default true
    */
   is_public?: boolean;
 };
@@ -15939,6 +15939,115 @@ export const usePostV2FileUploadMODELCOLLECTIONUUID = (
   >(
     (variables: PostV2FileUploadMODELCOLLECTIONUUIDVariables) =>
       fetchPostV2FileUploadMODELCOLLECTIONUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlPathParams = {
+  uuid: string;
+};
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlResponse = {
+  uuid?: string;
+  url?: string;
+  thumb_url?: string;
+  collection_name?: string;
+  title?: string;
+  file_name?: string;
+  mime_type?: string;
+  size?: number;
+  lat?: number;
+  lng?: number;
+  is_public?: boolean;
+  created_at?: string;
+}[];
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody = {
+  download_url?: string;
+  /**
+   * @default Name of image
+   */
+  title?: string;
+  /**
+   * @default null
+   */
+  lat?: number;
+  /**
+   * @default null
+   */
+  lng?: number;
+  /**
+   * @default true
+   */
+  is_public?: boolean;
+}[];
+
+export type PostV2FileUploadSitePhotosUUIDBulkUrlVariables = {
+  body?: PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody;
+  pathParams: PostV2FileUploadSitePhotosUUIDBulkUrlPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2FileUploadSitePhotosUUIDBulkUrl = (
+  variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+    PostV2FileUploadSitePhotosUUIDBulkUrlError,
+    PostV2FileUploadSitePhotosUUIDBulkUrlRequestBody,
+    {},
+    {},
+    PostV2FileUploadSitePhotosUUIDBulkUrlPathParams
+  >({ url: "/v2/file/upload/site/photos/{uuid}/bulk_url", method: "post", ...variables, signal });
+
+export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+      PostV2FileUploadSitePhotosUUIDBulkUrlError,
+      PostV2FileUploadSitePhotosUUIDBulkUrlVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2FileUploadSitePhotosUUIDBulkUrlResponse,
+    PostV2FileUploadSitePhotosUUIDBulkUrlError,
+    PostV2FileUploadSitePhotosUUIDBulkUrlVariables
+  >(
+    (variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables) =>
+      fetchPostV2FileUploadSitePhotosUUIDBulkUrl({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2MediaQueryParams = {
+  ["uuids[]"]: string[];
+};
+
+export type DeleteV2MediaError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2MediaVariables = {
+  queryParams: DeleteV2MediaQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2Media = (variables: DeleteV2MediaVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2MediaError, undefined, {}, DeleteV2MediaQueryParams, {}>({
+    url: "/v2/media",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2Media = (
+  options?: Omit<reactQuery.UseMutationOptions<undefined, DeleteV2MediaError, DeleteV2MediaVariables>, "mutationFn">
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2MediaError, DeleteV2MediaVariables>(
+    (variables: DeleteV2MediaVariables) => fetchDeleteV2Media({ ...fetcherOptions, ...variables }),
     options
   );
 };
