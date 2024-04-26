@@ -63,7 +63,7 @@ const WorkdaysGrid = ({ content, variant, nameSelect, daySelect }: WorkdaysGridP
               </Text>
             </div>
             <div
-              className={classNames("col-span-4 bg-white", variant.tertiaryCol, {
+              className={classNames("bg-white", variant.tertiaryCol, {
                 [`${variant.roundedTr}`]: index === 0,
                 "rounded-none": index !== 0
               })}
