@@ -1,4 +1,5 @@
 import cn from "classnames";
+import classNames from "classnames";
 import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
@@ -24,6 +25,9 @@ export interface InputProps
   descriptionClassName?: string;
   descriptionFooter?: string;
   format?: "number";
+  sufixLabelView?: boolean;
+  classNameContainerInput?: string;
+  classNameError?: string;
 }
 
 export type HtmlInputType =
@@ -57,6 +61,9 @@ const Input = forwardRef(
       labelVariant,
       readOnly,
       format,
+      sufixLabelView,
+      classNameContainerInput,
+      classNameError,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -85,7 +92,7 @@ const Input = forwardRef(
         "border-b-neutral-400": !error
       },
       login: {
-        "border-0 h-full relative z-[1] bg-transparent border-b-2 hover:border-blue-300 focus:border-blue-300 border-grey-400 hover:shadow-inset-blue focus:shadow-inset-blue w-full input-login pb-3.5 outline-none":
+        "border-0 p-0 h-full relative z-[1] bg-transparent border-b-2 hover:border-primary border-grey-400 hover:shadow-inset-blue w-full input-login pb-3.5 outline-none text-14-light !font-primary":
           true,
         "pl-4": inputProps.type === "number",
         "border-b-neutral-300": !error,
@@ -95,7 +102,7 @@ const Input = forwardRef(
         "focus:border-red-300": error
       },
       signup: {
-        "p-3 border border-grey-400 rounded-xl w-full hover:border-blue-300 hover:shadow-blue-border text-dark-700 opacity-60 outline-none":
+        "p-3 border border-grey-400 rounded-xl w-full hover:border-primary hover:shadow-blue-border text-dark-700 opacity-60 outline-none":
           true,
         "pl-4": inputProps.type === "number",
         "border-neutral-300": !error
@@ -169,8 +176,10 @@ const Input = forwardRef(
         feedbackRequired={feedbackRequired}
         labelClassName={labelClassName}
         descriptionClassName={descriptionClassName}
+        sufixLabelView={sufixLabelView}
+        classNameError={classNameError}
       >
-        <div className="relative">
+        <div className={classNames("relative", classNameContainerInput)}>
           <input
             {...inputProps}
             {...registeredFormProps}

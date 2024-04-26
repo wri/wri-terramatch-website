@@ -40,12 +40,15 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             id="email"
             formHook={form}
             error={errors.email}
-            containerClassName={`flex flex-col gap-2 bg-white ${
+            containerClassName={`flex flex-col gap-2 bg-white content-login w-full  ${
               !isEmpty(form.getValues("email")) ? "input-content-login" : "input-content-login"
             }`}
-            labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
+            labelClassName="opacity-50 text-blueCustom-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
-            absolute label-login text-14-light z-20 normal-case"
+            absolute label-login text-14-light normal-case"
+            sufixLabelView={false}
+            classNameContainerInput="!mt-0"
+            classNameError="!mt-0"
           />
           <Input
             name="password"
@@ -57,12 +60,15 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             id="password"
             formHook={form}
             error={errors.password}
-            containerClassName={`flex flex-col gap-2 bg-white ${
+            containerClassName={`flex flex-col gap-2 bg-white content-login w-full  ${
               !isEmpty(form.getValues("password")) ? "input-content-login" : "input-content-login"
             }`}
-            labelClassName=" opacity-50 text-blue-300 text-blue-700 origin-left
+            labelClassName="opacity-50 text-blueCustom-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
-            absolute label-login text-14-light z-20 normal-case"
+            absolute label-login text-14-light normal-case"
+            sufixLabelView={false}
+            classNameContainerInput="!mt-0"
+            classNameError="!mt-0"
           />
         </div>
         <Link href="/auth/reset-password">
@@ -75,8 +81,8 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             children: t("Sign in"),
             onClick: form.handleSubmit(handleSave),
             disabled: loading,
-            className:
-              "mb-4 bg-blue-300 py-6.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white"
+            className: `bg-blue-300 py-3.5 flex items-center justify-center rounded-lg w-full
+              border-2 border-blue-300 text-white text-14-bold hover:border-white`
           }}
         />
       </div>

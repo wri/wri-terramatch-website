@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import clsx from "clsx";
 import React from "react";
 import { When } from "react-if";
@@ -24,6 +25,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   titleOptions,
   setSelectedOption
 }) => {
+  const refContentCard = React.useRef<HTMLDivElement>(null);
   const MenuOption: MenuItemProps[] = options || [
     {
       id: "1",
@@ -38,14 +40,14 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   return (
     <article
       className={clsx("flex cursor-pointer items-center gap-2 rounded-lg border-2 p-3", {
-        "border-blue-300": selected,
-        "border-grey-300": !selected
+        "border-primary": selected,
+        "border-grey-350": !selected
       })}
     >
       <div className="rounded-lg border border-grey-300 p-2">
         <Icon name={IconNames.USER_ROLE} className="h-10 w-10 lg:h-11 lg:w-11 wide:h-12 wide:w-12" />
       </div>
-      <div className="flex flex-1 flex-col items-start gap-1">
+      <div className="flex flex-1 flex-col items-start gap-1" ref={refContentCard}>
         <Text variant="text-12-bold" className="text-dark-500">
           {title}
         </Text>
@@ -53,7 +55,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
           {description}
         </Text>
         <When condition={!!titleOptions}>
-          <Menu menu={MenuOption} setSelectedOption={setSelectedOption}>
+          <Menu menu={MenuOption} setSelectedOption={setSelectedOption} container={refContentCard.current}>
             <Text variant="text-12-bold" className="text-primary">
               {titleOptions || "Select Fund"}
             </Text>
@@ -61,8 +63,8 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
         </When>
       </div>
       <Icon
-        name={selected ? IconNames.SUCCESS : IconNames.NO_SUCCESS}
-        className="h-6 w-6 self-start lg:h-7 lg:w-7 wide:h-8 wide:w-8"
+        name={selected ? IconNames.APPROVED_COLORLESS : IconNames.NO_SUCCESS}
+        className={classNames(" h-5 w-5 self-start text-primary lg:h-6 lg:w-6 wide:h-7 wide:w-7")}
       />
     </article>
   );
