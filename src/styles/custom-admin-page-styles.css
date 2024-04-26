@@ -117,10 +117,10 @@
 }
 
 .RaSidebar-fixed a {
-  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 hover:border-primary-500 hover:bg-primary-200 text-grey-300 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400;
+  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 text-grey-300 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400 hover:bg-[#FAFAFB];
 }
 .Sidebar-active a {
-  @apply border-primary-500 bg-primary-200 font-bold !text-primary-400
+  @apply !border-primary-500 !bg-primary-200 font-bold !text-primary-400
 }
 
 .RaAppBar-toolbar {

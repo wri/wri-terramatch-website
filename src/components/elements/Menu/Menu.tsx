@@ -175,7 +175,7 @@ const Menu = (props: MenuProps) => {
         <div
           ref={menuRef}
           className={tw(
-            "fixed z-40 flex max-h-[270px] flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
+            "fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
             variant
           )}
           style={calculateMenuStyle()}
@@ -186,7 +186,9 @@ const Menu = (props: MenuProps) => {
               key={item.id}
               render={item?.data?.label || item?.render()}
               onClick={() => {
-                setSelectedOption(item?.country_slug || item?.data?.label);
+                const option = item?.country_slug || item?.data?.label;
+                setSelectedOption && setSelectedOption(option);
+                item?.onClick && item.onClick();
               }}
             />
           ))}
