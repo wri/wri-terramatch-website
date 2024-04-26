@@ -7,24 +7,24 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "../Icon/Icon";
 import WorkdaysGrid from "./WorkdayGrid";
 
-export interface WorkdayCollapseTableItemProps {
+export interface WorkdayCollapseGridItemProps {
   title: string;
   value: string;
 }
 
-export interface WorkdayCollapseTableContentProps {
+export interface WorkdayCollapseGridContentProps {
   type: "Gender" | "Age" | "Ethnicity";
-  item: WorkdayCollapseTableItemProps[];
+  item: WorkdayCollapseGridItemProps[];
   total: string;
 }
 
-export interface WorkdayCollapseTableProps {
+export interface WorkdayCollapseGridProps {
   title: string;
   status: "Complete" | "Not Started" | "In Progress";
-  content: WorkdayCollapseTableContentProps[];
+  content: WorkdayCollapseGridContentProps[];
 }
 
-const WorkdayCollapseTable: FC<WorkdayCollapseTableProps> = ({ title, status, content, ...rest }) => {
+const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, status, content, ...rest }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -66,4 +66,4 @@ const WorkdayCollapseTable: FC<WorkdayCollapseTableProps> = ({ title, status, co
   );
 };
 
-export default WorkdayCollapseTable;
+export default WorkdayCollapseGrid;

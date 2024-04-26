@@ -5,10 +5,10 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { WorkdayCollapseTableContentProps } from "./WorkdayCollapseTable";
+import { WorkdayCollapseGridContentProps } from "./WorkdayCollapseGrid";
 
 export interface WorkdaysGridProps {
-  content: WorkdayCollapseTableContentProps[];
+  content: WorkdayCollapseGridContentProps[];
 }
 
 const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
@@ -47,7 +47,7 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
 
             <div className="col-span-7 bg-white">
               <Text variant="text-14-semibold" className="bg-neutral-450 px-4 py-2 text-customBlue-50">
-                Total Workdays {index}
+                Total Workdays
               </Text>
             </div>
             <div
@@ -66,8 +66,8 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
             </div>
             {contents.item.map(items => (
               <Fragment key={index}>
-                <div className="col-span-7 flex items-center justify-between bg-white">
-                  <Text variant="text-14-light" className="flex items-center px-4">
+                <div className="col-span-7 flex items-center justify-between bg-white px-4">
+                  <Text variant="text-14-light" className="flex items-center">
                     {items.title}
                   </Text>
                   <When condition={!!editEthnicity && contents.type === "Ethnicity"}>
@@ -90,7 +90,9 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
               <div className="col-span-7 flex items-center bg-white">
                 <div className="relative">
                   <button
-                    className={"text-14-semibold flex items-baseline gap-1 px-4 py-2 text-customBlue-100"}
+                    className={
+                      "text-14-semibold flex items-baseline gap-1 px-4 py-2 text-customBlue-100 hover:text-primary"
+                    }
                     onClick={() => {
                       setOpenMenu(!openMenu);
                     }}

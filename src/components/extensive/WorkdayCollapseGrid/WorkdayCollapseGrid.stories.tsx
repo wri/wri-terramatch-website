@@ -1,21 +1,21 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import WorkdayCollapseTable, { WorkdayCollapseTableProps } from "./WorkdayCollapseTable";
+import WorkdayCollapseGrid, { WorkdayCollapseGridProps } from "./WorkdayCollapseGrid";
 
-const meta: Meta<typeof WorkdayCollapseTable> = {
-  title: "Components/Extensive/WorkdayCollapseTable",
-  component: WorkdayCollapseTable
+const meta: Meta<typeof WorkdayCollapseGrid> = {
+  title: "Components/Extensive/WorkdayCollapse",
+  component: WorkdayCollapseGrid
 };
 
-type Story = StoryObj<typeof WorkdayCollapseTable>;
+type Story = StoryObj<typeof WorkdayCollapseGrid>;
 
 export default meta;
 
 export const Default: Story = {
-  render: (args: WorkdayCollapseTableProps) => {
+  render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <WorkdayCollapseTable {...args} />
+        <WorkdayCollapseGrid {...args} />
       </div>
     );
   },
@@ -90,10 +90,10 @@ export const Default: Story = {
 };
 
 export const Complete: Story = {
-  render: (args: WorkdayCollapseTableProps) => {
+  render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <WorkdayCollapseTable {...args} />
+        <WorkdayCollapseGrid {...args} />
       </div>
     );
   },
@@ -168,10 +168,10 @@ export const Complete: Story = {
 };
 
 export const NotStarted: Story = {
-  render: (args: WorkdayCollapseTableProps) => {
+  render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <WorkdayCollapseTable {...args} />
+        <WorkdayCollapseGrid {...args} />
       </div>
     );
   },
@@ -246,10 +246,10 @@ export const NotStarted: Story = {
 };
 
 export const InProgress: Story = {
-  render: (args: WorkdayCollapseTableProps) => {
+  render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className="rounded-2xl">
-        <WorkdayCollapseTable {...args} />
+        <WorkdayCollapseGrid {...args} />
       </div>
     );
   },
