@@ -6,23 +6,32 @@ import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { WorkdayCollapseGridContentProps } from "./WorkdayCollapseGrid";
+import { WorkdayGridVariantProps } from "./WorkdayVariant";
 
 export interface WorkdaysGridProps {
   content: WorkdayCollapseGridContentProps[];
+  variant: WorkdayGridVariantProps;
+  nameSelect?: string;
+  daySelect?: string;
 }
 
-const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
+const WorkdaysGrid = ({ content, variant, nameSelect, daySelect }: WorkdaysGridProps) => {
   const [editEthnicity, setEditEthnicity] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   return (
-    <div className="bg-neutral-75 px-4 py-5">
-      <div className="overflow-hiden grid w-full grid-cols-15 gap-x-px gap-y-px rounded-2xl border border-neutral-200 bg-neutral-200 leading-normal">
+    <div className={classNames("", variant.bodyCollapse)}>
+      <div
+        className={classNames(
+          "overflow-hiden grid w-full gap-x-px gap-y-px border border-neutral-200 bg-neutral-200 leading-normal",
+          variant.gridStyle
+        )}
+      >
         {content.map((contents, index) => (
           <Fragment key={index}>
             <div
-              className={classNames("col-span-4 row-span-5 flex items-center justify-center bg-white", {
-                "rounded-tl-2xl": index === 0,
-                "rounded-bl-2xl": index === content.length - 1,
+              className={classNames("flex items-center justify-center bg-white", variant.firstCol, {
+                [`${variant.roundedTl}`]: index === 0,
+                [`${variant.roundedBl}`]: index === content.length - 1,
                 "row-span-1": contents.item.length === 0,
                 "row-span-2": contents.item.length === 1,
                 "row-span-3": contents.item.length === 2,
@@ -45,28 +54,35 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
               <Text variant="text-14-light">{contents.type}</Text>
             </div>
 
-            <div className="col-span-7 bg-white">
-              <Text variant="text-14-semibold" className="bg-neutral-450 px-4 py-2 text-customBlue-50">
+            <div className={(classNames("bg-white"), variant.secondCol)}>
+              <Text
+                variant="text-14-semibold"
+                className={classNames("px-4 py-2 text-customBlue-50", variant.columTitle)}
+              >
                 Total Workdays
               </Text>
             </div>
             <div
-              className={classNames("col-span-4 bg-neutral-450", {
-                "rounded-tr-2xl": index === 0,
+              className={classNames("col-span-4 bg-white", variant.tertiaryCol, {
+                [`${variant.roundedTr}`]: index === 0,
                 "rounded-none": index !== 0
               })}
             >
               <Text
                 variant="text-14-semibold"
-                className="flex items-start justify-center gap-2 px-4 py-2 leading-normal text-customBlue-50"
+                className={classNames(
+                  "flex items-start justify-center gap-2 px-4 py-2 leading-normal text-customBlue-50",
+                  variant.columTitle,
+                  { [`${variant.roundedTr}`]: index === 0 }
+                )}
               >
                 {contents.total}
-                <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className="text-customGreen-200" />
+                <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className={variant.totalIcon} />
               </Text>
             </div>
             {contents.item.map(items => (
               <Fragment key={index}>
-                <div className="col-span-7 flex items-center justify-between bg-white px-4">
+                <div className={classNames("flex items-center justify-between bg-white px-4", variant.secondCol)}>
                   <Text variant="text-14-light" className="flex items-center">
                     {items.title}
                   </Text>
@@ -77,7 +93,7 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
                     />
                   </When>
                 </div>
-                <div className="col-span-4 bg-white">
+                <div className={classNames("bg-white", variant.tertiaryCol)}>
                   <input
                     key={items.value}
                     defaultValue={items.value}
@@ -87,7 +103,7 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
               </Fragment>
             ))}
             <When condition={contents.type === "Ethnicity"}>
-              <div className="col-span-7 flex items-center bg-white">
+              <div className={classNames("flex items-center bg-white", variant.secondCol)}>
                 <div className="relative">
                   <button
                     className={
@@ -97,12 +113,12 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
                       setOpenMenu(!openMenu);
                     }}
                   >
-                    Add Ethnic Group{" "}
+                    {nameSelect || "Add Ethnic Group"}
                     <Icon
                       name={IconNames.IC_ARROW_COLLAPSE}
                       width={9}
                       height={9}
-                      className={classNames({ "rotate-180 transform": openMenu })}
+                      className={classNames("duration-150", { "rotate-180 transform": openMenu })}
                     />
                   </button>
                   <When condition={openMenu}>
@@ -129,8 +145,14 @@ const WorkdaysGrid = ({ content }: WorkdaysGridProps) => {
                   </When>
                 </div>
               </div>
-              <div className="col-span-4 rounded-br-2xl bg-white">
-                <input className="text-14-light w-full rounded-br-2xl border border-transparent px-4 py-[9.5px] text-center outline-0 hover:border-primary hover:shadow-blue-border-input" />
+              <div className={classNames("bg-white", variant.roundedBr, variant.tertiaryCol)}>
+                <input
+                  className={classNames(
+                    "text-14-light w-full border border-transparent px-4 py-[9.5px] text-center outline-0 hover:border-primary hover:shadow-blue-border-input",
+                    variant.roundedBr
+                  )}
+                  defaultValue={daySelect}
+                />
               </div>
             </When>
           </Fragment>

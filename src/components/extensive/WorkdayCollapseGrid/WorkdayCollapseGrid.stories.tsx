@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import WorkdayCollapseGrid, { WorkdayCollapseGridProps } from "./WorkdayCollapseGrid";
+import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN } from "./WorkdayVariant";
 
 const meta: Meta<typeof WorkdayCollapseGrid> = {
   title: "Components/Extensive/WorkdayCollapse",
@@ -21,14 +22,13 @@ export const Default: Story = {
   },
   args: {
     title: "A. Site Establishment Paid - 130 Days",
-    status: "Complete",
     content: [
       {
         type: "Gender",
         item: [
           {
             title: "Women",
-            value: "30 Days"
+            value: "70 Days"
           },
           {
             title: "Men",
@@ -37,31 +37,23 @@ export const Default: Story = {
           {
             title: "Undefined",
             value: "30 Days"
-          },
-          {
-            title: "Decline to Specify",
-            value: "30 Days"
           }
         ],
-        total: "100 Days"
+        total: "130 Days"
       },
       {
         type: "Age",
         item: [
           {
-            title: "Youth (15-24)",
+            title: "Youth",
             value: "30 Days"
           },
           {
-            title: "Adult (24-65)",
+            title: "Adult",
             value: "30 Days"
           },
           {
-            title: "Elder (65+)",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
+            title: "Elder",
             value: "30 Days"
           }
         ],
@@ -71,7 +63,7 @@ export const Default: Story = {
         type: "Ethnicity",
         item: [
           {
-            title: "Indigenous",
+            title: "Indigenous XYZ",
             value: "130 Days"
           },
           {
@@ -85,11 +77,14 @@ export const Default: Story = {
         ],
         total: "100 Days"
       }
-    ]
+    ],
+    variant: GRID_VARIANT_DEFAULT,
+    nameSelect: "Ethnicity ABC",
+    daySelect: "120 Days"
   }
 };
 
-export const Complete: Story = {
+export const CompleteGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
@@ -163,11 +158,12 @@ export const Complete: Story = {
         ],
         total: "100 Days"
       }
-    ]
+    ],
+    variant: GRID_VARIANT_GREEN
   }
 };
 
-export const NotStarted: Story = {
+export const NotStartedGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
@@ -241,11 +237,12 @@ export const NotStarted: Story = {
         ],
         total: "100 Days"
       }
-    ]
+    ],
+    variant: GRID_VARIANT_GREEN
   }
 };
 
-export const InProgress: Story = {
+export const InProgressgGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className="rounded-2xl">
@@ -319,6 +316,7 @@ export const InProgress: Story = {
         ],
         total: "100 Days"
       }
-    ]
+    ],
+    variant: GRID_VARIANT_GREEN
   }
 };
