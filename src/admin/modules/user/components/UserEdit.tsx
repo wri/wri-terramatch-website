@@ -16,7 +16,9 @@ const UserEdit = () => {
     email_address: yup.string().nullable().required(),
     phone_number: yup.string().nullable().required(),
     job_role: yup.string().nullable().required(),
-    organisation: yup.object()
+    organisation: yup.object(),
+    country: yup.string().nullable(),
+    program: yup.string().nullable()
   };
 
   if (isSuperAdmin) schemaObject.primary_role = yup.string().required();
@@ -38,9 +40,11 @@ const UserEdit = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isSuperAdmin && <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        {isSuperAdmin && (
+          <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth disabled />
+        )}
         <SelectInput source="country" label="Countries" choices={countriesChoices} fullWidth />
-        <SelectInput source="framework" label="Framework" choices={frameworkChoices} fullWidth />
+        <SelectInput source="program" label="Framework" choices={frameworkChoices} fullWidth />
       </SimpleForm>
     </Edit>
   );

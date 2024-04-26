@@ -21,6 +21,18 @@ export const userPrimaryRoleChoices = [
   {
     id: "project-developer",
     name: "Project Developer"
+  },
+  {
+    id: "government",
+    name: "Government Official"
+  },
+  {
+    id: "funder",
+    name: "Funder/Investor"
+  },
+  {
+    id: "interested-user",
+    name: "Interested User (Public)"
   }
 ];
 
@@ -31,11 +43,11 @@ export const countriesChoices = getCountriesOptions().map(item => ({
 
 export const frameworkChoices = [
   {
-    id: "1",
+    id: "ppc",
     name: "PPC"
   },
   {
-    id: "2",
+    id: "terrafund",
     name: "TerraFund"
   }
 ];
