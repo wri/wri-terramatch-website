@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import WorkdayCollapseGrid, { WorkdayCollapseGridProps } from "./WorkdayCollapseGrid";
-import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN } from "./WorkdayVariant";
+import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_GREY } from "./WorkdayVariant";
 
 const meta: Meta<typeof WorkdayCollapseGrid> = {
   title: "Components/Extensive/WorkdayCollapse",
@@ -75,12 +75,87 @@ export const Default: Story = {
             value: "30 Days"
           }
         ],
-        total: "100 Days"
+        total: "100 Days",
+        select: true
       }
     ],
     variant: GRID_VARIANT_DEFAULT,
     nameSelect: "Ethnicity ABC",
     daySelect: "120 Days"
+  }
+};
+
+export const VariantGrey: Story = {
+  render: (args: WorkdayCollapseGridProps) => {
+    return (
+      <div className="w-1/2 rounded-2xl">
+        <WorkdayCollapseGrid {...args} />
+      </div>
+    );
+  },
+  args: {
+    title: "A. Nursery Operations Volunteer (100 Days)",
+    content: [
+      {
+        type: "Gender",
+        item: [
+          {
+            title: "Women",
+            value: "70 Days"
+          },
+          {
+            title: "Men",
+            value: "30 Days"
+          },
+          {
+            title: "Undefined",
+            value: "30 Days"
+          }
+        ],
+        total: "130 Days"
+      },
+      {
+        type: "Age",
+        item: [
+          {
+            title: "Youth (15-24)",
+            value: "30 Days"
+          },
+          {
+            title: "Adult (24-65)",
+            value: "30 Days"
+          },
+          {
+            title: "Elder (65+)",
+            value: "30 Days"
+          }
+        ],
+        total: "90 Days"
+      },
+      {
+        type: "Ethnicity",
+        item: [
+          {
+            title: "Indigenous XYZ",
+            value: "130 Days"
+          },
+          {
+            title: "Other",
+            value: "30 Days"
+          },
+          {
+            title: "Unknown",
+            value: "30 Days"
+          },
+          {
+            title: "Ethnicity ABC",
+            value: "120 Days"
+          }
+        ],
+        total: "100 Days"
+      }
+    ],
+    variant: GRID_VARIANT_GREY
   }
 };
 
@@ -156,7 +231,8 @@ export const CompleteGreen: Story = {
             value: "30 Days"
           }
         ],
-        total: "100 Days"
+        total: "100 Days",
+        select: true
       }
     ],
     variant: GRID_VARIANT_GREEN
@@ -235,7 +311,8 @@ export const NotStartedGreen: Story = {
             value: "30 Days"
           }
         ],
-        total: "100 Days"
+        total: "100 Days",
+        select: true
       }
     ],
     variant: GRID_VARIANT_GREEN
@@ -314,7 +391,8 @@ export const InProgressgGreen: Story = {
             value: "30 Days"
           }
         ],
-        total: "100 Days"
+        total: "100 Days",
+        select: true
       }
     ],
     variant: GRID_VARIANT_GREEN

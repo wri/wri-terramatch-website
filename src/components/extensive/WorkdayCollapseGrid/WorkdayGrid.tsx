@@ -102,7 +102,7 @@ const WorkdaysGrid = ({ content, variant, nameSelect, daySelect }: WorkdaysGridP
                 </div>
               </Fragment>
             ))}
-            <When condition={contents.type === "Ethnicity"}>
+            <When condition={!!contents.select}>
               <div className={classNames("flex items-center bg-white", variant.secondCol)}>
                 <div className="relative">
                   <button

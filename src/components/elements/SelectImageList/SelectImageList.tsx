@@ -26,7 +26,7 @@ const SelectImageList = ({
     <List
       {...divProps}
       as="div"
-      className={classNames(className, "grid-cols-3 flex w-fit flex-wrap gap-5")}
+      className={classNames(className, "flex w-fit grid-cols-3 flex-wrap gap-5")}
       itemAs="div"
       items={valuesToOptions(selectedValues, options)}
       render={item => (

@@ -109,7 +109,7 @@ const TeamTabContent = () => {
               {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.data.length })}
             </Text>
             <List
-              className="grid-cols-4 mt-10 grid gap-6"
+              className="mt-10 grid grid-cols-4 gap-6"
               items={approvedUsers?.data ?? []}
               render={user => <TeamMemberCard user={user} />}
             />
@@ -121,7 +121,7 @@ const TeamTabContent = () => {
               {t("Requests to Join Organization ({n})", { n: pendingUsers?.data.length })}
             </Text>
             <List
-              className="grid-cols-3 mt-10 grid gap-6"
+              className="mt-10 grid grid-cols-3 gap-6"
               items={pendingUsers?.data ?? []}
               render={user => (
                 <TeamMemberCard

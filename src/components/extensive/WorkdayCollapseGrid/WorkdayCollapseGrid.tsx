@@ -17,6 +17,7 @@ export interface WorkdayCollapseGridContentProps {
   type: "Gender" | "Age" | "Ethnicity";
   item: WorkdayCollapseGridItemProps[];
   total: string;
+  select?: boolean;
 }
 
 export interface WorkdayCollapseGridProps {

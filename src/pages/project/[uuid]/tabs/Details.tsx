@@ -191,7 +191,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             <List
               as="div"
               itemAs="div"
-              className="grid-cols-3 grid gap-4"
+              className="grid grid-cols-3 gap-4"
               items={partners?.data || []}
               render={partner => {
                 const fullName = `${partner.first_name || ""} ${partner.last_name || ""}`.trim();

@@ -44,3 +44,18 @@ export const GRID_VARIANT_GREEN = {
   tertiaryCol: "col-span-4",
   totalIcon: "text-customGreen-200"
 };
+
+export const GRID_VARIANT_GREY = {
+  header: "rounded bg-neutral-350",
+  bodyCollapse: "bg-transparent pt-4",
+  columTitle: "bg-neutral-10",
+  gridStyle: "rounded grid-cols-10",
+  roundedTl: "rounded-tl",
+  roundedBl: "rounded-bl",
+  roundedTr: "rounded-tr",
+  roundedBr: "rounded-br",
+  firstCol: "col-span-2",
+  secondCol: "col-span-6 bg-white",
+  tertiaryCol: "col-span-2",
+  totalIcon: "hidden"
+};
