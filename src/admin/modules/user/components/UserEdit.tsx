@@ -40,9 +40,7 @@ const UserEdit = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isSuperAdmin && (
-          <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth disabled />
-        )}
+        {isSuperAdmin && <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
         <SelectInput source="country" label="Countries" choices={countriesChoices} fullWidth />
         <SelectInput source="program" label="Framework" choices={frameworkChoices} fullWidth />
       </SimpleForm>
