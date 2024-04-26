@@ -222,12 +222,17 @@ export const MapSite = ({
     }
   }, [polygonsData]);
 
-  useEffect(() => {
-    if (bbox && ref.current && ref.current.map) {
+  const zoomToBbox = (bbox: any) => {
+    if (ref.current && ref.current.map) {
       ref.current.map.fitBounds(bbox, {
         padding: 100,
         linear: false
       });
+    }
+  };
+  useEffect(() => {
+    if (bbox && ref.current && ref.current.map) {
+      zoomToBbox(bbox);
     }
   }, [bbox]);
 
@@ -459,7 +464,11 @@ export const MapSite = ({
             <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} />
           </When>
           <ControlGroup position="top-right" className="top-48">
-            <button type="button" className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 ">
+            <button
+              type="button"
+              className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
+              onClick={() => zoomToBbox(bbox)}
+            >
               <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
             </button>
           </ControlGroup>

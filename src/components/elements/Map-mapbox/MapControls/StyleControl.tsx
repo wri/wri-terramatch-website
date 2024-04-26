@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRefresh } from "react-admin";
 import { useLocation } from "react-router-dom";
 
@@ -17,7 +17,11 @@ export const StyleControl = () => {
   const path = location.pathname;
   const { map } = path.includes("show/1") ? useMapSiteContext() : useMapContext();
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
-
+  useEffect(() => {
+    if (map?.areTilesLoaded()) {
+      refresh();
+    }
+  }, [currentStyle, map]);
   return (
     <ControlButtonsGroup direction="row" className="h-auto">
       <button
