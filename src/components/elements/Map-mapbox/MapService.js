@@ -1,7 +1,3 @@
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import mapboxgl from "mapbox-gl";
 import { Map } from "mapbox-gl";
 
 const MAPBOX_TOKEN =
@@ -17,33 +13,25 @@ class MapService {
     this.centroids = null;
   }
 
-  initMap() {
+  initMap(mapId) {
     if (this.map !== null) {
       this.map.remove();
     }
     this.map = new Map({
       accessToken: MAPBOX_TOKEN,
-      container: "mapSite",
+      container: mapId,
       style: "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu",
       zoom: 2.5
     });
-
     this.map.on("style.load", () => {
       this.styleLoaded = true;
-      this.addGeocoder();
       this.addCentroidsLayers(this.centroids);
     });
+    return this.map;
   }
-  addGeocoder() {
-    const geocoder = new MapboxGeocoder({
-      accessToken: MAPBOX_TOKEN,
-      mapboxgl: mapboxgl,
-      bbox: [-19, -20, 51, 37]
-    });
-    this.map.addControl(geocoder);
-  }
+
   addSource(layer) {
-    const { name, styles, hover } = layer;
+    const { name, styles } = layer;
     if (!this.styleLoaded) {
       this.sourceQueue.push(layer);
       return;
@@ -62,10 +50,8 @@ class MapService {
     styles?.forEach((style, index) => {
       this.addLayerStyle(name, style, index);
     });
-    if (hover) {
-      this.addHoverEvent(layer, name);
-    }
   }
+
   addLayerStyle(sourceName, style, index) {
     this.map.addLayer({
       id: `${sourceName}-${index}`,
@@ -74,6 +60,7 @@ class MapService {
       ...style
     });
   }
+
   zoomTo(bounds) {
     if (bounds && Array.isArray(bounds) && bounds.length >= 2) {
       this.map.fitBounds(bounds[1], { padding: 100 });
@@ -85,9 +72,11 @@ class MapService {
   zoomIn() {
     this.map.zoomIn();
   }
+
   zoomOut() {
     this.map.zoomOut();
   }
+
   addFilterOnLayer(layer, uuids, field) {
     const { name, styles } = layer;
     const layersToHover = styles.map((_, index) => `${name}-${index}`);
@@ -99,8 +88,10 @@ class MapService {
       const filter = ["in", ["get", field], ["literal", uuids]];
 
       this.map.setFilter(layerName, filter);
+      this.map.setLayoutProperty(layerName, "visibility", "visible");
     });
   }
+
   addCentroidsLayers(centroids) {
     if (centroids) {
       if (!this.styleLoaded) {
@@ -146,6 +137,7 @@ class MapService {
     }
   }
 }
+
 const _MapService = new MapService();
 
 export default _MapService;

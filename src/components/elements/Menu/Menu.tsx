@@ -33,6 +33,7 @@ export interface MenuProps {
   className?: string;
   container?: HTMLDivElement | null;
   setSelectedOption?: any;
+  classNameContentMenu?: string;
 }
 const Menu = (props: MenuProps) => {
   const {
@@ -44,7 +45,8 @@ const Menu = (props: MenuProps) => {
     isDefaultOpen,
     className,
     container,
-    setSelectedOption
+    setSelectedOption,
+    classNameContentMenu
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -161,6 +163,7 @@ const Menu = (props: MenuProps) => {
     return styles;
   };
 
+  console.log("menu", menu);
   return (
     <div
       ref={menuContainerRef}
@@ -176,7 +179,8 @@ const Menu = (props: MenuProps) => {
           ref={menuRef}
           className={tw(
             "fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
-            variant
+            variant,
+            classNameContentMenu
           )}
           style={calculateMenuStyle()}
         >
@@ -184,7 +188,20 @@ const Menu = (props: MenuProps) => {
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
               key={item.id}
-              render={item?.data?.label || item?.render()}
+              render={
+                (item?.data?.icon ? (
+                  <div className="flex items-center">
+                    <img
+                      src={`${item?.data?.icon?.toLowerCase()}`}
+                      className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
+                      alt="info"
+                    />{" "}
+                    {item?.data?.label}
+                  </div>
+                ) : (
+                  item?.data?.label
+                )) || item?.render()
+              }
               onClick={() => {
                 if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
                 if (item.onClick) item.onClick();

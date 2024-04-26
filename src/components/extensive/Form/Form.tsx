@@ -36,7 +36,7 @@ const Form = ({ children, formType, ...rest }: FormProps) => {
 const Header = ({ title, subtitle, children }: PropsWithChildren<FormHeaderProps>) => {
   return (
     <div className="flex flex-col items-center gap-8">
-      <Text as="h1" variant="text-heading-1000" className="uppercase">
+      <Text as="h1" variant="text-32-bold" className="uppercase">
         {title}
       </Text>
       {children ? (

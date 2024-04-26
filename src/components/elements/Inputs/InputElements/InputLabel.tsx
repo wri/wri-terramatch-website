@@ -12,11 +12,12 @@ export interface InputLabelProps extends HTMLProps<HTMLLabelElement> {
   children?: string | number;
   feedbackRequired?: boolean;
   labelVariant?: TextVariants;
+  sufixLabelView?: boolean;
 }
 
 const InputLabel = (props: InputLabelProps) => {
   const t = useT();
-  const { feedbackRequired, required, children, className, labelVariant, ...labelProps } = props;
+  const { feedbackRequired, required, children, className, labelVariant, sufixLabelView = true, ...labelProps } = props;
 
   return (
     <When condition={!!props.children}>
@@ -26,7 +27,7 @@ const InputLabel = (props: InputLabelProps) => {
         variant={labelVariant || "text-bold-body-300"}
         className={classNames("mr-2 inline uppercase", className)}
       >
-        {`${children} ${required ? "*" : ""}`}
+        {`${children} ${required && sufixLabelView ? "*" : ""}`}
       </Text>
 
       <When condition={feedbackRequired}>
