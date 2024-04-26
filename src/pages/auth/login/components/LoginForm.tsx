@@ -22,8 +22,10 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
   return (
     <Form formType={"login"}>
       <div className="w-[30vw]">
-        <Text variant="text-32-bold">{t("Sign in")}</Text>
-        <Text variant="text-12-light" className="flex">
+        <Text variant="text-32-bold" className="text-blueCustom-700">
+          {t("Sign in")}
+        </Text>
+        <Text variant="text-12-light" className="flex text-blueCustom-700">
           New to TerraMatch’s Dashboards?&nbsp;
           <Link href={"/auth/create-account"} className="text-12-bold text-blue-300 underline underline-offset-4">
             Sign Up for free
