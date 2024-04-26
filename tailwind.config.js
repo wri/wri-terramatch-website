@@ -116,6 +116,12 @@ module.exports = {
       15: "repeat(15, minmax(0, 1fr))"
     },
 
+    gridRow:{
+      'span-6': 'span 6 / span 6',
+      'span-7': 'span 7 / span 7',
+      'span-8': 'span 8 / span 8',
+    },
+
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
