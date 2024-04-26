@@ -204,6 +204,7 @@ module.exports = {
       xl: "1.5rem", //24px
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
+      "3xx": "2rem", //32px
       "4xl": "2.25rem", //36px
       "5xl": "2.5rem", //40px
       //Wide extra

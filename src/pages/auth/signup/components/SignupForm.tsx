@@ -30,7 +30,7 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
   return (
     <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
       <Form formType="signUp">
-        <Text variant="text-32-bold" className="text-blueCustom-700">
+        <Text variant="text-32-bold" className="mb-2 text-blueCustom-700">
           Sign up
         </Text>
         <Text variant="text-12-light" className="text-blue-700 mb-6">

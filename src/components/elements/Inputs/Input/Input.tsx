@@ -102,7 +102,7 @@ const Input = forwardRef(
         "focus:border-red-300": error
       },
       signup: {
-        "p-3 border border-grey-400 rounded-xl w-full hover:border-primary hover:shadow-blue-border text-dark-700 opacity-60 outline-none":
+        "p-3 border border-grey-400 rounded-xl w-full hover:border-primary hover:shadow-blue-border text-dark-700 opacity-60 outline-none text-14-light !font-primary":
           true,
         "pl-4": inputProps.type === "number",
         "border-neutral-300": !error
