@@ -2,14 +2,19 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useState } from "react";
 import { When } from "react-if";
+import { useLocation } from "react-router-dom";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapContext } from "@/context/map.provider";
+import { useMapSiteContext } from "@/context/mapSites.provider";
 
 export const FilterControl = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  const { draw } = path.includes("show/1") ? useMapSiteContext() : useMapContext();
+
   const [showFilters, setShowFilters] = useState(false);
-  const { draw } = useMapContext();
   const t = useT();
 
   // Previous Images and Shapefiles Features

@@ -38,7 +38,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "Needs More Info";
+  status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
   label: string;
 }
 
@@ -353,7 +353,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
               </div>
 
-              <MapSite polygonsData={sitePolygonsIds} bbox={siteBbox} />
+              <MapSite polygonsData={sitePolygonsIds} bbox={siteBbox} className="rounded-lg" status={true} />
               <div className="mb-6">
                 <div className="mb-4">
                   <Text variant="text-16-bold" className="mb-2 text-grey-300">
