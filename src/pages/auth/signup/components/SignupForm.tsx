@@ -37,7 +37,7 @@ const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
           Sign up to Terramatch with your professional email address
         </Text>
         <div className="relative mb-8 h-[calc(100vh-409px)] flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="m-[-2px] flex flex-col gap-2 p-1">
+          <div className="m-[-2px] flex flex-col gap-3 p-1">
             <div className="grid w-full grid-cols-2 items-start gap-4">
               <Input
                 name="first_name"

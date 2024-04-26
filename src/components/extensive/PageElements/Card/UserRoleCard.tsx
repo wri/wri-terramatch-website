@@ -45,14 +45,14 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
         "border-grey-350": !selected
       })}
     >
-      <div className="rounded-lg border border-grey-300 p-2">
+      <div className="rounded-lg border border-grey-350 p-2">
         <Icon name={IconNames.USER_ROLE} className="h-10 w-10 lg:h-11 lg:w-11 wide:h-12 wide:w-12" />
       </div>
       <div className="flex flex-1 flex-col items-start gap-1">
-        <Text variant="text-12-bold" className="text-dark-500">
+        <Text variant="text-12-bold" className="text-darkCustom">
           {title}
         </Text>
-        <Text variant="text-12-light" className="text-dark-300 text-left leading-normal">
+        <Text variant="text-12-light" className="text-left leading-normal text-darkCustom-50">
           {description}
         </Text>
         <When condition={!!titleOptions}>

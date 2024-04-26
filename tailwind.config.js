@@ -138,7 +138,8 @@ module.exports = {
       },
       darkCustom: {
         DEFAULT: "#353535",
-        100: "#637579"
+        100: "#637579",
+        50: "#697A7F"
       },
       pinkCustom: {
         DEFAULT: "#E468EF"
