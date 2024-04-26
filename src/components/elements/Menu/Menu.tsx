@@ -186,9 +186,8 @@ const Menu = (props: MenuProps) => {
               key={item.id}
               render={item?.data?.label || item?.render()}
               onClick={() => {
-                const option = item?.country_slug || item?.data?.label;
-                setSelectedOption && setSelectedOption(option);
-                item?.onClick && item.onClick();
+                if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
+                if (item.onClick) item.onClick();
               }}
             />
           ))}
