@@ -20,6 +20,7 @@ export interface IPolygonItem {
   id: string;
   status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
   label: string;
+  uuid: string;
 }
 export interface IPolygonProps {
   menu: IPolygonItem[];
@@ -208,20 +209,23 @@ const Polygons = (props: IPolygonProps) => {
         </Button>
       </div>
       <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
-        {props.menu.map(item => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
-          >
-            <div className="flex items-center gap-2">
-              <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
-              <Text variant="text-14-light">{item.label}</Text>
+        {props.menu.map(item => {
+          console.log(item);
+          return (
+            <div
+              key={item.id}
+              className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
+            >
+              <div className="flex items-center gap-2">
+                <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
+                <Text variant="text-14-light">{item.label}</Text>
+              </div>
+              <Menu container={containerRef.current} menu={polygonMenuItems} placement={MENU_PLACEMENT_LEFT_BOTTOM}>
+                <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
+              </Menu>
             </div>
-            <Menu container={containerRef.current} menu={polygonMenuItems} placement={MENU_PLACEMENT_LEFT_BOTTOM}>
-              <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
-            </Menu>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

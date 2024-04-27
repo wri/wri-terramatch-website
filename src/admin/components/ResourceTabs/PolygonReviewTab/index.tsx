@@ -40,6 +40,7 @@ export interface IPolygonItem {
   id: string;
   status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
   label: string;
+  uuid: string;
 }
 
 const PolygonReviewAside: FC<{ type: EntityName; data: IPolygonItem[] }> = ({ type, data }) => {
@@ -90,10 +91,18 @@ const PolygonReviewTab: FC<IProps> = props => {
     (data: SitePolygon, index: number) => ({
       id: (index + 1).toString(),
       status: data.status,
-      label: data.poly_name || `Unnamed Polygon`
+      label: data.poly_name || `Unnamed Polygon`,
+      uuid: data.poly_id
     })
   );
-  const sitePolygonsIds = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(item => item?.poly_id);
+
+  const polygonDataMap = ((sitePolygonData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
+    if (!acc[data.status]) {
+      acc[data.status] = [];
+    }
+    acc[data.status].push(data.poly_id);
+    return acc;
+  }, {});
 
   const { openModal, closeModal } = useModalContext();
 
@@ -353,7 +362,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
               </div>
 
-              <MapSite polygonsData={sitePolygonsIds} bbox={siteBbox} className="rounded-lg" status={true} />
+              <MapSite polygonsData={polygonDataMap} bbox={siteBbox} className="rounded-lg" status={true} />
               <div className="mb-6">
                 <div className="mb-4">
                   <Text variant="text-16-bold" className="mb-2 text-grey-300">

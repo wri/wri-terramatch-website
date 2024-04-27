@@ -77,15 +77,20 @@ class MapService {
     this.map.zoomOut();
   }
 
-  addFilterOnLayer(layer, uuids, field) {
+  addFilterOnLayer(layer, polygonData, field) {
     const { name, styles } = layer;
-    const layersToHover = styles.map((_, index) => `${name}-${index}`);
-    layersToHover.forEach(layerName => {
+    styles.forEach((style, index) => {
+      const layerName = `${name}-${index}`;
       if (!this.map.getLayer(layerName)) {
-        console.error(`Layer '${layerName}' does not exist.`);
+        console.error(`Layer ${layerName} does not exist.`);
         return;
       }
-      const filter = ["in", ["get", field], ["literal", uuids]];
+      const polygonStatus = style?.metadata?.polygonStatus;
+      const filter = [
+        "in",
+        ["get", field],
+        ["literal", polygonData[polygonStatus] === undefined ? "" : polygonData[polygonStatus]]
+      ];
 
       this.map.setFilter(layerName, filter);
       this.map.setLayoutProperty(layerName, "visibility", "visible");
