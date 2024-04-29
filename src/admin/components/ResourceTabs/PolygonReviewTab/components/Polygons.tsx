@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
+import _MapService from "@/components/elements/Map-mapbox/MapService";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
@@ -13,21 +14,23 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
+import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "Needs More Info";
+  status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
   label: string;
+  uuid: string;
 }
 export interface IPolygonProps {
   menu: IPolygonItem[];
 }
 const statusColor = {
-  draft: "bg-purple",
-  submitted: "bg-blue",
-  approved: "bg-green",
+  Draft: "bg-purple",
+  Submitted: "bg-blue",
+  Approved: "bg-green",
   "Needs More Info": "bg-tertiary-600"
 };
 
@@ -43,6 +46,35 @@ const Polygons = (props: IPolygonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
+  const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedPolygon(undefined);
+    }
+  }, [isOpen]);
+
+  const downloadGeoJsonPolygon = async (polygon: IPolygonItem) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygon.uuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `polygon.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const flyToPolygonBounds = async (polygon: IPolygonItem) => {
+    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygon.uuid } });
+    const bounds: any = bbox.bbox;
+    _MapService.map?.fitBounds(bounds, {
+      padding: 100,
+      linear: false
+    });
+  };
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
@@ -126,7 +158,7 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const polygonMenuItems = [
+  const polygonMenuItems = (item: any) => [
     {
       id: "1",
       render: () => (
@@ -136,7 +168,8 @@ const Polygons = (props: IPolygonProps) => {
         </div>
       ),
       onClick: () => {
-        setIsOpen(true);
+        setSelectedPolygon(item);
+        return setIsOpen(true);
       }
     },
     {
@@ -146,7 +179,10 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.SEARCH_PA} className="h-6 w-6" />
           <Text variant="text-12-bold">Zoom to</Text>
         </div>
-      )
+      ),
+      onClick: () => {
+        flyToPolygonBounds(item);
+      }
     },
     {
       id: "3",
@@ -155,7 +191,10 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.DOWNLOAD_PA} className="h-6 w-6" />
           <Text variant="text-12-bold">Download</Text>
         </div>
-      )
+      ),
+      onClick: () => {
+        downloadGeoJsonPolygon(item);
+      }
     },
     {
       id: "4",
@@ -197,7 +236,7 @@ const Polygons = (props: IPolygonProps) => {
   return (
     <div>
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
-        <PolygonDrawer />
+        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
         <Text variant="text-16-bold" className="pl-2 text-grey-300">
@@ -208,20 +247,26 @@ const Polygons = (props: IPolygonProps) => {
         </Button>
       </div>
       <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
-        {props.menu.map(item => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
-          >
-            <div className="flex items-center gap-2">
-              <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
-              <Text variant="text-14-light">{item.label}</Text>
+        {props.menu.map(item => {
+          return (
+            <div
+              key={item.id}
+              className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
+            >
+              <div className="flex items-center gap-2">
+                <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
+                <Text variant="text-14-light">{item.label}</Text>
+              </div>
+              <Menu
+                container={containerRef.current}
+                menu={polygonMenuItems(item)}
+                placement={MENU_PLACEMENT_LEFT_BOTTOM}
+              >
+                <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
+              </Menu>
             </div>
-            <Menu container={containerRef.current} menu={polygonMenuItems} placement={MENU_PLACEMENT_LEFT_BOTTOM}>
-              <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
-            </Menu>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

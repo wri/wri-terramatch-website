@@ -1,53 +1,56 @@
+import { useEffect, useState } from "react";
+
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import { SitePolygon } from "@/generated/apiSchemas";
 
 const dropdownOptionsRestoration = [
   {
     title: "Tree Planting",
-    value: "1x"
+    value: "Tree Planting"
   },
   {
     title: "Direct Seeding",
-    value: "2x"
+    value: "Direct Seeding"
   },
   {
     title: "Assisted Natural Regeneration",
-    value: "3x"
+    value: "Assisted Natural Regeneration"
   }
 ];
 const dropdownOptionsTarget = [
   {
     title: "Agroforest",
-    value: 1
+    value: "Agroforest"
   },
   {
     title: "Natural Forest",
-    value: 2
+    value: "Natural Forest"
   },
   {
     title: "Mangrove",
-    value: 3
+    value: "Mangrove"
   },
   {
     title: "Peatland",
-    value: 4
+    value: "Peatland"
   },
   {
     title: "Riparian Area or Wetland",
-    value: 5
+    value: "Riparian Area or Wetland"
   },
   {
     title: "Silvopasture",
-    value: 6
+    value: "Silvopasture"
   },
   {
     title: "Woodlot or Plantation",
-    value: 7
+    value: "Woodlot or Plantation"
   },
   {
     title: "Urban Forest",
-    value: 8
+    value: "Urban Forest"
   }
 ];
 
@@ -65,7 +68,38 @@ const dropdownOptionsTree = [
     value: 3
   }
 ];
-const AttributeInformation = () => {
+const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygon }) => {
+  const [polygonName, setPolygonName] = useState(selectedPolygon?.poly_name);
+  const [plantStartDate, setPlantStartDate] = useState(selectedPolygon?.plantstart);
+  const [plantEndDate, setPlantEndDate] = useState(selectedPolygon?.plantend);
+  const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
+  const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
+  const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
+  const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
+  const [estimatedArea, setEstimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
+
+  useEffect(() => {
+    const restorationPracticeArray = selectedPolygon?.practice
+      ? selectedPolygon?.practice.split(",").map(function (item) {
+          return item.trim();
+        })
+      : [];
+    setRestorationPractice(restorationPracticeArray);
+
+    const targetLandUseSystemArray = selectedPolygon?.target_sys
+      ? selectedPolygon?.target_sys.split(",").map(function (item) {
+          return item.trim();
+        })
+      : [];
+    setTargetLandUseSystem(targetLandUseSystemArray);
+
+    const treeDistributionArray = selectedPolygon?.distr
+      ? selectedPolygon?.distr.split(",").map(function (item) {
+          return item.trim();
+        })
+      : [];
+    setTreeDistribution(treeDistributionArray);
+  }, [selectedPolygon]);
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -75,6 +109,8 @@ const AttributeInformation = () => {
         placeholder="Input Polygon Name"
         type="text"
         name=""
+        value={polygonName}
+        onChangeCapture={e => setPolygonName((e.target as HTMLInputElement).value)}
       />
       <label className="flex flex-col gap-2">
         <Text variant="text-14-light">Plant Start Date</Text>
@@ -82,6 +118,8 @@ const AttributeInformation = () => {
           type="date"
           className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
           placeholder="Input Plant Start Date"
+          value={plantStartDate}
+          onChange={e => setPlantStartDate(e.target.value)}
         />
       </label>
       <label className="flex flex-col gap-2">
@@ -90,6 +128,8 @@ const AttributeInformation = () => {
           type="date"
           className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
           placeholder="Input Plant Start Date"
+          value={plantEndDate}
+          onChange={e => setPlantEndDate(e.target.value)}
         />
       </label>
       <Dropdown
@@ -98,7 +138,8 @@ const AttributeInformation = () => {
         labelVariant="text-14-light"
         placeholder="Select Restoration Practice"
         multiSelect
-        onChange={() => {}}
+        value={restorationPractice}
+        onChange={e => setRestorationPractice(e as string[])}
         options={dropdownOptionsRestoration}
       />
       <Dropdown
@@ -107,7 +148,8 @@ const AttributeInformation = () => {
         labelVariant="text-14-light"
         placeholder="Select Target Land Use System"
         options={dropdownOptionsTarget}
-        onChange={() => {}}
+        value={targetLandUseSystem}
+        onChange={e => setTargetLandUseSystem(e as string[])}
       />
       <Dropdown
         multiSelect
@@ -116,7 +158,8 @@ const AttributeInformation = () => {
         labelVariant="text-14-light"
         placeholder="Select Tree Distribution"
         options={dropdownOptionsTree}
-        onChange={() => {}}
+        value={treeDistribution}
+        onChange={e => setTreeDistribution(e as string[])}
       />
       <Input
         label="Trees Planted"
@@ -126,15 +169,19 @@ const AttributeInformation = () => {
         type="text"
         format="number"
         name=""
+        value={treesPlanted}
+        onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => setTreesPlanted(Number(e.target.value))}
       />
       <Input
         label="Estimated Area"
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Estimated Area"
-        type="text"
+        type="number"
         format="number"
         name=""
+        value={estimatedArea}
+        onChangeCapture={e => setEstimatedArea(Number((e.target as HTMLInputElement).value))}
       />
     </div>
   );

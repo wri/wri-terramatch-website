@@ -26,6 +26,7 @@ import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/Mock
 import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 import MapSiteProvider from "@/context/mapSites.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
@@ -78,35 +79,66 @@ export const layersList = [
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
       {
+        metadata: { polygonStatus: "Submitted" },
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "rgba(200, 100, 240, 0.4)",
-          "fill-outline-color": "rgba(200, 100, 240, 1)"
+          "fill-color": "#2398d8",
+          "fill-opacity": 0.7
         },
-        minzoom: 1,
         filter: ["==", ["get", "uuid"], ""]
       },
       {
+        metadata: { polygonStatus: "Submitted" },
         type: "line",
         layout: {},
         paint: {
-          "line-color": "rgba(200, 100, 240, 1)",
-          "line-width": {
-            base: 1.5,
-            stops: [
-              [0, 7],
-              [5, 6],
-              [8, 4],
-              [10, 1]
-            ]
-          }
+          "line-color": "#2398d8",
+          "line-width": 2
         },
-        minzoom: 1,
+        filter: ["==", ["get", "uuid"], ""]
+      },
+      {
+        metadata: { polygonStatus: "Approved" },
+        type: "fill",
+        layout: {},
+        paint: {
+          "fill-color": "#72d961",
+          "fill-opacity": 0.7
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      },
+      {
+        metadata: { polygonStatus: "Approved" },
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#72d961",
+          "line-width": 2
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      },
+      {
+        metadata: { polygonStatus: "Needs More Info" },
+        type: "fill",
+        layout: {},
+        paint: {
+          "fill-color": "#ff8938",
+          "fill-opacity": 0.7
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      },
+      {
+        metadata: { polygonStatus: "Needs More Info" },
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#ff8938",
+          "line-width": 2
+        },
         filter: ["==", ["get", "uuid"], ""]
       }
-    ],
-    hover: true
+    ]
   }
 ];
 
@@ -180,13 +212,14 @@ export const MapSite = ({
   const [viewImages, setViewImages] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const [tooltipOpen, setTooltipOpen] = useState(true);
+  const sitePolygonData = useSitePolygonData();
 
   useEffect(() => {
     ref.current = MapService;
     const onLoad = () => {
       layersList.forEach((layer: any) => {
         if (ref.current) {
-          ref.current.addSource(layer);
+          ref.current.addSource(layer, sitePolygonData);
         }
       });
     };
@@ -222,12 +255,17 @@ export const MapSite = ({
     }
   }, [polygonsData]);
 
-  useEffect(() => {
-    if (bbox && ref.current && ref.current.map) {
+  const zoomToBbox = (bbox: any) => {
+    if (ref.current && ref.current.map) {
       ref.current.map.fitBounds(bbox, {
         padding: 100,
         linear: false
       });
+    }
+  };
+  useEffect(() => {
+    if (bbox && ref.current && ref.current.map) {
+      zoomToBbox(bbox);
     }
   }, [bbox]);
 
@@ -459,7 +497,11 @@ export const MapSite = ({
             <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} />
           </When>
           <ControlGroup position="top-right" className="top-48">
-            <button type="button" className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 ">
+            <button
+              type="button"
+              className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
+              onClick={() => zoomToBbox(bbox)}
+            >
               <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
             </button>
           </ControlGroup>
