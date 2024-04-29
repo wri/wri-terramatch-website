@@ -18,8 +18,12 @@ const SiteShow: FC = () => {
       className="-mt-[50px] bg-neutral-100"
     >
       <TabbedShowLayout>
-        <InformationTab type="sites" />
-        <PolygonReviewTab label="Polygon Review" type={"sites"} />
+        <TabbedShowLayout.Tab label="Site Information">
+          <InformationTab type="sites" />
+        </TabbedShowLayout.Tab>
+        <TabbedShowLayout.Tab label="Polygon Review">
+          <PolygonReviewTab label="Polygon Review" type={"sites"} />
+        </TabbedShowLayout.Tab>
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />
         <ChangeRequestsTab entity="sites" singularEntity="site" />
