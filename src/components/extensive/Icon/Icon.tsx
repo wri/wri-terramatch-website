@@ -144,7 +144,8 @@ export enum IconNames {
   APPROVED_COLORLESS = "status/approved-colorless",
   IMAGE = "image",
   IC_INFO_WHITE = "ic-info-white",
-  ERROR_WHITE_BORDER_RED = "error-white-border-red"
+  ERROR_WHITE_BORDER_RED = "error-white-border-red",
+  CLICK = "click"
 }
 
 export interface IconProps {

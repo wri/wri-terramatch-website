@@ -2,20 +2,13 @@ import { Map } from "mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
 
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-
-import Text from "../Text/Text";
+import TooltipMap from "../TooltipMap/TooltipMap";
 
 const MAPBOX_TOKEN =
   process.env.REACT_APP_MAPBOX_TOKEN ||
   "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
 const GEOSERVER = "https://geoserver-prod.wri-restoration-marketplace-api.com";
 
-const topBorderColorPopup = {
-  Submitted: "border-t-primary",
-  Approved: "border-t-[#72D961]",
-  "Needs More Info": "border-t-[#FF8938]"
-};
 class MapService {
   constructor() {
     this.map = null;
@@ -96,55 +89,64 @@ class MapService {
         popupContent.appendChild(containerElement);
         const root = createRoot(containerElement);
         root.render(
-          <div
-            className={`absolute z-20 w-[280px] rounded border-t-4 ${topBorderColorPopup[polygon.status]} bg-white p-3`}
-            style={{
-              top: "-100%",
-              left: "-50%",
-              transform: "translate(-40%, -77%)" //modify this based on style
+          <TooltipMap
+            polygon={polygon}
+            formattedPlantStartDate={formattedPlantStartDate}
+            setTooltipOpen={() => {
+              if (popup) {
+                popup.remove();
+              }
             }}
-          >
-            <button
-              onClick={() => {
-                if (popup) {
-                  popup.remove();
-                }
-              }}
-              className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800"
-            >
-              <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
-            </button>
+          />
+          // <div
+          //   className={`absolute z-20 w-[280px] rounded border-t-4 ${topBorderColorPopup[polygon.status]} bg-white p-3`}
+          //   style={{
+          //     top: "-100%",
+          //     left: "-50%",
+          //     transform: "translate(-40%, -77%)" //modify this based on style
+          //   }}
+          // >
+          //   <button
+          //     onClick={() => {
+          //       if (popup) {
+          //         popup.remove();
+          //       }
+          //     }}
+          //     className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800"
+          //   >
+          //     <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
+          //   </button>
 
-            <div className="text-10 flex items-center justify-center gap-1">
-              <Text variant="text-10 uppercase"> {polygon?.site_name} SITE </Text>
-              <div className="text-10">&#8226;</div>
-              <Text variant="text-10 uppercase"> {polygon?.proj_name} PROJECT</Text>
-            </div>
-            <Text variant="text-10-bold" className="text-center">
-              {polygon?.poly_name ? polygon?.poly_name : "Unnamed Polygon"}
-            </Text>
-            <hr className="my-2 border border-grey-750" />
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Text variant="text-10-light">Restoration Practice</Text>
-                <Text variant="text-10-bold">{polygon?.practice ? polygon?.practice : "unknown"}</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Target Land Use System</Text>
-                <Text variant="text-10-bold">{polygon?.target_sys ? polygon?.target_sys : "unknown"}</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Tree Distribution</Text>
-                <Text variant="text-10-bold">{polygon?.dist ? polygon?.dist : "unknown"}</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Planting Start Date</Text>
-                <Text variant="text-10-bold">{formattedPlantStartDate}</Text>
-              </div>
-            </div>
+          //   <div className="text-10 flex items-center justify-center gap-1">
+          //     <Text variant="text-10 uppercase"> {polygon?.site_name} SITE </Text>
+          //     <div className="text-10">&#8226;</div>
+          //     <Text variant="text-10 uppercase"> {polygon?.proj_name} PROJECT</Text>
+          //   </div>
+          //   <Text variant="text-10-bold" className="text-center">
+          //     {polygon?.poly_name ? polygon?.poly_name : "Unnamed Polygon"}
+          //   </Text>
+          //   <hr className="my-2 border border-grey-750" />
+          //   <div className="grid grid-cols-2 gap-4">
+          //     <div>
+          //       <Text variant="text-10-light">Restoration Practice</Text>
+          //       <Text variant="text-10-bold">{polygon?.practice ? polygon?.practice : "unknown"}</Text>
+          //     </div>
+          //     <div>
+          //       <Text variant="text-10-light">Target Land Use System</Text>
+          //       <Text variant="text-10-bold">{polygon?.target_sys ? polygon?.target_sys : "unknown"}</Text>
+          //     </div>
+          //     <div>
+          //       <Text variant="text-10-light">Tree Distribution</Text>
+          //       <Text variant="text-10-bold">{polygon?.dist ? polygon?.dist : "unknown"}</Text>
+          //     </div>
+          //     <div>
+          //       <Text variant="text-10-light">Planting Start Date</Text>
+          //       <Text variant="text-10-bold">{formattedPlantStartDate}</Text>
+          //     </div>
+          //   </div>
 
-            <hr className="my-2 border border-grey-750" />
-          </div>
+          //   <hr className="my-2 border border-grey-750" />
+          // </div>
         );
         popup = new mapboxgl.Popup().setLngLat([lng, lat]).setDOMContent(popupContent).addTo(this.map);
       }
