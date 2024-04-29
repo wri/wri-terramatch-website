@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
@@ -44,6 +44,13 @@ const Polygons = (props: IPolygonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
+  const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedPolygon(undefined);
+    }
+  }, [isOpen]);
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
@@ -127,7 +134,7 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const polygonMenuItems = [
+  const polygonMenuItems = (item: any) => [
     {
       id: "1",
       render: () => (
@@ -137,7 +144,8 @@ const Polygons = (props: IPolygonProps) => {
         </div>
       ),
       onClick: () => {
-        setIsOpen(true);
+        setSelectedPolygon(item);
+        return setIsOpen(true);
       }
     },
     {
@@ -198,7 +206,7 @@ const Polygons = (props: IPolygonProps) => {
   return (
     <div>
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
-        <PolygonDrawer />
+        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
         <Text variant="text-16-bold" className="pl-2 text-grey-300">
@@ -210,7 +218,6 @@ const Polygons = (props: IPolygonProps) => {
       </div>
       <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
         {props.menu.map(item => {
-          console.log(item);
           return (
             <div
               key={item.id}
@@ -220,7 +227,11 @@ const Polygons = (props: IPolygonProps) => {
                 <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
                 <Text variant="text-14-light">{item.label}</Text>
               </div>
-              <Menu container={containerRef.current} menu={polygonMenuItems} placement={MENU_PLACEMENT_LEFT_BOTTOM}>
+              <Menu
+                container={containerRef.current}
+                menu={polygonMenuItems(item)}
+                placement={MENU_PLACEMENT_LEFT_BOTTOM}
+              >
                 <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
               </Menu>
             </div>
