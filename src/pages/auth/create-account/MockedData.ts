@@ -17,13 +17,8 @@ export const UserRolInfo = [
     description: "Evaluate ROI, aid strategic investment decisions and guide funding priorities.",
     menu: [
       { id: "1", data: { label: "ppc" } },
-      { id: "2", data: { label: "terraFund" } }
+      { id: "2", data: { label: "terrafund" } }
     ],
     titleOption: "Select Framework"
   }
-  // {
-  //   id: "4",
-  //   title: "I’m an Interested User (Public)",
-  //   description: "View the positive impacts of restoration efforts across AFR100 restoration initiatives."
-  // }
 ];
