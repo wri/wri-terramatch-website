@@ -22970,7 +22970,7 @@ export type RoleUserCreate = {
   email_address?: string;
   password?: string;
   job_role?: string;
-  role_id?: string;
+  primary_role?: string;
   country?: string;
   program?: string;
   facebook?: string;
@@ -22995,8 +22995,7 @@ export type RoleUserRead = {
    * @format date-time
    */
   email_address_verified_at?: string;
-  role?: string;
-  role_id?: string;
+  primary_role?: string;
   country?: string;
   program?: string;
   /**

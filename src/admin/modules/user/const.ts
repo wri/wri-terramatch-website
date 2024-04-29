@@ -29,10 +29,6 @@ export const userPrimaryRoleChoices = [
   {
     id: "funder",
     name: "Funder/Investor"
-  },
-  {
-    id: "interested-user",
-    name: "Interested User (Public)"
   }
 ];
 
