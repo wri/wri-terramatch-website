@@ -19,7 +19,7 @@ const SignUpFormDataSchema = (t: any) =>
     phone_number: yup.string().required(),
     job_role: yup.string().required(),
     password: yup.string().required(),
-    role_id: yup.string().required(),
+    primary_role: yup.string().required(),
     country: yup.string(),
     program: yup.string(),
     confirm_password: yup.string().oneOf([yup.ref("password")], t("Passwords must match.")),
@@ -30,11 +30,11 @@ const SignUpFormDataSchema = (t: any) =>
 export type SignUpFormData = yup.InferType<ReturnType<typeof SignUpFormDataSchema>>;
 
 const SignUpPage = ({
-  role_id,
+  primary_role,
   selectedOption,
   selectedTitleOption
 }: {
-  role_id: string;
+  primary_role: string;
   selectedOption: string;
   selectedTitleOption: string;
 }) => {
@@ -93,7 +93,7 @@ const SignUpPage = ({
         phone_number: data.phone_number,
         job_role: data.job_role,
         callback_url: window.location.origin + "/auth/verify/email/",
-        role_id: role_id as string,
+        primary_role: primary_role as string,
         country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
         program: selectedTitleOption == "Select Framework" ? (selectedOption as any) : null
       }
@@ -106,7 +106,7 @@ const SignUpPage = ({
     //     <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
     //   </ContentLayout>
     // </BackgroundLayout>
-    <SignUpForm form={form} handleSave={handleSave} loading={isLoading} roleId={role_id as string} />
+    <SignUpForm form={form} handleSave={handleSave} loading={isLoading} primary_role={primary_role as string} />
   );
 };
 

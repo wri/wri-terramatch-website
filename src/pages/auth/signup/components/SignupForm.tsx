@@ -16,14 +16,14 @@ type SignUpFormProps = {
   form: UseFormReturn<SignUpFormData>;
   handleSave: (data: SignUpFormData) => Promise<any>;
   loading?: boolean;
-  roleId: string;
+  primary_role: string;
 };
 
-const SignUpForm = ({ form, loading, handleSave, roleId }: SignUpFormProps) => {
+const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps) => {
   const t = useT();
   const errors = form.formState.errors;
   useEffect(() => {
-    form.setValue("role_id", roleId);
+    form.setValue("primary_role", primary_role);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -30,7 +30,7 @@ const Page = () => {
     <LoginLayout>
       {showSignUp ? (
         <SignUpPage
-          role_id={selected as string}
+          primary_role={selected as string}
           selectedOption={selectedOption as string}
           selectedTitleOption={selectedTitleOption as string}
         />
