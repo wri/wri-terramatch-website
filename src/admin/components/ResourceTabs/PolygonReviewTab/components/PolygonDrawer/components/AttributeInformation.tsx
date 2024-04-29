@@ -1,5 +1,7 @@
+import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
@@ -77,6 +79,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [estimatedArea, setEstimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
+  const t = useT();
 
   useEffect(() => {
     const restorationPracticeArray = selectedPolygon?.practice
@@ -183,6 +186,14 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         value={estimatedArea}
         onChangeCapture={e => setEstimatedArea(Number((e.target as HTMLInputElement).value))}
       />
+      <div className="mt-auto flex items-center justify-end gap-5">
+        <Button variant="semi-red" className="w-full">
+          {t("Close")}
+        </Button>
+        <Button variant="semi-black" className="w-full">
+          {t("Save")}
+        </Button>
+      </div>
     </div>
   );
 };

@@ -158,8 +158,6 @@ const Input = forwardRef(
       if (decimalPart !== undefined) {
         formattedValue += "." + decimalPart.slice(0, 2);
       }
-      console.log(formattedValue);
-
       input.value = formattedValue;
     };
 
