@@ -31555,6 +31555,56 @@ export const useGetV2SitesSiteBbox = <TData = Schemas.SitePolygonsBboxResponse>(
   );
 };
 
+export type GetV2TerrafundGeojsonCompleteQueryParams = {
+  /**
+   * UUID of the polygon geometry.
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundGeojsonCompleteError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundGeojsonCompleteVariables = {
+  queryParams: GetV2TerrafundGeojsonCompleteQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieve polygon geometry and properties as GeoJSON.
+ */
+export const fetchGetV2TerrafundGeojsonComplete = (
+  variables: GetV2TerrafundGeojsonCompleteVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Schemas.GeoJSONResponse,
+    GetV2TerrafundGeojsonCompleteError,
+    undefined,
+    {},
+    GetV2TerrafundGeojsonCompleteQueryParams,
+    {}
+  >({ url: "/v2/terrafund/geojson/complete", method: "get", ...variables, signal });
+
+/**
+ * Retrieve polygon geometry and properties as GeoJSON.
+ */
+export const useGetV2TerrafundGeojsonComplete = <TData = Schemas.GeoJSONResponse>(
+  variables: GetV2TerrafundGeojsonCompleteVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.GeoJSONResponse, GetV2TerrafundGeojsonCompleteError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.GeoJSONResponse, GetV2TerrafundGeojsonCompleteError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/geojson/complete", operationId: "getV2TerrafundGeojsonComplete", variables }),
+    ({ signal }) => fetchGetV2TerrafundGeojsonComplete({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -32020,4 +32070,9 @@ export type QueryOperation =
       path: "/v2/sites/{site}/bbox";
       operationId: "getV2SitesSiteBbox";
       variables: GetV2SitesSiteBboxVariables;
+    }
+  | {
+      path: "/v2/terrafund/geojson/complete";
+      operationId: "getV2TerrafundGeojsonComplete";
+      variables: GetV2TerrafundGeojsonCompleteVariables;
     };

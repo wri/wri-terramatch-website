@@ -13,6 +13,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
+import { fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
@@ -51,6 +52,19 @@ const Polygons = (props: IPolygonProps) => {
       setSelectedPolygon(undefined);
     }
   }, [isOpen]);
+
+  const downloadGeoJsonPolygon = async (polygon: IPolygonItem) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygon.uuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `polygon.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
@@ -164,7 +178,10 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.DOWNLOAD_PA} className="h-6 w-6" />
           <Text variant="text-12-bold">Download</Text>
         </div>
-      )
+      ),
+      onClick: () => {
+        downloadGeoJsonPolygon(item);
+      }
     },
     {
       id: "4",
