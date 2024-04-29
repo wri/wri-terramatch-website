@@ -23104,3 +23104,7 @@ export type GeoJSONResponse = {
     };
   }[];
 };
+
+export type PolygonBboxResponse = {
+  bbox?: any[];
+};

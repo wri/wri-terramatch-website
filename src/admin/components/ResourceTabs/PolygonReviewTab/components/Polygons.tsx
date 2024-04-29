@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
+import _MapService from "@/components/elements/Map-mapbox/MapService";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
@@ -13,7 +14,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
-import { fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
@@ -64,6 +65,15 @@ const Polygons = (props: IPolygonProps) => {
     link.download = `polygon.geojson`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  const flyToPolygonBounds = async (polygon: IPolygonItem) => {
+    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygon.uuid } });
+    const bounds: any = bbox.bbox;
+    _MapService.map?.fitBounds(bounds, {
+      padding: 100,
+      linear: false
+    });
   };
 
   const openFormModalHandlerAddPolygon = () => {
@@ -169,7 +179,10 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.SEARCH_PA} className="h-6 w-6" />
           <Text variant="text-12-bold">Zoom to</Text>
         </div>
-      )
+      ),
+      onClick: () => {
+        flyToPolygonBounds(item);
+      }
     },
     {
       id: "3",

@@ -82,7 +82,7 @@ class MapService {
         const { lng, lat } = e.lngLat;
         const uuidPolygon = feature.properties?.uuid;
         const polygon = polygonData.find(data => data.poly_id === uuidPolygon);
-        const plantStartDate = new Date(polygon?.plantstart);
+        const plantStartDate = polygon?.plantstart ? new Date(polygon?.plantstart) : null;
         const formattedPlantStartDate =
           plantStartDate != null
             ? plantStartDate.toLocaleDateString("en-US", {

@@ -31605,6 +31605,50 @@ export const useGetV2TerrafundGeojsonComplete = <TData = Schemas.GeoJSONResponse
   );
 };
 
+export type GetV2TerrafundPolygonBboxUuidPathParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundPolygonBboxUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundPolygonBboxUuidVariables = {
+  pathParams: GetV2TerrafundPolygonBboxUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundPolygonBboxUuid = (
+  variables: GetV2TerrafundPolygonBboxUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Schemas.PolygonBboxResponse,
+    GetV2TerrafundPolygonBboxUuidError,
+    undefined,
+    {},
+    {},
+    GetV2TerrafundPolygonBboxUuidPathParams
+  >({ url: "/v2/terrafund/polygon/bbox/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundPolygonBboxUuid = <TData = Schemas.PolygonBboxResponse>(
+  variables: GetV2TerrafundPolygonBboxUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.PolygonBboxResponse, GetV2TerrafundPolygonBboxUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.PolygonBboxResponse, GetV2TerrafundPolygonBboxUuidError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/polygon/bbox/{uuid}", operationId: "getV2TerrafundPolygonBboxUuid", variables }),
+    ({ signal }) => fetchGetV2TerrafundPolygonBboxUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -32075,4 +32119,9 @@ export type QueryOperation =
       path: "/v2/terrafund/geojson/complete";
       operationId: "getV2TerrafundGeojsonComplete";
       variables: GetV2TerrafundGeojsonCompleteVariables;
+    }
+  | {
+      path: "/v2/terrafund/polygon/bbox/{uuid}";
+      operationId: "getV2TerrafundPolygonBboxUuid";
+      variables: GetV2TerrafundPolygonBboxUuidVariables;
     };
