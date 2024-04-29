@@ -55,7 +55,7 @@ const StepProgressbar = ({
                 <div className="relative flex flex-col items-center">
                   <Icon
                     name={index > lastSelected ? IconNames.CHECK_PROGRESSBAR_NULL : IconNames.CHECK_PROGRESSBAR}
-                    className={`z-10 h-5 w-5 lg:h-6 lg:w-6 wide:h-7 wide:w-1.75 text-${color}`}
+                    className={`z-10 h-5 w-5 lg:h-6 lg:w-6 wide:h-7 wide:w-7 text-${color}`}
                   />
                   <Text
                     variant={labelVariant}
