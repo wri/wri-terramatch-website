@@ -230,7 +230,10 @@ const PolygonReviewTab: FC<IProps> = props => {
               >
                 <Text
                   variant="text-12-bold"
-                  className={classNames({ "text-blue": image.isVerified, "text-red": !image.isVerified })}
+                  className={classNames("text-center", {
+                    "text-blue": image.isVerified,
+                    "text-red": !image.isVerified
+                  })}
                 >
                   {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
                 </Text>
