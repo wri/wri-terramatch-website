@@ -23,9 +23,8 @@ const TooltipMap = (props: TooltipMapProps) => {
         topBorderColorPopup[polygon.status]
       } bg-white px-3 pb-3 pt-[7px]`}
       style={{
-        top: "-100%",
-        left: "-50%",
-        transform: "translate(-40%, -77%)" //modify this based on style
+        bottom: "0",
+        transform: "translate(-50%, 0px)"
       }}
     >
       <button onClick={setTooltipOpen} className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800">
