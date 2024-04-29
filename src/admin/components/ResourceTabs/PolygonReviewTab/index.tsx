@@ -167,7 +167,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
               <Icon
                 name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
-                className="h-6 w-6"
+                className={classNames("h-6 w-6", { "animate-spin": !polygon.isUploaded })}
               />
             </div>
           ))}
