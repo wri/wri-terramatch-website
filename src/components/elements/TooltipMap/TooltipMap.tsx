@@ -5,6 +5,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Text from "../Text/Text";
 export interface TooltipMapProps {
   setTooltipOpen: () => void;
+  setEditPolygon: () => void;
   polygon: any;
   popup?: any;
   formattedPlantStartDate: any;
@@ -16,7 +17,7 @@ const topBorderColorPopup: any = {
 };
 
 const TooltipMap = (props: TooltipMapProps) => {
-  const { setTooltipOpen, polygon, formattedPlantStartDate } = props;
+  const { setTooltipOpen, setEditPolygon, polygon, formattedPlantStartDate } = props;
   return (
     <div
       className={`absolute z-20 w-[295px] rounded border-t-[5px] ${
@@ -46,7 +47,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             Restoration Practice
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {polygon?.practice ? polygon?.practice : "unknown"}
+            {polygon?.practice ? polygon?.practice : "Unknown"}
           </Text>
         </div>
         <div>
@@ -54,7 +55,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             Target Land Use System
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {polygon?.target_sys ? polygon?.target_sys : "unknown"}
+            {polygon?.target_sys ? polygon?.target_sys : "Unknown"}
           </Text>
         </div>
         <div>
@@ -62,7 +63,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             Tree Distribution
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black">
-            {polygon?.dist ? polygon?.dist : "unknown"}
+            {polygon?.dist ? polygon?.dist : "Unknown"}
           </Text>
         </div>
         <div>
@@ -77,7 +78,7 @@ const TooltipMap = (props: TooltipMapProps) => {
 
       <hr className="my-2 border border-grey-750" />
       <div className="flex w-full items-center justify-center">
-        <button className="flex items-center justify-center gap-1">
+        <button className="flex items-center justify-center gap-1" onClick={setEditPolygon}>
           <Icon name={IconNames.CLICK} className="h-4 w-4" />
           <Text variant="text-10-light" className="italic text-black">
             click to see polygon details

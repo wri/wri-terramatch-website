@@ -24,8 +24,14 @@ export interface IPolygonItem {
   label: string;
   uuid: string;
 }
+
+export interface IpolygonFromMap {
+  isOpen: boolean;
+  uuid: string;
+}
 export interface IPolygonProps {
   menu: IPolygonItem[];
+  polygonFromMap?: IpolygonFromMap;
 }
 const statusColor = {
   Draft: "bg-purple",
@@ -44,6 +50,7 @@ export const polygonData = [
 
 const Polygons = (props: IPolygonProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const polygonFromMap = props.polygonFromMap;
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
@@ -53,6 +60,15 @@ const Polygons = (props: IPolygonProps) => {
       setSelectedPolygon(undefined);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (polygonFromMap?.isOpen) {
+      setSelectedPolygon(props.menu.find(polygon => polygon.uuid === polygonFromMap.uuid));
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }, [polygonFromMap]);
 
   const downloadGeoJsonPolygon = async (polygon: IPolygonItem) => {
     const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({

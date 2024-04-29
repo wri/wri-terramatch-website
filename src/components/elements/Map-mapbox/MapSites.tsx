@@ -67,6 +67,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   centroids?: any;
   polygonsData?: any[];
   bbox?: any;
+  setPolygonMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
 }
 
 export const LAYERS_NAMES = {
@@ -206,20 +207,21 @@ export const MapSite = ({
   polygonChecks = false,
   ...props
 }: MapProps) => {
-  const { polygonsData, bbox } = props;
+  const { polygonsData, bbox, setPolygonMap } = props;
   const ref = useRef<typeof MapService | null>(null);
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const [tooltipOpen, setTooltipOpen] = useState(true);
   const sitePolygonData = useSitePolygonData();
+  const [isOpenEditPolygon, setIsOpenEditPolygon] = useState({ uuid: "", isOpen: false });
 
   useEffect(() => {
     ref.current = MapService;
     const onLoad = () => {
       layersList.forEach((layer: any) => {
         if (ref.current) {
-          ref.current.addSource(layer, sitePolygonData);
+          ref.current.addSource(layer, sitePolygonData, setIsOpenEditPolygon);
         }
       });
     };
@@ -254,6 +256,12 @@ export const MapSite = ({
       }
     }
   }, [polygonsData]);
+
+  useEffect(() => {
+    if (setPolygonMap) {
+      setPolygonMap(isOpenEditPolygon);
+    }
+  }, [isOpenEditPolygon]);
 
   const zoomToBbox = (bbox: any) => {
     if (ref.current && ref.current.map) {
