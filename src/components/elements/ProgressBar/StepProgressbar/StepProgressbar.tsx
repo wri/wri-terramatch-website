@@ -54,7 +54,7 @@ const StepProgressbar = ({
                     tw(
                       lastSelected === index && "!font-bold",
                       index > lastSelected && "opacity-50",
-                      "min-w-[64px] text-center",
+                      "min-w-[64px] max-w-[80px] text-center",
                       classNameLabels
                     ),
                     {
@@ -81,7 +81,7 @@ const StepProgressbar = ({
                     tw(
                       lastSelected === index && "!font-bold",
                       index > lastSelected && "opacity-50",
-                      "min-w-[64px] text-center",
+                      "min-w-[64px] max-w-[80px] text-center",
                       classNameLabels
                     ),
                     {
