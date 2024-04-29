@@ -105,16 +105,16 @@ const tableData = [
   }
 ];
 
-const AirtableList: FC = () => {
+const ProjectPipeline: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
   const openFormModalHandler = () => {
     openModal(
       <ModalCloseLogo
         className="w-[556px]"
-        title="Add New Airtable"
+        title="Add New Pipeline"
         onCLose={closeModal}
-        primaryButtonProps={{ children: "Submit Airtable", className: "w-full text-white capitalize" }}
+        primaryButtonProps={{ children: "Submit Pipeline", className: "w-full text-white capitalize" }}
       >
         <div className="flex w-full flex-col gap-4">
           <Input
@@ -190,7 +190,7 @@ const AirtableList: FC = () => {
     <>
       <div className="flex justify-between pb-6">
         <Text variant="text-36-bold" className="leading-none">
-          Airtable Management
+          Restore Local Project Pipeline
         </Text>
         <Button
           variant="white-page-admin"
@@ -198,7 +198,7 @@ const AirtableList: FC = () => {
           onClick={openFormModalHandler}
         >
           <Text variant="text-14-bold" className="text-neutral-950">
-            Add Airtable
+            Add Pipeline
           </Text>
         </Button>
       </div>
@@ -215,17 +215,18 @@ const AirtableList: FC = () => {
             <Text
               variant="text-14"
               className={classNames("border-b-2 border-transparent pb-3", {
-                " !border-blue-100 text-blue-100": selected === tabIndex.TERRAFUND
+                " !border-primary text-primary": selected === tabIndex.TERRAFUND
               })}
             >
-              TerraFund
+              Top100
             </Text>
           </Button>
-          <Button variant="text" onClick={() => setSelected(tabIndex.PRICELESS)}>
+          {/* Hidde buttons for now */}
+          {/* <Button variant="text" onClick={() => setSelected(tabIndex.PRICELESS)}>
             <Text
               variant="text-14"
               className={classNames("border-b-2 border-transparent pb-3", {
-                " !border-blue-100 text-blue-100": selected === tabIndex.PRICELESS
+                " !border-primary text-primary": selected === tabIndex.PRICELESS
               })}
             >
               Priceless Planet Coalition
@@ -236,7 +237,7 @@ const AirtableList: FC = () => {
             <Text
               variant="text-14"
               className={classNames("border-b-2 border-transparent pb-3", {
-                " !border-blue-100 text-blue-100": selected === tabIndex.HARIT
+                " !border-primary text-primary": selected === tabIndex.HARIT
               })}
             >
               Harit Bharat Fund
@@ -247,12 +248,12 @@ const AirtableList: FC = () => {
             <Text
               variant="text-14"
               className={classNames("border-b-2 border-transparent pb-3", {
-                " !border-blue-100 text-blue-100": selected === tabIndex.LAND
+                " !border-primary text-primary": selected === tabIndex.LAND
               })}
             >
               Land Accelerator
             </Text>
-          </Button>
+          </Button> */}
         </div>
         <When condition={selected === tabIndex.TERRAFUND}>
           <div className="rounded-lg border border-neutral-200">
@@ -329,4 +330,4 @@ const AirtableList: FC = () => {
   );
 };
 
-export default AirtableList;
+export default ProjectPipeline;

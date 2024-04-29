@@ -148,10 +148,10 @@ const App = () => {
         options={{ label: "Nursery Reports" }}
       />
       <Resource
-        name={modules.airtable.ResourceName}
-        list={modules.airtable.List}
+        name={modules.projectPipeline.ResourceName}
+        list={modules.projectPipeline.List}
         icon={() => <Icon className="h-8 w-8" name={IconNames.AIRTABLE} />}
-        options={{ label: "Airtables" }}
+        options={{ label: "Project Pipeline" }}
       />
       <Resource name={modules.audit.ResourceName} />
     </Admin>
