@@ -561,17 +561,19 @@ export const MapSite = ({
               <Text variant="text-10-bold" className="text-white">
                 Polygon Checks
               </Text>
-              {polygonCheckData.map(polygon => (
-                <div key={polygon.id} className="flex items-center gap-2">
-                  <Icon
-                    name={polygon.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                    className="h-4 w-4"
-                  />
-                  <Text variant="text-10-light" className="text-white">
-                    {polygon.label}
-                  </Text>
-                </div>
-              ))}
+              <div className="grid grid-cols-[min-content_1fr] gap-2">
+                {polygonCheckData.map(polygon => (
+                  <React.Fragment key={polygon.id}>
+                    <Icon
+                      name={polygon.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
+                      className="mt-[2px] h-4 w-4"
+                    />
+                    <Text variant="text-10-light" className="text-white">
+                      {polygon.label}
+                    </Text>
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
           </ControlGroup>
         </When>
