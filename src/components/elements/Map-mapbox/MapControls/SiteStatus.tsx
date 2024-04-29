@@ -53,11 +53,11 @@ const SiteStatus = () => {
   };
 
   return (
-    <div className="rounded-lg bg-white p-3 shadow">
+    <div className="min-w-[152px] rounded-lg bg-white p-3 shadow lg:min-w-[167px] wide:min-w-[182px]">
       <Dropdown
         label="Site Status"
-        labelClassName="opacity-60 capitalize"
-        labelVariant="text-12-light"
+        labelClassName="capitalize"
+        labelVariant="text-12-bold"
         optionClassName="py-[6px] px-3"
         optionTextClassName="w-full whitespace-nowrap"
         optionVariant="text-12-light"
