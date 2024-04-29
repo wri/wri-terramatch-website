@@ -26,6 +26,7 @@ import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/Mock
 import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 import MapSiteProvider from "@/context/mapSites.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
@@ -211,13 +212,14 @@ export const MapSite = ({
   const [viewImages, setViewImages] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const [tooltipOpen, setTooltipOpen] = useState(true);
+  const sitePolygonData = useSitePolygonData();
 
   useEffect(() => {
     ref.current = MapService;
     const onLoad = () => {
       layersList.forEach((layer: any) => {
         if (ref.current) {
-          ref.current.addSource(layer);
+          ref.current.addSource(layer, sitePolygonData);
         }
       });
     };
