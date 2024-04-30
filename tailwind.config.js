@@ -33,7 +33,8 @@ module.exports = {
       },
       backgroundImage: {
         imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
-        "square-pattern": "url('/icons/ic-bg.svg')"
+        "square-pattern": "url('/icons/ic-bg.svg')",
+        "back-map": "url('/icons/bg-map.svg')"
       },
       gridTemplateColumns: {
         1: "repeat(1, minmax(0, 1fr))",
