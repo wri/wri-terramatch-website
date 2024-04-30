@@ -1,4 +1,3 @@
-import { Grid, Stack } from "@mui/material";
 import { useState } from "react";
 import { useShowContext } from "react-admin";
 import { When } from "react-if";
@@ -47,10 +46,10 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
         <PageColumn>
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>
-              <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
-                <Grid xs={8}>
-                  <Stack gap={4} className="pl-8 pt-9">
-                    <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
+              <div className="flex max-h-[200vh] gap-6 overflow-auto">
+                <div className="grid w-2/3 gap-6">
+                  <div className="gap-6">
+                    <div className="mb-6 flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
                       <Button
                         variant={`${buttonToogle === ButtonStates.PROJECTS ? "white-toggle" : "transparent-toggle"}`}
                         onClick={() => setButtonToogle(ButtonStates.PROJECTS)}
@@ -79,9 +78,9 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
                     <When condition={buttonToogle === ButtonStates.POLYGON}>
                       <SiteAuditLogPolygonStatus resource={resource} />
                     </When>
-                  </Stack>
-                </Grid>
-                <Grid xs={4} className="pl-8 pr-4 pt-9">
+                  </div>
+                </div>
+                <div className="w-1/3 pl-8">
                   <When condition={buttonToogle === ButtonStates.PROJECTS}>
                     <SiteAuditLogProjectStatusSide />
                   </When>
@@ -91,8 +90,8 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
                   <When condition={buttonToogle === ButtonStates.POLYGON}>
                     <SiteAuditLogPolygonStatusSide />
                   </When>
-                </Grid>
-              </Grid>
+                </div>
+              </div>
             </PageCard>
           </LoadingContainer>
         </PageColumn>
