@@ -31775,6 +31775,56 @@ export const usePutV2TerrafundPolygonUuid = (
   );
 };
 
+export type GetV2TerrafundPolygonUuidPathParams = {
+  /**
+   * The UUID of the polygon geometry to retrieve.
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * Error message indicating that no polygon geometry was found for the provided UUID.
+     */
+    message?: string;
+  };
+}>;
+
+export type GetV2TerrafundPolygonUuidVariables = {
+  pathParams: GetV2TerrafundPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+ */
+export const fetchGetV2TerrafundPolygonUuid = (variables: GetV2TerrafundPolygonUuidVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.GeojsonData, GetV2TerrafundPolygonUuidError, undefined, {}, {}, GetV2TerrafundPolygonUuidPathParams>(
+    { url: "/v2/terrafund/polygon/{uuid}", method: "get", ...variables, signal }
+  );
+
+/**
+ * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+ */
+export const useGetV2TerrafundPolygonUuid = <TData = Schemas.GeojsonData>(
+  variables: GetV2TerrafundPolygonUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.GeojsonData, GetV2TerrafundPolygonUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.GeojsonData, GetV2TerrafundPolygonUuidError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/polygon/{uuid}", operationId: "getV2TerrafundPolygonUuid", variables }),
+    ({ signal }) => fetchGetV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -32250,4 +32300,9 @@ export type QueryOperation =
       path: "/v2/terrafund/polygon/bbox/{uuid}";
       operationId: "getV2TerrafundPolygonBboxUuid";
       variables: GetV2TerrafundPolygonBboxUuidVariables;
+    }
+  | {
+      path: "/v2/terrafund/polygon/{uuid}";
+      operationId: "getV2TerrafundPolygonUuid";
+      variables: GetV2TerrafundPolygonUuidVariables;
     };

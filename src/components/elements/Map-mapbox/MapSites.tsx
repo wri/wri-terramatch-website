@@ -217,6 +217,9 @@ export const MapSite = ({
   const [isOpenEditPolygon, setIsOpenEditPolygon] = useState({ uuid: "", isOpen: false });
 
   useEffect(() => {
+    console.log("is open edit polygon", isOpenEditPolygon);
+  }, [isOpenEditPolygon]);
+  useEffect(() => {
     ref.current = MapService;
     const onLoad = () => {
       layersList.forEach((layer: any) => {

@@ -23134,3 +23134,10 @@ export type GeometryData = {
     type?: string;
   };
 };
+
+export type GeojsonData = {
+  /**
+   * The GeoJSON representation of the polygon geometry.
+   */
+  geojson?: Record<string, any>;
+};

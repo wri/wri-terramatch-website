@@ -16,6 +16,7 @@ class MapService {
     this.styleLoaded = false;
     this.sourceQueue = [];
     this.centroids = null;
+    this.currentPolygonUuid = null;
   }
 
   initMap(mapId) {
@@ -38,11 +39,11 @@ class MapService {
         uncombine_features: false
       }
     });
-    // this.map.addControl(this.draw, "top-right");
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
     });
+    this.map.addControl(this.draw, "top-right");
     return this.map;
   }
 
@@ -87,6 +88,9 @@ class MapService {
         const { lng, lat } = e.lngLat;
         const uuidPolygon = feature.properties?.uuid;
         console.log("uuidPolygon", uuidPolygon);
+        if (uuidPolygon) {
+          this.currentPolygonUuid = uuidPolygon;
+        }
         const polygon = polygonData && polygonData.find(data => data.poly_id === uuidPolygon);
         const plantStartDate = polygon?.plantstart ? new Date(polygon?.plantstart) : null;
         const formattedPlantStartDate =
