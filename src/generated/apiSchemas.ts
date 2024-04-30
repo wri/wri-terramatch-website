@@ -23127,3 +23127,10 @@ export type SitePolygonResponse = {
    */
   est_area?: number;
 };
+
+export type GeometryData = {
+  geometry?: {
+    coordinates?: any[];
+    type?: string;
+  };
+};

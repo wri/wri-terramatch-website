@@ -1,3 +1,4 @@
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Map } from "mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
@@ -27,6 +28,17 @@ class MapService {
       style: "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu",
       zoom: 2.5
     });
+    this.draw = new MapboxDraw({
+      controls: {
+        point: false,
+        line_string: false,
+        polygon: true,
+        trash: false,
+        combine_features: false,
+        uncombine_features: false
+      }
+    });
+    // this.map.addControl(this.draw, "top-right");
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
@@ -74,6 +86,7 @@ class MapService {
         const feature = e.features[0];
         const { lng, lat } = e.lngLat;
         const uuidPolygon = feature.properties?.uuid;
+        console.log("uuidPolygon", uuidPolygon);
         const polygon = polygonData && polygonData.find(data => data.poly_id === uuidPolygon);
         const plantStartDate = polygon?.plantstart ? new Date(polygon?.plantstart) : null;
         const formattedPlantStartDate =
