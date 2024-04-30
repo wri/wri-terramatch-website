@@ -210,7 +210,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         format="number"
         disabled
         name=""
-        value={estimatedArea.toFixed(2) + " ha"}
+        value={estimatedArea ? estimatedArea?.toFixed(2) + " ha" : "0 ha"}
       />
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full">
