@@ -27,6 +27,7 @@ import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 import MapSiteProvider from "@/context/mapSites.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { useDebounce } from "@/hooks/useDebounce";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
@@ -218,6 +219,14 @@ export const MapSite = ({
 
   useEffect(() => {
     console.log("is open edit polygon", isOpenEditPolygon);
+    const getGeojson = async () => {
+      const geojsonPolygon = await fetchGetV2TerrafundPolygonGeojsonUuid({
+        pathParams: { uuid: isOpenEditPolygon.uuid }
+      });
+      console.log("geojsonPolygon", geojsonPolygon);
+      return geojsonPolygon;
+    };
+    getGeojson();
   }, [isOpenEditPolygon]);
   useEffect(() => {
     ref.current = MapService;

@@ -43,7 +43,7 @@ class MapService {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
     });
-    this.map.addControl(this.draw, "top-right");
+    // this.map.addControl(this.draw, "top-right");
     return this.map;
   }
 
@@ -144,6 +144,41 @@ class MapService {
   }
 
   addFilterOnLayer(layer, polygonData, field) {
+    const { name, styles } = layer;
+    styles.forEach((style, index) => {
+      const layerName = `${name}-${index}`;
+      if (!this.map.getLayer(layerName)) {
+        console.error(`Layer ${layerName} does not exist.`);
+        return;
+      }
+      const polygonStatus = style?.metadata?.polygonStatus;
+      const filter = [
+        "in",
+        ["get", field],
+        ["literal", polygonData[polygonStatus] === undefined ? "" : polygonData[polygonStatus]]
+      ];
+
+      this.map.setFilter(layerName, filter);
+      this.map.setLayoutProperty(layerName, "visibility", "visible");
+    });
+  }
+
+  convertToAcceptedGEOJSON(geojson) {
+    const templateGeoJSON = {
+      type: "Feature",
+      properties: {},
+      geometry: geojson
+    };
+    return [templateGeoJSON];
+  }
+
+  addGeojsonToDraw(geojson) {
+    if (geojson) {
+      this.draw.add(this.convertToAcceptedGEOJSON(geojson));
+    }
+  }
+
+  removePreviousGeojsonFromDraw(layer, polygonData, field) {
     const { name, styles } = layer;
     styles.forEach((style, index) => {
       const layerName = `${name}-${index}`;

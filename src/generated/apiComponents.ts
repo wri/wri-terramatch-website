@@ -31775,14 +31775,14 @@ export const usePutV2TerrafundPolygonUuid = (
   );
 };
 
-export type GetV2TerrafundPolygonUuidPathParams = {
+export type GetV2TerrafundPolygonGeojsonUuidPathParams = {
   /**
    * The UUID of the polygon geometry to retrieve.
    */
   uuid: string;
 };
 
-export type GetV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<{
+export type GetV2TerrafundPolygonGeojsonUuidError = Fetcher.ErrorWrapper<{
   status: 404;
   payload: {
     /**
@@ -31792,32 +31792,44 @@ export type GetV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<{
   };
 }>;
 
-export type GetV2TerrafundPolygonUuidVariables = {
-  pathParams: GetV2TerrafundPolygonUuidPathParams;
+export type GetV2TerrafundPolygonGeojsonUuidVariables = {
+  pathParams: GetV2TerrafundPolygonGeojsonUuidPathParams;
 } & ApiContext["fetcherOptions"];
 
 /**
  * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
  */
-export const fetchGetV2TerrafundPolygonUuid = (variables: GetV2TerrafundPolygonUuidVariables, signal?: AbortSignal) =>
-  apiFetch<Schemas.GeojsonData, GetV2TerrafundPolygonUuidError, undefined, {}, {}, GetV2TerrafundPolygonUuidPathParams>(
-    { url: "/v2/terrafund/polygon/{uuid}", method: "get", ...variables, signal }
-  );
+export const fetchGetV2TerrafundPolygonGeojsonUuid = (
+  variables: GetV2TerrafundPolygonGeojsonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Schemas.GeojsonData,
+    GetV2TerrafundPolygonGeojsonUuidError,
+    undefined,
+    {},
+    {},
+    GetV2TerrafundPolygonGeojsonUuidPathParams
+  >({ url: "/v2/terrafund/polygon/geojson/{uuid}", method: "get", ...variables, signal });
 
 /**
  * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
  */
-export const useGetV2TerrafundPolygonUuid = <TData = Schemas.GeojsonData>(
-  variables: GetV2TerrafundPolygonUuidVariables,
+export const useGetV2TerrafundPolygonGeojsonUuid = <TData = Schemas.GeojsonData>(
+  variables: GetV2TerrafundPolygonGeojsonUuidVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<Schemas.GeojsonData, GetV2TerrafundPolygonUuidError, TData>,
+    reactQuery.UseQueryOptions<Schemas.GeojsonData, GetV2TerrafundPolygonGeojsonUuidError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Schemas.GeojsonData, GetV2TerrafundPolygonUuidError, TData>(
-    queryKeyFn({ path: "/v2/terrafund/polygon/{uuid}", operationId: "getV2TerrafundPolygonUuid", variables }),
-    ({ signal }) => fetchGetV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<Schemas.GeojsonData, GetV2TerrafundPolygonGeojsonUuidError, TData>(
+    queryKeyFn({
+      path: "/v2/terrafund/polygon/geojson/{uuid}",
+      operationId: "getV2TerrafundPolygonGeojsonUuid",
+      variables
+    }),
+    ({ signal }) => fetchGetV2TerrafundPolygonGeojsonUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -32302,7 +32314,7 @@ export type QueryOperation =
       variables: GetV2TerrafundPolygonBboxUuidVariables;
     }
   | {
-      path: "/v2/terrafund/polygon/{uuid}";
-      operationId: "getV2TerrafundPolygonUuid";
-      variables: GetV2TerrafundPolygonUuidVariables;
+      path: "/v2/terrafund/polygon/geojson/{uuid}";
+      operationId: "getV2TerrafundPolygonGeojsonUuid";
+      variables: GetV2TerrafundPolygonGeojsonUuidVariables;
     };
