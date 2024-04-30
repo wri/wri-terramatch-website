@@ -23108,3 +23108,23 @@ export type GeoJSONResponse = {
 export type PolygonBboxResponse = {
   bbox?: any[];
 };
+
+export type SitePolygonResponse = {
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  est_area?: number;
+};
