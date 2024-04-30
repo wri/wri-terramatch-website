@@ -5,7 +5,6 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchPutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -82,7 +81,6 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [estimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
   const t = useT();
-  const { setIsPolygonDataUpdated } = useSitePolygonData();
 
   useEffect(() => {
     const restorationPracticeArray = selectedPolygon?.practice
@@ -221,7 +219,6 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
           className="w-full"
           onClick={() => {
             savePolygonData();
-            setIsPolygonDataUpdated(true);
           }}
         >
           {t("Save")}
