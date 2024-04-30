@@ -53,7 +53,7 @@ export const FileCardContent = ({
           className={tw(thumbnailClassName, !!hasPreview && variant.iconHasPreview, variant.iconClassName)}
         />
       </div>
-      <div className="flex-1">
+      <div className={classNames("flex-1", variant.bodyTextVariant)}>
         <Text variant={variant.titleVariant} className={variant.titleClassName} title={title}>
           {title}
         </Text>
@@ -67,7 +67,6 @@ export const FileCardContent = ({
             {errorMessage || subtitle}
           </Text>
         </When>
-
         <When condition={showPrivateCheckbox}>
           <div className="mt-1 flex items-center gap-2">
             <Checkbox name="" inputClassName="h-4 w-4" onChange={handlePrivateChange} checked={!isPublic} />
