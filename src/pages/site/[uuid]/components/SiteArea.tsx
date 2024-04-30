@@ -86,7 +86,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="absolute z-20 h-[500px] w-[23vw] p-8 wide:h-[700px]"
+        className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff26] p-8 wide:h-[700px] "
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
         setStateViewPanel={setStateViewPanel}
