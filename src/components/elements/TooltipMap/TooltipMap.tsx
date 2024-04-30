@@ -21,7 +21,7 @@ const TooltipMap = (props: TooltipMapProps) => {
   return (
     <div
       className={`absolute z-20 w-[295px] rounded border-t-[5px] ${
-        topBorderColorPopup[polygon.status]
+        topBorderColorPopup[polygon?.status]
       } bg-white px-3 pb-3 pt-[7px]`}
       style={{
         bottom: "0",
@@ -63,7 +63,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             Tree Distribution
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black">
-            {polygon?.dist ? polygon?.dist : "Unknown"}
+            {polygon?.distr ? polygon?.distr : "Unknown"}
           </Text>
         </div>
         <div>

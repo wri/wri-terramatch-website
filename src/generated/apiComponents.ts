@@ -31649,6 +31649,55 @@ export const useGetV2TerrafundPolygonBboxUuid = <TData = Schemas.PolygonBboxResp
   );
 };
 
+export type PutV2TerrafundSitePolygonUuidPathParams = {
+  /**
+   * The UUID of the site polygon
+   */
+  uuid: string;
+};
+
+export type PutV2TerrafundSitePolygonUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2TerrafundSitePolygonUuidVariables = {
+  body?: Schemas.SitePolygonResponse;
+  pathParams: PutV2TerrafundSitePolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2TerrafundSitePolygonUuid = (
+  variables: PutV2TerrafundSitePolygonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Schemas.SitePolygonResponse,
+    PutV2TerrafundSitePolygonUuidError,
+    Schemas.SitePolygonResponse,
+    {},
+    {},
+    PutV2TerrafundSitePolygonUuidPathParams
+  >({ url: "/v2/terrafund/site-polygon/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2TerrafundSitePolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.SitePolygonResponse,
+      PutV2TerrafundSitePolygonUuidError,
+      PutV2TerrafundSitePolygonUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.SitePolygonResponse,
+    PutV2TerrafundSitePolygonUuidError,
+    PutV2TerrafundSitePolygonUuidVariables
+  >(
+    (variables: PutV2TerrafundSitePolygonUuidVariables) =>
+      fetchPutV2TerrafundSitePolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";

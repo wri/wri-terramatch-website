@@ -5,6 +5,8 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { fetchPutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 const dropdownOptionsRestoration = [
@@ -59,15 +61,15 @@ const dropdownOptionsTarget = [
 const dropdownOptionsTree = [
   {
     title: "Single Line",
-    value: 1
+    value: "Single Line"
   },
   {
     title: "Partial",
-    value: 2
+    value: "Partial"
   },
   {
-    title: "Full",
-    value: 3
+    title: "Full Coverage",
+    value: "Full Coverage"
   }
 ];
 const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygon }) => {
@@ -78,8 +80,9 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
-  const [estimatedArea, setEstimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
+  const [estimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
   const t = useT();
+  const { setIsPolygonDataUpdated } = useSitePolygonData();
 
   useEffect(() => {
     const restorationPracticeArray = selectedPolygon?.practice
@@ -103,6 +106,29 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
       : [];
     setTreeDistribution(treeDistributionArray);
   }, [selectedPolygon]);
+
+  const savePolygonData = async () => {
+    if (selectedPolygon?.uuid) {
+      const restorationPracticeToSend = restorationPractice.join(", ");
+      const landUseSystemToSend = targetLandUseSystem.join(", ");
+      const treeDistributionToSend = treeDistribution.join(", ");
+      const updatedPolygonData = {
+        poly_name: polygonName,
+        plantstart: plantStartDate,
+        plantend: plantEndDate,
+        practice: restorationPracticeToSend,
+        target_sys: landUseSystemToSend,
+        distr: treeDistributionToSend,
+        num_trees: treesPlanted,
+        est_area: estimatedArea
+      };
+      await fetchPutV2TerrafundSitePolygonUuid({
+        body: updatedPolygonData,
+        pathParams: { uuid: selectedPolygon.uuid }
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -180,17 +206,24 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Estimated Area"
-        type="number"
+        type="text"
         format="number"
+        disabled
         name=""
-        value={estimatedArea}
-        onChangeCapture={e => setEstimatedArea(Number((e.target as HTMLInputElement).value))}
+        value={estimatedArea.toFixed(2) + " ha"}
       />
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full">
           {t("Close")}
         </Button>
-        <Button variant="semi-black" className="w-full">
+        <Button
+          variant="semi-black"
+          className="w-full"
+          onClick={() => {
+            savePolygonData();
+            setIsPolygonDataUpdated(true);
+          }}
+        >
           {t("Save")}
         </Button>
       </div>
