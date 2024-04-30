@@ -21,7 +21,7 @@ const UserEdit = () => {
     program: yup.string().nullable()
   };
 
-  if (isSuperAdmin) schemaObject.primary_role = yup.string().required();
+  if (isSuperAdmin) schemaObject.user_type = yup.string().required();
 
   return (
     <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false}>
@@ -40,7 +40,7 @@ const UserEdit = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isSuperAdmin && <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        {isSuperAdmin && <SelectInput source="user_type" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
         <SelectInput source="country" label="Countries" choices={countriesChoices} fullWidth />
         <SelectInput source="program" label="Framework" choices={frameworkChoices} fullWidth />
       </SimpleForm>
