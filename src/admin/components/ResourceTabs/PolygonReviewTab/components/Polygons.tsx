@@ -162,9 +162,10 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const openFormModalHandlerRequestPolygonSupport = () => {
+  const openFormModalHandlerRequestPolygonSupport = (item: any) => {
     openModal(
       <ModalWithMap
+        polygonSelected={item?.uuid || ""}
         title="Request Support"
         onCLose={closeModal}
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
@@ -230,7 +231,9 @@ const Polygons = (props: IPolygonProps) => {
           <Text variant="text-12-bold">Request Support</Text>
         </div>
       ),
-      onClick: openFormModalHandlerRequestPolygonSupport
+      onClick: () => {
+        openFormModalHandlerRequestPolygonSupport(item);
+      }
     },
     {
       id: "6",
