@@ -206,7 +206,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Estimated Area"
-        type="number"
+        type="text"
         format="number"
         disabled
         name=""
