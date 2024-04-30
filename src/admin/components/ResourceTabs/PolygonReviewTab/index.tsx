@@ -86,15 +86,17 @@ const PolygonReviewTab: FC<IProps> = props => {
   });
 
   const siteBbox = sitePolygonBbox?.bbox;
-  const sitePolygonDataTable = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map((data: SitePolygon) => ({
-    "polygon-id": data.id,
-    "restoration-practice": data.practice,
-    "target-land-use-system": data.target_sys,
-    "tree-distribution": data.distr,
-    "planting-start-date": data.plantstart,
-    source: data.org_name,
-    ellipse: false
-  }));
+  const sitePolygonDataTable = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(
+    (data: SitePolygon, index) => ({
+      "polygon-id": data.id,
+      "restoration-practice": data.practice,
+      "target-land-use-system": data.target_sys,
+      "tree-distribution": data.distr,
+      "planting-start-date": data.plantstart,
+      source: data.org_name,
+      ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
+    })
+  );
 
   const transformedSiteDataForList = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(
     (data: SitePolygon, index: number) => ({

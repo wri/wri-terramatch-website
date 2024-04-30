@@ -16,7 +16,7 @@ export const ModalBaseImageGallery: FC<ModalBaseProps> = ({ children, className,
     <div
       {...rest}
       className={twMerge(
-        "margin-4 z-50 m-auto flex h-full max-h-full w-[1200px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-8",
+        "margin-4 z-50 m-auto flex h-[80%] max-h-full w-[80vw] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-8",
         className
       )}
     >
