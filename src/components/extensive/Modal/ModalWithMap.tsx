@@ -33,7 +33,7 @@ export const ModalBaseWithMap: FC<ModalBaseProps> = ({ children, className, ...r
 };
 
 export interface ModalWithMapProps extends ModalProps {
-  polygonSelected: string;
+  polygonSelected?: string;
   primaryButtonText?: string;
   status?: "Under Review" | "Approved" | "Draft" | "Submitted";
   onCLose?: () => void;
@@ -58,13 +58,16 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
 
   useEffect(() => {
     const getPolygonData = async () => {
-      const polygonGeojson = await fetchGetV2TerrafundPolygonUuid({
-        pathParams: { uuid: polygonSelected }
-      });
-      setInitialPolygonData(polygonGeojson);
-      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonSelected } });
-      setPolygonBbox(bbox?.bbox);
+      if (polygonSelected) {
+        const polygonGeojson = await fetchGetV2TerrafundPolygonUuid({
+          pathParams: { uuid: polygonSelected }
+        });
+        setInitialPolygonData(polygonGeojson);
+        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonSelected } });
+        setPolygonBbox(bbox?.bbox);
+      }
     };
+
     getPolygonData();
   }, [polygonSelected]);
 
