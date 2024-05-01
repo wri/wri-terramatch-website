@@ -83,12 +83,13 @@ const ProjectPipeline: FC = () => {
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
   const [formTitle, setFormTitle] = useState("Add New Pipeline");
   const [buttonTitle, setButtonTitle] = useState("Submit Pipeline");
-  const [dropdownValueProgram, setDropdownValueProgram] = useState(1);
-  const [dropdownValueCohort, setDropdownValueCohort] = useState(1);
+  const [_, setDropdownValueProgram] = useState(1);
+  const [__, setDropdownValueCohort] = useState(1);
   const form = useForm();
   const { data: authMe } = useGetAuthMe({}) as { data: AuthMeResponse };
   const [isEdit, setIsEdit] = useState(false);
-  const { data: projectsPipeline } = useGetV2ProjectPipeline({}) as { data: ProjectPipelineResponse };
+  const { data: projectsPipeline, refetch } = useGetV2ProjectPipeline<ProjectPipelineResponse>({});
+  console.log(_, __);
   const { data: getProject } = useGetV2ProjectPipelineId({
     pathParams: {
       id: form.getValues("id")
@@ -110,7 +111,7 @@ const ProjectPipeline: FC = () => {
   const { mutate: remove } = useDeleteV2ProjectPipelineId();
   const [searchTerm, setSearchTerm] = useState("");
   const { openToast } = useToastContext();
-  const filteredProjects = projectsPipeline?.data.filter(
+  const filteredProjects = projectsPipeline?.data?.filter(
     (project: { name: { name: string | null; description: string | null } }) =>
       project?.name?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
       project?.name?.description?.toLowerCase().includes(searchTerm?.toLowerCase())
@@ -135,20 +136,26 @@ const ProjectPipeline: FC = () => {
         },
         body: requestBody
       });
-      closeModal();
-      form.reset();
-      window.location.href = "admin#/projectPipeline";
-      alert("Project Updated");
+      setTimeout(() => {
+        alert("Project Updated");
+        closeModal();
+        form.reset();
+        refetch();
+      }, 3000);
+
+      // window.location.href = "admin#/projectPipeline";
     } else {
       postProject({ body: requestBody });
       closeModal();
       form.reset();
-      window.location.href = "admin#/projectPipeline";
+      // window.location.href = "admin#/projectPipeline";
       alert("Project Created");
+      setTimeout(() => {
+        refetch();
+      }, 3000);
     }
   };
   const handleDelete = (projectId: string) => {
-    console.log(projectId);
     remove({
       pathParams: {
         id: projectId
@@ -171,6 +178,7 @@ const ProjectPipeline: FC = () => {
   const airtableItemMenu = [
     {
       id: "1",
+      is_airtable: true,
       render: () => (
         <div className="flex items-center gap-2">
           <Icon name={IconNames.EDIT} className="h-6 w-6" />
@@ -183,6 +191,7 @@ const ProjectPipeline: FC = () => {
     },
     {
       id: "2",
+      is_airtable: true,
       render: () => (
         <div className="flex items-center gap-2">
           <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
@@ -217,10 +226,6 @@ const ProjectPipeline: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProject]);
 
-  console.log(dropdownValueProgram, dropdownValueCohort);
-  console.log(form.getValues("program"), form.getValues("program") == "Terrafund" ? 1 : 2);
-  console.log(form.getValues("cohort"), form.getValues("cohort") == "Top100" ? 1 : 2);
-  // console.log(form.getValues("cohort") == "Top100" ? 1 : 2);
   const openFormModalHandler = () => {
     if (isEdit) {
       form.reset();
@@ -403,7 +408,7 @@ const ProjectPipeline: FC = () => {
         </div>
         <When condition={selected === tabIndex.TERRAFUND}>
           <div className="rounded-lg border border-neutral-200">
-            <Table
+            <Table<any>
               variant={VARIANT_TABLE_AIRTABLE}
               columns={[
                 {
@@ -411,13 +416,17 @@ const ProjectPipeline: FC = () => {
                   accessorKey: "name",
                   enableSorting: false,
                   cell: props => {
-                    console.log("props", props);
                     const value = props?.getValue() as tableProjectItemProps;
                     return (
                       <div className="flex items-center gap-4">
                         <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
                         <div>
-                          <div className="flex items-center gap-1">
+                          <div
+                            className="flex items-center gap-1"
+                            onClick={() => {
+                              window.open(props.row.original.URL, "_blank");
+                            }}
+                          >
                             <Text variant="text-14-semibold">{value.name}</Text>
                             <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-neutral-950" />
                           </div>

@@ -15,6 +15,7 @@ import {
 
 export interface MenuItemProps {
   id: string;
+  is_airtable?: boolean;
   render: () => ReactNode;
   MenuItemVariant?: string;
   onClick?: (id?: any) => void;
@@ -206,8 +207,14 @@ const Menu = (props: MenuProps) => {
                 )) || item?.render())
               }
               onClick={() => {
+                if (item.onClick) {
+                  if (item.is_airtable) {
+                    item.onClick((children as any)?._owner?.memoizedProps?.row?.original?.id?.toString());
+                  } else {
+                    item.onClick();
+                  }
+                }
                 if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
-                if (item.onClick) item.onClick(children?._owner?.memoizedProps.row.original.id.toString());
               }}
               className={classNames({
                 "bg-blue-200": item?.country_slug === selectedOption || item?.data?.label === selectedOption
