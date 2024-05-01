@@ -1,16 +1,11 @@
-import { useLocation } from "react-router-dom";
-
 import IconButton from "@/components/elements/IconButton/IconButton";
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapContext } from "@/context/map.provider";
-import { useMapSiteContext } from "@/context/mapSites.provider";
 
 export const ZoomControl = () => {
-  const location = useLocation();
-  const path = location.pathname;
-  const { map } = path.includes("show/1") ? useMapSiteContext() : useMapContext();
+  const { map } = useMapContext();
 
   return (
     <ControlButtonsGroup direction="col" className="w-auto">

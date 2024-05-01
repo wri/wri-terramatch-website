@@ -1,6 +1,3 @@
-import "mapbox-gl/dist/mapbox-gl.css";
-
-//@ts-ignore
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 //@ts-ignore
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
@@ -9,21 +6,14 @@ import classNames from "classnames";
 import mapboxgl, { Map as IMap } from "mapbox-gl";
 //@ts-ignore
 import { CircleMode, DirectMode, DragCircleMode, SimpleSelectMode } from "mapbox-gl-draw-circle";
+import React, { useEffect, useRef } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
 import { Navigation } from "swiper";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
-import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
-import { EditControl } from "@/components/elements/Map-mapbox/MapControls/EditControl";
-import { FeatureDetailCard } from "@/components/elements/Map-mapbox/MapControls/FeatureDetailCard";
-import { FilterControl } from "@/components/elements/Map-mapbox/MapControls/FilterLayer";
-import { StyleControl } from "@/components/elements/Map-mapbox/MapControls/StyleControl";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
-import { ZoomControl } from "@/components/elements/Map-mapbox/MapControls/ZoomControl";
-import { GeoJSONLayer } from "@/components/elements/Map-mapbox/MapLayers/GeoJsonLayer";
-import { ImagesLayer } from "@/components/elements/Map-mapbox/MapLayers/ImagesLayer";
 import {
   AdditionalPolygonProperties,
   user_shapePropertiesValidationSchema
@@ -34,18 +24,31 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
+import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import MapProvider from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { useDebounce } from "@/hooks/useDebounce";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "../Inputs/FileInput/FileInputVariants";
 import Text from "../Text/Text";
+import ControlGroup from "./components/ControlGroup";
+import { EditControl } from "./MapControls/EditControl";
+import { FeatureDetailCard } from "./MapControls/FeatureDetailCard";
+import { FilterControl } from "./MapControls/FilterLayer";
 import SiteStatus from "./MapControls/SiteStatus";
+import { StyleControl } from "./MapControls/StyleControl";
+import { ZoomControl } from "./MapControls/ZoomControl";
+import { ImagesLayer } from "./MapLayers/ImagesLayer";
+import MapService from "./MapService";
 
-mapboxgl.accessToken =
-  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
-  "pk.eyJ1IjoiM3NpZGVkY3ViZSIsImEiOiJjam55amZrdjIwaWY3M3FueDAzZ3ZjeGR2In0.DhSsxs-8XhbTgoVmFcs94Q";
+interface LegendItem {
+  color: string;
+  text: string;
+  uuid: string;
+}
 
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
   geojson?: any;
@@ -62,6 +65,11 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   status?: boolean;
   editPolygon?: boolean;
   polygonChecks?: boolean;
+  legend?: LegendItem[];
+  centroids?: any;
+  polygonsData?: any[];
+  bbox?: any;
+  setPolygonMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
 }
 
 const polygonCheckData = [
@@ -111,6 +119,9 @@ const polygonCheckData = [
     label: "Feature Type"
   }
 ];
+mapboxgl.accessToken =
+  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
+  "pk.eyJ1IjoiM3NpZGVkY3ViZSIsImEiOiJjam55amZrdjIwaWY3M3FueDAzZ3ZjeGR2In0.DhSsxs-8XhbTgoVmFcs94Q";
 
 export const Map = ({
   onError: _onError,
@@ -129,10 +140,86 @@ export const Map = ({
   polygonChecks = false,
   ...props
 }: MapProps) => {
+  const { polygonsData, bbox, setPolygonMap } = props;
+  const ref = useRef<typeof MapService | null>(null);
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const [tooltipOpen, setTooltipOpen] = useState(true);
+  const sitePolygonData = useSitePolygonData();
+  const [isOpenEditPolygon, setIsOpenEditPolygon] = useState({ uuid: "", isOpen: false });
+
+  useEffect(() => {
+    console.log("is open edit polygon", isOpenEditPolygon);
+    const getGeojson = async () => {
+      const geojsonPolygon = await fetchGetV2TerrafundPolygonGeojsonUuid({
+        pathParams: { uuid: isOpenEditPolygon.uuid }
+      });
+      console.log("geojsonPolygon", geojsonPolygon);
+      return geojsonPolygon;
+    };
+    getGeojson();
+  }, [isOpenEditPolygon]);
+  useEffect(() => {
+    ref.current = MapService;
+    const onLoad = () => {
+      layersList.forEach((layer: any) => {
+        if (ref.current) {
+          ref.current.addSource(layer, sitePolygonData, setIsOpenEditPolygon);
+        }
+      });
+    };
+
+    if (ref.current && ref.current.map) {
+      ref.current.map.on("style.load", onLoad);
+    }
+
+    return () => {
+      if (ref.current && ref.current.map) {
+        ref.current.map.on("style.load", onLoad);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (polygonsData && ref.current && ref.current.map) {
+      if (ref.current && ref.current.map.loaded()) {
+        ref.current.addFilterOnLayer(
+          layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
+          polygonsData ? polygonsData : [],
+          "uuid"
+        );
+      } else {
+        ref.current?.map.on("load", () => {
+          ref.current?.addFilterOnLayer(
+            layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
+            polygonsData ? polygonsData : [],
+            "uuid"
+          );
+        });
+      }
+    }
+  }, [polygonsData]);
+
+  useEffect(() => {
+    if (setPolygonMap) {
+      setPolygonMap(isOpenEditPolygon);
+    }
+  }, [isOpenEditPolygon]);
+
+  const zoomToBbox = (bbox: any) => {
+    if (ref.current && ref.current.map && bbox) {
+      ref.current.map.fitBounds(bbox, {
+        padding: 100,
+        linear: false
+      });
+    }
+  };
+  useEffect(() => {
+    if (bbox && ref.current && ref.current.map) {
+      zoomToBbox(bbox);
+    }
+  }, [bbox]);
 
   const validateGeoJSON = function (map: IMap, source: string) {
     if (!editable) return;
@@ -248,199 +335,205 @@ export const Map = ({
   const openFormModalHandlerImageGallery = () => {
     openModal(<ModalImageGallery onCLose={closeModal} tabItems={dataImageGallery} title={""} />);
   };
-
   return (
-    <MapProvider
-      {...props}
-      initialState={{ geoJson: geojson }}
-      mapOptions={{
-        style: MapStyle.Satellite,
-        zoom: 1
-      }}
-      drawOptions={{
-        displayControlsDefault: false,
-        userProperties: true,
-        defaultMode: editable ? "simple_select" : "static",
-        modes: {
-          ...MapboxDraw.modes,
-          static: StaticMode,
-          draw_circle: CircleMode,
-          drag_circle: DragCircleMode,
-          direct_select: DirectMode,
-          simple_select: SimpleSelectMode
-        },
-        styles: mapStyles
-      }}
-      onLoadMap={onLoadMap}
-      className={twMerge("h-[500px] wide:h-[700px]", className)}
-    >
-      <GeoJSONLayer geojson={geojson} />
-      <When condition={hasControls}>
-        <ControlGroup position="top-right">
-          <StyleControl />
-        </ControlGroup>
-        <ControlGroup position="top-right" className="top-21">
-          <ZoomControl />
-          <When condition={editable}>
-            <EditControl />
-          </When>
-        </ControlGroup>
-        <When condition={!!status}>
-          <ControlGroup position="top-left">
-            <SiteStatus />
+    <>
+      <MapProvider
+        {...props}
+        initialState={{ geoJson: geojson }}
+        mapOptions={{
+          style: MapStyle.Satellite,
+          zoom: 1
+        }}
+        drawOptions={{
+          displayControlsDefault: false,
+          userProperties: true,
+          defaultMode: editable ? "simple_select" : "static",
+          modes: {
+            ...MapboxDraw.modes,
+            static: StaticMode,
+            draw_circle: CircleMode,
+            drag_circle: DragCircleMode,
+            direct_select: DirectMode,
+            simple_select: SimpleSelectMode
+          },
+          styles: mapStyles
+        }}
+        onLoadMap={onLoadMap}
+        className={twMerge("h-[500px] wide:h-[700px]", className)}
+      >
+        <When condition={hasControls}>
+          <ControlGroup position="top-right">
+            <StyleControl />
           </ControlGroup>
-        </When>
-        <When condition={!!viewImages}>
-          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-            <div className="flex gap-4">
+          <ControlGroup position="top-right" className="top-21">
+            <ZoomControl />
+            <When condition={editable}>
+              <EditControl />
+            </When>
+          </ControlGroup>
+          <When condition={!!status}>
+            <ControlGroup position="top-left">
+              <SiteStatus />
+            </ControlGroup>
+          </When>
+          <When condition={!!viewImages}>
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+              <div className="flex gap-4">
+                <button
+                  className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
+                  onClick={() => setViewImages(!viewImages)}
+                >
+                  {t("Close Images")}
+                </button>
+                <button
+                  className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
+                  onClick={openFormModalHandlerUploadImages}
+                >
+                  {t("Add Images")}
+                </button>
+              </div>
+            </ControlGroup>
+          </When>
+          <When condition={editPolygon}>
+            <ControlGroup position="top-right" className="top-64">
+              <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
+                <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
+              </button>
+            </ControlGroup>
+          </When>
+          {/* Toltip Map */}
+          <When condition={!editPolygon && !!siteData && tooltipOpen}>
+            <div className="absolute left-2/4 top-36 z-20 rounded border-t-4 border-t-primary bg-white p-3">
+              <button
+                onClick={() => {
+                  setTooltipOpen(false);
+                }}
+                className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800"
+              >
+                <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
+              </button>
+
+              <div className="text-10 flex items-center justify-center gap-1">
+                <Text variant="text-10">ISEME SITE </Text>
+                <div className="text-10">&#8226;</div>
+                <Text variant="text-10"> FAJA LOB PROJECT</Text>
+              </div>
+              <Text variant="text-10-bold" className="text-center">
+                Elom
+              </Text>
+              <hr className="my-2 border border-grey-750" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Text variant="text-10-light">Restoration Practice</Text>
+                  <Text variant="text-10-bold">Tree Planting</Text>
+                </div>
+                <div>
+                  <Text variant="text-10-light">Target Land Use System</Text>
+                  <Text variant="text-10-bold">Riparian Area</Text>
+                </div>
+                <div>
+                  <Text variant="text-10-light">Tree Distribution</Text>
+                  <Text variant="text-10-bold">Single Line</Text>
+                </div>
+                <div>
+                  <Text variant="text-10-light">Planting Start Date</Text>
+                  <Text variant="text-10-bold">March 26, 2024</Text>
+                </div>
+              </div>
+
+              <hr className="my-2 border border-grey-750" />
+            </div>
+          </When>
+
+          <When condition={!editable && !viewImages}>
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+              <FilterControl />
+            </ControlGroup>
+            <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} />
+          </When>
+          <ControlGroup position="top-right" className="top-48">
+            <button
+              type="button"
+              className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
+              onClick={() => zoomToBbox(bbox)}
+            >
+              <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
+            </button>
+          </ControlGroup>
+          <ControlGroup position="bottom-right" className="bottom-8">
+            <div className="relative">
+              <div
+                className={classNames("absolute right-1/2 bottom-0 h-[250px] w-[200px] rounded-lg bg-white p-2", {
+                  hidden: !viewImages
+                })}
+              >
+                <div className="relative h-[calc(100%_-_48px)]">
+                  <Carousel
+                    className="test mb-2 h-full"
+                    swiperClassName="h-full"
+                    swiperSlideClassName="h-full"
+                    items={dataImageGallery[0].images}
+                    carouselItem={item => <img className="h-full" alt="" src={item.src} />}
+                    modules={[Navigation]}
+                    slidesPerView={1}
+                    spaceBetween={10}
+                    hidePaginationBullet
+                    smallSwiperButtons
+                  />
+                  <button
+                    onClick={() => setViewImages(false)}
+                    className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md"
+                  >
+                    <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
+                  </button>
+                </div>
+                <button onClick={openFormModalHandlerImageGallery}>
+                  <Text variant="text-12-bold">TerraMatch Sample</Text>
+                  <Text variant="text-12-light"> December 29, 2023</Text>
+                </button>
+              </div>
               <button
                 className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
                 onClick={() => setViewImages(!viewImages)}
               >
-                {t("Close Images")}
-              </button>
-              <button
-                className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
-                onClick={openFormModalHandlerUploadImages}
-              >
-                {t("Add Images")}
+                {t("View Images")}
               </button>
             </div>
           </ControlGroup>
         </When>
-        <When condition={editPolygon}>
-          <ControlGroup position="top-right" className="top-64">
-            <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
-              <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
-            </button>
+        <When condition={captureAdditionalPolygonProperties}>
+          <ControlGroup position="bottom-right">
+            <FeatureDetailCard editable={editable} additionalPolygonProperties={additionalPolygonProperties} />
           </ControlGroup>
         </When>
-        {/* Toltip Map */}
-        <When condition={!editPolygon && !!siteData && tooltipOpen}>
-          <div className="absolute left-2/4 top-36 z-20 rounded border-t-4 border-t-primary bg-white p-3">
-            <button
-              onClick={() => {
-                setTooltipOpen(false);
-              }}
-              className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800"
-            >
-              <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
-            </button>
-
-            <div className="text-10 flex items-center justify-center gap-1">
-              <Text variant="text-10">ISEME SITE </Text>
-              <div className="text-10">&#8226;</div>
-              <Text variant="text-10"> FAJA LOB PROJECT</Text>
-            </div>
-            <Text variant="text-10-bold" className="text-center">
-              Elom
-            </Text>
-            <hr className="my-2 border border-grey-750" />
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Text variant="text-10-light">Restoration Practice</Text>
-                <Text variant="text-10-bold">Tree Planting</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Target Land Use System</Text>
-                <Text variant="text-10-bold">Riparian Area</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Tree Distribution</Text>
-                <Text variant="text-10-bold">Single Line</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Planting Start Date</Text>
-                <Text variant="text-10-bold">March 26, 2024</Text>
+        <When condition={polygonChecks}>
+          <ControlGroup position="bottom-left" className="bottom-13">
+            <div className="relative flex w-[231px] flex-col gap-2 rounded-xl p-3">
+              <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
+              <Text variant="text-10-bold" className="text-white">
+                Polygon Checks
+              </Text>
+              <div className="grid grid-cols-[min-content_1fr] gap-2">
+                {polygonCheckData.map(polygon => (
+                  <React.Fragment key={polygon.id}>
+                    <Icon
+                      name={polygon.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
+                      className="mt-[2px] h-4 w-4"
+                    />
+                    <Text variant="text-10-light" className="text-white">
+                      {polygon.label}
+                    </Text>
+                  </React.Fragment>
+                ))}
               </div>
             </div>
-
-            <hr className="my-2 border border-grey-750" />
-          </div>
-        </When>
-
-        <When condition={!editable && !viewImages}>
-          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-            <FilterControl />
           </ControlGroup>
-          <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} />
         </When>
-        <ControlGroup position="top-right" className="top-48">
-          <button type="button" className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 ">
-            <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
-          </button>
-        </ControlGroup>
-        <ControlGroup position="bottom-right" className="bottom-8">
-          <div className="relative">
-            <div
-              className={classNames("absolute right-1/2 bottom-0 h-[250px] w-[200px] rounded-lg bg-white p-2", {
-                hidden: !viewImages
-              })}
-            >
-              <div className="relative h-[calc(100%_-_48px)]">
-                <Carousel
-                  className="test mb-2 h-full"
-                  swiperClassName="h-full"
-                  swiperSlideClassName="h-full"
-                  items={dataImageGallery[0].images}
-                  carouselItem={item => <img className="h-full" alt="" src={item.src} />}
-                  modules={[Navigation]}
-                  slidesPerView={1}
-                  spaceBetween={10}
-                  hidePaginationBullet
-                  smallSwiperButtons
-                />
-                <button
-                  onClick={() => setViewImages(false)}
-                  className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md"
-                >
-                  <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
-                </button>
-              </div>
-              <button onClick={openFormModalHandlerImageGallery}>
-                <Text variant="text-12-bold">TerraMatch Sample</Text>
-                <Text variant="text-12-light"> December 29, 2023</Text>
-              </button>
-            </div>
-            <button
-              className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
-              onClick={() => setViewImages(!viewImages)}
-            >
-              {t("View Images")}
-            </button>
-          </div>
-        </ControlGroup>
-      </When>
-      <When condition={captureAdditionalPolygonProperties}>
-        <ControlGroup position="bottom-right">
-          <FeatureDetailCard editable={editable} additionalPolygonProperties={additionalPolygonProperties} />
-        </ControlGroup>
-      </When>
-      <When condition={polygonChecks}>
-        <ControlGroup position="bottom-left" className="bottom-13">
-          <div className="relative flex w-[231px] flex-col gap-2 rounded-xl p-3">
-            <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
-            <Text variant="text-10-bold" className="text-white">
-              Polygon Checks
-            </Text>
-            {polygonCheckData.map(polygon => (
-              <div key={polygon.id} className="flex items-center gap-2">
-                <Icon
-                  name={polygon.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                  className="h-4 w-4"
-                />
-                <Text variant="text-10-light" className="text-white">
-                  {polygon.label}
-                </Text>
-              </div>
-            ))}
-          </div>
-        </ControlGroup>
-      </When>
-      <When condition={!!siteData}>
-        <div className="absolute z-10 h-full w-[23vw] bg-[#ffffff26] backdrop-blur-md" />
-      </When>
-    </MapProvider>
+        <When condition={!!siteData}>
+          <div className="absolute z-10 h-full w-[23vw] bg-[#ffffff26] backdrop-blur-md" />
+        </When>
+      </MapProvider>
+    </>
   );
 };
 

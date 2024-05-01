@@ -7,7 +7,7 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import MapSite from "@/components/elements/Map-mapbox/MapSites";
+import Map from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
@@ -402,7 +402,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   </div>
                 </div>
 
-                <MapSite
+                <Map
                   polygonsData={polygonDataMap}
                   bbox={siteBbox}
                   className="rounded-lg"

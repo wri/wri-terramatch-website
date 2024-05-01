@@ -2,20 +2,16 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { useRefresh } from "react-admin";
-import { useLocation } from "react-router-dom";
 
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
 import { useMapContext } from "@/context/map.provider";
-import { useMapSiteContext } from "@/context/mapSites.provider";
 
 export const StyleControl = () => {
   const t = useT();
   const refresh = useRefresh();
-  const location = useLocation();
-  const path = location.pathname;
-  const { map } = path.includes("show/1") ? useMapSiteContext() : useMapContext();
+  const { map } = useMapContext();
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   useEffect(() => {
     if (map?.areTilesLoaded()) {

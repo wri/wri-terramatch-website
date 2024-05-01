@@ -7,7 +7,7 @@ import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import ModalProvider from "@/context/modal.provider";
 import ToastProvider from "@/context/toast.provider";
 
-import Component from "./Map";
+import Component from "./MapOLDVERSION";
 import sample from "./sample.json";
 import sample2 from "./sample-2.json";
 
