@@ -1,30 +1,27 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
-import { useRefresh } from "react-admin";
+import { useState } from "react";
 
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
-import { useMapContext } from "@/context/map.provider";
 
-export const StyleControl = () => {
+export const StyleControl = ({ mapRef }: { mapRef: any }) => {
+  const map = mapRef.current?.map;
   const t = useT();
-  const refresh = useRefresh();
-  const { map } = useMapContext();
+  // const refresh = useRefresh();
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
-  useEffect(() => {
-    if (map?.areTilesLoaded()) {
-      refresh();
-    }
-  }, [currentStyle, map]);
+  // useEffect(() => {
+  //   if (map?.areTilesLoaded()) {
+  //     refresh();
+  //   }
+  // }, [currentStyle, map]);
   return (
     <ControlButtonsGroup direction="row" className="h-auto">
       <button
         onClick={() => {
           map?.setStyle(MapStyle.Street);
           setCurrentStyle(MapStyle.Street);
-          refresh();
         }}
         className={classNames(
           "h-fit w-21 rounded-l-lg py-2",
@@ -39,7 +36,6 @@ export const StyleControl = () => {
         onClick={() => {
           map?.setStyle(MapStyle.Satellite);
           setCurrentStyle(MapStyle.Satellite);
-          refresh();
         }}
         className={classNames(
           "h-fit w-21 rounded-r-lg py-2",

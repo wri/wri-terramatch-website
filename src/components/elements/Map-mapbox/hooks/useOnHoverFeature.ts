@@ -1,7 +1,7 @@
 import { EventData, MapboxGeoJSONFeature, MapLayerMouseEvent } from "mapbox-gl";
 import { useEffect, useRef } from "react";
 
-import { useMapContext } from "@/context/map.provider";
+import { useMapContext } from "@/context/map.providerOLD";
 
 export const useOnHoverFeature = (
   layer: string | readonly string[] = ["gl-draw-polygon-fill-static.cold", "gl-draw-polygon-fill-static-default.cold"]

@@ -10,7 +10,7 @@ import ControlDivider from "@/components/elements/Map-mapbox/components/ControlD
 import { useConvertShapeFileToGeoJson } from "@/components/elements/Map-mapbox/hooks/useConvertShapefileToGeoJson";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
-import { useMapContext } from "@/context/map.provider";
+import { useMapContext } from "@/context/map.providerOLD";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useFilePicker } from "@/hooks/useFilePicker";

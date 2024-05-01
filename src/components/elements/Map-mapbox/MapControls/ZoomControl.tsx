@@ -2,11 +2,8 @@ import IconButton from "@/components/elements/IconButton/IconButton";
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMapContext } from "@/context/map.provider";
-
-export const ZoomControl = () => {
-  const { map } = useMapContext();
-
+export const ZoomControl = ({ mapRef }: { mapRef: any }) => {
+  const map = mapRef.current?.map;
   return (
     <ControlButtonsGroup direction="col" className="w-auto">
       <IconButton

@@ -21,6 +21,7 @@ class MapService {
   }
 
   initMap(mapId) {
+    console.log("initMap", mapId);
     this.map = new Map({
       accessToken: MAPBOX_TOKEN,
       container: mapId,

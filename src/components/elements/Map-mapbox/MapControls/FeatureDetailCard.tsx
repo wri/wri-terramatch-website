@@ -17,7 +17,7 @@ import { getCountriesOptions } from "@/constants/options/countries";
 import { getDistributionOptions } from "@/constants/options/distribution";
 import { getLandUseTypeOptions } from "@/constants/options/landUseType";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
-import { useMapContext } from "@/context/map.provider";
+import { useMapContext } from "@/context/map.providerOLD";
 import { useModalContext } from "@/context/modal.provider";
 import { formatOptionsList, getOptionTitle } from "@/utils/options";
 

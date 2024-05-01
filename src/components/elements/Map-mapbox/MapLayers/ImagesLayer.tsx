@@ -3,7 +3,7 @@ import { EventData, GeoJSONSourceRaw, Map, MapboxEvent, MapMouseEvent } from "ma
 import { useEffect } from "react";
 
 import ImageGalleryPreviewer from "@/components/elements/ImageGallery/ImageGalleryPreviewer";
-import { useMapContext } from "@/context/map.provider";
+import { useMapContext } from "@/context/map.providerOLD";
 import { useModalContext } from "@/context/modal.provider";
 import { toDataURL } from "@/utils/image";
 
