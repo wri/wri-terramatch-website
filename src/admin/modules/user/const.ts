@@ -2,7 +2,10 @@ import { getCountriesOptions } from "@/constants/options/countries";
 
 export const userTypesChoices = [
   { name: "Admin", id: "admin" },
-  { name: "User", id: "user" }
+  { name: "User", id: "user" },
+  { name: "Project Developer", id: "project_developer" },
+  { name: "Government", id: "government" },
+  { name: "Funder", id: "funder" }
 ];
 
 export const userPrimaryRoleChoices = [
@@ -19,7 +22,7 @@ export const userPrimaryRoleChoices = [
     name: "Super Admin"
   },
   {
-    id: "project-developer",
+    id: "project_developer",
     name: "Project Developer"
   },
   {

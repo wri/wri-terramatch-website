@@ -21,9 +21,6 @@ class MapService {
   }
 
   initMap(mapId) {
-    if (this.map !== null) {
-      this.map.remove();
-    }
     this.map = new Map({
       accessToken: MAPBOX_TOKEN,
       container: mapId,
@@ -89,7 +86,8 @@ class MapService {
             ? plantStartDate.toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
-                year: "numeric"
+                year: "numeric",
+                timeZone: "UTC"
               })
             : "Unknown";
         const popupContent = document.createElement("div");

@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
-import Map from "@/components/elements/Map-mapbox/Map";
+// import Map from "@/components/elements/Map-mapbox/Map";
 import MapPolygonPanel from "@/components/elements/MapPolygonPanel/MapPolygonPanel";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -12,8 +12,8 @@ import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
 import { fetchGetV2ProjectsUUIDSitePolygons } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
-import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-import { useJSONParser } from "@/hooks/useJSONParser";
+// import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
+// import { useJSONParser } from "@/hooks/useJSONParser";
 import { usePaginatedResult } from "@/hooks/usePaginatedResult";
 
 interface SiteAreaProps {
@@ -30,6 +30,8 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   const [selected, setSelected] = useState<any>();
   const [stateViewPanel, setStateViewPanel] = useState(false);
   const [previewVersion, setPreviewVersion] = useState(false);
+
+  console.warn(selected);
 
   const { data, fetchNextPage } = useInfiniteQuery<any>({
     queryKey: ["sites", query],
@@ -55,8 +57,8 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
     keepPreviousData: true
   });
   const { openModal, closeModal } = useModalContext();
-  const imagesGeoJson = useGetImagesGeoJSON("projects", sites.uuid);
-  const geoJSON = useJSONParser(selected?.geojson || sites.boundary_geojson);
+  // const imagesGeoJson = useGetImagesGeoJSON("projects", sites.uuid);
+  // const geoJSON = useJSONParser(selected?.geojson || sites.boundary_geojson);
   const Polygon = usePaginatedResult<any>(data);
 
   const openFormModalHandlerRequestPolygonSupport = () => {
@@ -72,7 +74,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   };
 
   return (
-    <div className="relative flex h-[500px] text-darkCustom wide:h-[700px]">
+    <div className="relative flex h-[500px] rounded-lg bg-back-map  bg-cover bg-no-repeat text-darkCustom wide:h-[700px]">
       <MapPolygonPanel
         title={t("Sites")}
         items={
@@ -84,7 +86,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="absolute z-20 h-[500px] w-[23vw] p-8 wide:h-[700px]"
+        className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff26] p-8 wide:h-[700px] "
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
         setStateViewPanel={setStateViewPanel}
@@ -168,13 +170,13 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           </div>
         </div>
       </When>
-      <Map
+      {/* <Map
         geojson={geoJSON}
         siteData={true}
         imageLayerGeojson={imagesGeoJson}
         editPolygon={editPolygon}
         className="flex-1 rounded-r-lg"
-      />
+      /> */}
     </div>
   );
 };

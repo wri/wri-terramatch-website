@@ -2,12 +2,12 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useState } from "react";
 
-import Map from "@/components/elements/Map-mapbox/Map";
+// import Map from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { fetchGetV2ProjectsUUIDSitePolygons } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
-import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-import { useJSONParser } from "@/hooks/useJSONParser";
+// import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
+// import { useJSONParser } from "@/hooks/useJSONParser";
 import { usePaginatedResult } from "@/hooks/usePaginatedResult";
 
 interface ProjectAreaProps {
@@ -19,6 +19,8 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const { format } = useDate();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<any>();
+
+  console.warn(selected);
 
   const { data, fetchNextPage } = useInfiniteQuery<any>({
     queryKey: ["sites", query],
@@ -44,12 +46,12 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
     keepPreviousData: true
   });
 
-  const imagesGeoJson = useGetImagesGeoJSON("projects", project.uuid);
-  const geoJSON = useJSONParser(selected?.geojson || project.boundary_geojson);
+  // const imagesGeoJson = useGetImagesGeoJSON("projects", project.uuid);
+  // const geoJSON = useJSONParser(selected?.geojson || project.boundary_geojson);
   const sites = usePaginatedResult<any>(data);
 
   return (
-    <div className="flex h-[500px] text-darkCustom">
+    <div className="flex h-[500px] rounded-lg  bg-back-map bg-cover bg-no-repeat text-darkCustom">
       <MapSidePanel
         title={t("Sites")}
         items={
@@ -65,7 +67,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
       />
-      <Map geojson={geoJSON} siteData={true} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" />
+      {/* <Map geojson={geoJSON} siteData={true} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" /> */}
     </div>
   );
 };

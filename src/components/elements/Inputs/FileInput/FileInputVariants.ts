@@ -10,6 +10,7 @@ export interface FileCardContentVariant {
   titleClassName: string;
   subTitletitleVariant: TextVariants;
   subTitleClassName: string;
+  bodyTextVariant?: string;
 }
 
 export interface FilePreviewCardVariant {
@@ -53,14 +54,15 @@ export const VARIANT_FILE_CARD_MODAL_ADD_IMAGES: FileCardContentVariant = {
   iconName: IconNames.IMAGE,
   iconHasPreview: "",
   titleVariant: "text-12",
-  titleClassName: "",
+  titleClassName: "w-full truncate",
   subTitletitleVariant: "text-12",
-  subTitleClassName: "opacity-50"
+  subTitleClassName: "opacity-50",
+  bodyTextVariant: "w-[50%] flex-none"
 };
 
 export const VARIANT_FILE_PREVIEW_CARD_DEFAULT: FilePreviewCardVariant = {
   fileWrapper: "flex w-full items-center justify-between gap-4 rounded-xl bg-white p-4 shadow w-[400px]",
-  fileCardContent: "flex items-center justify-center gap-4 ",
+  fileCardContent: "flex items-center justify-center gap-3 ",
   fileCardContentVariant: VARIANT_FILE_CARD_MODAL_ADD
 };
 
@@ -74,8 +76,8 @@ export const VARIANT_FILE_PREVIEW_CARD_MODAL: FilePreviewCardVariant = {
 
 export const VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES: FilePreviewCardVariant = {
   fileWrapper:
-    "border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4 w-full",
-  fileCardContent: "flex items-center justify-center gap-3",
+    "border-grey-75 flex items-center justify-start rounded-lg border border-grey-750 py-4 lg:py-[10px] lg:px-4 px-3  w-full",
+  fileCardContent: "flex items-center justify-start gap-3 contents",
   fileCardContentVariant: VARIANT_FILE_CARD_MODAL_ADD_IMAGES,
   type: "image"
 };

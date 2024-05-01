@@ -89,10 +89,25 @@ const ItemMonitoringCards = ({
           <Text variant="text-24">{value}</Text>
         </When>
         <When condition={!!img}>
-          <Icon
-            name={img || IconNames.GRAPH1}
-            className={`${type === "graph-button" ? "mt-2 h-[44vh]" : "h-[16vh]"} mt-2 w-full`}
-          />
+          <div className="relative">
+            <When condition={!!type && type === "graph-button"}>
+              <div className="absolute top-[40%] left-[40%] flex flex-col rounded-lg bg-white p-1 shadow">
+                <div className="flex items-center gap-1">
+                  <div className="h-[10px] w-[10px] rounded-full bg-primary" />
+                  <Text variant="text-12-light" className="text-grey-700">
+                    2024
+                  </Text>
+                </div>
+                <Text variant="text-14-bold" className="text-primary">
+                  43%
+                </Text>
+              </div>
+            </When>
+            <Icon
+              name={img || IconNames.GRAPH1}
+              className={`${type === "graph-button" ? "mt-2 h-[44vh]" : "h-[16vh]"} mt-2 w-full`}
+            />
+          </div>
         </When>
         <When condition={!!leyends}>
           <div className="mt-2 flex flex-wrap justify-center gap-x-2">

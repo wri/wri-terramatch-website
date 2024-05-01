@@ -276,7 +276,7 @@ export const MapSite = ({
   }, [isOpenEditPolygon]);
 
   const zoomToBbox = (bbox: any) => {
-    if (ref.current && ref.current.map) {
+    if (ref.current && ref.current.map && bbox) {
       ref.current.map.fitBounds(bbox, {
         padding: 100,
         linear: false

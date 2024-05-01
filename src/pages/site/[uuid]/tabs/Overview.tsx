@@ -8,20 +8,17 @@ import { When } from "react-if";
 import { polygonData } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
-import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { dataSubmitPolygons, uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
+import { uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
+import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
@@ -150,6 +147,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const openFormModalHandlerSubmitReviewConfirm = () => {
     openModal(
       <ModalConfirm
+        commentArea
         className="max-w-xs"
         title={"Confirm Polygon Submission"}
         content={
@@ -161,17 +159,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         onConfirm={() => {
           closeModal;
         }}
-      >
-        <div className="rounded-lg border border-grey-750 p-3">
-          <TextArea
-            placeholder="Type comment here..."
-            name=""
-            className="max-h-72 !min-h-0 resize-none border-none !p-0 text-xs"
-            containerClassName="w-full"
-            rows={4}
-          />
-        </div>
-      </ModalConfirm>
+      />
     );
   };
 
@@ -189,14 +177,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const openFormModalHandlerSubmitPolygon = () => {
     openModal(
-      <ModalWithLogo
+      <ModalSubmit
         title="Submit Polygons"
         onCLose={closeModal}
-        content={
-          <Text variant="text-12-light" className="mt-1 mb-8" containHtml>
-            Project Developers may submit one or all polygons for review.
-          </Text>
-        }
+        content="Project Developers may submit one or all polygons for review."
         primaryButtonText="Next"
         primaryButtonProps={{
           className: "px-8 py-3",
@@ -208,34 +192,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
-      >
-        <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
-          <header className="flex items-center bg-neutral-150 px-4 py-2">
-            <Text variant="text-12" className="flex-[2]">
-              Name
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Status
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Submit
-            </Text>
-          </header>
-          {dataSubmitPolygons.map(item => (
-            <div key={item.id} className="flex items-center px-4 py-2">
-              <Text variant="text-12" className="flex-[2]">
-                {item.name}
-              </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <Status status={item.status} />
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <Checkbox name={""} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </ModalWithLogo>
+      ></ModalSubmit>
     );
   };
 

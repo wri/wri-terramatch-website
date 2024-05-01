@@ -7,8 +7,6 @@ import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/M
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
-import { useModalContext } from "@/context/modal.provider";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -34,23 +32,8 @@ const MapSidePanel = ({
 }: MapSidePanelProps) => {
   const t = useT();
   const [selected, setSelected] = useState<MapSidePanelItemProps>();
-  const { openModal, closeModal } = useModalContext();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
-
-  const openFormModalHandlerAddCommentary = () => {
-    openModal(
-      <ModalWithLogo
-        title="Blue Forest"
-        onCLose={closeModal}
-        status="Under Review"
-        toogleButton
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      />
-    );
-  };
 
   return (
     <div {...props} className={classNames(className)}>
@@ -93,7 +76,7 @@ const MapSidePanel = ({
             </When>
           </div>
           <div className="rounded bg-white p-1.5">
-            <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
+            <Button variant="text" onClick={() => {}}>
               <Icon name={IconNames.IC_SORT} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
             </Button>
           </div>

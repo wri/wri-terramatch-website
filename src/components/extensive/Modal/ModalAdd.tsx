@@ -21,7 +21,7 @@ export const ModalAddBase: FC<ModalBaseProps> = ({ children, className, ...rest 
     <div
       {...rest}
       className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
+        "margin-4 z-50 m-auto flex h-[80%] max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
         className
       )}
     >
