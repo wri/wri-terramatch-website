@@ -80,8 +80,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [estimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
-  const formattedArea =
-    estimatedArea && estimatedArea.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const formattedArea = estimatedArea && `${estimatedArea.toFixed(2)}`;
 
   const t = useT();
 
