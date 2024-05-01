@@ -35,7 +35,7 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
               Return to Sign-In?
             </Text>
             <Link href={"/login"}>
-              <Text variant="text-12-bold" className="text-blue-300 underline">
+              <Text variant="text-12-bold" className="text-primary underline">
                 Click here
               </Text>
             </Link>
@@ -70,7 +70,7 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
             onClick: form.handleSubmit(handleSave),
             disabled: loading,
             className:
-              "bg-blue-300 py-3.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white"
+              "bg-primary py-3.5 flex items-center justify-center rounded-lg w-full border-2 border-primary text-white text-14-bold hover:border-white"
           }}
         />
       </div>

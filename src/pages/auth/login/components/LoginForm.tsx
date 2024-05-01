@@ -27,7 +27,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
         </Text>
         <Text variant="text-12-light" className="flex text-blueCustom-700">
           New to TerraMatch’s Dashboards?&nbsp;
-          <Link href={"/auth/create-account"} className="text-12-bold text-blue-300 underline underline-offset-4">
+          <Link href={"/auth/create-account"} className="text-12-bold text-primary underline underline-offset-4">
             Sign Up for free
           </Link>
         </Text>
@@ -74,7 +74,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
           />
         </div>
         <Link href="/auth/reset-password">
-          <Text variant="text-12-bold" className="mb-6 decoration-slice text-blue-300">
+          <Text variant="text-12-bold" className="mb-6 decoration-slice text-primary">
             Forgot Password?
           </Text>
         </Link>
@@ -83,8 +83,8 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             children: t("Sign in"),
             onClick: form.handleSubmit(handleSave),
             disabled: loading,
-            className: `bg-blue-300 py-3.5 flex items-center justify-center rounded-lg w-full
-              border-2 border-blue-300 text-white text-14-bold hover:border-white`
+            className: `bg-primary py-3.5 flex items-center justify-center rounded-lg w-full
+              border-2 border-primary text-white text-14-bold hover:border-white`
           }}
         />
       </div>
