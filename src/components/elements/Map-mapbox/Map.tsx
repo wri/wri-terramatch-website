@@ -30,7 +30,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import MapProvider from "@/context/map.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 
-import Text from "../Text/Text";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import SiteStatus from "./MapControls/SiteStatus";
@@ -76,7 +75,6 @@ export const Map = ({
 }: MapProps) => {
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState(true);
 
   const validateGeoJSON = function (map: IMap, source: string) {
     if (!editable) return;
@@ -184,49 +182,6 @@ export const Map = ({
               <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
             </button>
           </ControlGroup>
-        </When>
-        {/* Toltip Map */}
-        <When condition={!editPolygon && !!siteData && tooltipOpen}>
-          <div className="absolute left-2/4 top-36 z-20 rounded border-t-4 border-t-primary bg-white p-3">
-            <button
-              onClick={() => {
-                setTooltipOpen(false);
-              }}
-              className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800"
-            >
-              <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
-            </button>
-
-            <div className="text-10 flex items-center justify-center gap-1">
-              <Text variant="text-10">ISEME SITE </Text>
-              <div className="text-10">&#8226;</div>
-              <Text variant="text-10"> FAJA LOB PROJECT</Text>
-            </div>
-            <Text variant="text-10-bold" className="text-center">
-              Elom
-            </Text>
-            <hr className="my-2 border border-grey-750" />
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Text variant="text-10-light">Restoration Practice</Text>
-                <Text variant="text-10-bold">Tree Planting</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Target Land Use System</Text>
-                <Text variant="text-10-bold">Riparian Area</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Tree Distribution</Text>
-                <Text variant="text-10-bold">Single Line</Text>
-              </div>
-              <div>
-                <Text variant="text-10-light">Planting Start Date</Text>
-                <Text variant="text-10-bold">March 26, 2024</Text>
-              </div>
-            </div>
-
-            <hr className="my-2 border border-grey-750" />
-          </div>
         </When>
 
         <When condition={!editable && !viewImages}>
