@@ -4,15 +4,15 @@ import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
-// import Map from "@/components/elements/Map-mapbox/Map";
+import Map from "@/components/elements/Map-mapbox/Map";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useDeleteV2FilesUUID, useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";
-// import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-// import { useJSONParser } from "@/hooks/useJSONParser";
+import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
+import { useJSONParser } from "@/hooks/useJSONParser";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 export interface EntityMapAndGalleryCardProps {
@@ -56,8 +56,8 @@ const EntityMapAndGalleryCard = ({
     }
   });
 
-  // const imagesGeoJson = useGetImagesGeoJSON(modelName, modelUUID);
-  // const geoJSON = useJSONParser(boundaryGeojson);
+  const imagesGeoJson = useGetImagesGeoJSON(modelName, modelUUID);
+  const geoJSON = useJSONParser(boundaryGeojson);
 
   const filterOptions = useMemo(() => {
     const mapping: any = {
@@ -90,12 +90,12 @@ const EntityMapAndGalleryCard = ({
   return (
     <>
       <PageCard title={`${modelTitle} ${t("Area")}`}>
-        {/* <Map
+        <Map
           className="rounded-lg"
           geojson={geoJSON}
           imageLayerGeojson={imagesGeoJson}
           onDeleteImage={uuid => deleteFile({ pathParams: { uuid } })}
-        /> */}
+        />
       </PageCard>
       <If
         condition={
