@@ -10,7 +10,7 @@ import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
 
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/MapOLDVERSION"), { ssr: false });
+const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
 
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
