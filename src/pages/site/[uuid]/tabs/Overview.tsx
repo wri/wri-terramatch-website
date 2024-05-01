@@ -8,6 +8,7 @@ import { When } from "react-if";
 import { polygonData } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
+import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Menu from "@/components/elements/Menu/Menu";
@@ -21,7 +22,6 @@ import { uploadImageData } from "@/components/extensive/Modal/ModalContent/Mocke
 import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import ItemMonitoringCards from "@/components/extensive/PageElements/Card/ItemMonitoringCards";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";

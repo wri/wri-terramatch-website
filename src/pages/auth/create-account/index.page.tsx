@@ -3,8 +3,8 @@ import React, { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import ButtonUserRole from "@/components/elements/Button/ButtonUserRole";
+import UserRoleCard from "@/components/elements/Cards/UserRoleCard/UserRoleCard";
 import Text from "@/components/elements/Text/Text";
-import UserRoleCard from "@/components/extensive/PageElements/Card/UserRoleCard";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import LoginLayout from "../layout";
