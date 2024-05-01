@@ -286,7 +286,7 @@ const ProjectPipeline: FC = () => {
               defaultValue={[form.getValues("program") == "Terrafund" ? 2 : 1]}
               onChange={handleProgramChange}
               formHook={form}
-              name="program"
+              customName="program"
             />
             <Dropdown
               label="Cohort"
@@ -297,7 +297,7 @@ const ProjectPipeline: FC = () => {
               defaultValue={[form.getValues("cohort") == "Top100" ? 2 : 1]}
               onChange={handleCohortChange}
               formHook={form}
-              name="cohort"
+              customName="cohort"
             />
             <Input
               label="Publish For"
