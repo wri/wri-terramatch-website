@@ -401,7 +401,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </div>
                   </div>
                 </div>
-
                 <MapSite
                   polygonsData={polygonDataMap}
                   bbox={siteBbox}
