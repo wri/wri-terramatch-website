@@ -80,6 +80,9 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [estimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
+  const formattedArea =
+    estimatedArea && estimatedArea.toLocaleString([], { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   const t = useT();
 
   useEffect(() => {
@@ -208,7 +211,8 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         format="number"
         disabled
         name=""
-        value={estimatedArea === 0 ? "0 ha" : estimatedArea?.toFixed(2) + " ha"}
+        value={formattedArea + " ha"}
+        readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full">
