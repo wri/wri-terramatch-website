@@ -11,7 +11,6 @@ import mapboxgl, { Map as IMap } from "mapbox-gl";
 import { CircleMode, DirectMode, DragCircleMode, SimpleSelectMode } from "mapbox-gl-draw-circle";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
-import { Navigation } from "swiper";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
@@ -29,11 +28,8 @@ import {
   user_shapePropertiesValidationSchema
 } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
-import Carousel from "@/components/extensive/Carousel/Carousel";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
-import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/MockedData";
-import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 import MapProvider from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -43,6 +39,7 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "../Inputs/FileInput/FileInp
 import Text from "../Text/Text";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import SiteStatus from "./MapControls/SiteStatus";
+import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 
 mapboxgl.accessToken =
   process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
@@ -198,10 +195,6 @@ export const Map = ({
     );
   };
 
-  const openFormModalHandlerImageGallery = () => {
-    openModal(<ModalImageGallery onCLose={closeModal} tabItems={dataImageGallery} title={""} />);
-  };
-
   return (
     <MapProvider
       {...props}
@@ -324,44 +317,7 @@ export const Map = ({
           </button>
         </ControlGroup>
         <ControlGroup position="bottom-right" className="bottom-8">
-          <div className="relative">
-            <div
-              className={classNames("absolute right-1/2 bottom-0 h-[250px] w-[200px] rounded-lg bg-white p-2", {
-                hidden: !viewImages
-              })}
-            >
-              <div className="relative h-[calc(100%_-_48px)]">
-                <Carousel
-                  className="test mb-2 h-full"
-                  swiperClassName="h-full"
-                  swiperSlideClassName="h-full"
-                  items={dataImageGallery[0].images}
-                  carouselItem={item => <img className="h-full" alt="" src={item.src} />}
-                  modules={[Navigation]}
-                  slidesPerView={1}
-                  spaceBetween={10}
-                  hidePaginationBullet
-                  smallSwiperButtons
-                />
-                <button
-                  onClick={() => setViewImages(false)}
-                  className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md"
-                >
-                  <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
-                </button>
-              </div>
-              <button onClick={openFormModalHandlerImageGallery}>
-                <Text variant="text-12-bold">TerraMatch Sample</Text>
-                <Text variant="text-12-light"> December 29, 2023</Text>
-              </button>
-            </div>
-            <button
-              className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
-              onClick={() => setViewImages(!viewImages)}
-            >
-              {t("View Images")}
-            </button>
-          </div>
+          <ViewImageCarousel viewImages={viewImages} setViewImages={setViewImages} />
         </ControlGroup>
       </When>
       <When condition={captureAdditionalPolygonProperties}>
