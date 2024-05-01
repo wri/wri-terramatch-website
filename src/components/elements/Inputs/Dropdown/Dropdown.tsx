@@ -21,6 +21,7 @@ import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
 
 export interface DropdownProps {
+  name?: string;
   label?: string;
   labelClassName?: string;
   labelVariant?: TextVariants;

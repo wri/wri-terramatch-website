@@ -16,6 +16,7 @@ interface UserRoleCardProps {
   titleOptions?: string;
   setSelectedOption?: any;
   refContentCard?: React.RefObject<HTMLDivElement>;
+  selectedOption?: string;
 }
 
 const UserRoleCard: React.FC<UserRoleCardProps> = ({
@@ -25,7 +26,8 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   options,
   titleOptions,
   setSelectedOption,
-  refContentCard
+  refContentCard,
+  selectedOption
 }) => {
   const MenuOption: MenuItemProps[] = options || [
     {
@@ -37,7 +39,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
       )
     }
   ];
-  console.log("MenuOption", MenuOption);
+
   return (
     <article
       className={clsx("flex cursor-pointer items-center gap-2 rounded-lg border-2 p-3", {
@@ -61,6 +63,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
             setSelectedOption={setSelectedOption}
             container={refContentCard?.current}
             classNameContentMenu="max-h-[273px]"
+            selectedOption={selectedOption}
           >
             <Text variant="text-12-bold" className="text-primary">
               {titleOptions || "Select Fund"}

@@ -17,7 +17,7 @@ export interface MenuItemProps {
   id: string;
   render: () => ReactNode;
   MenuItemVariant?: string;
-  onClick?: () => void;
+  onClick?: (id?: any) => void;
   country_slug?: string | null;
   program?: string | null;
   data?: any;
@@ -34,7 +34,9 @@ export interface MenuProps {
   container?: HTMLDivElement | null;
   setSelectedOption?: any;
   classNameContentMenu?: string;
+  selectedOption?: string;
 }
+
 const Menu = (props: MenuProps) => {
   const {
     menu,
@@ -46,7 +48,8 @@ const Menu = (props: MenuProps) => {
     className,
     container,
     setSelectedOption,
-    classNameContentMenu
+    classNameContentMenu,
+    selectedOption
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -162,6 +165,7 @@ const Menu = (props: MenuProps) => {
 
     return styles;
   };
+  console.log("ID:", (children as any)?.props?.row?.original?.id?.toString());
   return (
     <div
       ref={menuContainerRef}
@@ -182,11 +186,12 @@ const Menu = (props: MenuProps) => {
           )}
           style={calculateMenuStyle()}
         >
-          {menu.map(item => (
+          {menu?.map(item => (
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
               key={item.id}
               render={
+                (console.log(item?.data),
                 (item?.data?.icon ? (
                   <div className="flex items-center">
                     <img
@@ -198,12 +203,15 @@ const Menu = (props: MenuProps) => {
                   </div>
                 ) : (
                   item?.data?.label
-                )) || item?.render()
+                )) || item?.render())
               }
               onClick={() => {
                 if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
-                if (item.onClick) item.onClick();
+                if (item.onClick) item.onClick(children?._owner?.memoizedProps.row.original.id.toString());
               }}
+              className={classNames({
+                "bg-blue-200": item?.country_slug === selectedOption || item?.data?.label === selectedOption
+              })}
             />
           ))}
         </div>
