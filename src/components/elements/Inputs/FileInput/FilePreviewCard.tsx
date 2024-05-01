@@ -133,7 +133,7 @@ const Uploading = ({ title, file, variant }: UploadingProps) => {
       variant={variant.fileCardContentVariant}
       subtitle={`${format(file.size)} • ${t({ subtitle })}`}
       thumbnailClassName="fill-primary-200"
-      thumbnailContainerClassName="bg-primary-50"
+      thumbnailContainerClassName="bg-neutral-150"
     />
   );
 };
@@ -199,7 +199,7 @@ const Failed = ({ title, errorMessage: errorState, variant }: FailedContentProps
       variant={variant.fileCardContentVariant}
       errorMessage={`${errorState} • ${t({ errorMessage })}`}
       thumbnailClassName="fill-primary-200"
-      thumbnailContainerClassName="bg-primary-50"
+      thumbnailContainerClassName="bg-neutral-150"
     />
   );
 };

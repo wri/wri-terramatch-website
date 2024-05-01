@@ -381,6 +381,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </PageCard>
         </PageColumn>
       </PageRow>
+      {/* Old Site Information */}
       {/* <PageRow>
         <PageColumn>
           <PageCard title={t("Site Information")} gap={8}>
