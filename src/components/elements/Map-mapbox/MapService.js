@@ -1,9 +1,9 @@
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Map } from "mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
 
 import TooltipMap from "../TooltipMap/TooltipMap";
+// import { LAYERS_NAMES, layersList } from "./MapSites";
 
 const MAPBOX_TOKEN =
   process.env.REACT_APP_MAPBOX_TOKEN ||
@@ -17,6 +17,7 @@ class MapService {
     this.sourceQueue = [];
     this.centroids = null;
     this.currentPolygonUuid = null;
+    this.draw = null;
   }
 
   initMap(mapId) {
@@ -29,21 +30,11 @@ class MapService {
       style: "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu",
       zoom: 2.5
     });
-    this.draw = new MapboxDraw({
-      controls: {
-        point: false,
-        line_string: false,
-        polygon: true,
-        trash: false,
-        combine_features: false,
-        uncombine_features: false
-      }
-    });
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
     });
-    // this.map.addControl(this.draw, "top-right");
+
     return this.map;
   }
 
@@ -157,8 +148,8 @@ class MapService {
         ["get", field],
         ["literal", polygonData[polygonStatus] === undefined ? "" : polygonData[polygonStatus]]
       ];
-
-      this.map.setFilter(layerName, filter);
+      const completeFilter = ["all", filter];
+      this.map.setFilter(layerName, completeFilter);
       this.map.setLayoutProperty(layerName, "visibility", "visible");
     });
   }
@@ -169,12 +160,44 @@ class MapService {
       properties: {},
       geometry: geojson
     };
-    return [templateGeoJSON];
+    const geojsonFormatted = {
+      type: "FeatureCollection",
+      features: [templateGeoJSON]
+    };
+    return geojsonFormatted;
   }
 
-  addGeojsonToDraw(geojson) {
+  // addSingleFilterOnPolygonLayer(field, value) {
+  //   const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
+  //   if (!polygonLayer) {
+  //     console.error(`Layer ${LAYERS_NAMES.POLYGON_GEOMETRY} does not exist in layer list.`);
+  //     return;
+  //   }
+  //   const { name, styles } = polygonLayer;
+  //   styles.forEach((style, index) => {
+  //     const layerName = `${name}-${index}`;
+  //     if (!this.map.getLayer(layerName)) {
+  //       console.error(`Layer ${layerName} does not exist in map.`);
+  //       return;
+  //     }
+  //   });
+  // }
+  addGeojsonToDraw(geojson, uuid, cb) {
+    console.log("Add geojson", geojson);
     if (geojson) {
-      this.draw.add(this.convertToAcceptedGEOJSON(geojson));
+      const geojsonFormatted = this.convertToAcceptedGEOJSON(geojson);
+      const addToDrawAndFilter = () => {
+        if (this.draw) {
+          const featureGeojson = this.draw.add(geojsonFormatted);
+          if (featureGeojson.length) {
+            this.draw.changeMode("direct_select", { featureId: featureGeojson[0] });
+          }
+
+          cb(uuid);
+        }
+      };
+      console.log("this.styleLoaded", this.styleLoaded);
+      addToDrawAndFilter();
     }
   }
 
@@ -197,7 +220,9 @@ class MapService {
       this.map.setLayoutProperty(layerName, "visibility", "visible");
     });
   }
-
+  setDraw(draw) {
+    this.draw = draw;
+  }
   addCentroidsLayers(centroids) {
     if (centroids) {
       if (!this.styleLoaded) {
