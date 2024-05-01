@@ -14,6 +14,11 @@ export const formatEntryValue = (entry: any) => {
   if (isDateType(entry)) {
     return convertDateFormat(entry);
   }
+
+  if (typeof entry === "string") {
+    return entry.replaceAll("\n", "<br />");
+  }
+
   return entry;
 };
 
