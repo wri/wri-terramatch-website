@@ -4,8 +4,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 //@ts-ignore
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
-import { t } from "@transifex/native";
-import classNames from "classnames";
 import mapboxgl, { Map as IMap } from "mapbox-gl";
 //@ts-ignore
 import { CircleMode, DirectMode, DragCircleMode, SimpleSelectMode } from "mapbox-gl-draw-circle";
@@ -29,14 +27,11 @@ import {
 } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import MapProvider from "@/context/map.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
-import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 
-import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "../Inputs/FileInput/FileInputVariants";
 import Text from "../Text/Text";
+import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import SiteStatus from "./MapControls/SiteStatus";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
@@ -81,7 +76,6 @@ export const Map = ({
 }: MapProps) => {
   const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
-  const { openModal, closeModal } = useModalContext();
   const [tooltipOpen, setTooltipOpen] = useState(true);
 
   const validateGeoJSON = function (map: IMap, source: string) {
@@ -138,63 +132,6 @@ export const Map = ({
     }
   };
 
-  const openFormModalHandlerUploadImages = () => {
-    openModal(
-      <ModalAdd
-        title="Upload Images"
-        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road.."
-        descriptionList={
-          <Text variant="text-12-bold" className="mt-9 ">
-            Uploaded Files
-          </Text>
-        }
-        onCLose={closeModal}
-        content="Start by adding images for processing."
-        primaryButtonText="Save"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
-          {uploadImageData.map(image => (
-            <div
-              key={image.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
-            >
-              <div className="flex gap-3">
-                <div className="rounded-lg bg-neutral-150 p-2">
-                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                </div>
-                <div>
-                  <Text variant="text-12">{image.name}</Text>
-                  <Text variant="text-12" className="opacity-50">
-                    {image.status}
-                  </Text>
-                </div>
-              </div>
-              <div
-                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-blue": image.isVerified,
-                  "border-red": !image.isVerified
-                })}
-              >
-                <Text
-                  variant="text-12-bold"
-                  className={classNames("text-center", {
-                    "text-blue": image.isVerified,
-                    "text-red": !image.isVerified
-                  })}
-                >
-                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
-                </Text>
-              </div>
-            </div>
-          ))}
-        </div>
-      </ModalAdd>
-    );
-  };
-
   return (
     <MapProvider
       {...props}
@@ -238,20 +175,7 @@ export const Map = ({
         </When>
         <When condition={!!viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-            <div className="flex gap-4">
-              <button
-                className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
-                onClick={() => setViewImages(!viewImages)}
-              >
-                {t("Close Images")}
-              </button>
-              <button
-                className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow hover:bg-neutral-200"
-                onClick={openFormModalHandlerUploadImages}
-              >
-                {t("Add Images")}
-              </button>
-            </div>
+            <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
           </ControlGroup>
         </When>
         <When condition={editPolygon}>
