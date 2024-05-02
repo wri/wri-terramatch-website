@@ -90,7 +90,7 @@ const Page = () => {
             )}
           </div>
           <Button
-            className="text-14-bold border-blue-300 bg-blue-300 flex w-full items-center justify-center rounded-lg border-2 py-3.5 text-white hover:border-white"
+            className="text-14-bold flex w-full items-center justify-center rounded-lg border-2 border-primary bg-primary py-3.5 text-white hover:border-white"
             onClick={handleContinue}
           >
             Continue
