@@ -24,6 +24,7 @@ export interface MenuItemProps {
   data?: any;
 }
 export interface MenuProps {
+  extraData?: any;
   menu: MenuItemProps[];
   setSelected?: (id: string) => void;
   isDefaultOpen?: boolean;
@@ -50,7 +51,8 @@ const Menu = (props: MenuProps) => {
     container,
     setSelectedOption,
     classNameContentMenu,
-    selectedOption
+    selectedOption,
+    extraData
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -210,7 +212,7 @@ const Menu = (props: MenuProps) => {
               onClick={() => {
                 if (item.onClick) {
                   if (item.is_airtable) {
-                    item.onClick((children as any)?._owner?.memoizedProps?.row?.original?.id?.toString());
+                    item.onClick(extraData);
                   } else {
                     item.onClick();
                   }
