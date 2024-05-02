@@ -27,7 +27,8 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   titleOptions,
   setSelectedOption,
   refContentCard,
-  selectedOption
+  selectedOption,
+  menu
 }) => {
   const MenuOption: MenuItemProps[] = options || [
     {
@@ -39,6 +40,19 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
       )
     }
   ];
+
+  const displayOption = options?.find(m => {
+    if (selectedOption === null) {
+      return false;
+    } else {
+      if (title === "I’m a Government Official") {
+        return m.country_slug === selectedOption;
+      } else {
+        return m.data.label === selectedOption;
+      }
+    }
+  });
+  const diplayTitle = displayOption ? displayOption.data.label : "";
 
   return (
     <article
@@ -58,6 +72,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
           {description}
         </Text>
         <When condition={!!titleOptions}>
+          {diplayTitle}
           <Menu
             menu={MenuOption}
             setSelectedOption={setSelectedOption}
