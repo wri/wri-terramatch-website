@@ -340,10 +340,10 @@ const ProjectPipeline: FC = () => {
         </Text>
         <Button
           variant="white-page-admin"
-          iconProps={{ name: IconNames.PLUS_PA, className: "text-neutral-950 w-5 h-5" }}
+          iconProps={{ name: IconNames.PLUS_PA, className: "text-blueCustom-900 w-5 h-5" }}
           onClick={openFormModalHandler}
         >
-          <Text variant="text-14-bold" className="text-neutral-950">
+          <Text variant="text-14-bold" className="text-blueCustom-900">
             Add Pipeline
           </Text>
         </Button>
@@ -428,7 +428,7 @@ const ProjectPipeline: FC = () => {
                             }}
                           >
                             <Text variant="text-14-semibold">{value.name}</Text>
-                            <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-neutral-950" />
+                            <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-blueCustom-900" />
                           </div>
 
                           <Text variant="text-14-light" className="opacity-50">

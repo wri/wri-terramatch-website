@@ -60,7 +60,7 @@ const ShowActions = ({
         </When>
         <When condition={record && hasEdit}>
           <EditButton
-            className="!text-sm !font-semibold !capitalize !text-neutral-950 lg:!text-base wide:!text-md"
+            className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
             icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
           />
         </When>
