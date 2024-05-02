@@ -16,6 +16,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 
+import { FilterControl } from "./MapControls/FilterControl";
 // import { useSitePolygonData } from "@/context/sitePolygon.provider";
 // import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import ImageControl from "./MapControls/ImageControl";
@@ -217,6 +218,12 @@ export const Map = ({
           <ControlGroup position="top-left">
             <SiteStatus />
           </ControlGroup>
+        </When>
+        <When condition={!editable && !viewImages}>
+          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+            <FilterControl />
+          </ControlGroup>
+          {/* <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} > */}
         </When>
         <When condition={!!viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
