@@ -4,13 +4,15 @@ import { Else, If, Then } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygon } from "@/generated/apiSchemas";
+import { toArray } from "@/utils/array";
 
 import ComentarySection from "../ComentarySection/ComentarySection";
+import { dropdownPolygonOptions } from "../mockedData";
 import StatusDisplay from "../PolygonStatus/StatusDisplay ";
-import SelectPolygon from "../SelectPolygon/SelectPolygon";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
 import VersionHistory from "./components/VersionHistory";
@@ -105,7 +107,16 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
       <If condition={buttonToogle}>
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <SelectPolygon></SelectPolygon>
+            <Dropdown
+              label="Select Polygon"
+              labelVariant="text-16-bold"
+              labelClassName="capitalize"
+              optionsClassName="max-w-full"
+              defaultValue={toArray(dropdownPolygonOptions[0].value)}
+              placeholder="Select Polygon"
+              options={dropdownPolygonOptions}
+              onChange={() => {}}
+            />
             <StatusDisplay status={"Approved"} />
             <ComentarySection></ComentarySection>
           </div>
