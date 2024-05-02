@@ -24,7 +24,7 @@ const ToolTip = ({ children, content, width, placement, className, title }: Tool
       >
         <div className="absolute bottom-0 left-1/2 ml-[-4px] mb-[-9px] hidden  border-[5px] border-darkCustom border-r-transparent border-b-transparent border-l-transparent group-hover:block " />
         <Text variant="text-12-semibold">{title}</Text>
-        {content}
+        <Text variant="text-12-light">{content}</Text>
       </div>
       {children}
     </div>

@@ -297,7 +297,7 @@ const ProjectPipeline: FC = () => {
               labelVariant="text-14-light"
               placeholder="Select Program"
               options={dropdownOptionsProgram}
-              defaultValue={[form.getValues("program") == "Terrafund" ? 2 : 1]}
+              defaultValue={[form.getValues("program")?.toString() == "Terrafund" ? 1 : 2]}
               onChange={handleProgramChange}
               formHook={form}
               customName="program"
@@ -308,7 +308,7 @@ const ProjectPipeline: FC = () => {
               labelVariant="text-14-light"
               placeholder="Select Cohort"
               options={dropdownOptionsCohort}
-              defaultValue={[form.getValues("cohort") == "Top100" ? 2 : 1]}
+              defaultValue={[form.getValues("cohort")?.toString() == "Top100" ? 1 : 2]}
               onChange={handleCohortChange}
               formHook={form}
               customName="cohort"
