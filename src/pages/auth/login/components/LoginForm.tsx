@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import Link from "next/link";
+import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -18,9 +19,14 @@ type LoginFormProps = {
 const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
   const t = useT();
   const errors = form.formState.errors;
+  const [sendInformation, setSendInformation] = useState(false);
 
+  const handleSubmit = () => {
+    setSendInformation(true);
+    handleSave(form.getValues());
+  };
   return (
-    <Form formType={"login"}>
+    <Form formType={"login"} onSubmit={form.handleSubmit(handleSave)}>
       <div className="w-[30vw]">
         <Text variant="text-32-bold" className="text-blueCustom-700">
           {t("Sign in")}
@@ -41,7 +47,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             placeholder=" "
             id="email"
             formHook={form}
-            error={errors.email}
+            error={sendInformation ? errors.email : undefined}
             containerClassName={`flex flex-col gap-2 bg-white content-login w-full  ${
               !isEmpty(form.getValues("email")) ? "input-content-login" : "input-content-login"
             }`}
@@ -61,7 +67,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             placeholder=" "
             id="password"
             formHook={form}
-            error={errors.password}
+            error={sendInformation ? errors.password : undefined}
             containerClassName={`flex flex-col gap-2 bg-white content-login w-full  ${
               !isEmpty(form.getValues("password")) ? "input-content-login" : "input-content-login"
             }`}
@@ -81,7 +87,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
         <Form.Footer
           primaryButtonProps={{
             children: t("Sign in"),
-            onClick: form.handleSubmit(handleSave),
+            onClick: handleSubmit,
             disabled: loading,
             className: `bg-primary py-3.5 flex items-center justify-center rounded-lg w-full
               border-2 border-primary text-white text-14-bold hover:border-white`

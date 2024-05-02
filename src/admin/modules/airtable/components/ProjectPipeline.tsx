@@ -427,17 +427,18 @@ const ProjectPipeline: FC = () => {
                   cell: props => {
                     const value = props?.getValue() as tableProjectItemProps;
                     return (
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10">
-                          <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
-                        </div>
+                      <div
+                        className="flex items-center gap-4"
+                        onClick={() => {
+                          window.open(props.row.original.URL, "_blank");
+                        }}
+                      >
+                        <Icon
+                          name={IconNames.LEAF}
+                          className="h-20 min-h-[3rem] w-10 min-w-[3rem] overflow-hidden rounded-lg"
+                        />
                         <div>
-                          <div
-                            className="flex items-center gap-1"
-                            onClick={() => {
-                              window.open(props.row.original.URL, "_blank");
-                            }}
-                          >
+                          <div>
                             <Text variant="text-14-semibold">{value.name}</Text>
                             <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-blueCustom-900" />
                           </div>
