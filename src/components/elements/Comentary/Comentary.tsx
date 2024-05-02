@@ -33,10 +33,10 @@ const Comentary = (props: ComentaryProps) => {
             </Text>
           </div>
           <div className="flex w-full flex-col gap-1">
-            <Text variant="text-12-semibold" className="text-grey-250">
+            <Text variant="text-12-semibold" className="text-blueCustom-250">
               {name} {lastName}
             </Text>
-            <Text variant="text-10-light" className="text-grey-250 opacity-50">
+            <Text variant="text-10-light" className="text-blueCustom-250 opacity-50">
               {date}
             </Text>
           </div>
@@ -56,7 +56,7 @@ const Comentary = (props: ComentaryProps) => {
 
       <Text
         variant="text-12-light"
-        className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-grey-250 opacity-50"
+        className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-blueCustom-250 opacity-50"
       >
         {comentary}
       </Text>

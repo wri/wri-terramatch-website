@@ -393,7 +393,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </div>
                   </div>
                   <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
-                    <Text variant="text-14" className="mb-3 text-grey-250">
+                    <Text variant="text-14" className="mb-3 text-blueCustom-250">
                       Site Status
                     </Text>
                     <div className="h-fit w-full">
