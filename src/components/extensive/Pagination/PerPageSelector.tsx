@@ -70,7 +70,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                     as={Text}
                     key={option}
                     value={option}
-                    variant={props.variantText || "text-20"}
+                    variant={props.variantText || "text-14"}
                     className={classNames(
                       "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
                       isSelected ? "!font-bold" : "!font-light"

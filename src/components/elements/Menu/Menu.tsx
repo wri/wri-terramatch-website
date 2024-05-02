@@ -67,6 +67,7 @@ const Menu = (props: MenuProps) => {
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  console.log(selectedOption);
   useEffect(() => {
     const hideMenu = () => {
       if (menuContainerRef.current) {
@@ -216,9 +217,9 @@ const Menu = (props: MenuProps) => {
                 }
                 if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
               }}
-              className={classNames({
-                "bg-blue-200": item?.country_slug === selectedOption || item?.data?.label === selectedOption
-              })}
+              // className={classNames({
+              //   "bg-blue-200": item?.country_slug === selectedOption || item?.data?.label === selectedOption
+              // })}
             />
           ))}
         </div>
