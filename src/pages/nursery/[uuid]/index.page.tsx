@@ -143,7 +143,7 @@ const NurseryDetailPage = () => {
             body: <CompletedReportsTab nursery={nursery} />
           }
         ]}
-        containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
+        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full  overflow-y-hidden"
       />
     </LoadingContainer>
   );
