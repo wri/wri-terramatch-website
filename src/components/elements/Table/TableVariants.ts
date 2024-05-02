@@ -72,7 +72,7 @@ export const VARIANT_TABLE_AIRTABLE = {
   table: "border-collapse",
   name: "border-airtable",
   trHeader: "bg-neutral-150",
-  thHeader: "first:rounded-tl-lg last:rounded-tr-lg border-y border-neutral-200 text-14-semibold",
+  thHeader: "first:rounded-tl-lg last:rounded-tr-lg border-y border-neutral-200 text-14-semibold first:w-full",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 lastRow",
   tdBody: "text-16-light px-6 py-3",
