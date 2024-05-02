@@ -143,11 +143,6 @@ module.exports = {
         DEFAULT: "#E468EF",
         200: "#FDF0FE"
       },
-      greenCustom: {
-        200: "#72D961",
-        100: "#28C499",
-        50: "rgba(40, 196, 153, 0.10)"
-      },
       grey: {
         200: "#1976d2",
         250: "#11093C",
@@ -170,7 +165,9 @@ module.exports = {
       green: {
         DEFAULT: "#72D961",
         400: "#1BA631",
-        500: "#198E2B"
+        500: "#198E2B",
+        100: "#28C499",
+        50: "rgba(40, 196, 153, 0.10)"
       },
       yellow: {
         DEFAULT: "#FCFBE8",

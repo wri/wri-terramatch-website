@@ -144,7 +144,7 @@ const MapPolygonCheckPanelItem = ({
       case "Submitted":
         return "bg-blue";
       case "Approved":
-        return "bg-greenCustom-200";
+        return "bg-green";
       case "Needs More Info":
         return "bg-tertiary-600";
       case "Draft":
