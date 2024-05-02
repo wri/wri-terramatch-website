@@ -141,7 +141,7 @@ const ProjectPipeline: FC = () => {
         closeModal();
         form.reset();
         refetch();
-      }, 3000);
+      }, 2000);
 
       // window.location.href = "admin#/projectPipeline";
     } else {
@@ -152,7 +152,7 @@ const ProjectPipeline: FC = () => {
       alert("Project Created");
       setTimeout(() => {
         refetch();
-      }, 3000);
+      }, 2000);
     }
   };
   const handleDelete = (projectId: string) => {
@@ -161,6 +161,10 @@ const ProjectPipeline: FC = () => {
         id: projectId
       }
     });
+    setTimeout(() => {
+      alert("Project Deleted");
+      refetch();
+    }, 2000);
   };
 
   const handleEdit = (id: string) => {
@@ -456,16 +460,22 @@ const ProjectPipeline: FC = () => {
                   header: "",
                   accessorKey: "ellipse",
                   enableSorting: false,
-                  cell: () => (
-                    <Menu menu={airtableItemMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-                      <div className="rounded p-1 hover:bg-primary-200">
-                        <Icon
-                          name={IconNames.ELIPSES}
-                          className="roudn h-4 w-4 rounded-sm text-primary-500 hover:bg-primary-200"
-                        />
-                      </div>
-                    </Menu>
-                  )
+                  cell: x => {
+                    return (
+                      <Menu
+                        menu={airtableItemMenu}
+                        placement={MENU_PLACEMENT_BOTTOM_LEFT}
+                        extraData={x.cell.row.original.id}
+                      >
+                        <div className="rounded p-1 hover:bg-primary-200">
+                          <Icon
+                            name={IconNames.ELIPSES}
+                            className="roudn h-4 w-4 rounded-sm text-primary-500 hover:bg-primary-200"
+                          />
+                        </div>
+                      </Menu>
+                    );
+                  }
                 }
               ]}
               data={filteredProjects || projectsPipeline?.data || []}
