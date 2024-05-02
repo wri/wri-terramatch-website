@@ -428,7 +428,9 @@ const ProjectPipeline: FC = () => {
                     const value = props?.getValue() as tableProjectItemProps;
                     return (
                       <div className="flex items-center gap-4">
-                        <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
+                        <div className="h-10 w-10">
+                          <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
+                        </div>
                         <div>
                           <div
                             className="flex items-center gap-1"
