@@ -22,7 +22,7 @@ const SiteShow: FC = () => {
           <InformationTab type="sites" />
         </TabbedShowLayout.Tab>
         <TabbedShowLayout.Tab label="Polygon Review">
-          <PolygonReviewTab label="Polygon Review" type={"sites"} />
+          <PolygonReviewTab label="" type={"sites"} />
         </TabbedShowLayout.Tab>
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />
