@@ -205,7 +205,7 @@ export const Map = ({
   // };
 
   return (
-    <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]")}>
+    <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
       {/* <GeoJSONLayer geojson={geojson} /> */}
       <When condition={hasControls}>
         <ControlGroup position="top-right">
