@@ -90,7 +90,7 @@ const ProjectPipeline: FC = () => {
   const [isEdit, setIsEdit] = useState(false);
   const { data: projectsPipeline, refetch } = useGetV2ProjectPipeline<ProjectPipelineResponse>({});
   console.log(_, __);
-  const { data: getProject } = useGetV2ProjectPipelineId({
+  const { data: getProject, refetch: refetchProjectId } = useGetV2ProjectPipelineId({
     pathParams: {
       id: form.getValues("id")
     }
@@ -141,6 +141,7 @@ const ProjectPipeline: FC = () => {
         closeModal();
         form.reset();
         refetch();
+        refetchProjectId();
       }, 2000);
 
       // window.location.href = "admin#/projectPipeline";
@@ -152,6 +153,7 @@ const ProjectPipeline: FC = () => {
       alert("Project Created");
       setTimeout(() => {
         refetch();
+        refetchProjectId();
       }, 2000);
     }
   };
@@ -171,6 +173,7 @@ const ProjectPipeline: FC = () => {
     form.setValue("id", id);
     setIsEdit(true);
     openFormModalHandler();
+    refetchProjectId();
   };
   const handleCohortChange = (e: any) => {
     form.setValue("cohort", e == 1 ? "Top100" : "Top50");
