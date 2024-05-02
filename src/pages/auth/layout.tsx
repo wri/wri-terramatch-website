@@ -20,13 +20,13 @@ const LoginLayout: React.FC<LoginLayoutProps> = props => {
         {children}
         <When condition={pathname !== "/sign-up"}>
           {/* <Button variant="transparent" className="self-start pt-4 pb-8 px-9 lg:px-14 lg:pb-10">
-            <Text variant="text-12-bold" className="text-blue-300">
+            <Text variant="text-12-bold" className="text-primary">
               English (United Kingdom)
             </Text>
           </Button> */}
           <div className="absolute bottom-[1.5vh] left-6">
             <Button>
-              <Text variant="text-12-bold" className="text-blue-300">
+              <Text variant="text-12-bold" className="text-primary">
                 English (United Kingdom)
               </Text>
             </Button>

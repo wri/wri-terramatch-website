@@ -7,7 +7,7 @@ import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-interface UserRoleCardProps {
+export interface UserRoleCardProps {
   title: string;
   description: string;
   selected: boolean;

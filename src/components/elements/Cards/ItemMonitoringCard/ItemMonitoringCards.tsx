@@ -7,7 +7,7 @@ import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 
-import Icon, { IconNames } from "../../Icon/Icon";
+import Icon, { IconNames } from "../../../extensive/Icon/Icon";
 
 export interface LeyendItemMonitoringCardsProps {
   title: string;

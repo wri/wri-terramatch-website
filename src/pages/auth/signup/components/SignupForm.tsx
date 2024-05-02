@@ -166,7 +166,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
             onClick: form.handleSubmit(handleSave),
             disabled: loading,
             className:
-              "bg-blue-300 py-3.5 flex items-center justify-center rounded-lg w-full border-2 border-blue-300 text-white text-14-bold hover:border-white mb-4"
+              "bg-primary py-3.5 flex items-center justify-center rounded-lg w-full border-2 border-primary text-white text-14-bold hover:border-white mb-4"
           }}
           secondaryButtonProps={{
             children: t("Cancel"),
@@ -174,7 +174,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
             href: "/",
             disabled: loading,
             className:
-              "bg-white py-4 flex items-center justify-center rounded-lg w-full border-2 border-blue-700 text-blue-700 text-14-bold hover:border-blue-300 hover:text-blue-300"
+              "bg-white py-4 flex items-center justify-center rounded-lg w-full border-2 border-blue-700 text-blue-700 text-14-bold hover:border-primary hover:text-primary"
           }}
         />
       </Form>

@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import ButtonUserRole from "@/components/elements/Button/ButtonUserRole";
+import UserRoleCard from "@/components/elements/Cards/UserRoleCard/UserRoleCard";
 import Text from "@/components/elements/Text/Text";
-import UserRoleCard from "@/components/extensive/PageElements/Card/UserRoleCard";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import LoginLayout from "../layout";
@@ -90,7 +90,7 @@ const Page = () => {
             )}
           </div>
           <Button
-            className="text-14-bold flex w-full items-center justify-center rounded-lg border-2 border-blue-300 bg-blue-300 py-3.5 text-white hover:border-white"
+            className="text-14-bold border-blue-300 bg-blue-300 flex w-full items-center justify-center rounded-lg border-2 py-3.5 text-white hover:border-white"
             onClick={handleContinue}
           >
             Continue

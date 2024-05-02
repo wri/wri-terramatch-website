@@ -23128,6 +23128,20 @@ export type SitePolygonResponse = {
   est_area?: number;
 };
 
+export type GeometryData = {
+  geometry?: {
+    coordinates?: any[];
+    type?: string;
+  };
+};
+
+export type GeojsonData = {
+  /**
+   * The GeoJSON representation of the polygon geometry.
+   */
+  geojson?: Record<string, any>;
+};
+
 export type ProjectPipeline = {
   data?: {
     name?: {
