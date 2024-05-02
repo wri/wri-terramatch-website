@@ -162,7 +162,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             bbox={polygonBbox}
           />
           <button onClick={onCLose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
-            <Icon name={IconNames.CLEAR} className="h-4 w-4 text-grey-400" />
+            <Icon name={IconNames.CLEAR} className="h-4 w-4 text-darkCustom-100" />
           </button>
         </div>
       </div>

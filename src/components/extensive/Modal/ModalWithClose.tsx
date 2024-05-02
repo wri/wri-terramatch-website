@@ -44,7 +44,7 @@ const ModalCloseLogo: FC<ModalCloseProps> = ({
           {title}
         </Text>
         <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
-          <Icon name={IconNames.CLEAR} width={16} height={16} className="text-grey-400" />
+          <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
         </button>
       </div>
 
