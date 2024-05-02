@@ -25,7 +25,7 @@
     "@headlessui/tailwindcss": "^0.1.2",
     "@hookform/resolvers": "^2.9.10",
     "@mapbox/geojson-normalize": "^0.0.1",
-    "@mapbox/mapbox-gl-draw": "1.4.3",
+    "@mapbox/mapbox-gl-draw": "1.4.2",
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@mui/icons-material": "^5.11.0",
