@@ -25,6 +25,7 @@ import SiteStatus from "./MapControls/SiteStatus";
 import { StyleControl } from "./MapControls/StyleControl";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
+import { GeoJSONLayer } from "./MapLayers/GeoJSONLayer";
 import _MapService from "./MapService";
 
 mapboxgl.accessToken =
@@ -206,7 +207,7 @@ export const Map = ({
 
   return (
     <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
-      {/* <GeoJSONLayer geojson={geojson} /> */}
+      {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
       <When condition={hasControls}>
         <ControlGroup position="top-right">
           {ref.current && ref.current.map && <StyleControl mapRef={ref} />}

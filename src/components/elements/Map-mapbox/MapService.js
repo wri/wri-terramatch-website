@@ -1,3 +1,4 @@
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Map } from "mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
@@ -28,11 +29,22 @@ class MapService {
       style: "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu",
       zoom: 2.5
     });
+
+    this.draw = new MapboxDraw({
+      controls: {
+        point: false,
+        line_string: false,
+        polygon: false,
+        trash: false,
+        combine_features: false,
+        uncombine_features: false
+      }
+    });
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
+      this.map.addControl(this.draw, "top-right");
     });
-
     return this.map;
   }
 
