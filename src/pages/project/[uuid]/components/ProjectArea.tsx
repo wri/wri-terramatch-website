@@ -51,7 +51,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const sites = usePaginatedResult<any>(data);
 
   return (
-    <div className="flex h-[500px] rounded-lg  bg-back-map bg-cover bg-no-repeat text-darkCustom">
+    <div className="flex h-[500px] rounded-lg  text-darkCustom">
       <MapSidePanel
         title={t("Sites")}
         items={

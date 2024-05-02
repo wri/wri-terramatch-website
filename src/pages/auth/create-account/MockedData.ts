@@ -1,8 +1,9 @@
 export const UserRolInfo = [
   {
-    id: "project-developer",
+    id: "project_developer",
     title: "I’m a Project Developer",
-    description: "Visualize and share the progress of your project and other restoration champions."
+    description: "Visualize and share the progress of your project and other restoration champions.",
+    menu: []
   },
   {
     id: "government",

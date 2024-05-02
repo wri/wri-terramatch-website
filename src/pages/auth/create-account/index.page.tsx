@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import ButtonUserRole from "@/components/elements/Button/ButtonUserRole";
@@ -26,6 +26,20 @@ const Page = () => {
       return user;
     }
   });
+
+  const handleContinue = () => {
+    const isOptionRequired = updatedUserRolInfo.find(item => item.id === selected)?.menu.length !== 0 || false;
+    if (isOptionRequired && !selectedOption) {
+      alert(`Please select an option for ${selectedTitleOption}.`);
+      return;
+    }
+    setShowSignUp(true);
+  };
+
+  useEffect(() => {
+    setSelectedOption("");
+  }, [selected]);
+
   return (
     <LoginLayout>
       {showSignUp ? (
@@ -67,6 +81,7 @@ const Page = () => {
                       options={item?.menu}
                       titleOptions={item.titleOption}
                       setSelectedOption={setSelectedOption}
+                      selectedOption={selectedOption}
                       refContentCard={refContentCard}
                     />
                   </ButtonUserRole>
@@ -76,7 +91,7 @@ const Page = () => {
           </div>
           <Button
             className="text-14-bold flex w-full items-center justify-center rounded-lg border-2 border-primary bg-primary py-3.5 text-white hover:border-white"
-            onClick={() => setShowSignUp(true)}
+            onClick={handleContinue}
           >
             Continue
           </Button>

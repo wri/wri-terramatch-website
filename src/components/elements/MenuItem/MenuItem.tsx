@@ -6,7 +6,7 @@ export interface MenuItemProps {
   render: string;
   MenuItemVariant?: string;
   className?: string;
-  onClick?: () => void;
+  onClick?: any;
   ref?: MutableRefObject<HTMLDivElement | null>;
 }
 export const MenuItem = (props: MenuItemProps) => {

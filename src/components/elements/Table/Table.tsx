@@ -178,6 +178,7 @@ function Table<TData extends RowData>({
                 <LoadingCell />
               </Then>
               <Else>
+                {/* {console.log("cell1", getRowModel())} */}
                 {getRowModel().rows.length === 0 && (
                   <tr className={variant.trHeader}>
                     <td
@@ -190,8 +191,10 @@ function Table<TData extends RowData>({
                   </tr>
                 )}
                 {getRowModel().rows.map(row => (
+                  // console.log("cell1", row),
                   <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
                     {row.getVisibleCells().map(cell => (
+                      // console.log("row value", Object(cell.getValue()).id),
                       <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
                     ))}
                   </tr>

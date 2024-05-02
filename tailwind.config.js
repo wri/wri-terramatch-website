@@ -67,8 +67,7 @@ module.exports = {
         400: "#4EBBEA",
         300: "#98CEED",
         200: "#E5F8FF",
-        100: "#F2FAFD",
-        50: "#F5F7F9"
+        100: "#F2FAFD"
       },
       secondary: {
         DEFAULT: "#8CC63F",
@@ -91,7 +90,6 @@ module.exports = {
       neutral: {
         DEFAULT: "#9B9B9B",
         1000: "#000000",
-        950: "#002633",
         900: "#3A3A3A",
         800: "#5A5A5A",
         700: "#737373",

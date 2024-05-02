@@ -23141,3 +23141,51 @@ export type GeojsonData = {
    */
   geojson?: Record<string, any>;
 };
+
+export type ProjectPipeline = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    SubmittedBy?: string;
+    Program?: string;
+    Cohort?: string;
+    PublishFor?: string;
+    URL?: string;
+    /**
+     * @format date
+     */
+    CreatedDate?: string;
+    /**
+     * @format date
+     */
+    ModifiedDate?: string;
+  };
+};
+
+export type ProjectPipelinePost = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  SubmittedBy?: string;
+  Program?: string;
+  Cohort?: string;
+  PublishFor?: string;
+  URL?: string;
+  /**
+   * @format date
+   */
+  CreatedDate?: string;
+  /**
+   * @format date
+   */
+  ModifiedDate?: string;
+};

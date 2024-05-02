@@ -11,11 +11,11 @@
 }
 
 .filter-button-page-admin span {
-  @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md tracking-normal opacity-100;
+  @apply text-blueCustom-900 text-sm font-bold lg:text-base wide:text-md tracking-normal opacity-100;
 }
 
 .filter-button-page-admin button {
-  @apply text-neutral-950 text-sm font-bold lg:text-base wide:text-md font-primary !leading-[normal] tracking-normal px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white h-[42px];
+  @apply text-blueCustom-900 text-sm font-bold lg:text-base wide:text-md font-primary !leading-[normal] tracking-normal px-4 py-2 rounded-lg border border-solid border-neutral-300 bg-white h-[42px];
 }
 
 .filter-button-page-admin svg {
@@ -31,7 +31,7 @@
 }
 
 .button-page-admin {
-  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px];
+  @apply !text-blueCustom-900 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px];
 }
 
 .button-page-admin:hover {
@@ -43,11 +43,11 @@
 }
 
 .button-page-admin span {
-  @apply !text-neutral-950 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
+  @apply !text-blueCustom-900 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
 }
 
 .RaCreateButton-root{
-  @apply !text-neutral-950 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
+  @apply !text-blueCustom-900 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
 }
 
 .RaCreateButton-root:hover {
@@ -55,7 +55,7 @@
 }
 
 .RaCreateButton-root span {
-  @apply !text-neutral-950 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
+  @apply !text-blueCustom-900 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
 }
 
 .RaMenuItemLink-icon{
