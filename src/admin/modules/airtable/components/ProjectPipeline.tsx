@@ -81,6 +81,7 @@ const dropdownOptionsCohort = [
 const ProjectPipeline: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
+  const [projectId, setProjectId] = useState("");
   const [formTitle, setFormTitle] = useState("Add New Pipeline");
   const [buttonTitle, setButtonTitle] = useState("Submit Pipeline");
   const [_, setDropdownValueProgram] = useState(1);
@@ -92,7 +93,7 @@ const ProjectPipeline: FC = () => {
   console.log(_, __);
   const { data: getProject, refetch: refetchProjectId } = useGetV2ProjectPipelineId({
     pathParams: {
-      id: form.getValues("id")
+      id: form.getValues("id") || projectId
     }
   });
   const { mutate: postProject } = usePostV2ProjectPipeline({
@@ -171,9 +172,10 @@ const ProjectPipeline: FC = () => {
 
   const handleEdit = (id: string) => {
     form.setValue("id", id);
+    setProjectId(id);
+    refetchProjectId();
     setIsEdit(true);
     openFormModalHandler();
-    refetchProjectId();
   };
   const handleCohortChange = (e: any) => {
     form.setValue("cohort", e == 1 ? "Top100" : "Top50");
