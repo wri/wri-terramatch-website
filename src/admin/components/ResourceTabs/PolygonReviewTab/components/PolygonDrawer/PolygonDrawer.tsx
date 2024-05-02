@@ -18,7 +18,7 @@ import PolygonValidation from "./components/PolygonValidation";
 import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
-  Draft: "bg-purple",
+  Draft: "bg-pinkCustom",
   Submitted: "bg-blue",
   Approved: "bg-green",
   "Needs More Info": "bg-tertiary-600"

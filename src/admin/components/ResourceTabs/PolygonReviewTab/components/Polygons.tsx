@@ -34,7 +34,7 @@ export interface IPolygonProps {
   polygonFromMap?: IpolygonFromMap;
 }
 const statusColor = {
-  Draft: "bg-purple",
+  Draft: "bg-pinkCustom",
   Submitted: "bg-blue",
   Approved: "bg-green",
   "Needs More Info": "bg-tertiary-600"

@@ -16,7 +16,7 @@ export interface ComentaryProps {
 
 const statusStyle = {
   Submitted: { container: "bg-primary-200", textColor: "text-primary" },
-  Draft: { container: "bg-purple-200", textColor: "text-purple" }
+  Draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" }
 };
 
 const Comentary = (props: ComentaryProps) => {

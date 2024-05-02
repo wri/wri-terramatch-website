@@ -139,7 +139,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     const colorMap: { [key: string]: string } = {
       Approved: "bg-greenCustom-200",
       Submitted: "bg-blue",
-      Draft: "bg-purple",
+      Draft: "bg-pinkCustom",
       "Under Review": "bg-tertiary-600",
       "Needs More Info": "bg-tertiary-600"
     };

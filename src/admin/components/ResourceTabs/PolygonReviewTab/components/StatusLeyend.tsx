@@ -8,7 +8,7 @@ const StatusLeyend = () => {
       </Text>
       <div>
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
-          <div className="aspect-square h-3 w-3 rounded-sm bg-purple" /> Status Legend
+          <div className="aspect-square h-3 w-3 rounded-sm bg-pinkCustom" /> Status Legend
         </Text>
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
           <div className="aspect-square h-3 w-3 rounded-sm bg-blue" /> Submitted

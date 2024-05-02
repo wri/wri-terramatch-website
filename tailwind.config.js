@@ -140,7 +140,8 @@ module.exports = {
         50: "#697A7F"
       },
       pinkCustom: {
-        DEFAULT: "#E468EF"
+        DEFAULT: "#E468EF",
+        200: "#FDF0FE"
       },
       greenCustom: {
         200: "#72D961",
@@ -160,10 +161,6 @@ module.exports = {
         750: "#E6EAEB",
         800: "#E9EDF0",
         900: "#F6FAFD"
-      },
-      purple: {
-        DEFAULT: "#E468EF",
-        200: "#FDF0FE"
       },
       blue: {
         DEFAULT: "#2398D8",
