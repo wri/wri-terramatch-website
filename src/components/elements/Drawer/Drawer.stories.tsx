@@ -5,10 +5,6 @@ import Button from "../Button/Button";
 import Drawer from "./Drawer";
 
 const meta: Meta<typeof Drawer> = {
-  /* 👇 The title prop is optional.
-   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-   * to learn how to generate automatic titles
-   */
   title: "Components/Elements/Drawer",
   component: Drawer
 };
@@ -16,14 +12,8 @@ const meta: Meta<typeof Drawer> = {
 export default meta;
 type Story = StoryObj<typeof Drawer>;
 
-/*
- *👇 Render functions are a framework specific feature to allow you control on how the component renders.
- * See https://storybook.js.org/docs/react/api/csf
- * to learn how to use render functions.
- */
-
 export const Primary: Story = () => {
-  const [isOpen, setIsOpen] = useState(true); // Define isOpen state and its setter function
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="relative h-full">

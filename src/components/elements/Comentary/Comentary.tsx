@@ -1,17 +1,17 @@
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-export interface IComentaryFiles {
+export interface ComentaryFilesProps {
   id: string;
   file: string;
 }
-export interface IComentary {
+export interface ComentaryProps {
   name: string;
   lastName: string;
   date: string;
   comentary: string;
   status?: string;
-  files?: IComentaryFiles[];
+  files?: ComentaryFilesProps[];
 }
 
 const statusStyle = {
@@ -19,7 +19,7 @@ const statusStyle = {
   Draft: { container: "bg-purple-200", textColor: "text-purple" }
 };
 
-const Comentary = (props: IComentary) => {
+const Comentary = (props: ComentaryProps) => {
   const { name, lastName, date, comentary, files = [], status } = props;
   const statusKey = status as keyof typeof statusStyle;
   return (

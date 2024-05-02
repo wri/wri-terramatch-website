@@ -5,13 +5,13 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-export interface IComentaryBox {
+export interface ComentaryBoxProps {
   name: string;
   lastName: string;
   buttonSendOnBox?: boolean;
 }
 
-const ComentaryBox = (props: IComentaryBox) => {
+const ComentaryBox = (props: ComentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
 
   return (
