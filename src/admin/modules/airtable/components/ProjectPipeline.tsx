@@ -1,11 +1,12 @@
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import TextArea from "@/components/elements/Inputs/textArea/TextArea";
+import InputTextArea from "@/components/elements/Inputs/textArea/InputTextArea";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -17,36 +18,43 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Icon from "@/components/extensive/Icon/Icon";
 import ModalCloseLogo from "@/components/extensive/Modal/ModalWithClose";
 import { useModalContext } from "@/context/modal.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
+import {
+  useDeleteV2ProjectPipelineId,
+  useGetAuthMe,
+  useGetV2ProjectPipeline,
+  useGetV2ProjectPipelineId,
+  usePostV2ProjectPipeline,
+  usePutV2ProjectPipelineId
+} from "@/generated/apiComponents";
 
 const tabIndex = { TERRAFUND: 0, PRICELESS: 1, HARIT: 2, LAND: 3 };
+
+type ProjectPipelinePost = {
+  Name: string;
+  Description: string;
+  SubmittedBy: string;
+  Program: string;
+  Cohort: string;
+  PublishFor: string;
+  URL: string;
+};
+
+interface AuthMeResponse {
+  data: {
+    first_name: string;
+    last_name: string;
+  };
+}
+
+interface ProjectPipelineResponse {
+  data: [];
+}
 
 export interface tableProjectItemProps {
   name: string;
   description: string;
 }
-
-const airtableItemMenu = [
-  {
-    id: "1",
-    render: () => (
-      <div className="flex items-center gap-2">
-        <Icon name={IconNames.EDIT} className="h-6 w-6" />
-        <Text variant="text-12-bold">Edit</Text>
-      </div>
-    ),
-    onClick: () => {}
-  },
-  {
-    id: "2",
-    render: () => (
-      <div className="flex items-center gap-2">
-        <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
-        <Text variant="text-12-bold">Delete</Text>
-      </div>
-    ),
-    onClick: () => {}
-  }
-];
 
 const dropdownOptionsProgram = [
   {
@@ -70,118 +78,256 @@ const dropdownOptionsCohort = [
   }
 ];
 
-const tableData = [
-  {
-    name: {
-      name: "Harit Bharat Fund Base - 2023",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    date: "9 January 2024"
-  },
-  {
-    name: {
-      name: "Harit Bharat Fund Base - 2023",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    date: "9 January 2024"
-  },
-  {
-    name: {
-      name: "Harit Bharat Fund Base - 2023",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    date: "9 January 2024"
-  },
-  {
-    name: {
-      name: "Harit Bharat Fund Base - 2023",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    },
-    date: "9 January 2024"
-  }
-];
-
 const ProjectPipeline: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
+  const [formTitle, setFormTitle] = useState("Add New Pipeline");
+  const [buttonTitle, setButtonTitle] = useState("Submit Pipeline");
+  const [_, setDropdownValueProgram] = useState(1);
+  const [__, setDropdownValueCohort] = useState(1);
+  const form = useForm();
+  const { data: authMe } = useGetAuthMe({}) as { data: AuthMeResponse };
+  const [isEdit, setIsEdit] = useState(false);
+  const { data: projectsPipeline, refetch } = useGetV2ProjectPipeline<ProjectPipelineResponse>({});
+  console.log(_, __);
+  const { data: getProject } = useGetV2ProjectPipelineId({
+    pathParams: {
+      id: form.getValues("id")
+    }
+  });
+  const { mutate: postProject } = usePostV2ProjectPipeline({
+    onSuccess: () => {
+      openToast("Created!", ToastType.SUCCESS);
+    }
+  });
+  const { mutate: putProject } = usePutV2ProjectPipelineId({
+    onSuccess: () => {
+      openToast("Updated!", ToastType.SUCCESS);
+    },
+    onError: (e: any) => {
+      openToast("Error!", ToastType.ERROR);
+    }
+  });
+  const { mutate: remove } = useDeleteV2ProjectPipelineId();
+  const [searchTerm, setSearchTerm] = useState("");
+  const { openToast } = useToastContext();
+  const filteredProjects = projectsPipeline?.data?.filter(
+    (project: { name: { name: string | null; description: string | null } }) =>
+      project?.name?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      project?.name?.description?.toLowerCase().includes(searchTerm?.toLowerCase())
+  );
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+  const handleSubmit = async () => {
+    const requestBody: ProjectPipelinePost = {
+      Name: form.getValues("name"),
+      Description: form.getValues("description"),
+      SubmittedBy: form.getValues("submittedBy"),
+      Program: form.getValues("program") || "Terrafund",
+      Cohort: form.getValues("cohort") || "Top100",
+      PublishFor: form.getValues("publishFor"),
+      URL: form.getValues("url")
+    };
+    if (form.getValues("id")) {
+      putProject({
+        pathParams: {
+          id: form.getValues("id")
+        },
+        body: requestBody
+      });
+      setTimeout(() => {
+        alert("Project Updated");
+        closeModal();
+        form.reset();
+        refetch();
+      }, 3000);
+
+      // window.location.href = "admin#/projectPipeline";
+    } else {
+      postProject({ body: requestBody });
+      closeModal();
+      form.reset();
+      // window.location.href = "admin#/projectPipeline";
+      alert("Project Created");
+      setTimeout(() => {
+        refetch();
+      }, 3000);
+    }
+  };
+  const handleDelete = (projectId: string) => {
+    remove({
+      pathParams: {
+        id: projectId
+      }
+    });
+  };
+
+  const handleEdit = (id: string) => {
+    form.setValue("id", id);
+    setIsEdit(true);
+    openFormModalHandler();
+  };
+  const handleCohortChange = (e: any) => {
+    form.setValue("cohort", e == 1 ? "Top100" : "Top50");
+  };
+  const handleProgramChange = (e: any) => {
+    form.setValue("program", e == 1 ? "Terrafund" : "Terramatch");
+  };
+
+  const airtableItemMenu = [
+    {
+      id: "1",
+      is_airtable: true,
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.EDIT} className="h-6 w-6" />
+          <Text variant="text-12-bold">Edit</Text>
+        </div>
+      ),
+      onClick: (id: string) => {
+        handleEdit(id);
+      }
+    },
+    {
+      id: "2",
+      is_airtable: true,
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
+          <Text variant="text-12-bold">Delete</Text>
+        </div>
+      ),
+      onClick: (id: string) => {
+        handleDelete(id);
+      }
+    }
+  ];
+  useEffect(() => {
+    if (!isEdit) {
+      form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authMe]);
+  useEffect(() => {
+    if (isEdit && getProject?.data) {
+      setDropdownValueProgram(getProject.data.Program === "Terrafund" ? 1 : 2);
+      setDropdownValueCohort(getProject.data.Cohort === "Top100" ? 1 : 2);
+      form.setValue("name", getProject?.data?.name?.name);
+      form.setValue("description", getProject?.data?.name?.description);
+      form.setValue("submittedBy", getProject?.data?.SubmittedBy);
+      form.setValue("program", getProject?.data?.Program);
+      form.setValue("cohort", getProject?.data?.Cohort);
+      form.setValue("publishFor", getProject?.data?.PublishFor);
+      form.setValue("url", getProject?.data?.URL);
+    }
+    setFormTitle(!form.getValues("id") ? "Update Pipeline" : "Add New Pipeline");
+    setButtonTitle(!form.getValues("id") ? "Update Pipeline" : "Submit Pipeline");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getProject]);
+
   const openFormModalHandler = () => {
+    if (isEdit) {
+      form.reset();
+      form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
+    }
     openModal(
       <ModalCloseLogo
         className="w-[556px]"
-        title="Add New Pipeline"
-        onCLose={closeModal}
-        primaryButtonProps={{ children: "Submit Pipeline", className: "w-full text-white capitalize" }}
+        title={formTitle}
+        onCLose={() => {
+          closeModal();
+        }}
+        primaryButtonProps={{
+          children: buttonTitle,
+          className: "w-full text-white capitalize",
+          onClick: handleSubmit
+        }}
       >
-        <div className="flex w-full flex-col gap-4">
-          <Input
-            labelVariant="text-14-light"
-            labelClassName="capitalize"
-            label="Name"
-            placeholder="Input Name"
-            name="other"
-            type="text"
-            hideErrorMessage
-          />
-          <Input
-            label="Submitted by"
-            labelClassName="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Input Submitted by"
-            value="Ricardo Saavedra, November 14, 2023"
-            name="other"
-            type="text"
-          />
-          <TextArea
-            label="Description"
-            labelVariant="text-14-light"
-            labelClassName="capitalize"
-            placeholder="Input Description"
-            name=""
-            className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
-            containerClassName="w-full"
-            rows={3}
-          />
-          <Dropdown
-            label="Program"
-            labelClassName="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Select Program"
-            options={dropdownOptionsProgram}
-            defaultValue={[1]}
-            onChange={() => {}}
-          />
-          <Dropdown
-            label="Cohort"
-            labelClassName="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Select Cohort"
-            options={dropdownOptionsCohort}
-            defaultValue={[1]}
-            onChange={() => {}}
-          />
-          <Input
-            label="Publish For"
-            labelClassName="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Input Publish For"
-            onChange={() => {}}
-            name="other"
-            type="text"
-          />
-          <Input
-            label="URL"
-            labelClassName="capitalize"
-            labelVariant="text-14-light"
-            placeholder="Input URL"
-            onChange={() => {}}
-            name="other"
-            type="text"
-          />
-        </div>
+        <form method="POST" className="w-full">
+          <div className="flex w-full flex-col gap-4">
+            <Input
+              labelVariant="text-14-light"
+              labelClassName="capitalize"
+              label="Name"
+              placeholder="Input Name"
+              name="name"
+              type="text"
+              hideErrorMessage
+              formHook={form}
+              defaultValue={form.getValues("name")}
+              readOnly={false}
+            />
+            <Input
+              label="Submitted by"
+              labelClassName="capitalize"
+              labelVariant="text-14-light"
+              placeholder="Input Submitted by"
+              name="submittedBy"
+              type="text"
+              formHook={form}
+              defaultValue={form.getValues("submittedBy")}
+              readOnly={false}
+            />
+            <InputTextArea
+              label="Description"
+              labelVariant="text-14-light"
+              labelClassName="capitalize"
+              placeholder="Input Description"
+              name="description"
+              className="text-14-light max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 px-4 py-3"
+              containerClassName="w-full"
+              rows={3}
+              formHook={form}
+              defaultValue={form.getValues("description")}
+              readOnly={false}
+            />
+            <Dropdown
+              label="Program"
+              labelClassName="capitalize"
+              labelVariant="text-14-light"
+              placeholder="Select Program"
+              options={dropdownOptionsProgram}
+              defaultValue={[form.getValues("program") == "Terrafund" ? 2 : 1]}
+              onChange={handleProgramChange}
+              formHook={form}
+              customName="program"
+            />
+            <Dropdown
+              label="Cohort"
+              labelClassName="capitalize"
+              labelVariant="text-14-light"
+              placeholder="Select Cohort"
+              options={dropdownOptionsCohort}
+              defaultValue={[form.getValues("cohort") == "Top100" ? 2 : 1]}
+              onChange={handleCohortChange}
+              formHook={form}
+              customName="cohort"
+            />
+            <Input
+              label="Publish For"
+              labelClassName="capitalize"
+              labelVariant="text-14-light"
+              placeholder="Input Publish For"
+              name="publishFor"
+              type="text"
+              formHook={form}
+              defaultValue={form.getValues("publishFor")}
+              readOnly={false}
+            />
+            <Input
+              label="URL"
+              labelClassName="capitalize"
+              labelVariant="text-14-light"
+              placeholder="Input URL"
+              name="url"
+              type="text"
+              formHook={form}
+              defaultValue={form.getValues("url")}
+              readOnly={false}
+            />
+          </div>
+        </form>
       </ModalCloseLogo>
     );
   };
@@ -208,7 +354,12 @@ const ProjectPipeline: FC = () => {
             <Text variant="text-24-bold">AFR100 References</Text>
             <Text variant="text-16-light">Access publicly available curated infographics and dashboards. </Text>
           </div>
-          <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+          <FilterSearchBox
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search"
+            variant={FILTER_SEARCH_BOX_AIRTABLE}
+          />
         </div>
         <div className="mb-4 flex items-center gap-8">
           <Button variant="text" onClick={() => setSelected(tabIndex.TERRAFUND)}>
@@ -257,7 +408,7 @@ const ProjectPipeline: FC = () => {
         </div>
         <When condition={selected === tabIndex.TERRAFUND}>
           <div className="rounded-lg border border-neutral-200">
-            <Table
+            <Table<any>
               variant={VARIANT_TABLE_AIRTABLE}
               columns={[
                 {
@@ -265,12 +416,17 @@ const ProjectPipeline: FC = () => {
                   accessorKey: "name",
                   enableSorting: false,
                   cell: props => {
-                    const value = props.getValue() as tableProjectItemProps;
+                    const value = props?.getValue() as tableProjectItemProps;
                     return (
                       <div className="flex items-center gap-4">
                         <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
                         <div>
-                          <div className="flex items-center gap-1">
+                          <div
+                            className="flex items-center gap-1"
+                            onClick={() => {
+                              window.open(props.row.original.URL, "_blank");
+                            }}
+                          >
                             <Text variant="text-14-semibold">{value.name}</Text>
                             <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-neutral-950" />
                           </div>
@@ -312,7 +468,7 @@ const ProjectPipeline: FC = () => {
                   )
                 }
               ]}
-              data={tableData}
+              data={filteredProjects || projectsPipeline?.data || []}
             ></Table>
           </div>
         </When>

@@ -31837,6 +31837,208 @@ export const useGetV2TerrafundPolygonGeojsonUuid = <TData = Schemas.GeojsonData>
   );
 };
 
+export type GetV2ProjectPipelineQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2ProjectPipelineError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectPipelineResponse = Schemas.ProjectPipeline[];
+
+export type GetV2ProjectPipelineVariables = {
+  queryParams?: GetV2ProjectPipelineQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectPipeline = (variables: GetV2ProjectPipelineVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, undefined, {}, GetV2ProjectPipelineQueryParams, {}>(
+    { url: "/v2/project-pipeline", method: "get", ...variables, signal }
+  );
+
+export const useGetV2ProjectPipeline = <TData = GetV2ProjectPipelineResponse>(
+  variables: GetV2ProjectPipelineVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, TData>(
+    queryKeyFn({ path: "/v2/project-pipeline", operationId: "getV2ProjectPipeline", variables }),
+    ({ signal }) => fetchGetV2ProjectPipeline({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2ProjectPipelineQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type PostV2ProjectPipelineError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2ProjectPipelineVariables = {
+  body?: RequestBodies.PostV2FprojectPipeline;
+  queryParams?: PostV2ProjectPipelineQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2ProjectPipeline = (variables: PostV2ProjectPipelineVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.ProjectPipelinePost,
+    PostV2ProjectPipelineError,
+    RequestBodies.PostV2FprojectPipeline,
+    {},
+    PostV2ProjectPipelineQueryParams,
+    {}
+  >({ url: "/v2/project-pipeline", method: "post", ...variables, signal });
+
+export const usePostV2ProjectPipeline = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.ProjectPipelinePost,
+      PostV2ProjectPipelineError,
+      PostV2ProjectPipelineVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.ProjectPipelinePost,
+    PostV2ProjectPipelineError,
+    PostV2ProjectPipelineVariables
+  >(
+    (variables: PostV2ProjectPipelineVariables) => fetchPostV2ProjectPipeline({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2ProjectPipelineIdPathParams = {
+  /**
+   * show a specific project pipeline.
+   */
+  id: string;
+};
+
+export type GetV2ProjectPipelineIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectPipelineIdVariables = {
+  pathParams: GetV2ProjectPipelineIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectPipelineId = (variables: GetV2ProjectPipelineIdVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.ProjectPipeline, GetV2ProjectPipelineIdError, undefined, {}, {}, GetV2ProjectPipelineIdPathParams>({
+    url: "/v2/project-pipeline/{id}",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2ProjectPipelineId = <TData = Schemas.ProjectPipeline>(
+  variables: GetV2ProjectPipelineIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.ProjectPipeline, GetV2ProjectPipelineIdError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.ProjectPipeline, GetV2ProjectPipelineIdError, TData>(
+    queryKeyFn({ path: "/v2/project-pipeline/{id}", operationId: "getV2ProjectPipelineId", variables }),
+    ({ signal }) => fetchGetV2ProjectPipelineId({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PutV2ProjectPipelineIdPathParams = {
+  /**
+   * edit a specific project pipeline.
+   */
+  id: string;
+};
+
+export type PutV2ProjectPipelineIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2ProjectPipelineIdVariables = {
+  body?: RequestBodies.PostV2FprojectPipeline;
+  pathParams: PutV2ProjectPipelineIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2ProjectPipelineId = (variables: PutV2ProjectPipelineIdVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.ProjectPipelinePost,
+    PutV2ProjectPipelineIdError,
+    RequestBodies.PostV2FprojectPipeline,
+    {},
+    {},
+    PutV2ProjectPipelineIdPathParams
+  >({ url: "/v2/project-pipeline/{id}", method: "put", ...variables, signal });
+
+export const usePutV2ProjectPipelineId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.ProjectPipelinePost,
+      PutV2ProjectPipelineIdError,
+      PutV2ProjectPipelineIdVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.ProjectPipelinePost,
+    PutV2ProjectPipelineIdError,
+    PutV2ProjectPipelineIdVariables
+  >(
+    (variables: PutV2ProjectPipelineIdVariables) => fetchPutV2ProjectPipelineId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2ProjectPipelineIdPathParams = {
+  /**
+   * delete a specific project pipeline.
+   */
+  id: string;
+};
+
+export type DeleteV2ProjectPipelineIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ProjectPipelineIdVariables = {
+  pathParams: DeleteV2ProjectPipelineIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ProjectPipelineId = (variables: DeleteV2ProjectPipelineIdVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2ProjectPipelineIdError, undefined, {}, {}, DeleteV2ProjectPipelineIdPathParams>({
+    url: "/v2/project-pipeline/{id}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2ProjectPipelineId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2ProjectPipelineIdError, DeleteV2ProjectPipelineIdVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2ProjectPipelineIdError, DeleteV2ProjectPipelineIdVariables>(
+    (variables: DeleteV2ProjectPipelineIdVariables) =>
+      fetchDeleteV2ProjectPipelineId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -32317,4 +32519,14 @@ export type QueryOperation =
       path: "/v2/terrafund/polygon/geojson/{uuid}";
       operationId: "getV2TerrafundPolygonGeojsonUuid";
       variables: GetV2TerrafundPolygonGeojsonUuidVariables;
+    }
+  | {
+      path: "/v2/project-pipeline";
+      operationId: "getV2ProjectPipeline";
+      variables: GetV2ProjectPipelineVariables;
+    }
+  | {
+      path: "/v2/project-pipeline/{id}";
+      operationId: "getV2ProjectPipelineId";
+      variables: GetV2ProjectPipelineIdVariables;
     };

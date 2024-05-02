@@ -3,6 +3,8 @@
  *
  * @version 1.0.0
  */
+import type * as Schemas from "./apiSchemas";
+
 export type PutV2AdminUpdateRequestsUuidStatusBody = {
   feedback?: string;
   feedback_fields?: string[];
@@ -326,3 +328,5 @@ export type GetV2FundingProgrammeIDBody = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type PostV2FprojectPipeline = Schemas.ProjectPipelinePost;
