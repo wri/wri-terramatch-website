@@ -29,7 +29,7 @@ const TooltipMap = (props: TooltipMapProps) => {
       }}
     >
       <button onClick={setTooltipOpen} className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800">
-        <Icon name={IconNames.CLEAR} className="h-3 w-3 text-grey-400" />
+        <Icon name={IconNames.CLEAR} className="h-3 w-3 text-darkCustom-100" />
       </button>
 
       <div className="text-10 flex items-center justify-center gap-1">

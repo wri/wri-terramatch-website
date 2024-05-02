@@ -16,7 +16,9 @@ const Page = () => {
   const [selectedOption, setSelectedOption] = useState<string>();
   const [selectedTitleOption, setSelectedTitleOption] = useState<string>();
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({});
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: { country: "all" }
+  });
   const refContentCard = React.useRef<HTMLDivElement>(null);
 
   const updatedUserRolInfo = UserRolInfo.map((user, index) => {

@@ -89,7 +89,7 @@ const Button: FC<IButtonProps> = props => {
         };
       case "white-page-admin":
         return {
-          container: "py-2 px-3 bg-white rounded-lg text-grey-400 border border-grey-750 hover:bg-grey-900",
+          container: "py-2 px-3 bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900",
           span: "flex items-center text-bold-caption-200 text-inherit uppercase"
         };
       case "sky":
@@ -100,7 +100,7 @@ const Button: FC<IButtonProps> = props => {
       case "sky-page-admin":
         return {
           container:
-            "group py-2 px-3 bg-primary-200 rounded-lg text-grey-400 border border-grey-750 hover:text-primary-500",
+            "group py-2 px-3 bg-primary-200 rounded-lg text-darkCustom-100 border border-grey-750 hover:text-primary-500",
           span: "flex items-center text-bold-caption-200 text-inherit uppercase"
         };
       case "text":
@@ -136,12 +136,12 @@ const Button: FC<IButtonProps> = props => {
       case "white-toggle":
         return {
           container: "group bg-white py-1 px-3 rounded",
-          span: "text-14-semibold text-grey-300"
+          span: "text-14-semibold text-darkCustom"
         };
       case "transparent-toggle":
         return {
           container: "group bg-transparent px-3 py-1 rounded",
-          span: "text-14-light text-grey-400"
+          span: "text-14-light text-darkCustom-100"
         };
       default:
         return { container: "", span: "" };

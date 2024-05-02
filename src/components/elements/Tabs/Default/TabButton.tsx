@@ -41,7 +41,7 @@ export const TabButton = ({
           ? `border-l-4 border-l-[#27A9E0]
           bg-white text-neutral-1000`
           : item.done
-          ? `border border-greenCustom-100 border-b-greenCustom-100  bg-greenCustom-50 `
+          ? `border border-green-100  bg-green-50 `
           : `bg-[rgba(0, 0, 0, 0.03)] border-b-[rgba(0, 0, 0, 0.03)] border-l-4 border-b-2 border-white border-l-transparent text-neutral-900`
       )}
     >
@@ -49,7 +49,7 @@ export const TabButton = ({
         {item.title}
       </Text>
       <When condition={item.done}>
-        <Icon className=" text-greenCustom-100" name={IconNames.APPROVED_COLORLESS} width={20} />
+        <Icon className="text-green-100 " name={IconNames.APPROVED_COLORLESS} width={20} />
       </When>
     </button>
   );

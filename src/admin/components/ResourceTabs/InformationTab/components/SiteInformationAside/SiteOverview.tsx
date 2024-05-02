@@ -15,7 +15,7 @@ const SiteOverview: FC = () => {
   return (
     <>
       <Card sx={{ padding: 3.75 }} className="!shadow-none">
-        <Text variant="text-16-semibold" className="mb-6 text-grey-300">
+        <Text variant="text-16-semibold" className="mb-6 text-darkCustom">
           Site Overview
         </Text>
 

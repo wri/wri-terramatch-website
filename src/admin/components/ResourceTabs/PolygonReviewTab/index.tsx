@@ -350,10 +350,10 @@ const PolygonReviewTab: FC<IProps> = props => {
                 <div className="flex items-start gap-3">
                   <div className="w-full">
                     <div className="mb-2">
-                      <Text variant="text-16-bold" className="mb-2 text-grey-300">
+                      <Text variant="text-16-bold" className="mb-2 text-darkCustom">
                         Polygon Review
                       </Text>
-                      <Text variant="text-14-light" className="text-grey-300">
+                      <Text variant="text-14-light" className="text-darkCustom">
                         Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
                         below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
                         application.
@@ -393,7 +393,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </div>
                   </div>
                   <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
-                    <Text variant="text-14" className="mb-3 text-grey-250">
+                    <Text variant="text-14" className="mb-3 text-blueCustom-250">
                       Site Status
                     </Text>
                     <div className="h-fit w-full">
@@ -411,10 +411,10 @@ const PolygonReviewTab: FC<IProps> = props => {
                 />
                 <div className="mb-6">
                   <div className="mb-4">
-                    <Text variant="text-16-bold" className="mb-2 text-grey-300">
+                    <Text variant="text-16-bold" className="mb-2 text-darkCustom">
                       Site Attribute Table
                     </Text>
-                    <Text variant="text-14-light" className="text-grey-300">
+                    <Text variant="text-14-light" className="text-darkCustom">
                       Edit attribute table for all polygons quickly through the table below. Alternatively, open a
                       polygon and edit the attributes in the map above.
                     </Text>

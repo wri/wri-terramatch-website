@@ -42,7 +42,7 @@ const QuickActions: FC = () => {
   return (
     <Card className="!shadow-none">
       <Box paddingX={3.75} paddingY={2}>
-        <Text variant="text-16-semibold" className="text-grey-300">
+        <Text variant="text-16-semibold" className="text-darkCustom">
           Quick Actions
         </Text>
       </Box>

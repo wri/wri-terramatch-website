@@ -106,7 +106,7 @@
 }
 
 .RaDatagrid-rowCell span{
-  @apply text-sm font-normal lg:text-base wide:text-md tracking-normal text-grey-300
+  @apply text-sm font-normal lg:text-base wide:text-md tracking-normal text-darkCustom
 }
 
 .RaList-content {
@@ -122,7 +122,7 @@
 }
 
 .RaSidebar-fixed a {
-  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 text-grey-300 text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400 hover:bg-[#FAFAFB];
+  @apply rounded-lg border-l-[3px] border-transparent border-solid px-3 mx-3 text-darkCustom text-sm font-normal lg:text-base wide:text-md tracking-normal hover:font-bold hover:text-primary-400 hover:bg-[#FAFAFB];
 }
 .Sidebar-active a {
   @apply !border-primary-500 !bg-primary-200 font-bold !text-primary-400
@@ -214,11 +214,11 @@
 }
 
 .MuiTabs-flexContainer a{
-  @apply text-grey-300 text-sm lg:text-base wide:text-md capitalize !mx-4 !px-0 
+  @apply text-darkCustom text-sm lg:text-base wide:text-md capitalize !mx-4 !px-0 
 }
 
 .MuiTabs-flexContainer .Mui-selected{
-  @apply font-bold !text-grey-300
+  @apply font-bold !text-darkCustom
 }
 
 .MuiTabs-indicator {
@@ -245,7 +245,7 @@
 }
 
 .label-field-aside > span{
- @apply text-sm font-medium lg:text-base wide:text-md text-grey-300 font-primary
+ @apply text-sm font-medium lg:text-base wide:text-md text-darkCustom font-primary
 }
 
 .RaAppBar-menuButton svg{

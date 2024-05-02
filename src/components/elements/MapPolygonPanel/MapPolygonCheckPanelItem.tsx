@@ -142,15 +142,15 @@ const MapPolygonCheckPanelItem = ({
   const dynamicClasses = (status: string) => {
     switch (status) {
       case "Submitted":
-        return "bg-blueCustom-200";
+        return "bg-blue";
       case "Approved":
-        return "bg-greenCustom-200";
+        return "bg-green";
       case "Needs More Info":
         return "bg-tertiary-600";
       case "Draft":
         return "bg-pinkCustom";
       default:
-        return "bg-blueCustom-200 ";
+        return "bg-blue ";
     }
   };
 

@@ -34,7 +34,7 @@ export interface IPolygonProps {
   polygonFromMap?: IpolygonFromMap;
 }
 const statusColor = {
-  Draft: "bg-purple",
+  Draft: "bg-pinkCustom",
   Submitted: "bg-blue",
   Approved: "bg-green",
   "Needs More Info": "bg-tertiary-600"
@@ -258,7 +258,7 @@ const Polygons = (props: IPolygonProps) => {
         <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
-        <Text variant="text-16-bold" className="pl-2 text-grey-300">
+        <Text variant="text-16-bold" className="pl-2 text-darkCustom">
           Polygons
         </Text>
         <Button variant="text" onClick={openFormModalHandlerAddPolygon}>
