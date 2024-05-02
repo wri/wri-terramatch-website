@@ -79,7 +79,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
-  const [estimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
+  const [estimatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
   const formattedArea =
     estimatedArea && estimatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
