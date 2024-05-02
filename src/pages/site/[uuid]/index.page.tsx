@@ -96,7 +96,7 @@ const SiteDetailPage = () => {
         title={site.name}
         subtitles={[
           `${t("Organisation")}: ${site.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : t("Terrafund")
+          isPPC ? t("Priceless Planet Coalition") : t("TerraFund")
         ]}
         hasBackButton={false}
       >

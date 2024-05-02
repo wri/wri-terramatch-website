@@ -75,7 +75,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
               {project.framework_key === "ppc"
                 ? t("Priceless Planet Coalition")
                 : project.framework_key === "terrafund"
-                ? t("Terrafund")
+                ? t("TerraFund")
                 : project.framework_key}
             </Text>
           </div>
