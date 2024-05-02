@@ -136,7 +136,7 @@ const Button: FC<IButtonProps> = props => {
       case "white-toggle":
         return {
           container: "group bg-white py-1 px-3 rounded",
-          span: "text-14-semibold text-grey-300"
+          span: "text-14-semibold text-darkCustom"
         };
       case "transparent-toggle":
         return {

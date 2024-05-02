@@ -18,7 +18,7 @@ const HighLevelMetics: FC = () => {
     <Card className="!shadow-none">
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
-          <Text variant="text-16-semibold" className="text-grey-300">
+          <Text variant="text-16-semibold" className="text-darkCustom">
             High Level Metrics
           </Text>
           <When condition={isPPC}>

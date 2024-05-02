@@ -11,7 +11,7 @@ const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
   return (
     <>
-      <Text variant="text-16-semibold" className="text-grey-300">
+      <Text variant="text-16-semibold" className="text-darkCustom">
         {props.step.title}
       </Text>
       <List
@@ -28,7 +28,7 @@ const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
               <Then>
                 <Text
                   variant="text-14-semibold"
-                  className="text-grey-300"
+                  className="text-darkCustom"
                   dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }}
                 />
               </Then>
