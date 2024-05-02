@@ -23057,7 +23057,7 @@ export type SitePolygon = {
   /**
    * @format float
    */
-  est_area?: number;
+  calc_area?: number;
   /**
    * @format date-time
    */
@@ -23125,7 +23125,7 @@ export type SitePolygonResponse = {
   /**
    * @format float
    */
-  est_area?: number;
+  calc_area?: number;
 };
 
 export type GeometryData = {
