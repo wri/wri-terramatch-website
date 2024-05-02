@@ -11,7 +11,7 @@ import Map from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { fetchGetV2TerrafundPolygonBboxUuid, fetchGetV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundPolygonBboxUuid, fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -59,7 +59,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   useEffect(() => {
     const getPolygonData = async () => {
       if (polygonSelected) {
-        const polygonGeojson = await fetchGetV2TerrafundPolygonUuid({
+        const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
           pathParams: { uuid: polygonSelected }
         });
         setInitialPolygonData(polygonGeojson);
