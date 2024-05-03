@@ -193,6 +193,7 @@ const Menu = (props: MenuProps) => {
           {menu?.map(item => (
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
+              selected={selectedOption === (item?.country_slug || item?.data?.label)}
               key={item.id}
               render={
                 (console.log(item?.data),
@@ -202,7 +203,7 @@ const Menu = (props: MenuProps) => {
                       src={`${item?.data?.icon?.toLowerCase()}`}
                       className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
                       alt="info"
-                    />{" "}
+                    />
                     {item?.data?.label}
                   </div>
                 ) : (

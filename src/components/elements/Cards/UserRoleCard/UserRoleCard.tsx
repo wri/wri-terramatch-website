@@ -72,7 +72,6 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
           {description}
         </Text>
         <When condition={!!titleOptions}>
-          {diplayTitle}
           <Menu
             menu={MenuOption}
             setSelectedOption={setSelectedOption}
@@ -82,6 +81,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
           >
             <Text variant="text-12-bold" className="text-primary">
               {titleOptions || "Select Fund"}
+              {diplayTitle ? `: ${diplayTitle}` : ""}
             </Text>
           </Menu>
         </When>

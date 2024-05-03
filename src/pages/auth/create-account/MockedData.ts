@@ -17,8 +17,8 @@ export const UserRolInfo = [
     title: "I’m a Funder/Investor",
     description: "Evaluate ROI, aid strategic investment decisions and guide funding priorities.",
     menu: [
-      { id: "1", data: { label: "ppc" } },
-      { id: "2", data: { label: "terrafund" } }
+      { id: "1", data: { label: "PPC" } },
+      { id: "2", data: { label: "TerraFund" } }
     ],
     titleOption: "Select Framework"
   }
