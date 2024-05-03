@@ -185,7 +185,7 @@ const ProjectPipeline: FC = () => {
     form.reset();
     form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
     setIsEdit(true);
-    openFormModalHandler("Create Record", "Create Record");
+    openFormModalHandler("Add New Project Pipeline", "Save Project Pipeline");
   };
   const handleCohortChange = (e: any) => {
     form.setValue("cohort", e == 1 ? "Top100" : "Top50");
