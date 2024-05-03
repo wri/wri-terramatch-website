@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
-import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Map from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
@@ -23,7 +23,7 @@ export const ModalBaseWithMap: FC<ModalBaseProps> = ({ children, className, ...r
     <div
       {...rest}
       className={twMerge(
-        "margin-4 z-50 m-auto flex h-[700px] max-h-full w-[80vw] flex-col items-center justify-start overflow-hidden rounded-lg border-2 border-neutral-100 bg-white",
+        "margin-4 z-50 m-auto flex h-[504px] max-h-full w-[80vw] flex-col items-center justify-start overflow-hidden rounded-lg border-2 border-neutral-100 bg-white wide:h-[700px]",
         className
       )}
     >
@@ -75,7 +75,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
     if (initialPolygonData) {
       const selectedPolygon: any = {};
       const entry = initialPolygonData?.site_polygon;
-      selectedPolygon[entry.status] = entry.poly_id;
+      selectedPolygon[entry?.status] = entry?.poly_id;
       setPolygonData(selectedPolygon);
     }
   }, [initialPolygonData]);
@@ -118,7 +118,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             </Text>
             <FileInput
               descriptionInput="Drag and drop documents or images to help reviewer"
-              variant={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+              variant={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP}
               onDelete={file =>
                 setFiles(state => {
                   const tmp = [...state];

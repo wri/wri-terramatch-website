@@ -67,7 +67,7 @@ const FilePreviewCard = ({
           <Lottie animationData={SpinnerLottie} className="h-8 w-8" />
         </Then>
         <Else>
-          <div className="flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-4 self-end">
             <IconButton
               type="button"
               onClick={() => onDelete?.(file)}
@@ -81,9 +81,10 @@ const FilePreviewCard = ({
             />
             <When condition={variant.type === "image"}>
               <div
-                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
+                className={classNames("flex items-center justify-center rounded border py-2", {
                   "border-blue": image.isVerified,
-                  "border-red": !image.isVerified
+                  "border-red": !image.isVerified,
+                  "w-[146px]": variant.typeModal === "UploadImage"
                 })}
               >
                 <Text
