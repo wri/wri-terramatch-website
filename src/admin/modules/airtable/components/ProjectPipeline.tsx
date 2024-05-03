@@ -246,7 +246,6 @@ const ProjectPipeline: FC = () => {
     setRefreshKey(prevKey => prevKey + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch, projectsPipeline]);
-
   const openFormModalHandler = (title: string, buttonName: string) => {
     openModal(
       <ModalCloseLogo
@@ -424,10 +423,11 @@ const ProjectPipeline: FC = () => {
           </Button> */}
         </div>
         <When condition={selected === tabIndex.TERRAFUND}>
-          <div className="rounded-lg border border-neutral-200" ref={tableRef}>
+          <div ref={tableRef}>
             <Table<any>
               key={refreshKey}
               variant={VARIANT_TABLE_AIRTABLE}
+              classNameWrapper="rounded-lg border border-neutral-200"
               columns={[
                 {
                   header: "Project Name",
@@ -445,15 +445,19 @@ const ProjectPipeline: FC = () => {
                         </div>
                         <div>
                           <div
-                            className="flex items-center gap-1"
+                            className="group flex cursor-pointer items-center gap-1"
                             onClick={() => {
                               window.open(props.row.original.URL, "_blank");
                             }}
                           >
-                            <Text variant="text-14-semibold">{value.name}</Text>
-                            <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-blueCustom-900" />
+                            <Text variant="text-14-semibold" className="group-hover:text-primary">
+                              {value.name}
+                            </Text>
+                            <Icon
+                              name={IconNames.LINK_PA}
+                              className="h-3 w-3 text-blueCustom-900 group-hover:text-primary"
+                            />
                           </div>
-
                           <Text variant="text-14-light" className="opacity-50">
                             {value.description}
                           </Text>

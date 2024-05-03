@@ -1,3 +1,5 @@
+import { VARIANT_PAGINATION_TEXT_16, VariantPagination } from "@/components/extensive/Pagination/PaginationVariant";
+
 export interface TableVariant {
   tableWrapper?: string;
   name: string;
@@ -8,6 +10,7 @@ export interface TableVariant {
   tdBody?: string;
   thHeader?: string;
   thead?: string;
+  paginationVariant?: VariantPagination;
 }
 
 export const VARIANT_TABLE_PRIMARY = {
@@ -76,7 +79,8 @@ export const VARIANT_TABLE_AIRTABLE = {
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 lastRow",
   tdBody: "text-16-light px-6 py-3",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_TEXT_16
 };
 
 export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
