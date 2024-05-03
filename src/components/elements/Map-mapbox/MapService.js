@@ -48,7 +48,7 @@ class MapService {
     return this.map;
   }
 
-  addSource(layer, polygonData, setIsOpenEditPolygon) {
+  addSource(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
     const { name, styles } = layer;
     if (!this.styleLoaded) {
       this.sourceQueue.push(layer);
@@ -68,7 +68,7 @@ class MapService {
     styles?.forEach((style, index) => {
       this.addLayerStyle(name, style, index);
     });
-    this.onclickGeom(layer, polygonData, setIsOpenEditPolygon);
+    this.onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
   }
 
   addLayerStyle(sourceName, style, index) {
@@ -79,7 +79,10 @@ class MapService {
       ...style
     });
   }
-  onclickGeom(layer, polygonData, setIsOpenEditPolygon) {
+  onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
+    if (!canClickGeoms) {
+      return;
+    }
     let popup;
     const { name, styles } = layer;
     const layersNames = styles.map((_, index) => `${name}-${index}`);

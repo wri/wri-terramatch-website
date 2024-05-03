@@ -97,7 +97,7 @@ export const Map = ({
       const onLoad = () => {
         layersList.forEach((layer: any) => {
           if (ref.current) {
-            ref.current.addSource(layer, sitePolygonData, setPolygonFromMap);
+            ref.current.addSource(layer, sitePolygonData, setPolygonFromMap, hasControls);
           }
         });
       };
@@ -141,8 +141,9 @@ export const Map = ({
   const zoomToBbox = (bbox: any) => {
     if (ref.current && ref.current.map && bbox) {
       ref.current.map.fitBounds(bbox, {
-        padding: 100,
-        linear: false
+        padding: hasControls ? 100 : 30,
+        linear: false,
+        animate: hasControls ? true : false
       });
     }
   };
