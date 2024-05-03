@@ -179,8 +179,9 @@ export const Map = ({
       const geojson = ref.current.draw.getAll();
       if (geojson) {
         if (polygonFromMap?.uuid) {
+          const feature = geojson.features[0];
           const response = await fetchPutV2TerrafundPolygonUuid({
-            body: { geometry: JSON.stringify(geojson) },
+            body: { geometry: JSON.stringify(feature) },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           if (response.message == "Geometry updated successfully.") {
