@@ -23041,7 +23041,6 @@ export type SitePolygon = {
   poly_name?: string;
   site_id?: string;
   site_name?: string;
-  poly_label?: string;
   /**
    * @format date
    */
@@ -23058,10 +23057,6 @@ export type SitePolygon = {
    * @format float
    */
   calc_area?: number;
-  /**
-   * @format date-time
-   */
-  date_modified?: string;
   created_by?: string;
   last_modified_by?: string;
   /**
@@ -23188,4 +23183,35 @@ export type ProjectPipelinePost = {
    * @format date
    */
   ModifiedDate?: string;
+};
+
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type Feature = {
+  type?: string;
+  geometry?: Geometry;
+  properties?: FeatureProperties;
+};
+
+export type Geometry = {
+  type?: string;
+  coordinates?: number[][][];
+};
+
+export type FeatureProperties = {
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
 };
