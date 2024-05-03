@@ -32,6 +32,7 @@ export interface IpolygonFromMap {
 export interface IPolygonProps {
   menu: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
+  setPolygonFromMap?: any;
 }
 const statusColor = {
   Draft: "bg-pinkCustom",
@@ -49,24 +50,24 @@ export const polygonData = [
 ];
 
 const Polygons = (props: IPolygonProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const polygonFromMap = props.polygonFromMap;
+  const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
+  const { polygonFromMap, setPolygonFromMap } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpenPolygonDrawer) {
       setSelectedPolygon(undefined);
     }
-  }, [isOpen]);
+  }, [isOpenPolygonDrawer]);
 
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
       setSelectedPolygon(props.menu.find(polygon => polygon.uuid === polygonFromMap.uuid));
-      setIsOpen(true);
+      setIsOpenPolygonDrawer(true);
     } else {
-      setIsOpen(false);
+      setIsOpenPolygonDrawer(false);
     }
   }, [polygonFromMap]);
 
@@ -186,7 +187,8 @@ const Polygons = (props: IPolygonProps) => {
       ),
       onClick: () => {
         setSelectedPolygon(item);
-        return setIsOpen(true);
+        setPolygonFromMap({ isOpen: true, uuid: item.uuid });
+        setIsOpenPolygonDrawer(true);
       }
     },
     {
@@ -254,7 +256,7 @@ const Polygons = (props: IPolygonProps) => {
 
   return (
     <div>
-      <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">

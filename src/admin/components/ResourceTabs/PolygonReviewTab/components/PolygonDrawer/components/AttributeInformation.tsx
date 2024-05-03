@@ -120,8 +120,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         practice: restorationPracticeToSend,
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
-        num_trees: treesPlanted,
-        est_area: estimatedArea
+        num_trees: treesPlanted
       };
       await fetchPutV2TerrafundSitePolygonUuid({
         body: updatedPolygonData,

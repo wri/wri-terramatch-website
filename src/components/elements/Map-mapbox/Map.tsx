@@ -15,7 +15,10 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 
+import EditControl from "./MapControls/EditControl";
+import { FilterControl } from "./MapControls/FilterControl";
 // import { useSitePolygonData } from "@/context/sitePolygon.provider";
 // import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import ImageControl from "./MapControls/ImageControl";
@@ -24,6 +27,7 @@ import SiteStatus from "./MapControls/SiteStatus";
 import { StyleControl } from "./MapControls/StyleControl";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
+import { GeoJSONLayer } from "./MapLayers/GeoJSONLayer";
 import _MapService from "./MapService";
 
 mapboxgl.accessToken =
@@ -55,7 +59,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   centroids?: any;
   polygonsData?: any[];
   bbox?: any;
-  setPolygonMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
+  setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
+  polygonFromMap?: { uuid: string; isOpen: boolean };
 }
 
 export const Map = ({
@@ -75,16 +80,11 @@ export const Map = ({
   polygonChecks = false,
   ...props
 }: MapProps) => {
-  // const { polygonsData, bbox, setPolygonMap } = props;
   const ref = useRef<typeof _MapService | null>(null);
-  // const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
-  const { polygonsData, bbox, setPolygonMap } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
-  // const { openModal, closeModal } = useModalContext();
-  // const [tooltipOpen, setTooltipOpen] = useState(true);
   const sitePolygonData = useSitePolygonData();
-  const [isOpenEditPolygon, setIsOpenEditPolygon] = useState({ uuid: "", isOpen: false });
 
   useEffect(() => {
     if (!ref.current) {
@@ -93,7 +93,7 @@ export const Map = ({
       const onLoad = () => {
         layersList.forEach((layer: any) => {
           if (ref.current) {
-            ref.current.addSource(layer, sitePolygonData, setIsOpenEditPolygon);
+            ref.current.addSource(layer, sitePolygonData, setPolygonFromMap, hasControls);
           }
         });
       };
@@ -109,9 +109,8 @@ export const Map = ({
       }
     };
   }, []);
-
-  useEffect(() => {
-    if (polygonsData && ref.current && ref.current.map) {
+  const addFilterOfPolygonsData = () => {
+    if (ref.current && ref.current.map) {
       if (ref.current && ref.current.map.loaded()) {
         ref.current.addFilterOnLayer(
           layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
@@ -128,19 +127,19 @@ export const Map = ({
         });
       }
     }
-  }, [polygonsData]);
-
+  };
   useEffect(() => {
-    if (setPolygonMap) {
-      setPolygonMap(isOpenEditPolygon);
+    if (polygonsData) {
+      addFilterOfPolygonsData();
     }
-  }, [isOpenEditPolygon]);
+  }, [polygonsData]);
 
   const zoomToBbox = (bbox: any) => {
     if (ref.current && ref.current.map && bbox) {
       ref.current.map.fitBounds(bbox, {
-        padding: 100,
-        linear: false
+        padding: hasControls ? 100 : 30,
+        linear: false,
+        animate: hasControls ? true : false
       });
     }
   };
@@ -149,73 +148,86 @@ export const Map = ({
       zoomToBbox(bbox);
     }
   }, [bbox]);
-  // const validateGeoJSON = function (map: IMap, source: string) {
-  //   if (!editable) return;
-
-  //   const errors: { [index: string | number]: ValidationError | undefined } = {};
-  //   const features = map.querySourceFeatures(source);
-
-  //   for (const feature of features) {
-  //     if (typeof feature.id === "undefined" || feature.id === null || feature.properties?.meta !== "feature") return;
-
-  //     try {
-  //       user_shapePropertiesValidationSchema.validateSync(feature.properties);
-  //       errors[feature.id!] = undefined;
-  //       map.setFeatureState({ id: feature.id, source }, { error: false });
-  //     } catch (error) {
-  //       map.setFeatureState({ id: feature.id, source }, { error: true });
-  //       errors[feature.id!] = error as ValidationError;
-  //     }
-  //   }
-
-  //   onError(Object.values(errors).filter(error => !!error).length > 0, errors);
-  // };
-
-  // const onLoadMap = (map: IMap, draw?: MapboxDraw) => {
-  //   map.on("draw.selectionchange", function (e) {
-  //     const isSelected = e.features.length > 0;
-
-  //     if (isSelected && draw?.getMode() === "simple_select") {
-  //       draw.changeMode(draw.modes.DIRECT_SELECT, { featureId: e.features[0].id });
-  //     }
-  //   });
-
-  //   map.on("draw.upload", function () {
-  //     onGeojsonChange?.(draw?.getAll());
-  //   });
-
-  //   map.on("draw.clear", function () {
-  //     onGeojsonChange?.(null);
-  //   });
-
-  //   map.on("draw.create", function () {
-  //     onGeojsonChange?.(draw?.getAll());
-  //   });
-
-  //   map.on("draw.update", function () {
-  //     onGeojsonChange?.(draw?.getAll());
-  //   });
-
-  //   if (captureAdditionalPolygonProperties) {
-  //     map.on("data", function () {
-  //       validateGeoJSON(map, MapboxDraw.constants.sources.COLD);
-  //     });
-  //   }
-  // };
+  const handleEditPolygon = async () => {
+    if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
+      const polygonuuid = polygonFromMap.uuid;
+      const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
+        pathParams: { uuid: polygonuuid }
+      });
+      if (ref.current && ref.current.draw && polygonGeojson) {
+        ref.current.addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => {
+          if (polygonsData) {
+            const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
+            const statuses = ["Submitted", "Approved", "Need More Info"];
+            statuses.forEach(status => {
+              if (newPolygonData[status]) {
+                newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
+              }
+            });
+            ref.current?.addFilterOnLayer(
+              layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
+              newPolygonData,
+              "uuid"
+            );
+          }
+        });
+      }
+    }
+  };
+  const onSave = async () => {
+    if (ref.current && ref.current.draw) {
+      const geojson = ref.current.draw.getAll();
+      if (geojson) {
+        if (polygonFromMap?.uuid) {
+          const response = await fetchPutV2TerrafundPolygonUuid({
+            body: { geometry: JSON.stringify(geojson) },
+            pathParams: { uuid: polygonFromMap?.uuid }
+          });
+          if (response.message == "Geometry updated successfully.") {
+            layersList.forEach((layer: any) => {
+              if (ref.current) {
+                ref.current.refreshSource(layer);
+                if (setPolygonFromMap) {
+                  setPolygonFromMap({ uuid: "", isOpen: false });
+                }
+              }
+            });
+            onCancel();
+          }
+        }
+      }
+    }
+  };
+  const onCancel = () => {
+    if (ref.current && ref.current.draw) {
+      ref.current.draw.deleteAll();
+      addFilterOfPolygonsData();
+    }
+  };
 
   return (
-    <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]")}>
-      {/* <GeoJSONLayer geojson={geojson} /> */}
+    <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
+      {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
       <When condition={hasControls}>
+        <When condition={polygonFromMap?.isOpen}>
+          <ControlGroup position="top-center">
+            <EditControl onClick={handleEditPolygon} onSave={onSave} onCancel={onCancel} />
+          </ControlGroup>
+        </When>
         <ControlGroup position="top-right">
-          {ref.current && ref.current.map && <StyleControl mapRef={ref} />}
+          <StyleControl mapRef={ref} />
         </ControlGroup>
         <ControlGroup position="top-right" className="top-21">
-          {ref.current && ref.current.map && <ZoomControl mapRef={ref} />}
+          <ZoomControl mapRef={ref} />
         </ControlGroup>
         <When condition={!!status}>
           <ControlGroup position="top-left">
             <SiteStatus />
+          </ControlGroup>
+        </When>
+        <When condition={!editable && !viewImages}>
+          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+            <FilterControl />
           </ControlGroup>
         </When>
         <When condition={!!viewImages}>
@@ -238,7 +250,7 @@ export const Map = ({
           <button
             type="button"
             className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
-            // onClick={() => zoomToBbox(bbox)}
+            onClick={() => zoomToBbox(bbox)}
           >
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>

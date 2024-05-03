@@ -31780,7 +31780,7 @@ export type PutV2TerrafundPolygonUuidResponse = {
 };
 
 export type PutV2TerrafundPolygonUuidVariables = {
-  body?: Schemas.GeometryData;
+  body?: Schemas.GeometryString;
   pathParams: PutV2TerrafundPolygonUuidPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -31788,7 +31788,7 @@ export const fetchPutV2TerrafundPolygonUuid = (variables: PutV2TerrafundPolygonU
   apiFetch<
     PutV2TerrafundPolygonUuidResponse,
     PutV2TerrafundPolygonUuidError,
-    Schemas.GeometryData,
+    Schemas.GeometryString,
     {},
     {},
     PutV2TerrafundPolygonUuidPathParams

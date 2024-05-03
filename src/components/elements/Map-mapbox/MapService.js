@@ -1,3 +1,4 @@
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Map } from "mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
@@ -28,15 +29,34 @@ class MapService {
       style: "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu",
       zoom: 2.5
     });
+
+    this.draw = new MapboxDraw({
+      controls: {
+        point: false,
+        line_string: false,
+        polygon: false,
+        trash: false,
+        combine_features: false,
+        uncombine_features: false
+      }
+    });
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
+      this.map.addControl(this.draw, "top-right");
     });
-
     return this.map;
   }
-
-  addSource(layer, polygonData, setIsOpenEditPolygon) {
+  removeSources(layer) {
+    const { name, styles } = layer;
+    if (this.map.getSource(name)) {
+      styles?.forEach((_, index) => {
+        this.map.removeLayer(`${name}-${index}`);
+      });
+      this.map.removeSource(name);
+    }
+  }
+  addSource(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
     const { name, styles } = layer;
     if (!this.styleLoaded) {
       this.sourceQueue.push(layer);
@@ -44,8 +64,10 @@ class MapService {
     }
 
     if (this.map.getSource(name)) {
-      console.warn(`Source with name '${name}' already exists.`);
-      return;
+      styles?.forEach((_, index) => {
+        this.map.removeLayer(`${name}-${index}`);
+      });
+      this.map.removeSource(name);
     }
     const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
     &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
@@ -56,9 +78,14 @@ class MapService {
     styles?.forEach((style, index) => {
       this.addLayerStyle(name, style, index);
     });
-    this.onclickGeom(layer, polygonData, setIsOpenEditPolygon);
+    this.onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
   }
-
+  refreshSource(layer) {
+    const { name } = layer;
+    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
+    this.map.getSource(name).tiles = [URL_GEOSERVER];
+  }
   addLayerStyle(sourceName, style, index) {
     this.map.addLayer({
       id: `${sourceName}-${index}`,
@@ -67,7 +94,10 @@ class MapService {
       ...style
     });
   }
-  onclickGeom(layer, polygonData, setIsOpenEditPolygon) {
+  onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
+    if (!canClickGeoms) {
+      return;
+    }
     let popup;
     const { name, styles } = layer;
     const layersNames = styles.map((_, index) => `${name}-${index}`);
@@ -107,6 +137,9 @@ class MapService {
             }}
             setEditPolygon={() => {
               setIsOpenEditPolygon({ isOpen: true, uuid: uuidPolygon });
+              if (popup) {
+                popup.remove();
+              }
             }}
           />
         );
@@ -154,40 +187,37 @@ class MapService {
   }
 
   convertToAcceptedGEOJSON(geojson) {
-    const templateGeoJSON = {
-      type: "Feature",
-      properties: {},
-      geometry: geojson
-    };
-    const geojsonFormatted = {
-      type: "FeatureCollection",
-      features: [templateGeoJSON]
-    };
-    return geojsonFormatted;
+    if (geojson.type !== "FeatureCollection" && geojson.type !== "GeometryCollection") {
+      const templateGeoJSON = {
+        type: "Feature",
+        properties: {},
+        geometry: geojson
+      };
+      const geojsonFormatted = {
+        type: "FeatureCollection",
+        features: [templateGeoJSON]
+      };
+      return geojsonFormatted;
+    } else if (geojson.type === "GeometryCollection") {
+      const geojsonFormatted = {
+        type: "FeatureCollection",
+        features: geojson.geometries.map(geometry => ({
+          type: "Feature",
+          properties: {},
+          geometry
+        }))
+      };
+      return geojsonFormatted;
+    }
+    return geojson;
   }
 
-  // addSingleFilterOnPolygonLayer(field, value) {
-  //   const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
-  //   if (!polygonLayer) {
-  //     console.error(`Layer ${LAYERS_NAMES.POLYGON_GEOMETRY} does not exist in layer list.`);
-  //     return;
-  //   }
-  //   const { name, styles } = polygonLayer;
-  //   styles.forEach((style, index) => {
-  //     const layerName = `${name}-${index}`;
-  //     if (!this.map.getLayer(layerName)) {
-  //       console.error(`Layer ${layerName} does not exist in map.`);
-  //       return;
-  //     }
-  //   });
-  // }
   addGeojsonToDraw(geojson, uuid, cb) {
-    console.log("Add geojson", geojson);
     if (geojson) {
       const geojsonFormatted = this.convertToAcceptedGEOJSON(geojson);
       const addToDrawAndFilter = () => {
         if (this.draw) {
-          const featureGeojson = this.draw.add(geojsonFormatted);
+          const featureGeojson = this.draw.set(geojsonFormatted);
           if (featureGeojson.length) {
             this.draw.changeMode("direct_select", { featureId: featureGeojson[0] });
           }
@@ -195,7 +225,6 @@ class MapService {
           cb(uuid);
         }
       };
-      console.log("this.styleLoaded", this.styleLoaded);
       addToDrawAndFilter();
     }
   }
