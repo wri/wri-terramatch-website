@@ -10,10 +10,11 @@ export interface DrawerProps {
   title?: ReactNode;
   children: ReactNode;
   setIsOpen: (isOpen: boolean) => void;
+  setPolygonFromMap: any;
 }
 
 const Drawer = (props: DrawerProps) => {
-  const { isOpen, setIsOpen, title = "", children } = props;
+  const { isOpen, setIsOpen, title = "", setPolygonFromMap, children } = props;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -61,6 +62,7 @@ const Drawer = (props: DrawerProps) => {
           className="ml-auto rounded p-1 hover:bg-grey-800"
           onClick={() => {
             setIsOpen(false);
+            setPolygonFromMap({ isOpen: false, uuid: "" });
           }}
         >
           <Icon name={IconNames.CLEAR} className="h-5 w-5 text-blueCustom-900 opacity-50" />

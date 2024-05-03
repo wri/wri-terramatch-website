@@ -15,6 +15,7 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -58,7 +59,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   centroids?: any;
   polygonsData?: any[];
   bbox?: any;
-  setPolygonMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
+  setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
+  polygonFromMap?: { uuid: string; isOpen: boolean };
 }
 
 export const Map = ({
@@ -82,12 +84,11 @@ export const Map = ({
   const ref = useRef<typeof _MapService | null>(null);
   // const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
-  const { polygonsData, bbox, setPolygonMap } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
   // const { openModal, closeModal } = useModalContext();
   // const [tooltipOpen, setTooltipOpen] = useState(true);
   const sitePolygonData = useSitePolygonData();
-  const [isOpenEditPolygon, setIsOpenEditPolygon] = useState({ uuid: "", isOpen: false });
 
   useEffect(() => {
     if (!ref.current) {
@@ -96,7 +97,7 @@ export const Map = ({
       const onLoad = () => {
         layersList.forEach((layer: any) => {
           if (ref.current) {
-            ref.current.addSource(layer, sitePolygonData, setIsOpenEditPolygon);
+            ref.current.addSource(layer, sitePolygonData, setPolygonFromMap);
           }
         });
       };
@@ -132,12 +133,6 @@ export const Map = ({
       }
     }
   }, [polygonsData]);
-
-  useEffect(() => {
-    if (setPolygonMap) {
-      setPolygonMap(isOpenEditPolygon);
-    }
-  }, [isOpenEditPolygon]);
 
   const zoomToBbox = (bbox: any) => {
     if (ref.current && ref.current.map && bbox) {
@@ -205,14 +200,27 @@ export const Map = ({
   //     });
   //   }
   // };
-
+  const handleEditPolygon = async () => {
+    if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
+      const polygonuuid = polygonFromMap.uuid;
+      const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
+        pathParams: { uuid: polygonuuid }
+      });
+      console.log("polygon Geojson", polygonGeojson);
+    }
+  };
+  useEffect(() => {
+    console.log("polygonFromMap", polygonFromMap);
+  }, [polygonFromMap]);
   return (
     <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
       {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
       <When condition={hasControls}>
-        <ControlGroup position="top-center">
-          <EditControl />
-        </ControlGroup>
+        <When condition={polygonFromMap?.isOpen}>
+          <ControlGroup position="top-center">
+            <EditControl onClick={handleEditPolygon} />
+          </ControlGroup>
+        </When>
         <ControlGroup position="top-right">
           {ref.current && ref.current.map && <StyleControl mapRef={ref} />}
         </ControlGroup>

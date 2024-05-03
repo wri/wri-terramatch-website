@@ -1,7 +1,7 @@
 import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
 import JSZip from "jszip";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -46,14 +46,17 @@ export interface IPolygonItem {
   uuid: string;
 }
 
-const PolygonReviewAside: FC<{ type: EntityName; data: IPolygonItem[]; polygonFromMap: IpolygonFromMap }> = ({
-  type,
-  data,
-  polygonFromMap
-}) => {
+const PolygonReviewAside: FC<{
+  type: EntityName;
+  data: IPolygonItem[];
+  polygonFromMap: IpolygonFromMap;
+  setPolygonFromMap: any;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap }) => {
   switch (type) {
     case "sites":
-      return <SitePolygonReviewAside data={data} polygonFromMap={polygonFromMap} />;
+      return (
+        <SitePolygonReviewAside data={data} polygonFromMap={polygonFromMap} setPolygonFromMap={setPolygonFromMap} />
+      );
     default:
       return null;
   }
@@ -69,7 +72,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   });
 
-  const [polygonMap, setPolygonMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+  const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
   const { data: sitePolygonData } = useGetV2SitesSitePolygon<{
     data: SitePolygonsDataResponse;
@@ -138,7 +141,9 @@ const PolygonReviewTab: FC<IProps> = props => {
 
     URL.revokeObjectURL(zipUrl);
   };
-
+  useEffect(() => {
+    console.log("map", polygonFromMap);
+  }, [polygonFromMap]);
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
@@ -407,7 +412,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                   bbox={siteBbox}
                   className="rounded-lg"
                   status={true}
-                  setPolygonMap={setPolygonMap}
+                  setPolygonFromMap={setPolygonFromMap}
+                  polygonFromMap={polygonFromMap}
                 />
                 <div className="mb-6">
                   <div className="mb-4">
@@ -471,7 +477,8 @@ const PolygonReviewTab: FC<IProps> = props => {
               <PolygonReviewAside
                 type={props.type}
                 data={transformedSiteDataForList as IPolygonItem[]}
-                polygonFromMap={polygonMap}
+                polygonFromMap={polygonFromMap}
+                setPolygonFromMap={setPolygonFromMap}
               />
             </Grid>
           </Grid>

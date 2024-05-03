@@ -119,6 +119,9 @@ class MapService {
             }}
             setEditPolygon={() => {
               setIsOpenEditPolygon({ isOpen: true, uuid: uuidPolygon });
+              if (popup) {
+                popup.remove();
+              }
             }}
           />
         );
