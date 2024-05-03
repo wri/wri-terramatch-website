@@ -1,7 +1,7 @@
 import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
 import JSZip from "jszip";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -141,9 +141,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
     URL.revokeObjectURL(zipUrl);
   };
-  useEffect(() => {
-    console.log("map", polygonFromMap);
-  }, [polygonFromMap]);
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd

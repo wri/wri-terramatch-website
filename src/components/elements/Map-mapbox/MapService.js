@@ -202,7 +202,7 @@ class MapService {
       const geojsonFormatted = this.convertToAcceptedGEOJSON(geojson);
       const addToDrawAndFilter = () => {
         if (this.draw) {
-          const featureGeojson = this.draw.add(geojsonFormatted);
+          const featureGeojson = this.draw.set(geojsonFormatted);
           if (featureGeojson.length) {
             this.draw.changeMode("direct_select", { featureId: featureGeojson[0] });
           }
@@ -210,7 +210,6 @@ class MapService {
           cb(uuid);
         }
       };
-      console.log("this.styleLoaded", this.styleLoaded);
       addToDrawAndFilter();
     }
   }

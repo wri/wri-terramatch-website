@@ -206,12 +206,26 @@ export const Map = ({
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
         pathParams: { uuid: polygonuuid }
       });
-      console.log("polygon Geojson", polygonGeojson);
+      if (ref.current && ref.current.draw && polygonGeojson) {
+        ref.current.addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => {
+          if (polygonsData) {
+            const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
+            const statuses = ["Submitted", "Approved", "Need More Info"];
+            statuses.forEach(status => {
+              if (newPolygonData[status]) {
+                newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
+              }
+            });
+            ref.current?.addFilterOnLayer(
+              layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
+              newPolygonData,
+              "uuid"
+            );
+          }
+        });
+      }
     }
   };
-  useEffect(() => {
-    console.log("polygonFromMap", polygonFromMap);
-  }, [polygonFromMap]);
   return (
     <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
       {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
