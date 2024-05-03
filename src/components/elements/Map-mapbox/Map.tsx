@@ -80,14 +80,10 @@ export const Map = ({
   polygonChecks = false,
   ...props
 }: MapProps) => {
-  // const { polygonsData, bbox, setPolygonMap } = props;
   const ref = useRef<typeof _MapService | null>(null);
-  // const onError = useDebounce((hasError, errors) => _onError?.(hasError, errors), 250);
   const [viewImages, setViewImages] = useState(false);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
-  // const { openModal, closeModal } = useModalContext();
-  // const [tooltipOpen, setTooltipOpen] = useState(true);
   const sitePolygonData = useSitePolygonData();
 
   useEffect(() => {
@@ -152,59 +148,6 @@ export const Map = ({
       zoomToBbox(bbox);
     }
   }, [bbox]);
-  // const validateGeoJSON = function (map: IMap, source: string) {
-  //   if (!editable) return;
-
-  //   const errors: { [index: string | number]: ValidationError | undefined } = {};
-  //   const features = map.querySourceFeatures(source);
-
-  //   for (const feature of features) {
-  //     if (typeof feature.id === "undefined" || feature.id === null || feature.properties?.meta !== "feature") return;
-
-  //     try {
-  //       user_shapePropertiesValidationSchema.validateSync(feature.properties);
-  //       errors[feature.id!] = undefined;
-  //       map.setFeatureState({ id: feature.id, source }, { error: false });
-  //     } catch (error) {
-  //       map.setFeatureState({ id: feature.id, source }, { error: true });
-  //       errors[feature.id!] = error as ValidationError;
-  //     }
-  //   }
-
-  //   onError(Object.values(errors).filter(error => !!error).length > 0, errors);
-  // };
-
-  // const onLoadMap = (map: IMap, draw?: MapboxDraw) => {
-  //   map.on("draw.selectionchange", function (e) {
-  //     const isSelected = e.features.length > 0;
-
-  //     if (isSelected && draw?.getMode() === "simple_select") {
-  //       draw.changeMode(draw.modes.DIRECT_SELECT, { featureId: e.features[0].id });
-  //     }
-  //   });
-
-  //   map.on("draw.upload", function () {
-  //     onGeojsonChange?.(draw?.getAll());
-  //   });
-
-  //   map.on("draw.clear", function () {
-  //     onGeojsonChange?.(null);
-  //   });
-
-  //   map.on("draw.create", function () {
-  //     onGeojsonChange?.(draw?.getAll());
-  //   });
-
-  //   map.on("draw.update", function () {
-  //     onGeojsonChange?.(draw?.getAll());
-  //   });
-
-  //   if (captureAdditionalPolygonProperties) {
-  //     map.on("data", function () {
-  //       validateGeoJSON(map, MapboxDraw.constants.sources.COLD);
-  //     });
-  //   }
-  // };
   const handleEditPolygon = async () => {
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap.uuid;
@@ -235,7 +178,6 @@ export const Map = ({
     if (ref.current && ref.current.draw) {
       const geojson = ref.current.draw.getAll();
       if (geojson) {
-        // {geometry: JSON.stringify(geojson.geometry)},
         if (polygonFromMap?.uuid) {
           const response = await fetchPutV2TerrafundPolygonUuid({
             body: { geometry: JSON.stringify(geojson) },
@@ -287,7 +229,6 @@ export const Map = ({
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />
           </ControlGroup>
-          {/* <ImagesLayer source="images" data={imageLayerGeojson} onDeleteImage={onDeleteImage} > */}
         </When>
         <When condition={!!viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>

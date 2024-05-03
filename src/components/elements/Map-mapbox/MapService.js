@@ -212,21 +212,6 @@ class MapService {
     return geojson;
   }
 
-  // addSingleFilterOnPolygonLayer(field, value) {
-  //   const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
-  //   if (!polygonLayer) {
-  //     console.error(`Layer ${LAYERS_NAMES.POLYGON_GEOMETRY} does not exist in layer list.`);
-  //     return;
-  //   }
-  //   const { name, styles } = polygonLayer;
-  //   styles.forEach((style, index) => {
-  //     const layerName = `${name}-${index}`;
-  //     if (!this.map.getLayer(layerName)) {
-  //       console.error(`Layer ${layerName} does not exist in map.`);
-  //       return;
-  //     }
-  //   });
-  // }
   addGeojsonToDraw(geojson, uuid, cb) {
     if (geojson) {
       const geojsonFormatted = this.convertToAcceptedGEOJSON(geojson);

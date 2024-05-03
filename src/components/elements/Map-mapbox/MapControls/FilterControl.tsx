@@ -9,26 +9,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 export const FilterControl = () => {
   const [showFilters, setShowFilters] = useState(false);
   const t = useT();
-
-  // Previous Images and Shapefiles Features
-
-  // const changeImagesVisibility = (visible: boolean) => {
-  //   map?.setLayoutProperty("clusters", "visibility", visible ? "visible" : "none");
-  //   map?.setLayoutProperty("cluster-count", "visibility", visible ? "visible" : "none");
-  //   map?.setLayoutProperty("unclustered-point", "visibility", visible ? "visible" : "none");
-  //   map?.setLayoutProperty("image", "visibility", visible ? "visible" : "none");
-  // };
-
-  // const changeShapeFileVisibility = (visible: boolean) => {
-  //   map?.setLayoutProperty("gl-draw-polygon-fill-static.cold", "visibility", visible ? "visible" : "none");
-  //   map?.setLayoutProperty("gl-draw-polygon-stroke-static.cold", "visibility", visible ? "visible" : "none");
-  // };
-
-  // const imagesVisibility = map?.getLayoutProperty("image", "visibility");
-  // const filterVisibility = map?.getLayoutProperty("gl-draw-polygon-fill-static.cold", "visibility");
-
-  // if (!draw) return null;
-
   return (
     <div className="">
       <When condition={showFilters}>
