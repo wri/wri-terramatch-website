@@ -10,7 +10,7 @@ export interface DrawerProps {
   title?: ReactNode;
   children: ReactNode;
   setIsOpen: (isOpen: boolean) => void;
-  setPolygonFromMap: any;
+  setPolygonFromMap?: any;
 }
 
 const Drawer = (props: DrawerProps) => {
