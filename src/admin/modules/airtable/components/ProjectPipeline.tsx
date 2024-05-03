@@ -445,18 +445,13 @@ const ProjectPipeline: FC = () => {
                         </div>
                         <div>
                           <div
-                            className="group flex cursor-pointer items-center gap-1"
+                            className="flex items-center gap-1"
                             onClick={() => {
                               window.open(props.row.original.URL, "_blank");
                             }}
                           >
-                            <Text variant="text-14-semibold" className="group-hover:text-primary">
-                              {value.name}
-                            </Text>
-                            <Icon
-                              name={IconNames.LINK_PA}
-                              className="h-3 w-3 text-blueCustom-900 group-hover:text-primary"
-                            />
+                            <Text variant="text-14-semibold">{value.name}</Text>
+                            <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-blueCustom-900" />
                           </div>
 
                           <Text variant="text-14-light" className="opacity-50">
