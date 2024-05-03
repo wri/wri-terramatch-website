@@ -443,7 +443,10 @@ const ProjectPipeline: FC = () => {
                             window.open(props.row.original.URL, "_blank");
                           }}
                         >
-                          <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
+                          <Icon
+                            name={IconNames.LEAF}
+                            className="min-w-10 min-h-10 h-10 w-10 overflow-hidden rounded-lg"
+                          />
                         </div>
                         <div
                           onClick={() => {
