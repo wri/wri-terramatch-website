@@ -267,6 +267,7 @@ const Polygons = (props: IPolygonProps) => {
       </div>
       <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
         {props.menu.map(item => {
+          console.log("item", item);
           return (
             <div
               key={item.id}

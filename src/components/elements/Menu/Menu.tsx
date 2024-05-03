@@ -49,8 +49,8 @@ const Menu = (props: MenuProps) => {
     className,
     container,
     setSelectedOption,
-    classNameContentMenu,
-    selectedOption
+    classNameContentMenu
+    // selectedOption
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -67,7 +67,7 @@ const Menu = (props: MenuProps) => {
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  console.log(selectedOption);
+  // console.log(selectedOption);
   useEffect(() => {
     const hideMenu = () => {
       if (menuContainerRef.current) {
@@ -167,7 +167,7 @@ const Menu = (props: MenuProps) => {
 
     return styles;
   };
-  console.log("ID:", (children as any)?.props?.row?.original?.id?.toString());
+  // console.log("ID:", (children as any)?.props?.row?.original?.id?.toString());
   return (
     <div
       ref={menuContainerRef}
@@ -193,7 +193,6 @@ const Menu = (props: MenuProps) => {
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
               key={item.id}
               render={
-                (console.log(item?.data),
                 (item?.data?.icon ? (
                   <div className="flex items-center">
                     <img
@@ -205,7 +204,7 @@ const Menu = (props: MenuProps) => {
                   </div>
                 ) : (
                   item?.data?.label
-                )) || item?.render())
+                )) || item?.render()
               }
               onClick={() => {
                 if (item.onClick) {

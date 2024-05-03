@@ -16,6 +16,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 
+import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
 // import { useSitePolygonData } from "@/context/sitePolygon.provider";
 // import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
@@ -209,6 +210,9 @@ export const Map = ({
     <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
       {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
       <When condition={hasControls}>
+        <ControlGroup position="top-center">
+          <EditControl />
+        </ControlGroup>
         <ControlGroup position="top-right">
           {ref.current && ref.current.map && <StyleControl mapRef={ref} />}
         </ControlGroup>
