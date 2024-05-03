@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
 
+import Button from "../../Button/Button";
+import Text from "../../Text/Text";
+
 const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: any; onCancel?: any }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   useEffect(() => {
@@ -8,63 +11,39 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
     };
   }, []);
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <button
+    <div className="flex w-[160px] flex-col items-center gap-1">
+      <Button
         id="buttonEditPolygon"
+        variant="white"
+        className="w-full py-2"
         onClick={() => {
           setIsEditing(true);
           onClick();
         }}
-        style={{
-          backgroundColor: "#FFA500",
-          borderRadius: "5px",
-          padding: "10px 20px",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-          outline: "none",
-          marginBottom: "10px",
-          width: "100%"
-        }}
       >
-        Edit Polygon
-      </button>
+        <Text variant="text-12-bold" className="leading-[normal] text-black">
+          Edit Polygon
+        </Text>
+      </Button>
       {isEditing && (
-        <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <button
-            onClick={onSave}
-            style={{
-              backgroundColor: "#4CAF50",
-              borderRadius: "5px",
-              padding: "10px 20px",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              outline: "none",
-              flex: 1,
-              marginRight: "5px"
-            }}
-          >
-            Save
-          </button>
-          <button
+        <div className="flex w-full items-center gap-1">
+          <Button onClick={onSave} className="w-full">
+            <Text variant="text-12-bold" className="leading-[normal]">
+              Save
+            </Text>
+          </Button>
+          <Button
+            variant="sky-page-admin"
+            className="w-full"
             onClick={() => {
               setIsEditing(false);
               onCancel();
             }}
-            style={{
-              backgroundColor: "#f44336",
-              borderRadius: "5px",
-              padding: "10px 20px",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              outline: "none",
-              flex: 1
-            }}
           >
-            Cancel
-          </button>
+            <Text variant="text-12-bold" className="leading-[normal]">
+              Cancel
+            </Text>
+          </Button>
         </div>
       )}
     </div>
