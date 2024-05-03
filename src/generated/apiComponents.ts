@@ -31605,6 +31605,47 @@ export const useGetV2TerrafundGeojsonComplete = <TData = Schemas.GeoJSONResponse
   );
 };
 
+export type GetV2TerrafundGeojsonSiteQueryParams = {
+  /**
+   * UUID of the aite.
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundGeojsonSiteError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundGeojsonSiteVariables = {
+  queryParams: GetV2TerrafundGeojsonSiteQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundGeojsonSite = (variables: GetV2TerrafundGeojsonSiteVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.FeatureCollection,
+    GetV2TerrafundGeojsonSiteError,
+    undefined,
+    {},
+    GetV2TerrafundGeojsonSiteQueryParams,
+    {}
+  >({ url: "/v2/terrafund/geojson/site", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundGeojsonSite = <TData = Schemas.FeatureCollection>(
+  variables: GetV2TerrafundGeojsonSiteVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.FeatureCollection, GetV2TerrafundGeojsonSiteError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.FeatureCollection, GetV2TerrafundGeojsonSiteError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/geojson/site", operationId: "getV2TerrafundGeojsonSite", variables }),
+    ({ signal }) => fetchGetV2TerrafundGeojsonSite({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2TerrafundPolygonBboxUuidPathParams = {
   /**
    * The UUID of the polygon
@@ -32509,6 +32550,11 @@ export type QueryOperation =
       path: "/v2/terrafund/geojson/complete";
       operationId: "getV2TerrafundGeojsonComplete";
       variables: GetV2TerrafundGeojsonCompleteVariables;
+    }
+  | {
+      path: "/v2/terrafund/geojson/site";
+      operationId: "getV2TerrafundGeojsonSite";
+      variables: GetV2TerrafundGeojsonSiteVariables;
     }
   | {
       path: "/v2/terrafund/polygon/bbox/{uuid}";

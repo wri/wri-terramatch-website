@@ -1,6 +1,5 @@
 import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
-import JSZip from "jszip";
 import { FC, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
@@ -22,7 +21,7 @@ import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
-  fetchGetV2TerrafundGeojsonComplete,
+  fetchGetV2TerrafundGeojsonSite,
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
   useGetV2SitesSiteBbox,
@@ -117,26 +116,17 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openModal, closeModal } = useModalContext();
 
-  const downloadMultipleGeoJsonPolygons = async (polygonUuids: IPolygonItem[]) => {
-    const zip = new JSZip();
-    await Promise.all(
-      polygonUuids.map(async (polygon, index) => {
-        const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({ queryParams: { uuid: polygon.uuid } });
-        const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-        zip.file(`${polygon.label}_${index}.geojson`, blob);
-      })
-    );
-
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-
-    const zipUrl = URL.createObjectURL(zipBlob);
-
+  const downloadSiteGeoJsonPolygons = async (siteUuid: string) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
+      queryParams: { uuid: siteUuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = zipUrl;
-    link.download = "polygons.zip";
+    link.href = url;
+    link.download = `SitePolygons.geojson`;
     link.click();
-
-    URL.revokeObjectURL(zipUrl);
+    URL.revokeObjectURL(url);
   };
 
   const openFormModalHandlerAddPolygon = () => {
@@ -380,7 +370,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                           name: IconNames.DOWNLOAD_PA
                         }}
                         onClick={() => {
-                          downloadMultipleGeoJsonPolygons(transformedSiteDataForList as IPolygonItem[]);
+                          downloadSiteGeoJsonPolygons(record.uuid);
                         }}
                       >
                         Download
