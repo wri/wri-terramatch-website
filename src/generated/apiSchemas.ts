@@ -23057,10 +23057,6 @@ export type SitePolygon = {
    * @format float
    */
   calc_area?: number;
-  /**
-   * @format date-time
-   */
-  date_modified?: string;
   created_by?: string;
   last_modified_by?: string;
   /**

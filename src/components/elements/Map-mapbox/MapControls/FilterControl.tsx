@@ -40,7 +40,7 @@ export const FilterControl = () => {
               onClick={() => {}}
             >
               <div className="text-12-semibold flex items-center">
-                <div className="mr-2 h-3 w-3 rounded-sm bg-blueCustom-200 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
+                <div className="bg-blueCustom-200 mr-2 h-3 w-3 rounded-sm lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
                 {t("Submitted")}
               </div>
             </Button>
@@ -60,7 +60,7 @@ export const FilterControl = () => {
               onClick={() => {}}
             >
               <div className="text-12-semibold flex items-center">
-                <div className="mr-2 h-3 w-3 rounded-sm bg-greenCustom-200 lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
+                <div className="bg-greenCustom-200 mr-2 h-3 w-3 rounded-sm lg:h-4 lg:w-4 wide:h-5 wide:w-5" />
                 {t("Approved")}
               </div>
             </Button>
