@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -83,20 +82,17 @@ const ProjectPipeline: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
   const [projectId, setProjectId] = useState("");
-  const [formTitle, setFormTitle] = useState("Create Record");
-  const [buttonTitle, setButtonTitle] = useState("Submit Record");
   const [_, setDropdownValueProgram] = useState(1);
   const [__, setDropdownValueCohort] = useState(1);
   const tableRef = useRef<HTMLDivElement>(null);
-  const [sortedProjectsPipeline, setSortedProjectsPipeline] = useState<ProjectPipelineResponse[]>([]);
   const form = useForm();
   const { data: authMe } = useGetAuthMe({}) as { data: AuthMeResponse };
   const [isEdit, setIsEdit] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { data: projectsPipeline, refetch } = useGetV2ProjectPipeline<ProjectPipelineResponse>({});
-  const queryClient = useQueryClient();
 
   console.log(_, __);
-  const { data: getProject, refetch: refetchProjectId } = useGetV2ProjectPipelineId({
+  const { data: getProject } = useGetV2ProjectPipelineId({
     pathParams: {
       id: form.getValues("id") || projectId
     }
@@ -126,7 +122,6 @@ const ProjectPipeline: FC = () => {
     setSearchTerm(value);
   };
   const handleSubmit = async () => {
-    await queryClient.refetchQueries(["MyData", "current"]);
     const requestBody: ProjectPipelinePost = {
       Name: form.getValues("name"),
       Description: form.getValues("description"),
@@ -144,27 +139,23 @@ const ProjectPipeline: FC = () => {
         body: requestBody
       });
       setTimeout(() => {
-        alert("Project Updated");
+        alert("Project Pipeline Record Updated");
         closeModal();
         form.reset();
         refetch();
-        refetchProjectId();
       }, 2000);
-
-      // window.location.href = "admin#/projectPipeline";
     } else {
       postProject({ body: requestBody });
       closeModal();
       form.reset();
-      // window.location.href = "admin#/projectPipeline";
-      alert("Project Created");
+      alert("Record Created");
       setTimeout(() => {
         refetch();
-        refetchProjectId();
       }, 2000);
     }
   };
   const handleDelete = (projectId: string) => {
+    setRefreshKey(prevKey => prevKey + 1);
     remove({
       pathParams: {
         id: projectId
@@ -173,15 +164,28 @@ const ProjectPipeline: FC = () => {
     setTimeout(() => {
       alert("Project Deleted");
       refetch();
+      setRefreshKey(prevKey => prevKey + 1);
     }, 2000);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = async (id: string) => {
     form.setValue("id", id);
+    form.setValue("name", getProject?.data?.name?.name);
+    form.setValue("description", getProject?.data?.name?.description);
+    form.setValue("submittedBy", getProject?.data?.SubmittedBy);
+    form.setValue("program", getProject?.data?.Program === "Terrafund" ? 1 : 2);
+    form.setValue("cohort", getProject?.data?.Cohort === "Top100" ? 1 : 2);
+    form.setValue("publishFor", getProject?.data?.PublishFor);
+    form.setValue("url", getProject?.data?.URL);
+    openFormModalHandler("Update Pipeline", "Save Project Pipeline");
     setProjectId(id);
-    refetchProjectId();
     setIsEdit(true);
-    openFormModalHandler();
+  };
+  const handleAddPipeline = () => {
+    form.reset();
+    form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
+    setIsEdit(true);
+    openFormModalHandler("Create Record", "Create Record");
   };
   const handleCohortChange = (e: any) => {
     form.setValue("cohort", e == 1 ? "Top100" : "Top50");
@@ -189,27 +193,6 @@ const ProjectPipeline: FC = () => {
   const handleProgramChange = (e: any) => {
     form.setValue("program", e == 1 ? "Terrafund" : "Terramatch");
   };
-
-  useEffect(() => {
-    refetch();
-    queryClient.refetchQueries(["MyData", "current"]);
-    if (projectsPipeline) {
-      const sortedData = [...projectsPipeline.data].sort((a, b) => {
-        const dateA = new Date((a as any).created_at);
-        const dateB = new Date((b as any).created_at);
-
-        if (dateA < dateB) {
-          return 1;
-        }
-        if (dateA > dateB) {
-          return -1;
-        }
-        return 0;
-      });
-      setSortedProjectsPipeline(sortedData);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectsPipeline?.data, refetch, isEdit]);
 
   const airtableItemMenu = [
     {
@@ -257,25 +240,22 @@ const ProjectPipeline: FC = () => {
       form.setValue("publishFor", getProject?.data?.PublishFor);
       form.setValue("url", getProject?.data?.URL);
     }
-    setFormTitle(!isEdit ? "Update Pipeline" : "Create Record");
-    setButtonTitle(!isEdit ? "Update Pipeline" : "Submit Record");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProject]);
+  useEffect(() => {
+    setRefreshKey(prevKey => prevKey + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch, projectsPipeline]);
 
-  const openFormModalHandler = () => {
-    if (isEdit) {
-      form.reset();
-      form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
-    }
+  const openFormModalHandler = (title: string, buttonName: string) => {
     openModal(
       <ModalCloseLogo
+        key={refreshKey}
         className="w-[556px]"
-        title={formTitle}
-        onCLose={() => {
-          closeModal();
-        }}
+        title={title}
+        onCLose={closeModal}
         primaryButtonProps={{
-          children: buttonTitle,
+          children: buttonName,
           className: "w-full text-white capitalize",
           onClick: handleSubmit
         }}
@@ -325,7 +305,7 @@ const ProjectPipeline: FC = () => {
               labelVariant="text-14-light"
               placeholder="Select Program"
               options={dropdownOptionsProgram}
-              defaultValue={[form.getValues("program")?.toString() == "Terrafund" ? 1 : 2]}
+              defaultValue={[_] || [form.getValues("program")?.toString() == "Terrafund" ? 1 : 2]}
               onChange={handleProgramChange}
               formHook={form}
               customName="program"
@@ -336,7 +316,7 @@ const ProjectPipeline: FC = () => {
               labelVariant="text-14-light"
               placeholder="Select Cohort"
               options={dropdownOptionsCohort}
-              defaultValue={[form.getValues("cohort")?.toString() == "Top100" ? 1 : 2]}
+              defaultValue={[__] || [form.getValues("cohort")?.toString() == "Top100" ? 1 : 2]}
               onChange={handleCohortChange}
               formHook={form}
               customName="cohort"
@@ -378,7 +358,7 @@ const ProjectPipeline: FC = () => {
         <Button
           variant="white-page-admin"
           iconProps={{ name: IconNames.PLUS_PA, className: "text-blueCustom-900 w-5 h-5" }}
-          onClick={openFormModalHandler}
+          onClick={handleAddPipeline}
         >
           <Text variant="text-14-bold" className="text-blueCustom-900">
             Add Pipeline
@@ -446,6 +426,7 @@ const ProjectPipeline: FC = () => {
         <When condition={selected === tabIndex.TERRAFUND}>
           <div className="rounded-lg border border-neutral-200" ref={tableRef}>
             <Table<any>
+              key={refreshKey}
               variant={VARIANT_TABLE_AIRTABLE}
               columns={[
                 {
@@ -455,18 +436,21 @@ const ProjectPipeline: FC = () => {
                   cell: props => {
                     const value = props?.getValue() as tableProjectItemProps;
                     return (
-                      <div
-                        className="flex items-center gap-4"
-                        onClick={() => {
-                          window.open(props.row.original.URL, "_blank");
-                        }}
-                      >
-                        <Icon
-                          name={IconNames.LEAF}
-                          className="h-20 min-h-[3rem] w-10 min-w-[3rem] overflow-hidden rounded-lg"
-                        />
-                        <div>
-                          <div>
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="h-10 w-10"
+                          onClick={() => {
+                            window.open(props.row.original.URL, "_blank");
+                          }}
+                        >
+                          <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
+                        </div>
+                        <div
+                          onClick={() => {
+                            window.open(props.row.original.URL, "_blank");
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
                             <Text variant="text-14-semibold">{value.name}</Text>
                             <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-blueCustom-900" />
                           </div>
@@ -514,7 +498,7 @@ const ProjectPipeline: FC = () => {
                   }
                 }
               ]}
-              data={(searchTerm != "" ? filteredProjects : sortedProjectsPipeline) || []}
+              data={(searchTerm != "" ? filteredProjects : projectsPipeline?.data) || []}
             ></Table>
           </div>
         </When>
