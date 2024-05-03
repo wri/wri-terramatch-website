@@ -193,7 +193,7 @@ const Menu = (props: MenuProps) => {
           {menu?.map(item => (
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
-              selected={selectedOption === (item?.country_slug || item?.data?.label)}
+              // selected={selectedOption === (item?.country_slug || item?.data?.label)}
               key={item.id}
               render={
                 (console.log(item?.data),
