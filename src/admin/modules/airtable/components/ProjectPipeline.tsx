@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { When } from "react-if";
 
@@ -82,14 +83,18 @@ const ProjectPipeline: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
   const [projectId, setProjectId] = useState("");
-  const [formTitle, setFormTitle] = useState("Add New Pipeline");
-  const [buttonTitle, setButtonTitle] = useState("Submit Pipeline");
+  const [formTitle, setFormTitle] = useState("Create Record");
+  const [buttonTitle, setButtonTitle] = useState("Submit Record");
   const [_, setDropdownValueProgram] = useState(1);
   const [__, setDropdownValueCohort] = useState(1);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [sortedProjectsPipeline, setSortedProjectsPipeline] = useState<ProjectPipelineResponse[]>([]);
   const form = useForm();
   const { data: authMe } = useGetAuthMe({}) as { data: AuthMeResponse };
   const [isEdit, setIsEdit] = useState(false);
   const { data: projectsPipeline, refetch } = useGetV2ProjectPipeline<ProjectPipelineResponse>({});
+  const queryClient = useQueryClient();
+
   console.log(_, __);
   const { data: getProject, refetch: refetchProjectId } = useGetV2ProjectPipelineId({
     pathParams: {
@@ -121,6 +126,7 @@ const ProjectPipeline: FC = () => {
     setSearchTerm(value);
   };
   const handleSubmit = async () => {
+    await queryClient.refetchQueries(["MyData", "current"]);
     const requestBody: ProjectPipelinePost = {
       Name: form.getValues("name"),
       Description: form.getValues("description"),
@@ -184,6 +190,27 @@ const ProjectPipeline: FC = () => {
     form.setValue("program", e == 1 ? "Terrafund" : "Terramatch");
   };
 
+  useEffect(() => {
+    refetch();
+    queryClient.refetchQueries(["MyData", "current"]);
+    if (projectsPipeline) {
+      const sortedData = [...projectsPipeline.data].sort((a, b) => {
+        const dateA = new Date((a as any).created_at);
+        const dateB = new Date((b as any).created_at);
+
+        if (dateA < dateB) {
+          return 1;
+        }
+        if (dateA > dateB) {
+          return -1;
+        }
+        return 0;
+      });
+      setSortedProjectsPipeline(sortedData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectsPipeline?.data, refetch, isEdit]);
+
   const airtableItemMenu = [
     {
       id: "1",
@@ -230,8 +257,8 @@ const ProjectPipeline: FC = () => {
       form.setValue("publishFor", getProject?.data?.PublishFor);
       form.setValue("url", getProject?.data?.URL);
     }
-    setFormTitle(!form.getValues("id") ? "Update Pipeline" : "Add New Pipeline");
-    setButtonTitle(!form.getValues("id") ? "Update Pipeline" : "Submit Pipeline");
+    setFormTitle(!isEdit ? "Update Pipeline" : "Create Record");
+    setButtonTitle(!isEdit ? "Update Pipeline" : "Submit Record");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProject]);
 
@@ -274,6 +301,7 @@ const ProjectPipeline: FC = () => {
               placeholder="Input Submitted by"
               name="submittedBy"
               type="text"
+              disabled
               formHook={form}
               defaultValue={form.getValues("submittedBy")}
               readOnly={false}
@@ -416,7 +444,7 @@ const ProjectPipeline: FC = () => {
           </Button> */}
         </div>
         <When condition={selected === tabIndex.TERRAFUND}>
-          <div className="rounded-lg border border-neutral-200">
+          <div className="rounded-lg border border-neutral-200" ref={tableRef}>
             <Table<any>
               variant={VARIANT_TABLE_AIRTABLE}
               columns={[
@@ -486,7 +514,7 @@ const ProjectPipeline: FC = () => {
                   }
                 }
               ]}
-              data={filteredProjects || projectsPipeline?.data || []}
+              data={(searchTerm != "" ? filteredProjects : sortedProjectsPipeline) || []}
             ></Table>
           </div>
         </When>

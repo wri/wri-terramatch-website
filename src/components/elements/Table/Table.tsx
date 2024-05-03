@@ -14,7 +14,7 @@ import {
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Lottie from "lottie-react";
-import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useMemo, useState } from "react";
+import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -107,6 +107,11 @@ function Table<TData extends RowData>({
   });
 
   const tableState = getState();
+
+  useEffect(() => {
+    setSorting(initialTableState?.sorting ?? []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <div className={`overflow-x-auto px-4 md:px-0 lg:overflow-x-visible ${classNameWrapper}`}>
