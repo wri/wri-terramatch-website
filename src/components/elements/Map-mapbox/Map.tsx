@@ -245,6 +245,9 @@ export const Map = ({
             layersList.forEach((layer: any) => {
               if (ref.current) {
                 ref.current.refreshSource(layer);
+                if (setPolygonFromMap) {
+                  setPolygonFromMap({ uuid: "", isOpen: false });
+                }
               }
             });
             onCancel();
@@ -270,10 +273,10 @@ export const Map = ({
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">
-          {ref.current && ref.current.map && <StyleControl mapRef={ref} />}
+          <StyleControl mapRef={ref} />
         </ControlGroup>
         <ControlGroup position="top-right" className="top-21">
-          {ref.current && ref.current.map && <ZoomControl mapRef={ref} />}
+          <ZoomControl mapRef={ref} />
         </ControlGroup>
         <When condition={!!status}>
           <ControlGroup position="top-left">
