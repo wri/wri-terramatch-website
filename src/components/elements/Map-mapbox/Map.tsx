@@ -241,7 +241,14 @@ export const Map = ({
             body: { geometry: JSON.stringify(geojson) },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
-          console.log("Response", response);
+          if (response.message == "Geometry updated successfully.") {
+            layersList.forEach((layer: any) => {
+              if (ref.current) {
+                ref.current.refreshSource(layer);
+              }
+            });
+            onCancel();
+          }
         }
       }
     }

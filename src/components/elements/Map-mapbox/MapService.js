@@ -47,7 +47,15 @@ class MapService {
     });
     return this.map;
   }
-
+  removeSources(layer) {
+    const { name, styles } = layer;
+    if (this.map.getSource(name)) {
+      styles?.forEach((_, index) => {
+        this.map.removeLayer(`${name}-${index}`);
+      });
+      this.map.removeSource(name);
+    }
+  }
   addSource(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
     const { name, styles } = layer;
     if (!this.styleLoaded) {
@@ -56,8 +64,10 @@ class MapService {
     }
 
     if (this.map.getSource(name)) {
-      console.warn(`Source with name '${name}' already exists.`);
-      return;
+      styles?.forEach((_, index) => {
+        this.map.removeLayer(`${name}-${index}`);
+      });
+      this.map.removeSource(name);
     }
     const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
     &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
@@ -70,7 +80,12 @@ class MapService {
     });
     this.onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
   }
-
+  refreshSource(layer) {
+    const { name } = layer;
+    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
+    this.map.getSource(name).tiles = [URL_GEOSERVER];
+  }
   addLayerStyle(sourceName, style, index) {
     this.map.addLayer({
       id: `${sourceName}-${index}`,
