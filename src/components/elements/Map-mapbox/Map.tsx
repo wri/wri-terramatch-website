@@ -15,7 +15,7 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -113,9 +113,8 @@ export const Map = ({
       }
     };
   }, []);
-
-  useEffect(() => {
-    if (polygonsData && ref.current && ref.current.map) {
+  const addFilterOfPolygonsData = () => {
+    if (ref.current && ref.current.map) {
       if (ref.current && ref.current.map.loaded()) {
         ref.current.addFilterOnLayer(
           layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
@@ -131,6 +130,11 @@ export const Map = ({
           );
         });
       }
+    }
+  };
+  useEffect(() => {
+    if (polygonsData) {
+      addFilterOfPolygonsData();
     }
   }, [polygonsData]);
 
@@ -226,13 +230,35 @@ export const Map = ({
       }
     }
   };
+  const onSave = async () => {
+    if (ref.current && ref.current.draw) {
+      const geojson = ref.current.draw.getAll();
+      if (geojson) {
+        // {geometry: JSON.stringify(geojson.geometry)},
+        if (polygonFromMap?.uuid) {
+          const response = await fetchPutV2TerrafundPolygonUuid({
+            body: { geometry: JSON.stringify(geojson) },
+            pathParams: { uuid: polygonFromMap?.uuid }
+          });
+          console.log("Response", response);
+        }
+      }
+    }
+  };
+  const onCancel = () => {
+    if (ref.current && ref.current.draw) {
+      ref.current.draw.deleteAll();
+      addFilterOfPolygonsData();
+    }
+  };
+
   return (
     <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
       {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen}>
           <ControlGroup position="top-center">
-            <EditControl onClick={handleEditPolygon} />
+            <EditControl onClick={handleEditPolygon} onSave={onSave} onCancel={onCancel} />
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">

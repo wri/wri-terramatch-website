@@ -169,16 +169,29 @@ class MapService {
   }
 
   convertToAcceptedGEOJSON(geojson) {
-    const templateGeoJSON = {
-      type: "Feature",
-      properties: {},
-      geometry: geojson
-    };
-    const geojsonFormatted = {
-      type: "FeatureCollection",
-      features: [templateGeoJSON]
-    };
-    return geojsonFormatted;
+    if (geojson.type !== "FeatureCollection" && geojson.type !== "GeometryCollection") {
+      const templateGeoJSON = {
+        type: "Feature",
+        properties: {},
+        geometry: geojson
+      };
+      const geojsonFormatted = {
+        type: "FeatureCollection",
+        features: [templateGeoJSON]
+      };
+      return geojsonFormatted;
+    } else if (geojson.type === "GeometryCollection") {
+      const geojsonFormatted = {
+        type: "FeatureCollection",
+        features: geojson.geometries.map(geometry => ({
+          type: "Feature",
+          properties: {},
+          geometry
+        }))
+      };
+      return geojsonFormatted;
+    }
+    return geojson;
   }
 
   // addSingleFilterOnPolygonLayer(field, value) {
@@ -197,7 +210,6 @@ class MapService {
   //   });
   // }
   addGeojsonToDraw(geojson, uuid, cb) {
-    console.log("Add geojson", geojson);
     if (geojson) {
       const geojsonFormatted = this.convertToAcceptedGEOJSON(geojson);
       const addToDrawAndFilter = () => {

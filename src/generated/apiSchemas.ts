@@ -23130,6 +23130,10 @@ export type GeometryData = {
   };
 };
 
+export type GeometryString = {
+  geometry?: string;
+};
+
 export type GeojsonData = {
   /**
    * The GeoJSON representation of the polygon geometry.
@@ -23183,4 +23187,35 @@ export type ProjectPipelinePost = {
    * @format date
    */
   ModifiedDate?: string;
+};
+
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type Feature = {
+  type?: string;
+  geometry?: Geometry;
+  properties?: FeatureProperties;
+};
+
+export type Geometry = {
+  type?: string;
+  coordinates?: number[][][];
+};
+
+export type FeatureProperties = {
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
 };
