@@ -47,7 +47,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = ({ uuid, entity }) => {
     <Card className="!shadow-none">
       <Stack>
         <Box paddingX={3} paddingY={2}>
-          <Text variant="text-16-semibold" className="text-grey-300">
+          <Text variant="text-16-semibold" className="text-darkCustom">
             Tree Species
           </Text>
         </Box>

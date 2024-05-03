@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { When } from "react-if";
 
@@ -81,18 +81,20 @@ const dropdownOptionsCohort = [
 const ProjectPipeline: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [selected, setSelected] = useState(tabIndex.TERRAFUND);
-  const [formTitle, setFormTitle] = useState("Add New Pipeline");
-  const [buttonTitle, setButtonTitle] = useState("Submit Pipeline");
+  const [projectId, setProjectId] = useState("");
   const [_, setDropdownValueProgram] = useState(1);
   const [__, setDropdownValueCohort] = useState(1);
+  const tableRef = useRef<HTMLDivElement>(null);
   const form = useForm();
   const { data: authMe } = useGetAuthMe({}) as { data: AuthMeResponse };
   const [isEdit, setIsEdit] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { data: projectsPipeline, refetch } = useGetV2ProjectPipeline<ProjectPipelineResponse>({});
+
   console.log(_, __);
   const { data: getProject } = useGetV2ProjectPipelineId({
     pathParams: {
-      id: form.getValues("id")
+      id: form.getValues("id") || projectId
     }
   });
   const { mutate: postProject } = usePostV2ProjectPipeline({
@@ -137,36 +139,53 @@ const ProjectPipeline: FC = () => {
         body: requestBody
       });
       setTimeout(() => {
-        alert("Project Updated");
+        alert("Project Pipeline Record Updated");
         closeModal();
         form.reset();
         refetch();
-      }, 3000);
-
-      // window.location.href = "admin#/projectPipeline";
+      }, 2000);
     } else {
       postProject({ body: requestBody });
       closeModal();
       form.reset();
-      // window.location.href = "admin#/projectPipeline";
-      alert("Project Created");
+      alert("Record Created");
       setTimeout(() => {
         refetch();
-      }, 3000);
+      }, 2000);
     }
   };
   const handleDelete = (projectId: string) => {
+    setRefreshKey(prevKey => prevKey + 1);
     remove({
       pathParams: {
         id: projectId
       }
     });
+    setTimeout(() => {
+      alert("Project Deleted");
+      refetch();
+      setRefreshKey(prevKey => prevKey + 1);
+    }, 2000);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = async (id: string) => {
     form.setValue("id", id);
+    form.setValue("name", getProject?.data?.name?.name);
+    form.setValue("description", getProject?.data?.name?.description);
+    form.setValue("submittedBy", getProject?.data?.SubmittedBy);
+    form.setValue("program", getProject?.data?.Program === "Terrafund" ? 1 : 2);
+    form.setValue("cohort", getProject?.data?.Cohort === "Top100" ? 1 : 2);
+    form.setValue("publishFor", getProject?.data?.PublishFor);
+    form.setValue("url", getProject?.data?.URL);
+    openFormModalHandler("Update Pipeline", "Save Project Pipeline");
+    setProjectId(id);
     setIsEdit(true);
-    openFormModalHandler();
+  };
+  const handleAddPipeline = () => {
+    form.reset();
+    form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
+    setIsEdit(true);
+    openFormModalHandler("Add New Project Pipeline", "Save Project Pipeline");
   };
   const handleCohortChange = (e: any) => {
     form.setValue("cohort", e == 1 ? "Top100" : "Top50");
@@ -221,25 +240,21 @@ const ProjectPipeline: FC = () => {
       form.setValue("publishFor", getProject?.data?.PublishFor);
       form.setValue("url", getProject?.data?.URL);
     }
-    setFormTitle(!form.getValues("id") ? "Update Pipeline" : "Add New Pipeline");
-    setButtonTitle(!form.getValues("id") ? "Update Pipeline" : "Submit Pipeline");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProject]);
-
-  const openFormModalHandler = () => {
-    if (isEdit) {
-      form.reset();
-      form.setValue("submittedBy", authMe?.data.first_name + " " + authMe?.data.last_name);
-    }
+  useEffect(() => {
+    setRefreshKey(prevKey => prevKey + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch, projectsPipeline]);
+  const openFormModalHandler = (title: string, buttonName: string) => {
     openModal(
       <ModalCloseLogo
+        key={refreshKey}
         className="w-[556px]"
-        title={formTitle}
-        onCLose={() => {
-          closeModal();
-        }}
+        title={title}
+        onCLose={closeModal}
         primaryButtonProps={{
-          children: buttonTitle,
+          children: buttonName,
           className: "w-full text-white capitalize",
           onClick: handleSubmit
         }}
@@ -265,6 +280,7 @@ const ProjectPipeline: FC = () => {
               placeholder="Input Submitted by"
               name="submittedBy"
               type="text"
+              disabled
               formHook={form}
               defaultValue={form.getValues("submittedBy")}
               readOnly={false}
@@ -288,7 +304,7 @@ const ProjectPipeline: FC = () => {
               labelVariant="text-14-light"
               placeholder="Select Program"
               options={dropdownOptionsProgram}
-              defaultValue={[form.getValues("program") == "Terrafund" ? 2 : 1]}
+              defaultValue={[_] || [form.getValues("program")?.toString() == "Terrafund" ? 1 : 2]}
               onChange={handleProgramChange}
               formHook={form}
               customName="program"
@@ -299,7 +315,7 @@ const ProjectPipeline: FC = () => {
               labelVariant="text-14-light"
               placeholder="Select Cohort"
               options={dropdownOptionsCohort}
-              defaultValue={[form.getValues("cohort") == "Top100" ? 2 : 1]}
+              defaultValue={[__] || [form.getValues("cohort")?.toString() == "Top100" ? 1 : 2]}
               onChange={handleCohortChange}
               formHook={form}
               customName="cohort"
@@ -341,7 +357,7 @@ const ProjectPipeline: FC = () => {
         <Button
           variant="white-page-admin"
           iconProps={{ name: IconNames.PLUS_PA, className: "text-blueCustom-900 w-5 h-5" }}
-          onClick={openFormModalHandler}
+          onClick={handleAddPipeline}
         >
           <Text variant="text-14-bold" className="text-blueCustom-900">
             Add Pipeline
@@ -407,9 +423,11 @@ const ProjectPipeline: FC = () => {
           </Button> */}
         </div>
         <When condition={selected === tabIndex.TERRAFUND}>
-          <div className="rounded-lg border border-neutral-200">
+          <div ref={tableRef}>
             <Table<any>
+              key={refreshKey}
               variant={VARIANT_TABLE_AIRTABLE}
+              classNameWrapper="rounded-lg border border-neutral-200"
               columns={[
                 {
                   header: "Project Name",
@@ -419,18 +437,27 @@ const ProjectPipeline: FC = () => {
                     const value = props?.getValue() as tableProjectItemProps;
                     return (
                       <div className="flex items-center gap-4">
-                        <Icon name={IconNames.LEAF} className="h-10 w-10 overflow-hidden rounded-lg" />
+                        <div className="h-10 w-10">
+                          <Icon
+                            name={IconNames.LEAF}
+                            className="min-w-10 min-h-10 h-10 w-10 overflow-hidden rounded-lg"
+                          />
+                        </div>
                         <div>
                           <div
-                            className="flex items-center gap-1"
+                            className="group flex cursor-pointer items-center gap-1"
                             onClick={() => {
                               window.open(props.row.original.URL, "_blank");
                             }}
                           >
-                            <Text variant="text-14-semibold">{value.name}</Text>
-                            <Icon name={IconNames.LINK_PA} className="h-3 w-3 text-blueCustom-900" />
+                            <Text variant="text-14-semibold" className="group-hover:text-primary">
+                              {value.name}
+                            </Text>
+                            <Icon
+                              name={IconNames.LINK_PA}
+                              className="h-3 w-3 text-blueCustom-900 group-hover:text-primary"
+                            />
                           </div>
-
                           <Text variant="text-14-light" className="opacity-50">
                             {value.description}
                           </Text>
@@ -456,19 +483,25 @@ const ProjectPipeline: FC = () => {
                   header: "",
                   accessorKey: "ellipse",
                   enableSorting: false,
-                  cell: () => (
-                    <Menu menu={airtableItemMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-                      <div className="rounded p-1 hover:bg-primary-200">
-                        <Icon
-                          name={IconNames.ELIPSES}
-                          className="roudn h-4 w-4 rounded-sm text-primary-500 hover:bg-primary-200"
-                        />
-                      </div>
-                    </Menu>
-                  )
+                  cell: x => {
+                    return (
+                      <Menu
+                        menu={airtableItemMenu}
+                        placement={MENU_PLACEMENT_BOTTOM_LEFT}
+                        extraData={x.cell.row.original.id}
+                      >
+                        <div className="rounded p-1 hover:bg-primary-200">
+                          <Icon
+                            name={IconNames.ELIPSES}
+                            className="roudn h-4 w-4 rounded-sm text-primary-500 hover:bg-primary-200"
+                          />
+                        </div>
+                      </Menu>
+                    );
+                  }
                 }
               ]}
-              data={filteredProjects || projectsPipeline?.data || []}
+              data={(searchTerm != "" ? filteredProjects : projectsPipeline?.data) || []}
             ></Table>
           </div>
         </When>

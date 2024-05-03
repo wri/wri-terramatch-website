@@ -29,7 +29,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
 
   return (
     <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
-      <Form formType="signUp">
+      <Form formType="signUp" onSubmit={form.handleSubmit(handleSave)}>
         <Text variant="text-32-bold" className="mb-2 text-blueCustom-700">
           Sign up
         </Text>

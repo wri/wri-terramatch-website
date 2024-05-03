@@ -16,7 +16,9 @@ const Page = () => {
   const [selectedOption, setSelectedOption] = useState<string>();
   const [selectedTitleOption, setSelectedTitleOption] = useState<string>();
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({});
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: { country: "all" }
+  });
   const refContentCard = React.useRef<HTMLDivElement>(null);
 
   const updatedUserRolInfo = UserRolInfo.map((user, index) => {
@@ -28,12 +30,16 @@ const Page = () => {
   });
 
   const handleContinue = () => {
-    const isOptionRequired = updatedUserRolInfo.find(item => item.id === selected)?.menu.length !== 0 || false;
-    if (isOptionRequired && !selectedOption) {
-      alert(`Please select an option for ${selectedTitleOption}.`);
-      return;
+    if (selected) {
+      const isOptionRequired = updatedUserRolInfo.find(item => item.id === selected)?.menu.length !== 0 || false;
+      if (isOptionRequired && !selectedOption) {
+        alert(`Select a ${selectedTitleOption == "Select Framework" ? "Framework" : "Country"} to continue`);
+        return;
+      }
+      setShowSignUp(true);
+    } else {
+      alert("Please select an User.");
     }
-    setShowSignUp(true);
   };
 
   useEffect(() => {

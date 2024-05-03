@@ -7,12 +7,13 @@ export interface MenuItemProps {
   MenuItemVariant?: string;
   className?: string;
   onClick?: any;
+  selected?: boolean;
   ref?: MutableRefObject<HTMLDivElement | null>;
 }
 export const MenuItem = (props: MenuItemProps) => {
-  const { MenuItemVariant = MENU_ITEM_VARIANT_BLUE, onClick, render, className } = props;
+  const { MenuItemVariant = MENU_ITEM_VARIANT_BLUE, onClick, render, className, selected } = props;
   return (
-    <button onClick={onClick} className={tw(MenuItemVariant, className)}>
+    <button onClick={onClick} className={tw(MenuItemVariant, className, selected ? "bg-primary-200 text-primary" : "")}>
       {render}
     </button>
   );

@@ -18,10 +18,10 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   return (
     <div>
       <div className="mb-3 flex items-center">
-        <Text variant="text-14-bold" className="text-grey-300">
+        <Text variant="text-14-bold" className="text-darkCustom">
           3 out of 14 &nbsp;
         </Text>
-        <Text variant="text-14" className="text-grey-300">
+        <Text variant="text-14" className="text-darkCustom">
           criteria are not met
         </Text>
       </div>

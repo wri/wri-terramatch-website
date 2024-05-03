@@ -24,6 +24,7 @@ export interface MenuItemProps {
   data?: any;
 }
 export interface MenuProps {
+  extraData?: any;
   menu: MenuItemProps[];
   setSelected?: (id: string) => void;
   isDefaultOpen?: boolean;
@@ -49,8 +50,9 @@ const Menu = (props: MenuProps) => {
     className,
     container,
     setSelectedOption,
-    classNameContentMenu
-    // selectedOption
+    classNameContentMenu,
+    selectedOption,
+    extraData
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -191,6 +193,7 @@ const Menu = (props: MenuProps) => {
           {menu?.map(item => (
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
+              selected={setSelectedOption && selectedOption === (item?.country_slug || item?.data?.label)}
               key={item.id}
               render={
                 (item?.data?.icon ? (
@@ -199,7 +202,7 @@ const Menu = (props: MenuProps) => {
                       src={`${item?.data?.icon?.toLowerCase()}`}
                       className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
                       alt="info"
-                    />{" "}
+                    />
                     {item?.data?.label}
                   </div>
                 ) : (
@@ -209,7 +212,7 @@ const Menu = (props: MenuProps) => {
               onClick={() => {
                 if (item.onClick) {
                   if (item.is_airtable) {
-                    item.onClick((children as any)?._owner?.memoizedProps?.row?.original?.id?.toString());
+                    item.onClick(extraData);
                   } else {
                     item.onClick();
                   }

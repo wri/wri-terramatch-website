@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
+import { dropdownPolygonOptions } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/mockedData";
 import { OptionValue } from "@/types/common";
+import { toArray } from "@/utils/array";
 
 import Component, { DropdownProps as Props } from "./Dropdown";
 
@@ -97,5 +99,18 @@ export const MultiSelectWithOtherOption: Story = {
     ...SingleSelect.args,
     multiSelect: true,
     hasOtherOptions: true
+  }
+};
+
+export const SingleSelectWithMetaData: Story = {
+  args: {
+    label: "Select Polygon",
+    labelVariant: "text-16-bold",
+    labelClassName: "capitalize",
+    optionsClassName: "max-w-full",
+    defaultValue: toArray(dropdownPolygonOptions[0].value),
+    placeholder: "Select Polygon",
+    options: dropdownPolygonOptions,
+    onChange: () => {}
   }
 };

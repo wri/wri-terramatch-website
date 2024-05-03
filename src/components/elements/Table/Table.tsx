@@ -14,7 +14,7 @@ import {
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Lottie from "lottie-react";
-import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useMemo, useState } from "react";
+import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -108,105 +108,112 @@ function Table<TData extends RowData>({
 
   const tableState = getState();
 
-  return (
-    <div className={`overflow-x-auto px-4 md:px-0 lg:overflow-x-visible ${classNameWrapper}`}>
-      <When condition={!!columnFilters && columnFilters.length > 0}>
-        <TableFilter
-          filters={filters}
-          columnFilters={columnFilters!}
-          onChangeFilters={filters => {
-            setFilters(filters);
-            onTableStateChange?.({ sorting: tableState.sorting, filters: [...filters] });
-          }}
-        />
-      </When>
-      {children}
-      <div className={variant.tableWrapper}>
-        <table {...props} className={classNames(className, "w-full", variant.table)}>
-          <thead className={variant.thead}>
-            {getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id} className={variant.trHeader}>
-                {headerGroup.headers.map(
-                  header =>
-                    !header.isPlaceholder && (
-                      <th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        onClick={header.column.getToggleSortingHandler()}
-                        className={classNames(
-                          tw(
-                            `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
-                            header.column.getCanSort() && "cursor-pointer"
-                          )
-                        )}
-                        align="left"
-                      >
-                        <div
-                          className="flex items-center"
-                          style={{
-                            fontSize: "inherit",
-                            fontWeight: "inherit",
-                            color: "currentColor",
-                            fontFamily: "inherit"
-                          }}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                          <When condition={header.column.getCanSort()}>
-                            <Icon
-                              name={
-                                { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
-                                  header.column.getIsSorted() as string
-                                ] || IconNames.SORT
-                              }
-                              className="ml-2 inline fill-neutral-900"
-                              width={11}
-                              height={14}
-                            />
-                          </When>
-                        </div>
-                      </th>
-                    )
-                )}
-              </tr>
-            ))}
-          </thead>
-          <tbody className={variant.tBody}>
-            <If condition={isLoading}>
-              <Then>
-                <LoadingCell />
-              </Then>
-              <Else>
-                {/* {console.log("cell1", getRowModel())} */}
-                {getRowModel().rows.length === 0 && (
-                  <tr className={variant.trHeader}>
-                    <td
-                      className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
-                      align={"center"}
-                      colSpan={columns.length}
-                    >
-                      {t("No results")}
-                    </td>
-                  </tr>
-                )}
-                {getRowModel().rows.map(row => (
-                  // console.log("cell1", row),
-                  <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
-                    {row.getVisibleCells().map(cell => (
-                      // console.log("row value", Object(cell.getValue()).id),
-                      <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
-                    ))}
-                  </tr>
-                ))}
-              </Else>
-            </If>
-          </tbody>
-        </table>
-      </div>
+  useEffect(() => {
+    setSorting(initialTableState?.sorting ?? []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
-      {!serverSideData && hasPagination && getPageCount() > 1 && (
+  return (
+    <div>
+      <div className={`overflow-x-auto px-4 md:px-0 lg:overflow-x-visible ${classNameWrapper}`}>
+        <When condition={!!columnFilters && columnFilters.length > 0}>
+          <TableFilter
+            filters={filters}
+            columnFilters={columnFilters!}
+            onChangeFilters={filters => {
+              setFilters(filters);
+              onTableStateChange?.({ sorting: tableState.sorting, filters: [...filters] });
+            }}
+          />
+        </When>
+        {children}
+        <div className={variant.tableWrapper}>
+          <table {...props} className={classNames(className, "w-full", variant.table)}>
+            <thead className={variant.thead}>
+              {getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id} className={variant.trHeader}>
+                  {headerGroup.headers.map(
+                    header =>
+                      !header.isPlaceholder && (
+                        <th
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          onClick={header.column.getToggleSortingHandler()}
+                          className={classNames(
+                            tw(
+                              `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
+                              header.column.getCanSort() && "cursor-pointer"
+                            )
+                          )}
+                          align="left"
+                        >
+                          <div
+                            className="flex items-center"
+                            style={{
+                              fontSize: "inherit",
+                              fontWeight: "inherit",
+                              color: "currentColor",
+                              fontFamily: "inherit"
+                            }}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                            <When condition={header.column.getCanSort()}>
+                              <Icon
+                                name={
+                                  { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
+                                    header.column.getIsSorted() as string
+                                  ] || IconNames.SORT
+                                }
+                                className="ml-2 inline fill-neutral-900"
+                                width={11}
+                                height={14}
+                              />
+                            </When>
+                          </div>
+                        </th>
+                      )
+                  )}
+                </tr>
+              ))}
+            </thead>
+            <tbody className={variant.tBody}>
+              <If condition={isLoading}>
+                <Then>
+                  <LoadingCell />
+                </Then>
+                <Else>
+                  {/* {console.log("cell1", getRowModel())} */}
+                  {getRowModel().rows.length === 0 && (
+                    <tr className={variant.trHeader}>
+                      <td
+                        className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
+                        align={"center"}
+                        colSpan={columns.length}
+                      >
+                        {t("No results")}
+                      </td>
+                    </tr>
+                  )}
+                  {getRowModel().rows.map(row => (
+                    // console.log("cell1", row),
+                    <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
+                      {row.getVisibleCells().map(cell => (
+                        // console.log("row value", Object(cell.getValue()).id),
+                        <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
+                      ))}
+                    </tr>
+                  ))}
+                </Else>
+              </If>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {
         <Pagination
+          variant={variant.paginationVariant}
           getCanNextPage={getCanNextPage}
           getCanPreviousPage={getCanPreviousPage}
           getPageCount={getPageCount}
@@ -219,7 +226,7 @@ function Table<TData extends RowData>({
           containerClassName="mt-6"
           hasPageSizeSelector
         />
-      )}
+      }
     </div>
   );
 }

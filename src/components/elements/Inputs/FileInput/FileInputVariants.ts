@@ -18,6 +18,7 @@ export interface FilePreviewCardVariant {
   fileCardContent: string;
   fileCardContentVariant: FileCardContentVariant;
   type?: "geoFile" | "image";
+  typeModal?: "UploadImage" | "WithMap";
 }
 
 export interface FileInputVariant {
@@ -71,7 +72,8 @@ export const VARIANT_FILE_PREVIEW_CARD_MODAL: FilePreviewCardVariant = {
     "border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4 w-full",
   fileCardContent: "flex items-center justify-center gap-3",
   fileCardContentVariant: VARIANT_FILE_CARD_MODAL_ADD,
-  type: "geoFile"
+  type: "geoFile",
+  typeModal: "UploadImage"
 };
 
 export const VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES: FilePreviewCardVariant = {
@@ -79,7 +81,17 @@ export const VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES: FilePreviewCardVariant 
     "border-grey-75 flex items-center justify-start rounded-lg border border-grey-750 py-4 lg:py-[10px] lg:px-4 px-3  w-full",
   fileCardContent: "flex items-center justify-start gap-3 contents",
   fileCardContentVariant: VARIANT_FILE_CARD_MODAL_ADD_IMAGES,
-  type: "image"
+  type: "image",
+  typeModal: "UploadImage"
+};
+
+export const VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES_WITH_MAP: FilePreviewCardVariant = {
+  fileWrapper:
+    "border-grey-75 flex items-center justify-start rounded-lg border border-grey-750 py-4 lg:py-[10px] lg:px-4 px-3  w-full",
+  fileCardContent: "flex items-center justify-start gap-3 contents",
+  fileCardContentVariant: VARIANT_FILE_CARD_MODAL_ADD_IMAGES,
+  type: "image",
+  typeModal: "WithMap"
 };
 
 export const VARIANT_FILE_INPUT_DEFAULT: FileInputVariant = {
@@ -102,4 +114,12 @@ export const VARIANT_FILE_INPUT_MODAL_ADD_IMAGES: FileInputVariant = {
   listPreview: "flex flex-col gap-4 w-full mt-2 mb-4",
   listPreviewDescription: "flex items-center justify-between",
   filePreviewVariant: VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES
+};
+
+export const VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP: FileInputVariant = {
+  container: "flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8",
+  snapshotPanel: true,
+  listPreview: "flex flex-col gap-4 w-full mt-2 mb-4",
+  listPreviewDescription: "flex items-center justify-between",
+  filePreviewVariant: VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES_WITH_MAP
 };

@@ -19,7 +19,7 @@ const Status = (props: StatusProps) => {
     const colorMap: { [key: string]: string } = {
       Approved: "text-green-500",
       Submitted: "text-blue",
-      Draft: "text-purple",
+      Draft: "text-pinkCustom",
       "Under Review": "text-tertiary-600",
       "Needs More Info": "text-tertiary-600",
       "Planting in Progress": "text-blue"
@@ -32,7 +32,7 @@ const Status = (props: StatusProps) => {
     const colorMap: { [key: string]: string } = {
       Approved: "bg-secondary-200",
       Submitted: "bg-blue-200",
-      Draft: "bg-purple-200",
+      Draft: "bg-pinkCustom-200",
       "Under Review": "bg-tertiary-50",
       "Needs More Info": "bg-tertiary-50",
       "Planting in Progress": "bg-blue-200"

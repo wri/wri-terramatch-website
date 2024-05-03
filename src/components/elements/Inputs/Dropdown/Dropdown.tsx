@@ -137,9 +137,9 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const getColorStatus = (option: string): string => {
     const colorMap: { [key: string]: string } = {
-      Approved: "bg-greenCustom-200",
+      Approved: "bg-green",
       Submitted: "bg-blue",
-      Draft: "bg-purple",
+      Draft: "bg-pinkCustom",
       "Under Review": "bg-tertiary-600",
       "Needs More Info": "bg-tertiary-600"
     };
@@ -239,7 +239,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             name=""
                             checked={isSelected}
                             label={option.title}
-                            className="flex-row-reverse justify-end gap-3"
+                            className="flex flex-row-reverse items-center gap-3"
                             onChange={() => {
                               !isSelected
                                 ? setSelected([...selected, option.value])

@@ -38,7 +38,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         </Text>
         <If condition={typeof content === "string"}>
           <Then>
-            <Text as="div" variant="text-12-light" className="text-grey-300" containHtml>
+            <Text as="div" variant="text-12-light" className="text-darkCustom" containHtml>
               {content}
             </Text>
           </Then>
