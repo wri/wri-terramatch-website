@@ -79,7 +79,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
-  const [estimatedArea] = useState<number>(selectedPolygon?.est_area || 0);
+  const [estimatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
   const formattedArea =
     estimatedArea && estimatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -121,7 +121,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
         num_trees: treesPlanted,
-        est_area: estimatedArea
+        calc_area: estimatedArea
       };
       await fetchPutV2TerrafundSitePolygonUuid({
         body: updatedPolygonData,
