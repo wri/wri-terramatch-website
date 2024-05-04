@@ -4,14 +4,14 @@ export const GRID_VARIANT_DEFAULT: WorkdayGridVariantProps = {
   header: "rounded bg-neutral-350",
   bodyCollapse: "bg-transparent pt-4 pr-11",
   columTitle: "bg-neutral-10",
-  gridStyle: "rounded grid-cols-23",
+  gridStyle: "rounded grid-cols-15",
   roundedTl: "rounded-tl",
   roundedBl: "rounded-bl",
   roundedTr: "rounded-tr",
   roundedBr: "rounded-br",
-  firstCol: "col-span-8",
+  firstCol: "col-span-4",
   secondCol: "col-span-7 bg-white",
-  tertiaryCol: "col-span-8",
+  tertiaryCol: "col-span-4",
   totalIcon: "hidden"
 };
 
@@ -31,7 +31,7 @@ export const GRID_VARIANT_GREEN: WorkdayGridVariantProps = {
   totalIcon: "text-customGreen-200"
 };
 
-export const GRID_VARIANT_GREY: WorkdayGridVariantProps = {
+export const GRID_VARIANT_NARROW: WorkdayGridVariantProps = {
   header: "rounded bg-neutral-350",
   bodyCollapse: "bg-transparent pt-4",
   columTitle: "bg-neutral-10",

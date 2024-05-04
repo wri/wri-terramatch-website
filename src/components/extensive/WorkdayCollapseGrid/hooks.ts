@@ -1,4 +1,4 @@
-import { Dictionary, find, uniq } from "lodash";
+import { Dictionary, findIndex, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { Demographic, DEMOGRAPHIC_TYPE_MAP, DEMOGRAPHIC_TYPES, DemographicType, Status } from "./types";
@@ -6,6 +6,8 @@ import { Demographic, DEMOGRAPHIC_TYPE_MAP, DEMOGRAPHIC_TYPES, DemographicType, 
 export type Position = "first" | "last" | null;
 
 export interface SectionRow {
+  demographicIndex: number;
+  typeName: string;
   label: string;
   userLabel?: string;
   amount: number;
@@ -40,19 +42,26 @@ export function useTableStatus(demographics: Demographic[]): { total: number; st
 
 function mapRows(usesSubtype: boolean, typeMap: Dictionary<string>, demographics: Demographic[]) {
   if (usesSubtype) {
-    return demographics.map(({ subtype, name, amount }) => ({
-      label: typeMap[subtype!],
-      userLabel: name,
-      amount
-    }));
+    return demographics.map(
+      ({ subtype, name, amount }, index): SectionRow => ({
+        demographicIndex: index,
+        typeName: name ?? "unknown",
+        label: typeMap[subtype!],
+        userLabel: name,
+        amount
+      })
+    );
   }
 
-  return Object.keys(typeMap).map(
-    (typeName): SectionRow => ({
+  return Object.keys(typeMap).map((typeName): SectionRow => {
+    const demographicIndex = findIndex(demographics, ({ name }) => name === typeName);
+    return {
+      demographicIndex,
+      typeName,
       label: typeMap[typeName],
-      amount: find(demographics, ({ name }) => name === typeName)?.amount ?? 0
-    })
-  );
+      amount: demographicIndex >= 0 ? demographics[demographicIndex].amount : 0
+    };
+  });
 }
 
 export function useSectionData(type: DemographicType, demographics: Demographic[]) {

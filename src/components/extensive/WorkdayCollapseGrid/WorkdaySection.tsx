@@ -1,10 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { startCase } from "lodash";
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
+import WorkdayRow from "@/components/extensive/WorkdayCollapseGrid/WorkdayRow";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
@@ -14,8 +15,7 @@ export interface WorkdaySectionProps {
   demographics: Demographic[];
   type: DemographicType;
   variant: WorkdayGridVariantProps;
-  // TODO real signature
-  onChange?: () => void;
+  onChange?: (demographics: Demographic[]) => void;
 }
 
 const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectionProps) => {
@@ -23,6 +23,34 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
   const { title, rows, total, position, subtypes } = useSectionData(type, demographics);
+
+  const onRowChange = useCallback(
+    (index: number, name: string, amount: number, userLabel?: string) => {
+      if (onChange == null) return;
+
+      // avoid mutation of existing data from our parent
+      const updatedDemographics = [...demographics];
+      const demographic: Demographic =
+        index >= 0
+          ? { ...updatedDemographics[index] }
+          : // We can ignore subtype here because when a type uses subtypes, we never have a row
+            // that doesn't exist in the demographics array, so the index can never be < 0
+            { type, name, amount };
+
+      if (subtypes != null) {
+        demographic.name = userLabel;
+      }
+      demographic.amount = amount;
+      if (index < 0) {
+        updatedDemographics.push(demographic);
+      } else {
+        updatedDemographics[index] = demographic;
+      }
+
+      onChange(updatedDemographics);
+    },
+    [demographics, onChange, type]
+  );
 
   return (
     <Fragment>
@@ -65,27 +93,16 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
           <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className={variant.totalIcon} />
         </Text>
       </div>
-      {rows.map(({ label, userLabel, amount }) => (
-        <Fragment key={`${label}|${userLabel}`}>
-          <div className={classNames("flex items-center justify-between bg-white px-4", variant.secondCol)}>
-            <Text variant="text-14-light" className="flex items-center">
-              {t(label)}
-            </Text>
-            <When condition={editUserLabel && subtypes != null}>
-              <input
-                placeholder={t(`Enter ${startCase(type)}`)}
-                className="text-14-light h-min w-3/5 rounded px-2 py-1 outline-0 hover:border hover:border-primary hover:shadow-blue-border-input"
-              />
-            </When>
-          </div>
-          <div className={classNames("bg-white", variant.tertiaryCol)}>
-            <input
-              placeholder={t("{amount} Days", { amount })}
-              defaultValue={amount}
-              className="text-14-light w-full border border-transparent px-4 py-[9.5px] text-center outline-0 hover:border-primary hover:shadow-blue-border-input"
-            />
-          </div>
-        </Fragment>
+      {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (
+        <WorkdayRow
+          key={index}
+          onChange={
+            onChange == null
+              ? undefined
+              : (amount, userLabel) => onRowChange(demographicIndex, typeName, amount, userLabel)
+          }
+          {...{ type, subtypes, label, userLabel, amount, variant }}
+        />
       ))}
       <When condition={subtypes != null && onChange != null}>
         <div className={classNames("flex items-center bg-white", variant.secondCol)}>

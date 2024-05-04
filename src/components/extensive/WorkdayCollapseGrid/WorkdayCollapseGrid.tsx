@@ -1,14 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { groupBy, startCase } from "lodash";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useTableStatus } from "./hooks";
-import { DEMOGRAPHIC_TYPES, WorkdayCollapseGridProps } from "./types";
+import { Demographic, DEMOGRAPHIC_TYPES, DemographicType, WorkdayCollapseGridProps } from "./types";
 import WorkdaySection from "./WorkdaySection";
 
 const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
@@ -16,6 +16,16 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
   const t = useT();
   const { total, status } = useTableStatus(demographics);
   const byType = useMemo(() => groupBy(demographics, "type"), [demographics]);
+
+  const onSectionChange = useCallback(
+    (type: DemographicType, sectionDemographics: Demographic[]) => {
+      onChange?.([
+        ...demographics.filter(({ type: demographicType }) => demographicType !== type),
+        ...sectionDemographics
+      ]);
+    },
+    [onChange, demographics]
+  );
 
   return (
     <div>
@@ -57,12 +67,17 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
         <div className={classNames("", variant.bodyCollapse)}>
           <div
             className={classNames(
-              "overflow-hiden grid w-full gap-x-px gap-y-px border border-neutral-200 bg-neutral-200 leading-normal",
+              "grid w-full gap-x-px gap-y-px overflow-hidden border border-neutral-200 bg-neutral-200 leading-normal",
               variant.gridStyle
             )}
           >
             {DEMOGRAPHIC_TYPES.map(type => (
-              <WorkdaySection key={type} demographics={byType[type] ?? []} {...{ type, variant, onChange }} />
+              <WorkdaySection
+                key={type}
+                onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}
+                demographics={byType[type] ?? []}
+                {...{ type, variant }}
+              />
             ))}
           </div>
         </div>

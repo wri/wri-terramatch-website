@@ -32,8 +32,7 @@ export interface WorkdayCollapseGridProps {
   title: string;
   demographics: Demographic[];
   variant: WorkdayGridVariantProps;
-  // TODO real signature
-  onChange?: () => void;
+  onChange?: (demographics: Demographic[]) => void;
 }
 
 const GENDERS: Dictionary<string> = {

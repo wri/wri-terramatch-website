@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 
-import { WorkdayCollapseGridProps } from "@/components/extensive/WorkdayCollapseGrid/types";
+import { Demographic, WorkdayCollapseGridProps } from "@/components/extensive/WorkdayCollapseGrid/types";
 
 import WorkdayCollapseGrid from "./WorkdayCollapseGrid";
-import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_GREY } from "./WorkdayVariant";
+import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_NARROW } from "./WorkdayVariant";
 
 const meta: Meta<typeof WorkdayCollapseGrid> = {
   title: "Components/Extensive/WorkdayCollapse",
@@ -13,6 +14,14 @@ const meta: Meta<typeof WorkdayCollapseGrid> = {
 type Story = StoryObj<typeof WorkdayCollapseGrid>;
 
 export default meta;
+
+const ControlWrapper = (args: WorkdayCollapseGridProps) => {
+  const [demographics, setDemographics] = useState(args.demographics);
+  const onChange = (updatedDemographics: Demographic[]) => {
+    setDemographics(updatedDemographics);
+  };
+  return <WorkdayCollapseGrid {...{ ...args, demographics, onChange }} />;
+};
 
 export const Default: Story = {
   render: (args: WorkdayCollapseGridProps) => {
@@ -39,7 +48,7 @@ export const Default: Story = {
   }
 };
 
-export const VariantGrey: Story = {
+export const VariantNarrow: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className="w-1/2 rounded-2xl">
@@ -61,7 +70,7 @@ export const VariantGrey: Story = {
       { type: "ethnicity", subtype: "unknown", amount: 30 },
       { type: "ethnicity", subtype: "indigenous", name: "ABC", amount: 30 }
     ],
-    variant: GRID_VARIANT_GREY
+    variant: GRID_VARIANT_NARROW
   }
 };
 
@@ -69,7 +78,7 @@ export const CompleteGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <WorkdayCollapseGrid {...args} />
+        <ControlWrapper {...args} />
       </div>
     );
   },
@@ -87,8 +96,7 @@ export const CompleteGreen: Story = {
       { type: "ethnicity", subtype: "other", name: "Indonesian", amount: 25 },
       { type: "ethnicity", subtype: "unknown", amount: 15 }
     ],
-    variant: GRID_VARIANT_GREEN,
-    onChange: () => {}
+    variant: GRID_VARIANT_GREEN
   }
 };
 
@@ -96,15 +104,14 @@ export const NotStartedGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <WorkdayCollapseGrid {...args} />
+        <ControlWrapper {...args} />
       </div>
     );
   },
   args: {
     title: "A. Site Establishment Paid",
     demographics: [],
-    variant: GRID_VARIANT_GREEN,
-    onChange: () => {}
+    variant: GRID_VARIANT_GREEN
   }
 };
 
@@ -112,7 +119,7 @@ export const InProgressGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className="rounded-2xl">
-        <WorkdayCollapseGrid {...args} />
+        <ControlWrapper {...args} />
       </div>
     );
   },
@@ -122,7 +129,6 @@ export const InProgressGreen: Story = {
       { type: "gender", name: "female", amount: 20 },
       { type: "age", name: "adult", amount: 75 }
     ],
-    variant: GRID_VARIANT_GREEN,
-    onChange: () => {}
+    variant: GRID_VARIANT_GREEN
   }
 };
