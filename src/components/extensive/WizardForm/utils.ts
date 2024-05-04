@@ -8,7 +8,6 @@ import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTabl
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
-import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { FormRead } from "@/generated/apiSchemas";
 import { UploadedFile } from "@/types/common";
@@ -189,8 +188,6 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
       else if (field.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(field.fieldProps);
       else if (field.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns();
-      else if (field.type === FieldType.WorkdaysTable)
-        headers = getWorkdaysTableColumns(undefined, field.fieldProps.ethnicityOptions);
       else if (field.type === FieldType.SeedingsDataTable)
         headers = getSeedingTableColumns(undefined, field.fieldProps.captureCount);
 

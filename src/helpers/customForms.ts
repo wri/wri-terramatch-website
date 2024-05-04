@@ -4,14 +4,12 @@ import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
-import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { Option } from "@/types/common";
-import { objectArrayHasDuplication } from "@/utils/array";
 import { urlValidation } from "@/utils/yup";
 
 export function normalizedFormData<T = any>(values: T, steps: FormStepSchema[]): T {
@@ -451,8 +449,7 @@ export const apiFormQuestionToFormField = (
           required,
           entity,
           addButtonCaption: question.add_button_text,
-          collection: question.collection,
-          ethnicityOptions: getOptions(question, t)
+          collection: question.collection
         }
       };
     }
@@ -618,30 +615,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
 
     case "workdays": {
       validation = yup.array();
-      validation = validation.test({
-        name: "duplicated",
-        exclusive: false,
-        message: t("You've already added an item that matches this selection. Please try a different one."),
-        test: function (values) {
-          return !objectArrayHasDuplication(
-            values || [],
-            getWorkdaysTableColumns(t => t, [])
-              .filter(header => header.accessorKey !== "amount")
-              .map(header => header.accessorKey)
-          );
-        }
-      });
-
-      if (max) validation = validation.max(max);
-      if (isNumber(min)) validation = validation.min(min);
-
-      if (required) {
-        if (isNumber(min)) {
-          validation = validation.required();
-        } else {
-          validation = validation.min(1).required();
-        }
-      }
+      // TODO (TM-878) Validation
 
       return validation;
     }
