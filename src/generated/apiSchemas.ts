@@ -4933,37 +4933,13 @@ export type V2SeedingPaginated = {
 
 export type V2WorkdayRead = {
   uuid?: string;
-  amount?: number;
   collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdaysPaginated = {
-  data?: {
-    uuid?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity";
+    subtype?: string;
+    name?: string;
     amount?: number;
-    collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
-    indigeneity?: string;
   }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
 };
 
 export type V2DisturbanceRead = {
@@ -22962,4 +22938,11 @@ export type V2ProjectInviteRead = {
 
 export type V2ProjectInviteCreate = {
   email_address?: string;
+};
+
+export type WorkdayDemographic = {
+  type?: "gender" | "age" | "ethnicity";
+  subtype?: string;
+  name?: string;
+  amount?: number;
 };

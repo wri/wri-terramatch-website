@@ -1,44 +1,21 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { groupBy, startCase } from "lodash";
+import { FC, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import WorkdaysGrid from "./WorkdayGrid";
-import { WorkdayGridVariantProps } from "./WorkdayVariant";
+import { useTableStatus } from "./hooks";
+import { DEMOGRAPHIC_TYPES, WorkdayCollapseGridProps } from "./types";
+import WorkdaySection from "./WorkdaySection";
 
-export interface WorkdayCollapseGridItemProps {
-  title: string;
-  value: string;
-}
-
-export interface WorkdayCollapseGridContentProps {
-  type: "Gender" | "Age" | "Ethnicity";
-  item: WorkdayCollapseGridItemProps[];
-  total: string;
-  select?: boolean;
-}
-
-export interface WorkdayCollapseGridProps {
-  title: string;
-  status?: "Complete" | "Not Started" | "In Progress";
-  content: WorkdayCollapseGridContentProps[];
-  variant: WorkdayGridVariantProps;
-  nameSelect?: string;
-  daySelect?: string;
-}
-
-const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({
-  title,
-  status,
-  content,
-  variant,
-  nameSelect,
-  daySelect,
-  ...rest
-}) => {
+const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
   const [open, setOpen] = useState(false);
+  const t = useT();
+  const { total, status } = useTableStatus(demographics);
+  const byType = useMemo(() => groupBy(demographics, "type"), [demographics]);
 
   return (
     <div>
@@ -48,20 +25,22 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({
           [`${variant.open}`]: !open
         })}
       >
-        <Text variant="text-18-bold">{title}</Text>
+        <Text variant="text-18-bold">
+          {t(title)} - {t("{total} Days", { total })}
+        </Text>
 
         <div className="flex items-baseline gap-2">
-          <When condition={status}>
+          <When condition={onChange != null}>
             <Text
               variant="text-14-bold"
               className={classNames("flex items-start gap-2 leading-normal", {
-                "text-customGreen-200": status === "Complete",
-                "text-neutral-550": status === "Not Started",
-                "text-tertiary-450": status === "In Progress"
+                "text-customGreen-200": status === "complete",
+                "text-neutral-550": status === "not-started",
+                "text-tertiary-450": status === "in-progress"
               })}
             >
-              {status}
-              <When condition={status === "Complete"}>
+              {t(startCase(status))}
+              <When condition={status === "complete"}>
                 <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className="text-customGreen-200" />
               </When>
             </Text>
@@ -75,7 +54,18 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({
         </div>
       </button>
       <When condition={open}>
-        <WorkdaysGrid content={content} variant={variant} nameSelect={nameSelect} daySelect={daySelect} />
+        <div className={classNames("", variant.bodyCollapse)}>
+          <div
+            className={classNames(
+              "overflow-hiden grid w-full gap-x-px gap-y-px border border-neutral-200 bg-neutral-200 leading-normal",
+              variant.gridStyle
+            )}
+          >
+            {DEMOGRAPHIC_TYPES.map(type => (
+              <WorkdaySection key={type} demographics={byType[type] ?? []} {...{ type, variant, onChange }} />
+            ))}
+          </div>
+        </div>
       </When>
     </div>
   );

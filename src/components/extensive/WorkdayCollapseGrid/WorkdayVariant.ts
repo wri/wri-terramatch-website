@@ -1,20 +1,6 @@
-export interface WorkdayGridVariantProps {
-  header: string;
-  open?: string;
-  bodyCollapse: string;
-  columTitle: string;
-  gridStyle: string;
-  roundedTl: string;
-  roundedBl: string;
-  roundedTr: string;
-  roundedBr: string;
-  firstCol?: string;
-  secondCol?: string;
-  tertiaryCol?: string;
-  totalIcon?: string;
-}
+import { WorkdayGridVariantProps } from "./types";
 
-export const GRID_VARIANT_DEFAULT = {
+export const GRID_VARIANT_DEFAULT: WorkdayGridVariantProps = {
   header: "rounded bg-neutral-350",
   bodyCollapse: "bg-transparent pt-4 pr-11",
   columTitle: "bg-neutral-10",
@@ -29,7 +15,7 @@ export const GRID_VARIANT_DEFAULT = {
   totalIcon: "hidden"
 };
 
-export const GRID_VARIANT_GREEN = {
+export const GRID_VARIANT_GREEN: WorkdayGridVariantProps = {
   header: "rounded-t-2xl bg-customGreen-100",
   open: "rounded-2xl",
   bodyCollapse: "bg-neutral-75 px-4 py-5",
@@ -45,7 +31,7 @@ export const GRID_VARIANT_GREEN = {
   totalIcon: "text-customGreen-200"
 };
 
-export const GRID_VARIANT_GREY = {
+export const GRID_VARIANT_GREY: WorkdayGridVariantProps = {
   header: "rounded bg-neutral-350",
   bodyCollapse: "bg-transparent pt-4",
   columTitle: "bg-neutral-10",

@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import WorkdayCollapseGrid, { WorkdayCollapseGridProps } from "./WorkdayCollapseGrid";
+import { WorkdayCollapseGridProps } from "@/components/extensive/WorkdayCollapseGrid/types";
+
+import WorkdayCollapseGrid from "./WorkdayCollapseGrid";
 import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_GREY } from "./WorkdayVariant";
 
 const meta: Meta<typeof WorkdayCollapseGrid> = {
@@ -21,67 +23,19 @@ export const Default: Story = {
     );
   },
   args: {
-    title: "A. Site Establishment Paid - 130 Days",
-    content: [
-      {
-        type: "Gender",
-        item: [
-          {
-            title: "Women",
-            value: "70 Days"
-          },
-          {
-            title: "Men",
-            value: "30 Days"
-          },
-          {
-            title: "Undefined",
-            value: "30 Days"
-          }
-        ],
-        total: "130 Days"
-      },
-      {
-        type: "Age",
-        item: [
-          {
-            title: "Youth",
-            value: "30 Days"
-          },
-          {
-            title: "Adult",
-            value: "30 Days"
-          },
-          {
-            title: "Elder",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Ethnicity",
-        item: [
-          {
-            title: "Indigenous XYZ",
-            value: "130 Days"
-          },
-          {
-            title: "Other",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days",
-        select: true
-      }
+    title: "A. Site Establishment Paid",
+    demographics: [
+      { type: "gender", name: "female", amount: 70 },
+      { type: "gender", name: "male", amount: 30 },
+      { type: "gender", name: "unknown", amount: 30 },
+      { type: "age", name: "youth", amount: 30 },
+      { type: "age", name: "adult", amount: 30 },
+      { type: "age", name: "elder", amount: 30 },
+      { type: "ethnicity", subtype: "indigenous", name: "XYZ", amount: 130 },
+      { type: "ethnicity", subtype: "other", name: "German", amount: 30 },
+      { type: "ethnicity", subtype: "unknown", amount: 50 }
     ],
-    variant: GRID_VARIANT_DEFAULT,
-    nameSelect: "Ethnicity ABC",
-    daySelect: "120 Days"
+    variant: GRID_VARIANT_DEFAULT
   }
 };
 
@@ -94,66 +48,18 @@ export const VariantGrey: Story = {
     );
   },
   args: {
-    title: "A. Nursery Operations Volunteer (100 Days)",
-    content: [
-      {
-        type: "Gender",
-        item: [
-          {
-            title: "Women",
-            value: "70 Days"
-          },
-          {
-            title: "Men",
-            value: "30 Days"
-          },
-          {
-            title: "Undefined",
-            value: "30 Days"
-          }
-        ],
-        total: "130 Days"
-      },
-      {
-        type: "Age",
-        item: [
-          {
-            title: "Youth (15-24)",
-            value: "30 Days"
-          },
-          {
-            title: "Adult (24-65)",
-            value: "30 Days"
-          },
-          {
-            title: "Elder (65+)",
-            value: "30 Days"
-          }
-        ],
-        total: "90 Days"
-      },
-      {
-        type: "Ethnicity",
-        item: [
-          {
-            title: "Indigenous XYZ",
-            value: "130 Days"
-          },
-          {
-            title: "Other",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          },
-          {
-            title: "Ethnicity ABC",
-            value: "120 Days"
-          }
-        ],
-        total: "100 Days"
-      }
+    title: "A. Nursery Operations Volunteer",
+    demographics: [
+      { type: "gender", name: "female", amount: 70 },
+      { type: "gender", name: "male", amount: 30 },
+      { type: "gender", name: "unknown", amount: 30 },
+      { type: "age", name: "youth", amount: 30 },
+      { type: "age", name: "adult", amount: 30 },
+      { type: "age", name: "elder", amount: 30 },
+      { type: "ethnicity", subtype: "indigenous", name: "XYZ", amount: 130 },
+      { type: "ethnicity", subtype: "other", name: "English", amount: 30 },
+      { type: "ethnicity", subtype: "unknown", amount: 30 },
+      { type: "ethnicity", subtype: "indigenous", name: "ABC", amount: 30 }
     ],
     variant: GRID_VARIANT_GREY
   }
@@ -168,74 +74,21 @@ export const CompleteGreen: Story = {
     );
   },
   args: {
-    title: "A. Site Establishment Paid - 130 Days",
-    status: "Complete",
-    content: [
-      {
-        type: "Gender",
-        item: [
-          {
-            title: "Women",
-            value: "30 Days"
-          },
-          {
-            title: "Men",
-            value: "30 Days"
-          },
-          {
-            title: "Undefined",
-            value: "30 Days"
-          },
-          {
-            title: "Decline to Specify",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Age",
-        item: [
-          {
-            title: "Youth (15-24)",
-            value: "30 Days"
-          },
-          {
-            title: "Adult (24-65)",
-            value: "30 Days"
-          },
-          {
-            title: "Elder (65+)",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Ethnicity",
-        item: [
-          {
-            title: "Indigenous",
-            value: "130 Days"
-          },
-          {
-            title: "Other",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days",
-        select: true
-      }
+    title: "A. Site Establishment Paid",
+    demographics: [
+      { type: "gender", name: "female", amount: 30 },
+      { type: "gender", name: "male", amount: 30 },
+      { type: "gender", name: "non-binary", amount: 30 },
+      { type: "age", name: "youth", amount: 10 },
+      { type: "age", name: "adult", amount: 40 },
+      { type: "age", name: "elder", amount: 10 },
+      { type: "age", name: "unknown", amount: 30 },
+      { type: "ethnicity", subtype: "indigenous", amount: 50 },
+      { type: "ethnicity", subtype: "other", name: "Indonesian", amount: 25 },
+      { type: "ethnicity", subtype: "unknown", amount: 15 }
     ],
-    variant: GRID_VARIANT_GREEN
+    variant: GRID_VARIANT_GREEN,
+    onChange: () => {}
   }
 };
 
@@ -248,78 +101,14 @@ export const NotStartedGreen: Story = {
     );
   },
   args: {
-    title: "A. Site Establishment Paid - 130 Days",
-    status: "Not Started",
-    content: [
-      {
-        type: "Gender",
-        item: [
-          {
-            title: "Women",
-            value: "30 Days"
-          },
-          {
-            title: "Men",
-            value: "30 Days"
-          },
-          {
-            title: "Undefined",
-            value: "30 Days"
-          },
-          {
-            title: "Decline to Specify",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Age",
-        item: [
-          {
-            title: "Youth (15-24)",
-            value: "30 Days"
-          },
-          {
-            title: "Adult (24-65)",
-            value: "30 Days"
-          },
-          {
-            title: "Elder (65+)",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Ethnicity",
-        item: [
-          {
-            title: "Indigenous",
-            value: "130 Days"
-          },
-          {
-            title: "Other",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days",
-        select: true
-      }
-    ],
-    variant: GRID_VARIANT_GREEN
+    title: "A. Site Establishment Paid",
+    demographics: [],
+    variant: GRID_VARIANT_GREEN,
+    onChange: () => {}
   }
 };
 
-export const InProgressgGreen: Story = {
+export const InProgressGreen: Story = {
   render: (args: WorkdayCollapseGridProps) => {
     return (
       <div className="rounded-2xl">
@@ -328,73 +117,12 @@ export const InProgressgGreen: Story = {
     );
   },
   args: {
-    title: "A. Site Establishment Paid - 130 Days",
-    status: "In Progress",
-    content: [
-      {
-        type: "Gender",
-        item: [
-          {
-            title: "Women",
-            value: "30 Days"
-          },
-          {
-            title: "Men",
-            value: "30 Days"
-          },
-          {
-            title: "Undefined",
-            value: "30 Days"
-          },
-          {
-            title: "Decline to Specify",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Age",
-        item: [
-          {
-            title: "Youth (15-24)",
-            value: "30 Days"
-          },
-          {
-            title: "Adult (24-65)",
-            value: "30 Days"
-          },
-          {
-            title: "Elder (65+)",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days"
-      },
-      {
-        type: "Ethnicity",
-        item: [
-          {
-            title: "Indigenous",
-            value: "130 Days"
-          },
-          {
-            title: "Other",
-            value: "30 Days"
-          },
-          {
-            title: "Unknown",
-            value: "30 Days"
-          }
-        ],
-        total: "100 Days",
-        select: true
-      }
+    title: "A. Site Establishment Paid",
+    demographics: [
+      { type: "gender", name: "female", amount: 20 },
+      { type: "age", name: "adult", amount: 75 }
     ],
-    variant: GRID_VARIANT_GREEN
+    variant: GRID_VARIANT_GREEN,
+    onChange: () => {}
   }
 };
