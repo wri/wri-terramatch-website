@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { startCase } from "lodash";
 import { Fragment, useCallback, useState } from "react";
 import { When } from "react-if";
 
@@ -9,7 +8,7 @@ import WorkdayRow from "@/components/extensive/WorkdayCollapseGrid/WorkdayRow";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { Demographic, DemographicType, WorkdayGridVariantProps } from "./types";
+import { Demographic, DEMOGRAPHIC_TYPE_MAP, DemographicType, WorkdayGridVariantProps } from "./types";
 
 export interface WorkdaySectionProps {
   demographics: Demographic[];
@@ -19,10 +18,10 @@ export interface WorkdaySectionProps {
 }
 
 const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectionProps) => {
-  const [editUserLabel, setEditUserLabel] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
   const { title, rows, total, position, subtypes } = useSectionData(type, demographics);
+  const { addSubtypeLabel } = DEMOGRAPHIC_TYPE_MAP[type];
 
   const onRowChange = useCallback(
     (index: number, name: string, amount: number, userLabel?: string) => {
@@ -48,6 +47,14 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
       }
 
       onChange(updatedDemographics);
+    },
+    [demographics, onChange, type]
+  );
+
+  const addRow = useCallback(
+    (subtype: string) => {
+      setOpenMenu(false);
+      onChange?.([...demographics, { type, subtype, amount: 0 }]);
     },
     [demographics, onChange, type]
   );
@@ -109,11 +116,9 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
           <div className="relative">
             <button
               className={"text-14-semibold flex items-baseline gap-1 px-4 py-2 text-customBlue-100 hover:text-primary"}
-              onClick={() => {
-                setOpenMenu(!openMenu);
-              }}
+              onClick={() => setOpenMenu(!openMenu)}
             >
-              {t(`Add ${t(startCase(type))} Group`)}
+              {addSubtypeLabel && t(addSubtypeLabel)}
               <Icon
                 name={IconNames.IC_ARROW_COLLAPSE}
                 width={9}
@@ -122,13 +127,13 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
               />
             </button>
             <When condition={openMenu}>
-              <div className="absolute rounded-lg border border-neutral-200 bg-white p-2">
+              <div className="absolute -my-1 rounded-lg border border-neutral-200 bg-white p-2">
                 {subtypes &&
                   Object.keys(subtypes).map(subtype => (
                     <button
                       key={subtype}
                       className="w-full rounded-lg p-2 text-left hover:bg-customBlue-75 hover:text-primary"
-                      onClick={() => setEditUserLabel(!editUserLabel)}
+                      onClick={() => addRow(subtype)}
                     >
                       {t(subtypes[subtype])}
                     </button>

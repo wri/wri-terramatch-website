@@ -57,22 +57,20 @@ const ETHNICITIES: Dictionary<string> = {
 
 export const DEMOGRAPHIC_TYPE_MAP: Dictionary<{
   title: string;
-  usesSubtype: boolean;
   typeMap: Dictionary<string>;
+  addSubtypeLabel?: string;
 }> = {
   gender: {
     title: "Gender",
-    usesSubtype: false,
     typeMap: GENDERS
   },
   age: {
     title: "Age",
-    usesSubtype: false,
     typeMap: AGES
   },
   ethnicity: {
     title: "Ethnicity",
-    usesSubtype: true,
-    typeMap: ETHNICITIES
+    typeMap: ETHNICITIES,
+    addSubtypeLabel: "Add Ethnic Group"
   }
 };

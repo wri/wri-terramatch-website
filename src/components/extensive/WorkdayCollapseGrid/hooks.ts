@@ -67,7 +67,8 @@ function mapRows(usesSubtype: boolean, typeMap: Dictionary<string>, demographics
 export function useSectionData(type: DemographicType, demographics: Demographic[]) {
   return useMemo(
     function () {
-      const { title, usesSubtype, typeMap } = DEMOGRAPHIC_TYPE_MAP[type];
+      const { title, addSubtypeLabel, typeMap } = DEMOGRAPHIC_TYPE_MAP[type];
+      const usesSubtype = addSubtypeLabel != null;
       const rows = mapRows(usesSubtype, typeMap, demographics);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
       const index = DEMOGRAPHIC_TYPES.indexOf(type);

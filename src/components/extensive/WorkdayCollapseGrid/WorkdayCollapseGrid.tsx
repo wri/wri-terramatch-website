@@ -67,7 +67,7 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
         <div className={classNames("", variant.bodyCollapse)}>
           <div
             className={classNames(
-              "grid w-full gap-x-px gap-y-px overflow-hidden border border-neutral-200 bg-neutral-200 leading-normal",
+              "grid w-full gap-x-px gap-y-px border border-neutral-200 bg-neutral-200 leading-normal",
               variant.gridStyle
             )}
           >
