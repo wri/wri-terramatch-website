@@ -8133,6 +8133,7 @@ export type GetV2WorkdaysENTITYUUIDResponse = {
   data?: {
     uuid?: string;
     collection?: string;
+    readable_collection?: string;
     demographics?: {
       type?: "gender" | "age" | "ethnicity";
       subtype?: string;

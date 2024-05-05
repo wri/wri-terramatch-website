@@ -4934,6 +4934,7 @@ export type V2SeedingPaginated = {
 export type V2WorkdayRead = {
   uuid?: string;
   collection?: string;
+  readable_collection?: string;
   demographics?: {
     type?: "gender" | "age" | "ethnicity";
     subtype?: string;

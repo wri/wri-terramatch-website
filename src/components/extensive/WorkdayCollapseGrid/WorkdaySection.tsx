@@ -59,19 +59,19 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
     [demographics, onChange, type]
   );
 
+  // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
+  const rowSpanCount = subtypes == null || onChange == null ? rows.length + 1 : rows.length + 2;
+  const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
+
   return (
     <Fragment>
       <div
-        className={classNames(
-          "flex items-center justify-center bg-white",
-          variant.firstCol,
-          `row-span-${rows.length > 7 ? "full" : rows.length + 1}`,
-          {
-            [variant.roundedTl]: position === "first",
-            [variant.roundedBl]: position === "last",
-            [`!row-span-${rows.length > 6 ? "full" : rows.length + 2}`]: subtypes != null
-          }
-        )}
+        className={classNames("flex items-center justify-center bg-white", variant.firstCol, {
+          [variant.roundedTl]: position === "first",
+          [variant.roundedBl]: position === "last",
+          [`!row-span-${rows.length > 6 ? "full" : rows.length + 2}`]: subtypes != null
+        })}
+        style={{ gridRow: firstColGridRow }}
       >
         <Text variant="text-14-light">{t(title)}</Text>
       </div>
