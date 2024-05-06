@@ -21,11 +21,13 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const { field } = useController(props);
 
   useEffect(() => {
-    fields
-      .filter(field => field.condition !== formHook.watch(props.name))
-      .forEach(field => {
+    fields.forEach(field => {
+      if (field.condition !== formHook.watch(props.name)) {
+        formHook.register(field.name);
+      } else {
         formHook.unregister(field.name);
-      });
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields, formHook.watch(props.name)]);
 
