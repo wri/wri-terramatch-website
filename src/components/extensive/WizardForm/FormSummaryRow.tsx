@@ -16,6 +16,8 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
+import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -67,6 +69,16 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
         break;
       }
 
+      case FieldType.WorkdaysTable: {
+        const workday = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: <WorkdayCollapseGrid demographics={workday?.demographics ?? []} variant={GRID_VARIANT_NARROW} />
+        });
+        break;
+      }
+
       case FieldType.Map: {
         outputArr.push({
           title: f.label,
@@ -93,7 +105,6 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
       case FieldType.StrataDataTable:
       case FieldType.DisturbanceDataTable:
       case FieldType.InvasiveDataTable:
-      case FieldType.WorkdaysTable:
       case FieldType.SeedingsDataTable: {
         let headers: AccessorKeyColumnDef<any>[] = [];
 

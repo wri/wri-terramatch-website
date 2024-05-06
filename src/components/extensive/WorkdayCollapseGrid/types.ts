@@ -29,7 +29,7 @@ export interface WorkdayGridVariantProps {
 }
 
 export interface WorkdayCollapseGridProps {
-  title: string;
+  title?: string;
   demographics: Demographic[];
   variant: WorkdayGridVariantProps;
   onChange?: (demographics: Demographic[]) => void;

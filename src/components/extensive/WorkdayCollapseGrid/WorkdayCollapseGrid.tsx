@@ -27,6 +27,9 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
     [onChange, demographics]
   );
 
+  const titleDays = t("{total} Days", { total });
+  const fullTitle = title == null ? titleDays : `${title} - ${titleDays}`;
+
   return (
     <div>
       <button
@@ -35,9 +38,7 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
           [`${variant.open}`]: !open
         })}
       >
-        <Text variant="text-18-bold">
-          {t(title)} - {t("{total} Days", { total })}
-        </Text>
+        <Text variant="text-18-bold">{fullTitle}</Text>
 
         <div className="flex items-baseline gap-2">
           <When condition={onChange != null}>
