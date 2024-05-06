@@ -92,7 +92,7 @@ export const Map = ({
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const { isUserDrawingEnabled } = context || { isUserDrawingEnabled: false };
-  // const { toggleUserDrawing } = context || {};
+  const { toggleUserDrawing } = context || {};
 
   const refresh = useRefresh();
   useEffect(() => {
@@ -103,12 +103,13 @@ export const Map = ({
     }
   }, [isUserDrawingEnabled]);
   const storePolygon = async (geojson: any) => {
-    console.log("Store polygon", geojson);
+    toggleUserDrawing?.(false);
     if (geojson && geojson[0]) {
-      const response = await fetchPostV2TerrafundPolygon({
+      await fetchPostV2TerrafundPolygon({
         body: { geometry: JSON.stringify(geojson[0].geometry) }
       });
-      console.log("response", response);
+      onCancel();
+      loadLayersInMap();
     }
   };
   useEffect(() => {
@@ -199,6 +200,19 @@ export const Map = ({
       }
     }
   };
+  const loadLayersInMap = () => {
+    layersList.forEach((layer: any) => {
+      if (ref.current && ref.current.map) {
+        ref.current.addSource(layer, polygonsData, setPolygonFromMap, true);
+        if (setPolygonFromMap) {
+          setPolygonFromMap({ uuid: "", isOpen: false });
+        }
+        ref.current.map.once("idle", () => {
+          refresh();
+        });
+      }
+    });
+  };
   const onSave = async () => {
     if (ref.current && ref.current.draw) {
       const geojson = ref.current.draw.getAll();
@@ -210,17 +224,7 @@ export const Map = ({
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           if (response.message == "Geometry updated successfully.") {
-            layersList.forEach((layer: any) => {
-              if (ref.current && ref.current.map) {
-                ref.current.addSource(layer, polygonsData, setPolygonFromMap, true);
-                if (setPolygonFromMap) {
-                  setPolygonFromMap({ uuid: "", isOpen: false });
-                }
-                ref.current.map.once("idle", () => {
-                  refresh();
-                });
-              }
-            });
+            loadLayersInMap();
             onCancel();
           }
         }
