@@ -40,7 +40,7 @@ const RHFWorkdaysTable = ({
     (updatedDemographics: Demographic[]) => {
       onChange([{ ...value[0], collection, demographics: updatedDemographics }]);
     },
-    [value]
+    [value, collection, onChange]
   );
 
   return (

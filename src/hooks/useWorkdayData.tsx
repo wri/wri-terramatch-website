@@ -58,6 +58,6 @@ export default function useWorkdayData(
 
       return { grids, title };
     },
-    [response]
+    [response, t, titlePrefix, workdayCollection]
   );
 }

@@ -48,7 +48,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
 
       onChange(updatedDemographics);
     },
-    [demographics, onChange, type]
+    [demographics, onChange, type, subtypes]
   );
 
   const addRow = useCallback(
