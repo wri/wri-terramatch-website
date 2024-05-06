@@ -15,7 +15,7 @@ const LoginLayout: React.FC<LoginLayoutProps> = props => {
   const pathname = usePathname();
 
   return (
-    <div className="relative flex h-full w-full bg-square-pattern bg-contain bg-right bg-no-repeat">
+    <div className="relative flex h-screen w-full bg-square-pattern bg-contain bg-right bg-no-repeat">
       <div className="mt-[-78px] flex w-[45%] flex-col items-center justify-center py-[78px]">
         {children}
         <When condition={pathname !== "/sign-up"}>
