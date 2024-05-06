@@ -87,7 +87,12 @@ export const Map = ({
   const mapId = useId();
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
+  const { isUserDrawingEnabled } = context || { isUserDrawingEnabled: false };
+
   const refresh = useRefresh();
+  useEffect(() => {
+    console.log("isUserDrawingEnabled", isUserDrawingEnabled);
+  }, [isUserDrawingEnabled]);
   useEffect(() => {
     if (!ref.current) {
       ref.current = _MapService;
