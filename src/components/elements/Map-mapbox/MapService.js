@@ -56,8 +56,22 @@ class MapService {
       this.map.removeSource(name);
     }
   }
+  addSourceAndLayerToMap(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
+    const { name, styles } = layer;
+    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
+    this.map.addSource(name, {
+      type: "vector",
+      tiles: [URL_GEOSERVER]
+    });
+    styles?.forEach((style, index) => {
+      this.addLayerStyle(name, style, index);
+    });
+    this.onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
+  }
   addSource(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
     const { name, styles } = layer;
+
     if (!this.styleLoaded) {
       this.sourceQueue.push(layer);
       return;
@@ -69,16 +83,7 @@ class MapService {
       });
       this.map.removeSource(name);
     }
-    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
-    this.map.addSource(name, {
-      type: "vector",
-      tiles: [URL_GEOSERVER]
-    });
-    styles?.forEach((style, index) => {
-      this.addLayerStyle(name, style, index);
-    });
-    this.onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
+    this.addSourceAndLayerToMap(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
   }
   refreshSource(layer) {
     const { name } = layer;
