@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import Link from "next/link";
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -14,19 +14,52 @@ type LoginFormProps = {
   form: UseFormReturn<LoginFormData>;
   handleSave: (data: LoginFormData) => Promise<any>;
   loading?: boolean;
+  errorsRequest?: {
+    stack: { errors: [] };
+  };
 };
 
-const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
+const LoginForm = ({ form, handleSave, loading, errorsRequest }: LoginFormProps) => {
   const t = useT();
   const errors = form.formState.errors;
   const [sendInformation, setSendInformation] = useState(false);
 
-  const handleSubmit = () => {
-    setSendInformation(true);
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    if (form.getValues("email") === "" || form.getValues("password") === "") {
+      setSendInformation(false);
+      form.setError("email", { message: undefined });
+      form.setError("password", { message: undefined });
+    }
     handleSave(form.getValues());
+    e.preventDefault();
+  };
+  useEffect(() => {
+    if (errorsRequest?.stack) {
+      setSendInformation(true);
+      errorsRequest.stack?.errors?.map((error: { source: string; detail: string }) => {
+        if (error.source === "email_address") {
+          form.setError("email", { message: error.detail });
+        } else if (error.source === "password") {
+          form.setError("password", { message: error.detail });
+        }
+      });
+    } else {
+      setSendInformation(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorsRequest]);
+
+  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSendInformation(false);
+    form.setValue("email", e.target.value);
+  };
+
+  const handleChangePwd = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSendInformation(false);
+    form.setValue("password", e.target.value);
   };
   return (
-    <Form formType={"login"} onSubmit={form.handleSubmit(handleSave)}>
+    <Form formType={"login"} onSubmit={handleSubmit}>
       <div className="w-[30vw]">
         <Text variant="text-32-bold" className="text-blueCustom-700">
           {t("Sign in")}
@@ -43,11 +76,12 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             type="text"
             label={t("Email Address")}
             variant={"login"}
-            required={true}
+            required={false}
             placeholder=" "
             id="email"
             formHook={form}
             error={sendInformation ? errors.email : undefined}
+            hideErrorMessage={!sendInformation}
             containerClassName={`flex flex-col gap-2 bg-white content-login w-full  ${
               !isEmpty(form.getValues("email")) ? "input-content-login" : "input-content-login"
             }`}
@@ -57,17 +91,19 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             sufixLabelView={false}
             classNameContainerInput="!mt-0"
             classNameError="!mt-0"
+            onInput={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeEmail(e)}
           />
           <Input
             name="password"
             type="password"
             label={t("Enter Password")}
             variant={"login"}
-            required={true}
+            required={false}
             placeholder=" "
             id="password"
             formHook={form}
             error={sendInformation ? errors.password : undefined}
+            hideErrorMessage={!sendInformation}
             containerClassName={`flex flex-col gap-2 bg-white content-login w-full  ${
               !isEmpty(form.getValues("password")) ? "input-content-login" : "input-content-login"
             }`}
@@ -77,6 +113,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             sufixLabelView={false}
             classNameContainerInput="!mt-0"
             classNameError="!mt-0"
+            onInput={(e: React.ChangeEvent<HTMLInputElement>) => handleChangePwd(e)}
           />
         </div>
         <Link href="/auth/reset-password" className="flex w-fit">
@@ -87,7 +124,6 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
         <Form.Footer
           primaryButtonProps={{
             children: t("Sign in"),
-            onClick: handleSubmit,
             disabled: loading,
             className: `bg-primary py-3.5 flex items-center justify-center rounded-lg w-full
               border-2 border-primary text-white text-14-bold hover:border-white`
