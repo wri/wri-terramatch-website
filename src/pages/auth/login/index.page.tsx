@@ -24,7 +24,7 @@ const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
   const router = useRouter();
-  const { login, loginLoading } = useAuthContext();
+  const { login, loginLoading, errorsRequest } = useAuthContext();
   const { openToast } = useToastContext();
   const form = useForm<LoginFormData>({
     resolver: yupResolver(LoginFormDataSchema),
@@ -58,7 +58,7 @@ const LoginPage = () => {
     // </BackgroundLayout>
     <>
       <LoginLayout>
-        <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
+        <LoginForm form={form} loading={loginLoading} handleSave={handleSave} errorsRequest={errorsRequest} />
       </LoginLayout>
     </>
   );

@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
 import { usePostAuthLogin } from "@/generated/apiComponents";
@@ -8,18 +8,25 @@ interface IAuthContext {
   login: (body: AuthLogIn, onError?: () => void) => Promise<unknown>;
   loginLoading: boolean;
   token?: string;
+  errorsRequest: Object;
 }
 
 export const AuthContext = createContext<IAuthContext>({
   login: async () => {},
   loginLoading: false,
-  token: ""
+  token: "",
+  errorsRequest: {}
 });
 
 type AuthProviderProps = { children: React.ReactNode; token?: string };
 
 const AuthProvider = ({ children, token }: AuthProviderProps) => {
-  const { mutateAsync: authLogin, isLoading: loginLoading } = usePostAuthLogin();
+  const [errorsRequest, setErrorsRequest] = useState({});
+  const { mutateAsync: authLogin, isLoading: loginLoading } = usePostAuthLogin({
+    onError: stack => {
+      setErrorsRequest({ stack });
+    }
+  });
 
   const login = async (body: AuthLogIn, onError?: () => void) => {
     return new Promise(r => {
@@ -46,7 +53,8 @@ const AuthProvider = ({ children, token }: AuthProviderProps) => {
       value={{
         token,
         login,
-        loginLoading
+        loginLoading,
+        errorsRequest
       }}
     >
       {children}
