@@ -73,7 +73,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
-  const { data: sitePolygonData } = useGetV2SitesSitePolygon<{
+  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<{
     data: SitePolygonsDataResponse;
   }>({
     pathParams: {
@@ -175,7 +175,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       </ModalAdd>
     );
   };
-
+  const reloadSiteData = () => {
+    refetch();
+  };
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
@@ -334,7 +336,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   return (
     <When condition={!isLoading}>
-      <SitePolygonDataProvider sitePolygonData={sitePolygonData}>
+      <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={reloadSiteData}>
         <TabbedShowLayout.Tab {...props}>
           <Grid spacing={2} container>
             <Grid xs={9}>
