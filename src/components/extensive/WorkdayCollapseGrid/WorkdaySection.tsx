@@ -97,7 +97,6 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
           )}
         >
           {t("{total} Days", { total })}
-          <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className={variant.totalIcon} />
         </Text>
       </div>
       {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (

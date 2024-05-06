@@ -11,8 +11,7 @@ export const GRID_VARIANT_DEFAULT: WorkdayGridVariantProps = {
   roundedBr: "rounded-br",
   firstCol: "col-span-4",
   secondCol: "col-span-7 bg-white",
-  tertiaryCol: "col-span-4",
-  totalIcon: "hidden"
+  tertiaryCol: "col-span-4"
 };
 
 export const GRID_VARIANT_GREEN: WorkdayGridVariantProps = {
@@ -27,8 +26,7 @@ export const GRID_VARIANT_GREEN: WorkdayGridVariantProps = {
   roundedBr: "rounded-br-2xl",
   firstCol: "col-span-4",
   secondCol: "col-span-7",
-  tertiaryCol: "col-span-4",
-  totalIcon: "text-customGreen-200"
+  tertiaryCol: "col-span-4"
 };
 
 export const GRID_VARIANT_NARROW: WorkdayGridVariantProps = {
@@ -42,6 +40,5 @@ export const GRID_VARIANT_NARROW: WorkdayGridVariantProps = {
   roundedBr: "rounded-br",
   firstCol: "col-span-2",
   secondCol: "col-span-6 bg-white",
-  tertiaryCol: "col-span-2",
-  totalIcon: "hidden"
+  tertiaryCol: "col-span-2"
 };

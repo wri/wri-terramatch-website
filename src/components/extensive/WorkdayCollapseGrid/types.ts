@@ -25,7 +25,6 @@ export interface WorkdayGridVariantProps {
   firstCol?: string;
   secondCol?: string;
   tertiaryCol?: string;
-  totalIcon?: string;
 }
 
 export interface WorkdayCollapseGridProps {
