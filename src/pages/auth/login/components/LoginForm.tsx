@@ -79,8 +79,8 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
             classNameError="!mt-0"
           />
         </div>
-        <Link href="/auth/reset-password">
-          <Text variant="text-12-bold" className="mb-6 decoration-slice text-primary">
+        <Link href="/auth/reset-password" className="flex w-fit">
+          <Text variant="text-12-bold" className="mb-6 w-fit decoration-slice text-primary">
             Forgot Password?
           </Text>
         </Link>
