@@ -31816,6 +31816,44 @@ export const usePutV2TerrafundPolygonUuid = (
   );
 };
 
+export type DeleteV2TerrafundPolygonUuidPathParams = {
+  /**
+   * The UUID of the polygon geometry to delete
+   */
+  uuid: string;
+};
+
+export type DeleteV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2TerrafundPolygonUuidVariables = {
+  pathParams: DeleteV2TerrafundPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2TerrafundPolygonUuid = (
+  variables: DeleteV2TerrafundPolygonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<undefined, DeleteV2TerrafundPolygonUuidError, undefined, {}, {}, DeleteV2TerrafundPolygonUuidPathParams>({
+    url: "/v2/terrafund/polygon/{uuid}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2TerrafundPolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2TerrafundPolygonUuidError, DeleteV2TerrafundPolygonUuidVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2TerrafundPolygonUuidError, DeleteV2TerrafundPolygonUuidVariables>(
+    (variables: DeleteV2TerrafundPolygonUuidVariables) =>
+      fetchDeleteV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2TerrafundPolygonGeojsonUuidPathParams = {
   /**
    * The UUID of the polygon geometry to retrieve.
