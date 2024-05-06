@@ -81,7 +81,6 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
       setSelectedPolygonData(PolygonData || {});
       setStatusSelectedPolygon(PolygonData?.status || "");
     } else {
-      // Handle the case when sitePolygonData is not an array
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }

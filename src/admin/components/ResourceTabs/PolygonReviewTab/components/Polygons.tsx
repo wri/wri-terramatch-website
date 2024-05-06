@@ -106,8 +106,6 @@ const Polygons = (props: IPolygonProps) => {
   const deletePolygon = async (polygon: IPolygonItem) => {
     const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
     if (response && response?.uuid) {
-      // const newMenu = polygonMenu.filter(item => item.uuid !== polygon.uuid);
-      // setPolygonMenu(newMenu);
       if (reloadSiteData) {
         reloadSiteData();
       }

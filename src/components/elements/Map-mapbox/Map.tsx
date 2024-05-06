@@ -89,9 +89,6 @@ export const Map = ({
   const sitePolygonData = context?.sitePolygonData;
   const refresh = useRefresh();
   useEffect(() => {
-    console.log("site Po", sitePolygonData);
-  }, [sitePolygonData]);
-  useEffect(() => {
     if (!ref.current) {
       ref.current = _MapService;
       ref.current.initMap(mapId);
