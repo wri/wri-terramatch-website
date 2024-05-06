@@ -8,20 +8,22 @@ interface IAuthContext {
   login: (body: AuthLogIn, onError?: () => void) => Promise<unknown>;
   loginLoading: boolean;
   token?: string;
-  errorsRequest: Object;
+  errorsRequest?: {
+    stack: { errors: [] };
+  };
 }
 
 export const AuthContext = createContext<IAuthContext>({
   login: async () => {},
   loginLoading: false,
   token: "",
-  errorsRequest: {}
+  errorsRequest: { stack: { errors: [] } }
 });
 
 type AuthProviderProps = { children: React.ReactNode; token?: string };
 
 const AuthProvider = ({ children, token }: AuthProviderProps) => {
-  const [errorsRequest, setErrorsRequest] = useState({});
+  const [errorsRequest, setErrorsRequest] = useState<any>();
   const { mutateAsync: authLogin, isLoading: loginLoading } = usePostAuthLogin({
     onError: stack => {
       setErrorsRequest({ stack });
