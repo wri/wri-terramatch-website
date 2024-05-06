@@ -76,7 +76,7 @@ export async function apiFetch<
       method: method.toUpperCase(),
       // @ts-ignore
       body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
-      headers: requestHeaders
+      headers: url === "/auth/login" ? { "Content-Type": "application/json" } : requestHeaders
     });
 
     if (!response.ok) {
