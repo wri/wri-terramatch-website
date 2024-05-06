@@ -59,6 +59,18 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
     [demographics, onChange, type]
   );
 
+  const removeRow = useCallback(
+    (index: number): void => {
+      if (onChange == null) return;
+
+      // avoid mutation of existing data from our parent
+      const updatedDemographics = [...demographics];
+      updatedDemographics.splice(index, 1);
+      onChange(updatedDemographics);
+    },
+    [demographics, onChange, type]
+  );
+
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
   const rowSpanCount = subtypes == null || onChange == null ? rows.length + 1 : rows.length + 2;
   const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
@@ -107,6 +119,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
               ? undefined
               : (amount, userLabel) => onRowChange(demographicIndex, typeName, amount, userLabel)
           }
+          onDelete={onChange == null ? undefined : () => removeRow(demographicIndex)}
           {...{ type, subtypes, label, userLabel, amount, variant }}
         />
       ))}
