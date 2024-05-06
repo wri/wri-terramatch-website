@@ -85,7 +85,8 @@ export const Map = ({
   const [viewImages, setViewImages] = useState(false);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
-  const sitePolygonData = useSitePolygonData();
+  const context = useSitePolygonData();
+  const sitePolygonData = context?.sitePolygonData;
   const refresh = useRefresh();
   useEffect(() => {
     if (!ref.current) {

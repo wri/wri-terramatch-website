@@ -72,14 +72,18 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
 
-  const sitePolygonData = useSitePolygonData();
+  const context = useSitePolygonData();
+  const sitePolygonData = context?.sitePolygonData;
 
   useEffect(() => {
-    const PolygonData = sitePolygonData
-      ? sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected)
-      : {};
-    setSelectedPolygonData(PolygonData);
-    setStatusSelectedPolygon(PolygonData?.status || "");
+    if (sitePolygonData && Array.isArray(sitePolygonData)) {
+      const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
+      setSelectedPolygonData(PolygonData || {});
+      setStatusSelectedPolygon(PolygonData?.status || "");
+    } else {
+      setSelectedPolygonData({});
+      setStatusSelectedPolygon("");
+    }
   }, [polygonSelected]);
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
