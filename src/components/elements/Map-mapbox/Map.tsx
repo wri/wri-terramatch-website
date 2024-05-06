@@ -6,6 +6,7 @@ import mapboxgl from "mapbox-gl";
 //@ts-ignore
 import React, { useEffect, useId, useRef } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
+import { useRefresh } from "react-admin";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -85,7 +86,7 @@ export const Map = ({
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
   const sitePolygonData = useSitePolygonData();
-
+  const refresh = useRefresh();
   useEffect(() => {
     if (!ref.current) {
       ref.current = _MapService;
@@ -186,11 +187,14 @@ export const Map = ({
           });
           if (response.message == "Geometry updated successfully.") {
             layersList.forEach((layer: any) => {
-              if (ref.current) {
-                ref.current.refreshSource(layer);
+              if (ref.current && ref.current.map) {
+                ref.current.addSource(layer, polygonsData, setPolygonFromMap, true);
                 if (setPolygonFromMap) {
                   setPolygonFromMap({ uuid: "", isOpen: false });
                 }
+                ref.current.map.once("idle", () => {
+                  refresh();
+                });
               }
             });
             onCancel();
