@@ -23,7 +23,7 @@ export const SitePolygonDataProvider: React.FC<{
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
 
   const toggleUserDrawing = (isDrawing: boolean) => {
-    console.log("is reaching hereee");
+    console.log("is toggling in provider", isDrawing);
     setIsUserDrawingEnabled(isDrawing);
   };
 

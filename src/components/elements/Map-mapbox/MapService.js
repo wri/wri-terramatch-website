@@ -1,4 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import * as turfHelper from "@turf/helpers";
 import { Map } from "mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
@@ -19,9 +20,11 @@ class MapService {
     this.centroids = null;
     this.currentPolygonUuid = null;
     this.draw = null;
+    this.handleCreateDraw = this.handleCreateDraw.bind(this);
+    this.storePolygon = null;
   }
 
-  initMap(mapId) {
+  initMap(mapId, storePolygon) {
     console.log("initMap", mapId);
     this.map = new Map({
       accessToken: MAPBOX_TOKEN,
@@ -44,8 +47,25 @@ class MapService {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
       this.map.addControl(this.draw, "top-right");
+      this.map.on("draw.create", this.handleCreateDraw);
     });
+    this.storePolygon = storePolygon;
     return this.map;
+  }
+  convertToGeoJSON(features) {
+    return features.reduce((acc, feature) => {
+      const { geometry, properties } = feature;
+      const coordinates = geometry.coordinates;
+      const type = geometry.type;
+      const featureGeoJSON = turfHelper.feature({ type, coordinates }, properties);
+      this.feature = featureGeoJSON;
+      acc.push(featureGeoJSON);
+      return acc;
+    }, []);
+  }
+  handleCreateDraw({ features }) {
+    const geojson = this.convertToGeoJSON(features);
+    this.storePolygon(geojson);
   }
   removeSources(layer) {
     const { name, styles } = layer;
@@ -68,6 +88,14 @@ class MapService {
       this.addLayerStyle(name, style, index);
     });
     this.onclickGeom(layer, polygonData, setIsOpenEditPolygon, canClickGeoms);
+  }
+  startDrawing() {
+    this.draw.changeMode("draw_polygon");
+    this.map.getCanvas().style.cursor = "crosshair";
+  }
+  stopDrawing() {
+    this.draw.changeMode("simple_select");
+    this.map.getCanvas().style.cursor = "auto";
   }
   addSource(layer, polygonData, setIsOpenEditPolygon, canClickGeoms = true) {
     const { name, styles } = layer;

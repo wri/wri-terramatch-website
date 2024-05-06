@@ -23130,6 +23130,10 @@ export type GeometryData = {
   };
 };
 
+export type DashboardPolygonResponse = {
+  uuid?: string;
+};
+
 export type GeometryString = {
   geometry?: string;
 };

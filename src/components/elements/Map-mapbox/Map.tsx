@@ -16,7 +16,11 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundPolygonGeojsonUuid,
+  fetchPostV2TerrafundPolygon,
+  fetchPutV2TerrafundPolygonUuid
+} from "@/generated/apiComponents";
 
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -88,15 +92,29 @@ export const Map = ({
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const { isUserDrawingEnabled } = context || { isUserDrawingEnabled: false };
+  // const { toggleUserDrawing } = context || {};
 
   const refresh = useRefresh();
   useEffect(() => {
-    console.log("isUserDrawingEnabled", isUserDrawingEnabled);
+    if (ref.current && isUserDrawingEnabled && ref.current.draw) {
+      ref.current.startDrawing();
+    } else {
+      ref.current?.stopDrawing();
+    }
   }, [isUserDrawingEnabled]);
+  const storePolygon = async (geojson: any) => {
+    console.log("Store polygon", geojson);
+    if (geojson && geojson[0]) {
+      const response = await fetchPostV2TerrafundPolygon({
+        body: { geometry: JSON.stringify(geojson[0].geometry) }
+      });
+      console.log("response", response);
+    }
+  };
   useEffect(() => {
     if (!ref.current) {
       ref.current = _MapService;
-      ref.current.initMap(mapId);
+      ref.current.initMap(mapId, storePolygon);
       const onLoad = () => {
         layersList.forEach((layer: any) => {
           if (ref.current) {

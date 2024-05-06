@@ -32118,6 +32118,41 @@ export const useDeleteV2ProjectPipelineId = (
   );
 };
 
+export type PostV2TerrafundPolygonError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundPolygonVariables = {
+  body?: Schemas.GeometryString;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundPolygon = (variables: PostV2TerrafundPolygonVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.DashboardPolygonResponse, PostV2TerrafundPolygonError, Schemas.GeometryString, {}, {}, {}>({
+    url: "/v2/terrafund/polygon",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2TerrafundPolygon = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.DashboardPolygonResponse,
+      PostV2TerrafundPolygonError,
+      PostV2TerrafundPolygonVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.DashboardPolygonResponse,
+    PostV2TerrafundPolygonError,
+    PostV2TerrafundPolygonVariables
+  >(
+    (variables: PostV2TerrafundPolygonVariables) => fetchPostV2TerrafundPolygon({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
