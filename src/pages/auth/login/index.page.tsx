@@ -42,7 +42,7 @@ const LoginPage = () => {
         email_address: data.email,
         password: data.password
       },
-      () => openToast(t("Incorrect email or password"), ToastType.ERROR)
+      () => openToast(t("Incorrect Email or Password"), ToastType.ERROR)
     )) as { success: boolean };
 
     if (!res?.success) return;
