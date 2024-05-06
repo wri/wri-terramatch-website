@@ -6,7 +6,7 @@ export const useGetUserRole = () => {
 
   return {
     role: user.role,
-    isSuperAdmin: user.role === "admin-super",
+    isSuperAdmin: user.role === "admin" || user.role === "admin-super",
     isPPCAdmin: user.role === "admin-ppc",
     isPPCTerrafundAdmin: user.role === "admin-terrafund"
   };

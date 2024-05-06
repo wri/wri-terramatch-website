@@ -18,7 +18,7 @@ export const userPrimaryRoleChoices = [
     name: "TerraFund Admin"
   },
   {
-    id: "admin-super",
+    id: "admin",
     name: "Super Admin"
   },
   {
