@@ -5,6 +5,7 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchPutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -80,6 +81,8 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [estimatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
+  const contextSite = useSitePolygonData();
+  const reloadSiteData = contextSite?.reloadSiteData;
   const formattedArea =
     estimatedArea && estimatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -122,10 +125,17 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         distr: treeDistributionToSend,
         num_trees: treesPlanted
       };
-      await fetchPutV2TerrafundSitePolygonUuid({
-        body: updatedPolygonData,
-        pathParams: { uuid: selectedPolygon.uuid }
-      });
+      try {
+        await fetchPutV2TerrafundSitePolygonUuid({
+          body: updatedPolygonData,
+          pathParams: { uuid: selectedPolygon.uuid }
+        });
+        if (reloadSiteData) {
+          reloadSiteData();
+        }
+      } catch (error) {
+        console.error("Error updating polygon data:", error);
+      }
     }
   };
 

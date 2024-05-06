@@ -6,13 +6,24 @@ type SitePolygonData = {
   data: SitePolygonsDataResponse;
 };
 
-const SitePolygonDataContext = createContext<any>(null);
+type SitePolygonContextType = {
+  sitePolygonData: SitePolygonData | undefined;
+  reloadSiteData: () => void;
+};
+
+const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
 
 export const SitePolygonDataProvider: React.FC<{
   sitePolygonData: SitePolygonData | undefined;
+  reloadSiteData: () => void; // Added reloadSiteData to props
   children: ReactNode;
-}> = ({ sitePolygonData, children }) => {
-  return <SitePolygonDataContext.Provider value={sitePolygonData}>{children}</SitePolygonDataContext.Provider>;
+}> = ({ sitePolygonData, reloadSiteData, children }) => {
+  const contextValue: SitePolygonContextType = {
+    sitePolygonData,
+    reloadSiteData
+  };
+
+  return <SitePolygonDataContext.Provider value={contextValue}>{children}</SitePolygonDataContext.Provider>;
 };
 
 export const useSitePolygonData = () => {

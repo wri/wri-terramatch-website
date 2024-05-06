@@ -14,6 +14,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonComplete,
@@ -60,7 +61,11 @@ const Polygons = (props: IPolygonProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
-
+  const context = useSitePolygonData();
+  const reloadSiteData = context?.reloadSiteData;
+  useEffect(() => {
+    setPolygonMenu(props.menu);
+  }, [props.menu]);
   useEffect(() => {
     if (!isOpenPolygonDrawer) {
       setSelectedPolygon(undefined);
@@ -101,8 +106,9 @@ const Polygons = (props: IPolygonProps) => {
   const deletePolygon = async (polygon: IPolygonItem) => {
     const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
     if (response && response?.uuid) {
-      const newMenu = polygonMenu.filter(item => item.uuid !== polygon.uuid);
-      setPolygonMenu(newMenu);
+      if (reloadSiteData) {
+        reloadSiteData();
+      }
       closeModal();
     }
   };
