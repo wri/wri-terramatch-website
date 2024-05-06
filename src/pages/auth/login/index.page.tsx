@@ -15,7 +15,7 @@ import LoginForm from "./components/LoginForm";
 
 export const LoginFormDataSchema = yup.object({
   email: yup.string().email().required(),
-  password: yup.string().required()
+  password: yup.string().required("Password is required")
 });
 
 export type LoginFormData = yup.InferType<typeof LoginFormDataSchema>;

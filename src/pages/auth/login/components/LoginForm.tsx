@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -26,28 +26,11 @@ const LoginForm = ({ form, handleSave, loading, errorsRequest }: LoginFormProps)
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     if (form.getValues("email") === "" || form.getValues("password") === "") {
-      setSendInformation(false);
-      form.setError("email", { message: undefined });
-      form.setError("password", { message: undefined });
+      setSendInformation(true);
     }
     handleSave(form.getValues());
     e.preventDefault();
   };
-  useEffect(() => {
-    if (errorsRequest?.stack) {
-      setSendInformation(true);
-      errorsRequest.stack?.errors?.map((error: { source: string; detail: string }) => {
-        if (error.source === "email_address") {
-          form.setError("email", { message: error.detail });
-        } else if (error.source === "password") {
-          form.setError("password", { message: error.detail });
-        }
-      });
-    } else {
-      setSendInformation(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorsRequest]);
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSendInformation(false);
