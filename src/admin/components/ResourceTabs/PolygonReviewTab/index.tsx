@@ -29,7 +29,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
-import { EntityName } from "@/types/common";
+import { EntityName, FileType } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap, polygonData } from "./components/Polygons";
@@ -146,6 +146,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Start by adding polygons to your site."
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
       >
         {/* Next div is only Mocked data delete this children later*/}
         <div className="mb-6 flex flex-col gap-4">

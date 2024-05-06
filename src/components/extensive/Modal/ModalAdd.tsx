@@ -11,7 +11,7 @@ import {
 } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { UploadedFile } from "@/types/common";
+import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBaseProps, ModalProps } from "./Modal";
@@ -37,6 +37,7 @@ export interface ModalAddProps extends ModalProps {
   descriptionList?: ReactNode;
   variantFileInput?: FileInputVariant;
   descriptionListStatus?: string;
+  acceptedTYpes?: FileType[];
   status?: "Under Review" | "Approved" | "Draft" | "Submitted";
   onCLose?: () => void;
 }
@@ -52,6 +53,7 @@ const ModalAdd: FC<ModalAddProps> = ({
   descriptionInput,
   descriptionList,
   descriptionListStatus,
+  acceptedTYpes,
   variantFileInput = VARIANT_FILE_INPUT_MODAL_ADD,
   children,
   status,
@@ -95,6 +97,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           descriptionList={descriptionList}
           descriptionListStatus={descriptionListStatus}
           variant={variantFileInput}
+          accept={acceptedTYpes}
           onDelete={file =>
             setFiles(state => {
               const tmp = [...state];
