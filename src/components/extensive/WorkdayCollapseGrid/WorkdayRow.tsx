@@ -66,7 +66,7 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
           </When>
         </When>
       </div>
-      <div className={classNames("flex items-center justify-center bg-white", variant.tertiaryCol)}>
+      <div className={classNames("relative flex items-center justify-center bg-white", variant.tertiaryCol)}>
         <When condition={onChange == null}>
           <Text variant="text-14-light" className="w-full px-4 py-[9.5px] text-center">
             {t("{amount} Days", { amount })}

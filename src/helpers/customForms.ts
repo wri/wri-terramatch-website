@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hooks";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
@@ -448,7 +449,6 @@ export const apiFormQuestionToFormField = (
         fieldProps: {
           required,
           entity,
-          addButtonCaption: question.add_button_text,
           collection: question.collection
         }
       };
@@ -513,13 +513,13 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   let options: Option[] = [];
 
   if (question.options?.length > 0) {
-    return (options = question.options
+    return question.options
       ? (sortBy(question.options, "order").map(option => ({
           title: option.label,
           value: option.slug,
           meta: omit(option, ["label", "slug"])
         })) as Option[])
-      : []);
+      : [];
   }
 
   switch (question.options_list) {
@@ -614,8 +614,38 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
     }
 
     case "workdays": {
-      validation = yup.array();
-      // TODO (TM-878) Validation
+      validation = yup
+        .array()
+        .min(0)
+        .max(1)
+        .of(
+          yup.object({
+            collection: yup.string().required(),
+            demographics: yup
+              .array()
+              .of(
+                yup.object({
+                  type: yup.string(),
+                  subtype: yup.string().nullable(),
+                  name: yup.string().nullable(),
+                  amount: yup.number()
+                })
+              )
+              .required()
+          })
+        )
+        .test(
+          "totals-match",
+          () => "The totals for each demographic type do not match",
+          value => {
+            const { demographics } = value.length > 0 ? value[0] : {};
+            if (demographics == null) return true;
+
+            return calculateTotals(demographics).countsMatch;
+          }
+        );
+
+      if (required) validation = validation.required();
 
       return validation;
     }

@@ -139,7 +139,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
               />
             </button>
             <When condition={openMenu}>
-              <div className="absolute -my-1 rounded-lg border border-neutral-200 bg-white p-2">
+              <div className="absolute z-10 -my-1 rounded-lg border border-neutral-200 bg-white p-2">
                 {subtypes &&
                   Object.keys(subtypes).map(subtype => (
                     <button

@@ -1,6 +1,7 @@
 import { PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
 import { Demographic } from "@/components/extensive/WorkdayCollapseGrid/types";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
 import { GRID_VARIANT_GREEN } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
@@ -44,12 +45,14 @@ const RHFWorkdaysTable = ({
   );
 
   return (
-    <WorkdayCollapseGrid
-      title={props.label ?? ""}
-      demographics={demographics}
-      variant={GRID_VARIANT_GREEN}
-      onChange={updateDemographics}
-    />
+    <InputWrapper error={props.error}>
+      <WorkdayCollapseGrid
+        title={props.label ?? ""}
+        demographics={demographics}
+        variant={GRID_VARIANT_GREEN}
+        onChange={updateDemographics}
+      />
+    </InputWrapper>
   );
 };
 

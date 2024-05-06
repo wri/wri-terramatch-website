@@ -13,19 +13,24 @@ export interface SectionRow {
   amount: number;
 }
 
+export function calculateTotals(demographics: Demographic[]) {
+  const counts = demographics.reduce(
+    function (counts, { type, amount }) {
+      counts[type] += amount;
+      return counts;
+    },
+    { gender: 0, age: 0, ethnicity: 0 }
+  );
+
+  const total = Math.max(counts.age, counts.gender, counts.ethnicity);
+  const countsMatch = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
+  return { total, countsMatch };
+}
+
 export function useTableStatus(demographics: Demographic[]): { total: number; status: Status } {
   return useMemo(
     function () {
-      const counts = demographics.reduce(
-        function (counts, { type, amount }) {
-          counts[type] += amount;
-          return counts;
-        },
-        { gender: 0, age: 0, ethnicity: 0 }
-      );
-
-      const total = Math.max(counts.age, counts.gender, counts.ethnicity);
-      const countsMatch = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
+      const { total, countsMatch } = calculateTotals(demographics);
 
       let status: Status = "in-progress";
       if (total === 0) {
