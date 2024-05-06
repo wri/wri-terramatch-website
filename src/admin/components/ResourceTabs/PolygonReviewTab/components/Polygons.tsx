@@ -14,7 +14,11 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
-import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
+import {
+  fetchDeleteV2TerrafundPolygonUuid,
+  fetchGetV2TerrafundGeojsonComplete,
+  fetchGetV2TerrafundPolygonBboxUuid
+} from "@/generated/apiComponents";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
@@ -51,6 +55,7 @@ export const polygonData = [
 
 const Polygons = (props: IPolygonProps) => {
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
+  const [polygonMenu, setPolygonMenu] = useState<IPolygonItem[]>(props.menu);
   const { polygonFromMap, setPolygonFromMap } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
@@ -64,7 +69,7 @@ const Polygons = (props: IPolygonProps) => {
 
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
-      setSelectedPolygon(props.menu.find(polygon => polygon.uuid === polygonFromMap.uuid));
+      setSelectedPolygon(polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid));
       setIsOpenPolygonDrawer(true);
     } else {
       setIsOpenPolygonDrawer(false);
@@ -91,6 +96,15 @@ const Polygons = (props: IPolygonProps) => {
       padding: 100,
       linear: false
     });
+  };
+
+  const deletePolygon = async (polygon: IPolygonItem) => {
+    const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
+    if (response && response?.uuid) {
+      const newMenu = polygonMenu.filter(item => item.uuid !== polygon.uuid);
+      setPolygonMenu(newMenu);
+      closeModal();
+    }
   };
 
   const openFormModalHandlerAddPolygon = () => {
@@ -138,13 +152,15 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const openFormModalHandlerConfirm = () => {
+  const openFormModalHandlerConfirm = (item: any) => {
     openModal(
       <ModalConfirm
         title={"Confirm Polygon Deletion"}
         content="Do you want to delete this polygon?"
         onClose={closeModal}
-        onConfirm={() => {}}
+        onConfirm={() => {
+          deletePolygon(item);
+        }}
       />
     );
   };
@@ -250,7 +266,9 @@ const Polygons = (props: IPolygonProps) => {
           <Text variant="text-12-bold">Delete Polygon</Text>
         </div>
       ),
-      onClick: openFormModalHandlerConfirm
+      onClick: () => {
+        openFormModalHandlerConfirm(item);
+      }
     }
   ];
 
@@ -268,7 +286,7 @@ const Polygons = (props: IPolygonProps) => {
         </Button>
       </div>
       <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
-        {props.menu.map(item => {
+        {polygonMenu.map(item => {
           return (
             <div
               key={item.id}
