@@ -75,6 +75,7 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
         <When condition={onChange != null}>
           <input
             value={focused ? amount : t("{amount} Days", { amount })}
+            type={focused ? "number" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onChange={onAmountChange}
@@ -90,6 +91,5 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
     </Fragment>
   );
 };
-//style={{ path: { transform: 'translate(-10.5px, -5.5px) scale(1.5, 1.5)' } } }/>
 
 export default WorkdayRow;
