@@ -23117,10 +23117,6 @@ export type SitePolygonResponse = {
   target_sys?: string;
   distr?: string;
   num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
 };
 
 export type SitePolygonCreateResponse = {

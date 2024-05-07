@@ -1,5 +1,5 @@
 import { remove } from "lodash";
-import React, { FC, ReactNode, useState } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -11,7 +11,7 @@ import {
 } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { UploadedFile } from "@/types/common";
+import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBaseProps, ModalProps } from "./Modal";
@@ -37,8 +37,10 @@ export interface ModalAddProps extends ModalProps {
   descriptionList?: ReactNode;
   variantFileInput?: FileInputVariant;
   descriptionListStatus?: string;
+  acceptedTYpes?: FileType[];
   status?: "Under Review" | "Approved" | "Draft" | "Submitted";
   onCLose?: () => void;
+  setFile?: (file: UploadedFile[]) => void;
 }
 
 const ModalAdd: FC<ModalAddProps> = ({
@@ -52,13 +54,22 @@ const ModalAdd: FC<ModalAddProps> = ({
   descriptionInput,
   descriptionList,
   descriptionListStatus,
+  acceptedTYpes,
   variantFileInput = VARIANT_FILE_INPUT_MODAL_ADD,
   children,
   status,
+  setFile,
   onCLose,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
+
+  useEffect(() => {
+    if (setFile && files) {
+      console.log("gets here", files);
+      setFile(files);
+    }
+  }, [files]);
 
   return (
     <ModalAddBase {...rest}>
@@ -95,6 +106,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           descriptionList={descriptionList}
           descriptionListStatus={descriptionListStatus}
           variant={variantFileInput}
+          accept={acceptedTYpes}
           onDelete={file =>
             setFiles(state => {
               const tmp = [...state];
@@ -114,7 +126,8 @@ const ModalAdd: FC<ModalAddProps> = ({
                 url: "https://google.com",
                 created_at: "now",
                 uuid: file.name,
-                is_public: true
+                is_public: true,
+                rawFile: file
               }))
             ])
           }
