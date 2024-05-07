@@ -22,7 +22,13 @@ import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundGeojsonSite,
+  fetchPostV2TerrafundUploadGeojson,
+  fetchPostV2TerrafundUploadKml,
+  fetchPostV2TerrafundUploadShapefile,
   GetV2FormsENTITYUUIDResponse,
+  PostV2TerrafundUploadGeojsonRequestBody,
+  PostV2TerrafundUploadKmlRequestBody,
+  PostV2TerrafundUploadShapefileRequestBody,
   useGetV2FormsENTITYUUID,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
@@ -134,38 +140,37 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   useEffect(() => {
-    console.log("filesssssss", files);
+    console.log("the files", files);
   }, [files]);
 
-  const uploadFiles = async () => {
-    const formData = new FormData();
+  const uploadFiles = async (files: any) => {
+    console.log("upload files ", files);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const site_uuid = record.uuid;
+      const formData = new FormData();
+      const fileType = getFileType(file);
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
-      // let blob;
-      const fileType = getFileType(file);
-      console.log("fileType", fileType);
-      // switch (fileType) {
-      //   case "geojson":
-      //     await fetchPostV2TerrafundUploadGeojson({ formData, pathParams: { uuid: site_uuid } });
-      //     break;
-      //   case "shapefile":
-      //     await fetchPostV2TerrafundUploadShapefile({ formData, pathParams: { uuid: site_uuid } });
-      //     break;
-      //   case "kml":
-      //     blob = new Blob(file, { type: "application/vnd.google-earth.kml+xml" });
-      //     await fetchPostV2TerrafundUploadKml({
-      //       body: { file: blob, uuid: site_uuid }
-      //     });
-      //     break;
-      //   default:
-      //     break;
-      // }
+      let newRequest: any; // Define newRequest variable with 'any' type
+      switch (fileType) {
+        case "geojson":
+          newRequest = formData as PostV2TerrafundUploadGeojsonRequestBody;
+          await fetchPostV2TerrafundUploadGeojson({ body: newRequest });
+          break;
+        case "shapefile":
+          newRequest = formData as PostV2TerrafundUploadShapefileRequestBody;
+          await fetchPostV2TerrafundUploadShapefile({ body: newRequest });
+          break;
+        case "kml":
+          newRequest = formData as PostV2TerrafundUploadKmlRequestBody;
+          await fetchPostV2TerrafundUploadKml({ body: newRequest });
+          break;
+        default:
+          break;
+      }
     }
-
-    console.log("formdata", formData);
+    closeModal();
   };
 
   const getFileType = (file: UploadedFile) => {
@@ -175,7 +180,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     if (fileType === "kml") return "kml";
     return null;
   };
-
+  const handleUploadFiles = () => {
+    console.log("handle upload files", files);
+    uploadFiles(files);
+  };
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
@@ -190,7 +198,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         onCLose={closeModal}
         content="Start by adding polygons to your site."
         primaryButtonText="Save"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: uploadFiles }}
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: handleUploadFiles }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={setFiles}
       >
