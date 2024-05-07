@@ -1,6 +1,6 @@
 import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -29,10 +29,10 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
-import { EntityName, FileType } from "@/types/common";
+import { EntityName, FileType, UploadedFile } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
-import { IpolygonFromMap, polygonData } from "./components/Polygons";
+import { IpolygonFromMap } from "./components/Polygons";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -63,6 +63,7 @@ const PolygonReviewAside: FC<{
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
+  const [files, setFiles] = useState<UploadedFile[]>([]);
 
   const { isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -131,6 +132,50 @@ const PolygonReviewTab: FC<IProps> = props => {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  useEffect(() => {
+    console.log("filesssssss", files);
+  }, [files]);
+
+  const uploadFiles = async () => {
+    const formData = new FormData();
+    for (const file of files) {
+      const fileToUpload = file.rawFile as File;
+      const site_uuid = record.uuid;
+      formData.append("file", fileToUpload);
+      formData.append("uuid", site_uuid);
+      // let blob;
+      const fileType = getFileType(file);
+      console.log("fileType", fileType);
+      // switch (fileType) {
+      //   case "geojson":
+      //     await fetchPostV2TerrafundUploadGeojson({ formData, pathParams: { uuid: site_uuid } });
+      //     break;
+      //   case "shapefile":
+      //     await fetchPostV2TerrafundUploadShapefile({ formData, pathParams: { uuid: site_uuid } });
+      //     break;
+      //   case "kml":
+      //     blob = new Blob(file, { type: "application/vnd.google-earth.kml+xml" });
+      //     await fetchPostV2TerrafundUploadKml({
+      //       body: { file: blob, uuid: site_uuid }
+      //     });
+      //     break;
+      //   default:
+      //     break;
+      // }
+    }
+
+    console.log("formdata", formData);
+  };
+
+  const getFileType = (file: UploadedFile) => {
+    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    if (fileType === "geojson") return "geojson";
+    if (fileType === "zip") return "shapefile";
+    if (fileType === "kml") return "kml";
+    return null;
+  };
+
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
@@ -144,12 +189,13 @@ const PolygonReviewTab: FC<IProps> = props => {
         }
         onCLose={closeModal}
         content="Start by adding polygons to your site."
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonText="Save"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: uploadFiles }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        setFile={setFiles}
       >
         {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
+        {/* <div className="mb-6 flex flex-col gap-4">
           {polygonData.map(polygon => (
             <div
               key={polygon.id}
@@ -172,7 +218,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               />
             </div>
           ))}
-        </div>
+        </div> */}
       </ModalAdd>
     );
   };

@@ -1,5 +1,5 @@
 import { remove } from "lodash";
-import React, { FC, ReactNode, useState } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -40,6 +40,7 @@ export interface ModalAddProps extends ModalProps {
   acceptedTYpes?: FileType[];
   status?: "Under Review" | "Approved" | "Draft" | "Submitted";
   onCLose?: () => void;
+  setFile?: (file: UploadedFile[]) => void;
 }
 
 const ModalAdd: FC<ModalAddProps> = ({
@@ -57,10 +58,18 @@ const ModalAdd: FC<ModalAddProps> = ({
   variantFileInput = VARIANT_FILE_INPUT_MODAL_ADD,
   children,
   status,
+  setFile,
   onCLose,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
+
+  useEffect(() => {
+    if (setFile && files) {
+      console.log("gets here", files);
+      setFile(files);
+    }
+  }, [files]);
 
   return (
     <ModalAddBase {...rest}>
