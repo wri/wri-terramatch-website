@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { DetailedHTMLProps, TextareaHTMLAttributes, useEffect, useId } from "react";
+import { DetailedHTMLProps, TextareaHTMLAttributes, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -21,11 +21,10 @@ const TextArea = ({ formHook, className, ...inputWrapperProps }: TextAreaProps) 
     { "border-light ": !error },
     { ["border border-error focus:border-error"]: error }
   );
-  useEffect(() => {
+  if (error && !!formHook?.watch(inputWrapperProps.name)) {
     formHook && formHook.trigger();
     formHook && formHook.reset(formHook.getValues());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formHook, inputWrapperProps.name, formHook?.watch(inputWrapperProps.name)]);
+  }
   return (
     <InputWrapper
       inputId={id}

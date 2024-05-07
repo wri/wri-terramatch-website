@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useEffect, useId } from "react";
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { IconNames } from "src/components/extensive/Icon/Icon";
@@ -99,14 +99,14 @@ const Input = forwardRef(
       };
     }
 
+    if (error && !!formHook?.watch(inputWrapperProps.name)) {
+      formHook.trigger();
+      formHook && formHook.reset(formHook.getValues());
+    }
+
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
 
-    useEffect(() => {
-      formHook && formHook.trigger();
-      formHook && formHook.reset(formHook.getValues());
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formHook, inputWrapperProps.name, formHook?.watch(inputWrapperProps.name)]);
     return (
       <InputWrapper
         inputId={id}
