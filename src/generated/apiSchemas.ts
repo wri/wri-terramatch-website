@@ -23123,6 +23123,23 @@ export type SitePolygonResponse = {
   calc_area?: number;
 };
 
+export type SitePolygonCreateResponse = {
+  /**
+   * @example Site polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created site polygon
+   */
+  uuid?: string;
+  /**
+   * Calculated area in hectares
+   *
+   * @format double
+   */
+  area?: number;
+};
+
 export type GeometryData = {
   geometry?: {
     coordinates?: any[];

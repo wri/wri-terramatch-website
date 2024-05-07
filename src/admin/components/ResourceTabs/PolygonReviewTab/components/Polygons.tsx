@@ -65,6 +65,7 @@ const Polygons = (props: IPolygonProps) => {
   const { toggleUserDrawing } = context || {};
 
   useEffect(() => {
+    console.log("props.menu", props.menu);
     setPolygonMenu(props.menu);
   }, [props.menu]);
   useEffect(() => {
@@ -75,12 +76,13 @@ const Polygons = (props: IPolygonProps) => {
 
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
-      setSelectedPolygon(polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid));
+      const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
+      setSelectedPolygon(newSelectedPolygon);
       setIsOpenPolygonDrawer(true);
     } else {
       setIsOpenPolygonDrawer(false);
     }
-  }, [polygonFromMap]);
+  }, [polygonFromMap, polygonMenu]);
 
   const downloadGeoJsonPolygon = async (polygon: IPolygonItem) => {
     const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({

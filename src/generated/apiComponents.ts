@@ -31700,7 +31700,7 @@ export type PutV2TerrafundSitePolygonUuidPathParams = {
 export type PutV2TerrafundSitePolygonUuidError = Fetcher.ErrorWrapper<undefined>;
 
 export type PutV2TerrafundSitePolygonUuidVariables = {
-  body?: Schemas.SitePolygonResponse;
+  body?: RequestBodies.SitePolygonResponse;
   pathParams: PutV2TerrafundSitePolygonUuidPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -31711,7 +31711,7 @@ export const fetchPutV2TerrafundSitePolygonUuid = (
   apiFetch<
     Schemas.SitePolygonResponse,
     PutV2TerrafundSitePolygonUuidError,
-    Schemas.SitePolygonResponse,
+    RequestBodies.SitePolygonResponse,
     {},
     {},
     PutV2TerrafundSitePolygonUuidPathParams
@@ -31735,6 +31735,127 @@ export const usePutV2TerrafundSitePolygonUuid = (
   >(
     (variables: PutV2TerrafundSitePolygonUuidVariables) =>
       fetchPutV2TerrafundSitePolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundSitePolygonUuidPathParams = {
+  /**
+   * The uuid of the polygon
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundSitePolygonUuidError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example No polygon geometry found for the given UUID.
+         */
+        message?: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example Internal Server Error
+         */
+        error?: string;
+      };
+    }
+>;
+
+export type PostV2TerrafundSitePolygonUuidVariables = {
+  body?: RequestBodies.SitePolygonResponse;
+  pathParams: PostV2TerrafundSitePolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundSitePolygonUuid = (
+  variables: PostV2TerrafundSitePolygonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Schemas.SitePolygonCreateResponse,
+    PostV2TerrafundSitePolygonUuidError,
+    RequestBodies.SitePolygonResponse,
+    {},
+    {},
+    PostV2TerrafundSitePolygonUuidPathParams
+  >({ url: "/v2/terrafund/site-polygon/{uuid}", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundSitePolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.SitePolygonCreateResponse,
+      PostV2TerrafundSitePolygonUuidError,
+      PostV2TerrafundSitePolygonUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.SitePolygonCreateResponse,
+    PostV2TerrafundSitePolygonUuidError,
+    PostV2TerrafundSitePolygonUuidVariables
+  >(
+    (variables: PostV2TerrafundSitePolygonUuidVariables) =>
+      fetchPostV2TerrafundSitePolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundSitePolygonUuidSiteUuidPathParams = {
+  /**
+   * The UUID of the polygon related
+   */
+  uuid: string;
+  /**
+   * The UUID of the site
+   */
+  siteUuid: string;
+};
+
+export type PostV2TerrafundSitePolygonUuidSiteUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundSitePolygonUuidSiteUuidVariables = {
+  body?: RequestBodies.SitePolygonResponse;
+  pathParams: PostV2TerrafundSitePolygonUuidSiteUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundSitePolygonUuidSiteUuid = (
+  variables: PostV2TerrafundSitePolygonUuidSiteUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Schemas.SitePolygonCreateResponse,
+    PostV2TerrafundSitePolygonUuidSiteUuidError,
+    RequestBodies.SitePolygonResponse,
+    {},
+    {},
+    PostV2TerrafundSitePolygonUuidSiteUuidPathParams
+  >({ url: "/v2/terrafund/site-polygon/{uuid}/{siteUuid}", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundSitePolygonUuidSiteUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.SitePolygonCreateResponse,
+      PostV2TerrafundSitePolygonUuidSiteUuidError,
+      PostV2TerrafundSitePolygonUuidSiteUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.SitePolygonCreateResponse,
+    PostV2TerrafundSitePolygonUuidSiteUuidError,
+    PostV2TerrafundSitePolygonUuidSiteUuidVariables
+  >(
+    (variables: PostV2TerrafundSitePolygonUuidSiteUuidVariables) =>
+      fetchPostV2TerrafundSitePolygonUuidSiteUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };
