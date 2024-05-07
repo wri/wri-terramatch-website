@@ -70,6 +70,7 @@ const PolygonReviewAside: FC<{
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
   const { isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -140,11 +141,14 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   useEffect(() => {
-    console.log("the files", files);
-  }, [files]);
+    console.log("Files save ", files, saveFlags);
+    if (files && files.length > 0 && saveFlags) {
+      uploadFiles();
+      setSaveFlags(false);
+    }
+  }, [files, saveFlags]);
 
-  const uploadFiles = async (files: any) => {
-    console.log("upload files ", files);
+  const uploadFiles = async () => {
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const site_uuid = record.uuid;
@@ -180,10 +184,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     if (fileType === "kml") return "kml";
     return null;
   };
-  const handleUploadFiles = () => {
-    console.log("handle upload files", files);
-    uploadFiles(files);
-  };
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
@@ -198,7 +198,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         onCLose={closeModal}
         content="Start by adding polygons to your site."
         primaryButtonText="Save"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: handleUploadFiles }}
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={setFiles}
       >
