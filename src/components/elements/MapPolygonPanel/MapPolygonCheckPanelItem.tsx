@@ -99,7 +99,7 @@ const MapPolygonCheckPanelItem = ({
       id: "3",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Download
         </Text>
       )
@@ -109,7 +109,7 @@ const MapPolygonCheckPanelItem = ({
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
           <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.COMMENT} className="h-5 w-4 lg:h-6 lg:w-6" />
+            <Icon name={IconNames.COMMENT} className="h-5 w-5 lg:h-6 lg:w-6" />
             &nbsp; Comment
           </Text>
         </Button>
@@ -120,7 +120,7 @@ const MapPolygonCheckPanelItem = ({
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerRequestPolygonSupport}>
           <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.REQUEST} className="h-5 w-4 lg:h-6 lg:w-6" />
+            <Icon name={IconNames.REQUEST} className="h-5 w-5 lg:h-6 lg:w-6" />
             &nbsp; Request Support
           </Text>
         </Button>
@@ -131,7 +131,7 @@ const MapPolygonCheckPanelItem = ({
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerConfirm}>
           <Text variant="text-14-semibold" className="flex items-center ">
-            <Icon name={IconNames.TRASH_PA} className="h-5 w-4 lg:h-6 lg:w-6" />
+            <Icon name={IconNames.TRASH_PA} className="h-5 w-5 lg:h-6 lg:w-6" />
             &nbsp; Delete Polygon
           </Text>
         </Button>

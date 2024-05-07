@@ -49,8 +49,6 @@ const MapPlygonSitePanel = ({
   });
 
   useEffect(() => {
-    console.log(checkboxRefs.current);
-
     const handleChange = () => {
       const checked = checkboxRefs.current.some(ref => ref.checked);
       setOpenSubMenu(checked);

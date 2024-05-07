@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useRef, useState } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
@@ -10,6 +10,7 @@ import List from "@/components/extensive/List/List";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
+import { MenuItem } from "../MenuItem/MenuItem";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
@@ -34,6 +35,33 @@ const MapSidePanel = ({
   const [selected, setSelected] = useState<MapSidePanelItemProps>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
+  const [openSubMenu, setOpenSubMenu] = useState(false);
+  const checkboxRefs = useRef<HTMLInputElement[]>([]);
+
+  useEffect(() => {
+    const handleChange = () => {
+      const checked = checkboxRefs.current.some(ref => ref.checked);
+      setOpenSubMenu(checked);
+    };
+
+    const checkbox = checkboxRefs.current;
+
+    checkbox.forEach(ref => {
+      if (ref) {
+        ref.addEventListener("change", handleChange);
+      }
+    });
+
+    handleChange();
+
+    return () => {
+      checkbox.forEach(ref => {
+        if (ref) {
+          ref.removeEventListener("change", handleChange);
+        }
+      });
+    };
+  }, [openMenu]);
 
   return (
     <div {...props} className={classNames(className)}>
@@ -49,29 +77,51 @@ const MapSidePanel = ({
             <When condition={openMenu}>
               <div className="absolute z-10 mt-1 grid w-max gap-3 rounded-lg bg-white p-3 shadow">
                 <Checkbox
+                  ref={ref => ref && checkboxRefs.current.push(ref as HTMLInputElement)}
                   name=""
                   label={t("Draft")}
-                  className="flex-row-reverse items-center justify-end gap-3"
+                  className="flex w-full flex-row-reverse items-center justify-end gap-3"
                   textClassName="text-10-semibold"
                 />
                 <Checkbox
+                  ref={ref => ref && checkboxRefs.current.push(ref as HTMLInputElement)}
                   name=""
                   label={t("Submitted")}
-                  className="flex-row-reverse items-center justify-end gap-3"
+                  className="flex w-full flex-row-reverse items-center justify-end gap-3"
                   textClassName="text-10-semibold"
                 />
                 <Checkbox
+                  ref={ref => ref && checkboxRefs.current.push(ref as HTMLInputElement)}
                   name=""
                   label={t("Approved")}
-                  className="flex-row-reverse items-center justify-end gap-3"
+                  className="flex w-full flex-row-reverse items-center justify-end gap-3"
                   textClassName="text-10-semibold"
                 />
                 <Checkbox
+                  ref={ref => ref && checkboxRefs.current.push(ref as HTMLInputElement)}
                   name=""
                   label={t("Needs More Info")}
-                  className="flex-row-reverse items-center justify-end gap-3"
+                  className="flex w-full flex-row-reverse items-center justify-end gap-3"
                   textClassName="text-10-semibold"
                 />
+                <When condition={openSubMenu}>
+                  <div className="absolute left-full top-0 ml-2 rounded-lg bg-white p-1">
+                    <MenuItem
+                      render="Sort by date"
+                      className="text-10-semibold"
+                      onClick={() => {
+                        setOpenSubMenu(false);
+                      }}
+                    ></MenuItem>
+                    <MenuItem
+                      render="Status"
+                      className="text-10-semibold"
+                      onClick={() => {
+                        setOpenSubMenu(false);
+                      }}
+                    ></MenuItem>
+                  </div>
+                </When>
               </div>
             </When>
           </div>

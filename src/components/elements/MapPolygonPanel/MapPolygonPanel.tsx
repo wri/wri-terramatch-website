@@ -61,14 +61,14 @@ const MapPolygonPanel = ({
           <div className="mb-4 flex rounded-lg bg-neutral-100 p-1">
             <Button
               variant={stateViewPanel ? "group-active-polygon" : "group-polygon"}
-              className="!w-2/4 text-blueCustom-600"
+              className="!w-2/4 whitespace-nowrap text-blueCustom-600"
               onClick={() => setStateViewPanel(true)}
             >
               {t("Polygon Check")}
             </Button>
             <Button
               variant={stateViewPanel ? "group-polygon" : "group-active-polygon"}
-              className="!w-2/4 text-blueCustom-600"
+              className="!w-2/4 whitespace-nowrap text-blueCustom-600"
               onClick={() => setStateViewPanel(false)}
             >
               {t("Site Polygons")}
