@@ -33,7 +33,7 @@ export const FormStep = ({
   useEffect(() => {
     formHook.trigger();
     formHook.reset(formHook.getValues());
-  }, [fields, formHook, title]);
+  }, [fields, formHook, title, fields]);
 
   return (
     <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-15", className)}>

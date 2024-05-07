@@ -21,7 +21,7 @@ const TextArea = ({ formHook, className, ...inputWrapperProps }: TextAreaProps) 
     { "border-light ": !error },
     { ["border border-error focus:border-error"]: error }
   );
-  if (error && !!formHook?.watch(inputWrapperProps.name)) {
+  if (error && formHook?.watch(inputWrapperProps.name)) {
     formHook && formHook.trigger();
     formHook && formHook.reset(formHook.getValues());
   }
