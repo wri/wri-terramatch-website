@@ -133,6 +133,7 @@ function WizardForm(props: WizardFormProps) {
       });
     }
     formHook.reset(formHook.getValues());
+    formHook.trigger();
   }, [formHook, props.errors]);
 
   const initialStepIndex = useMemo(() => {

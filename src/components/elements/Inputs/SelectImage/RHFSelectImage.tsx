@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useController } from "react-hook-form";
 
 import { OptionValue } from "@/types/common";
@@ -25,6 +25,9 @@ const RHFSelectImage = ({ onChangeCapture, ...props }: PropsWithChildren<RHFSele
     props.formHook.trigger();
   };
 
+  useEffect(() => {
+    props.formHook.trigger();
+  }, [value, props.formHook]);
   return <SelectImage {...props} value={value} onChange={_onChange} />;
 };
 
