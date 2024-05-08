@@ -138,7 +138,8 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
                     url: "https://google.com",
                     created_at: "now",
                     uuid: file.name,
-                    is_public: true
+                    is_public: true,
+                    original_file: file
                   }))
                 ])
               }

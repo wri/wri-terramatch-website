@@ -1,6 +1,6 @@
 import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -22,17 +22,23 @@ import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundGeojsonSite,
+  fetchPostV2TerrafundUploadGeojson,
+  fetchPostV2TerrafundUploadKml,
+  fetchPostV2TerrafundUploadShapefile,
   GetV2FormsENTITYUUIDResponse,
+  PostV2TerrafundUploadGeojsonRequestBody,
+  PostV2TerrafundUploadKmlRequestBody,
+  PostV2TerrafundUploadShapefileRequestBody,
   useGetV2FormsENTITYUUID,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
-import { EntityName } from "@/types/common";
+import { EntityName, FileType, UploadedFile } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
-import { IpolygonFromMap, polygonData } from "./components/Polygons";
+import { IpolygonFromMap } from "./components/Polygons";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -63,6 +69,8 @@ const PolygonReviewAside: FC<{
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
   const { isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -131,6 +139,50 @@ const PolygonReviewTab: FC<IProps> = props => {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  useEffect(() => {
+    if (files && files.length > 0 && saveFlags) {
+      uploadFiles();
+      setSaveFlags(false);
+    }
+  }, [files, saveFlags]);
+
+  const uploadFiles = async () => {
+    for (const file of files) {
+      const fileToUpload = file.rawFile as File;
+      const site_uuid = record.uuid;
+      const formData = new FormData();
+      const fileType = getFileType(file);
+      formData.append("file", fileToUpload);
+      formData.append("uuid", site_uuid);
+      let newRequest: any;
+      switch (fileType) {
+        case "geojson":
+          newRequest = formData as PostV2TerrafundUploadGeojsonRequestBody;
+          await fetchPostV2TerrafundUploadGeojson({ body: newRequest });
+          break;
+        case "shapefile":
+          newRequest = formData as PostV2TerrafundUploadShapefileRequestBody;
+          await fetchPostV2TerrafundUploadShapefile({ body: newRequest });
+          break;
+        case "kml":
+          newRequest = formData as PostV2TerrafundUploadKmlRequestBody;
+          await fetchPostV2TerrafundUploadKml({ body: newRequest });
+          break;
+        default:
+          break;
+      }
+    }
+    closeModal();
+  };
+
+  const getFileType = (file: UploadedFile) => {
+    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    if (fileType === "geojson") return "geojson";
+    if (fileType === "zip") return "shapefile";
+    if (fileType === "kml") return "kml";
+    return null;
+  };
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
@@ -144,11 +196,13 @@ const PolygonReviewTab: FC<IProps> = props => {
         }
         onCLose={closeModal}
         content="Start by adding polygons to your site."
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonText="Save"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
+        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        setFile={setFiles}
       >
         {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
+        {/* <div className="mb-6 flex flex-col gap-4">
           {polygonData.map(polygon => (
             <div
               key={polygon.id}
@@ -171,7 +225,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               />
             </div>
           ))}
-        </div>
+        </div> */}
       </ModalAdd>
     );
   };
