@@ -62,6 +62,7 @@ const Drawer = (props: DrawerProps) => {
           className="ml-auto rounded p-1 hover:bg-grey-800"
           onClick={() => {
             setIsOpen(false);
+            console.log("Polygon from map", "false");
             setPolygonFromMap({ isOpen: false, uuid: "" });
           }}
         >

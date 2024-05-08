@@ -329,4 +329,8 @@ export type GetV2FundingProgrammeIDBody = {
   updated_at?: string;
 };
 
+export type SitePolygonResponse = Schemas.SitePolygonResponse;
+
 export type PostV2FprojectPipeline = Schemas.ProjectPipelinePost;
+
+export type PostV2AuditStatus = Schemas.AuditStatusPost;

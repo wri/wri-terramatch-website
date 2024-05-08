@@ -6,7 +6,7 @@ import mapboxgl from "mapbox-gl";
 //@ts-ignore
 import React, { useEffect, useId, useRef } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
-import { useRefresh } from "react-admin";
+import { useRefresh, useShowContext } from "react-admin";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -16,7 +16,13 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundPolygonGeojsonUuid,
+  fetchPostV2TerrafundPolygon,
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
+  // fetchPostV2TerrafundSitePolygonUuid,
+  fetchPutV2TerrafundPolygonUuid
+} from "@/generated/apiComponents";
 
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -86,12 +92,49 @@ export const Map = ({
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
   const context = useSitePolygonData();
+  const showContext = useShowContext();
+  const { record } = showContext;
   const sitePolygonData = context?.sitePolygonData;
+  const { isUserDrawingEnabled } = context || { isUserDrawingEnabled: false };
+  const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context || {};
+
   const refresh = useRefresh();
+  useEffect(() => {
+    if (ref.current && isUserDrawingEnabled && ref.current.draw) {
+      ref.current.startDrawing();
+    } else {
+      ref.current?.stopDrawing();
+    }
+  }, [isUserDrawingEnabled]);
+
+  const storePolygon = async (geojson: any) => {
+    toggleUserDrawing?.(false);
+    if (geojson && geojson[0]) {
+      const response = await fetchPostV2TerrafundPolygon({
+        body: { geometry: JSON.stringify(geojson[0].geometry) }
+      });
+      const polygonUUID = response.uuid;
+      if (polygonUUID) {
+        const site_id = record.uuid;
+        console.log("{ uuid: polygonUUID, siteUuid: site_id }", { uuid: polygonUUID, siteUuid: site_id });
+        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
+          body: {},
+          pathParams: { uuid: polygonUUID, siteUuid: site_id }
+        });
+        if (reloadSiteData) {
+          reloadSiteData();
+        }
+        loadLayersInMap();
+        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
+        toggleAttribute?.(true);
+      }
+      onCancel();
+    }
+  };
   useEffect(() => {
     if (!ref.current) {
       ref.current = _MapService;
-      ref.current.initMap(mapId);
+      ref.current.initMap(mapId, storePolygon);
       const onLoad = () => {
         layersList.forEach((layer: any) => {
           if (ref.current) {
@@ -176,6 +219,20 @@ export const Map = ({
       }
     }
   };
+  const loadLayersInMap = () => {
+    layersList.forEach((layer: any) => {
+      if (ref.current && ref.current.map) {
+        ref.current.addSource(layer, polygonsData, setPolygonFromMap, true);
+        if (setPolygonFromMap) {
+          console.log("Polygon from map", "false");
+          setPolygonFromMap({ uuid: "", isOpen: false });
+        }
+        ref.current.map.once("idle", () => {
+          refresh();
+        });
+      }
+    });
+  };
   const onSave = async () => {
     if (ref.current && ref.current.draw) {
       const geojson = ref.current.draw.getAll();
@@ -187,17 +244,7 @@ export const Map = ({
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           if (response.message == "Geometry updated successfully.") {
-            layersList.forEach((layer: any) => {
-              if (ref.current && ref.current.map) {
-                ref.current.addSource(layer, polygonsData, setPolygonFromMap, true);
-                if (setPolygonFromMap) {
-                  setPolygonFromMap({ uuid: "", isOpen: false });
-                }
-                ref.current.map.once("idle", () => {
-                  refresh();
-                });
-              }
-            });
+            loadLayersInMap();
             onCancel();
           }
         }
