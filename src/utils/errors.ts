@@ -10,6 +10,13 @@ export const getErrorMessages = (t: typeof useT, errorCode: string, variables: a
     FILE_SIZE: {
       message: t("Maximum file allowed is {max}Mb", variables),
       type: "max"
+    },
+    UPLOAD_ERROR: {
+      message: t(
+        "The maximum upload size is 10 MB. Please compress this file and try again, or upload a different file.",
+        variables
+      ),
+      type: "max"
     }
   };
 
