@@ -173,6 +173,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           break;
       }
     }
+    refetch();
     closeModal();
   };
 
