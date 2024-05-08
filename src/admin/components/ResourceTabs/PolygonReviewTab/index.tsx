@@ -147,6 +147,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [files, saveFlags]);
 
   const uploadFiles = async () => {
+    const uploadPromises = [];
+
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const site_uuid = record.uuid;
@@ -155,23 +157,27 @@ const PolygonReviewTab: FC<IProps> = props => {
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
       let newRequest: any;
+
       switch (fileType) {
         case "geojson":
           newRequest = formData as PostV2TerrafundUploadGeojsonRequestBody;
-          await fetchPostV2TerrafundUploadGeojson({ body: newRequest });
+          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
           break;
         case "shapefile":
           newRequest = formData as PostV2TerrafundUploadShapefileRequestBody;
-          await fetchPostV2TerrafundUploadShapefile({ body: newRequest });
+          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
           break;
         case "kml":
           newRequest = formData as PostV2TerrafundUploadKmlRequestBody;
-          await fetchPostV2TerrafundUploadKml({ body: newRequest });
+          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
           break;
         default:
           break;
       }
     }
+
+    await Promise.all(uploadPromises);
+
     refetch();
     closeModal();
   };
