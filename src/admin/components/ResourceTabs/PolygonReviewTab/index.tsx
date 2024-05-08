@@ -141,7 +141,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   useEffect(() => {
-    console.log("Files save ", files, saveFlags);
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
       setSaveFlags(false);
@@ -156,7 +155,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
-      let newRequest: any; // Define newRequest variable with 'any' type
+      let newRequest: any;
       switch (fileType) {
         case "geojson":
           newRequest = formData as PostV2TerrafundUploadGeojsonRequestBody;
