@@ -71,11 +71,14 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
+  const [openAttributes, setOpenAttributes] = useState(false);
 
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
+  const openEditNewPolygon = context?.isUserDrawingEnabled;
 
   useEffect(() => {
+    console.log("polugon selected", polygonSelected);
     if (sitePolygonData && Array.isArray(sitePolygonData)) {
       const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
       setSelectedPolygonData(PolygonData || {});
@@ -85,6 +88,13 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
       setStatusSelectedPolygon("");
     }
   }, [polygonSelected]);
+  useEffect(() => {
+    console.log("openEditNewPolygon", openEditNewPolygon);
+    if (openEditNewPolygon) {
+      setButtonToogle(false);
+      setOpenAttributes(true);
+    }
+  }, [openEditNewPolygon]);
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -131,7 +141,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
               <PolygonValidation menu={polygonValidationItems} />
             </Accordion>
             <Divider />
-            <Accordion variant="drawer" title={"Attribute Information"}>
+            <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
             </Accordion>
             <Divider />

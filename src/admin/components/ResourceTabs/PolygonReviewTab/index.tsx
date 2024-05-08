@@ -4,12 +4,10 @@ import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
-import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Map from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -37,6 +35,7 @@ import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
+import PolygonReviewButtons from "./components/PolygonDrawer/components/PolygonReviewButtons";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
 
@@ -326,31 +325,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   if (isLoading) return null;
 
-  const addMenuItems = [
-    {
-      id: "1",
-      render: () => <Text variant="text-12-bold">Create Polygons</Text>
-    },
-    {
-      id: "2",
-      render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
-      onClick: openFormModalHandlerAddPolygon
-    },
-    {
-      id: "3",
-      render: () => <Text variant="text-12-bold">Upload Images</Text>,
-      onClick: openFormModalHandlerUploadImages
-    }
-  ];
-
-  const polygonStatusLabels = [
-    { id: "1", label: "Draft" },
-    { id: "2", label: "Awaiting Approval" },
-    { id: "3", label: "Needs More Information" },
-    { id: "4", label: "Planting In Progress" },
-    { id: "5", label: "Approved" }
-  ];
-
   const tableItemMenu = [
     {
       id: "1",
@@ -395,61 +369,13 @@ const PolygonReviewTab: FC<IProps> = props => {
           <Grid spacing={2} container>
             <Grid xs={9}>
               <Stack gap={4} className="pl-8 pt-9">
-                <div className="flex items-start gap-3">
-                  <div className="w-full">
-                    <div className="mb-2">
-                      <Text variant="text-16-bold" className="mb-2 text-darkCustom">
-                        Polygon Review
-                      </Text>
-                      <Text variant="text-14-light" className="text-darkCustom">
-                        Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
-                        below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
-                        application.
-                      </Text>
-                    </div>
-                    <div className="flex gap-3">
-                      <Menu menu={addMenuItems} className="flex-1">
-                        <Button
-                          variant="sky-page-admin"
-                          className="h-fit w-full whitespace-nowrap"
-                          iconProps={{
-                            className: "w-4 h-4",
-                            name: IconNames.PLUS_PA
-                          }}
-                        >
-                          Add Data
-                        </Button>
-                      </Menu>
-                      <Button
-                        variant="white-page-admin"
-                        className="flex-1"
-                        iconProps={{
-                          className: "w-4 h-4 group-hover-text-primary-500",
-                          name: IconNames.DOWNLOAD_PA
-                        }}
-                        onClick={() => {
-                          downloadSiteGeoJsonPolygons(record.uuid);
-                        }}
-                      >
-                        Download
-                      </Button>
-                      <Button className="flex-1 px-3" onClick={openFormModalHandlerSubmitPolygon}>
-                        <Text variant="text-14-bold" className="text-white">
-                          approve polygons
-                        </Text>
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
-                    <Text variant="text-14" className="mb-3 text-blueCustom-250">
-                      Site Status
-                    </Text>
-                    <div className="h-fit w-full">
-                      <StepProgressbar color="primary" value={50} labels={polygonStatusLabels} labelVariant="text-10" />
-                    </div>
-                  </div>
-                </div>
-
+                <PolygonReviewButtons
+                  openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
+                  openFormModalHandlerSubmitPolygon={openFormModalHandlerSubmitPolygon}
+                  downloadSiteGeoJsonPolygons={downloadSiteGeoJsonPolygons}
+                  openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                  record={record}
+                />
                 <Map
                   polygonsData={polygonDataMap}
                   bbox={siteBbox}
