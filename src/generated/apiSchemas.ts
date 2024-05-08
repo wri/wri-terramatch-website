@@ -23117,6 +23117,10 @@ export type SitePolygonResponse = {
   target_sys?: string;
   distr?: string;
   num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
 };
 
 export type SitePolygonCreateResponse = {
@@ -23235,4 +23239,37 @@ export type FeatureProperties = {
   target_sys?: string;
   distr?: string;
   num_trees?: number;
+};
+
+export type AuditStatusResponse = {
+  entity_uuid?: string;
+  status?: string;
+  comment?: string;
+  attachment_url?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type AuditStatusPost = {
+  entity_uuid?: string;
+  status?: string;
+  comment?: string;
+  attachment_url?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type AttachmentResponse = {
+  attachment_url?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
 };

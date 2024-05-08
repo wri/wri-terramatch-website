@@ -32431,6 +32431,229 @@ export const usePostV2TerrafundUploadKml = (
   );
 };
 
+export type PostV2TerrafundPolygonError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundPolygonVariables = {
+  body?: Schemas.GeometryString;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundPolygon = (variables: PostV2TerrafundPolygonVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.DashboardPolygonResponse, PostV2TerrafundPolygonError, Schemas.GeometryString, {}, {}, {}>({
+    url: "/v2/terrafund/polygon",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2TerrafundPolygon = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.DashboardPolygonResponse,
+      PostV2TerrafundPolygonError,
+      PostV2TerrafundPolygonVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Schemas.DashboardPolygonResponse,
+    PostV2TerrafundPolygonError,
+    PostV2TerrafundPolygonVariables
+  >(
+    (variables: PostV2TerrafundPolygonVariables) => fetchPostV2TerrafundPolygon({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2AuditStatusQueryParams = {
+  /**
+   * Optional.
+   */
+  id?: string;
+};
+
+export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AuditStatusResponse = Schemas.AuditStatusResponse[];
+
+export type GetV2AuditStatusVariables = {
+  queryParams?: GetV2AuditStatusQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AuditStatus = (variables: GetV2AuditStatusVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2AuditStatusResponse, GetV2AuditStatusError, undefined, {}, GetV2AuditStatusQueryParams, {}>({
+    url: "/v2/audit-status",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2AuditStatus = <TData = GetV2AuditStatusResponse>(
+  variables: GetV2AuditStatusVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AuditStatusResponse, GetV2AuditStatusError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AuditStatusResponse, GetV2AuditStatusError, TData>(
+    queryKeyFn({ path: "/v2/audit-status", operationId: "getV2AuditStatus", variables }),
+    ({ signal }) => fetchGetV2AuditStatus({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2AuditStatusQueryParams = {
+  /**
+   * Optional.
+   */
+  id?: string;
+};
+
+export type PostV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AuditStatusVariables = {
+  body?: RequestBodies.PostV2AuditStatus;
+  queryParams?: PostV2AuditStatusQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AuditStatus = (variables: PostV2AuditStatusVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.AuditStatusResponse,
+    PostV2AuditStatusError,
+    RequestBodies.PostV2AuditStatus,
+    {},
+    PostV2AuditStatusQueryParams,
+    {}
+  >({ url: "/v2/audit-status", method: "post", ...variables, signal });
+
+export const usePostV2AuditStatus = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.AuditStatusResponse, PostV2AuditStatusError, PostV2AuditStatusVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Schemas.AuditStatusResponse, PostV2AuditStatusError, PostV2AuditStatusVariables>(
+    (variables: PostV2AuditStatusVariables) => fetchPostV2AuditStatus({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2AuditStatusIdPathParams = {
+  /**
+   * show a specific audit status.
+   */
+  id: string;
+};
+
+export type GetV2AuditStatusIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AuditStatusIdVariables = {
+  pathParams: GetV2AuditStatusIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AuditStatusId = (variables: GetV2AuditStatusIdVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, undefined, {}, {}, GetV2AuditStatusIdPathParams>({
+    url: "/v2/audit-status/{id}",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2AuditStatusId = <TData = Schemas.AuditStatusResponse>(
+  variables: GetV2AuditStatusIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, TData>(
+    queryKeyFn({ path: "/v2/audit-status/{id}", operationId: "getV2AuditStatusId", variables }),
+    ({ signal }) => fetchGetV2AuditStatusId({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PutV2AuditStatusIdPathParams = {
+  /**
+   * edit a specific audit status.
+   */
+  id: string;
+};
+
+export type PutV2AuditStatusIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2AuditStatusIdVariables = {
+  body?: RequestBodies.PostV2AuditStatus;
+  pathParams: PutV2AuditStatusIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2AuditStatusId = (variables: PutV2AuditStatusIdVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.AuditStatusResponse,
+    PutV2AuditStatusIdError,
+    RequestBodies.PostV2AuditStatus,
+    {},
+    {},
+    PutV2AuditStatusIdPathParams
+  >({ url: "/v2/audit-status/{id}", method: "put", ...variables, signal });
+
+export const usePutV2AuditStatusId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.AuditStatusResponse, PutV2AuditStatusIdError, PutV2AuditStatusIdVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Schemas.AuditStatusResponse, PutV2AuditStatusIdError, PutV2AuditStatusIdVariables>(
+    (variables: PutV2AuditStatusIdVariables) => fetchPutV2AuditStatusId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2AuditStatusIdPathParams = {
+  /**
+   * delete a specific audit status.
+   */
+  id: string;
+};
+
+export type DeleteV2AuditStatusIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2AuditStatusIdVariables = {
+  pathParams: DeleteV2AuditStatusIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2AuditStatusId = (variables: DeleteV2AuditStatusIdVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2AuditStatusIdError, undefined, {}, {}, DeleteV2AuditStatusIdPathParams>({
+    url: "/v2/audit-status/{id}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2AuditStatusId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2AuditStatusIdError, DeleteV2AuditStatusIdVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2AuditStatusIdError, DeleteV2AuditStatusIdVariables>(
+    (variables: DeleteV2AuditStatusIdVariables) => fetchDeleteV2AuditStatusId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -32926,4 +33149,14 @@ export type QueryOperation =
       path: "/v2/project-pipeline/{id}";
       operationId: "getV2ProjectPipelineId";
       variables: GetV2ProjectPipelineIdVariables;
+    }
+  | {
+      path: "/v2/audit-status";
+      operationId: "getV2AuditStatus";
+      variables: GetV2AuditStatusVariables;
+    }
+  | {
+      path: "/v2/audit-status/{id}";
+      operationId: "getV2AuditStatusId";
+      variables: GetV2AuditStatusIdVariables;
     };

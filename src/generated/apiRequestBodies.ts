@@ -332,3 +332,5 @@ export type GetV2FundingProgrammeIDBody = {
 export type SitePolygonResponse = Schemas.SitePolygonResponse;
 
 export type PostV2FprojectPipeline = Schemas.ProjectPipelinePost;
+
+export type PostV2AuditStatus = Schemas.AuditStatusPost;
