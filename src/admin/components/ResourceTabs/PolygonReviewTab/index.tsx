@@ -2,14 +2,12 @@ import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
 import { FC, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Map from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -22,8 +20,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundGeojsonSite,
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
@@ -33,6 +29,7 @@ import { EntityName } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap, polygonData } from "./components/Polygons";
+import SitePolygonStatus from "./components/SitePolygonStatus/SitePolygonStatus";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -63,13 +60,6 @@ const PolygonReviewAside: FC<{
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
-
-  const { isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
-    pathParams: {
-      uuid: record.uuid,
-      entity: props.type
-    }
-  });
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
@@ -268,7 +258,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
-  const isLoading = ctxLoading || queryLoading;
+  const isLoading = ctxLoading;
 
   if (isLoading) return null;
 
@@ -287,14 +277,6 @@ const PolygonReviewTab: FC<IProps> = props => {
       render: () => <Text variant="text-12-bold">Upload Images</Text>,
       onClick: openFormModalHandlerUploadImages
     }
-  ];
-
-  const polygonStatusLabels = [
-    { id: "1", label: "Draft" },
-    { id: "2", label: "Awaiting Approval" },
-    { id: "3", label: "Needs More Information" },
-    { id: "4", label: "Planting In Progress" },
-    { id: "5", label: "Approved" }
   ];
 
   const tableItemMenu = [
@@ -335,145 +317,143 @@ const PolygonReviewTab: FC<IProps> = props => {
   );
 
   return (
-    <When condition={!isLoading}>
-      <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={reloadSiteData}>
-        <TabbedShowLayout.Tab {...props}>
-          <Grid spacing={2} container>
-            <Grid xs={9}>
-              <Stack gap={4} className="pl-8 pt-9">
-                <div className="flex items-start gap-3">
-                  <div className="w-full">
-                    <div className="mb-2">
-                      <Text variant="text-16-bold" className="mb-2 text-darkCustom">
-                        Polygon Review
-                      </Text>
-                      <Text variant="text-14-light" className="text-darkCustom">
-                        Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
-                        below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
-                        application.
-                      </Text>
-                    </div>
-                    <div className="flex gap-3">
-                      <Menu menu={addMenuItems} className="flex-1">
-                        <Button
-                          variant="sky-page-admin"
-                          className="h-fit w-full whitespace-nowrap"
-                          iconProps={{
-                            className: "w-4 h-4",
-                            name: IconNames.PLUS_PA
-                          }}
-                        >
-                          Add Data
-                        </Button>
-                      </Menu>
-                      <Button
-                        variant="white-page-admin"
-                        className="flex-1"
-                        iconProps={{
-                          className: "w-4 h-4 group-hover-text-primary-500",
-                          name: IconNames.DOWNLOAD_PA
-                        }}
-                        onClick={() => {
-                          downloadSiteGeoJsonPolygons(record.uuid);
-                        }}
-                      >
-                        Download
-                      </Button>
-                      <Button className="flex-1 px-3" onClick={openFormModalHandlerSubmitPolygon}>
-                        <Text variant="text-14-bold" className="text-white">
-                          approve polygons
-                        </Text>
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
-                    <Text variant="text-14" className="mb-3 text-blueCustom-250">
-                      Site Status
-                    </Text>
-                    <div className="h-fit w-full">
-                      <StepProgressbar color="primary" value={50} labels={polygonStatusLabels} labelVariant="text-10" />
-                    </div>
-                  </div>
-                </div>
-
-                <Map
-                  polygonsData={polygonDataMap}
-                  bbox={siteBbox}
-                  className="rounded-lg"
-                  status={true}
-                  setPolygonFromMap={setPolygonFromMap}
-                  polygonFromMap={polygonFromMap}
-                />
-                <div className="mb-6">
-                  <div className="mb-4">
+    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={reloadSiteData}>
+      <TabbedShowLayout.Tab {...props}>
+        <Grid spacing={2} container>
+          <Grid xs={9}>
+            <Stack gap={4} className="pl-8 pt-9">
+              <div className="flex items-start gap-3">
+                <div className="w-full">
+                  <div className="mb-2">
                     <Text variant="text-16-bold" className="mb-2 text-darkCustom">
-                      Site Attribute Table
+                      Polygon Review
                     </Text>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Edit attribute table for all polygons quickly through the table below. Alternatively, open a
-                      polygon and edit the attributes in the map above.
+                      Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
+                      below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
+                      application.
                     </Text>
                   </div>
-                  <Table
-                    variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                    classNameWrapper="max-h-[176px]"
-                    columns={[
-                      { header: "Polygon ID", accessorKey: "polygon-id" },
-                      {
-                        header: "Restoration Practice",
-                        accessorKey: "restoration-practice",
-                        cell: props => {
-                          const placeholder = props.getValue() as string;
-                          return (
-                            <input
-                              placeholder={placeholder}
-                              className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
-                            />
-                          );
-                        }
-                      },
-                      { header: "Target Land Use System", accessorKey: "target-land-use-system" },
-                      { header: "Tree Distribution", accessorKey: "tree-distribution" },
-                      { header: "Planting Start Date", accessorKey: "planting-start-date" },
-                      { header: "Source", accessorKey: "source" },
-                      {
-                        header: "",
-                        accessorKey: "ellipse",
-                        enableSorting: false,
-                        cell: props => (
-                          <Menu
-                            menu={tableItemMenu}
-                            placement={
-                              (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
-                            }
-                          >
-                            <div className="rounded p-1 hover:bg-primary-200">
-                              <Icon
-                                name={IconNames.ELIPSES}
-                                className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
-                              />
-                            </div>
-                          </Menu>
-                        )
-                      }
-                    ]}
-                    data={sitePolygonDataTable}
-                  ></Table>
+                  <div className="flex gap-3">
+                    <Menu menu={addMenuItems} className="flex-1">
+                      <Button
+                        variant="sky-page-admin"
+                        className="h-fit w-full whitespace-nowrap"
+                        iconProps={{
+                          className: "w-4 h-4",
+                          name: IconNames.PLUS_PA
+                        }}
+                      >
+                        Add Data
+                      </Button>
+                    </Menu>
+                    <Button
+                      variant="white-page-admin"
+                      className="flex-1"
+                      iconProps={{
+                        className: "w-4 h-4 group-hover-text-primary-500",
+                        name: IconNames.DOWNLOAD_PA
+                      }}
+                      onClick={() => {
+                        downloadSiteGeoJsonPolygons(record.uuid);
+                      }}
+                    >
+                      Download
+                    </Button>
+                    <Button className="flex-1 px-3" onClick={openFormModalHandlerSubmitPolygon}>
+                      <Text variant="text-14-bold" className="text-white">
+                        approve polygons
+                      </Text>
+                    </Button>
+                  </div>
                 </div>
-              </Stack>
-            </Grid>
-            <Grid xs={3} className="pl-8 pr-4 pt-9">
-              <PolygonReviewAside
-                type={props.type}
-                data={transformedSiteDataForList as IPolygonItem[]}
-                polygonFromMap={polygonFromMap}
+                <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
+                  <Text variant="text-14" className="mb-3 text-blueCustom-250">
+                    Site Status
+                  </Text>
+                  <div className="h-fit w-full">
+                    <SitePolygonStatus statusLabel={record.readable_status} />
+                  </div>
+                </div>
+              </div>
+
+              <Map
+                polygonsData={polygonDataMap}
+                bbox={siteBbox}
+                className="rounded-lg"
+                status={true}
                 setPolygonFromMap={setPolygonFromMap}
+                polygonFromMap={polygonFromMap}
               />
-            </Grid>
+              <div className="mb-6">
+                <div className="mb-4">
+                  <Text variant="text-16-bold" className="mb-2 text-darkCustom">
+                    Site Attribute Table
+                  </Text>
+                  <Text variant="text-14-light" className="text-darkCustom">
+                    Edit attribute table for all polygons quickly through the table below. Alternatively, open a polygon
+                    and edit the attributes in the map above.
+                  </Text>
+                </div>
+                <Table
+                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  classNameWrapper="max-h-[176px]"
+                  columns={[
+                    { header: "Polygon ID", accessorKey: "polygon-id" },
+                    {
+                      header: "Restoration Practice",
+                      accessorKey: "restoration-practice",
+                      cell: props => {
+                        const placeholder = props.getValue() as string;
+                        return (
+                          <input
+                            placeholder={placeholder}
+                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                          />
+                        );
+                      }
+                    },
+                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
+                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
+                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
+                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "",
+                      accessorKey: "ellipse",
+                      enableSorting: false,
+                      cell: props => (
+                        <Menu
+                          menu={tableItemMenu}
+                          placement={
+                            (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
+                          }
+                        >
+                          <div className="rounded p-1 hover:bg-primary-200">
+                            <Icon
+                              name={IconNames.ELIPSES}
+                              className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
+                            />
+                          </div>
+                        </Menu>
+                      )
+                    }
+                  ]}
+                  data={sitePolygonDataTable}
+                ></Table>
+              </div>
+            </Stack>
           </Grid>
-        </TabbedShowLayout.Tab>
-      </SitePolygonDataProvider>
-    </When>
+          <Grid xs={3} className="pl-8 pr-4 pt-9">
+            <PolygonReviewAside
+              type={props.type}
+              data={transformedSiteDataForList as IPolygonItem[]}
+              polygonFromMap={polygonFromMap}
+              setPolygonFromMap={setPolygonFromMap}
+            />
+          </Grid>
+        </Grid>
+      </TabbedShowLayout.Tab>
+    </SitePolygonDataProvider>
   );
 };
 
