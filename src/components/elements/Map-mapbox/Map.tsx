@@ -184,7 +184,7 @@ export const Map = ({
       ref.current.map.fitBounds(bbox, {
         padding: hasControls ? 100 : 30,
         linear: false,
-        animate: hasControls ? true : false
+        animate: true
       });
     }
   };
