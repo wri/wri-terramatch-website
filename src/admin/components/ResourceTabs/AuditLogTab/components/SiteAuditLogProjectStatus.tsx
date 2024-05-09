@@ -73,7 +73,8 @@ const projectStatusLabels = [
 const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   const { data: projectAuditLog } = useGetV2AuditStatus({
     queryParams: {
-      entity: "Project"
+      entity: "Project",
+      uuid: "zxxzc-zxczxc-zcxsad"
     }
   }) as { data: AuditLogResponse };
   console.log(projectAuditLog?.data);

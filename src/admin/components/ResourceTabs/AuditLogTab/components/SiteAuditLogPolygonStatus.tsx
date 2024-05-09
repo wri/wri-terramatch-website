@@ -26,7 +26,8 @@ const polygonStatusLabels = [
 const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
   const { data: polygonAuditLog } = useGetV2AuditStatus({
     queryParams: {
-      entity: "Polygon"
+      entity: "Polygon",
+      uuid: "zxxzc-zxczxc-zcxsad"
     }
   }) as { data: AuditLogResponse };
   console.log(polygonAuditLog?.data);

@@ -32468,9 +32468,13 @@ export const usePostV2TerrafundPolygon = (
 
 export type GetV2AuditStatusQueryParams = {
   /**
-   * Optional.
+   * required.
    */
-  entity?: string;
+  entity: string;
+  /**
+   * required.
+   */
+  uuid: string;
 };
 
 export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
@@ -32478,7 +32482,7 @@ export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
 export type GetV2AuditStatusResponse = Schemas.AuditStatusResponse[];
 
 export type GetV2AuditStatusVariables = {
-  queryParams?: GetV2AuditStatusQueryParams;
+  queryParams: GetV2AuditStatusQueryParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AuditStatus = (variables: GetV2AuditStatusVariables, signal?: AbortSignal) =>
