@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
@@ -27,7 +27,7 @@ export interface RHFDisturbanceTableProps
 }
 
 export const getDisturbanceTableColumns = (
-  props: { hasIntensity?: boolean; hasExtent?: boolean },
+  props: { hasIntensity?: boolean; hasExtent?: boolean; onChangeCapture?: () => void },
   t: typeof useT | Function = (t: string) => t
 ) => {
   const columns: AccessorKeyColumnDef<any>[] = [
@@ -126,6 +126,8 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
       //@ts-ignore
       _tmp.push(data.data);
       field.onChange(_tmp);
+      props.formHook?.trigger();
+      props.formHook?.reset(props.formHook.getValues());
     }
   });
 
@@ -137,11 +139,17 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
     }
   });
 
+  useEffect(() => {
+    props.formHook && props.formHook.register(field.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.formHook, field.name, entity?.entityName, entity?.entityUUID]);
+
   return (
     <DataTable
       {...props}
       value={value}
       handleCreate={data => {
+        onChangeCapture && onChangeCapture();
         createDisturbances({
           body: {
             ...data,
@@ -150,6 +158,9 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
             model_uuid: entity?.entityUUID
           }
         });
+        onChangeCapture && onChangeCapture();
+        props.formHook?.trigger();
+        props.formHook?.reset(props.formHook.getValues());
       }}
       handleDelete={uuid => {
         if (uuid) {
@@ -159,6 +170,8 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
       addButtonCaption={t("Add Disturbance")}
       tableColumns={getDisturbanceTableColumns(props, t)}
       fields={getDisturbanceTableFields(props, t)}
+      onChangeCapture={onChangeCapture}
+      formHook={props.formHook}
     />
   );
 };

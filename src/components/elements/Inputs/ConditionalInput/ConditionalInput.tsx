@@ -21,16 +21,27 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const { field } = useController(props);
 
   useEffect(() => {
-    fields.forEach(field => {
-      if (field.condition !== formHook.watch(props.name)) {
-        formHook.register(field.name);
-      } else {
-        formHook.unregister(field.name);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields, formHook.watch(props.name)]);
+    // const unregisterFields = () => {
+    //   const conditionValue = formHook.watch(props.name);
+    //   if (conditionValue !== false) {
+    //     fields
+    //       .filter(field => field.condition !== conditionValue)
+    //       .forEach(field => {
+    //         formHook.unregister(field.name);
+    //       });
+    //   }
+    // };
 
+    // unregisterFields();
+
+    // return () => unregisterFields();
+    fields
+      .filter(field => field.condition !== formHook.watch(props.name))
+      .forEach(field => {
+        formHook.unregister(field.name);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields, formHook, props.name, formHook.watch(props.name)]);
   const onChange = (value: OptionValueWithBoolean) => {
     field.onChange(value);
     onChangeCapture();
