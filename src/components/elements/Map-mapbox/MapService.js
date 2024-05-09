@@ -22,6 +22,7 @@ class MapService {
     this.draw = null;
     this.handleCreateDraw = this.handleCreateDraw.bind(this);
     this.storePolygon = null;
+    this.drawControlAdded = false;
   }
 
   initMap(mapId, storePolygon) {
@@ -33,21 +34,27 @@ class MapService {
       zoom: 2.5
     });
 
-    this.draw = new MapboxDraw({
-      controls: {
-        point: false,
-        line_string: false,
-        polygon: false,
-        trash: false,
-        combine_features: false,
-        uncombine_features: false
-      }
-    });
+    if (this.draw === null) {
+      this.draw = new MapboxDraw({
+        controls: {
+          point: false,
+          line_string: false,
+          polygon: false,
+          trash: false,
+          combine_features: false,
+          uncombine_features: false
+        }
+      });
+    }
+
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
-      this.map.addControl(this.draw, "top-right");
-      this.map.on("draw.create", this.handleCreateDraw);
+      if (this.drawControlAdded === false) {
+        this.map.addControl(this.draw, "top-right");
+        this.map.on("draw.create", this.handleCreateDraw);
+        this.drawControlAdded = true;
+      }
     });
     this.storePolygon = storePolygon;
     return this.map;

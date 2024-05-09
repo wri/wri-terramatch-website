@@ -80,11 +80,11 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
-  const [estimatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
+  const [calculatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
   const formattedArea =
-    estimatedArea && estimatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    calculatedArea && calculatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const t = useT();
 
@@ -212,10 +212,10 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => setTreesPlanted(Number(e.target.value))}
       />
       <Input
-        label="Estimated Area"
+        label="Calculated Area"
         labelClassName="capitalize"
         labelVariant="text-14-light"
-        placeholder="Input Estimated Area"
+        placeholder="Input Calculated Area"
         type="text"
         format="number"
         disabled
