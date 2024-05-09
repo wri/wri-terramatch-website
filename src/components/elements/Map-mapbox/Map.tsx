@@ -139,6 +139,7 @@ export const Map = ({
         layersList.forEach((layer: any) => {
           if (ref.current) {
             ref.current.addSource(layer, sitePolygonData, setPolygonFromMap, hasControls);
+            refresh();
           }
         });
       };
