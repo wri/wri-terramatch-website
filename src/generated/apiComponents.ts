@@ -32239,6 +32239,198 @@ export const useDeleteV2ProjectPipelineId = (
   );
 };
 
+export type PostV2TerrafundUploadGeojsonError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadGeojsonResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadGeojsonRequestBody = {
+  /**
+   * The GeoJSON file to upload
+   *
+   * @format binary
+   */
+  file?: Blob;
+  /**
+   * The UUID of the site associated with the GeoJSON file
+   */
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadGeojsonVariables = {
+  body?: PostV2TerrafundUploadGeojsonRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadGeojson = (
+  variables: PostV2TerrafundUploadGeojsonVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadGeojsonResponse,
+    PostV2TerrafundUploadGeojsonError,
+    PostV2TerrafundUploadGeojsonRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-geojson", method: "post", ...variables, signal });
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadGeojson = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadGeojsonResponse,
+      PostV2TerrafundUploadGeojsonError,
+      PostV2TerrafundUploadGeojsonVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadGeojsonResponse,
+    PostV2TerrafundUploadGeojsonError,
+    PostV2TerrafundUploadGeojsonVariables
+  >(
+    (variables: PostV2TerrafundUploadGeojsonVariables) =>
+      fetchPostV2TerrafundUploadGeojson({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadShapefileError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadShapefileResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadShapefileRequestBody = {
+  /**
+   * The shapefile file to upload
+   *
+   * @format binary
+   */
+  file?: Blob;
+  /**
+   * The UUID of the site associated with the shapefile file
+   */
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadShapefileVariables = {
+  body?: PostV2TerrafundUploadShapefileRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadShapefile = (
+  variables: PostV2TerrafundUploadShapefileVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadShapefileResponse,
+    PostV2TerrafundUploadShapefileError,
+    PostV2TerrafundUploadShapefileRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-shapefile", method: "post", ...variables, signal });
+
+/**
+ * Uploads a shapefile file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadShapefile = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadShapefileResponse,
+      PostV2TerrafundUploadShapefileError,
+      PostV2TerrafundUploadShapefileVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadShapefileResponse,
+    PostV2TerrafundUploadShapefileError,
+    PostV2TerrafundUploadShapefileVariables
+  >(
+    (variables: PostV2TerrafundUploadShapefileVariables) =>
+      fetchPostV2TerrafundUploadShapefile({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadKmlError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadKmlResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadKmlRequestBody = {
+  /**
+   * The KML file to upload
+   *
+   * @format binary
+   */
+  file?: Blob;
+  /**
+   * The UUID of the site associated with the KML file
+   */
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadKmlVariables = {
+  body?: PostV2TerrafundUploadKmlRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadKml = (variables: PostV2TerrafundUploadKmlVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2TerrafundUploadKmlResponse,
+    PostV2TerrafundUploadKmlError,
+    PostV2TerrafundUploadKmlRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-kml", method: "post", ...variables, signal });
+
+/**
+ * Uploads a KML file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadKml = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadKmlResponse,
+      PostV2TerrafundUploadKmlError,
+      PostV2TerrafundUploadKmlVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadKmlResponse,
+    PostV2TerrafundUploadKmlError,
+    PostV2TerrafundUploadKmlVariables
+  >(
+    (variables: PostV2TerrafundUploadKmlVariables) =>
+      fetchPostV2TerrafundUploadKml({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostV2TerrafundPolygonError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2TerrafundPolygonVariables = {
@@ -32278,7 +32470,7 @@ export type GetV2AuditStatusQueryParams = {
   /**
    * Optional.
    */
-  id?: string;
+  entity?: string;
 };
 
 export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
