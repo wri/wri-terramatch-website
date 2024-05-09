@@ -34,27 +34,27 @@ class MapService {
       zoom: 2.5
     });
 
-    if (this.draw === null) {
-      this.draw = new MapboxDraw({
-        controls: {
-          point: false,
-          line_string: false,
-          polygon: false,
-          trash: false,
-          combine_features: false,
-          uncombine_features: false
-        }
-      });
-    }
+    this.draw = new MapboxDraw({
+      controls: {
+        point: false,
+        line_string: false,
+        polygon: false,
+        trash: false,
+        combine_features: false,
+        uncombine_features: false
+      }
+    });
 
     this.map.on("style.load", () => {
       this.styleLoaded = true;
       this.addCentroidsLayers(this.centroids);
-      if (this.drawControlAdded === false) {
-        this.map.addControl(this.draw, "top-right");
-        this.map.on("draw.create", this.handleCreateDraw);
-        this.drawControlAdded = true;
+      const projection = this.map.transform.projection.name;
+      if (this.drawControlAdded && (projection == "equirectangular" || projection == "mercator")) {
+        this.map.removeControl(this.draw);
       }
+      this.map.addControl(this.draw, "top-right");
+      this.map.on("draw.create", this.handleCreateDraw);
+      this.drawControlAdded = true;
     });
     this.storePolygon = storePolygon;
     return this.map;
