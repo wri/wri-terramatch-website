@@ -2,8 +2,20 @@ import { Fragment } from "react";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
+import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
 import { gridData, SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+
+interface AuditLogResponse {
+  data: {
+    entity_uuid: string;
+    status: string;
+    comment: string;
+    attachment_url: string;
+    date_created: Date;
+    created_by: string;
+  };
+}
 
 const polygonStatusLabels = [
   { id: "1", label: "Submitted" },
@@ -12,6 +24,12 @@ const polygonStatusLabels = [
 ];
 
 const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
+  const { data: polygonAuditLog } = useGetV2AuditStatus({
+    queryParams: {
+      entity: "Polygon"
+    }
+  }) as { data: AuditLogResponse };
+  console.log(polygonAuditLog?.data);
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -91,6 +109,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
+        {/* {gridData.map(item => ( */}
         {gridData.map(item => (
           <Fragment key={item.id}>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">

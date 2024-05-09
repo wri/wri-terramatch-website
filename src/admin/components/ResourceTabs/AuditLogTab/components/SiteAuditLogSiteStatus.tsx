@@ -2,8 +2,20 @@ import { Fragment } from "react";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
+import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
 import { gridData, SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+
+interface AuditLogResponse {
+  data: {
+    entity_uuid: string;
+    status: string;
+    comment: string;
+    attachment_url: string;
+    date_created: Date;
+    created_by: string;
+  };
+}
 
 const siteStatusLabels = [
   { id: "1", label: "Draft" },
@@ -14,6 +26,12 @@ const siteStatusLabels = [
 ];
 
 const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
+  const { data: siteAuditLog } = useGetV2AuditStatus({
+    queryParams: {
+      entity: "Site"
+    }
+  }) as { data: AuditLogResponse };
+  console.log(siteAuditLog?.data);
   return (
     <div className="flex flex-col gap-6">
       <div>
