@@ -144,6 +144,10 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.formHook, field.name, entity?.entityName, entity?.entityUUID]);
 
+  useEffect(() => {
+    props.formHook?.clearErrors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, props.formHook?.watch(props.name)]);
   return (
     <DataTable
       {...props}
@@ -158,9 +162,6 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
             model_uuid: entity?.entityUUID
           }
         });
-        onChangeCapture && onChangeCapture();
-        props.formHook?.trigger();
-        props.formHook?.reset(props.formHook.getValues());
       }}
       handleDelete={uuid => {
         if (uuid) {

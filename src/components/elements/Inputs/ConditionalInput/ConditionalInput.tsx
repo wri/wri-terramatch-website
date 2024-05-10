@@ -24,9 +24,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     fields.forEach(field => {
       if (field.condition == formHook.watch(props.name)) formHook.register(field.name);
     });
-    formHook.reset(formHook.getValues());
-    formHook.trigger();
-    onChangeCapture();
+    formHook.clearErrors(props.name);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields, formHook.watch(props.name)]);
 
