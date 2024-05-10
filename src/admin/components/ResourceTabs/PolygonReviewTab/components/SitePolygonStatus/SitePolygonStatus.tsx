@@ -9,7 +9,8 @@ const polygonStatusLabels = [
 ];
 
 const SitePolygonStatus = ({ statusLabel }: { statusLabel: string }) => {
-  const statusIndex = polygonStatusLabels.findIndex(({ label }) => label === statusLabel);
+  let status = statusLabel === "Unkown" ? "Planting in progress" : statusLabel;
+  const statusIndex = polygonStatusLabels.findIndex(({ label }) => label === status);
   const progress = statusIndex === -1 ? 0 : statusIndex * 25;
   return <StepProgressbar color="primary" value={progress} labels={polygonStatusLabels} labelVariant="text-10" />;
 };

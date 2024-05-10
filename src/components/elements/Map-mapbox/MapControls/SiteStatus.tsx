@@ -71,14 +71,14 @@ const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
   return (
     <div className="min-w-[152px] rounded-lg bg-white p-3 shadow lg:min-w-[167px] wide:min-w-[182px]">
       <Dropdown
-        label="Site Status"
+        label={"Site Status"}
         labelClassName="capitalize"
         labelVariant="text-12-bold"
         optionClassName="py-[6px] px-3"
         optionTextClassName="w-full whitespace-nowrap"
         optionVariant="text-12-light"
         containerClassName="space-y-0"
-        placeholder="Site Status"
+        placeholder={record.readable_status ?? "Site Status"}
         inputVariant="text-12-light"
         options={dropdownOptions}
         onChange={openFormModalHandler}
