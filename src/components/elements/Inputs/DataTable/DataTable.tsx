@@ -1,7 +1,6 @@
 import { AccessorKeyColumnDef, ColumnDef, RowData } from "@tanstack/react-table";
 import _ from "lodash";
 import { useMemo } from "react";
-import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -23,24 +22,12 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
-  onChangeCapture?: () => void;
-  formHook?: UseFormReturn;
 }
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
   const { openModal, closeModal } = useModalContext();
-  const {
-    fields,
-    addButtonCaption,
-    tableColumns,
-    value,
-    onChange,
-    handleCreate,
-    handleDelete,
-    onChangeCapture,
-    formHook,
-    ...inputWrapperProps
-  } = props;
+  const { fields, addButtonCaption, tableColumns, value, onChange, handleCreate, handleDelete, ...inputWrapperProps } =
+    props;
 
   const openFormModalHandler = () => {
     openModal(
@@ -49,22 +36,14 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   };
 
   const onAddNewEntry = (fieldValues: any) => {
-    console.log("here");
     onChange?.([...value, fieldValues]);
     handleCreate?.(fieldValues);
-    onChangeCapture && onChangeCapture();
-    formHook?.reset(formHook.getValues());
-    formHook?.trigger();
-    console.log("here");
     closeModal();
   };
 
   const onDeleteEntry = (uuid: string) => {
     const _tmp = [...value];
     _.remove(_tmp, item => item.uuid === uuid);
-    formHook?.reset(formHook.getValues());
-    formHook?.trigger();
-    console.log("here");
     //@ts-ignore
     handleDelete?.(uuid);
     onChange?.(_tmp);
