@@ -7,7 +7,7 @@ import { useGetV2AuditStatus } from "@/generated/apiComponents";
 export interface SiteAuditLogTable {
   resource: string;
   uuid?: string;
-  record: any;
+  record?: any;
 }
 
 export const gridData = [
