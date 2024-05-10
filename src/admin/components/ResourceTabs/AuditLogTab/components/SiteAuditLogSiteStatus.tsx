@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
 import { Fragment } from "react";
+import { useParams } from "react-router-dom";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
@@ -46,13 +46,12 @@ function getValueForStatus(status: string): number {
 }
 
 const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
-  const router = useRouter();
-  const startIndex = router.asPath.indexOf("site/") + 5;
-  const siteUUID = router.asPath.slice(startIndex, router.asPath.indexOf("/", startIndex));
+  const { id } = useParams<"id">();
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  const { data: siteData } = useGetV2SitesUUID({ pathParams: { uuid: siteUUID } }) as {
+  console.log(id);
+  const { data: siteData } = useGetV2SitesUUID({ pathParams: { uuid: id as string } }) as {
     data: { data: { project: { status: string }; status: string; name: string } };
   };
 
