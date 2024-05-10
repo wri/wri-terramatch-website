@@ -12,7 +12,7 @@ interface AuditLogResponse {
   data: [AuditLogItem];
 }
 interface AuditLogItem {
-  entity_uuid: string;
+  entity: string;
   status: string;
   comment: string;
   attachment_url: string;
@@ -50,7 +50,7 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  console.log(id);
+
   const { data: siteData } = useGetV2SitesUUID({ pathParams: { uuid: id as string } }) as {
     data: { data: { project: { status: string }; status: string; name: string } };
   };
@@ -59,10 +59,10 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
   const { data: siteAuditLog } = useGetV2AuditStatus({
     queryParams: {
       entity: "Site",
-      uuid: "asdasdsa-asdasdzxc"
+      uuid: props.uuid
     }
   }) as { data: AuditLogResponse };
-
+  console.log("uuid", props.resource);
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -151,8 +151,7 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
               {item.created_by}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {/* {item.site || "-"} */}
-              {"-"}
+              {item.entity || "-"}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {formattedText(item.status)}
