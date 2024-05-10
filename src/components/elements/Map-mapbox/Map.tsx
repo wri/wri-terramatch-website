@@ -62,6 +62,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   bbox?: any;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
+  record?: any;
 }
 
 export const Map = ({
@@ -79,6 +80,7 @@ export const Map = ({
   status = false,
   editPolygon = false,
   polygonChecks = false,
+  record,
   ...props
 }: MapProps) => {
   const ref = useRef<typeof _MapService | null>(null);
@@ -228,7 +230,7 @@ export const Map = ({
         </ControlGroup>
         <When condition={!!status}>
           <ControlGroup position="top-left">
-            <SiteStatus />
+            <SiteStatus record={record} />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages}>

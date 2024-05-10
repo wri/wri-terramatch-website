@@ -378,6 +378,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
 
               <Map
+                record={record}
                 polygonsData={polygonDataMap}
                 bbox={siteBbox}
                 className="rounded-lg"

@@ -28612,6 +28612,43 @@ export const useDeleteV2AdminNurseryReportsUUID = (
   );
 };
 
+export type PutV2AdminSitesUUIDPathParams = {
+  /**
+   * The UUID of the site
+   */
+  uuid: string;
+};
+
+export type PutV2AdminSitesUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2AdminSitesUUIDVariables = {
+  body?: Schemas.SiteStatusRequestPost;
+  pathParams: PutV2AdminSitesUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2AdminSitesUUID = (variables: PutV2AdminSitesUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.SiteStatusResponse,
+    PutV2AdminSitesUUIDError,
+    Schemas.SiteStatusRequestPost,
+    {},
+    {},
+    PutV2AdminSitesUUIDPathParams
+  >({ url: "/v2/admin/sites/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2AdminSitesUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.SiteStatusResponse, PutV2AdminSitesUUIDError, PutV2AdminSitesUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Schemas.SiteStatusResponse, PutV2AdminSitesUUIDError, PutV2AdminSitesUUIDVariables>(
+    (variables: PutV2AdminSitesUUIDVariables) => fetchPutV2AdminSitesUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type DeleteV2AdminSitesUUIDPathParams = {
   uuid: string;
 };

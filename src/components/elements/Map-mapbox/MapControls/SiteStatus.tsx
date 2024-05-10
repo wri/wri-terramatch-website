@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
+import { fetchPutV2AdminSitesUUID } from "@/generated/apiComponents";
 
 import Dropdown from "../../Inputs/Dropdown/Dropdown";
 import Text from "../../Text/Text";
@@ -9,31 +10,37 @@ import Text from "../../Text/Text";
 const dropdownOptions = [
   {
     title: "Draft",
-    value: 1
+    value: 1,
+    status: "draft"
   },
   {
     title: "Awaiting Approval",
-    value: 2
+    value: 2,
+    status: "awaiting-approval"
   },
   {
     title: "Needs More Information",
-    value: 3
+    value: 3,
+    status: "needs-more-information"
   },
   {
     title: "Planting In Progress",
-    value: 4
+    value: 4,
+    status: "planting-in-progress"
   },
   {
     title: "Approved",
-    value: 5
+    value: 5,
+    status: "approved"
   }
 ];
 
-const SiteStatus = () => {
+const SiteStatus = ({ record }: { record: any }) => {
   const { openModal, closeModal } = useModalContext();
   const [confirmChange, setConfirmChange] = useState(true);
 
-  const openFormModalHandler = () => {
+  const openFormModalHandler = (indexes: any[]) => {
+    console.log("openFormModalHandler", indexes);
     openModal(
       <ModalConfirm
         title={"Confirm Site Status Change"}
@@ -44,7 +51,15 @@ const SiteStatus = () => {
           </Text>
         }
         onClose={closeModal}
-        onConfirm={() => {
+        onConfirm={async (text: any) => {
+          const response = await fetchPutV2AdminSitesUUID({
+            pathParams: { uuid: record.uuid },
+            body: {
+              status: dropdownOptions.find(option => option.value === indexes[0])?.status,
+              comment: text
+            }
+          });
+          console.log("response", response);
           setConfirmChange(true);
           closeModal;
         }}

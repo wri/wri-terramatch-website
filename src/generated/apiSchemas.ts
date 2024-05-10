@@ -23241,6 +23241,23 @@ export type FeatureProperties = {
   num_trees?: number;
 };
 
+export type SiteStatusRequestPost = {
+  status?: string;
+  comment?: string;
+};
+
+export type SiteStatusResponse = {
+  entity_uuid?: string;
+  status?: string;
+  comment?: string;
+  attachment_url?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
 export type AuditStatusResponse = {
   entity_uuid?: string;
   status?: string;
