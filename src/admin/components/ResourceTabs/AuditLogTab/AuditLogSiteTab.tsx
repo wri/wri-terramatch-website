@@ -55,13 +55,13 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 </Button>
               </div>
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                <SiteAuditLogProjectStatus resource={resource} uuid={ctx.record.uuid} />
+                <SiteAuditLogProjectStatus resource={resource} uuid={ctx.record.uuid} record={ctx.record} />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
-                <SiteAuditLogSiteStatus resource={resource} uuid={ctx.record.uuid} />
+                <SiteAuditLogSiteStatus resource={resource} uuid={ctx.record.uuid} record={ctx.record} />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
-                <SiteAuditLogPolygonStatus resource={resource} uuid={ctx.record.uuid} />
+                <SiteAuditLogPolygonStatus resource={resource} uuid={ctx.record.uuid} record={ctx.record} />
               </When>
             </Stack>
           </Grid>

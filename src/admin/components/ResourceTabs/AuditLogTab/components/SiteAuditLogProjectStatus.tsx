@@ -1,14 +1,13 @@
 import { Fragment } from "react";
-import { useParams } from "react-router-dom";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2AuditStatus } from "@/generated/apiComponents";
-import { useGetV2SitesUUID } from "@/generated/apiComponents";
 
 export interface SiteAuditLogTable {
   resource: string;
   uuid?: string;
+  record: any;
 }
 
 export const gridData = [
@@ -90,7 +89,6 @@ function getValueForStatus(status: string): number {
   }
 }
 const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
-  const { id } = useParams<"id">();
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
@@ -98,15 +96,9 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   const { data: projectAuditLog } = useGetV2AuditStatus({
     queryParams: {
       entity: "Project",
-      uuid: "asdasdsa-asdasdzxc"
+      uuid: props.record.project.uuid as string
     }
   }) as { data: AuditLogResponse };
-
-  const { data: siteData } = useGetV2SitesUUID({ pathParams: { uuid: id as string } }) as {
-    data: { data: { project: { status: string; name: string }; status: string } };
-  };
-
-  const projectStatus = siteData?.data?.project?.status;
 
   return (
     <div className="flex flex-col gap-6">
@@ -130,13 +122,13 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-16-bold">Project Status</Text>
         <StepProgressbar
           color="secondary"
-          value={getValueForStatus(projectStatus)}
+          value={getValueForStatus(props.record.project.status)}
           labels={projectStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[62%]"
         />
       </div>
-      <Text variant="text-16-bold">History for {siteData?.data?.project?.name}</Text>
+      <Text variant="text-16-bold">History for {props.record.project.name}</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}

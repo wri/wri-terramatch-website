@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-import { useParams } from "react-router-dom";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
@@ -41,20 +40,19 @@ function getValueForStatus(status: string): number {
 }
 
 const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
-  const { id } = useParams<"id">();
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
   const { data: sitePolygon } = useGetV2SitesSitePolygon({
     pathParams: {
-      site: id as string
+      site: props.uuid as string
     }
   });
 
   const { data: polygonAuditLog } = useGetV2AuditStatus({
     queryParams: {
       entity: "Polygon",
-      uuid: "asdasdsa-asdasdzxc"
+      uuid: sitePolygon?.[0]?.poly_id as string
     }
   }) as { data: AuditLogResponse };
 
@@ -146,8 +144,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
               {item.created_by}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {/* {item.site || "-"} */}
-              {"-"}
+              {sitePolygon?.[0]?.poly_name || "-"}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {formattedText(item.status)}

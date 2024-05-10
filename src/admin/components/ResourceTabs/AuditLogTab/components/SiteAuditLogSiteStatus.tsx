@@ -1,10 +1,8 @@
 import { Fragment } from "react";
-import { useParams } from "react-router-dom";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2AuditStatus } from "@/generated/apiComponents";
-import { useGetV2SitesUUID } from "@/generated/apiComponents";
 
 import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
 
@@ -46,23 +44,17 @@ function getValueForStatus(status: string): number {
 }
 
 const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
-  const { id } = useParams<"id">();
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
 
-  const { data: siteData } = useGetV2SitesUUID({ pathParams: { uuid: id as string } }) as {
-    data: { data: { project: { status: string }; status: string; name: string } };
-  };
-
-  const siteStatus = siteData?.data?.status;
   const { data: siteAuditLog } = useGetV2AuditStatus({
     queryParams: {
       entity: "Site",
       uuid: props.uuid!
     }
   }) as { data: AuditLogResponse };
-  console.log("uuid", props.resource);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -85,13 +77,13 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-16-bold">Site Status</Text>
         <StepProgressbar
           color="secondary"
-          value={getValueForStatus(siteStatus)}
+          value={getValueForStatus(props.record.status)}
           labels={siteStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[80%]"
         />
       </div>
-      <Text variant="text-16-bold">History for {siteData?.data?.name}</Text>
+      <Text variant="text-16-bold">History for {props.record.name}</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}
