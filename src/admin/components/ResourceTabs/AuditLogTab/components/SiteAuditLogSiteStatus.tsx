@@ -1,20 +1,23 @@
+import { useRouter } from "next/router";
 import { Fragment } from "react";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2AuditStatus } from "@/generated/apiComponents";
+import { useGetV2SitesUUID } from "@/generated/apiComponents";
 
-import { gridData, SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
 
 interface AuditLogResponse {
-  data: {
-    entity_uuid: string;
-    status: string;
-    comment: string;
-    attachment_url: string;
-    date_created: Date;
-    created_by: string;
-  };
+  data: [AuditLogItem];
+}
+interface AuditLogItem {
+  entity_uuid: string;
+  status: string;
+  comment: string;
+  attachment_url: string;
+  date_created: string;
+  created_by: string;
 }
 
 const siteStatusLabels = [
@@ -25,14 +28,42 @@ const siteStatusLabels = [
   { id: "4", label: "Approved" }
 ];
 
+function getValueForStatus(status: string): number {
+  switch (status) {
+    case "started":
+      return 20;
+    case "awaiting-approval":
+      return 35;
+    case "needs-more-information":
+      return 60;
+    case "planting-in-progress":
+      return 80;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
+
 const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
+  const router = useRouter();
+  const startIndex = router.asPath.indexOf("site/") + 5;
+  const siteUUID = router.asPath.slice(startIndex, router.asPath.indexOf("/", startIndex));
+  const formattedText = (text: string) => {
+    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  };
+  const { data: siteData } = useGetV2SitesUUID({ pathParams: { uuid: siteUUID } }) as {
+    data: { data: { project: { status: string }; status: string; name: string } };
+  };
+
+  const siteStatus = siteData?.data?.status;
   const { data: siteAuditLog } = useGetV2AuditStatus({
     queryParams: {
       entity: "Site",
-      uuid: "zxxzc-zxczxc-zcxsad"
+      uuid: "asdasdsa-asdasdzxc"
     }
   }) as { data: AuditLogResponse };
-  console.log(siteAuditLog?.data);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -55,13 +86,13 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-16-bold">Site Status</Text>
         <StepProgressbar
           color="secondary"
-          value={80}
+          value={getValueForStatus(siteStatus)}
           labels={siteStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[80%]"
         />
       </div>
-      <Text variant="text-16-bold">History for Tannous/Brayton Road</Text>
+      <Text variant="text-16-bold">History for {siteData?.data?.name}</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}
@@ -112,22 +143,23 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
-        {gridData.map(item => (
-          <Fragment key={item.id}>
+        {siteAuditLog?.data?.map((item: AuditLogItem, index: number) => (
+          <Fragment key={index}>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.date}
+              {item.date_created}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.user}
+              {item.created_by}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.site || "-"}
+              {/* {item.site || "-"} */}
+              {"-"}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.status}
+              {formattedText(item.status)}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comentary || "-"}
+              {item.comment || "-"}
             </Text>
           </Fragment>
         ))}
