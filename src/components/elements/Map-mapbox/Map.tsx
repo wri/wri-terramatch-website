@@ -6,7 +6,7 @@ import mapboxgl from "mapbox-gl";
 //@ts-ignore
 import React, { useEffect, useId, useRef } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
-import { useRefresh, useShowContext } from "react-admin";
+import { useRefresh } from "react-admin";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -68,6 +68,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   bbox?: any;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
+  record?: any;
 }
 
 export const Map = ({
@@ -85,6 +86,7 @@ export const Map = ({
   status = false,
   editPolygon = false,
   polygonChecks = false,
+  record,
   ...props
 }: MapProps) => {
   const ref = useRef<typeof _MapService | null>(null);
@@ -92,8 +94,6 @@ export const Map = ({
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
   const mapId = useId();
   const context = useSitePolygonData();
-  const showContext = useShowContext();
-  const { record } = showContext;
   const sitePolygonData = context?.sitePolygonData;
   const { isUserDrawingEnabled } = context || { isUserDrawingEnabled: false };
   const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context || {};
@@ -278,7 +278,7 @@ export const Map = ({
         </ControlGroup>
         <When condition={!!status}>
           <ControlGroup position="top-left">
-            <SiteStatus />
+            <SiteStatus record={record} refresh={refresh} />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages}>

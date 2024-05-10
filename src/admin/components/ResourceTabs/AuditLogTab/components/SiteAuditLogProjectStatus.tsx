@@ -2,9 +2,12 @@ import { Fragment } from "react";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
+import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
 export interface SiteAuditLogTable {
   resource: string;
+  uuid?: string;
+  record?: any;
 }
 
 export const gridData = [
@@ -51,6 +54,19 @@ export const gridData = [
   }
 ];
 
+interface AuditLogResponse {
+  data: [AuditLogItem];
+}
+
+interface AuditLogItem {
+  entity_uuid: string;
+  status: string;
+  comment: string;
+  attachment_url: string;
+  date_created: string;
+  created_by: string;
+}
+
 const projectStatusLabels = [
   { id: "1", label: "Draft" },
   { id: "2", label: "Awaiting Approval" },
@@ -58,7 +74,32 @@ const projectStatusLabels = [
   { id: "4", label: "Approved" }
 ];
 
+function getValueForStatus(status: string): number {
+  switch (status) {
+    case "started":
+      return 20;
+    case "awaiting-approval":
+      return 40;
+    case "needs-more-information":
+      return 80;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
 const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
+  const formattedText = (text: string) => {
+    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  };
+
+  const { data: projectAuditLog } = useGetV2AuditStatus({
+    queryParams: {
+      entity: "Project",
+      uuid: props.record.project.uuid as string
+    }
+  }) as { data: AuditLogResponse };
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -81,13 +122,13 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-16-bold">Project Status</Text>
         <StepProgressbar
           color="secondary"
-          value={80}
+          value={getValueForStatus(props.record.project.status)}
           labels={projectStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[62%]"
         />
       </div>
-      <Text variant="text-16-bold">History for Native Seed Centre Shrub SPA</Text>
+      <Text variant="text-16-bold">History for {props.record.project.name}</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}
@@ -138,22 +179,23 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
-        {gridData.map(item => (
-          <Fragment key={item.id}>
+        {projectAuditLog?.data?.map((item: AuditLogItem, index: number) => (
+          <Fragment key={index}>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.date}
+              {item?.date_created}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.user}
+              {item.created_by}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.site || "-"}
+              {/* {item.site || "-"} */}
+              {"-"}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.status}
+              {formattedText(item.status)}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comentary || "-"}
+              {item.comment || "-"}
             </Text>
           </Fragment>
         ))}

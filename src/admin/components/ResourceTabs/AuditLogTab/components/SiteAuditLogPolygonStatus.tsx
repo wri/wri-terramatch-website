@@ -2,8 +2,23 @@ import { Fragment } from "react";
 
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
+import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
-import { gridData, SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+
+interface AuditLogResponse {
+  data: [AuditLogItem];
+}
+
+interface AuditLogItem {
+  entity_uuid: string;
+  status: string;
+  comment: string;
+  attachment_url: string;
+  date_created: string;
+  created_by: string;
+}
 
 const polygonStatusLabels = [
   { id: "1", label: "Submitted" },
@@ -11,7 +26,36 @@ const polygonStatusLabels = [
   { id: "3", label: "Approved" }
 ];
 
+function getValueForStatus(status: string): number {
+  switch (status) {
+    case "Submitted":
+      return 20;
+    case "needs-more-information":
+      return 60;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
+
 const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
+  const formattedText = (text: string) => {
+    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  };
+  const { data: sitePolygon } = useGetV2SitesSitePolygon({
+    pathParams: {
+      site: props.uuid as string
+    }
+  });
+
+  const { data: polygonAuditLog } = useGetV2AuditStatus({
+    queryParams: {
+      entity: "Polygon",
+      uuid: sitePolygon?.[0]?.poly_id as string
+    }
+  }) as { data: AuditLogResponse };
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -34,13 +78,13 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-16-bold">Polygon Status</Text>
         <StepProgressbar
           color="secondary"
-          value={80}
+          value={getValueForStatus(sitePolygon?.[0]?.status as string)}
           labels={polygonStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[44%]"
         />
       </div>
-      <Text variant="text-16-bold">History for Aerobic Agroforestry</Text>
+      <Text variant="text-16-bold">History for {sitePolygon?.[0]?.poly_name}</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}
@@ -91,22 +135,22 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
-        {gridData.map(item => (
-          <Fragment key={item.id}>
+        {polygonAuditLog?.data?.map((item: AuditLogItem, index: number) => (
+          <Fragment key={index}>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.date}
+              {item.date_created}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.user}
+              {item.created_by}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.site || "-"}
+              {sitePolygon?.[0]?.poly_name || "-"}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.status}
+              {formattedText(item.status)}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comentary || "-"}
+              {item.comment || "-"}
             </Text>
           </Fragment>
         ))}

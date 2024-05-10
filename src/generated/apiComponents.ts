@@ -28612,6 +28612,43 @@ export const useDeleteV2AdminNurseryReportsUUID = (
   );
 };
 
+export type PutV2AdminSitesUUIDPathParams = {
+  /**
+   * The UUID of the site
+   */
+  uuid: string;
+};
+
+export type PutV2AdminSitesUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2AdminSitesUUIDVariables = {
+  body?: Schemas.SiteStatusRequestPost;
+  pathParams: PutV2AdminSitesUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2AdminSitesUUID = (variables: PutV2AdminSitesUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    Schemas.SiteStatusResponse,
+    PutV2AdminSitesUUIDError,
+    Schemas.SiteStatusRequestPost,
+    {},
+    {},
+    PutV2AdminSitesUUIDPathParams
+  >({ url: "/v2/admin/sites/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2AdminSitesUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.SiteStatusResponse, PutV2AdminSitesUUIDError, PutV2AdminSitesUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Schemas.SiteStatusResponse, PutV2AdminSitesUUIDError, PutV2AdminSitesUUIDVariables>(
+    (variables: PutV2AdminSitesUUIDVariables) => fetchPutV2AdminSitesUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type DeleteV2AdminSitesUUIDPathParams = {
   uuid: string;
 };
@@ -32468,9 +32505,13 @@ export const usePostV2TerrafundPolygon = (
 
 export type GetV2AuditStatusQueryParams = {
   /**
-   * Optional.
+   * required.
    */
-  id?: string;
+  entity: string;
+  /**
+   * required.
+   */
+  uuid: string;
 };
 
 export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
@@ -32478,7 +32519,7 @@ export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
 export type GetV2AuditStatusResponse = Schemas.AuditStatusResponse[];
 
 export type GetV2AuditStatusVariables = {
-  queryParams?: GetV2AuditStatusQueryParams;
+  queryParams: GetV2AuditStatusQueryParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AuditStatus = (variables: GetV2AuditStatusVariables, signal?: AbortSignal) =>

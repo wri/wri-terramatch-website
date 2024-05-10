@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -12,7 +12,7 @@ import { ModalBase, ModalProps } from "./Modal";
 
 export interface ModalConfirmProps extends ModalProps {
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (text?: any) => void;
   menu?: Option[];
   menuLabel?: string;
   commentArea?: boolean;
@@ -30,6 +30,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   commentArea = false,
   ...rest
 }) => {
+  const [data, useData] = useState("");
   return (
     <ModalBase {...rest} className={tw("max-w-xs p-5", className)}>
       <div className="flex flex-col gap-2">
@@ -64,6 +65,8 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
           <TextArea
             placeholder="Type comment here..."
             name=""
+            value={data}
+            onChange={e => useData(e.target.value)}
             className="max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 p-4 text-xs"
             containerClassName="w-full"
             rows={4}
@@ -79,7 +82,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full"
           onClick={() => {
-            onConfirm();
+            onConfirm(data);
             onClose();
           }}
         >
