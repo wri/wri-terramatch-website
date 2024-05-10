@@ -35,7 +35,7 @@ const dropdownOptions = [
   }
 ];
 
-const SiteStatus = ({ record }: { record: any }) => {
+const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
   const { openModal, closeModal } = useModalContext();
   const [confirmChange, setConfirmChange] = useState(true);
 
@@ -60,6 +60,7 @@ const SiteStatus = ({ record }: { record: any }) => {
             }
           });
           console.log("response", response);
+          refresh();
           setConfirmChange(true);
           closeModal;
         }}

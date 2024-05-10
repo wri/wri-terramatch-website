@@ -230,7 +230,7 @@ export const Map = ({
         </ControlGroup>
         <When condition={!!status}>
           <ControlGroup position="top-left">
-            <SiteStatus record={record} />
+            <SiteStatus record={record} refresh={refresh} />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages}>
