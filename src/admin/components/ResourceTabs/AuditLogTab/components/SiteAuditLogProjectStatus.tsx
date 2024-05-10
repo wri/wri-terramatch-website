@@ -8,7 +8,7 @@ import { useGetV2SitesUUID } from "@/generated/apiComponents";
 
 export interface SiteAuditLogTable {
   resource: string;
-  uuid: string;
+  uuid?: string;
 }
 
 export const gridData = [
