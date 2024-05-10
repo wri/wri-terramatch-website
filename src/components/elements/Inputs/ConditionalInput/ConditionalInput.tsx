@@ -36,7 +36,8 @@ const ConditionalInput = (props: ConditionalInputProps) => {
 
   useEffect(() => {
     onChangeCapture();
-  }, [props.value, onChangeCapture]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.value, formHook.watch(props.name)]);
 
   return (
     <>
