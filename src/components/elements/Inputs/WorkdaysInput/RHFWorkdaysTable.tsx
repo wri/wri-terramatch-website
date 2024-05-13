@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useMemo } from "react";
+import { Fragment, PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -7,7 +7,7 @@ import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/Work
 import { GRID_VARIANT_GREEN } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 import { Entity } from "@/types/common";
 
-import { DataTableProps } from "./DataTable";
+import { DataTableProps } from "../DataTable/DataTable";
 
 export interface RHFWorkdaysTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
@@ -45,14 +45,16 @@ const RHFWorkdaysTable = ({
   );
 
   return (
-    <InputWrapper error={props.error}>
-      <WorkdayCollapseGrid
-        title={props.label ?? ""}
-        demographics={demographics}
-        variant={GRID_VARIANT_GREEN}
-        onChange={updateDemographics}
-      />
-    </InputWrapper>
+    <Fragment>
+      <InputWrapper error={props.error}>
+        <WorkdayCollapseGrid
+          title={props.label ?? ""}
+          demographics={demographics}
+          variant={GRID_VARIANT_GREEN}
+          onChange={updateDemographics}
+        />
+      </InputWrapper>
+    </Fragment>
   );
 };
 
