@@ -1,8 +1,13 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { GetV2TreeSpeciesEntityUUIDResponse, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
+import {
+  GetV2FormsENTITYUUIDResponse,
+  GetV2TreeSpeciesEntityUUIDResponse,
+  useGetV2FormsENTITYUUID,
+  useGetV2TreeSpeciesEntityUUID
+} from "@/generated/apiComponents";
 
 export interface TreeSpeciesTableProps {
   modelName: string;
@@ -13,6 +18,7 @@ export interface TreeSpeciesTableProps {
 
 const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpeciesTableProps) => {
   const t = useT();
+  const [showTreeSpecies, setShowTreeSpecies] = useState(false);
 
   const [queryParams, setQueryParams] = useState<any>();
 
@@ -37,11 +43,42 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
       ? treeSpecies?.data?.reduce((total, item) => total + (typeof item.amount === "number" ? 1 : 0), 0) > 0
       : false;
 
+  const { data: record } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
+    pathParams: {
+      uuid: modelUUID,
+      entity: modelName
+    }
+  });
+
+  const viewDataDisturbances = record?.data?.form?.form_sections.map((questions: any) =>
+    questions.form_questions.map((item: any) => item.uuid).map((item: any) => record?.data?.answers?.[item])
+  );
+
+  const verifydata = () => {
+    record?.data?.form?.form_sections.forEach((section: any, sectionIndex: number) => {
+      section.form_questions.forEach((question: any, questionIndex: number) => {
+        if (question.children) {
+          question.children.forEach((child: any) => {
+            if (child.input_type === "treeSpecies") {
+              setShowTreeSpecies(viewDataDisturbances?.[sectionIndex as number]?.[questionIndex as number]);
+              viewDataDisturbances?.[sectionIndex as number]?.[questionIndex as number];
+            }
+          });
+        }
+      });
+    });
+    return false;
+  };
+
+  useEffect(() => {
+    verifydata();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [record]);
   return (
     <div>
       <ServerSideTable
         meta={treeSpecies?.meta}
-        data={treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) || []}
+        data={showTreeSpecies ? treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) || [] : []}
         isLoading={isLoading}
         treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}

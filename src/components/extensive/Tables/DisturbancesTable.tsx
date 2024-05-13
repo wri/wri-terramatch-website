@@ -1,9 +1,14 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { GetV2DisturbancesENTITYUUIDResponse, useGetV2DisturbancesENTITYUUID } from "@/generated/apiComponents";
+import {
+  GetV2DisturbancesENTITYUUIDResponse,
+  GetV2FormsENTITYUUIDResponse,
+  useGetV2DisturbancesENTITYUUID,
+  useGetV2FormsENTITYUUID
+} from "@/generated/apiComponents";
 
 export interface DisturbancesTableProps {
   modelName: string;
@@ -17,6 +22,7 @@ const DisturbancesTable = ({ modelName, modelUUID, collection, onFetch }: Distur
   const t = useT();
 
   const [queryParams, setQueryParams] = useState<any>();
+  const [showDisturbance, setShowDisturbance] = useState(false);
 
   if (collection && queryParams) {
     queryParams["filter[collection]"] = collection;
@@ -35,12 +41,42 @@ const DisturbancesTable = ({ modelName, modelUUID, collection, onFetch }: Distur
   );
 
   const hasAllHeaders = !!disturbances?.data?.[0]?.extent && !!disturbances?.data?.[0].intensity;
+  const { data: record } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
+    pathParams: {
+      uuid: modelUUID,
+      entity: modelName
+    }
+  });
 
+  const viewDataDisturbances = record?.data?.form?.form_sections.map((questions: any) =>
+    questions.form_questions.map((item: any) => item.uuid).map((item: any) => record?.data?.answers?.[item])
+  );
+
+  const verifydata = () => {
+    record?.data?.form?.form_sections.forEach((section: any, sectionIndex: number) => {
+      section.form_questions.forEach((question: any, questionIndex: number) => {
+        if (question.children) {
+          question.children.forEach((child: any) => {
+            if (child.input_type === "disturbances") {
+              setShowDisturbance(viewDataDisturbances?.[sectionIndex as number]?.[questionIndex as number]);
+              viewDataDisturbances?.[sectionIndex as number]?.[questionIndex as number];
+            }
+          });
+        }
+      });
+    });
+    return false;
+  };
+
+  useEffect(() => {
+    verifydata();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [record]);
   return (
     <div>
       <ServerSideTable
         meta={disturbances?.meta}
-        data={disturbances?.data || []}
+        data={(showDisturbance ? disturbances?.data : []) || []}
         isLoading={isLoading}
         onQueryParamChange={setQueryParams}
         columns={getDisturbanceTableColumns({ hasExtent: hasAllHeaders, hasIntensity: hasAllHeaders }, t)}
