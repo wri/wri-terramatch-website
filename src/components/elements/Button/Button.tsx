@@ -27,6 +27,7 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "white-page-admin"
     | "white-toggle"
     | "white-border"
+    | "orange"
     | "transparent-toggle";
   fullWidth?: boolean;
   shallow?: boolean;
@@ -125,6 +126,13 @@ const Button: FC<IButtonProps> = props => {
           container:
             "group bg-white border-[3px] border-grey-500 hover:border-primary-500 disabled:border-neutral-1000 px-4 py-2 rounded-lg",
           span: "uppercase text-14-bold text-grey-500 group-hover:text-primary-500"
+        };
+
+      case "orange":
+        return {
+          container:
+            "group bg-tertiary-600 py-1.5 px-5 rounded-lg hover:opacity-90 disabled:bg-tertiary-600 disabled:opacity-70",
+          span: "normal-case text-14-bold text-white h-min"
         };
 
       case "semi-red":

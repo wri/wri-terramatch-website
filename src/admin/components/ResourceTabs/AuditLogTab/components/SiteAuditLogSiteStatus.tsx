@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2AuditStatus } from "@/generated/apiComponents";
@@ -65,7 +66,10 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
           Update the site status, view updates, or add comments
         </Text>
         <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-          <Text variant="text-16-bold">Change Requested</Text>
+          <div className="flex items-center justify-between">
+            <Text variant="text-16-bold">Change Requested</Text>
+            <Button variant="orange">Remove Request</Button>
+          </div>
           <Text variant="text-14-semibold">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
             dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
