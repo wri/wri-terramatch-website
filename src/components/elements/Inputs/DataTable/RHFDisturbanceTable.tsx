@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
@@ -126,6 +126,7 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
       //@ts-ignore
       _tmp.push(data.data);
       field.onChange(_tmp);
+      onChangeCapture && onChangeCapture();
     }
   });
 
@@ -137,11 +138,23 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
     }
   });
 
+  useEffect(() => {
+    onChangeCapture && onChangeCapture();
+    props.formHook && props.formHook.register(field.name);
+    props.formHook?.clearErrors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.formHook, field.name, entity?.entityName, entity?.entityUUID]);
+
+  useEffect(() => {
+    props.formHook?.clearErrors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, props.formHook]);
   return (
     <DataTable
       {...props}
       value={value}
       handleCreate={data => {
+        onChangeCapture && onChangeCapture();
         createDisturbances({
           body: {
             ...data,

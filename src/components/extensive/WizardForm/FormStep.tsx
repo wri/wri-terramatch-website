@@ -31,8 +31,7 @@ export const FormStep = ({
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
   useEffect(() => {
-    formHook.trigger();
-    formHook.reset(formHook.getValues());
+    formHook.clearErrors();
   }, [fields, formHook, title]);
 
   return (
