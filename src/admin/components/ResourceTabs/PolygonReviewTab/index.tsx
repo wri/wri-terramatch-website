@@ -200,15 +200,15 @@ const PolygonReviewTab: FC<IProps> = props => {
         setFile={setFiles}
       >
         {/* Next div is only Mocked data delete this children later*/}
-        {/* <div className="mb-6 flex flex-col gap-4">
+        {/* <div className="flex flex-col gap-4 mb-6">
           {polygonData.map(polygon => (
             <div
               key={polygon.id}
               className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
             >
               <div className="flex gap-3">
-                <div className="rounded-lg bg-neutral-150 p-2">
-                  <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
+                <div className="p-2 rounded-lg bg-neutral-150">
+                  <Icon name={IconNames.POLYGON} className="w-6 h-6 text-grey-720" />
                 </div>
                 <div>
                   <Text variant="text-12">{polygon.name}</Text>
@@ -463,6 +463,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
                 <Table
                   variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  hasPagination={false}
                   classNameWrapper="max-h-[176px]"
                   columns={[
                     { header: "Polygon ID", accessorKey: "polygon-id" },

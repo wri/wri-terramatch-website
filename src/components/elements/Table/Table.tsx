@@ -211,7 +211,7 @@ function Table<TData extends RowData>({
           </table>
         </div>
       </div>
-      {
+      {hasPagination && (
         <Pagination
           variant={variant.paginationVariant}
           getCanNextPage={getCanNextPage}
@@ -226,7 +226,7 @@ function Table<TData extends RowData>({
           containerClassName="mt-6"
           hasPageSizeSelector
         />
-      }
+      )}
     </div>
   );
 }
