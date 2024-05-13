@@ -19,7 +19,7 @@ import DataTable, { DataTableProps } from "./DataTable";
 export interface RHFDisturbanceTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
-  onChangeCapture: () => void;
+  onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   entity: Entity;
   hasIntensity?: boolean;
@@ -126,7 +126,7 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
       //@ts-ignore
       _tmp.push(data.data);
       field.onChange(_tmp);
-      onChangeCapture();
+      onChangeCapture && onChangeCapture();
     }
   });
 
@@ -139,15 +139,16 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
   });
 
   useEffect(() => {
-    onChangeCapture();
+    onChangeCapture && onChangeCapture();
     props.formHook && props.formHook.register(field.name);
+    props.formHook?.clearErrors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.formHook, field.name, entity?.entityName, entity?.entityUUID]);
 
   useEffect(() => {
     props.formHook?.clearErrors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, props.formHook?.watch(props.name)]);
+  }, [value, props.formHook]);
   return (
     <DataTable
       {...props}
