@@ -24,7 +24,7 @@ import {
   fetchPutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 
-import CheckPolygon from "./MapControls/CheckPolygon";
+import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
 // import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -298,7 +298,7 @@ export const Map = ({
         </When> */}
         <When condition={!!status}>
           <ControlGroup position="top-left">
-            <CheckPolygon />
+            <CheckPolygonControl />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages}>
