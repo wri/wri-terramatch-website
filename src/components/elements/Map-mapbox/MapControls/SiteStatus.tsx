@@ -40,14 +40,14 @@ const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
   const [confirmChange, setConfirmChange] = useState(true);
 
   const openFormModalHandler = (indexes: any[]) => {
-    console.log("openFormModalHandler", indexes);
+    const optionSelected = dropdownOptions.find(option => option.value === indexes[0]);
     openModal(
       <ModalConfirm
         title={"Confirm Site Status Change"}
         commentArea
         content={
           <Text variant="text-14-light" className="text-center">
-            Are you sure you want to change the site status to Planting In Progress?
+            Are you sure you want to change the site status to {optionSelected?.title}?
           </Text>
         }
         onClose={closeModal}
@@ -55,7 +55,7 @@ const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
           const response = await fetchPutV2AdminSitesUUID({
             pathParams: { uuid: record.uuid },
             body: {
-              status: dropdownOptions.find(option => option.value === indexes[0])?.status,
+              status: optionSelected?.status,
               comment: text
             }
           });
