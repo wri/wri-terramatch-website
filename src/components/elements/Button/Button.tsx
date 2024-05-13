@@ -132,7 +132,7 @@ const Button: FC<IButtonProps> = props => {
         return {
           container:
             "group bg-tertiary-600 py-1.5 px-5 rounded-lg hover:opacity-90 disabled:bg-tertiary-600 disabled:opacity-70",
-          span: "normal-case text-14-bold text-white h-min"
+          span: "normal-case text-10-bold text-white h-min"
         };
 
       case "semi-red":

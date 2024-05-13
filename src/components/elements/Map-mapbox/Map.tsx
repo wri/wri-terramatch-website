@@ -24,13 +24,14 @@ import {
   fetchPutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 
+import CheckPolygon from "./MapControls/CheckPolygon";
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
 // import { useSitePolygonData } from "@/context/sitePolygon.provider";
 // import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
-import SiteStatus from "./MapControls/SiteStatus";
+// import SiteStatus from "./MapControls/SiteStatus";
 import { StyleControl } from "./MapControls/StyleControl";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
@@ -290,9 +291,14 @@ export const Map = ({
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl mapRef={ref} />
         </ControlGroup>
-        <When condition={!!status}>
+        {/* <When condition={!!status}>
           <ControlGroup position="top-left">
             <SiteStatus record={record} refresh={refresh} />
+          </ControlGroup>
+        </When> */}
+        <When condition={!!status}>
+          <ControlGroup position="top-left">
+            <CheckPolygon />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages}>
