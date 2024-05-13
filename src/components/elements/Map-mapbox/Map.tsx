@@ -69,6 +69,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
+  isUserDrawing?: boolean;
+  setIsUserDrawing?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const Map = ({
@@ -87,6 +89,8 @@ export const Map = ({
   editPolygon = false,
   polygonChecks = false,
   record,
+  isUserDrawing = false,
+  setIsUserDrawing,
   ...props
 }: MapProps) => {
   const ref = useRef<typeof _MapService | null>(null);
@@ -95,8 +99,17 @@ export const Map = ({
   const mapId = useId();
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
-  const { isUserDrawingEnabled } = context || { isUserDrawingEnabled: false };
+  const { isUserDrawingEnabled } = isUserDrawing
+    ? { isUserDrawingEnabled: isUserDrawing }
+    : context || { isUserDrawingEnabled: false };
   const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context || {};
+
+  useEffect(() => {
+    if (isUserDrawing) {
+      toggleUserDrawing?.(isUserDrawing);
+      toggleAttribute?.(true);
+    }
+  }, [isUserDrawing]);
 
   const refresh = useRefresh();
   useEffect(() => {
@@ -109,6 +122,7 @@ export const Map = ({
 
   const storePolygon = async (geojson: any) => {
     toggleUserDrawing?.(false);
+    setIsUserDrawing?.(false);
     if (geojson && geojson[0]) {
       const response = await fetchPostV2TerrafundPolygon({
         body: { geometry: JSON.stringify(geojson[0].geometry) }

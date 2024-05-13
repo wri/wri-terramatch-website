@@ -68,6 +68,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const [isUserDrawing, setIsUserDrawing] = useState<boolean>(false);
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
@@ -326,7 +327,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   const addMenuItems = [
     {
       id: "1",
-      render: () => <Text variant="text-12-bold">Create Polygons</Text>
+      render: () => <Text variant="text-12-bold">Create Polygons</Text>,
+      onClick: () => setIsUserDrawing(true)
     },
     {
       id: "2",
@@ -446,6 +448,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                 status={true}
                 setPolygonFromMap={setPolygonFromMap}
                 polygonFromMap={polygonFromMap}
+                isUserDrawing={isUserDrawing}
+                setIsUserDrawing={setIsUserDrawing}
               />
               <div className="mb-6">
                 <div className="mb-4">
