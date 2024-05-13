@@ -32,6 +32,7 @@ export function useProcessRecordData(modelUUID: string, modelName: string, input
       }
     }
     return false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [record]);
 
   return ProcesssRecordData;
