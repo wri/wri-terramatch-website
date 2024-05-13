@@ -301,7 +301,7 @@ export const Map = ({
             <CheckPolygonControl />
           </ControlGroup>
         </When>
-        <When condition={!editable && !viewImages}>
+        <When condition={!editable && !viewImages && !status}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />
           </ControlGroup>
