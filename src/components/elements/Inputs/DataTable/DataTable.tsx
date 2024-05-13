@@ -44,7 +44,6 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   const onDeleteEntry = (uuid: string) => {
     const _tmp = [...value];
     _.remove(_tmp, item => item.uuid === uuid);
-
     //@ts-ignore
     handleDelete?.(uuid);
     onChange?.(_tmp);

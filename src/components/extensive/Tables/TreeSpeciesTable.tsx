@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { GetV2TreeSpeciesEntityUUIDResponse, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
+import { useProcessRecordData } from "@/hooks/useProcessRecordData";
 
 export interface TreeSpeciesTableProps {
   modelName: string;
@@ -37,11 +38,12 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
       ? treeSpecies?.data?.reduce((total, item) => total + (typeof item.amount === "number" ? 1 : 0), 0) > 0
       : false;
 
+  const showTreeSpecies = useProcessRecordData(modelUUID, modelName, "treeSpecies");
   return (
     <div>
       <ServerSideTable
         meta={treeSpecies?.meta}
-        data={treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) || []}
+        data={(showTreeSpecies && treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 }))) ?? []}
         isLoading={isLoading}
         treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
