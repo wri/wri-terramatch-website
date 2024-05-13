@@ -30,7 +30,7 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
         currentTarget: { value }
       } = event;
       const newAmount = Number(value);
-      if (!isNaN(newAmount)) {
+      if (!isNaN(newAmount) && newAmount >= 0) {
         onChange?.(newAmount, userLabel);
       }
     },
