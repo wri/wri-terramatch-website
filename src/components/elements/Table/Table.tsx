@@ -66,7 +66,7 @@ function Table<TData extends RowData>({
   variant = VARIANT_TABLE_PRIMARY,
   children,
   isLoading,
-  hasPagination = true,
+  hasPagination = false,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -115,7 +115,7 @@ function Table<TData extends RowData>({
 
   return (
     <div>
-      <div className={`overflow-x-auto px-4 md:px-0 lg:overflow-x-visible ${classNameWrapper}`}>
+      <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter
             filters={filters}
