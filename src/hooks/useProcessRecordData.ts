@@ -26,6 +26,8 @@ export function useProcessRecordData(modelUUID: string, modelName: string, input
               return viewDataTable?.[sectionIndex]?.[questionIndex];
             }
           }
+        } else {
+          return true;
         }
       }
     }
