@@ -38,6 +38,10 @@ export const getSchemaFields = (fields: FormField[]) => {
           })
           .nullable()
           .label(child.label || "");
+
+        if (child.fieldProps.required) {
+          schema[child.name] = schema[child.name].required();
+        }
       });
     } else {
       schema[field.name] = field.validation?.nullable().label(field.label);
