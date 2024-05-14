@@ -73,22 +73,26 @@ const dropdownOptionsTree = [
   }
 ];
 const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygon }) => {
-  const [polygonName, setPolygonName] = useState(selectedPolygon?.poly_name);
-  const [plantStartDate, setPlantStartDate] = useState(selectedPolygon?.plantstart);
-  const [plantEndDate, setPlantEndDate] = useState(selectedPolygon?.plantend);
+  const [polygonName, setPolygonName] = useState<string>();
+  const [plantStartDate, setPlantStartDate] = useState<string>();
+  const [plantEndDate, setPlantEndDate] = useState<string>();
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
-  const [calculatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
+  const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area || 0);
+  const [formattedArea, setFormattedArea] = useState<string>();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
-  const formattedArea =
-    calculatedArea && calculatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const t = useT();
 
   useEffect(() => {
+    setPolygonName(selectedPolygon?.poly_name || "");
+    setPlantStartDate(selectedPolygon?.plantstart || "");
+    setPlantEndDate(selectedPolygon?.plantend || "");
+    setTreesPlanted(selectedPolygon?.num_trees || 0);
+    setCalculatedArea(selectedPolygon?.calc_area || 0);
     const restorationPracticeArray = selectedPolygon?.practice
       ? selectedPolygon?.practice.split(",").map(function (item) {
           return item.trim();
@@ -110,6 +114,12 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
       : [];
     setTreeDistribution(treeDistributionArray);
   }, [selectedPolygon]);
+
+  useEffect(() => {
+    const format =
+      calculatedArea && calculatedArea.toLocaleString("UTC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    setFormattedArea(format || "");
+  }, [calculatedArea]);
 
   const savePolygonData = async () => {
     if (selectedPolygon?.uuid) {

@@ -89,7 +89,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
-  }, [polygonSelected]);
+  }, [polygonSelected, sitePolygonData]);
   useEffect(() => {
     console.log("openEditNewPolygon", openEditNewPolygon);
     if (openEditNewPolygon) {
