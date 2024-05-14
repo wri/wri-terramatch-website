@@ -43,7 +43,7 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
     <div>
       <ServerSideTable
         meta={treeSpecies?.meta}
-        data={(showTreeSpecies && treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 }))) ?? []}
+        data={(showTreeSpecies ? treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) : []) ?? []}
         isLoading={isLoading}
         treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
