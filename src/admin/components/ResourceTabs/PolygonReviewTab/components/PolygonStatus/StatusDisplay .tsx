@@ -130,7 +130,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name,
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           const response = await mutate({
-            pathParams: { uuid: record.uuid },
+            pathParams: { uuid: record.uuid || record.value },
             body: {
               status: option?.status,
               comment: text

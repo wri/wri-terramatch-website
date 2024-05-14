@@ -3,7 +3,6 @@ import { Fragment } from "react";
 import Button from "@/components/elements/Button/Button";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
 import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
@@ -44,16 +43,11 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  const { data: sitePolygon } = useGetV2SitesSitePolygon({
-    pathParams: {
-      site: props.uuid as string
-    }
-  });
 
   const { data: polygonAuditLog } = useGetV2AuditStatus({
     queryParams: {
-      entity: "Polygon",
-      uuid: sitePolygon?.[0]?.poly_id as string
+      entity: "SitePolygon",
+      uuid: props.record?.value as string
     }
   }) as { data: AuditLogResponse };
 
@@ -82,13 +76,13 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-16-bold">Polygon Status</Text>
         <StepProgressbar
           color="secondary"
-          value={getValueForStatus(sitePolygon?.[0]?.status as string)}
+          value={getValueForStatus(props.record?.meta)}
           labels={polygonStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[44%]"
         />
       </div>
-      <Text variant="text-16-bold">History for {sitePolygon?.[0]?.poly_name}</Text>
+      <Text variant="text-16-bold">History for {props.record?.title}</Text>
       {/*OLD TABLE*/}
       {/* <ReferenceManyField
         pagination={<Pagination />}
@@ -148,7 +142,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
               {item.created_by}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {sitePolygon?.[0]?.poly_name || "-"}
+              {props?.record?.title || "-"}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {formattedText(item.status)}

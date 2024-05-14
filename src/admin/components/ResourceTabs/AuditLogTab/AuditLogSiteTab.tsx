@@ -79,7 +79,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
       };
       fn();
     }
-  }, [selectedPolygon, buttonToogle]);
+  }, [buttonToogle, ctx.record]);
 
   return (
     <When condition={!ctx.isLoading}>
@@ -126,8 +126,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               <When condition={buttonToogle === ButtonStates.POLYGON}>
                 <SiteAuditLogPolygonStatus
                   resource={resource}
-                  uuid={ctx.record.uuid}
-                  record={ctx.record}
+                  uuid={selectedPolygon.value}
+                  record={polygonList.find(item => item.uuid === selectedPolygon.value)}
                   auditLogData={auditLogData}
                 />
               </When>

@@ -35,10 +35,10 @@ const SiteAuditLogPolygonStatusSide = ({
       />
       <StatusDisplay
         titleStatus={"Polygon"}
-        name={selectedPolygon?.poly_name}
+        name={record?.title || selectedPolygon?.poly_name}
         refresh={refresh}
         mutate={mutate}
-        status={selectedPolygon?.meta}
+        status={record?.meta || selectedPolygon?.meta}
         record={record}
       />
       <ComentarySection />
