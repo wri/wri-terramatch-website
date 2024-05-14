@@ -3,7 +3,7 @@ import { fetchPutV2AdminSitesUUID } from "@/generated/apiComponents";
 import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
-const SiteAuditLogSiteStatusSide = ({ record, refresh }: { record: any; refresh?: any }) => {
+const SiteAuditLogSiteStatusSide = ({ record, refresh }: { record?: any; refresh?: any }) => {
   const mutate = fetchPutV2AdminSitesUUID;
   return (
     <div className="flex flex-col gap-6">

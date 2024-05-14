@@ -8,9 +8,9 @@ const SiteAuditLogPolygonStatusSide = ({
   selectedPolygon,
   setSelectedPolygon
 }: {
-  polygonList: any[];
-  selectedPolygon: any;
-  setSelectedPolygon: any;
+  polygonList?: any[];
+  selectedPolygon?: any;
+  setSelectedPolygon?: any;
 }) => {
   return (
     <div className="flex flex-col gap-6">
@@ -21,7 +21,7 @@ const SiteAuditLogPolygonStatusSide = ({
         optionsClassName="max-w-full"
         defaultValue={[selectedPolygon]}
         placeholder={selectedPolygon?.name ?? "Select Polygon"}
-        options={polygonList}
+        options={polygonList!}
         onChange={e => {
           console.log("onChange", e);
           setSelectedPolygon(e);
