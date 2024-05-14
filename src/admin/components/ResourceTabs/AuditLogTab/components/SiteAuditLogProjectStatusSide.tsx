@@ -1,10 +1,21 @@
-import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
-import Status from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
+import { fetchPutV2AdminProjectsUUID } from "@/generated/apiComponents";
 
-const SiteAuditLogProjectStatusSide = () => {
+import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
+import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
+
+const SiteAuditLogProjectStatusSide = ({ record, refresh }: { record: any; refresh?: any }) => {
+  const mutate = fetchPutV2AdminProjectsUUID;
+  console.log("record", record);
   return (
     <div className="flex flex-col gap-6">
-      <Status titleStatus="Project" status="Needs More Info" />
+      <StatusDisplay
+        titleStatus="Project"
+        status={record.readable_status}
+        record={record}
+        name={record.name}
+        mutate={mutate}
+        refresh={refresh}
+      />
       <ComentarySection />
     </div>
   );

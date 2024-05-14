@@ -1,3 +1,5 @@
+import { useShowContext } from "react-admin";
+
 import Button from "@/components/elements/Button/Button";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -7,54 +9,66 @@ import { useModalContext } from "@/context/modal.provider";
 const menuPolygonOptions = [
   {
     title: "Submitted",
+    status: "submitted",
     value: 1
   },
   {
     title: "Needs More Information",
+    status: "needs-more-information",
     value: 2
   },
   {
     title: "Approved",
+    status: "approved",
     value: 3
   }
 ];
 const menuSiteOptions = [
   {
     title: "Draft",
+    status: "draft",
     value: 1
   },
   {
     title: "Awaiting Approval",
+    status: "awaiting-approval",
     value: 2
   },
   {
     title: "Needs More Information",
+    status: "needs-more-information",
     value: 3
   },
   {
     title: "Planting in Progress",
+    status: "planting-in-progress",
     value: 4
   },
   {
     title: "Approved",
+    status: "approved",
     value: 5
   }
 ];
 const menuProjectOptions = [
   {
     title: "Draft",
+    status: "draft",
     value: 1
   },
   {
     title: "Awaiting Approval",
+    status: "awaiting-approval",
     value: 2
   },
   {
     title: "Needs More Information",
+    status: "needs-more-information",
     value: 3
   },
   {
     title: "Approved",
+    status: "approved",
     value: 4
   }
 ];
@@ -62,6 +76,10 @@ const menuProjectOptions = [
 export interface StatusProps {
   titleStatus?: "Site" | "Project" | "Polygon";
   status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info" | "Planting in Progress";
+  mutate?: any;
+  record?: any;
+  refresh?: any;
+  name?: any;
 }
 
 const menuOptionsMap = {
@@ -82,16 +100,21 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon", status }: StatusProps) => {
+const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name, record }: StatusProps) => {
+  const ctx = useShowContext();
+  const rec: any = ctx.record as any;
+  console.log("rec", rec);
+  console.log("ctx.resource", ctx.resource);
+
   const { openModal, closeModal } = useModalContext();
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>Monitoring Begins</b>?
+      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name ?? "Monitoring Begins"}</b>?
     </Text>
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>Malanga</b>?
+      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name ?? "Malanga"}</b>?
     </Text>
   );
 
@@ -104,8 +127,19 @@ const StatusDisplay = ({ titleStatus = "Polygon", status }: StatusProps) => {
         menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
-        onConfirm={() => {
+        onConfirm={async (text: any, opt) => {
+          const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
+          const response = await mutate({
+            pathParams: { uuid: record.uuid },
+            body: {
+              status: option?.status,
+              comment: text
+            }
+          });
+          console.log("response", response);
+          refresh();
           closeModal;
+          ctx.refetch();
         }}
       />
     );

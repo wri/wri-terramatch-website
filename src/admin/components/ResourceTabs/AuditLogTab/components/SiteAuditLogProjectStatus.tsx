@@ -3,12 +3,12 @@ import { Fragment } from "react";
 import Button from "@/components/elements/Button/Button";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
 export interface SiteAuditLogTable {
   resource: string;
   uuid?: string;
   record?: any;
+  auditLogData?: any;
 }
 
 export const gridData = [
@@ -55,10 +55,6 @@ export const gridData = [
   }
 ];
 
-interface AuditLogResponse {
-  data: [AuditLogItem];
-}
-
 interface AuditLogItem {
   entity_uuid: string;
   status: string;
@@ -78,11 +74,11 @@ const projectStatusLabels = [
 function getValueForStatus(status: string): number {
   switch (status) {
     case "started":
-      return 20;
+      return 0;
     case "awaiting-approval":
-      return 40;
+      return 34;
     case "needs-more-information":
-      return 80;
+      return 67;
     case "approved":
       return 100;
     default:
@@ -93,13 +89,6 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-
-  const { data: projectAuditLog } = useGetV2AuditStatus({
-    queryParams: {
-      entity: "Project",
-      uuid: props.record.project.uuid as string
-    }
-  }) as { data: AuditLogResponse };
 
   return (
     <div className="flex flex-col gap-6">
@@ -133,40 +122,6 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         />
       </div>
       <Text variant="text-16-bold">History for {props.record.project.name}</Text>
-      {/*OLD TABLE*/}
-      {/* <ReferenceManyField
-        pagination={<Pagination />}
-        reference={modules.audit.ResourceName}
-        filter={{ entity: props.resource }}
-        target="uuid"
-        label=""
-      >
-        <Datagrid bulkActionButtons={false}>
-          <DateField
-            source="created_at"
-            label="Date and time"
-            showTime
-            locales="en-GB"
-            options={{ dateStyle: "short", timeStyle: "short" }}
-          />
-          <ReferenceField source="user_uuid" reference={modules.user.ResourceName} label="User">
-            <FunctionField
-              source="first_name"
-              render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
-            />
-          </ReferenceField>
-          <FunctionField
-            label="Action"
-            className="capitalize"
-            render={(record: any) => {
-              const str: string = record?.new_values?.status ?? record?.event ?? "";
-
-              return str.replaceAll("-", " ");
-            }}
-          />
-          <FunctionField label="Comments" render={(record: any) => record?.new_values?.feedback ?? "-"} />
-        </Datagrid>
-      </ReferenceManyField> */}
       <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Date and Time
@@ -183,7 +138,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
-        {projectAuditLog?.data?.map((item: AuditLogItem, index: number) => (
+        {props.auditLogData?.data?.map((item: AuditLogItem, index: number) => (
           <Fragment key={index}>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {item?.date_created}

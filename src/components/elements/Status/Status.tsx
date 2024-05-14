@@ -34,7 +34,9 @@ const Status = (props: StatusProps) => {
       Submitted: "bg-blue-200",
       Draft: "bg-pinkCustom-200",
       "Under Review": "bg-tertiary-50",
+      "Awaiting approval": "bg-tertiary-50",
       "Needs More Info": "bg-tertiary-50",
+      "Needs more information": "bg-tertiary-50",
       "Planting in Progress": "bg-blue-200"
     };
 

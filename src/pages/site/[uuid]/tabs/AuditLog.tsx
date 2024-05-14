@@ -54,7 +54,7 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
                         variant={`${buttonToogle === ButtonStates.PROJECTS ? "white-toggle" : "transparent-toggle"}`}
                         onClick={() => setButtonToogle(ButtonStates.PROJECTS)}
                       >
-                        Project Status
+                        Project Status x
                       </Button>
                       <Button
                         variant={`${buttonToogle === ButtonStates.SITE ? "white-toggle" : "transparent-toggle"}`}

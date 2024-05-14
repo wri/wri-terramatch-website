@@ -12,7 +12,7 @@ import { ModalBase, ModalProps } from "./Modal";
 
 export interface ModalConfirmProps extends ModalProps {
   onClose: () => void;
-  onConfirm: (text?: any) => void;
+  onConfirm: (text?: any, opt?: any) => void;
   menu?: Option[];
   menuLabel?: string;
   commentArea?: boolean;
@@ -31,6 +31,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   ...rest
 }) => {
   const [data, useData] = useState("");
+  const [selectedOption, setSelectedOption] = useState<any>(null);
   return (
     <ModalBase {...rest} className={tw("max-w-xs p-5", className)}>
       <div className="flex flex-col gap-2">
@@ -57,7 +58,9 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               placeholder="New Status"
               inputVariant="text-12-light"
               options={menu}
-              onChange={() => {}}
+              onChange={opt => {
+                setSelectedOption(opt);
+              }}
             />
           </div>
         </When>
@@ -82,7 +85,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full"
           onClick={() => {
-            onConfirm(data);
+            onConfirm(data, selectedOption);
             onClose();
           }}
         >

@@ -137,9 +137,9 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const getColorStatus = (option: string): string => {
     const colorMap: { [key: string]: string } = {
-      Approved: "bg-green",
-      Submitted: "bg-blue",
-      Draft: "bg-pinkCustom",
+      approved: "bg-green",
+      submitted: "bg-blue",
+      draft: "bg-pinkCustom",
       "Under Review": "bg-tertiary-600",
       "Needs More Info": "bg-tertiary-600"
     };
@@ -177,7 +177,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               )}
             >
               <div className="flex items-center gap-2">
-                <When condition={options[0].meta}>
+                <When condition={options && options.length && options.length > 0 && options[0].meta}>
                   <div
                     className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
                       statusColor(options, toArray<any>(value)) ?? ""
