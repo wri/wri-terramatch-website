@@ -142,6 +142,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
+                refresh={refetch}
+                record={polygonList.find(item => item.uuid === selectedPolygon.value)}
                 polygonList={polygonList}
                 selectedPolygon={selectedPolygon}
                 setSelectedPolygon={setSelectedPolygon}

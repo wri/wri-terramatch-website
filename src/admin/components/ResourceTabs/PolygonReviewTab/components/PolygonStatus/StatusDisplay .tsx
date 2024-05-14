@@ -123,7 +123,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name,
       <ModalConfirm
         title={`${titleStatus} Status Change`}
         commentArea
-        menuLabel={`New ${titleStatus} Status`}
+        menuLabel={status}
         menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
