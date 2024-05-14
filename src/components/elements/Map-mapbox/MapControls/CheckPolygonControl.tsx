@@ -74,7 +74,10 @@ const CheckPolygonControl = () => {
           </Text>
           <Icon
             name={IconNames.CHEVRON_DOWN}
-            className={classNames("h-4 w-4 text-white", openCollapse ? "rotate-180 transform" : "rotate-0 transform")}
+            className={classNames(
+              "h-4 w-4 text-white duration-300",
+              openCollapse ? "rotate-180 transform" : "rotate-0 transform"
+            )}
           />
         </button>
         {openCollapse &&
