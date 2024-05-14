@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 
 export function useProcessRecordData(modelUUID: string, modelName: string, inputType: string) {
-  const [show, setShow] = useState(false);
   const { data: record } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
       uuid: modelUUID,
@@ -24,18 +23,17 @@ export function useProcessRecordData(modelUUID: string, modelName: string, input
         if (question.children) {
           for (let child of question.children) {
             if (child.input_type === inputType) {
-              setShow(viewDataTable?.[sectionIndex]?.[questionIndex]);
+              return viewDataTable?.[sectionIndex]?.[questionIndex];
             }
           }
         } else {
-          setShow(true);
+          return true;
         }
       }
     }
-
-    return show;
+    return false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record, inputType, modelUUID, modelName, show]);
+  }, [record]);
 
   return ProcesssRecordData;
 }
