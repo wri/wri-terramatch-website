@@ -156,7 +156,7 @@ export const Map = ({
             ref.current.addSource(layer, sitePolygonData, setPolygonFromMap, hasControls);
             setTimeout(() => {
               refresh();
-            }, 200);
+            }, 500);
           }
         });
       };
