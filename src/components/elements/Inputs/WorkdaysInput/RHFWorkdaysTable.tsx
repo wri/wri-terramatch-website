@@ -1,4 +1,4 @@
-import { Fragment, PropsWithChildren, useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -45,16 +45,14 @@ const RHFWorkdaysTable = ({
   );
 
   return (
-    <Fragment>
-      <InputWrapper error={props.error}>
-        <WorkdayCollapseGrid
-          title={props.label ?? ""}
-          demographics={demographics}
-          variant={GRID_VARIANT_GREEN}
-          onChange={updateDemographics}
-        />
-      </InputWrapper>
-    </Fragment>
+    <InputWrapper error={props.error}>
+      <WorkdayCollapseGrid
+        title={props.label ?? ""}
+        demographics={demographics}
+        variant={GRID_VARIANT_GREEN}
+        onChange={updateDemographics}
+      />
+    </InputWrapper>
   );
 };
 
