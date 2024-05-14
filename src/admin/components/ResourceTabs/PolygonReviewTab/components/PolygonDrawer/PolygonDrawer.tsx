@@ -25,42 +25,47 @@ const polygonValidationItems = [
   {
     id: "1",
     status: true,
-    label: "Polygon 1213023412"
+    label: "GeoJSON Format"
   },
   {
     id: "2",
     status: true,
-    label: "Polygon 1234825234"
+    label: "WGS84 Projection"
   },
   {
     id: "3",
     status: false,
-    label: "Polygon 2321340880"
+    label: "Earth Location"
   },
   {
     id: "4",
     status: false,
-    label: "Polygon 1234825235"
+    label: "Country"
   },
   {
     id: "5",
     status: true,
-    label: "Polygon 2321340881"
+    label: "Reasonable Size Self-Intersecting Topology"
   },
   {
     id: "6",
-    status: true,
-    label: "Polygon 2321340882"
+    status: false,
+    label: "Overlapping Polygons"
   },
   {
     id: "7",
-    status: false,
-    label: "Polygon 2321340883"
+    status: true,
+    label: "Spike"
   },
   {
     id: "8",
-    status: false,
-    label: "Polygon 2321340884"
+    status: true,
+    label: "Polygon Integrity"
+  },
+  {
+    id: "9",
+    status: true,
+    label: "Feature Type"
   }
 ];
 

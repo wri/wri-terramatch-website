@@ -19,7 +19,7 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   return (
     <div>
       <Button variant="orange" className="mb-4 px-10">
-        Check Polygons
+        Check Polygon
       </Button>
       <div className="mb-1 flex items-center">
         <Text variant="text-14-bold" className="text-darkCustom">
