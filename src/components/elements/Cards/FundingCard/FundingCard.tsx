@@ -47,7 +47,7 @@ const FundingCard = (props: FundingCardProps) => {
       {...rest}
       className={classNames(
         className,
-        "flex h-[420px] w-full flex-col rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow"
+        "flex h-[420px] w-full flex-col overflow-auto rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow wide:h-[500px]"
       )}
     >
       <When condition={!!statusProps}>
@@ -58,14 +58,23 @@ const FundingCard = (props: FundingCardProps) => {
       </Text>
       <When condition={!!deadline}>
         <CardItem
-          iconProps={{ name: IconNames.CALENDAR, width: 16, className: "fill-neutral-900" }}
+          iconProps={{
+            name: IconNames.CALENDAR,
+            width: 16,
+            className: "fill-neutral-900 wide:min-h-[20px] wide:min-w-[20px] "
+          }}
           title={t("Deadline") + ":"}
           subtitle={format(Date.parse(deadline!), "do MMMM y, HH:mm")}
         />
       </When>
       <When condition={!!location}>
         <CardItem
-          iconProps={{ name: IconNames.MAP_PIN, width: 13, height: 18, className: "fill-neutral-900" }}
+          iconProps={{
+            name: IconNames.MAP_PIN,
+            width: 13,
+            height: 18,
+            className: "fill-neutral-900 min-w-[13px] min-h-[18px] wide:min-w-[17px] wide:min-h-[22px]"
+          }}
           title={t("Location") + ":"}
           subtitle={location!}
         />
@@ -77,8 +86,8 @@ const FundingCard = (props: FundingCardProps) => {
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         <Button
           as={Link}
-          variant="secondary"
-          iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
+          variant="white"
+          // iconProps={{ name: IconNames.LINK, width: 14, height: 14 }}
           className="w-full flex-1"
           href={secondaryLink}
           disabled={!secondaryLink}
@@ -88,6 +97,7 @@ const FundingCard = (props: FundingCardProps) => {
         </Button>
         <Button
           as={Link}
+          variant="sky"
           className="w-full flex-1"
           href={primaryLink}
           disabled={!primaryLink || status === "inactive" || status === "disabled" || status === "coming-soon"}
@@ -107,7 +117,7 @@ interface CardItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
 
 const CardItem = ({ iconProps, title, subtitle, className, ...props }: CardItemProps) => {
   return (
-    <div {...props} className={classNames(className, "flex items-center gap-2 border-b border-neutral-200 py-2")}>
+    <div {...props} className={classNames(className, "flex items-center gap-2 py-2")}>
       <Icon {...iconProps} />
       <Text variant="text-bold-caption-200">{title}</Text>
       <Text variant="text-light-caption-200" className="max-h-10 overflow-hidden">
