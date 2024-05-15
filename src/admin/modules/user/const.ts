@@ -13,6 +13,10 @@ export const userPrimaryRoleChoices = [
     name: "TerraFund Admin"
   },
   {
+    id: "admin-hbf",
+    name: "HBF Admin"
+  },
+  {
     id: "admin-super",
     name: "Super Admin"
   },

@@ -34,7 +34,7 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
       onChange([...(value ?? []), { ...treeValue, collection }]);
       formHook?.clearErrors(props.name);
     },
-    [value, onChange, formHook]
+    [value, onChange, formHook, props.name, collection]
   );
 
   const updateTreeSpecies = useCallback(
@@ -42,7 +42,7 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
       onChange(updateArrayState(value, treeValue, "uuid"));
       formHook?.clearErrors(props.name);
     },
-    [value, onChange, formHook]
+    [value, onChange, formHook, props.name]
   );
 
   const deleteTreeSpecies = useCallback(
@@ -53,7 +53,7 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
         formHook?.clearErrors(props.name);
       }
     },
-    [value, onChange, formHook]
+    [value, onChange, formHook, props.name]
   );
 
   return (
