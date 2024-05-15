@@ -7,7 +7,7 @@ import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/Work
 import { GRID_VARIANT_GREEN } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 import { Entity } from "@/types/common";
 
-import { DataTableProps } from "./DataTable";
+import { DataTableProps } from "../DataTable/DataTable";
 
 export interface RHFWorkdaysTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
