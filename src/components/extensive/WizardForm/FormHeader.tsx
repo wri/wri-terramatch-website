@@ -31,7 +31,7 @@ export const WizardFormHeader = (props: WizardFormHeaderProps) => {
             </Text>
             <Text variant="text-14-light">
               <Switch>
-                <Case condition={props.formStatus === undefined}>{t("Unsaved")}</Case>
+                <Case condition={!props.formStatus}>{t("Unsaved")}</Case>
                 <Case condition={props.formStatus === "saving"}>{t("Saving…")}</Case>
                 <Case condition={props.formStatus === "saved"}>{t("Saved")}</Case>
                 <Case condition={props.errorMessage}>{t("Something went wrong.")}</Case>
