@@ -1,66 +1,128 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { When } from "react-if";
+import Lottie from "lottie-react";
+import { Else, If, Then, When } from "react-if";
 
+import SpinnerLottie from "@/assets/animations/spinner.json";
 import IconButton from "@/components/elements/IconButton/IconButton";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import { useFileSize } from "@/hooks/useFileSize";
 import { UploadedFile } from "@/types/common";
 
-import Text from "../Text/Text";
-
-export type FilePreviewCardProps = {
-  accessLevel?: "public" | "private";
-  file: UploadedFile;
-  onDelete?: (file: UploadedFile) => void;
-  onDownload?: (file: UploadedFile) => void;
+export interface FilePreviewCardProps {
+  file: Partial<UploadedFile>;
   className?: string;
+  showPrivateCheckbox?: boolean;
+  onDelete?: (file: Partial<UploadedFile>) => void;
+  onPrivateChange?: (file: Partial<UploadedFile>, checked: boolean) => void;
+}
+
+const FilePreviewCard = ({ file, className, showPrivateCheckbox, onDelete, onPrivateChange }: FilePreviewCardProps) => {
+  const handlePrivateChange = (checked: boolean) => {
+    if (!file) return;
+
+    onPrivateChange?.(file, checked);
+  };
+
+  return (
+    <div
+      className={classNames("flex w-full items-center justify-between gap-4 rounded-xl bg-white p-4 shadow", className)}
+    >
+      <div className="flex items-center justify-center gap-4">
+        <When condition={file.uuid || file.uploadState?.isSuccess}>
+          <Uploaded
+            title={file?.title || file?.file_name || ""}
+            file={file as UploadedFile}
+            showPrivateCheckbox={showPrivateCheckbox}
+            onPrivateChange={handlePrivateChange}
+          />
+        </When>
+        <When condition={file?.uploadState?.isLoading}>
+          <Uploading title={file?.title || file?.file_name || ""} file={file as UploadedFile} />
+        </When>
+
+        <When condition={!!file.uploadState?.error}>
+          <Failed title={file?.title || file?.file_name || ""} errorMessage={file.uploadState?.error!} />
+        </When>
+      </div>
+      <If condition={file.uploadState?.isLoading || file.uploadState?.isDeleting}>
+        <Then>
+          <Lottie animationData={SpinnerLottie} className="h-8 w-8" />
+        </Then>
+        <Else>
+          <IconButton
+            type="button"
+            onClick={() => onDelete?.(file)}
+            aria-label="Delete button"
+            iconProps={{
+              name: IconNames.TRASH_CIRCLE,
+              className: " fill-error",
+              width: 32
+            }}
+          />
+        </Else>
+      </If>
+    </div>
+  );
 };
 
-const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }: FilePreviewCardProps) => {
+interface UploadingProps {
+  title: string;
+  file: UploadedFile;
+}
+
+const Uploading = ({ title, file }: UploadingProps) => {
+  const t = useT();
+  const { format } = useFileSize();
+
+  return (
+    <FileCardContent
+      title={title}
+      subtitle={`${format(file.size)} • ${t("Uploading document ...")}`}
+      thumbnailClassName="fill-primary-200"
+      thumbnailContainerClassName="bg-primary-50"
+    />
+  );
+};
+
+interface UploadedProps extends UploadingProps {
+  showPrivateCheckbox?: boolean;
+  onPrivateChange: (checked: boolean) => void;
+}
+
+const Uploaded = ({ title, file, showPrivateCheckbox, onPrivateChange }: UploadedProps) => {
+  const t = useT();
+  const { format } = useFileSize();
+
+  return (
+    <FileCardContent
+      title={title}
+      subtitle={`${format(file.size)} • ${t("Document Uploaded")}`}
+      file={file}
+      thumbnailClassName="fill-white"
+      thumbnailContainerClassName="bg-success"
+      onPrivateChange={onPrivateChange}
+      showPrivateCheckbox={showPrivateCheckbox}
+    />
+  );
+};
+
+interface FailedContentProps {
+  title: string;
+  errorMessage: string;
+}
+
+const Failed = ({ title, errorMessage }: FailedContentProps) => {
   const t = useT();
 
   return (
-    <div className={classNames("flex items-center justify-between rounded-xl bg-white p-4 pr-6 shadow", className)}>
-      <div className="flex flex-1 items-center justify-center gap-2">
-        <div
-          className="flex items-center justify-center rounded-lg bg-cover bg-no-repeat"
-          style={{ backgroundImage: `url(${file.url})` }}
-        >
-          <When condition={!file.mime_type?.includes("image")}>
-            <Icon name={IconNames.DOCUMENT} />
-          </When>
-        </div>
-        <div className="flex flex-1 flex-col items-start gap-1">
-          <Text variant="text-body-900" className=" capitalize line-clamp-1">
-            {file.title || file.file_name}
-          </Text>
-          <When condition={accessLevel}>
-            <Text variant="text-body-600">{accessLevel === "public" ? t("Public") : t("Private")}</Text>
-          </When>
-        </div>
-      </div>
-      <When condition={!!onDelete}>
-        <IconButton
-          onClick={() => onDelete?.(file)}
-          iconProps={{
-            name: IconNames.TRASH_CIRCLE,
-            className: " fill-error",
-            width: 24,
-            height: 28
-          }}
-        />
-      </When>
-      <When condition={!!onDownload}>
-        <IconButton
-          onClick={() => onDownload?.(file)}
-          iconProps={{
-            name: IconNames.DOWNLOAD,
-            width: 24,
-            height: 28
-          }}
-        />
-      </When>
-    </div>
+    <FileCardContent
+      title={title}
+      errorMessage={`${errorMessage} • ${t("Upload Failed")}`}
+      thumbnailClassName="fill-primary-200"
+      thumbnailContainerClassName="bg-primary-50"
+    />
   );
 };
 
