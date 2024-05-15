@@ -10,7 +10,7 @@ import Text from "../Text/Text";
 export interface AccordionProps extends PropsWithChildren {
   title: string;
   className?: string;
-  variant?: "default" | "secondary";
+  variant?: "default" | "secondary" | "drawer";
   defaultOpen?: boolean;
   ctaButtonProps?: {
     text: string;
@@ -30,8 +30,8 @@ const Accordion = ({
     <Disclosure
       as="div"
       defaultOpen={defaultOpen}
-      className={classNames(`rounded-lg border-2 border-neutral-100 shadow ${className}`, {
-        "rounded-lg": variant === "secondary"
+      className={classNames(`${className}`, {
+        "rounded-lg border-2 border-neutral-100 shadow": variant === "default" || variant === "secondary"
       })}
     >
       {({ open }) => (
@@ -42,7 +42,16 @@ const Accordion = ({
               "p-6 ": variant === "secondary"
             })}
           >
-            <Text variant={variant === "secondary" ? "text-heading-500" : "text-heading-700"} className="text-left">
+            <Text
+              variant={
+                variant === "secondary"
+                  ? "text-heading-500"
+                  : variant === "drawer"
+                  ? "text-16-bold"
+                  : "text-heading-700"
+              }
+              className="text-left"
+            >
               {title}
             </Text>
             <div className="flex items-center space-x-6">
@@ -57,7 +66,7 @@ const Accordion = ({
                 </Text>
               </When>
               <Icon
-                name={IconNames.CHEVRON_DOWN}
+                name={variant === "drawer" ? IconNames.CHEVRON_DOWN_PA : IconNames.CHEVRON_DOWN}
                 width={16}
                 className={`transform transition-all duration-300 ${open ? "rotate-180" : "rotate-0"}`}
               />
@@ -66,7 +75,13 @@ const Accordion = ({
           <When condition={variant === "default" && open}>
             <div className="h-[1px] w-full bg-neutral-400" />
           </When>
-          <Disclosure.Panel className={variant === "secondary" ? "px-6 pb-6" : "px-15 py-8"}>
+          <Disclosure.Panel
+            className={classNames({
+              "px-15 py-8": variant === "default",
+              "px-6 pb-6": variant === "secondary",
+              "pt-4": variant === "drawer"
+            })}
+          >
             {children}
           </Disclosure.Panel>
         </>
