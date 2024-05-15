@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { filter } from "lodash";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { useEffect } from "react";
 import { When } from "react-if";
@@ -82,12 +83,24 @@ export const FeatureDetailCard = ({ editable, additionalPolygonProperties }: Fea
   const title = getFeatureProperties<string>(selectedFeature.properties, "Poly_ID") || t("Shape");
   const countryCode = getFeatureProperties<string>(selectedFeature.properties, "Country");
 
-  const properties = [
+  const isPpc = additionalPolygonProperties?.Framework === "ppc";
+  const projectId =
+    (isPpc ? additionalPolygonProperties?.Project_ID : null) ??
+    getFeatureProperties<string>(selectedFeature.properties, "Project_ID");
+  const projectUuid = additionalPolygonProperties?.Project_UUID;
+  const siteId =
+    (isPpc ? additionalPolygonProperties?.Site_ID : null) ??
+    getFeatureProperties<string>(selectedFeature.properties, "Site_ID");
+  const siteUuid = additionalPolygonProperties?.Site_UUID;
+
+  const properties = filter([
     { title: t("Polygon ID"), value: title },
     { title: t("Org Name"), value: getFeatureProperties<string>(selectedFeature.properties, "Org_Name") },
-    { title: t("Project ID"), value: getFeatureProperties<string>(selectedFeature.properties, "Project_ID") },
+    { title: t("Project ID"), value: projectId },
+    isPpc && projectUuid != null ? { title: t("Project UUID"), value: projectUuid } : null,
     { title: t("Project Name"), value: getFeatureProperties<string>(selectedFeature.properties, "Project_Name") },
-    { title: t("Site ID"), value: getFeatureProperties<string>(selectedFeature.properties, "Site_ID") },
+    { title: t("Site ID"), value: siteId },
+    isPpc && siteUuid != null ? { title: t("Site UUID"), value: siteUuid } : null,
     { title: t("Site Name"), value: getFeatureProperties<string>(selectedFeature.properties, "Site_Name") },
     {
       title: t("Country"),
@@ -118,7 +131,7 @@ export const FeatureDetailCard = ({ editable, additionalPolygonProperties }: Fea
         getFeatureProperties<string>(selectedFeature.properties, "Distr")?.split(",")
       )
     }
-  ];
+  ]) as { title: string; value: any }[];
 
   return (
     <>
