@@ -6,7 +6,10 @@ module.exports = {
     extend: {
       screens: {
         sx: "460px",
-        "screen-height-sm": { raw: "(max-height: 768px)" }
+        "screen-height-sm": { raw: "(max-height: 768px)" },
+        wide: "2500px",
+        lg: "1900px",
+        sm: "1200px"
       },
       width: {
         "fit-content": "fit-content"
@@ -29,7 +32,28 @@ module.exports = {
         12: "0.12"
       },
       backgroundImage: {
-        imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)"
+        imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
+        "square-pattern": "url('/icons/ic-bg.svg')",
+        "back-map": "url('/icons/bg-map.svg')"
+      },
+      gridTemplateColumns: {
+        1: "repeat(1, minmax(0, 1fr))",
+        2: "repeat(2, minmax(0, 1fr))",
+        3: "repeat(3, minmax(0, 1fr))",
+        4: "repeat(4, minmax(0, 1fr))",
+        5: "repeat(5, minmax(0, 1fr))",
+        6: "repeat(6, minmax(0, 1fr))",
+        7: "repeat(7, minmax(0, 1fr))",
+        8: "repeat(8, minmax(0, 1fr))",
+        9: "repeat(9, minmax(0, 1fr))",
+        10: "repeat(10, minmax(0, 1fr))",
+        11: "repeat(11, minmax(0, 1fr))",
+        12: "repeat(12, minmax(0, 1fr))",
+        13: "repeat(13, minmax(0, 1fr))",
+        14: "repeat(14, minmax(0, 1fr))",
+        15: "repeat(15, minmax(0, 1fr))",
+        16: "repeat(16, minmax(0, 1fr))",
+        17: "repeat(17, minmax(0, 1fr))"
       }
     },
     colors: {
@@ -42,9 +66,8 @@ module.exports = {
         500: "#27A9E0",
         400: "#4EBBEA",
         300: "#98CEED",
-        200: "#CEE6F4",
-        100: "#F2FAFD",
-        50: "#F5F7F9"
+        200: "#E5F8FF",
+        100: "#F2FAFD"
       },
       secondary: {
         DEFAULT: "#8CC63F",
@@ -56,7 +79,9 @@ module.exports = {
       },
       success: {
         DEFAULT: "#009344",
+        600: "#29C499",
         500: "#009344",
+        450: "#3BAE5B",
         400: "#9EDD8F",
         300: "#C7ECC4",
         200: "#E0F3E9",
@@ -71,36 +96,91 @@ module.exports = {
         600: "#888888",
         500: "#9B9B9B",
         400: "#B1B1B1",
+        450: "#CCD4D6",
         300: "#D8D8D8",
         200: "#E3E3E3",
         150: "#F5F7F9",
         100: "#F2F2F2",
-        50: "#FAFAFA"
+        50: "#FAFAFA",
+        40: "#f2f4f5"
       },
       tertiary: {
         DEFAULT: "#F0AB00",
+        600: "#FF8938",
+        550: "#FFA160",
         500: "#F0AB00",
         400: "#F3C148",
         300: "#F6D279",
         200: "#FAEAC1",
-        100: "#FDFAF2"
+        100: "#FDFAF2",
+        80: "#ffa060",
+        50: "#FFF4EC"
       },
       error: {
         DEFAULT: "#D50000",
+        600: "#FF4040",
         500: "#D50000",
         400: "#F5B5B5",
         300: "#F9D7D7",
         200: "#FBE6E6",
         100: "#FFF2F2"
-      }
+      },
+      blueCustom: {
+        DEFAULT: "#13487A",
+        900: "#002633",
+        700: "#092C3C",
+        600: "#33525c",
+        250: "#11093C",
+        100: "#cfe6f4",
+        50: "#f1fafd",
+        10: "#eaf7fc"
+      },
+      darkCustom: {
+        DEFAULT: "#353535",
+        100: "#637579",
+        50: "#697A7F"
+      },
+      pinkCustom: {
+        DEFAULT: "#E468EF",
+        200: "#FDF0FE"
+      },
+      grey: {
+        350: "#E6E6E6",
+        500: "#676D71",
+        600: "#797A7B",
+        700: "#868686",
+        720: "#94A3A8",
+        730: "#B8C3C6",
+        740: "#E0E0E0",
+        750: "#E6EAEB",
+        800: "#E9EDF0",
+        900: "#F6FAFD"
+      },
+      blue: {
+        DEFAULT: "#2398D8",
+        100: "#1B59F8",
+        200: "#E9F5FC"
+      },
+      green: {
+        DEFAULT: "#72D961",
+        400: "#1BA631",
+        500: "#198E2B",
+        100: "#28C499",
+        50: "rgba(40, 196, 153, 0.10)"
+      },
+      yellow: {
+        DEFAULT: "#FCFBE8",
+        500: "#F3EFB0"
+      },
+      red: "#FF6464"
     },
-
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
-      "t-secondary": "0px -1px 0 #8CC63F" //to add additional border, secondary-500 1px
+      "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
+      none: "0 0 #0000"
     },
     fontFamily: {
-      primary: ["Acumin Pro"],
+      primary: ["Inter"],
       secondary: ["Georgia"]
     },
     fontSize: {
@@ -112,8 +192,12 @@ module.exports = {
       xl: "1.5rem", //24px
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
+      "3xx": "2rem", //32px
       "4xl": "2.25rem", //36px
-      "5xl": "2.5rem" //40px
+      "5xl": "2.5rem", //40px
+      //Wide extra
+      "6xl": "2.75rem", //44px
+      "7xl": "3rem" //48px
     },
     listStyleType: {
       none: "none",
@@ -136,7 +220,8 @@ module.exports = {
       support: "url('/images/support.webp')",
       leavesWithOverlay: "url('/images/leaves-with-overlay.webp')",
       treesHeaderWithOverlay:
-        "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')"
+        "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
+      mapsImg: "url('/images/Maps.svg')"
     }
   },
   plugins: [
