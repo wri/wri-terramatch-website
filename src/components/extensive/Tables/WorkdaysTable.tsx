@@ -33,7 +33,9 @@ const WorkdaysTable = ({ modelName, modelUUID, collection, onFetch }: WorkdaysTa
     }
   );
 
-  const ethnicityOptions = useGetOptions(workdays?.data?.map(workday => workday?.ethnicity || "") || []);
+  const ethnicityOptions = useGetOptions(
+    workdays?.data?.map(workday => (workday?.ethnicity ? workday?.ethnicity : "")) || []
+  );
   const columns = useMemo(() => {
     const columns = getWorkdaysTableColumns(t, ethnicityOptions);
 
