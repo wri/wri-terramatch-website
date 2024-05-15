@@ -1,14 +1,18 @@
 import { useT } from "@transifex/react";
-import classNames from "classnames";
-import { ChangeEvent, Fragment, useId, useMemo, useRef } from "react";
+import { ChangeEvent, Fragment, ReactNode, useId, useMemo, useRef } from "react";
 import { useDropzone } from "react-dropzone";
+import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { APIError } from "@/generated/apiFetcher";
 import { FileType, UploadedFile } from "@/types/common";
 
+import Text from "../../Text/Text";
 import InputWrapper, { InputWrapperProps } from "../InputElements/InputWrapper";
+import { FileInputVariant, VARIANT_FILE_INPUT_DEFAULT } from "./FileInputVariants";
 import FilePreviewCard from "./FilePreviewCard";
 
 export type FileInputProps = InputWrapperProps & {
@@ -18,6 +22,10 @@ export type FileInputProps = InputWrapperProps & {
   allowMultiple?: boolean;
   maxFileSize?: number; // in MB
   showPrivateCheckbox?: boolean;
+  variant?: FileInputVariant;
+  descriptionInput?: string;
+  descriptionList?: ReactNode;
+  descriptionListStatus?: string;
 
   onChange?: (file: File[]) => any;
   onDelete?: (file: Partial<UploadedFile>) => void;
@@ -43,6 +51,9 @@ const FileInput = (props: FileInputProps) => {
   const t = useT();
 
   const ref = useRef<HTMLInputElement>(null);
+
+  // eslint-disable-next-line no-unused-vars
+  const { variant = VARIANT_FILE_INPUT_DEFAULT } = props;
 
   const accept = props.accept?.join(",");
 
@@ -101,10 +112,7 @@ const FileInput = (props: FileInputProps) => {
       >
         <div
           {...getRootProps()}
-          className={classNames(
-            "border-dashed-2 relative cursor-pointer rounded-xl p-10",
-            isDragActive ? "bg-primary-100" : "bg-white"
-          )}
+          className={tw(isDragActive ? "bg-primary-100" : "bg-white", variant.container)}
           onClick={() => ref.current?.click()}
         >
           <input
@@ -117,30 +125,54 @@ const FileInput = (props: FileInputProps) => {
             multiple={props.allowMultiple}
             accept={accept}
           />
-          <div className="m-auto flex w-fit items-center justify-center gap-3">
-            <FileCardContent
-              title={labelText}
-              subtitle={`${t("Drag and drop or")} <span className="text-primary underline">${t(
-                "browse your device"
-              )}</span>`}
-              thumbnailClassName="fill-primary"
-              thumbnailContainerClassName="bg-primary-100"
-            />
-          </div>
+          <When condition={!variant.snapshotPanel}>
+            <div className="m-auto flex w-fit items-center justify-center gap-3">
+              <FileCardContent
+                title={labelText}
+                subtitle={`${t("Drag and drop or")} <span className="text-primary underline">${t(
+                  "browse your device"
+                )}</span>`}
+                thumbnailClassName="fill-primary"
+                thumbnailContainerClassName="bg-primary-100"
+              />
+            </div>
+          </When>
+          <When condition={variant.snapshotPanel}>
+            <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
+            <div className="flex flex-col">
+              <Text variant="text-12-bold" className="text-center text-primary">
+                Click to upload
+              </Text>
+              <Text variant="text-12-light" className="text-center">
+                or
+              </Text>
+              <Text variant="text-12-light" className="max-w-[210px] text-center">
+                {props.descriptionInput}
+              </Text>
+            </div>
+          </When>
         </div>
       </InputWrapper>
+      <When condition={variant.listPreviewDescription}>
+        <div className={variant.listPreviewDescription}>
+          {props.descriptionList}
+          <Text variant="text-12-bold" className="mt-9 pr-5 text-primary">
+            {props.descriptionListStatus}
+          </Text>
+        </div>
+      </When>
       <List
         as="div"
         itemAs={Fragment}
-        className="mt-8 flex flex-col items-center justify-center gap-8"
+        className={variant.listPreview}
         items={props.files}
         render={item => (
           <FilePreviewCard
+            variant={variant.filePreviewVariant}
             file={item}
             onDelete={file => props.onDelete?.(file)}
             onPrivateChange={props.onPrivateChange}
             showPrivateCheckbox={props.showPrivateCheckbox}
-            className="w-[400px]"
           />
         )}
       />
