@@ -98,12 +98,6 @@ const Input = forwardRef(
         onClick: () => clearInput()
       };
     }
-
-    if (error && formHook?.watch(inputWrapperProps.name)) {
-      formHook.trigger();
-      formHook && formHook.reset(formHook.getValues());
-    }
-
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
 
