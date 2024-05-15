@@ -4,14 +4,13 @@ import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
-import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hooks";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { Option } from "@/types/common";
-import { objectArrayHasDuplication } from "@/utils/array";
 import { urlValidation } from "@/utils/yup";
 
 export function normalizedFormData<T = any>(values: T, steps: FormStepSchema[]): T {
@@ -450,9 +449,7 @@ export const apiFormQuestionToFormField = (
         fieldProps: {
           required,
           entity,
-          addButtonCaption: question.add_button_text,
-          collection: question.collection,
-          ethnicityOptions: getOptions(question, t)
+          collection: question.collection
         }
       };
     }
@@ -516,13 +513,13 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   let options: Option[] = [];
 
   if (question.options?.length > 0) {
-    return (options = question.options
+    return question.options
       ? (sortBy(question.options, "order").map(option => ({
           title: option.label,
           value: option.slug,
           meta: omit(option, ["label", "slug"])
         })) as Option[])
-      : []);
+      : [];
   }
 
   switch (question.options_list) {
@@ -617,31 +614,38 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
     }
 
     case "workdays": {
-      validation = yup.array();
-      validation = validation.test({
-        name: "duplicated",
-        exclusive: false,
-        message: t("You've already added an item that matches this selection. Please try a different one."),
-        test: function (values) {
-          return !objectArrayHasDuplication(
-            values || [],
-            getWorkdaysTableColumns(t => t, [])
-              .filter(header => header.accessorKey !== "amount")
-              .map(header => header.accessorKey)
-          );
-        }
-      });
+      validation = yup
+        .array()
+        .min(0)
+        .max(1)
+        .of(
+          yup.object({
+            collection: yup.string().required(),
+            demographics: yup
+              .array()
+              .of(
+                yup.object({
+                  type: yup.string(),
+                  subtype: yup.string().nullable(),
+                  name: yup.string().nullable(),
+                  amount: yup.number()
+                })
+              )
+              .required()
+          })
+        )
+        .test(
+          "totals-match",
+          () => "The totals for each demographic type do not match",
+          value => {
+            const { demographics } = value.length > 0 ? value[0] : {};
+            if (demographics == null) return true;
 
-      if (max) validation = validation.max(max);
-      if (isNumber(min)) validation = validation.min(min);
+            return calculateTotals(demographics).countsMatch;
+          }
+        );
 
-      if (required) {
-        if (isNumber(min)) {
-          validation = validation.required();
-        } else {
-          validation = validation.min(1).required();
-        }
-      }
+      if (required) validation = validation.required();
 
       return validation;
     }
