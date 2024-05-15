@@ -17,7 +17,7 @@ export const WizardFormHeader = (props: WizardFormHeaderProps) => {
   const t = useT();
 
   return (
-    <div className="sticky top-[74px] z-40 flex border-primary-50 bg-leavesWithOverlay bg-cover bg-center p-6">
+    <div className="border-primary-50 sticky top-[74px] z-40 flex bg-leavesWithOverlay bg-cover bg-center p-6">
       <div className="mx-auto flex w-full min-w-0 max-w-7xl items-center gap-8">
         <div className="min-w-0 flex-grow text-white">
           {props.title && (
