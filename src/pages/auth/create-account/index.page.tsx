@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import ButtonUserRole from "@/components/elements/Button/ButtonUserRole";
 import UserRoleCard from "@/components/elements/Cards/UserRoleCard/UserRoleCard";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
@@ -72,8 +71,9 @@ const Page = () => {
               item => (
                 console.log(item),
                 (
-                  <ButtonUserRole
+                  <Button
                     key={item.id}
+                    variant="transparent-toggle"
                     onClick={() => {
                       setSelected(item.id);
                       setSelectedTitleOption(item.titleOption);
@@ -90,7 +90,7 @@ const Page = () => {
                       selectedOption={selectedOption}
                       refContentCard={refContentCard}
                     />
-                  </ButtonUserRole>
+                  </Button>
                 )
               )
             )}
