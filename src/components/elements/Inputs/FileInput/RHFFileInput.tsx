@@ -149,7 +149,6 @@ const RHFFileInput = ({
           error: error.message
         }
       });
-      formHook && formHook.trigger();
       return;
     }
 
@@ -199,7 +198,6 @@ const RHFFileInput = ({
         is_public: !isPrivate
       }
     });
-    formHook && formHook.trigger();
   };
 
   const onDeleteFile = (file: Partial<UploadedFile>) => {
