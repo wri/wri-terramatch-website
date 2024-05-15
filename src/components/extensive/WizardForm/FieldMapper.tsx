@@ -11,7 +11,6 @@ import RHFLeadershipTeamDataTable from "@/components/elements/Inputs/DataTable/R
 import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
-import RHFWorkdaysTable from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -22,6 +21,7 @@ import RHFSelectImage from "@/components/elements/Inputs/SelectImage/RHFSelectIm
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
+import RHFWorkdaysTable from "@/components/elements/Inputs/WorkdaysInput/RHFWorkdaysTable";
 
 import { FieldType, FormField } from "./types";
 
