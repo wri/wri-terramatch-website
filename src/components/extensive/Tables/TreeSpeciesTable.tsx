@@ -2,17 +2,18 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { TableVariant } from "@/components/elements/Table/TableVariants";
 import { GetV2TreeSpeciesEntityUUIDResponse, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
-import { useProcessRecordData } from "@/hooks/useProcessRecordData";
 
 export interface TreeSpeciesTableProps {
   modelName: string;
   modelUUID: string;
   collection?: string;
   onFetch?: (data: GetV2TreeSpeciesEntityUUIDResponse) => void;
+  variantTable?: TableVariant;
 }
 
-const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpeciesTableProps) => {
+const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch, variantTable }: TreeSpeciesTableProps) => {
   const t = useT();
 
   const [queryParams, setQueryParams] = useState<any>();
@@ -38,15 +39,15 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
       ? treeSpecies?.data?.reduce((total, item) => total + (typeof item.amount === "number" ? 1 : 0), 0) > 0
       : false;
 
-  const showTreeSpecies = useProcessRecordData(modelUUID, modelName, "treeSpecies");
   return (
     <div>
       <ServerSideTable
         meta={treeSpecies?.meta}
-        data={(showTreeSpecies ? treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) : []) ?? []}
+        data={treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) || []}
         isLoading={isLoading}
         treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
+        variant={variantTable}
         columns={[
           {
             accessorKey: "name",

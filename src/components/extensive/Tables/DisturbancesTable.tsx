@@ -4,7 +4,6 @@ import { useState } from "react";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { GetV2DisturbancesENTITYUUIDResponse, useGetV2DisturbancesENTITYUUID } from "@/generated/apiComponents";
-import { useProcessRecordData } from "@/hooks/useProcessRecordData";
 
 export interface DisturbancesTableProps {
   modelName: string;
@@ -36,12 +35,12 @@ const DisturbancesTable = ({ modelName, modelUUID, collection, onFetch }: Distur
   );
 
   const hasAllHeaders = !!disturbances?.data?.[0]?.extent && !!disturbances?.data?.[0].intensity;
-  const showDisturbance = useProcessRecordData(modelUUID, modelName, "disturbances");
+
   return (
     <div>
       <ServerSideTable
         meta={disturbances?.meta}
-        data={((showDisturbance && disturbances?.data) || []) ?? []}
+        data={disturbances?.data || []}
         isLoading={isLoading}
         onQueryParamChange={setQueryParams}
         columns={getDisturbanceTableColumns({ hasExtent: hasAllHeaders, hasIntensity: hasAllHeaders }, t)}

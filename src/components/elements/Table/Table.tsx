@@ -14,14 +14,17 @@ import {
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Lottie from "lottie-react";
-import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useMemo, useState } from "react";
+import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useState } from "react";
 import { Else, If, Then, When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import SpinnerLottie from "@/assets/animations/spinner.json";
 import TableFilter, { ColumnFilter, FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
+
+import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
 
 export interface TableProps<TData>
   extends DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>,
@@ -30,8 +33,9 @@ export interface TableProps<TData>
   columns: ColumnDef<TData>[];
   columnFilters?: ColumnFilter[];
   serverSideData?: boolean;
+  classNameWrapper?: string;
   initialTableState?: InitialTableState;
-  variant?: "primary" | "secondary";
+  variant?: TableVariant;
   hasPagination?: boolean;
   onTableStateChange?: (state: TableState) => void;
   isLoading?: boolean;
@@ -55,13 +59,14 @@ function Table<TData extends RowData>({
   columns,
   columnFilters,
   className,
+  classNameWrapper,
   serverSideData,
   onTableStateChange,
   initialTableState,
-  variant = "primary",
+  variant = VARIANT_TABLE_PRIMARY,
   children,
   isLoading,
-  hasPagination = true,
+  hasPagination = false,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -103,9 +108,14 @@ function Table<TData extends RowData>({
 
   const tableState = getState();
 
+  useEffect(() => {
+    setSorting(initialTableState?.sorting ?? []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   return (
-    <div className="overflow-x-auto px-4 md:px-0 lg:overflow-x-visible">
-      <div className="flex items-center justify-between">
+    <div>
+      <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter
             filters={filters}
@@ -117,81 +127,90 @@ function Table<TData extends RowData>({
           />
         </When>
         {children}
-      </div>
-      <table {...props} className={classNames(className, "w-full border-separate border-spacing-y-4")}>
-        <thead className="bg-primary-200">
-          {getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(
-                header =>
-                  !header.isPlaceholder && (
-                    <th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      onClick={header.column.getToggleSortingHandler()}
-                      className={classNames(
-                        "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-                        "text-bold-subtitle-500 whitespace-nowrap px-6 py-4",
-                        header.column.getCanSort() && "cursor-pointer"
-                      )}
-                      align="left"
-                    >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      <When condition={header.column.getCanSort()}>
-                        <Icon
-                          name={
-                            { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
-                              header.column.getIsSorted() as string
-                            ] || IconNames.SORT
-                          }
-                          className="ml-2 inline fill-neutral-900"
-                          width={11}
-                          height={14}
-                        />
-                      </When>
-                    </th>
-                  )
-              )}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="space-y-4">
-          <If condition={isLoading}>
-            <Then>
-              <LoadingCell />
-            </Then>
-            <Else>
-              {getRowModel().rows.length === 0 && (
-                <tr className={classNames("rounded-lg", variant === "primary" ? "bg-white shadow" : "bg-neutral-50")}>
-                  <td
-                    className={classNames(
-                      "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-                      "text-light-subtitle-400 px-6 py-4"
-                    )}
-                    align={"center"}
-                    colSpan={columns.length}
-                  >
-                    {t("No results")}
-                  </td>
-                </tr>
-              )}
-              {getRowModel().rows.map(row => (
-                <tr
-                  key={row.id}
-                  className={classNames("rounded-lg", variant === "primary" ? "bg-white shadow" : "bg-neutral-50")}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell<TData> key={cell.id} cell={cell} />
-                  ))}
+        <div className={variant.tableWrapper}>
+          <table {...props} className={classNames(className, "w-full", variant.table)}>
+            <thead className={variant.thead}>
+              {getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id} className={variant.trHeader}>
+                  {headerGroup.headers.map(
+                    header =>
+                      !header.isPlaceholder && (
+                        <th
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          onClick={header.column.getToggleSortingHandler()}
+                          className={classNames(
+                            tw(
+                              `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
+                              header.column.getCanSort() && "cursor-pointer"
+                            )
+                          )}
+                          align="left"
+                        >
+                          <div
+                            className="flex items-center"
+                            style={{
+                              fontSize: "inherit",
+                              fontWeight: "inherit",
+                              color: "currentColor",
+                              fontFamily: "inherit"
+                            }}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                            <When condition={header.column.getCanSort()}>
+                              <Icon
+                                name={
+                                  { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
+                                    header.column.getIsSorted() as string
+                                  ] || IconNames.SORT
+                                }
+                                className="ml-2 inline fill-neutral-900"
+                                width={11}
+                                height={14}
+                              />
+                            </When>
+                          </div>
+                        </th>
+                      )
+                  )}
                 </tr>
               ))}
-            </Else>
-          </If>
-        </tbody>
-      </table>
-
-      {!serverSideData && hasPagination && getPageCount() > 1 && (
+            </thead>
+            <tbody className={variant.tBody}>
+              <If condition={isLoading}>
+                <Then>
+                  <LoadingCell />
+                </Then>
+                <Else>
+                  {getRowModel().rows.length === 0 && (
+                    <tr className={variant.trHeader}>
+                      <td
+                        className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
+                        align={"center"}
+                        colSpan={columns.length}
+                      >
+                        {t("No results")}
+                      </td>
+                    </tr>
+                  )}
+                  {getRowModel().rows.map(row => (
+                    <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
+                      ))}
+                    </tr>
+                  ))}
+                </Else>
+              </If>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {hasPagination && (
         <Pagination
+          variant={variant.paginationVariant}
           getCanNextPage={getCanNextPage}
           getCanPreviousPage={getCanPreviousPage}
           getPageCount={getPageCount}
@@ -211,7 +230,7 @@ function Table<TData extends RowData>({
 
 export default Table;
 
-function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown> }) {
+function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData, unknown>; variant: TableVariant }) {
   const cellContent = useMemo(
     () => flexRender(cell.column.columnDef.cell, cell.getContext()),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -220,10 +239,7 @@ function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown>
 
   return (
     <td
-      className={classNames(
-        "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
-        "text-light-subtitle-400 px-6 py-4"
-      )}
+      className={classNames("text-normal-subtitle-400", variant.tdBody)}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}
     >
@@ -235,9 +251,9 @@ function TableCell<TData extends RowData>({ cell }: { cell: Cell<TData, unknown>
 function LoadingCell() {
   return (
     <tr>
-      <td align="center" colSpan={100} className="py-4 px-6">
+      <td align="center" colSpan={100} className="px-6 py-4">
         <Lottie animationData={SpinnerLottie} className="mb-8 h-8 w-8" />
-        <Text variant="text-light-subtitle-400">Loading results, load times might increase with more data</Text>
+        <Text variant="text-normal-subtitle-400">Loading results, load times might increase with more data</Text>
       </td>
     </tr>
   );

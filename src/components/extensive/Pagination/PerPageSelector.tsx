@@ -4,12 +4,14 @@ import { PropsWithChildren, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { TextVariants } from "@/types/common";
 
 export interface PerPageSelectorProps {
   label?: string;
   value?: number;
   defaultValue?: number;
   options: number[];
+  variantText?: TextVariants;
 
   className?: string;
   onChange: (value: number) => void;
@@ -30,11 +32,11 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
           <div className="flex items-center gap-3">
             <Listbox.Button as="div" className="flex h-10 w-20 items-center justify-center rounded-md shadow">
               <div className="flex h-full flex-1 items-center justify-center">
-                <Text variant="text-bold-subtitle-500" className="w-fit uppercase line-clamp-1">
+                <Text variant={props.variantText || "text-bold-subtitle-500"} className="w-fit uppercase line-clamp-1">
                   {value}
                 </Text>
               </div>
-              <div className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200">
+              <div className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]">
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
                   className={classNames("mb-[2px] fill-neutral-900 transition", open && "rotate-180")}
@@ -43,7 +45,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
               </div>
             </Listbox.Button>
 
-            <Listbox.Label as={Text} variant="text-bold-subtitle-500">
+            <Listbox.Label as={Text} variant={props.variantText || "text-bold-subtitle-500"}>
               {props.label}
             </Listbox.Label>
           </div>
@@ -51,14 +53,14 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
             show={open}
             enter="transition duration-100 ease-out"
             enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
+            enterTo="transform scale-100 opacity-100 !mt-0"
             leave="transition duration-75 ease-out"
             leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
+            leaveTo="transform scale-95 opacity-0 !mt-0"
           >
             <Listbox.Options
               as="div"
-              className="mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
+              className="absolute mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
             >
               {props.options.map(option => {
                 let isSelected = value === option;
@@ -68,9 +70,10 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                     as={Text}
                     key={option}
                     value={option}
-                    variant={isSelected ? "text-bold-subtitle-500" : "text-light-subtitle-400"}
+                    variant={props.variantText || "text-14"}
                     className={classNames(
-                      "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100"
+                      "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
+                      isSelected ? "!font-bold" : "!font-light"
                     )}
                   >
                     {option}

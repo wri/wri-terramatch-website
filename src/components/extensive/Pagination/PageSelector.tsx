@@ -4,9 +4,11 @@ import { DetailedHTMLProps, HTMLAttributes } from "react";
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { TextVariants } from "@/types/common";
 
 export interface PageSelectorProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageIndex: number;
+  variantText?: TextVariants;
 
   nextPage: () => void;
   getCanNextPage: () => boolean;
@@ -27,6 +29,7 @@ function PageSelector({
   getCanPreviousPage,
   pageIndex,
   className,
+  variantText,
   ...props
 }: PageSelectorProps) {
   const currentPage = pageIndex + 1;
@@ -43,7 +46,7 @@ function PageSelector({
           <Text
             key={pageNumber}
             role="button"
-            variant="text-bold-subtitle-500"
+            variant={variantText || "text-bold-subtitle-500"}
             className={classNames(currentPage === pageNumber ? "text-neutral-1000 underline" : "text-neutral-600")}
             disabled={typeof pageNumber !== "number"}
             onClick={() => typeof pageNumber === "number" && setPageIndex(pageNumber - 1)}
