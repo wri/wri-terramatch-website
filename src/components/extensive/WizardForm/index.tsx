@@ -106,7 +106,6 @@ function WizardForm(props: WizardFormProps) {
       props.onChange && props.onChange(formHook.getValues());
       props.onStepChange?.(data, selectedStep);
       formHook.clearErrors();
-      formHook.trigger();
     } else {
       //Step changes on last step
       if (!props.onSubmit) return props.onStepChange?.(data, selectedStep);
@@ -135,7 +134,6 @@ function WizardForm(props: WizardFormProps) {
       });
     }
     formHook.reset(formHook.getValues());
-    formHook.trigger();
   }, [formHook, props.errors]);
 
   const initialStepIndex = useMemo(() => {
