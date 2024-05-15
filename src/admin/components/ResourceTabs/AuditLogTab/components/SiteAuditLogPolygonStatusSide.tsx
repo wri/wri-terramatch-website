@@ -26,19 +26,19 @@ const SiteAuditLogPolygonStatusSide = ({
         labelClassName="capitalize"
         optionsClassName="max-w-full"
         defaultValue={[selectedPolygon]}
-        placeholder={selectedPolygon?.name ?? "Select Polygon"}
+        placeholder={selectedPolygon?.title ?? "Select Polygon"}
         options={polygonList!}
         onChange={e => {
           console.log("onChange", e);
-          setSelectedPolygon(e);
+          setSelectedPolygon(polygonList?.find(item => item.value === e[0]));
         }}
       />
       <StatusDisplay
         titleStatus={"Polygon"}
-        name={record?.title || selectedPolygon?.poly_name}
+        name={selectedPolygon?.title}
         refresh={refresh}
         mutate={mutate}
-        status={record?.meta || selectedPolygon?.meta}
+        status={selectedPolygon?.meta}
         record={record}
       />
       <ComentarySection />
