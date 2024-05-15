@@ -13,10 +13,11 @@ import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTabl
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
-import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
+import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -68,6 +69,16 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
         break;
       }
 
+      case FieldType.WorkdaysTable: {
+        const workday = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: <WorkdayCollapseGrid demographics={workday?.demographics ?? []} variant={GRID_VARIANT_NARROW} />
+        });
+        break;
+      }
+
       case FieldType.Map: {
         outputArr.push({
           title: f.label,
@@ -94,7 +105,6 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
       case FieldType.StrataDataTable:
       case FieldType.DisturbanceDataTable:
       case FieldType.InvasiveDataTable:
-      case FieldType.WorkdaysTable:
       case FieldType.SeedingsDataTable: {
         let headers: AccessorKeyColumnDef<any>[] = [];
 
@@ -104,8 +114,6 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
         else if (f.type === FieldType.StrataDataTable) headers = getStrataTableColumns(t);
         else if (f.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(f.fieldProps, t);
         else if (f.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns(t);
-        else if (f.type === FieldType.WorkdaysTable)
-          headers = getWorkdaysTableColumns(t, f.fieldProps.ethnicityOptions);
         else if (f.type === FieldType.SeedingsDataTable) headers = getSeedingTableColumns(t, f.fieldProps.captureCount);
 
         const stringValues: string[] = [];
