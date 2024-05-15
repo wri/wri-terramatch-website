@@ -32,7 +32,10 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     { "border-light ": !error },
     { ["border border-error focus:border-error"]: error }
   );
-
+  if (error && formHook?.watch(inputWrapperProps.name)) {
+    formHook && formHook.trigger();
+    formHook && formHook.reset(formHook.getValues());
+  }
   const [textValue, setTextValue] = useState("");
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     if (externalOnChange) {

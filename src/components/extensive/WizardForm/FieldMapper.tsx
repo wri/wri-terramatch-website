@@ -79,6 +79,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           formHook={formHook}
           control={formHook.control}
           onChangeCapture={onChange}
+          maxFileSize={10}
         />
       );
 

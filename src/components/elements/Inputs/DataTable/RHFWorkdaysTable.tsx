@@ -71,6 +71,7 @@ const RHFWorkdaysTable = ({
 
   const createWorkday = useCallback(
     (data: any) => {
+      onChangeCapture && onChangeCapture();
       onChange([...(value ?? []), { ...data, uuid: uuidv4(), collection }]);
     },
     [value, onChange]
