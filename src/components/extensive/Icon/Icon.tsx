@@ -70,6 +70,7 @@ export enum IconNames {
   STATUS_AWAITING_REVIEW = "status/awaiting-review",
   ROUND_RED_CROSS = "round-red-cross",
   ROUND_GREEN_TICK = "round-green-tick",
+  ROUND_CUSTOM_TICK = "round-custom-tick",
   WARNING = "warning",
   IMAGE_PLACEHOLDER = "image-placeholder",
   ZoomIn = "zoom-in",
@@ -83,7 +84,8 @@ export enum IconNames {
   LEAF_CIRCLE = "leaf-circle",
   REFRESH_CIRCLE = "refresh-circle",
   SITE_CIRCLE = "site-circle",
-  NURSERY_CIRCLE = "nursery-circle"
+  NURSERY_CIRCLE = "nursery-circle",
+  IC_ARROW_COLLAPSE = "ic-arrow-collapse"
 }
 
 export interface IconProps {
@@ -92,28 +94,37 @@ export interface IconProps {
   width?: number;
   height?: number;
   style?: CSSProperties;
+  viewBox?: string;
 }
 
-const Icon: FC<IconProps> = ({ name, width = 24, height, className = "", style = {} }) => {
+const Icon: FC<IconProps> = ({ name, width = 24, height, className = "", style = {}, viewBox }) => {
   const [path, setPath] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
 
   // Imports the SVG
   useEffect(() => {
     const importIcon = async () => {
+      setLoading(true);
       setPath((await import(`../../../assets/icons/${name}.svg`)).default);
+      setLoading(false);
     };
 
-    setLoading(true);
     importIcon();
-    setLoading(false);
     // eslint-disable-next-line
   }, [name]);
+
+  const svgProps = { width, height: height ?? width, className, style };
+  // If the viewBox property key exists at all, even with undefined, it overrides the default behavior
+  // of pulling in the viewbox from the src SVG file.
+  if (viewBox != null) {
+    // @ts-ignore
+    svgProps.viewBox = viewBox;
+  }
 
   return (
     <If condition={!loading}>
       <Then>
-        <SVG src={path ?? ""} width={width} height={height || width} className={className} style={style} />
+        <SVG src={path ?? ""} {...svgProps} />
       </Then>
       <Else>
         <div style={{ width, height, ...style }} />
