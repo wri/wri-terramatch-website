@@ -23383,3 +23383,29 @@ export type SiteGeometryPost = {
     }[];
   };
 };
+
+export type V2TerrafundCriteriaData = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+  }[];
+};
