@@ -93,7 +93,6 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   };
 
   const recentRequest = props?.auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
-  console.log("recentRequest", recentRequest);
   const mutate = fetchPutV2AuditStatusId;
   const deactivateRecentRequest = async () => {
     await mutate({
