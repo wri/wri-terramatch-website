@@ -25,7 +25,7 @@ const polygonStatusLabels = [
 function getValueForStatus(status: string): number {
   switch (status) {
     case "Submitted":
-      return 20;
+      return 0;
     case "needs-more-information":
       return 50;
     case "approved":

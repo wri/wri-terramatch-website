@@ -40,20 +40,24 @@ const ComentarySection = ({
         refresh={refresh}
         record={record}
       />
-      {auditLogData && auditLogData.length > 0 ? (
-        auditLogData
-          ?.filter((item: any) => item.type == "comment")
-          .slice(0, 5)
-          .map((item: any) => (
-            <Comentary
-              key={item.id}
-              name={item?.first_name || item.created_by}
-              lastName={item?.last_name}
-              date={item.date_created}
-              comentary={item.comment}
-              files={comentaryFiles}
-            />
-          ))
+      {auditLogData !== null && auditLogData !== undefined ? (
+        auditLogData.length > 0 ? (
+          auditLogData
+            .filter((item: any) => item.type === "comment")
+            .slice(0, 5)
+            .map((item: any) => (
+              <Comentary
+                key={item.id}
+                name={item?.first_name || item.created_by}
+                lastName={item?.last_name}
+                date={item.date_created}
+                comentary={item.comment}
+                files={comentaryFiles}
+              />
+            ))
+        ) : (
+          <></>
+        )
       ) : (
         <Loader />
       )}
