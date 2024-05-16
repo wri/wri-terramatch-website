@@ -19,7 +19,7 @@ const ComentarySection = ({
 }: {
   auditLogData?: any;
   mutate?: any;
-  refresh: any;
+  refresh?: any;
   record?: any;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
