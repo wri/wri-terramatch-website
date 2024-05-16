@@ -17,7 +17,7 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
           "top-5": position.includes("top"),
           "left-5 items-start": position.includes("left"),
           "right-5 items-end": position.includes("right"),
-          "bottom-8": position.includes("bottom")
+          "bottom-7": position.includes("bottom")
         }),
         className
       )}

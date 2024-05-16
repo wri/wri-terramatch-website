@@ -140,7 +140,7 @@ export const FeatureDetailCard = ({ editable, additionalPolygonProperties }: Fea
           <Text variant="text-heading-200">{title}</Text>
         </div>
         <div className="p-3">
-          <div className="mb-3 space-y-3">
+          <div className="mb-1">
             {properties.filter(v => !!v.value).length === 0 && (
               <Text variant="text-light-caption-200">{t("No data is attached to this polygon")}</Text>
             )}
