@@ -167,8 +167,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
                   {item.created_by}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {/* {item.site || "-"} */}
-                  {"-"}
+                  {props.record.project.name || "-"}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {formattedText(item.status)}
