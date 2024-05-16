@@ -47,8 +47,8 @@ const ComentarySection = ({
           .map((item: any) => (
             <Comentary
               key={item.id}
-              name={item.created_by}
-              lastName={""}
+              name={item?.first_name || item.created_by}
+              lastName={item?.last_name}
               date={item.date_created}
               comentary={item.comment}
               files={comentaryFiles}
