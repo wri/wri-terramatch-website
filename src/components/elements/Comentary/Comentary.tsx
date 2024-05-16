@@ -28,8 +28,8 @@ const Comentary = (props: ComentaryProps) => {
         <div className="flex items-center gap-2">
           <div className="ml-3 flex h-fit min-h-[32px] min-w-[32px] items-center justify-center rounded-full bg-primary-500">
             <Text variant="text-14-semibold" className="uppercase text-white">
-              {name[0]}
-              {lastName[0]}
+              {name?.[0]}
+              {lastName?.[0]}
             </Text>
           </div>
           <div className="flex w-full flex-col gap-1">

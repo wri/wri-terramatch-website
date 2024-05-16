@@ -3,12 +3,14 @@ import { Fragment } from "react";
 import Button from "@/components/elements/Button/Button";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
+import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
 
 export interface SiteAuditLogTable {
   resource: string;
   uuid?: string;
   record?: any;
   auditLogData?: any;
+  refresh?: any;
 }
 
 export const gridData = [
@@ -89,7 +91,21 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  const recentRequest = props?.auditLogData?.data?.find((item: any) => item.type == "change-request");
+
+  const recentRequest = props?.auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
+  console.log("recentRequest", recentRequest);
+  const mutate = fetchPutV2AuditStatusId;
+  const deactivateRecentRequest = async () => {
+    await mutate({
+      pathParams: {
+        id: recentRequest?.id
+      },
+      body: {
+        is_active: false
+      }
+    });
+    props.refresh();
+  };
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -99,13 +115,17 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-14-light" className="mb-4">
           Update the project status, view updates, or add comments
         </Text>
-        <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-          <div className="flex items-center justify-between">
-            <Text variant="text-16-bold">Change Requested</Text>
-            <Button variant="orange">Remove Request</Button>
+        {recentRequest && (
+          <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
+            <div className="flex items-center justify-between">
+              <Text variant="text-16-bold">Change Requested</Text>
+              <Button variant="orange" onClick={deactivateRecentRequest}>
+                Remove Request
+              </Button>
+            </div>
+            <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
           </div>
-          <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
-        </div>
+        )}
       </div>
       <div className="flex flex-col gap-4">
         <Text variant="text-16-bold">Project Status</Text>
@@ -136,7 +156,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
             Comments
           </Text>
         </div>
-        <div className="mr-[-7px] grid max-h-[30vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
+        <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
           {props.auditLogData?.data
             ?.filter((item: any) => item.type == "status")
             .map((item: AuditLogItem, index: number) => (

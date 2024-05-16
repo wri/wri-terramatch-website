@@ -125,6 +125,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   uuid={ctx.record.uuid}
                   record={ctx.record}
                   auditLogData={auditLogData}
+                  refresh={refetch}
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
@@ -133,6 +134,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   uuid={ctx.record.uuid}
                   record={ctx.record}
                   auditLogData={auditLogData}
+                  refresh={refetch}
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
@@ -141,6 +143,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   uuid={selectedPolygon.value}
                   record={selectedPolygon || selectedPolygon[0] || selectedPolygon.value}
                   auditLogData={auditLogData}
+                  refresh={refetch}
                 />
               </When>
             </Stack>

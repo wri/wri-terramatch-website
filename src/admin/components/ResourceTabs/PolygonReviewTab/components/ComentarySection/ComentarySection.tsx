@@ -43,6 +43,7 @@ const ComentarySection = ({
       {auditLogData && auditLogData.length > 0 ? (
         auditLogData
           ?.filter((item: any) => item.type == "comment")
+          .slice(0, 5)
           .map((item: any) => (
             <Comentary
               key={item.id}
