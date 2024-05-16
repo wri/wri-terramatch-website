@@ -23305,6 +23305,11 @@ export type AuditStatusResponse = {
    */
   date_created?: string;
   created_by?: string;
+  is_active?: boolean;
+  is_submitted?: boolean;
+  type?: string;
+  first_name?: string;
+  last_name?: string;
 };
 
 export type AuditStatusPost = {
@@ -23317,6 +23322,11 @@ export type AuditStatusPost = {
    */
   date_created?: string;
   created_by?: string;
+  is_active?: boolean;
+  is_submitted?: boolean;
+  type?: string;
+  first_name?: string;
+  last_name?: string;
 };
 
 export type AttachmentResponse = {

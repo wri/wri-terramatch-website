@@ -9,15 +9,21 @@ const SiteAuditLogPolygonStatusSide = ({
   record,
   polygonList,
   selectedPolygon,
-  setSelectedPolygon
+  setSelectedPolygon,
+  auditLogData
 }: {
   refresh?: any;
   record?: any;
   polygonList?: any[];
   selectedPolygon?: any;
   setSelectedPolygon?: any;
+  auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AdminSitePolygonUUID;
+  // const selectTitle = selectedPolygon?.title
+  //   ? selectedPolygon?.title
+  //   : polygonList?.find((item: any) => item.value == selectedPolygon.value || item.value == selectedPolygon[0])?.title;
+
   return (
     <div className="flex flex-col gap-6">
       <Dropdown
@@ -40,8 +46,9 @@ const SiteAuditLogPolygonStatusSide = ({
         mutate={mutate}
         status={selectedPolygon?.meta}
         record={record}
+        setSelectedPolygon={setSelectedPolygon}
       />
-      <ComentarySection />
+      <ComentarySection record={record?.value} auditLogData={auditLogData} mutate={mutate} refresh={refresh} />
     </div>
   );
 };
