@@ -118,44 +118,48 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         />
       </div>
       <Text variant="text-16-bold">History for {props.record.project.name}</Text>
-      <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Date and Time
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          User
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Site
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Status
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Comments
-        </Text>
-        {props.auditLogData?.data
-          ?.filter((item: any) => item.type == "status")
-          .map((item: AuditLogItem, index: number) => (
-            <Fragment key={index}>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {item?.date_created}
-              </Text>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {item.created_by}
-              </Text>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {/* {item.site || "-"} */}
-                {"-"}
-              </Text>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {formattedText(item.status)}
-              </Text>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-                {item.comment || "-"}
-              </Text>
-            </Fragment>
-          ))}
+      <div>
+        <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Date and Time
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            User
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Site
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Status
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Comments
+          </Text>
+        </div>
+        <div className="mr-[-7px] grid max-h-[30vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
+          {props.auditLogData?.data
+            ?.filter((item: any) => item.type == "status")
+            .map((item: AuditLogItem, index: number) => (
+              <Fragment key={index}>
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                  {item?.date_created}
+                </Text>
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                  {item.created_by}
+                </Text>
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                  {/* {item.site || "-"} */}
+                  {"-"}
+                </Text>
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                  {formattedText(item.status)}
+                </Text>
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                  {item.comment || "-"}
+                </Text>
+              </Fragment>
+            ))}
+        </div>
       </div>
     </div>
   );
