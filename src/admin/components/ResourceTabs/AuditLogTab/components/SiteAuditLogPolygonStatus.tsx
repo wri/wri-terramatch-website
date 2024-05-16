@@ -120,6 +120,8 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
+      </div>
+      <div className="mr-[-7px] grid max-h-[30vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
         {props.auditLogData?.data
           .filter((item: any) => item.type == "status")
           .map((item: AuditLogItem, index: number) => (
