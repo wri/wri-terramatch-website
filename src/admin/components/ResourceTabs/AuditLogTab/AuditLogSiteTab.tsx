@@ -70,7 +70,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
       }))
     );
     if (polygonList.length > 0) {
-      if (selectedPolygon.title === undefined) {
+      if (selectedPolygon.title === undefined || !selectedPolygon) {
         setSelectedPolygon({
           title: (res as { data: any[] }).data[0]?.poly_name,
           value: (res as { data: any[] }).data[0]?.uuid,
