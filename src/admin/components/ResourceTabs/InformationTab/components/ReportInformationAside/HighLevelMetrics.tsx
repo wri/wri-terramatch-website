@@ -4,7 +4,7 @@ import { Labeled, NumberField, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 const HighLevelMetics: FC = () => {
-  const { record } = useShowContext();
+  const { record, resource } = useShowContext();
 
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
@@ -12,6 +12,7 @@ const HighLevelMetics: FC = () => {
   };
 
   const isTerraFund = record.framework_key === "terrafund";
+  const workdaysType = resource === "projectReport" ? "Project" : resource === "siteReport" ? "Site" : null;
 
   return (
     <Card>
@@ -27,6 +28,14 @@ const HighLevelMetics: FC = () => {
             <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
               <NumberField source={record.workdays_total ? "workdays_total" : "total_workdays_count"} emptyText="0" />
             </Labeled>
+            <When condition={workdaysType != null}>
+              <Labeled label={`Total Number Of Paid ${workdaysType} Workdays Created`} sx={inlineLabelSx}>
+                <NumberField source="workdays_paid" emptyText="0" />
+              </Labeled>
+              <Labeled label={`Total Number Of Volunteer ${workdaysType} Workdays Created`} sx={inlineLabelSx}>
+                <NumberField source="workdays_volunteer" emptyText="0" />
+              </Labeled>
+            </When>
           </When>
           <When condition={isTerraFund}>
             <Labeled label="Total Number Of Jobs Created" sx={inlineLabelSx}>
