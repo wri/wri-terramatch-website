@@ -3,11 +3,11 @@ import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
 import Text from "@/components/elements/Text/Text";
 import { useGetAuthMe } from "@/generated/apiComponents";
 
-const comentaryFiles = [
-  { id: "1", file: "img-attachment.jpeg" },
-  { id: "2", file: "img-attachment-with-large-name.jpeg" },
-  { id: "3", file: "img-attachment.jpeg" },
-  { id: "4", file: "img-attachment.jpeg" }
+const comentaryFiles: any[] = [
+  // { id: "1", file: "img-attachment.jpeg" },
+  // { id: "2", file: "img-attachment-with-large-name.jpeg" },
+  // { id: "3", file: "img-attachment.jpeg" },
+  // { id: "4", file: "img-attachment.jpeg" }
 ];
 
 const ComentarySection = ({

@@ -45,7 +45,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           containerClassName="w-full"
           rows={1}
           onChange={e => setComment(e.target.value)}
-          defaultValue={comment}
+          value={comment}
         />
         <label htmlFor="input-files" className="cursor-pointer">
           <input
