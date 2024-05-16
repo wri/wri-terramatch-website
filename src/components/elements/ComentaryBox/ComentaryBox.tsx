@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -9,18 +10,32 @@ export interface ComentaryBoxProps {
   name: string;
   lastName: string;
   buttonSendOnBox?: boolean;
+  mutate?: any;
+  refresh?: any;
+  record?: any;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox } = props;
-
+  const { name, lastName, buttonSendOnBox, mutate, refresh, record } = props;
+  const [comment, setComment] = useState("");
+  const submitComment = async () => {
+    await mutate({
+      pathParams: { uuid: record.uuid || record },
+      body: {
+        comment: comment,
+        type: "comment"
+      }
+    });
+    refresh();
+    setComment("");
+  };
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3">
         <div className="flex min-h-[32px] min-w-[32px] items-center justify-center self-start rounded-full bg-primary-500">
           <Text variant="text-14-semibold" className="uppercase text-white">
-            {name[0]}
-            {lastName[0]}
+            {name?.[0]}
+            {lastName?.[0]}
           </Text>
         </div>
         <TextArea
@@ -29,6 +44,8 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           className="max-h-72 !min-h-0 resize-none border-none !p-0 text-xs"
           containerClassName="w-full"
           rows={1}
+          onChange={e => setComment(e.target.value)}
+          defaultValue={comment}
         />
         <label htmlFor="input-files" className="cursor-pointer">
           <input
@@ -43,7 +60,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
         </When>
       </div>
       <When condition={!buttonSendOnBox}>
-        <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}>
+        <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }} onClick={submitComment}>
           <Text variant="text-12-bold" className="text-white">
             SEND
           </Text>

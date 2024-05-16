@@ -85,7 +85,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full"
           onClick={() => {
-            onConfirm(data, selectedOption);
+            onConfirm(data, selectedOption || [0]);
             onClose();
           }}
         >

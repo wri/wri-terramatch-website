@@ -52,7 +52,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ? ctx.record.project.uuid
           : buttonToogle === ButtonStates.SITE
           ? ctx.record.uuid
-          : selectedPolygon.value
+          : selectedPolygon.value || selectedPolygon[0]
     }
   });
 
@@ -64,24 +64,24 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     });
     setPolygonList(
       (res as { data: SitePolygonResponse[] }).data.map((item: any) => ({
-        title: item.poly_name,
-        value: item.uuid,
-        meta: item.status
+        title: item?.poly_name,
+        value: item?.uuid,
+        meta: item?.status
       }))
     );
     if (polygonList.length > 0) {
-      if (selectedPolygon === "") {
+      if (selectedPolygon.title === undefined) {
         setSelectedPolygon({
-          title: (res as { data: any[] }).data[0].poly_name,
-          value: (res as { data: any[] }).data[0].uuid,
-          meta: (res as { data: any[] }).data[0].status
+          title: (res as { data: any[] }).data[0]?.poly_name,
+          value: (res as { data: any[] }).data[0]?.uuid,
+          meta: (res as { data: any[] }).data[0]?.status
         });
       } else {
         const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon.value);
         setSelectedPolygon({
-          title: currentSelectedPolygon.poly_name,
-          value: currentSelectedPolygon.value,
-          meta: currentSelectedPolygon.status
+          title: currentSelectedPolygon?.poly_name,
+          value: currentSelectedPolygon?.value,
+          meta: currentSelectedPolygon?.status
         });
       }
     }
@@ -139,7 +139,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 <SiteAuditLogPolygonStatus
                   resource={resource}
                   uuid={selectedPolygon.value}
-                  record={polygonList.find(item => item.uuid === selectedPolygon.value)}
+                  record={selectedPolygon || selectedPolygon[0] || selectedPolygon.value}
                   auditLogData={auditLogData}
                 />
               </When>
@@ -147,10 +147,14 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Grid>
           <Grid xs={4} className="pt-9 pl-8 pr-4">
             <When condition={buttonToogle === ButtonStates.PROJECTS}>
-              <SiteAuditLogProjectStatusSide record={ctx.record.project} refresh={refetch} />
+              <SiteAuditLogProjectStatusSide
+                record={ctx.record.project}
+                refresh={refetch}
+                auditLogData={auditLogData?.data}
+              />
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
-              <SiteAuditLogSiteStatusSide record={ctx.record} refresh={refetch} />
+              <SiteAuditLogSiteStatusSide record={ctx.record} refresh={refetch} auditLogData={auditLogData?.data} />
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
@@ -162,6 +166,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 polygonList={polygonList}
                 selectedPolygon={selectedPolygon}
                 setSelectedPolygon={setSelectedPolygon}
+                auditLogData={auditLogData?.data}
               />
             </When>
           </Grid>

@@ -89,7 +89,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-
+  const recentRequest = props?.auditLogData?.data?.find((item: any) => item.type == "change-request");
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -104,11 +104,7 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
             <Text variant="text-16-bold">Change Requested</Text>
             <Button variant="orange">Remove Request</Button>
           </div>
-          <Text variant="text-14-semibold">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.
-          </Text>
+          <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
       </div>
       <div className="flex flex-col gap-4">
@@ -138,26 +134,28 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
         </Text>
-        {props.auditLogData?.data?.map((item: AuditLogItem, index: number) => (
-          <Fragment key={index}>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item?.date_created}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.created_by}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {/* {item.site || "-"} */}
-              {"-"}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {formattedText(item.status)}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comment || "-"}
-            </Text>
-          </Fragment>
-        ))}
+        {props.auditLogData?.data
+          ?.filter((item: any) => item.type == "status")
+          .map((item: AuditLogItem, index: number) => (
+            <Fragment key={index}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {item?.date_created}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {item.created_by}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {/* {item.site || "-"} */}
+                {"-"}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {formattedText(item.status)}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                {item.comment || "-"}
+              </Text>
+            </Fragment>
+          ))}
       </div>
     </div>
   );

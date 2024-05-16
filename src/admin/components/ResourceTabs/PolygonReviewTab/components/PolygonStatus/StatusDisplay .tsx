@@ -80,6 +80,8 @@ export interface StatusProps {
   record?: any;
   refresh?: any;
   name?: any;
+  refetchPolygon?: any;
+  setSelectedPolygon?: any;
 }
 
 const menuOptionsMap = {
@@ -100,7 +102,15 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name, record }: StatusProps) => {
+const StatusDisplay = ({
+  titleStatus = "Polygon",
+  status,
+  mutate,
+  refresh,
+  name,
+  record,
+  setSelectedPolygon
+}: StatusProps) => {
   const ctx = useShowContext();
   const rec: any = ctx.record as any;
   console.log("rec", rec);
@@ -133,13 +143,15 @@ const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name,
             pathParams: { uuid: record.uuid || record.value },
             body: {
               status: option?.status,
-              comment: text
+              comment: text,
+              type: "status"
             }
           });
-          console.log("response", response);
+          console.log("response", response.poly_id);
           refresh();
-          closeModal;
           ctx.refetch();
+          setSelectedPolygon(response.poly_id);
+          closeModal;
         }}
       />
     );
@@ -152,7 +164,18 @@ const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name,
         content={contentRequest}
         commentArea
         onClose={closeModal}
-        onConfirm={() => {
+        onConfirm={async (text: any, opt) => {
+          const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
+          await mutate({
+            pathParams: { uuid: record.uuid || record.value },
+            body: {
+              status: option?.status,
+              comment: text,
+              type: "change-request",
+              is_active: true
+            }
+          });
+          refresh();
           closeModal;
         }}
       />
