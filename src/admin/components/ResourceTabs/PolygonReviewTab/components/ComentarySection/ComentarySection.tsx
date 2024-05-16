@@ -1,6 +1,7 @@
 import Comentary from "@/components/elements/Comentary/Comentary";
 import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
 import Text from "@/components/elements/Text/Text";
+import Loader from "@/components/generic/Loading/Loader";
 import { useGetAuthMe } from "@/generated/apiComponents";
 
 const comentaryFiles: any[] = [
@@ -39,18 +40,22 @@ const ComentarySection = ({
         refresh={refresh}
         record={record}
       />
-      {auditLogData
-        ?.filter((item: any) => item.type == "comment")
-        .map((item: any) => (
-          <Comentary
-            key={item.id}
-            name={item.created_by}
-            lastName={""}
-            date={item.date_created}
-            comentary={item.comment}
-            files={comentaryFiles}
-          />
-        ))}
+      {auditLogData && auditLogData.length > 0 ? (
+        auditLogData
+          ?.filter((item: any) => item.type == "comment")
+          .map((item: any) => (
+            <Comentary
+              key={item.id}
+              name={item.created_by}
+              lastName={""}
+              date={item.date_created}
+              comentary={item.comment}
+              files={comentaryFiles}
+            />
+          ))
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 };
