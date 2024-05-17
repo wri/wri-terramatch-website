@@ -37,8 +37,8 @@ const ReverseButtonStates: { [key: number]: string } = {
 };
 
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
-  const ctx = useShowContext();
-  const resource = entity ?? ctx.resource;
+  const { record, resource, isLoading } = useShowContext();
+  const { project } = record;
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const [selectedPolygon, setSelectedPolygon] = useState<any>("");
@@ -49,17 +49,17 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
       entity: ReverseButtonStates[buttonToogle],
       uuid:
         buttonToogle === ButtonStates.PROJECTS
-          ? ctx.record.project.uuid
+          ? project.uuid
           : buttonToogle === ButtonStates.SITE
-          ? ctx.record.uuid
-          : selectedPolygon.value || selectedPolygon[0]
+          ? record.uuid
+          : selectedPolygon.value
     }
   });
 
   const loadSitePolygonList = async () => {
     const res = await fetchGetV2AdminSitePolygonUUID({
       pathParams: {
-        uuid: ctx.record.uuid
+        uuid: record.uuid
       }
     });
     setPolygonList(
@@ -91,10 +91,10 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     if (buttonToogle === ButtonStates.POLYGON) {
       loadSitePolygonList();
     }
-  }, [buttonToogle, ctx.record]);
+  }, [buttonToogle, record]);
 
   return (
-    <When condition={!ctx.isLoading}>
+    <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
@@ -122,8 +122,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
                 <SiteAuditLogProjectStatus
                   resource={resource}
-                  uuid={ctx.record.uuid}
-                  record={ctx.record}
+                  uuid={record.uuid}
+                  record={record}
                   auditLogData={auditLogData}
                   refresh={refetch}
                 />
@@ -131,8 +131,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               <When condition={buttonToogle === ButtonStates.SITE}>
                 <SiteAuditLogSiteStatus
                   resource={resource}
-                  uuid={ctx.record.uuid}
-                  record={ctx.record}
+                  uuid={record.uuid}
+                  record={record}
                   auditLogData={auditLogData}
                   refresh={refetch}
                 />
@@ -150,14 +150,10 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Grid>
           <Grid xs={4} className="pt-9 pl-8 pr-4">
             <When condition={buttonToogle === ButtonStates.PROJECTS}>
-              <SiteAuditLogProjectStatusSide
-                record={ctx.record.project}
-                refresh={refetch}
-                auditLogData={auditLogData?.data}
-              />
+              <SiteAuditLogProjectStatusSide record={project} refresh={refetch} auditLogData={auditLogData?.data} />
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
-              <SiteAuditLogSiteStatusSide record={ctx.record} refresh={refetch} auditLogData={auditLogData?.data} />
+              <SiteAuditLogSiteStatusSide record={record} refresh={refetch} auditLogData={auditLogData?.data} />
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide

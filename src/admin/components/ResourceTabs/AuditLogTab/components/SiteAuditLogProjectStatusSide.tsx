@@ -18,7 +18,7 @@ const SiteAuditLogProjectStatusSide = ({
     <div className="flex flex-col gap-6">
       <StatusDisplay
         titleStatus="Project"
-        status={record?.readable_status}
+        status={record?.status}
         record={record}
         name={record?.name}
         mutate={mutate}

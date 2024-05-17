@@ -13,12 +13,13 @@ const SiteAuditLogSiteStatusSide = ({
   auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AdminSitesUUID;
+  const status = record?.readable_status === "Unknown" ? "Planting in progress" : record?.readable_status;
   return (
     <div className="flex flex-col gap-6">
       <StatusDisplay
         titleStatus="Site"
         name={record.name}
-        status={record.readable_status}
+        status={status}
         refresh={refresh}
         record={record}
         mutate={mutate}

@@ -139,19 +139,25 @@ const StatusDisplay = ({
         content={contentStatus}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
-          const response = await mutate({
-            pathParams: { uuid: record.uuid || record.value },
-            body: {
-              status: option?.status,
-              comment: text,
-              type: "status"
-            }
-          });
-          console.log("response", response.poly_id);
-          refresh();
-          ctx.refetch();
-          setSelectedPolygon(response.poly_id);
-          closeModal;
+          let response;
+          try {
+            response = await mutate({
+              pathParams: { uuid: record.uuid || record.value },
+              body: {
+                status: option?.status,
+                comment: text,
+                type: "status"
+              }
+            });
+            console.log("response", response.poly_id);
+            setSelectedPolygon(response.poly_id);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            refresh();
+            ctx.refetch();
+            closeModal;
+          }
         }}
       />
     );
