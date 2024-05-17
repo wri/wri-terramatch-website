@@ -61,7 +61,7 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record,
     });
     refresh();
   };
-  console.log(auditLogData?.data);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
