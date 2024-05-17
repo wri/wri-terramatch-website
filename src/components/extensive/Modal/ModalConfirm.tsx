@@ -32,6 +32,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
 }) => {
   const [data, useData] = useState("");
   const [selectedOption, setSelectedOption] = useState<any>(null);
+  const [showError, setShowError] = useState(false);
   return (
     <ModalBase {...rest} className={tw("max-w-xs p-5", className)}>
       <div className="flex flex-col gap-2">
@@ -62,6 +63,11 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
                 setSelectedOption(opt);
               }}
             />
+            <If condition={showError}>
+              <Text variant="text-12-bold" className="text-red">
+                Please select an option
+              </Text>
+            </If>
           </div>
         </When>
         <When condition={commentArea}>
@@ -85,6 +91,11 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full"
           onClick={() => {
+            if (selectedOption === null && menu?.length > 0) {
+              setShowError(true);
+              setTimeout(() => setShowError(false), 3000);
+              return;
+            }
             onConfirm(data, selectedOption || [0]);
             onClose();
           }}
