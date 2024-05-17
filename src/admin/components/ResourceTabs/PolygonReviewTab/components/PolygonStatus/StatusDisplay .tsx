@@ -160,7 +160,7 @@ const StatusDisplay = ({
   const openFormModalHandlerRequest = () => {
     openModal(
       <ModalConfirm
-        title={"Request Change"}
+        title={"Change Request"}
         content={contentRequest}
         commentArea
         onClose={closeModal}
@@ -189,7 +189,7 @@ const StatusDisplay = ({
       </div>
       <div className="flex w-full items-center gap-4">
         <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>
-          <Text variant="text-12-bold">Request change</Text>
+          <Text variant="text-12-bold">Change Request</Text>
         </Button>
         <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
           <Text variant="text-12-bold">change status</Text>
