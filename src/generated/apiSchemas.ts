@@ -23330,15 +23330,6 @@ export type AuditStatusPost = {
   last_name?: string;
 };
 
-export type AttachmentResponse = {
-  attachment_url?: string;
-  /**
-   * @format date
-   */
-  date_created?: string;
-  created_by?: string;
-};
-
 export type GeoJSON = {
   type?: "FeatureCollection";
   features?: {
@@ -23419,4 +23410,10 @@ export type V2TerrafundCriteriaData = {
      */
     valid?: number;
   }[];
+};
+
+export type AttachmentResponse = {
+  entity_id?: string;
+  attachment?: string;
+  created_by?: string;
 };

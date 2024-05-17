@@ -5,6 +5,7 @@ import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { usePostV2AuditStatus } from "@/generated/apiComponents";
 
 export interface ComentaryBoxProps {
   name: string;
@@ -14,24 +15,35 @@ export interface ComentaryBoxProps {
   refresh?: any;
   record?: any;
   entity?: string;
+  attachmentRefetch?: any;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox, mutate, refresh, record, entity } = props;
-  const [comment, setComment] = useState("");
-  const submitComment = async () => {
-    await mutate({
-      body: {
-        entity_uuid: record?.uuid,
-        status: record?.status,
-        entity: entity,
-        comment: comment,
-        type: "comment"
-      }
+  const { name, lastName, buttonSendOnBox, refresh, record, entity } = props;
+  const { mutate: upload } = usePostV2AuditStatus();
+  const [files, setFiles] = useState<File[]>([]);
+  const [comment, setComment] = useState<string>("");
+  const submitComment = () => {
+    const body = new FormData();
+    body.append("entity_uuid", record?.uuid);
+    body.append("status", record?.status);
+    body.append("entity", entity as string);
+    body.append("comment", comment);
+    body.append("type", "comment");
+    body.append("attachment", "test");
+    files.forEach((element: File, index: number) => {
+      body.append(`file[${index}]`, element);
     });
-    refresh();
+    upload?.({
+      //@ts-ignore swagger issue
+      body
+    });
     setComment("");
+    setFiles([]);
+    props.attachmentRefetch();
+    refresh();
   };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3">
@@ -55,6 +67,12 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
             type="file"
             id="input-files"
             className="absolute z-[-1] h-[0.1px] w-[0.1px] overflow-hidden opacity-0"
+            onChange={e => {
+              if (e.target.files) {
+                const file = e.target.files[0];
+                setFiles(prevFiles => [...prevFiles, file]);
+              }
+            }}
           />
           <Icon name={IconNames.PAPER_CLIP} className="h-4 w-4" />
         </label>
