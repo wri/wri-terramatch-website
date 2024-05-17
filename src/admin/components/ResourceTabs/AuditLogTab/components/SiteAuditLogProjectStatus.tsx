@@ -63,6 +63,8 @@ interface AuditLogItem {
   attachment_url: string;
   date_created: string;
   created_by: string;
+  first_name: string;
+  last_name: string;
 }
 
 const projectStatusLabels = [
@@ -163,7 +165,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
                   {item?.date_created}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {item.created_by}
+                  {`${item.first_name} ${item.last_name}`}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {record.name || "-"}
