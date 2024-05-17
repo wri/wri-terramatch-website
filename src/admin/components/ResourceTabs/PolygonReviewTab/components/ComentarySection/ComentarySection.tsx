@@ -15,12 +15,14 @@ const ComentarySection = ({
   auditLogData,
   mutate,
   refresh,
-  record
+  record,
+  entity
 }: {
   auditLogData?: any;
   mutate?: any;
   refresh?: any;
   record?: any;
+  entity?: string;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
     data: {
@@ -39,6 +41,7 @@ const ComentarySection = ({
         mutate={mutate}
         refresh={refresh}
         record={record}
+        entity={entity}
       />
       {auditLogData !== null && auditLogData !== undefined ? (
         auditLogData.length > 0 ? (

@@ -13,15 +13,18 @@ export interface ComentaryBoxProps {
   mutate?: any;
   refresh?: any;
   record?: any;
+  entity?: string;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox, mutate, refresh, record } = props;
+  const { name, lastName, buttonSendOnBox, mutate, refresh, record, entity } = props;
   const [comment, setComment] = useState("");
   const submitComment = async () => {
     await mutate({
-      pathParams: { uuid: record.uuid || record },
       body: {
+        entity_uuid: record?.uuid,
+        status: record?.status,
+        entity: entity,
         comment: comment,
         type: "comment"
       }
