@@ -23123,6 +23123,7 @@ export type SitePolygonResponse = {
    * @format float
    */
   calc_area?: number;
+  status?: string;
 };
 
 export type SitePolygonCreateResponse = {
