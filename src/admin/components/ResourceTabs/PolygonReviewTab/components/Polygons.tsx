@@ -24,7 +24,7 @@ import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
-  status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
+  status: "draft" | "submitted" | "approved" | "needs-more-info";
   label: string;
   uuid: string;
 }
@@ -39,10 +39,10 @@ export interface IPolygonProps {
   setPolygonFromMap?: any;
 }
 const statusColor = {
-  Draft: "bg-pinkCustom",
-  Submitted: "bg-blue",
-  Approved: "bg-green",
-  "Needs More Info": "bg-tertiary-600"
+  draft: "bg-pinkCustom",
+  submitted: "bg-blue",
+  approved: "bg-green",
+  "needs-more-info": "bg-tertiary-600"
 };
 
 export const polygonData = [

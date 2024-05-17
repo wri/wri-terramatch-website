@@ -18,10 +18,10 @@ import PolygonValidation from "./components/PolygonValidation";
 import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
-  Draft: "bg-pinkCustom",
-  Submitted: "bg-blue",
-  Approved: "bg-green",
-  "Needs More Info": "bg-tertiary-600"
+  draft: "bg-pinkCustom",
+  submitted: "bg-blue",
+  approved: "bg-green",
+  "needs-more-info": "bg-tertiary-600"
 };
 
 const validationLabels: any = {

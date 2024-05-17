@@ -11,9 +11,9 @@ export interface TooltipMapProps {
   formattedPlantStartDate: any;
 }
 const topBorderColorPopup: any = {
-  Submitted: "border-t-primary",
-  Approved: "border-t-[#72D961]",
-  "Needs More Info": "border-t-[#FF8938]"
+  submitted: "border-t-primary",
+  approved: "border-t-[#72D961]",
+  "needs-more-info": "border-t-[#FF8938]"
 };
 
 const TooltipMap = (props: TooltipMapProps) => {

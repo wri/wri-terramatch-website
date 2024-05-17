@@ -43,7 +43,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 export interface IPolygonItem {
   id: string;
-  status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
+  status: "draft" | "submitted" | "approved" | "needs-more-info";
   label: string;
   uuid: string;
 }

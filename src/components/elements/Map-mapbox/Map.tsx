@@ -221,7 +221,7 @@ export const Map = ({
         ref.current.addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => {
           if (polygonsData) {
             const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-            const statuses = ["Submitted", "Approved", "Need More Info"];
+            const statuses = ["submitted", "approved", "need-more-info"];
             statuses.forEach(status => {
               if (newPolygonData[status]) {
                 newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);

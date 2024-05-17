@@ -8,7 +8,7 @@ export const layersList = [
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
       {
-        metadata: { polygonStatus: "Submitted" },
+        metadata: { polygonStatus: "submitted" },
         type: "fill",
         layout: {},
         paint: {
@@ -18,7 +18,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "Submitted" },
+        metadata: { polygonStatus: "submitted" },
         type: "line",
         layout: {},
         paint: {
@@ -28,7 +28,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "Approved" },
+        metadata: { polygonStatus: "approved" },
         type: "fill",
         layout: {},
         paint: {
@@ -38,7 +38,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "Approved" },
+        metadata: { polygonStatus: "approved" },
         type: "line",
         layout: {},
         paint: {
@@ -48,7 +48,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "Needs More Info" },
+        metadata: { polygonStatus: "needs-more-info" },
         type: "fill",
         layout: {},
         paint: {
@@ -58,7 +58,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "Needs More Info" },
+        metadata: { polygonStatus: "needs-more-info" },
         type: "line",
         layout: {},
         paint: {
