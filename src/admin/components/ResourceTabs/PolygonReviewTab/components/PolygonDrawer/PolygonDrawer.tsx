@@ -56,11 +56,16 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   const sitePolygonData = context?.sitePolygonData;
   const openEditNewPolygon = context?.isUserDrawingEnabled;
 
-  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData({
-    queryParams: {
-      uuid: polygonSelected
+  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: {
+        uuid: polygonSelected
+      }
+    },
+    {
+      enabled: !!polygonSelected
     }
-  });
+  );
 
   const validatePolygon = () => {
     fetchGetV2TerrafundValidationPolygon({
@@ -68,7 +73,6 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
         uuid: polygonSelected
       }
     }).then(() => {
-      setValidationStatus(true);
       reloadCriteriaValidation();
       setCheckPolygonValidation(false);
     });
