@@ -37,7 +37,7 @@ const ReverseButtonStates: { [key: number]: string } = {
 };
 
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
-  const { record, resource, isLoading } = useShowContext();
+  const { record, isLoading } = useShowContext();
   const { project } = record;
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
@@ -101,31 +101,13 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             <Stack gap={4} className="pt-9 pl-8">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                <SiteAuditLogProjectStatus
-                  resource={resource}
-                  uuid={record.uuid}
-                  record={record}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                />
+                <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} refresh={refetch} />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
-                <SiteAuditLogSiteStatus
-                  resource={resource}
-                  uuid={record.uuid}
-                  record={record}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                />
+                <SiteAuditLogSiteStatus record={record} auditLogData={auditLogData} refresh={refetch} />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
-                <SiteAuditLogPolygonStatus
-                  resource={resource}
-                  uuid={selectedPolygon.value}
-                  record={selectedPolygon || selectedPolygon[0] || selectedPolygon.value}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                />
+                <SiteAuditLogPolygonStatus record={selectedPolygon} auditLogData={auditLogData} refresh={refetch} />
               </When>
             </Stack>
           </Grid>

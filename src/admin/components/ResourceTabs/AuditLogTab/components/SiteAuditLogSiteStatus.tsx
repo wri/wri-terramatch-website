@@ -5,7 +5,11 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
 
-import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+export interface SiteAuditLogSiteStatusProps {
+  record?: any;
+  auditLogData?: any;
+  refresh?: any;
+}
 
 const siteStatusLabels = [
   { id: "1", label: "Draft" },
@@ -32,7 +36,7 @@ function getValueForStatus(status: string): number {
   }
 }
 
-const SiteAuditLogSiteStatus = (props: SiteAuditLogTable) => {
+const SiteAuditLogSiteStatus = (props: SiteAuditLogSiteStatusProps) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };

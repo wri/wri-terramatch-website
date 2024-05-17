@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import SiteAuditLogPolygonStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatus";
@@ -24,13 +23,11 @@ interface ReportingTasksProps {
 }
 
 const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
-  const ctx = useShowContext();
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
     POLYGON: 2
   };
-  const resource = entity ?? ctx.resource;
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { data: reports, isLoading } = useGetV2ENTITYUUIDReports(
     {
@@ -70,13 +67,13 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
                       </Button>
                     </div>
                     <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                      <SiteAuditLogProjectStatus resource={resource} />
+                      <SiteAuditLogProjectStatus />
                     </When>
                     <When condition={buttonToogle === ButtonStates.SITE}>
-                      <SiteAuditLogSiteStatus resource={resource} />
+                      <SiteAuditLogSiteStatus />
                     </When>
                     <When condition={buttonToogle === ButtonStates.POLYGON}>
-                      <SiteAuditLogPolygonStatus resource={resource} />
+                      <SiteAuditLogPolygonStatus />
                     </When>
                   </div>
                 </div>

@@ -5,7 +5,11 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
 
-import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+export interface SiteAuditLogPolygonStatusProps {
+  record?: any;
+  auditLogData?: any;
+  refresh?: any;
+}
 
 interface AuditLogItem {
   entity_uuid: string;
@@ -35,7 +39,7 @@ function getValueForStatus(status: string): number {
   }
 }
 
-const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
+const SiteAuditLogPolygonStatus = (props: SiteAuditLogPolygonStatusProps) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
@@ -52,6 +56,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
     });
     props.refresh();
   };
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -84,40 +89,6 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         />
       </div>
       <Text variant="text-16-bold">History for {props.record?.title}</Text>
-      {/*OLD TABLE*/}
-      {/* <ReferenceManyField
-        pagination={<Pagination />}
-        reference={modules.audit.ResourceName}
-        filter={{ entity: props.resource }}
-        target="uuid"
-        label=""
-      >
-        <Datagrid bulkActionButtons={false}>
-          <DateField
-            source="created_at"
-            label="Date and time"
-            showTime
-            locales="en-GB"
-            options={{ dateStyle: "short", timeStyle: "short" }}
-          />
-          <ReferenceField source="user_uuid" reference={modules.user.ResourceName} label="User">
-            <FunctionField
-              source="first_name"
-              render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
-            />
-          </ReferenceField>
-          <FunctionField
-            label="Action"
-            className="capitalize"
-            render={(record: any) => {
-              const str: string = record?.new_values?.status ?? record?.event ?? "";
-
-              return str.replaceAll("-", " ");
-            }}
-          />
-          <FunctionField label="Comments" render={(record: any) => record?.new_values?.feedback ?? "-"} />
-        </Datagrid>
-      </ReferenceManyField> */}
       <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Date and Time
