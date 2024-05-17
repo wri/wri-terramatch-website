@@ -21,6 +21,12 @@ const SiteAuditLogPolygonStatusSide = ({
 }) => {
   const mutate = fetchPutV2AdminSitePolygonUUID;
   const mutateComment = fetchPostV2AuditStatus;
+  const unnamedPolygons = polygonList?.map((polygon: any) => {
+    if (!polygon.title) {
+      return { ...polygon, title: "Unnamed Polygon" };
+    }
+    return polygon;
+  });
   return (
     <div className="flex flex-col gap-6">
       <Dropdown
@@ -28,9 +34,9 @@ const SiteAuditLogPolygonStatusSide = ({
         labelVariant="text-16-bold"
         labelClassName="capitalize"
         optionsClassName="max-w-full"
-        value={[selectedPolygon?.value ? selectedPolygon.value : ""]}
+        value={[selectedPolygon?.value ? selectedPolygon.value : "Unnamed Polygon"]}
         placeholder={"Select Polygon"}
-        options={polygonList!}
+        options={unnamedPolygons!}
         onChange={e => {
           console.log("onChange", e);
           setSelectedPolygon(polygonList?.find(item => item.value === e[0]));

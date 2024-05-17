@@ -65,6 +65,7 @@ interface AuditLogItem {
   created_by: string;
   first_name: string;
   last_name: string;
+  request_removed: boolean;
 }
 
 const projectStatusLabels = [
@@ -101,11 +102,13 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
         id: recentRequest?.id
       },
       body: {
-        is_active: false
+        is_active: false,
+        request_removed: true
       }
     });
     refresh();
   };
+  console.log(auditLogData?.data);
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -171,7 +174,11 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
                   {record.name || "-"}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {item.type === "status" ? `New Status: ${formattedText(item.status)}` : "Change Requested Added"}
+                  {item.type === "status"
+                    ? `New Status: ${formattedText(item.status)}`
+                    : item.request_removed
+                    ? "Change Request Removed"
+                    : "Change Requested Added"}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2">
                   {item.comment || "-"}

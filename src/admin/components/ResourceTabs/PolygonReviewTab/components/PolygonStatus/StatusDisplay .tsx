@@ -166,7 +166,8 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               status: option?.status,
               comment: text,
               type: "change-request",
-              is_active: true
+              is_active: true,
+              request_removed: false
             }
           });
           refresh();

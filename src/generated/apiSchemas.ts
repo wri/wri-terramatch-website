@@ -23311,6 +23311,7 @@ export type AuditStatusResponse = {
   type?: string;
   first_name?: string;
   last_name?: string;
+  request_removed?: boolean;
 };
 
 export type AuditStatusPost = {
@@ -23328,6 +23329,7 @@ export type AuditStatusPost = {
   type?: string;
   first_name?: string;
   last_name?: string;
+  request_removed?: boolean;
 };
 
 export type GeoJSON = {

@@ -33,6 +33,13 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   const [data, useData] = useState("");
   const [selectedOption, setSelectedOption] = useState<any>(null);
   const [showError, setShowError] = useState(false);
+  const [charCount, setCharCount] = useState<number>(0);
+
+  const handleCommentChange = (e: any) => {
+    useData(e.target.value);
+    setCharCount(e.target.value.length);
+  };
+
   return (
     <ModalBase {...rest} className={tw("max-w-xs p-5", className)}>
       <div className="flex flex-col gap-2">
@@ -75,11 +82,14 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
             placeholder="Type comment here..."
             name=""
             value={data}
-            onChange={e => useData(e.target.value)}
+            onChange={e => handleCommentChange(e)}
             className="max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 p-4 text-xs"
             containerClassName="w-full"
             rows={4}
           />
+          <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
+            {charCount}/255 characters
+          </div>
         </When>
       </div>
       <div className="mt-4 flex w-full gap-4">
