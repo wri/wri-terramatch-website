@@ -78,6 +78,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   };
 
   useEffect(() => {
+    console.log("checkPolygonValidation", checkPolygonValidation);
     if (checkPolygonValidation) {
       validatePolygon();
       reloadCriteriaValidation();
