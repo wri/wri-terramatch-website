@@ -42,7 +42,7 @@ const Status = (props: StatusProps) => {
       submitted: "text-blue",
       draft: "text-pinkCustom",
       "under-review": "text-tertiary-600",
-      "needs-more-information": "Needs More Info",
+      "needs-more-information": "text-tertiary-600",
       "planting-in-progress": "text-blue",
       "awaiting-approval": "text-tertiary-600"
     };
@@ -70,7 +70,7 @@ const Status = (props: StatusProps) => {
     >
       <Text
         variant={textVariant}
-        className={`flex w-fit items-center gap-[6px] whitespace-nowrap ${getColorStatusText(status)}`}
+        className={`flex w-fit items-center justify-center gap-[6px] text-center ${getColorStatusText(status)}`}
       >
         <When condition={status === "approved"}>
           <Icon name={IconNames.CHECK_CIRCLE_FILL} className="h-4 w-4 text-secondary" />
