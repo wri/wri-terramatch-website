@@ -13,11 +13,14 @@ export interface SiteAuditLogPolygonStatusProps {
 
 interface AuditLogItem {
   entity_uuid: string;
+  type: string;
   status: string;
   comment: string;
   attachment_url: string;
   date_created: string;
   created_by: string;
+  first_name: string;
+  last_name: string;
 }
 
 const polygonStatusLabels = [
@@ -100,7 +103,7 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record,
           Polygon
         </Text>
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Status
+          Action
         </Text>
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Comments
@@ -108,20 +111,20 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record,
       </div>
       <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
         {auditLogData?.data
-          .filter((item: any) => item.type == "status")
+          .filter((item: any) => ["status", "change-request"].includes(item.type))
           .map((item: AuditLogItem, index: number) => (
             <Fragment key={index}>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {item.date_created}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {item.created_by}
+                {`${item.first_name} ${item.last_name}`}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {record?.title || "-"}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {formattedText(item.status)}
+                {item.type === "status" ? `New Status: ${formattedText(item.status)}` : "Change Requested Added"}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2">
                 {item.comment || "-"}

@@ -33112,6 +33112,47 @@ export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundVa
   );
 };
 
+export type GetV2AttachmentQueryParams = {
+  /**
+   * required.
+   */
+  entity_uuid?: string;
+};
+
+export type GetV2AttachmentError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AttachmentResponse = Schemas.AuditStatusResponse[];
+
+export type GetV2AttachmentVariables = {
+  queryParams?: GetV2AttachmentQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2Attachment = (variables: GetV2AttachmentVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2AttachmentResponse, GetV2AttachmentError, undefined, {}, GetV2AttachmentQueryParams, {}>({
+    url: "/v2/attachment",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2Attachment = <TData = GetV2AttachmentResponse>(
+  variables: GetV2AttachmentVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AttachmentResponse, GetV2AttachmentError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AttachmentResponse, GetV2AttachmentError, TData>(
+    queryKeyFn({ path: "/v2/attachment", operationId: "getV2Attachment", variables }),
+    ({ signal }) => fetchGetV2Attachment({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -33632,4 +33673,9 @@ export type QueryOperation =
       path: "/v2/terrafund/validation/criteria-data";
       operationId: "getV2TerrafundValidationCriteriaData";
       variables: GetV2TerrafundValidationCriteriaDataVariables;
+    }
+  | {
+      path: "/v2/attachment";
+      operationId: "getV2Attachment";
+      variables: GetV2AttachmentVariables;
     };

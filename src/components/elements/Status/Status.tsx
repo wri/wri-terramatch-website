@@ -8,21 +8,43 @@ import Text from "../Text/Text";
 
 export interface StatusProps {
   className?: string;
-  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info" | "Planting in Progress";
+  status:
+    | "draft"
+    | "submitted"
+    | "approved"
+    | "under-review"
+    | "needs-more-information"
+    | "planting-in-progress"
+    | "awaiting-approval";
   textVariant?: TextVariants;
 }
 
 const Status = (props: StatusProps) => {
   const { className, status, textVariant = "text-12-semibold" } = props;
 
+  const convertStatusToReadableStatus = (status: string): string => {
+    const statusMap: { [key: string]: string } = {
+      approved: "Approved",
+      submitted: "Submitted",
+      draft: "Draft",
+      "under-review": "Under Review",
+      "needs-more-information": "Needs More Information",
+      "planting-in-progress": "Planting in Progress",
+      "awaiting-approval": "Awaiting Approval"
+    };
+
+    return statusMap[status] || "";
+  };
+
   const getColorStatusText = (status: string): string => {
     const colorMap: { [key: string]: string } = {
-      Approved: "text-green-500",
-      Submitted: "text-blue",
-      Draft: "text-pinkCustom",
-      "Under Review": "text-tertiary-600",
-      "Needs More Info": "text-tertiary-600",
-      "Planting in Progress": "text-blue"
+      approved: "text-green-500",
+      submitted: "text-blue",
+      draft: "text-pinkCustom",
+      "under-review": "text-tertiary-600",
+      "needs-more-information": "text-tertiary-600",
+      "planting-in-progress": "text-blue",
+      "awaiting-approval": "text-tertiary-600"
     };
 
     return colorMap[status] || "";
@@ -30,14 +52,13 @@ const Status = (props: StatusProps) => {
 
   const getColorStatusBg = (status: string): string => {
     const colorMap: { [key: string]: string } = {
-      Approved: "bg-secondary-200",
-      Submitted: "bg-blue-200",
-      Draft: "bg-pinkCustom-200",
-      "Under Review": "bg-tertiary-50",
-      "Awaiting approval": "bg-tertiary-50",
-      "Needs More Info": "bg-tertiary-50",
-      "Needs more information": "bg-tertiary-50",
-      "Planting in Progress": "bg-blue-200"
+      approved: "bg-secondary-200",
+      submitted: "bg-blue-200",
+      draft: "bg-pinkCustom-200",
+      "under-review": "bg-tertiary-50",
+      "awaiting-approval": "bg-tertiary-50",
+      "needs-more-information": "bg-tertiary-50",
+      "planting-in-progress": "bg-blue-200"
     };
 
     return colorMap[status] || "";
@@ -49,12 +70,12 @@ const Status = (props: StatusProps) => {
     >
       <Text
         variant={textVariant}
-        className={`flex w-fit items-center gap-[6px] whitespace-nowrap ${getColorStatusText(status)}`}
+        className={`flex w-fit items-center justify-center gap-[6px] text-center ${getColorStatusText(status)}`}
       >
-        <When condition={status === "Approved"}>
+        <When condition={status === "approved"}>
           <Icon name={IconNames.CHECK_CIRCLE_FILL} className="h-4 w-4 text-secondary" />
         </When>
-        {status}
+        {convertStatusToReadableStatus(status)}
       </Text>
     </div>
   );

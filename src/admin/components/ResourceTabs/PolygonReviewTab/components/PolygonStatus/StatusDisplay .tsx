@@ -121,7 +121,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
       <ModalConfirm
         title={`${titleStatus} Status Change`}
         commentArea
-        menuLabel={record.status}
+        menuLabel={""}
         menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
@@ -130,7 +130,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
           let response;
           try {
             response = await mutate({
-              pathParams: { uuid: record.uuid || record.value },
+              pathParams: { uuid: record?.uuid },
               body: {
                 status: option?.status,
                 comment: text,
@@ -161,7 +161,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           await mutate({
-            pathParams: { uuid: record.uuid || record.value },
+            pathParams: { uuid: record?.uuid },
             body: {
               status: option?.status,
               comment: text,
@@ -179,7 +179,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-full items-center gap-2">
         <Text variant="text-16-bold">{titleStatus === "Polygon" ? "" : `${titleStatus} `}Status:</Text>
-        <Status status={record.status} className="py-[2px] px-[6px]"></Status>
+        <Status status={record?.status} className="py-[2px] px-[6px]"></Status>
       </div>
       <div className="flex w-full items-center gap-4">
         <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>

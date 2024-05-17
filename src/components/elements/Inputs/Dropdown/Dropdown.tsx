@@ -137,11 +137,11 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const getColorStatus = (option: string): string => {
     const colorMap: { [key: string]: string } = {
-      approved: "bg-green",
-      submitted: "bg-blue",
+      approved: "bg-secondary",
+      Submitted: "bg-blue",
       draft: "bg-pinkCustom",
       "Under Review": "bg-tertiary-600",
-      "Needs More Info": "bg-tertiary-600"
+      "needs-more-information": "bg-tertiary-600"
     };
 
     return colorMap[option] || "";
@@ -208,7 +208,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <Listbox.Options
                 as="div"
                 className={tw(
-                  "border-light absolute mt-2 max-h-[400px] min-w-full overflow-auto rounded-lg bg-white",
+                  "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white lg:max-h-[250px] wide:max-h-[266px]",
                   props.optionsClassName
                 )}
               >

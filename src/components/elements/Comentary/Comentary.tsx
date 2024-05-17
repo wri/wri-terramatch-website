@@ -61,10 +61,10 @@ const Comentary = (props: ComentaryProps) => {
         {comentary}
       </Text>
       <div className="flex flex-wrap gap-2">
-        {files.map(file => (
+        {files?.map((file: any) => (
           <div key={file.id} className="rounded-xl bg-neutral-150 px-2 py-1">
             <Text variant="text-14-light" className="text-grey-700">
-              {file.file}
+              {file?.attachment}
             </Text>
           </div>
         ))}

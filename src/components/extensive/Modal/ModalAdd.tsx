@@ -38,7 +38,7 @@ export interface ModalAddProps extends ModalProps {
   variantFileInput?: FileInputVariant;
   descriptionListStatus?: string;
   acceptedTYpes?: FileType[];
-  status?: "Under Review" | "Approved" | "Draft" | "Submitted";
+  status?: "under-review" | "approved" | "draft" | "submitted";
   onCLose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
 }
@@ -77,7 +77,7 @@ const ModalAdd: FC<ModalAddProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
           <When condition={status}>
-            <Status status={status ? status : "Draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
+            <Status status={status ? status : "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
           </When>
           <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />

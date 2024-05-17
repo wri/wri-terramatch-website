@@ -41,7 +41,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { project } = record;
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
-  const [selectedPolygon, setSelectedPolygon] = useState<any>("");
+  const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [polygonList, setPolygonList] = useState<any[]>([]);
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
@@ -52,42 +52,52 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ? project.uuid
           : buttonToogle === ButtonStates.SITE
           ? record.uuid
-          : selectedPolygon.value
+          : selectedPolygon?.uuid
     }
   });
 
   const loadSitePolygonList = async () => {
+    console.log("loadSitePolygonList", record.uuid);
     const res = await fetchGetV2AdminSitePolygonUUID({
       pathParams: {
         uuid: record.uuid
       }
     });
+    const _polygonList = (res as { data: SitePolygonResponse[] }).data;
+    console.log("data", res);
     setPolygonList(
-      (res as { data: SitePolygonResponse[] }).data.map((item: any) => ({
+      _polygonList.map((item: any) => ({
         title: item?.poly_name,
+        uuid: item?.uuid,
         name: item?.poly_name,
         value: item?.uuid,
         meta: item?.status,
         status: item?.status
       }))
     );
-    if (polygonList.length > 0) {
-      if (selectedPolygon.title === undefined || !selectedPolygon) {
+    if (_polygonList.length > 0) {
+      if (selectedPolygon?.title === undefined || !selectedPolygon) {
         setSelectedPolygon({
-          title: (res as { data: any[] }).data[0]?.poly_name,
-          name: (res as { data: any[] }).data[0]?.poly_name,
-          value: (res as { data: any[] }).data[0]?.uuid,
-          meta: (res as { data: any[] }).data[0]?.status,
-          status: (res as { data: any[] }).data[0]?.status
+          title: _polygonList[0]?.poly_name,
+          uuid: _polygonList[0]?.uuid,
+          name: _polygonList[0]?.poly_name,
+          value: _polygonList[0]?.uuid,
+          meta: _polygonList[0]?.status,
+          status: _polygonList[0]?.status
         });
       } else {
-        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon.value);
+        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.value);
         setSelectedPolygon({
           title: currentSelectedPolygon?.poly_name,
+          uuid: currentSelectedPolygon?.uuid,
+          name: currentSelectedPolygon?.poly_name,
           value: currentSelectedPolygon?.value,
-          meta: currentSelectedPolygon?.status
+          meta: currentSelectedPolygon?.status,
+          status: currentSelectedPolygon?.status
         });
       }
+    } else {
+      setSelectedPolygon(null);
     }
   };
 
