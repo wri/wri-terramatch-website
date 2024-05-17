@@ -25,10 +25,15 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const formattedDate = (dateObject: Date) => {
-    return `${dateObject.toLocaleTimeString("en-US", {
+    const localDate = new Date(dateObject.getTime() - dateObject.getTimezoneOffset() * 60000);
+    return `${localDate.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit"
-    })} on ${dateObject.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })}`;
+    })} on ${localDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric"
+    })}`;
   };
 
   useEffect(() => {
@@ -55,7 +60,7 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
         <Then>
           <div className="mb-1 flex items-center">
             <Text variant="text-14-bold" className="text-darkCustom">
-              {`${failedValidationCounter} out of 14`} &nbsp;
+              {`${failedValidationCounter} out of ${menu.length}`} &nbsp;
             </Text>
             <Text variant="text-14" className="text-darkCustom">
               criteria are not met
