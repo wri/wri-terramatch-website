@@ -74,12 +74,11 @@ const menuProjectOptions = [
 ];
 
 export interface StatusProps {
-  titleStatus?: "Site" | "Project" | "Polygon";
-  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info" | "Planting in Progress";
+  titleStatus: "Site" | "Project" | "Polygon";
   mutate?: any;
   record?: any;
   refresh?: any;
-  name?: any;
+  name: any;
   refetchPolygon?: any;
   setSelectedPolygon?: any;
 }
@@ -102,29 +101,18 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({
-  titleStatus = "Polygon",
-  status,
-  mutate,
-  refresh,
-  name,
-  record,
-  setSelectedPolygon
-}: StatusProps) => {
-  const ctx = useShowContext();
-  const rec: any = ctx.record as any;
-  console.log("rec", rec);
-  console.log("ctx.resource", ctx.resource);
+const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record, setSelectedPolygon }: StatusProps) => {
+  const { refetch: reloadEntity } = useShowContext();
 
   const { openModal, closeModal } = useModalContext();
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name ?? "Monitoring Begins"}</b>?
+      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name ?? "Malanga"}</b>?
+      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
 
@@ -155,7 +143,7 @@ const StatusDisplay = ({
             console.error(e);
           } finally {
             refresh();
-            ctx.refetch();
+            reloadEntity();
             closeModal;
           }
         }}
@@ -191,7 +179,7 @@ const StatusDisplay = ({
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-full items-center gap-2">
         <Text variant="text-16-bold">{titleStatus === "Polygon" ? "" : `${titleStatus} `}Status:</Text>
-        <Status status={status} className="py-[2px] px-[6px]"></Status>
+        <Status status={record.status} className="py-[2px] px-[6px]"></Status>
       </div>
       <div className="flex w-full items-center gap-4">
         <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>

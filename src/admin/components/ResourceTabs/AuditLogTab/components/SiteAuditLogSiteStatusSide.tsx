@@ -13,17 +13,9 @@ const SiteAuditLogSiteStatusSide = ({
   auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AdminSitesUUID;
-  const status = record?.readable_status === "Unknown" ? "Planting in progress" : record?.readable_status;
   return (
     <div className="flex flex-col gap-6">
-      <StatusDisplay
-        titleStatus="Site"
-        name={record.name}
-        status={status}
-        refresh={refresh}
-        record={record}
-        mutate={mutate}
-      />
+      <StatusDisplay titleStatus="Site" name={record.name} refresh={refresh} record={record} mutate={mutate} />
       <ComentarySection record={record} auditLogData={auditLogData} mutate={mutate} refresh={refresh} />
     </div>
   );

@@ -65,16 +65,20 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     setPolygonList(
       (res as { data: SitePolygonResponse[] }).data.map((item: any) => ({
         title: item?.poly_name,
+        name: item?.poly_name,
         value: item?.uuid,
-        meta: item?.status
+        meta: item?.status,
+        status: item?.status
       }))
     );
     if (polygonList.length > 0) {
       if (selectedPolygon.title === undefined || !selectedPolygon) {
         setSelectedPolygon({
           title: (res as { data: any[] }).data[0]?.poly_name,
+          name: (res as { data: any[] }).data[0]?.poly_name,
           value: (res as { data: any[] }).data[0]?.uuid,
-          meta: (res as { data: any[] }).data[0]?.status
+          meta: (res as { data: any[] }).data[0]?.status,
+          status: (res as { data: any[] }).data[0]?.status
         });
       } else {
         const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon.value);

@@ -20,9 +20,6 @@ const SiteAuditLogPolygonStatusSide = ({
   auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AdminSitePolygonUUID;
-  // const selectTitle = selectedPolygon?.title
-  //   ? selectedPolygon?.title
-  //   : polygonList?.find((item: any) => item.value == selectedPolygon.value || item.value == selectedPolygon[0])?.title;
 
   return (
     <div className="flex flex-col gap-6">
@@ -44,7 +41,6 @@ const SiteAuditLogPolygonStatusSide = ({
         name={selectedPolygon?.title}
         refresh={refresh}
         mutate={mutate}
-        status={selectedPolygon?.meta}
         record={record}
         setSelectedPolygon={setSelectedPolygon}
       />

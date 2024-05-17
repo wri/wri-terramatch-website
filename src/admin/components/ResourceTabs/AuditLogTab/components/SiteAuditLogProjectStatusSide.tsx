@@ -13,17 +13,9 @@ const SiteAuditLogProjectStatusSide = ({
   auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AdminProjectsUUID;
-  console.log("record", record);
   return (
     <div className="flex flex-col gap-6">
-      <StatusDisplay
-        titleStatus="Project"
-        status={record?.status}
-        record={record}
-        name={record?.name}
-        mutate={mutate}
-        refresh={refresh}
-      />
+      <StatusDisplay titleStatus="Project" record={record} name={record?.name} mutate={mutate} refresh={refresh} />
       <ComentarySection record={record} auditLogData={auditLogData} mutate={mutate} refresh={refresh} />
     </div>
   );
