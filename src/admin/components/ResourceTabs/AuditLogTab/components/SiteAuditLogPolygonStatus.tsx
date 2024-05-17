@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
@@ -39,11 +39,11 @@ function getValueForStatus(status: string): number {
   }
 }
 
-const SiteAuditLogPolygonStatus = (props: SiteAuditLogPolygonStatusProps) => {
+const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record, auditLogData, refresh }) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  const recentRequest = props?.auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
+  const recentRequest = auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
   const mutate = fetchPutV2AuditStatusId;
   const deactivateRecentRequest = async () => {
     await mutate({
@@ -54,7 +54,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogPolygonStatusProps) => {
         is_active: false
       }
     });
-    props.refresh();
+    refresh();
   };
 
   return (
@@ -82,13 +82,13 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogPolygonStatusProps) => {
         <Text variant="text-16-bold">Polygon Status</Text>
         <StepProgressbar
           color="secondary"
-          value={getValueForStatus(props.record?.meta)}
+          value={getValueForStatus(record?.meta)}
           labels={polygonStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[44%]"
         />
       </div>
-      <Text variant="text-16-bold">History for {props.record?.title}</Text>
+      <Text variant="text-16-bold">History for {record?.title}</Text>
       <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Date and Time
@@ -107,7 +107,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogPolygonStatusProps) => {
         </Text>
       </div>
       <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
-        {props.auditLogData?.data
+        {auditLogData?.data
           .filter((item: any) => item.type == "status")
           .map((item: AuditLogItem, index: number) => (
             <Fragment key={index}>
@@ -118,7 +118,7 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogPolygonStatusProps) => {
                 {item.created_by}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {props?.record?.title || "-"}
+                {record?.title || "-"}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {formattedText(item.status)}

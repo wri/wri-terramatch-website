@@ -101,7 +101,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             <Stack gap={4} className="pt-9 pl-8">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} refresh={refetch} />
+                <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
                 <SiteAuditLogSiteStatus record={record} auditLogData={auditLogData} refresh={refetch} />

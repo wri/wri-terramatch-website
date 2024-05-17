@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
@@ -36,11 +36,11 @@ function getValueForStatus(status: string): number {
   }
 }
 
-const SiteAuditLogSiteStatus = (props: SiteAuditLogSiteStatusProps) => {
+const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({ record, auditLogData, refresh }) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  const recentRequest = props?.auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
+  const recentRequest = auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
 
   const mutate = fetchPutV2AuditStatusId;
   const deactivateRecentRequest = async () => {
@@ -52,7 +52,7 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogSiteStatusProps) => {
         is_active: false
       }
     });
-    props.refresh();
+    refresh();
   };
   return (
     <div className="flex flex-col gap-6">
@@ -79,13 +79,13 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogSiteStatusProps) => {
         <Text variant="text-16-bold">Site Status</Text>
         <StepProgressbar
           color="secondary"
-          value={getValueForStatus(props.record.status)}
+          value={getValueForStatus(record.status)}
           labels={siteStatusLabels}
           classNameLabels="min-w-[111px]"
           className="w-[80%]"
         />
       </div>
-      <Text variant="text-16-bold">History for {props.record.name}</Text>
+      <Text variant="text-16-bold">History for {record.name}</Text>
       <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
           Date and Time
@@ -104,7 +104,7 @@ const SiteAuditLogSiteStatus = (props: SiteAuditLogSiteStatusProps) => {
         </Text>
       </div>
       <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
-        {props.auditLogData?.data
+        {auditLogData?.data
           ?.filter((item: any) => item.type == "status")
           .map((item: any, index: number) => (
             <Fragment key={index}>
