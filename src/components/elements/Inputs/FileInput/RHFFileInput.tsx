@@ -133,7 +133,7 @@ const RHFFileInput = ({
     const maxSize = fileInputProps.maxFileSize;
 
     if (maxSize && file.size > maxSize * 1024 * 1024) {
-      const error = getErrorMessages(t, "FILE_SIZE", { max: maxSize });
+      const error = getErrorMessages(t, "UPLOAD_ERROR", { max: maxSize });
       formHook?.setError(fileInputProps.name, error);
 
       addFileToValue({

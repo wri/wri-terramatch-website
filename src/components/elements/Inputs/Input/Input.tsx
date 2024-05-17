@@ -98,7 +98,6 @@ const Input = forwardRef(
         onClick: () => clearInput()
       };
     }
-
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
 

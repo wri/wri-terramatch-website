@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useEffect } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
@@ -30,6 +30,10 @@ export const FormStep = ({
   className,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
+  useEffect(() => {
+    formHook.clearErrors();
+  }, [fields, formHook, title]);
+
   return (
     <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-15", className)}>
       <div className="flex items-center justify-between">
