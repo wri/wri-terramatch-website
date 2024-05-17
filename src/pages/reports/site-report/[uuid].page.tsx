@@ -27,7 +27,12 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
-import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports, useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
+import {
+  useGetV2ENTITYUUID,
+  useGetV2SeedingsENTITYUUID,
+  useGetV2TasksUUIDReports,
+  useGetV2WorkdaysENTITYUUID
+} from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useDate } from "@/hooks/useDate";
@@ -79,6 +84,16 @@ const SiteReportDetailPage = () => {
     "Site Workdays"
   );
 
+  const { data: treeSpecies } = useGetV2SeedingsENTITYUUID(
+    {
+      pathParams: { entity: "site-report", uuid: siteReportUUID }
+    },
+    {
+      enabled: !!siteReportUUID,
+      keepPreviousData: true
+    }
+  );
+  const totalSeedlings = treeSpecies?.data?.reduce((acc, item) => acc + (item.amount || 0), 0);
   return (
     <LoadingContainer loading={isLoading}>
       <Head>
@@ -160,9 +175,15 @@ const SiteReportDetailPage = () => {
                     <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                     <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                   </When>
+                  <When condition={isPPC}>
+                    <TextField label={t("Total Trees Planted")} value={siteReport?.total_trees_planted_count} />
+                  </When>
                   <GenericField label={t("Trees Planted")}>
                     <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} />
                   </GenericField>
+                  <When condition={isPPC}>
+                    <TextField label={t("Seedlings Grown")} value={totalSeedlings?.toString() || ""} />
+                  </When>
                   <GenericField label={t("Direct Seeding")}>
                     <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
                   </GenericField>
