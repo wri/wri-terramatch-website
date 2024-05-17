@@ -28,8 +28,8 @@ const SiteAuditLogPolygonStatusSide = ({
         labelVariant="text-16-bold"
         labelClassName="capitalize"
         optionsClassName="max-w-full"
-        defaultValue={[selectedPolygon]}
-        placeholder={selectedPolygon?.title ?? "Select Polygon"}
+        value={[selectedPolygon?.value ? selectedPolygon.value : ""]}
+        placeholder={"Select Polygon"}
         options={polygonList!}
         onChange={e => {
           console.log("onChange", e);
