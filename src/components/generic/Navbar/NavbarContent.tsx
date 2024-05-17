@@ -50,7 +50,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
   return (
     <div {...rest}>
       <div className="absolute top-4 left-[50%] translate-x-[-50%]">
-        <LanguagesDropdown onChange={changeLanguageHandler} className="block lg:hidden" />
+        <LanguagesDropdown onChange={changeLanguageHandler} className="block sm:hidden" />
       </div>
       <List
         as={Fragment}
@@ -60,7 +60,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
           <NavbarItem
             href={item.url}
             active={router.asPath === item.url || router.asPath === `${item.url}#`}
-            className={classNames("lg:mr-2", item.tourTarget)}
+            className={classNames("text-darkCustom sm:mr-2", item.tourTarget)}
             onClick={handleClose}
             disabled={linksDisabled}
           >
@@ -69,7 +69,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
         )}
       />
       <When condition={navItems.length > 0}>
-        <div className="hidden h-4 w-[1px] bg-neutral-500 lg:mx-2 lg:block" />
+        <div className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block" />
       </When>
       <If condition={isLoggedIn}>
         <Then>
@@ -83,7 +83,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
           </NavbarItem>
         </Else>
       </If>
-      <LanguagesDropdown onChange={changeLanguageHandler} className="hidden lg:block" />
+      <LanguagesDropdown onChange={changeLanguageHandler} className="hidden sm:block" />
     </div>
   );
 };
