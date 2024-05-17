@@ -47,7 +47,7 @@ const MapPolygonPanelItem = ({
       <ModalWithLogo
         title="Blue Forest"
         onCLose={closeModal}
-        status="Under Review"
+        status="under-review"
         toogleButton
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Close"

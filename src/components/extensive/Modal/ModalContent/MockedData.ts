@@ -1,19 +1,19 @@
 interface IDataSubmitPolygons {
   id: string;
   name: string;
-  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info";
+  status: "draft" | "submitted" | "approved" | "under-review" | "needs-more-information";
   isSubmitted: boolean;
 }
 
 export const dataSubmitPolygons: IDataSubmitPolygons[] = [
-  { id: "1", name: "Aerobic-agroforestry", status: "Approved", isSubmitted: true },
-  { id: "2", name: "Arcos", status: "Needs More Info", isSubmitted: false },
-  { id: "3", name: "Bccp", status: "Submitted", isSubmitted: false },
-  { id: "4", name: "Blue-forest", status: "Approved", isSubmitted: true },
-  { id: "5", name: "Durrell", status: "Submitted", isSubmitted: false },
-  { id: "6", name: "Ecofix", status: "Submitted", isSubmitted: true },
-  { id: "7", name: "Env-coffee-forest-forum", status: "Submitted", isSubmitted: false },
-  { id: "8", name: "Env-found-afr-sl", status: "Needs More Info", isSubmitted: true }
+  { id: "1", name: "Aerobic-agroforestry", status: "approved", isSubmitted: true },
+  { id: "2", name: "Arcos", status: "needs-more-information", isSubmitted: false },
+  { id: "3", name: "Bccp", status: "submitted", isSubmitted: false },
+  { id: "4", name: "Blue-forest", status: "approved", isSubmitted: true },
+  { id: "5", name: "Durrell", status: "submitted", isSubmitted: false },
+  { id: "6", name: "Ecofix", status: "submitted", isSubmitted: true },
+  { id: "7", name: "Env-coffee-forest-forum", status: "submitted", isSubmitted: false },
+  { id: "8", name: "Env-found-afr-sl", status: "needs-more-information", isSubmitted: true }
 ];
 
 export const dataImageGallery = [
