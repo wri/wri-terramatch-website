@@ -3,7 +3,6 @@ import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
-import Button from "@/components/elements/Button/Button";
 import {
   fetchGetV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
@@ -12,6 +11,7 @@ import {
 import { SitePolygonResponse } from "@/generated/apiSchemas";
 import { Entity } from "@/types/common";
 
+import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
 import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
 import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
@@ -24,7 +24,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: Entity["entityName"];
 }
 
-const ButtonStates = {
+export const ButtonStates = {
   PROJECTS: 0,
   SITE: 1,
   POLYGON: 2
@@ -99,26 +99,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
             <Stack gap={4} className="pt-9 pl-8">
-              <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
-                <Button
-                  variant={`${buttonToogle === ButtonStates.PROJECTS ? "white-toggle" : "transparent-toggle"}`}
-                  onClick={() => setButtonToogle(ButtonStates.PROJECTS)}
-                >
-                  Project Status
-                </Button>
-                <Button
-                  variant={`${buttonToogle === ButtonStates.SITE ? "white-toggle" : "transparent-toggle"}`}
-                  onClick={() => setButtonToogle(ButtonStates.SITE)}
-                >
-                  Site Status
-                </Button>
-                <Button
-                  variant={`${buttonToogle === ButtonStates.POLYGON ? "white-toggle" : "transparent-toggle"}`}
-                  onClick={() => setButtonToogle(ButtonStates.POLYGON)}
-                >
-                  Polygon Status
-                </Button>
-              </div>
+              <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
                 <SiteAuditLogProjectStatus
                   resource={resource}
