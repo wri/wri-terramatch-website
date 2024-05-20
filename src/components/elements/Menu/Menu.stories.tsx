@@ -10,20 +10,12 @@ import {
   MENU_VARIANT_BORDER_B_ORANGE
 } from "./MenuVariant";
 const meta: Meta<typeof Menu> = {
-  /* :point_down: The title prop is optional.
-   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-   * to learn how to generate automatic titles
-   */
   title: "Components/Elements/Menu",
   component: Menu
 };
 export default meta;
 type Story = StoryObj<typeof Menu>;
-/*
- *:point_down: Render functions are a framework specific feature to allow you control on how the component renders.
- * See https://storybook.js.org/docs/react/api/csf
- * to learn how to use render functions.
- */
+
 const itemsMenu = [
   { id: "1", render: () => <div>Test1</div>, onClick: () => {} },
   { id: "2", render: () => <div>Test2</div>, onClick: () => {} },

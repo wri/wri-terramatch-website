@@ -30,7 +30,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   selectedOption,
   menu
 }) => {
-  const MenuOption: MenuItemProps[] = options || [
+  const MenuOption: MenuItemProps[] = options ?? [
     {
       id: "1",
       render: () => (

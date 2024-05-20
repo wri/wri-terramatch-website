@@ -150,7 +150,7 @@ const Menu = (props: MenuProps) => {
       [MENU_PLACEMENT_LEFT_HALF_TOP]: "leftHalfTop"
     };
 
-    const place = placeMap[placement] || "bottom";
+    const place = placeMap[placement] ?? "bottom";
     let styles;
     switch (place) {
       case "horizontalTop":
@@ -169,7 +169,7 @@ const Menu = (props: MenuProps) => {
 
     return styles;
   };
-  // console.log("ID:", (children as any)?.props?.row?.original?.id?.toString());
+
   return (
     <div
       ref={menuContainerRef}
@@ -219,9 +219,6 @@ const Menu = (props: MenuProps) => {
                 }
                 if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
               }}
-              // className={classNames({
-              //   "bg-blue-200": item?.country_slug === selectedOption || item?.data?.label === selectedOption
-              // })}
             />
           ))}
         </div>
