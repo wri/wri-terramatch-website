@@ -10,7 +10,7 @@ export interface ComentaryProps {
   lastName: string;
   date: string;
   comentary: string;
-  status?: string;
+  status?: "Submitted" | "Draft";
   files?: ComentaryFilesProps[];
 }
 
@@ -21,7 +21,6 @@ const statusStyle = {
 
 const Comentary = (props: ComentaryProps) => {
   const { name, lastName, date, comentary, files = [], status } = props;
-  const statusKey = status as keyof typeof statusStyle;
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between">
@@ -44,10 +43,10 @@ const Comentary = (props: ComentaryProps) => {
         <When condition={status}>
           <div
             className={`flex h-fit w-[92px] items-center justify-center rounded-xl py-2 ${
-              status ? statusStyle[statusKey].container : ""
+              status ? statusStyle[status].container : ""
             }`}
           >
-            <Text variant="text-12-semibold" className={`${status ? statusStyle[statusKey].textColor : ""}`}>
+            <Text variant="text-12-semibold" className={`${status ? statusStyle[status].textColor : ""}`}>
               {status}
             </Text>
           </div>

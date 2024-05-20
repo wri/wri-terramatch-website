@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -13,6 +14,7 @@ export interface ComentaryBoxProps {
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
+  const t = useT();
 
   return (
     <div className="flex flex-col gap-4">
@@ -45,7 +47,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
       <When condition={!buttonSendOnBox}>
         <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}>
           <Text variant="text-12-bold" className="text-white">
-            SEND
+            {t("SEND")}
           </Text>
         </Button>
       </When>
