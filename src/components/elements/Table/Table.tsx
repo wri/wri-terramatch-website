@@ -249,11 +249,12 @@ function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData,
 }
 
 function LoadingCell() {
+  const t = useT();
   return (
     <tr>
       <td align="center" colSpan={100} className="px-6 py-4">
         <Lottie animationData={SpinnerLottie} className="mb-8 h-8 w-8" />
-        <Text variant="text-normal-subtitle-400">Loading results, load times might increase with more data</Text>
+        <Text variant="text-normal-subtitle-400">{t("Loading results, load times might increase with more data")}</Text>
       </td>
     </tr>
   );
