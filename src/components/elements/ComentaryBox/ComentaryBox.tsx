@@ -23,6 +23,40 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
   const { mutate: upload } = usePostV2AuditStatus();
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const validFileTypes = [
+    "application/pdf",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/jpeg",
+    "image/png",
+    "image/tiff"
+  ];
+  const maxFileSize = 10 * 1024 * 1024;
+  const maxFiles = 5;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      if (files.length >= maxFiles) {
+        setError("You can upload a maximum of 5 files.");
+        return;
+      }
+      if (!validFileTypes.includes(file.type)) {
+        setError("Invalid file type. Only PDF, XLS, DOC, XLSX, DOCX, JPG, PNG, and TIFF are allowed.");
+        return;
+      }
+      if (file.size > maxFileSize) {
+        setError("File size must be less than 10MB.");
+        return;
+      }
+      setFiles(prevFiles => [...prevFiles, file]);
+      setError("");
+    }
+  };
   const submitComment = () => {
     const body = new FormData();
     body.append("entity_uuid", record?.uuid);
@@ -42,6 +76,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
       {
         onSuccess: () => {
           setComment("");
+          setError("");
           setFiles([]);
           props.attachmentRefetch();
           refresh();
@@ -75,8 +110,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
             className="absolute z-[-1] h-[0.1px] w-[0.1px] overflow-hidden opacity-0"
             onChange={e => {
               if (e.target.files) {
-                const file = e.target.files[0];
-                setFiles(prevFiles => [...prevFiles, file]);
+                handleFileChange(e);
               }
             }}
           />
@@ -86,6 +120,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           <Button variant="text" iconProps={{ name: IconNames.SEND, className: "h-4 w-4 text-darkCustom" }} />
         </When>
       </div>
+      {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
         <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }} onClick={submitComment}>
           <Text variant="text-12-bold" className="text-white">
