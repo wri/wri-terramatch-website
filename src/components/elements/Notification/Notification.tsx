@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo } from "react";
 import { When } from "react-if";
@@ -14,6 +15,7 @@ export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> 
 
 const Notification: FC<NotificationProps> = props => {
   const { type, message, className, title, ...rest } = props;
+  const t = useT();
   const notificationClasses = useMemo(() => {
     const baseClasses =
       "flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)]";
@@ -55,10 +57,10 @@ const Notification: FC<NotificationProps> = props => {
       </div>
       <div>
         <Text variant="text-bold-body-300" className={TextClasses}>
-          {title}
+          {t(title)}
         </Text>
         <Text variant="text-body-200" className="mt-2 !font-primary">
-          {message}
+          {t(message)}
         </Text>
       </div>
     </div>
