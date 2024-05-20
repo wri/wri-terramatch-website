@@ -16,6 +16,7 @@ import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./Fil
 
 export interface FilePreviewCardProps {
   file: Partial<UploadedFile>;
+  fileStatus?: boolean;
   className?: string;
   variant?: FilePreviewCardVariant;
   showPrivateCheckbox?: boolean;
@@ -25,6 +26,7 @@ export interface FilePreviewCardProps {
 
 const FilePreviewCard = ({
   file,
+  fileStatus = true,
   className,
   showPrivateCheckbox,
   onDelete,
@@ -36,7 +38,6 @@ const FilePreviewCard = ({
 
     onPrivateChange?.(file, checked);
   };
-  const image = { isVerified: true };
 
   return (
     <div className={tw(variant.fileWrapper, className)}>
@@ -82,19 +83,19 @@ const FilePreviewCard = ({
             <When condition={variant.type === "image"}>
               <div
                 className={classNames("flex items-center justify-center rounded border py-2", {
-                  "border-blue": image.isVerified,
-                  "border-red": !image.isVerified,
+                  "border-blue": fileStatus,
+                  "border-red": !fileStatus,
                   "w-[146px]": variant.typeModal === "UploadImage"
                 })}
               >
                 <Text
                   variant="text-12-bold"
                   className={classNames("text-center", {
-                    "text-blue": image.isVerified,
-                    "text-red": !image.isVerified
+                    "text-blue": fileStatus,
+                    "text-red": !fileStatus
                   })}
                 >
-                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                  {fileStatus ? "GeoTagged Verified" : "Not Verified"}
                 </Text>
               </div>
             </When>
@@ -132,7 +133,7 @@ const Uploading = ({ title, file, variant }: UploadingProps) => {
     <FileCardContent
       title={title}
       variant={variant.fileCardContentVariant}
-      subtitle={`${format(file.size)} • ${t({ subtitle })}`}
+      subtitle={`${format(file.size)} • ${t(subtitle)}`}
       thumbnailClassName="fill-primary-200"
       thumbnailContainerClassName="bg-neutral-150"
     />
@@ -198,7 +199,7 @@ const Failed = ({ title, errorMessage: errorState, variant }: FailedContentProps
     <FileCardContent
       title={title}
       variant={variant.fileCardContentVariant}
-      errorMessage={`${errorState} • ${t({ errorMessage })}`}
+      errorMessage={`${errorState} • ${t(errorMessage)}`}
       thumbnailClassName="fill-primary-200"
       thumbnailContainerClassName="bg-neutral-150"
     />

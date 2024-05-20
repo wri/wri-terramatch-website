@@ -1,9 +1,9 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { forwardRef, useId } from "react";
 import { FieldError, UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
-import { twMerge } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
 
@@ -25,6 +25,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const id = useId();
 
     const labelIsComponent = label && typeof label !== "string";
+    const t = useT();
 
     return (
       <div
@@ -48,7 +49,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                   variant="text-body-600"
                   className={`max-w-[365px] ${textClassName}`}
                   containHtml
-                >{`${label} ${required ? "*" : ""}`}</Text>
+                >
+                  {t(`${label} ${required ? "*" : ""}`)}
+                </Text>
               </Else>
             </If>
           </label>
@@ -63,7 +66,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           required={required}
           disabled={disabled}
           type="checkbox"
-          className={twMerge(
+          className={tw(
             classNames(
               "h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5",
               { "absolute opacity-0": labelIsComponent }
@@ -73,7 +76,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         />
         <When condition={!!error}>
           <Text variant="text-body-500" className="absolute right-0 -bottom-6 w-full text-right text-error">
-            {error?.message ?? ""}
+            {t(error?.message ?? "")}
           </Text>
         </When>
       </div>

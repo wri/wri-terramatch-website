@@ -144,7 +144,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       "Needs More Info": "bg-tertiary-600"
     };
 
-    return colorMap[option] || "";
+    return colorMap[option] ?? "";
   };
 
   return (
@@ -177,7 +177,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               )}
             >
               <div className="flex items-center gap-2">
-                <When condition={options && options.length && options.length > 0 && options[0].meta}>
+                <When condition={options?.[0]?.meta != null}>
                   <div
                     className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
                       statusColor(options, toArray<any>(value)) ?? ""
@@ -185,7 +185,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                   />
                 </When>
                 <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">
-                  {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
+                  {formatOptionsList(options, toArray<any>(value)) ?? props.placeholder}
                 </Text>
               </div>
 

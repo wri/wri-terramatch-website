@@ -55,7 +55,7 @@ const Input = forwardRef(
       className,
       iconButtonProps,
       hideErrorMessage,
-      customVariant,
+      customVariant = {},
       labelClassName,
       descriptionClassName,
       labelVariant,
@@ -79,7 +79,7 @@ const Input = forwardRef(
       ...inputProps
     } = inputWrapperProps;
     const id = useId();
-    const customVariantClasses = customVariant ? customVariant : {};
+    const customVariantClasses = customVariant;
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,

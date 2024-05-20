@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { isNumber } from "lodash";
 import { HTMLProps } from "react";
 import { When } from "react-if";
 
@@ -12,22 +13,30 @@ export interface InputLabelProps extends HTMLProps<HTMLLabelElement> {
   children?: string | number;
   feedbackRequired?: boolean;
   labelVariant?: TextVariants;
-  sufixLabelView?: boolean;
+  suffixLabelView?: boolean;
 }
 
 const InputLabel = (props: InputLabelProps) => {
   const t = useT();
-  const { feedbackRequired, required, children, className, labelVariant, sufixLabelView = true, ...labelProps } = props;
+  const {
+    feedbackRequired,
+    required,
+    children,
+    className,
+    labelVariant,
+    suffixLabelView = true,
+    ...labelProps
+  } = props;
 
   return (
     <When condition={!!props.children}>
       <Text<HTMLLabelElement>
         {...labelProps}
         as="label"
-        variant={labelVariant || "text-bold-body-300"}
+        variant={labelVariant ?? "text-bold-body-300"}
         className={classNames("mr-2 inline uppercase", className)}
       >
-        {`${children} ${required && sufixLabelView ? "*" : ""}`}
+        {`${isNumber(children) ? children : t(children)} ${required && suffixLabelView ? "*" : ""}`}
       </Text>
 
       <When condition={feedbackRequired}>

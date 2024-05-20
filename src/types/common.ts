@@ -188,6 +188,7 @@ export type UploadedFile = {
   created_at: string;
   collection_name: string;
   is_public?: boolean;
+  status?: boolean;
 
   //Client side data
   rawFile?: File;

@@ -52,7 +52,6 @@ const FileInput = (props: FileInputProps) => {
 
   const ref = useRef<HTMLInputElement>(null);
 
-  // eslint-disable-next-line no-unused-vars
   const { variant = VARIANT_FILE_INPUT_DEFAULT } = props;
 
   const accept = props.accept?.join(",");
@@ -129,9 +128,9 @@ const FileInput = (props: FileInputProps) => {
             <div className="m-auto flex w-fit items-center justify-center gap-3">
               <FileCardContent
                 title={labelText}
-                subtitle={`${t("Drag and drop or")} <span className="text-primary underline">${t(
-                  "browse your device"
-                )}</span>`}
+                subtitle={t("Drag and drop or {browse}", {
+                  browse: `<span className="text-primary underline">${t("browse your device")}</span>`
+                })}
                 thumbnailClassName="fill-primary"
                 thumbnailContainerClassName="bg-primary-100"
               />
@@ -141,13 +140,13 @@ const FileInput = (props: FileInputProps) => {
             <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
             <div className="flex flex-col">
               <Text variant="text-12-bold" className="text-center text-primary">
-                Click to upload
+                {t("Click to upload")}
               </Text>
               <Text variant="text-12-light" className="text-center">
-                or
+                {t("or")}
               </Text>
               <Text variant="text-12-light" className="max-w-[210px] text-center">
-                {props.descriptionInput}
+                {t(props.descriptionInput)}
               </Text>
             </div>
           </When>
@@ -157,7 +156,7 @@ const FileInput = (props: FileInputProps) => {
         <div className={variant.listPreviewDescription}>
           {props.descriptionList}
           <Text variant="text-12-bold" className="mt-9 pr-5 text-primary">
-            {props.descriptionListStatus}
+            {t(props.descriptionListStatus)}
           </Text>
         </div>
       </When>
@@ -169,6 +168,7 @@ const FileInput = (props: FileInputProps) => {
         render={item => (
           <FilePreviewCard
             variant={variant.filePreviewVariant}
+            fileStatus={item.status}
             file={item}
             onDelete={file => props.onDelete?.(file)}
             onPrivateChange={props.onPrivateChange}

@@ -25,7 +25,7 @@ const Status = (props: StatusProps) => {
       "Planting in Progress": "text-blue"
     };
 
-    return colorMap[status] || "";
+    return colorMap[status] ?? "";
   };
 
   const getColorStatusBg = (status: string): string => {
@@ -40,7 +40,7 @@ const Status = (props: StatusProps) => {
       "Planting in Progress": "bg-blue-200"
     };
 
-    return colorMap[status] || "";
+    return colorMap[status] ?? "";
   };
 
   return (
