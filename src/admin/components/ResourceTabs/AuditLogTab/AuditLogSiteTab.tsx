@@ -86,7 +86,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           status: _polygonList[0]?.status
         });
       } else {
-        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.value);
+        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.uuid);
         setSelectedPolygon({
           title: currentSelectedPolygon?.poly_name,
           uuid: currentSelectedPolygon?.uuid,

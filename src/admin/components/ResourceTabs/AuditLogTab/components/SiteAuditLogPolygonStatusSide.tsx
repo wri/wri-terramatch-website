@@ -34,12 +34,12 @@ const SiteAuditLogPolygonStatusSide = ({
         labelVariant="text-16-bold"
         labelClassName="capitalize"
         optionsClassName="max-w-full"
-        value={[selectedPolygon?.value ? selectedPolygon.value : "Unnamed Polygon"]}
+        value={[selectedPolygon?.uuid]}
         placeholder={"Select Polygon"}
         options={unnamedPolygons!}
         onChange={e => {
           console.log("onChange", e);
-          setSelectedPolygon(polygonList?.find(item => item.value === e[0]));
+          setSelectedPolygon(polygonList?.find(item => item.uuid === e[0]));
         }}
       />
       <StatusDisplay
@@ -51,7 +51,7 @@ const SiteAuditLogPolygonStatusSide = ({
         setSelectedPolygon={setSelectedPolygon}
       />
       <ComentarySection
-        record={{ uuid: record?.value, status: record?.meta, title: record?.title }}
+        record={{ uuid: record?.uuid, status: record?.meta, title: record?.title }}
         entity={"SitePolygon"}
         auditLogData={auditLogData}
         mutate={mutateComment}

@@ -34,14 +34,20 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
     files.forEach((element: File, index: number) => {
       body.append(`file[${index}]`, element);
     });
-    upload?.({
-      //@ts-ignore swagger issue
-      body
-    });
-    setComment("");
-    setFiles([]);
-    props.attachmentRefetch();
-    refresh();
+    upload?.(
+      {
+        //@ts-ignore swagger issue
+        body
+      },
+      {
+        onSuccess: () => {
+          setComment("");
+          setFiles([]);
+          props.attachmentRefetch();
+          refresh();
+        }
+      }
+    );
   };
 
   return (
