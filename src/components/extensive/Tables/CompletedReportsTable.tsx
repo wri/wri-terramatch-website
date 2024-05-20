@@ -67,7 +67,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
 
             return (
               <Text variant="text-14-light" className="whitespace-normal">
-                {report_title || title}
+                {report_title ?? title}
               </Text>
             );
           }

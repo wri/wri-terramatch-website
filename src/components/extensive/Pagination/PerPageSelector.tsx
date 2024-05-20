@@ -32,7 +32,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
           <div className="flex items-center gap-3">
             <Listbox.Button as="div" className="flex h-10 w-20 items-center justify-center rounded-md shadow">
               <div className="flex h-full flex-1 items-center justify-center">
-                <Text variant={props.variantText || "text-bold-subtitle-500"} className="w-fit uppercase line-clamp-1">
+                <Text variant={props.variantText ?? "text-bold-subtitle-500"} className="w-fit uppercase line-clamp-1">
                   {value}
                 </Text>
               </div>
@@ -45,7 +45,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
               </div>
             </Listbox.Button>
 
-            <Listbox.Label as={Text} variant={props.variantText || "text-bold-subtitle-500"}>
+            <Listbox.Label as={Text} variant={props.variantText ?? "text-bold-subtitle-500"}>
               {props.label}
             </Listbox.Label>
           </div>
@@ -70,7 +70,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                     as={Text}
                     key={option}
                     value={option}
-                    variant={props.variantText || "text-14"}
+                    variant={props.variantText ?? "text-14"}
                     className={classNames(
                       "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
                       isSelected ? "!font-bold" : "!font-light"
