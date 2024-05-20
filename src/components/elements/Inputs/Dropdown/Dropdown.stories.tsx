@@ -2,8 +2,37 @@ import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 import { OptionValue } from "@/types/common";
+import { toArray } from "@/utils/array";
 
 import Component, { DropdownProps as Props } from "./Dropdown";
+
+const dropdownPolygonOptions = [
+  {
+    title: "Aerobic Agroforestry",
+    value: "1",
+    meta: "Approved"
+  },
+  {
+    title: "Mexico_FONCET_ANP_FRAILESCAN",
+    value: "2",
+    meta: "Submitted"
+  },
+  {
+    title: "Philippines_CI_Philippines",
+    value: "3",
+    meta: "Submitted"
+  },
+  {
+    title: "Portugal_ReForest_Action_(Proenca-a-Nova)",
+    value: "4",
+    meta: "Needs More Info"
+  },
+  {
+    title: "Spain_ReForest_Action_(Palencia)",
+    value: "5",
+    meta: "Approved"
+  }
+];
 
 const meta: Meta<typeof Component> = {
   title: "Components/Elements/Inputs/Dropdown",
@@ -97,5 +126,18 @@ export const MultiSelectWithOtherOption: Story = {
     ...SingleSelect.args,
     multiSelect: true,
     hasOtherOptions: true
+  }
+};
+
+export const SingleSelectWithMetaData: Story = {
+  args: {
+    label: "Select Polygon",
+    labelVariant: "text-16-bold",
+    labelClassName: "capitalize",
+    optionsClassName: "max-w-full",
+    defaultValue: toArray(dropdownPolygonOptions[0].value),
+    placeholder: "Select Polygon",
+    options: dropdownPolygonOptions,
+    onChange: () => {}
   }
 };
