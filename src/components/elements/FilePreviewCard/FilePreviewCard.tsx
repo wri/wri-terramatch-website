@@ -23,15 +23,15 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
     <div className={classNames("flex items-center justify-between rounded-xl bg-white p-4 pr-6 shadow", className)}>
       <div className="flex flex-1 items-center justify-center gap-2">
         <div
-          className="flex h-16 w-16 items-center justify-center rounded-lg border border-neutral-400 border-opacity-20 bg-cover bg-no-repeat"
+          className="flex items-center justify-center rounded-lg bg-cover bg-no-repeat"
           style={{ backgroundImage: `url(${file.url})` }}
         >
           <When condition={!file.mime_type?.includes("image")}>
-            <Icon name={IconNames.DOCUMENT} width={22.5} height={30} />
+            <Icon name={IconNames.DOCUMENT} />
           </When>
         </div>
         <div className="flex flex-1 flex-col items-start gap-1">
-          <Text variant="text-heading-200" className=" capitalize line-clamp-1">
+          <Text variant="text-body-900" className=" capitalize line-clamp-1">
             {file.title || file.file_name}
           </Text>
           <When condition={accessLevel}>
@@ -42,7 +42,6 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
       <When condition={!!onDelete}>
         <IconButton
           onClick={() => onDelete?.(file)}
-          className="h-11 w-11"
           iconProps={{
             name: IconNames.TRASH_CIRCLE,
             className: " fill-error",
@@ -54,10 +53,8 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
       <When condition={!!onDownload}>
         <IconButton
           onClick={() => onDownload?.(file)}
-          className="h-11 w-11"
           iconProps={{
             name: IconNames.DOWNLOAD,
-            className: "fill-black",
             width: 24,
             height: 28
           }}

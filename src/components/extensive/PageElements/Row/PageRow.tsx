@@ -7,7 +7,7 @@ export interface PageRowProps
 
 const PageRow = ({ children, className, ...props }: PageRowProps) => {
   return (
-    <div {...props} className={twMerge("mx-auto flex max-w-7xl flex-wrap gap-8", className)}>
+    <div {...props} className={twMerge("mx-auto flex max-w-[82vw] flex-wrap gap-8", className)}>
       {children}
     </div>
   );
