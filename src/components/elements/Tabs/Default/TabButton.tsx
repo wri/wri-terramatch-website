@@ -33,16 +33,14 @@ export const TabButton = ({
       aria-checked={item.done ? "true" : "false"}
       className={classNames(
         className,
-        `w-full items-center focus:outline-none disabled:text-neutral-900`,
-        "",
+        "w-full items-center focus:outline-none disabled:text-neutral-900",
         item.done && "peer",
-        lastItem || selected ? "" : "",
+        lastItem,
         selected
-          ? `border-l-4 border-l-[#27A9E0]
-          bg-white text-neutral-1000`
+          ? "border-l-4 border-l-[#27A9E0] bg-white text-neutral-1000"
           : item.done
-          ? `border border-green-100  bg-green-50 `
-          : `bg-[rgba(0, 0, 0, 0.03)] border-b-[rgba(0, 0, 0, 0.03)] border-l-4 border-b-2 border-white border-l-transparent text-neutral-900`
+          ? "border border-green-100  bg-green-50"
+          : "bg-[rgba(0, 0, 0, 0.03)] border-b-[rgba(0, 0, 0, 0.03)] border-l-4 border-b-2 border-white border-l-transparent text-neutral-900"
       )}
     >
       <Text variant={textVariant} className="w-full text-left font-primary line-clamp-2 md:pr-6" containHtml>
