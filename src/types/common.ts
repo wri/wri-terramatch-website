@@ -68,6 +68,7 @@ export type TextVariantNew =
   | "text-40-bold";
 
 export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
+
 export type SecondaryColor =
   | "secondary"
   | "secondary-100"
