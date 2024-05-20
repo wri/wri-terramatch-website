@@ -182,7 +182,7 @@ function WizardForm(props: WizardFormProps) {
                 variant="text"
                 className="text-14-bold nowrap whitespace-nowrap rounded-lg border-2 border-transparent bg-[#ffb88891] px-4 py-0 uppercase text-white hover:border-white"
               >
-                edit polygon
+                {t("edit polygon")}
               </Button>
             </div>
           </div>
@@ -214,8 +214,8 @@ function WizardForm(props: WizardFormProps) {
             submitButtonProps={{
               children:
                 selectedStepIndex < lastIndex
-                  ? props.nextButtonText || t("Save and continue")
-                  : props.submitButtonText || t("Submit"),
+                  ? props.nextButtonText ?? t("Save and continue")
+                  : props.submitButtonText ?? t("Submit"),
               onClick: formHook.handleSubmit(onSubmitStep),
               disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
             }}
