@@ -22,7 +22,6 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbancesTable from "@/components/extensive/Tables/DisturbancesTable";
 import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
-import WorkdaysTable from "@/components/extensive/Tables/WorkdaysTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import {
   COLLECTION_SITE_PAID_OTHER,
@@ -205,22 +204,11 @@ const SiteReportDetailPage = () => {
                         <Then>
                           <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4}>
                             <TextField label={t("Description")} value={siteReport.paid_other_activity_description} />
-                            <WorkdaysTable
-                              modelName="site-report"
-                              modelUUID={siteReport.uuid}
-                              collection={collection}
-                            />
                           </PageCard>
                         </Then>
                         <Else>
                           <Then key={collection}>
-                            <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4}>
-                              <WorkdaysTable
-                                modelName="site-report"
-                                modelUUID={siteReport.uuid}
-                                collection={collection}
-                              />
-                            </PageCard>
+                            <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4}></PageCard>
                           </Then>
                         </Else>
                       </If>

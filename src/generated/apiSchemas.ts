@@ -4933,37 +4933,14 @@ export type V2SeedingPaginated = {
 
 export type V2WorkdayRead = {
   uuid?: string;
-  amount?: number;
   collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdaysPaginated = {
-  data?: {
-    uuid?: string;
+  readable_collection?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity";
+    subtype?: string;
+    name?: string;
     amount?: number;
-    collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
-    indigeneity?: string;
   }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
 };
 
 export type V2DisturbanceRead = {
@@ -23332,6 +23309,13 @@ export type AuditStatusPost = {
   request_removed?: boolean;
 };
 
+export type WorkdayDemographic = {
+  type?: "gender" | "age" | "ethnicity";
+  subtype?: string;
+  name?: string;
+  amount?: number;
+};
+
 export type GeoJSON = {
   type?: "FeatureCollection";
   features?: {
@@ -23381,7 +23365,7 @@ export type SiteGeometryPost = {
         | "TABLE_SCHEMA"
         | "DATA_COMPLETED";
       /**
-       * Human readable string in english to describe the error.
+       * Human readable string in English to describe the error.
        */
       message?: string;
     }[];
