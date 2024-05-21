@@ -11,7 +11,6 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
-import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -143,19 +142,6 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const openFormModalHandlerRequestPolygonSupport = (item: any) => {
-    openModal(
-      <ModalWithMap
-        polygonSelected={item?.uuid || ""}
-        title="Request Support"
-        onCLose={closeModal}
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Submit"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
-    );
-  };
-
   const polygonMenuItems = (item: any) => [
     {
       id: "1",
@@ -207,23 +193,11 @@ const Polygons = (props: IPolygonProps) => {
     },
     {
       id: "5",
-      render: () => (
-        <div className="flex items-center gap-2">
-          <Icon name={IconNames.REQUEST} className="h-6 w-6" />
-          <Text variant="text-12-bold">Request Support</Text>
-        </div>
-      ),
-      onClick: () => {
-        openFormModalHandlerRequestPolygonSupport(item);
-      }
-    },
-    {
-      id: "6",
       render: () => <div className="h-[1px] w-full bg-grey-750" />,
       MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
     },
     {
-      id: "7",
+      id: "6",
       render: () => (
         <div className="flex items-center gap-2">
           <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />

@@ -178,7 +178,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Do you want to delete this polygon?"
         onClose={closeModal}
         onConfirm={() => {
-          console.log("uuuuuuu", uuid);
           deletePolygon(uuid);
         }}
       />
