@@ -14,8 +14,8 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import ModalApprove from "@/components/extensive/Modal/ModalApprove";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -301,10 +301,10 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const openFormModalHandlerSubmitPolygon = () => {
     openModal(
-      <ModalSubmit
-        title="Submit Polygons"
+      <ModalApprove
+        title="Approve Polygons"
         onCLose={closeModal}
-        content="Project Developers may submit one or all polygons for review."
+        content="Administrators may approve polygons only if all checks pass."
         primaryButtonText="Next"
         primaryButtonProps={{
           className: "px-8 py-3",
@@ -316,7 +316,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
-      ></ModalSubmit>
+      ></ModalApprove>
     );
   };
 
