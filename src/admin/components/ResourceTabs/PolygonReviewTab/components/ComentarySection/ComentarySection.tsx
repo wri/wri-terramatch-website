@@ -4,7 +4,7 @@ import Comentary from "@/components/elements/Comentary/Comentary";
 import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
-import { useGetAuthMe, useGetV2Attachment } from "@/generated/apiComponents";
+import { useGetAuthMe } from "@/generated/apiComponents";
 
 const ComentarySection = ({
   auditLogData,
@@ -12,7 +12,8 @@ const ComentarySection = ({
   refresh,
   record,
   entity,
-  viewCommentsList = true
+  viewCommentsList = true,
+  attachmentRefetch
 }: {
   auditLogData?: any;
   mutate?: any;
@@ -20,6 +21,7 @@ const ComentarySection = ({
   record?: any;
   entity?: "Project" | "SitePolygon";
   viewCommentsList?: boolean;
+  attachmentRefetch?: any;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
     data: {
@@ -28,7 +30,6 @@ const ComentarySection = ({
       last_name: string;
     };
   };
-  const { data: attachment, refetch: attachmentRefetch } = useGetV2Attachment<any>({});
 
   return (
     <div className="flex flex-col gap-4">
@@ -55,7 +56,7 @@ const ComentarySection = ({
                     lastName={item?.last_name}
                     date={item.date_created}
                     comentary={item.comment}
-                    files={attachment?.data?.filter((attachment: any) => attachment.entity_id == item.id)}
+                    // files={attachment?.data?.filter((attachment: any) => attachment.entity_id == item.id)}
                   />
                 ))
             ) : (

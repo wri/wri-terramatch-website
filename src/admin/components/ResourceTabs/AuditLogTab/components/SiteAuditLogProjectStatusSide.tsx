@@ -14,7 +14,9 @@ const SiteAuditLogProjectStatusSide = ({
   auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AuditStatusId;
-  const recentRequest = auditLogData?.find((item: any) => item.type == "change-request" && item.is_active);
+  const recentRequest = auditLogData?.find(
+    (item: { type: string; is_active: boolean }) => item.type == "change-request" && item.is_active
+  );
 
   const deactivateRecentRequest = async () => {
     await mutate({

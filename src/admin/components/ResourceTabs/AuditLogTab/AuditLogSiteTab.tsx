@@ -6,6 +6,7 @@ import { When } from "react-if";
 import {
   fetchGetV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
+  useGetV2Attachment,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
 import { SitePolygonResponse } from "@/generated/apiSchemas";
@@ -36,6 +37,17 @@ const ReverseButtonStates: { [key: number]: string } = {
   2: "SitePolygon"
 };
 
+interface AttachmentItem {
+  id: number;
+  entity_id: number;
+  attachment: string;
+  url_file: string;
+}
+
+interface AttachmentResponse {
+  data: [AttachmentItem];
+}
+
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { record, isLoading } = useShowContext();
   const { project } = record;
@@ -55,6 +67,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           : selectedPolygon?.uuid
     }
   });
+
+  const { data: attachmentData, refetch: attachmentRefetch } = useGetV2Attachment<AttachmentResponse>({});
 
   const loadSitePolygonList = async () => {
     console.log("loadSitePolygonList", record.uuid);
@@ -115,13 +129,31 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
+                <SiteAuditLogProjectStatus
+                  record={project}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  recordAttachments={attachmentData?.data}
+                  refreshAttachments={attachmentRefetch}
+                />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
-                <SiteAuditLogSiteStatus record={record} auditLogData={auditLogData} refresh={refetch} />
+                <SiteAuditLogSiteStatus
+                  record={record}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  recordAttachments={attachmentData?.data}
+                  refreshAttachments={attachmentRefetch}
+                />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
-                <SiteAuditLogPolygonStatus record={selectedPolygon} auditLogData={auditLogData} refresh={refetch} />
+                <SiteAuditLogPolygonStatus
+                  record={selectedPolygon}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  recordAttachments={attachmentData?.data}
+                  refreshAttachments={attachmentRefetch}
+                />
               </When>
             </Stack>
           </Grid>

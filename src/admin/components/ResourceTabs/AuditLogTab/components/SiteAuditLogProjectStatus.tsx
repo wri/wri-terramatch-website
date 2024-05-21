@@ -9,6 +9,8 @@ export interface SiteAuditLogProjectStatusProps {
   record?: any;
   auditLogData?: any;
   refresh?: any;
+  recordAttachments?: any;
+  refreshAttachments?: any;
 }
 
 export const gridData = [
@@ -56,6 +58,7 @@ export const gridData = [
 ];
 
 interface AuditLogItem {
+  id: number;
   entity_uuid: string;
   type: string;
   status: string;
@@ -67,13 +70,32 @@ interface AuditLogItem {
   last_name: string;
   request_removed: boolean;
 }
+const options: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+};
+interface AttachmentItem {
+  id: number;
+  entity_id: number;
+  attachment: string;
+  url_file: string;
+}
 
-const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record, auditLogData, refresh }) => {
+const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
+  record,
+  auditLogData,
+  refresh,
+  recordAttachments,
+  refreshAttachments
+}) => {
   const mutateComment = fetchPostV2AuditStatus;
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-
+  const formattedDate = (date: string) => {
+    return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
+  };
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -90,6 +112,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
           mutate={mutateComment}
           refresh={refresh}
           viewCommentsList={false}
+          attachmentRefetch={refreshAttachments}
         />
       </div>
       <Text variant="text-16-bold">History for {record.name}</Text>
@@ -112,39 +135,42 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
           </Text>
         </div>
         <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_15%_30%_21%] overflow-auto pr-[7px]">
-          {auditLogData?.data
-            ?.filter((item: any) => ["status", "change-request"].includes(item.type))
-            .map((item: AuditLogItem, index: number) => (
-              <Fragment key={index}>
-                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {item?.date_created}
-                </Text>
-                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {`${item.first_name} ${item.last_name}`}
-                </Text>
-                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {item.type === "status"
-                    ? `New Status: ${formattedText(item.status)}`
-                    : item.request_removed
-                    ? "Change Request Removed"
-                    : "Change Requested Added"}
-                </Text>
-                <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-                  {item.comment || "-"}
-                </Text>
-                <div className="grid gap-2 border-b border-b-grey-750 py-2">
-                  <Text variant="text-12-light" className="w-max rounded-xl bg-neutral-40 px-2" as={"span"}>
-                    img-attachment.jpeg
-                  </Text>
-                  <Text variant="text-12-light" className="w-max rounded-xl bg-neutral-40 px-2" as={"span"}>
-                    critical-document.docx
-                  </Text>
-                  <Text variant="text-12-light" className="w-max rounded-xl bg-neutral-40 px-2" as={"span"}>
-                    moreinformation123.xlsx
-                  </Text>
-                </div>
-              </Fragment>
-            ))}
+          {auditLogData?.data.map((item: AuditLogItem, index: number) => (
+            <Fragment key={index}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {formattedDate(item?.date_created)}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {`${item.first_name} ${item.last_name}`}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {item.type === "status"
+                  ? `New Status: ${formattedText(item.status)}`
+                  : item.request_removed
+                  ? "Change Request Removed"
+                  : "Change Requested Added"}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                {item.comment || "-"}
+              </Text>
+              <div className="grid gap-2 border-b border-b-grey-750 py-2">
+                {recordAttachments
+                  ?.filter((attachmentItem: AttachmentItem) => {
+                    return attachmentItem.entity_id == item.id;
+                  })
+                  ?.map((attachmentItem: AttachmentItem) => (
+                    <Text
+                      key={attachmentItem.id}
+                      variant="text-12-light"
+                      className="flex w-max items-center justify-center rounded-xl bg-neutral-40 px-2"
+                      as={"span"}
+                    >
+                      {attachmentItem.attachment}
+                    </Text>
+                  ))}
+              </div>
+            </Fragment>
+          ))}
         </div>
       </div>
     </div>
