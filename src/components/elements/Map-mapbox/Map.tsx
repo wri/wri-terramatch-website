@@ -296,9 +296,9 @@ export const Map = ({
             <SiteStatus record={record} refresh={refresh} />
           </ControlGroup>
         </When> */}
-        <When condition={!!status}>
+        <When condition={!!status && !!record.uuid}>
           <ControlGroup position="top-left">
-            <CheckPolygonControl />
+            <CheckPolygonControl siteRecord={record} />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages && !status}>

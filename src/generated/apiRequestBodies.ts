@@ -166,6 +166,35 @@ export type V2PostOrganisationsBody = {
   tags?: string[];
 };
 
+export type PostV2SitesUuidGeometryBody = {
+  geometries?: {
+    type?: "FeatureCollection";
+    features?: {
+      type?: "Feature";
+      properties?: {
+        poly_name?: string;
+        /**
+         * @format date
+         */
+        plantstart?: string;
+        /**
+         * @format date
+         */
+        plantend?: string;
+        practice?: string;
+        target_sys?: string;
+        distr?: string;
+        num_trees?: number;
+        site_id?: string;
+      };
+      geometry?: {
+        type?: "Polygon";
+        coordinates?: number[][][];
+      };
+    }[];
+  }[];
+};
+
 export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
