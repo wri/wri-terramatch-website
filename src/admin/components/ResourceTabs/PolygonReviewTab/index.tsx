@@ -1,11 +1,13 @@
 import { Grid, Stack } from "@mui/material";
 import classNames from "classnames";
+import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Map from "@/components/elements/Map-mapbox/Map";
+import _MapService from "@/components/elements/Map-mapbox/MapService";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -19,7 +21,9 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
+  fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonSite,
+  fetchGetV2TerrafundPolygonBboxUuid,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
@@ -29,7 +33,7 @@ import {
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { PolygonBboxResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
@@ -46,6 +50,22 @@ export interface IPolygonItem {
   status: "draft" | "submitted" | "approved" | "needs-more-info";
   label: string;
   uuid: string;
+}
+
+interface TableItemMenuProps {
+  ellipse: boolean;
+  "planting-start-date": string | null;
+  "polygon-name": string;
+  "restoration-practice": string;
+  source?: string;
+  "target-land-use-system": string | null;
+  "tree-distribution": string | null;
+  uuid: string;
+}
+
+interface DeletePolygonProps {
+  uuid: string;
+  message: string;
 }
 
 const PolygonReviewAside: FC<{
@@ -89,12 +109,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   const siteBbox = sitePolygonBbox?.bbox;
   const sitePolygonDataTable = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(
     (data: SitePolygon, index) => ({
-      "polygon-id": data.id,
+      "polygon-name": data.poly_name || `Unnamed Polygon`,
       "restoration-practice": data.practice,
       "target-land-use-system": data.target_sys,
       "tree-distribution": data.distr,
       "planting-start-date": data.plantstart,
       source: data.org_name,
+      uuid: data.poly_id,
       ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
     })
   );
@@ -117,6 +138,52 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, {});
 
   const { openModal, closeModal } = useModalContext();
+
+  const flyToPolygonBounds = async (uuid: string) => {
+    const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
+    const bboxArray = bbox?.bbox;
+    if (bboxArray) {
+      const bounds: LngLatBoundsLike = [
+        [bboxArray[0], bboxArray[1]],
+        [bboxArray[2], bboxArray[3]]
+      ];
+      _MapService.map?.fitBounds(bounds, {
+        padding: 100,
+        linear: false
+      });
+    } else {
+      console.error("Bounding box is not in the expected format");
+    }
+  };
+
+  const deletePolygon = (uuid: string) => {
+    fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
+      .then((response: DeletePolygonProps | undefined) => {
+        if (response && response?.uuid) {
+          if (reloadSiteData) {
+            reloadSiteData();
+          }
+          closeModal();
+        }
+      })
+      .catch(error => {
+        console.error("Error deleting polygon:", error);
+      });
+  };
+
+  const openFormModalHandlerConfirmDeletion = (uuid: string) => {
+    openModal(
+      <ModalConfirm
+        title={"Confirm Polygon Deletion"}
+        content="Do you want to delete this polygon?"
+        onClose={closeModal}
+        onConfirm={() => {
+          console.log("uuuuuuu", uuid);
+          deletePolygon(uuid);
+        }}
+      />
+    );
+  };
 
   const downloadSiteGeoJsonPolygons = async (siteUuid: string) => {
     const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
@@ -342,11 +409,11 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   ];
 
-  const tableItemMenu = [
+  const tableItemMenu = (props: TableItemMenuProps) => [
     {
       id: "1",
       render: () => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={() => setPolygonFromMap({ isOpen: true, uuid: props.uuid })}>
           <Icon name={IconNames.POLYGON} className="h-6 w-6" />
           <Text variant="text-12-bold">Open Polygon</Text>
         </div>
@@ -355,7 +422,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     {
       id: "2",
       render: () => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={() => flyToPolygonBounds(props.uuid)}>
           <Icon name={IconNames.SEARCH_PA} className="h-6 w-6" />
           <Text variant="text-12-bold">Zoom to</Text>
         </div>
@@ -364,7 +431,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     {
       id: "3",
       render: () => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={() => openFormModalHandlerConfirmDeletion(props.uuid)}>
           <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
           <Text variant="text-12-bold">Delete Polygon</Text>
         </div>
@@ -466,7 +533,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   hasPagination={false}
                   classNameWrapper="max-h-[176px]"
                   columns={[
-                    { header: "Polygon ID", accessorKey: "polygon-id" },
+                    { header: "Polygon Name", accessorKey: "polygon-name" },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
@@ -490,7 +557,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       enableSorting: false,
                       cell: props => (
                         <Menu
-                          menu={tableItemMenu}
+                          menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
                           placement={
                             (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
                           }
