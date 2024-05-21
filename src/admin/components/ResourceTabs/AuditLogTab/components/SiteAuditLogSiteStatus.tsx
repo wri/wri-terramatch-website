@@ -9,8 +9,8 @@ export interface SiteAuditLogSiteStatusProps {
   record?: any;
   auditLogData?: any;
   refresh?: any;
-  recordAttachments: any;
-  refreshAttachments: any;
+  recordAttachments?: any;
+  refreshAttachments?: any;
 }
 
 interface AttachmentItem {
@@ -34,6 +34,12 @@ interface AuditLogItem {
   request_removed: boolean;
 }
 
+const options: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+};
+
 const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
   record,
   auditLogData,
@@ -44,6 +50,10 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
   const mutateComment = fetchPostV2AuditStatus;
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  };
+
+  const formattedDate = (date: string) => {
+    return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
   };
 
   return (
@@ -57,7 +67,7 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
         </Text>
         <ComentarySection
           record={record}
-          entity={"Project"}
+          entity={"Site"}
           auditLogData={auditLogData?.data}
           mutate={mutateComment}
           refresh={refresh}
@@ -88,7 +98,7 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
           {auditLogData?.data.map((item: AuditLogItem, index: number) => (
             <Fragment key={index}>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {item?.date_created}
+                {formattedDate(item?.date_created)}
               </Text>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {`${item.first_name} ${item.last_name}`}

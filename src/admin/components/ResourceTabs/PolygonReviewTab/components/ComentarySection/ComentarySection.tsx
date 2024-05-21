@@ -19,7 +19,7 @@ const ComentarySection = ({
   mutate?: any;
   refresh?: any;
   record?: any;
-  entity?: "Project" | "SitePolygon";
+  entity?: "Project" | "SitePolygon" | "Site";
   viewCommentsList?: boolean;
   attachmentRefetch?: any;
 }) => {
