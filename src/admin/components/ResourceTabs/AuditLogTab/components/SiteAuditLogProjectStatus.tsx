@@ -1,9 +1,9 @@
 import { FC, Fragment } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPostV2AuditStatus } from "@/generated/apiComponents";
+
+import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 
 export interface SiteAuditLogProjectStatusProps {
   record?: any;
@@ -68,46 +68,12 @@ interface AuditLogItem {
   request_removed: boolean;
 }
 
-const projectStatusLabels = [
-  { id: "1", label: "Draft" },
-  { id: "2", label: "Awaiting Approval" },
-  { id: "3", label: "Needs More Information" },
-  { id: "4", label: "Approved" }
-];
-
-function getValueForStatus(status: string): number {
-  switch (status) {
-    case "started":
-      return 0;
-    case "awaiting-approval":
-      return 34;
-    case "needs-more-information":
-      return 67;
-    case "approved":
-      return 100;
-    default:
-      return 0;
-  }
-}
 const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record, auditLogData, refresh }) => {
+  const mutateComment = fetchPostV2AuditStatus;
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
 
-  const recentRequest = auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
-  const mutate = fetchPutV2AuditStatusId;
-  const deactivateRecentRequest = async () => {
-    await mutate({
-      pathParams: {
-        id: recentRequest?.id
-      },
-      body: {
-        is_active: false,
-        request_removed: true
-      }
-    });
-    refresh();
-  };
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -117,31 +83,18 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
         <Text variant="text-14-light" className="mb-4">
           Update the project status, view updates, or add comments
         </Text>
-        {recentRequest && (
-          <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-            <div className="flex items-center justify-between">
-              <Text variant="text-16-bold">Change Requested</Text>
-              <Button variant="orange" onClick={deactivateRecentRequest}>
-                Remove Request
-              </Button>
-            </div>
-            <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col gap-4">
-        <Text variant="text-16-bold">Project Status</Text>
-        <StepProgressbar
-          color="secondary"
-          value={getValueForStatus(record.status)}
-          labels={projectStatusLabels}
-          classNameLabels="min-w-[111px]"
-          className="w-[62%]"
+        <ComentarySection
+          record={record}
+          entity={"Project"}
+          auditLogData={auditLogData?.data}
+          mutate={mutateComment}
+          refresh={refresh}
+          viewCommentsList={false}
         />
       </div>
       <Text variant="text-16-bold">History for {record.name}</Text>
       <div>
-        <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
+        <div className="grid grid-cols-[14%_20%_15%_30%_21%]">
           <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
             Date and Time
           </Text>
@@ -149,16 +102,16 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
             User
           </Text>
           <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-            Site
-          </Text>
-          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
             Action
           </Text>
           <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
             Comments
           </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Attachments
+          </Text>
         </div>
-        <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
+        <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_15%_30%_21%] overflow-auto pr-[7px]">
           {auditLogData?.data
             ?.filter((item: any) => ["status", "change-request"].includes(item.type))
             .map((item: AuditLogItem, index: number) => (
@@ -170,9 +123,6 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
                   {`${item.first_name} ${item.last_name}`}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {record.name || "-"}
-                </Text>
-                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {item.type === "status"
                     ? `New Status: ${formattedText(item.status)}`
                     : item.request_removed
@@ -182,6 +132,17 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2">
                   {item.comment || "-"}
                 </Text>
+                <div className="grid gap-2 border-b border-b-grey-750 py-2">
+                  <Text variant="text-12-light" className="w-max rounded-xl bg-neutral-40 px-2" as={"span"}>
+                    img-attachment.jpeg
+                  </Text>
+                  <Text variant="text-12-light" className="w-max rounded-xl bg-neutral-40 px-2" as={"span"}>
+                    critical-document.docx
+                  </Text>
+                  <Text variant="text-12-light" className="w-max rounded-xl bg-neutral-40 px-2" as={"span"}>
+                    moreinformation123.xlsx
+                  </Text>
+                </div>
               </Fragment>
             ))}
         </div>

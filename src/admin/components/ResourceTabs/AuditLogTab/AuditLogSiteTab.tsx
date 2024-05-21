@@ -112,7 +112,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
-            <Stack gap={4} className="pt-9 pl-8">
+            <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
                 <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
@@ -125,7 +125,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               </When>
             </Stack>
           </Grid>
-          <Grid xs={4} className="pt-9 pl-8 pr-4">
+          <Grid xs={4} className="pl-8 pr-4 pt-9">
             <When condition={buttonToogle === ButtonStates.PROJECTS}>
               <SiteAuditLogProjectStatusSide record={project} refresh={refetch} auditLogData={auditLogData?.data} />
             </When>
