@@ -66,8 +66,8 @@ const SiteAuditLogProjectStatusSide = ({
           <div>
             <div className="flex items-baseline justify-between">
               <Text variant="text-16-bold">Change Requested</Text>
-              <button onClick={deactivateRecentRequest} className="text-12-bold text-tertiary-600">
-                Remove Request
+              <button onClick={deactivateRecentRequest} className="text-14-bold text-tertiary-600">
+                Remove
               </button>
             </div>
             <Text variant="text-14-light">From Liza LePage on 13/06/24</Text>
