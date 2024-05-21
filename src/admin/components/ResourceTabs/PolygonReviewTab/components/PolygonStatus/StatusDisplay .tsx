@@ -1,7 +1,6 @@
 import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
@@ -178,16 +177,12 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
   };
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex w-full items-center gap-2">
-        <Text variant="text-16-bold">{titleStatus === "Polygon" ? "" : `${titleStatus} `}Status:</Text>
-        <Status status={record?.status} className="py-[2px] px-[6px]"></Status>
-      </div>
       <div className="flex w-full items-center gap-4">
-        <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>
-          <Text variant="text-12-bold">Change Request</Text>
-        </Button>
         <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
           <Text variant="text-12-bold">change status</Text>
+        </Button>
+        <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>
+          <Text variant="text-12-bold">Change Request</Text>
         </Button>
       </div>
     </div>
