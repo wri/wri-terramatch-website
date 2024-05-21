@@ -32685,6 +32685,14 @@ export type GetV2AuditStatusQueryParams = {
    * required.
    */
   uuid: string;
+  /**
+   * required.
+   */
+  page?: string;
+  /**
+   * required.
+   */
+  per_page?: string;
 };
 
 export type GetV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;

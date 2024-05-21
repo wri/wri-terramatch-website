@@ -16,10 +16,11 @@ export interface ComentaryBoxProps {
   record?: any;
   entity?: string;
   attachmentRefetch?: any;
+  setNewElement?: any;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox, refresh, record, entity } = props;
+  const { name, lastName, buttonSendOnBox, refresh, record, entity, setNewElement } = props;
   const { mutate: upload } = usePostV2AuditStatus();
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
@@ -78,11 +79,13 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           setComment("");
           setError("");
           setFiles([]);
+          setNewElement(true);
           props.attachmentRefetch();
           refresh();
         }
       }
     );
+    refresh();
   };
 
   return (

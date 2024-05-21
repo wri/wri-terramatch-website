@@ -9,15 +9,13 @@ const SiteAuditLogPolygonStatusSide = ({
   record,
   polygonList,
   selectedPolygon,
-  setSelectedPolygon,
-  auditLogData
+  setSelectedPolygon
 }: {
   refresh?: any;
   record?: any;
   polygonList?: any[];
   selectedPolygon?: any;
   setSelectedPolygon?: any;
-  auditLogData?: any;
 }) => {
   const mutate = fetchPutV2AdminSitePolygonUUID;
   const mutateComment = fetchPostV2AuditStatus;
@@ -53,7 +51,6 @@ const SiteAuditLogPolygonStatusSide = ({
       <ComentarySection
         record={{ uuid: record?.uuid, status: record?.meta, title: record?.title }}
         entity={"SitePolygon"}
-        auditLogData={auditLogData}
         mutate={mutateComment}
         refresh={refresh}
       />

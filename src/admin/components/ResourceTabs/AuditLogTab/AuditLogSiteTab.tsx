@@ -127,10 +127,10 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Grid>
           <Grid xs={4} className="pt-9 pl-8 pr-4">
             <When condition={buttonToogle === ButtonStates.PROJECTS}>
-              <SiteAuditLogProjectStatusSide record={project} refresh={refetch} auditLogData={auditLogData?.data} />
+              <SiteAuditLogProjectStatusSide record={project} refresh={refetch} />
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
-              <SiteAuditLogSiteStatusSide record={record} refresh={refetch} auditLogData={auditLogData?.data} />
+              <SiteAuditLogSiteStatusSide record={record} refresh={refetch} />
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
@@ -142,7 +142,6 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 polygonList={polygonList}
                 selectedPolygon={selectedPolygon}
                 setSelectedPolygon={setSelectedPolygon}
-                auditLogData={auditLogData?.data}
               />
             </When>
           </Grid>
