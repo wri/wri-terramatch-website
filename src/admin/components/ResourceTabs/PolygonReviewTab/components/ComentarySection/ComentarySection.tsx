@@ -18,7 +18,7 @@ const ComentarySection = ({
   mutate?: any;
   refresh?: any;
   record?: any;
-  entity?: string;
+  entity?: "Project" | "SitePolygon";
   viewCommentsList?: boolean;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
