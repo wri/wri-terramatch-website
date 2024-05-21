@@ -1,9 +1,9 @@
 import { FC, Fragment } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPostV2AuditStatus } from "@/generated/apiComponents";
+
+import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 
 export interface SiteAuditLogPolygonStatusProps {
   record?: any;
@@ -24,44 +24,11 @@ interface AuditLogItem {
   request_removed: boolean;
 }
 
-const polygonStatusLabels = [
-  { id: "1", label: "Submitted" },
-  { id: "2", label: "Needs More Information" },
-  { id: "3", label: "Approved" }
-];
-
-function getValueForStatus(status: string): number {
-  switch (status) {
-    case "Submitted":
-      return 0;
-    case "needs-more-information":
-      return 50;
-    case "approved":
-      return 100;
-    default:
-      return 0;
-  }
-}
-
 const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record, auditLogData, refresh }) => {
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
-  const recentRequest = auditLogData?.data?.find((item: any) => item.type == "change-request" && item.is_active);
-  const mutate = fetchPutV2AuditStatusId;
-  const deactivateRecentRequest = async () => {
-    await mutate({
-      pathParams: {
-        id: recentRequest?.id
-      },
-      body: {
-        is_active: false,
-        request_removed: true
-      }
-    });
-    refresh();
-  };
-
+  const mutateComment = fetchPostV2AuditStatus;
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -71,28 +38,15 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record,
         <Text variant="text-14-light" className="mb-4">
           Update the polygon status, view updates, or add comments
         </Text>
-        {recentRequest && (
-          <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-            <div className="flex items-center justify-between">
-              <Text variant="text-16-bold">Change Requested</Text>
-              <Button variant="orange" onClick={deactivateRecentRequest}>
-                Remove Request
-              </Button>
-            </div>
-            <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
-          </div>
-        )}
       </div>
-      <div className="flex flex-col gap-4">
-        <Text variant="text-16-bold">Polygon Status</Text>
-        <StepProgressbar
-          color="secondary"
-          value={getValueForStatus(record?.meta)}
-          labels={polygonStatusLabels}
-          classNameLabels="min-w-[111px]"
-          className="w-[44%]"
-        />
-      </div>
+      <ComentarySection
+        record={{ uuid: record?.uuid, status: record?.meta, title: record?.title }}
+        entity={"SitePolygon"}
+        auditLogData={auditLogData?.data}
+        mutate={mutateComment}
+        refresh={refresh}
+        viewCommentsList={false}
+      />
       <Text variant="text-16-bold">History for {record?.title}</Text>
       <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
         <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">

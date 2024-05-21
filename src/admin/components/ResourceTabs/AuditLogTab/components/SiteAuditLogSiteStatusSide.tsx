@@ -16,6 +16,18 @@ const SiteAuditLogSiteStatusSide = ({
   const recentRequest = auditLogData?.find((item: any) => item.type == "change-request" && item.is_active);
 
   const mutate = fetchPutV2AuditStatusId;
+  const deactivateRecentRequest = async () => {
+    await mutate({
+      pathParams: {
+        id: recentRequest?.id
+      },
+      body: {
+        is_active: false,
+        request_removed: true
+      }
+    });
+    refresh();
+  };
 
   const siteStatusLabels = [
     { id: "1", label: "Draft" },
@@ -52,9 +64,15 @@ const SiteAuditLogSiteStatusSide = ({
         className="w-[99%]"
       />
       {recentRequest && (
-        <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-          <div className="flex items-center justify-between">
-            <Text variant="text-16-bold">Change Requested</Text>
+        <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-3">
+          <div>
+            <div className="flex items-baseline justify-between">
+              <Text variant="text-16-bold">Change Requested</Text>
+              <button onClick={deactivateRecentRequest} className="text-12-bold text-tertiary-600">
+                Remove Request
+              </button>
+            </div>
+            <Text variant="text-14-light">From Liza LePage on 13/06/24</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
