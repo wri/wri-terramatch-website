@@ -36,10 +36,12 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
-  const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite(
+  const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
+    CheckedPolygon[]
+  >(
     {
       queryParams: {
-        uuid: siteUuid || ""
+        uuid: siteUuid ?? ""
       }
     },
     {
@@ -50,7 +52,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const validatePolygons = () => {
     fetchGetV2TerrafundValidationSitePolygons({
       queryParams: {
-        uuid: siteUuid || ""
+        uuid: siteUuid ?? ""
       }
     }).then(() => {
       reloadSitePolygonValidation();
@@ -58,19 +60,23 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     });
   };
 
+  const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
+    return currentValidationSite.map((checkedPolygon, index) => {
+      const matchingPolygon = Array.isArray(sitePolygonData)
+        ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
+        : null;
+      return {
+        id: index + 1,
+        valid: checkedPolygon.valid,
+        checked: checkedPolygon.checked,
+        label: matchingPolygon?.poly_name ?? null
+      };
+    });
+  };
+
   useEffect(() => {
     if (currentValidationSite) {
-      const transformedData = (currentValidationSite as CheckedPolygon[]).map((checkedPolygon, index) => {
-        const matchingPolygon = Array.isArray(sitePolygonData)
-          ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
-          : null;
-        return {
-          id: index + 1,
-          valid: checkedPolygon.valid,
-          checked: checkedPolygon.checked,
-          label: matchingPolygon ? matchingPolygon.poly_name : null
-        };
-      });
+      const transformedData = getTransformedData(currentValidationSite);
       setSitePolygonCheckData(transformedData);
     }
   }, [currentValidationSite, sitePolygonData]);
@@ -94,9 +100,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-          onClick={() => {
-            setClickedValidation(true);
-          }}
+          onClick={() => setClickedValidation(true)}
         >
           Check Polygons
         </Button>
