@@ -2409,10 +2409,10 @@
     lodash.isequal "^4.2.0"
     xtend "^4.0.1"
 
-"@mapbox/mapbox-gl-draw@1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@mapbox/mapbox-gl-draw/-/mapbox-gl-draw-1.4.3.tgz#3f95362fdeabcffcb46f3392f24bf5914e7be817"
-  integrity sha512-03qIJgyGmm0IoTZbV/cfODru9jRGogi4LcQ3maxIJDKccq1gY3ofgt2UYPkeU143ElxitZahEythNQv1NpsLhg==
+"@mapbox/mapbox-gl-draw@1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@mapbox/mapbox-gl-draw/-/mapbox-gl-draw-1.4.2.tgz#3ec71d496f056313707c67e62728945563336a85"
+  integrity sha512-Zvl5YN+tIuYZlzPmuzOgkoJsZX6sHMQsnFI+O3ox8EwYkpLO2w0U2FvVhQuVnq1Yys12x6UnF+0IPoEdBy2UfA==
   dependencies:
     "@mapbox/geojson-area" "^0.2.2"
     "@mapbox/geojson-extent" "^1.0.1"
@@ -13792,6 +13792,13 @@ react-if@^4.1.4:
   resolved "https://registry.yarnpkg.com/react-if/-/react-if-4.1.4.tgz#aa33d954993f9d9992f0c7ab8ca9e40c5f2509f2"
   integrity sha512-bjufPfCdPBiBy9EO/BeoxaqGc/xCwTu0coKtHfjpJw+v85DLMbpG43IUPISh+m3DzENx1rOYLpqbp2KaDmEYlg==
 
+react-infinite-scroll-component@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-6.1.0.tgz#7e511e7aa0f728ac3e51f64a38a6079ac522407f"
+  integrity sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==
+  dependencies:
+    throttle-debounce "^2.1.0"
+
 react-inlinesvg@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/react-inlinesvg/-/react-inlinesvg-3.0.1.tgz#2133f5d2c770ac405060db2ce1c13eed30e7e83b"
@@ -15458,6 +15465,11 @@ thenify-all@^1.0.0:
   integrity sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==
   dependencies:
     any-promise "^1.0.0"
+
+throttle-debounce@^2.1.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.3.0.tgz#fd31865e66502071e411817e241465b3e9c372e2"
+  integrity sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==
 
 throttle-debounce@^3.0.1:
   version "3.0.1"
