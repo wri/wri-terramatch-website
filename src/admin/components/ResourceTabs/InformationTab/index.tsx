@@ -133,7 +133,7 @@ const InformationTab: FC<IProps> = props => {
                     >
                       <Card sx={{ padding: 3 }}>
                         <Typography variant="h6" component="h3" className="capitalize">
-                          Total Tree Species
+                          Total Trees Planted
                         </Typography>
                         {record?.total_trees_planted_count}
                       </Card>
