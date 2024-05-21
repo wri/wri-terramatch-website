@@ -37,7 +37,6 @@ const SiteAuditLogProjectStatusSide = ({
         return 0;
     }
   }
-  console.log(recentRequest, "recentRequest");
   return (
     <div className="flex flex-col gap-6 overflow-hidden">
       <Text variant="text-16-bold">Project Status</Text>
