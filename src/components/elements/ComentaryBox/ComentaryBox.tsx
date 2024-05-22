@@ -45,7 +45,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
         setError("You can upload a maximum of 5 files.");
         return;
       }
-      if (!validFileTypes.includes(file.type)) {
+      if (!validFileTypes.includes(file?.type)) {
         setError("Invalid file type. Only PDF, XLS, DOC, XLSX, DOCX, JPG, PNG, and TIFF are allowed.");
         return;
       }

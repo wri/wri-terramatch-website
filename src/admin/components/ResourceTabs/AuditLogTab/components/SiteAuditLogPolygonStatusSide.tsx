@@ -1,7 +1,7 @@
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPutV2AdminSitePolygonUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -24,6 +24,13 @@ function getValueForStatus(status: string): number {
   }
 }
 
+interface auditLogItem {
+  type: string;
+  is_active: boolean;
+  id: number;
+  comment: string;
+}
+
 const SiteAuditLogPolygonStatusSide = ({
   refresh,
   record,
@@ -39,10 +46,11 @@ const SiteAuditLogPolygonStatusSide = ({
   setSelectedPolygon?: any;
   auditLogData?: any;
 }) => {
-  const recentRequest = auditLogData?.find((item: any) => item.type == "change-request" && item.is_active);
-  const mutate = fetchPutV2AuditStatusId;
+  const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
+  const mutatePutAuditStatus = fetchPutV2AuditStatusId;
+  const mutate = fetchPutV2AdminSitePolygonUUID;
   const deactivateRecentRequest = async () => {
-    await mutate({
+    await mutatePutAuditStatus({
       pathParams: {
         id: recentRequest?.id
       },
@@ -72,7 +80,7 @@ const SiteAuditLogPolygonStatusSide = ({
         options={unnamedPolygons!}
         onChange={e => {
           console.log("onChange", e);
-          setSelectedPolygon(polygonList?.find(item => item.uuid === e[0]));
+          setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
         }}
       />
       <Text variant="text-16-bold">Polygon Status</Text>
