@@ -21,7 +21,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({ iconName, label, 
       </Text>
 
       <Text variant="text-14-bold" className="">
-        {value}
+        {value?.toLocaleString()}
       </Text>
     </div>
   );
