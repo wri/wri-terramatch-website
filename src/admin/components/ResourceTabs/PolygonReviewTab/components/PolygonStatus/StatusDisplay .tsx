@@ -170,6 +170,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             }
           });
           refresh();
+          reloadEntity();
           closeModal;
         }}
       />

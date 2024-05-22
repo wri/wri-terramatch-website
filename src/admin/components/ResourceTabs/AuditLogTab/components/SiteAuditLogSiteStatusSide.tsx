@@ -1,8 +1,15 @@
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPutV2AdminSitesUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
+
+interface auditLogItem {
+  type: string;
+  is_active: boolean;
+  id: number;
+  comment: string;
+}
 
 const SiteAuditLogSiteStatusSide = ({
   record,
@@ -13,11 +20,12 @@ const SiteAuditLogSiteStatusSide = ({
   refresh?: any;
   auditLogData?: any;
 }) => {
-  const recentRequest = auditLogData?.find((item: any) => item.type == "change-request" && item.is_active);
+  const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
 
-  const mutate = fetchPutV2AuditStatusId;
+  const mutatePutAuditStatus = fetchPutV2AuditStatusId;
+  const mutate = fetchPutV2AdminSitesUUID;
   const deactivateRecentRequest = async () => {
-    await mutate({
+    await mutatePutAuditStatus({
       pathParams: {
         id: recentRequest?.id
       },
