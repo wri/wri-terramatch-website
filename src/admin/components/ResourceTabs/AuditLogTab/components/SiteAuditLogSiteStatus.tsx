@@ -37,7 +37,8 @@ interface AuditLogItem {
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
-  day: "numeric"
+  day: "numeric",
+  timeZone: "UTC"
 };
 
 const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
@@ -75,11 +76,11 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
           attachmentRefetch={refreshAttachments}
         />
       </div>
-      <Text variant="text-16-bold">History for {record.name}</Text>
+      <Text variant="text-16-bold">History and Discussion for {record.name}</Text>
       <div>
         <div className="grid grid-cols-[14%_20%_15%_30%_21%]">
           <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-            Date and Time
+            Date
           </Text>
           <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
             User

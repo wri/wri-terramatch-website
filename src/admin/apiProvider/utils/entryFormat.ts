@@ -21,7 +21,7 @@ const isDateType = (value: any) => {
   return isValid(parseISO(value));
 };
 
-const convertDateFormat = (value: any) => {
+export const convertDateFormat = (value: any) => {
   if (typeof value === "string") {
     const dateObject = new Date(value);
     const formattedDay = dateObject.getUTCDate().toString().padStart(2, "0");
