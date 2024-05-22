@@ -131,6 +131,9 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({
                       variant="text-12-light"
                       className="h-min w-fit max-w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
                       as={"span"}
+                      onClick={() => {
+                        attachmentItem.url_file && window.open(attachmentItem.url_file, "_blank");
+                      }}
                     >
                       {attachmentItem.attachment}
                     </Text>

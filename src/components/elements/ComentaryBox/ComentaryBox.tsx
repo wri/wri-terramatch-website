@@ -120,6 +120,20 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           <Button variant="text" iconProps={{ name: IconNames.SEND, className: "h-4 w-4 text-darkCustom" }} />
         </When>
       </div>
+      {...files.map((file: any) => (
+        <div key={file.name} className="rounded-xl bg-neutral-150 px-2 py-1">
+          <Text variant="text-14-light" className="text-grey-700">
+            {file?.name}
+          </Text>
+          <Button
+            onClick={() => {
+              setFiles(files.filter((f: any) => f.name !== file.name));
+            }}
+          >
+            X
+          </Button>
+        </div>
+      ))}
       {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
         <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }} onClick={submitComment}>
