@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import ReadMoreText from "@/components/elements/ReadMoreText/ReadMoreText";
 import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_SECONDARY } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { ApplicationRead, AuditRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -102,7 +103,7 @@ const ApplicationTimeline = ({ application }: ApplicationTimelineProps) => {
             }
           ]}
           data={allAudits}
-          variant="secondary"
+          variant={VARIANT_TABLE_SECONDARY}
         />
       </div>
     </section>
