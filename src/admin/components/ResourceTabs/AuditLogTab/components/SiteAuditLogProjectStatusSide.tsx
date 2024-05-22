@@ -1,4 +1,3 @@
-import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AdminProjectsUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
@@ -8,11 +7,13 @@ import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/Statu
 const SiteAuditLogProjectStatusSide = ({
   record,
   refresh,
-  auditLogData
+  auditLogData,
+  recentRequestData
 }: {
   record?: any;
   refresh?: any;
   auditLogData?: any;
+  recentRequestData?: any;
 }) => {
   const mutatePutAuditStatus = fetchPutV2AuditStatusId;
   const mutate = fetchPutV2AdminProjectsUUID;
@@ -54,6 +55,7 @@ const SiteAuditLogProjectStatusSide = ({
         return 0;
     }
   }
+
   return (
     <div className="flex flex-col gap-6 overflow-hidden">
       <Text variant="text-16-bold">Project Status</Text>
@@ -75,8 +77,9 @@ const SiteAuditLogProjectStatusSide = ({
               </button>
             </div>
             <Text variant="text-14-light">
-              From {recentRequest.first_name} {recentRequest.last_name} on{" "}
-              {convertDateFormat(recentRequest.date_created)}
+              {/* From {recentRequest.first_name} {recentRequest.last_name} on{" "}
+              {convertDateFormat(recentRequest.date_created)} */}
+              {recentRequestData(recentRequest)}
             </Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>

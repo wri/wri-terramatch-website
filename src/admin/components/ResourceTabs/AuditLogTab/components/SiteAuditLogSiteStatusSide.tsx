@@ -1,4 +1,3 @@
-import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AdminSitesUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
@@ -15,11 +14,13 @@ interface auditLogItem {
 const SiteAuditLogSiteStatusSide = ({
   record,
   refresh,
-  auditLogData
+  auditLogData,
+  recentRequestData
 }: {
   record?: any;
   refresh?: any;
   auditLogData?: any;
+  recentRequestData?: any;
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
 
@@ -81,10 +82,7 @@ const SiteAuditLogSiteStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">
-              From {recentRequest.first_name} {recentRequest.last_name} on{" "}
-              {convertDateFormat(recentRequest.date_created)}
-            </Text>
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
