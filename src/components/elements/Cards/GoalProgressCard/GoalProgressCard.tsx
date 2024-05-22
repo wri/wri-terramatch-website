@@ -43,9 +43,9 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             {label}
           </Text>
           <Text variant="text-24-bold" className="flex w-full items-baseline">
-            {valueText}&nbsp;
+            {valueText.toLocaleString()}&nbsp;
             <When condition={!!limit}>
-              <Text variant="text-16-light">of {limit}</Text>
+              <Text variant="text-16-light">of {limit?.toLocaleString()}</Text>
             </When>
             <Text variant="text-16-light">{labelValue}</Text>
           </Text>
