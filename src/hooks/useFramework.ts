@@ -6,7 +6,7 @@
 export const useFramework = (entity: any) => {
   return {
     isPPC: entity.framework_key === "ppc",
-    isTerrafund: entity.framework_key !== "ppc",
-    isHBF: entity.framework_key === "hbf"
+    isHBF: entity.framework_key === "hbf",
+    isTerrafund: entity.framework_key !== "ppc" && entity.framework_key !== "hbf"
   };
 };
