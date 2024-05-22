@@ -76,11 +76,7 @@ const SiteAuditLogProjectStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">
-              {/* From {recentRequest.first_name} {recentRequest.last_name} on{" "}
-              {convertDateFormat(recentRequest.date_created)} */}
-              {recentRequestData(recentRequest)}
-            </Text>
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
