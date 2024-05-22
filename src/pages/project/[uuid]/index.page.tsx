@@ -108,10 +108,10 @@ const ProjectDetailPage = () => {
           `${t("Organisation")}: ${project.organisation?.name}`,
           isPPC
             ? t("Priceless Planet Coalition")
-            : isTerrafund
-            ? t("TerraFund")
             : isHBF
             ? "HBF"
+            : isTerrafund
+            ? t("TerraFund")
             : reportingFramework.name
         ]}
         hasBackButton={false}
