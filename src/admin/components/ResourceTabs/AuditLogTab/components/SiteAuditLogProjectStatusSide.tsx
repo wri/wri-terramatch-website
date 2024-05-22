@@ -7,11 +7,13 @@ import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/Statu
 const SiteAuditLogProjectStatusSide = ({
   record,
   refresh,
-  auditLogData
+  auditLogData,
+  recentRequestData
 }: {
   record?: any;
   refresh?: any;
   auditLogData?: any;
+  recentRequestData?: any;
 }) => {
   const mutatePutAuditStatus = fetchPutV2AuditStatusId;
   const mutate = fetchPutV2AdminProjectsUUID;
@@ -53,6 +55,7 @@ const SiteAuditLogProjectStatusSide = ({
         return 0;
     }
   }
+
   return (
     <div className="flex flex-col gap-6 overflow-hidden">
       <Text variant="text-16-bold">Project Status</Text>
@@ -73,7 +76,7 @@ const SiteAuditLogProjectStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">From Liza LePage on 13/06/24</Text>
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>

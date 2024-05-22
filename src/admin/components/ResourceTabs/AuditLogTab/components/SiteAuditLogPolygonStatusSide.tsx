@@ -37,7 +37,8 @@ const SiteAuditLogPolygonStatusSide = ({
   polygonList,
   selectedPolygon,
   setSelectedPolygon,
-  auditLogData
+  auditLogData,
+  recentRequestData
 }: {
   refresh?: any;
   record?: any;
@@ -45,6 +46,7 @@ const SiteAuditLogPolygonStatusSide = ({
   selectedPolygon?: any;
   setSelectedPolygon?: any;
   auditLogData?: any;
+  recentRequestData?: any;
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
   const mutatePutAuditStatus = fetchPutV2AuditStatusId;
@@ -101,7 +103,7 @@ const SiteAuditLogPolygonStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">From Liza LePage on 13/06/24</Text>
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>

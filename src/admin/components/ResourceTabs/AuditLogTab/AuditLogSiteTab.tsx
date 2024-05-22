@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
+import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import {
   fetchGetV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
@@ -46,6 +47,12 @@ interface AttachmentItem {
 
 interface AttachmentResponse {
   data: [AttachmentItem];
+}
+
+interface recentRequestItem {
+  first_name: string;
+  last_name: string;
+  date_created: string;
 }
 
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
@@ -121,6 +128,11 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   }, [buttonToogle, record]);
 
+  const recentRequestData = (recentRequest: recentRequestItem) => {
+    return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
+    ${convertDateFormat(recentRequest.date_created) ?? ""}`;
+  };
+
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
@@ -159,10 +171,20 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Grid>
           <Grid xs={4} className="pl-8 pr-4 pt-9">
             <When condition={buttonToogle === ButtonStates.PROJECTS}>
-              <SiteAuditLogProjectStatusSide record={project} refresh={refetch} auditLogData={auditLogData?.data} />
+              <SiteAuditLogProjectStatusSide
+                record={project}
+                refresh={refetch}
+                auditLogData={auditLogData?.data}
+                recentRequestData={recentRequestData}
+              />
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
-              <SiteAuditLogSiteStatusSide record={record} refresh={refetch} auditLogData={auditLogData?.data} />
+              <SiteAuditLogSiteStatusSide
+                record={record}
+                refresh={refetch}
+                auditLogData={auditLogData?.data}
+                recentRequestData={recentRequestData}
+              />
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
@@ -175,6 +197,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 selectedPolygon={selectedPolygon}
                 setSelectedPolygon={setSelectedPolygon}
                 auditLogData={auditLogData?.data}
+                recentRequestData={recentRequestData}
               />
             </When>
           </Grid>

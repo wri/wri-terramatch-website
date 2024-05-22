@@ -14,11 +14,13 @@ interface auditLogItem {
 const SiteAuditLogSiteStatusSide = ({
   record,
   refresh,
-  auditLogData
+  auditLogData,
+  recentRequestData
 }: {
   record?: any;
   refresh?: any;
   auditLogData?: any;
+  recentRequestData?: any;
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
 
@@ -80,7 +82,7 @@ const SiteAuditLogSiteStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">From Liza LePage on 13/06/24</Text>
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
