@@ -42,11 +42,17 @@ export interface ICriteriaCheckItem {
   date?: string;
 }
 
-const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
+const PolygonDrawer = ({
+  polygonSelected,
+  isPolygonStatusOpen
+}: {
+  polygonSelected: string;
+  isPolygonStatusOpen: any;
+}) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
-  const [openAttributes, setOpenAttributes] = useState(false);
+  const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
@@ -78,12 +84,15 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   };
 
   useEffect(() => {
-    console.log("checkPolygonValidation", checkPolygonValidation);
     if (checkPolygonValidation) {
       validatePolygon();
       reloadCriteriaValidation();
     }
   }, [checkPolygonValidation]);
+
+  useEffect(() => {
+    setButtonToogle(!isPolygonStatusOpen);
+  }, [isPolygonStatusOpen]);
 
   useEffect(() => {
     if (criteriaData && criteriaData.criteria_list) {
@@ -114,7 +123,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   useEffect(() => {
     console.log("openEditNewPolygon", openEditNewPolygon);
     if (openEditNewPolygon) {
-      setButtonToogle(false);
+      setButtonToogle(true);
       setOpenAttributes(true);
     }
   }, [openEditNewPolygon]);
@@ -132,16 +141,16 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
           variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setButtonToogle(!buttonToogle)}
         >
-          Polygon Status
+          Attributes
         </Button>
         <Button
           variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
           onClick={() => setButtonToogle(!buttonToogle)}
         >
-          Attributes
+          Polygon Status
         </Button>
       </div>
-      <If condition={buttonToogle}>
+      <If condition={!buttonToogle}>
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             {/* <StatusDisplay status={"Approved"} /> */}
@@ -150,7 +159,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
         </Then>
         <Else>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <Accordion variant="drawer" title={"Validation"}>
+            <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
               <PolygonValidation
                 menu={polygonValidationData ?? []}
                 clickedValidation={setCheckPolygonValidation}
@@ -162,7 +171,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
               {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
             </Accordion>
             <Divider />
-            <Accordion variant="drawer" title={"Version History"}>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
               <VersionHistory />
             </Accordion>
             <Divider />
