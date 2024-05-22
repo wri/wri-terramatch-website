@@ -121,17 +121,18 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
         </When>
       </div>
       {...files.map((file: any) => (
-        <div key={file.name} className="rounded-xl bg-neutral-150 px-2 py-1">
+        <div key={file.name} className="flex items-baseline justify-between rounded-xl bg-neutral-150 px-2 py-1">
           <Text variant="text-14-light" className="text-grey-700">
             {file?.name}
           </Text>
-          <Button
+          <button
+            className="rounded-full bg-red p-2 text-white hover:bg-error-400 hover:text-red"
             onClick={() => {
               setFiles(files.filter((f: any) => f.name !== file.name));
             }}
           >
-            X
-          </Button>
+            <Icon name={IconNames.CLEAR} className="h-3 w-3" />
+          </button>
         </div>
       ))}
       {error && <div className="text-red">{error}</div>}
