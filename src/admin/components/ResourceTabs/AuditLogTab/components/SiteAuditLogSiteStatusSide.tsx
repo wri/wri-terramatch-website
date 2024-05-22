@@ -1,6 +1,6 @@
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AdminSitesUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPutV2AdminSitesUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -24,19 +24,28 @@ const SiteAuditLogSiteStatusSide = ({
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
 
-  const mutatePutAuditStatus = fetchPutV2AuditStatusId;
+  const { mutate: upload } = usePostV2AuditStatus();
   const mutate = fetchPutV2AdminSitesUUID;
   const deactivateRecentRequest = async () => {
-    await mutatePutAuditStatus({
-      pathParams: {
-        id: recentRequest?.id
+    upload?.(
+      {
+        //@ts-ignore swagger issue
+        body: {
+          entity_uuid: record?.uuid,
+          status: record?.status,
+          entity: "Site",
+          comment: "",
+          type: "change-request",
+          is_active: false,
+          request_removed: true
+        }
       },
-      body: {
-        is_active: false,
-        request_removed: true
+      {
+        onSuccess: () => {
+          refresh();
+        }
       }
-    });
-    refresh();
+    );
   };
 
   const siteStatusLabels = [

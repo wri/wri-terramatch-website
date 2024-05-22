@@ -139,6 +139,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             console.log("response", response.poly_id);
             setSelectedPolygon(response.poly_id);
           } catch (e) {
+            alert("The request encountered an issue, or the comment exceeds 255 characters.");
             console.error(e);
           } finally {
             refresh();
@@ -159,19 +160,25 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
         onClose={closeModal}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
-          await mutate({
-            pathParams: { uuid: record?.uuid },
-            body: {
-              status: option?.status,
-              comment: text,
-              type: "change-request",
-              is_active: true,
-              request_removed: false
-            }
-          });
-          refresh();
-          reloadEntity();
-          closeModal;
+          try {
+            await mutate({
+              pathParams: { uuid: record?.uuid },
+              body: {
+                status: option?.status,
+                comment: text,
+                type: "change-request",
+                is_active: true,
+                request_removed: false
+              }
+            });
+          } catch (e) {
+            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            console.error(e);
+          } finally {
+            refresh();
+            reloadEntity();
+            closeModal;
+          }
         }}
       />
     );

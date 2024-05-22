@@ -1,7 +1,7 @@
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AdminSitePolygonUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPutV2AdminSitePolygonUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -49,19 +49,28 @@ const SiteAuditLogPolygonStatusSide = ({
   recentRequestData?: any;
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
-  const mutatePutAuditStatus = fetchPutV2AuditStatusId;
+  const { mutate: upload } = usePostV2AuditStatus();
   const mutate = fetchPutV2AdminSitePolygonUUID;
   const deactivateRecentRequest = async () => {
-    await mutatePutAuditStatus({
-      pathParams: {
-        id: recentRequest?.id
+    upload?.(
+      {
+        //@ts-ignore swagger issue
+        body: {
+          entity_uuid: record?.uuid,
+          status: record?.status,
+          entity: "SitePolygon",
+          comment: "",
+          type: "change-request",
+          is_active: false,
+          request_removed: true
+        }
       },
-      body: {
-        is_active: false,
-        request_removed: true
+      {
+        onSuccess: () => {
+          refresh();
+        }
       }
-    });
-    refresh();
+    );
   };
 
   const unnamedPolygons = polygonList?.map((polygon: any) => {

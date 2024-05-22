@@ -133,6 +133,22 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ${convertDateFormat(recentRequest.date_created) ?? ""}`;
   };
 
+  const formattedTextStatus = (text: string) => {
+    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  };
+
+  const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
+    if (item.type === "comment") {
+      return "New Comment Added";
+    } else if (item.type === "status") {
+      return `New Status: ${formattedTextStatus(item.status)}`;
+    } else if (item.request_removed) {
+      return "Change Request Removed";
+    } else {
+      return "Change Requested Added";
+    }
+  };
+
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
@@ -147,6 +163,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   refresh={refetch}
                   recordAttachments={attachmentData?.data}
                   refreshAttachments={attachmentRefetch}
+                  getTextForActionTable={getTextForActionTable}
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
@@ -156,6 +173,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   refresh={refetch}
                   recordAttachments={attachmentData?.data}
                   refreshAttachments={attachmentRefetch}
+                  getTextForActionTable={getTextForActionTable}
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
@@ -165,6 +183,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   refresh={refetch}
                   recordAttachments={attachmentData?.data}
                   refreshAttachments={attachmentRefetch}
+                  getTextForActionTable={getTextForActionTable}
                 />
               </When>
             </Stack>

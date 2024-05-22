@@ -23292,6 +23292,7 @@ export type AuditStatusResponse = {
 };
 
 export type AuditStatusPost = {
+  entity?: string;
   entity_uuid?: string;
   status?: string;
   comment?: string;

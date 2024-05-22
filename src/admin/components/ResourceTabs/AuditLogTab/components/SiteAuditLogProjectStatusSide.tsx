@@ -1,6 +1,6 @@
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AdminProjectsUUID, fetchPutV2AuditStatusId } from "@/generated/apiComponents";
+import { fetchPutV2AdminProjectsUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -15,23 +15,32 @@ const SiteAuditLogProjectStatusSide = ({
   auditLogData?: any;
   recentRequestData?: any;
 }) => {
-  const mutatePutAuditStatus = fetchPutV2AuditStatusId;
+  const { mutate: upload } = usePostV2AuditStatus();
   const mutate = fetchPutV2AdminProjectsUUID;
   const recentRequest = auditLogData?.find(
     (item: { type: string; is_active: boolean }) => item.type == "change-request" && item.is_active
   );
 
-  const deactivateRecentRequest = async () => {
-    await mutatePutAuditStatus({
-      pathParams: {
-        id: recentRequest?.id
+  const deactivateRecentRequest = () => {
+    upload?.(
+      {
+        //@ts-ignore swagger issue
+        body: {
+          entity_uuid: record?.uuid,
+          status: record?.status,
+          entity: "Project",
+          comment: "",
+          type: "change-request",
+          is_active: false,
+          request_removed: true
+        }
       },
-      body: {
-        is_active: false,
-        request_removed: true
+      {
+        onSuccess: () => {
+          refresh();
+        }
       }
-    });
-    refresh();
+    );
   };
 
   const projectStatusLabels = [

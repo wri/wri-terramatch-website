@@ -24,6 +24,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [charCount, setCharCount] = useState<number>(0);
 
   const validFileTypes = [
     "application/pdf",
@@ -85,6 +86,11 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
     );
   };
 
+  const handleCommentChange = (e: any) => {
+    setComment(e.target.value);
+    setCharCount(e.target.value.length);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3">
@@ -100,7 +106,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           className="max-h-72 !min-h-0 resize-none border-none !p-0 text-xs"
           containerClassName="w-full"
           rows={1}
-          onChange={e => setComment(e.target.value)}
+          onChange={e => handleCommentChange(e)}
           value={comment}
         />
         <label htmlFor="input-files" className="cursor-pointer">
@@ -119,6 +125,9 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
         <When condition={buttonSendOnBox}>
           <Button variant="text" iconProps={{ name: IconNames.SEND, className: "h-4 w-4 text-darkCustom" }} />
         </When>
+      </div>
+      <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
+        {charCount}/255 characters
       </div>
       <When condition={files.length > 0}>
         <div className="grid gap-2">
