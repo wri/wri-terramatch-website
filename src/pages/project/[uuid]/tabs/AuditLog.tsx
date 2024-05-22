@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { When } from "react-if";
 
-import SiteAuditLogPolygonStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatus";
-import SiteAuditLogPolygonStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatusSide";
-import SiteAuditLogProjectStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatus";
-import SiteAuditLogProjectStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatusSide";
-import SiteAuditLogSiteStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogSiteStatus";
-import SiteAuditLogSiteStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogSiteStatusSide";
+// import SiteAuditLogPolygonStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatus";
+// import SiteAuditLogPolygonStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatusSide";
+// import SiteAuditLogProjectStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatus";
+// import SiteAuditLogProjectStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatusSide";
+// import SiteAuditLogSiteStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogSiteStatus";
+// import SiteAuditLogSiteStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogSiteStatusSide";
 import Button from "@/components/elements/Button/Button";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -67,25 +67,19 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
                       </Button>
                     </div>
                     <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                      <SiteAuditLogProjectStatus />
+                      {/* <SiteAuditLogProjectStatus /> */}
                     </When>
-                    <When condition={buttonToogle === ButtonStates.SITE}>
-                      <SiteAuditLogSiteStatus />
-                    </When>
-                    <When condition={buttonToogle === ButtonStates.POLYGON}>
-                      <SiteAuditLogPolygonStatus />
-                    </When>
+                    <When condition={buttonToogle === ButtonStates.SITE}>{/* <SiteAuditLogSiteStatus /> */}</When>
+                    <When condition={buttonToogle === ButtonStates.POLYGON}>{/* <SiteAuditLogPolygonStatus /> */}</When>
                   </div>
                 </div>
                 <div className="w-1/3 pl-8">
                   <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                    <SiteAuditLogProjectStatusSide />
+                    {/* <SiteAuditLogProjectStatusSide /> */}
                   </When>
-                  <When condition={buttonToogle === ButtonStates.SITE}>
-                    <SiteAuditLogSiteStatusSide />
-                  </When>
+                  <When condition={buttonToogle === ButtonStates.SITE}>{/* <SiteAuditLogSiteStatusSide /> */}</When>
                   <When condition={buttonToogle === ButtonStates.POLYGON}>
-                    <SiteAuditLogPolygonStatusSide />
+                    {/* <SiteAuditLogPolygonStatusSide /> */}
                   </When>
                 </div>
               </div>
