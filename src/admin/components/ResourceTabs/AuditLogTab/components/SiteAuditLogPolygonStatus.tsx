@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useMemo } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import { fetchPostV2AuditStatus } from "@/generated/apiComponents";
@@ -47,7 +47,6 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({
   recordAttachments,
   refreshAttachments
 }) => {
-  const [polygonData, setPolygonData] = useState({});
   const formattedText = (text: string) => {
     return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   };
@@ -55,13 +54,14 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({
     return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
   };
   const mutateComment = fetchPostV2AuditStatus;
-  useEffect(() => {
-    setPolygonData({
+  const polygonData = useMemo(
+    () => ({
       uuid: record?.uuid,
       status: record?.meta,
       title: record?.title
-    });
-  }, [record]);
+    }),
+    [record]
+  );
   return (
     <div className="flex flex-col gap-6">
       <div>
