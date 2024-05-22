@@ -33,22 +33,21 @@ export const TabButton = ({
       aria-checked={item.done ? "true" : "false"}
       className={classNames(
         className,
-        `w-full items-center focus:outline-none disabled:text-neutral-900`,
-        "border",
+        "w-full items-center focus:outline-none disabled:text-neutral-900",
         item.done && "peer",
-        lastItem || selected ? "border-b" : "border-b-0",
+        lastItem,
         selected
-          ? "border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+          ? "border-l-4 border-l-[#27A9E0] bg-white text-neutral-1000"
           : item.done
-          ? `border-secondary-500 bg-secondary-300 text-neutral-800  `
-          : `border-neutral-100 bg-neutral-300 text-neutral-900`
+          ? "border border-green-100  bg-green-50"
+          : "bg-[rgba(0, 0, 0, 0.03)] border-b-[rgba(0, 0, 0, 0.03)] border-l-4 border-b-2 border-white border-l-transparent text-neutral-900"
       )}
     >
-      <Text variant={textVariant} className="w-full text-left line-clamp-2 md:pr-6" containHtml>
+      <Text variant={textVariant} className="w-full text-left font-primary line-clamp-2 md:pr-6" containHtml>
         {item.title}
       </Text>
       <When condition={item.done}>
-        <Icon className="fill-primary-500" name={IconNames.TICK_RECT} width={20} />
+        <Icon className="text-green-100 " name={IconNames.APPROVED_COLORLESS} width={20} />
       </When>
     </button>
   );

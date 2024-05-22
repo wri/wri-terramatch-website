@@ -64,7 +64,7 @@ const StatusPill = ({ status, children, className, ...props }: StatusPillProps) 
         className
       )}
     >
-      <Icon {...iconProps} className={classnames(iconProps.classNames, "h-4 w-auto")} />
+      <Icon {...iconProps} className={classnames(iconProps.classNames, "h-4 w-auto lg:h-5")} />
       {children}
     </div>
   );
