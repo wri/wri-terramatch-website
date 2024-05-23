@@ -1,7 +1,7 @@
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { fetchPutV2AdminSitePolygonUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
+import { usePostV2AuditStatus } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -39,7 +39,8 @@ const SiteAuditLogPolygonStatusSide = ({
   setSelectedPolygon,
   auditLogData,
   recentRequestData,
-  recordType = "Polygon"
+  recordType = "Polygon",
+  mutate
 }: {
   recordType?: string;
   refresh?: any;
@@ -49,10 +50,10 @@ const SiteAuditLogPolygonStatusSide = ({
   setSelectedPolygon?: any;
   auditLogData?: any;
   recentRequestData?: any;
+  mutate?: any;
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
   const { mutate: upload } = usePostV2AuditStatus();
-  const mutate = fetchPutV2AdminSitePolygonUUID;
   const deactivateRecentRequest = async () => {
     upload?.(
       {

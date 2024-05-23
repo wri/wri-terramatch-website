@@ -7,6 +7,7 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import {
   fetchGetV2AuditStatusId,
   fetchGetV2ProjectsUUIDSites,
+  fetchPutV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2Attachment,
   useGetV2AuditStatus
@@ -78,6 +79,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [siteList, setSiteList] = useState<any[]>([]);
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [polygonList, setPolygonList] = useState<any[]>([]);
+  const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
+  const mutateSite = fetchPutV2AdminSitePolygonUUID;
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
@@ -242,6 +245,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
               <SiteAuditLogPolygonStatusSide
+                mutate={mutateSite}
                 recordType="Site"
                 refresh={() => {
                   refetch();
@@ -257,6 +261,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
+                mutate={mutateSitePolygons}
                 refresh={() => {
                   refetch();
                   loadPolygonList();
