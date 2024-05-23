@@ -124,7 +124,10 @@ const Menu = (props: MenuProps) => {
   };
 
   const calculateMenuStyleForLeftHalfTop = () => {
-    if (!menuContainerRef.current == null || !menuRef.current == null) {
+    if (!menuContainerRef.current) {
+      return {};
+    }
+    if (!menuRef.current) {
       return {};
     }
     const rect = menuContainerRef.current.getBoundingClientRect();
