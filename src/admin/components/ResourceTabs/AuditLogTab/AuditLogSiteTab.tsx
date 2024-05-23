@@ -139,7 +139,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
     if (item.type === "comment") {
-      return "New Comment Added";
+      return "New Comment";
     } else if (item.type === "status") {
       return `New Status: ${formattedTextStatus(item.status)}`;
     } else if (item.request_removed) {
