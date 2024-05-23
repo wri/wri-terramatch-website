@@ -10,7 +10,6 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -59,12 +58,12 @@ const Polygons = (props: IPolygonProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
+  const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
   const { toggleUserDrawing } = context || {};
 
   useEffect(() => {
-    console.log("props.menu", props.menu);
     setPolygonMenu(props.menu);
   }, [props.menu]);
   useEffect(() => {
@@ -128,20 +127,6 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const openFormModalHandlerAddCommentary = () => {
-    openModal(
-      <ModalWithLogo
-        title="Blue Forest"
-        onCLose={closeModal}
-        status="under-review"
-        toogleButton
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      />
-    );
-  };
-
   const polygonMenuItems = (item: any) => [
     {
       id: "1",
@@ -155,6 +140,7 @@ const Polygons = (props: IPolygonProps) => {
         setSelectedPolygon(item);
         setPolygonFromMap({ isOpen: true, uuid: item.uuid });
         setIsOpenPolygonDrawer(true);
+        setIsPolygonStatusOpen(false);
       }
     },
     {
@@ -189,7 +175,11 @@ const Polygons = (props: IPolygonProps) => {
           <Text variant="text-12-bold">Comment</Text>
         </div>
       ),
-      onClick: openFormModalHandlerAddCommentary
+      onClick: () => {
+        setSelectedPolygon(item);
+        setIsOpenPolygonDrawer(true);
+        setIsPolygonStatusOpen(true);
+      }
     },
     {
       id: "5",
@@ -213,7 +203,7 @@ const Polygons = (props: IPolygonProps) => {
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
-        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} />
+        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} isPolygonStatusOpen={isPolygonStatusOpen} />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
         <Text variant="text-16-bold" className="pl-2 text-darkCustom">
