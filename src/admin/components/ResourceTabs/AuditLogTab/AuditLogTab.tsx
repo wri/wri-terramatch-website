@@ -8,6 +8,7 @@ import {
   fetchGetV2AuditStatusId,
   fetchGetV2ProjectsUUIDSites,
   fetchPutV2AdminSitePolygonUUID,
+  fetchPutV2AdminSitesUUID,
   GetV2AuditStatusResponse,
   useGetV2Attachment,
   useGetV2AuditStatus
@@ -124,7 +125,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [polygonList, setPolygonList] = useState<any[]>([]);
   const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
-  const mutateSite = fetchPutV2AdminSitePolygonUUID;
+  const mutateSite = fetchPutV2AdminSitesUUID;
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
