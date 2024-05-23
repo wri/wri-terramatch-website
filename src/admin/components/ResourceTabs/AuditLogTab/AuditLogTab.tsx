@@ -139,6 +139,26 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   });
 
+  const unnamedTitleAndSort = (list: any[], entity: string) => {
+    const unnamedItems = list?.map((item: any) => {
+      if (!item.poly_name && entity === "SitePolygon") {
+        return { ...item, poly_name: "Unnamed Polygon" };
+      }
+      if (!item.name && entity === "Site") {
+        return { ...item, name: "Unnamed Site" };
+      }
+      return item;
+    });
+
+    return unnamedItems?.sort((a: { poly_name: string; name: string }, b: { poly_name: string; name: string }) => {
+      if (a.name) {
+        return a?.name?.localeCompare(b?.name);
+      } else {
+        return a?.poly_name?.localeCompare(b?.poly_name);
+      }
+    });
+  };
+
   const loadSiteList = async () => {
     const res = await fetchGetV2ProjectsUUIDSites({
       pathParams: {
@@ -146,8 +166,9 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
       }
     });
     const _siteList = (res as { data: any[] }).data;
+    const _list = unnamedTitleAndSort(_siteList, "Site");
     setSiteList(
-      _siteList.map((item: any) => ({
+      _list.map((item: any) => ({
         title: item?.name,
         uuid: item?.uuid,
         name: item?.name,
@@ -156,15 +177,15 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         status: item?.status
       }))
     );
-    if (_siteList.length > 0) {
+    if (_list.length > 0) {
       if (selectedSite?.title === undefined || !selectedSite) {
         setSelectedSite({
-          title: _siteList[0]?.name,
-          uuid: _siteList[0]?.uuid,
-          name: _siteList[0]?.name,
-          value: _siteList[0]?.uuid,
-          meta: _siteList[0]?.status,
-          status: _siteList[0]?.status
+          title: _list[0]?.name,
+          uuid: _list[0]?.uuid,
+          name: _list[0]?.name,
+          value: _list[0]?.uuid,
+          meta: _list[0]?.status,
+          status: _list[0]?.status
         });
       } else {
         const currentSelectedSite = (res as { data: any[] }).data.find(item => item.uuid === selectedSite?.uuid);
@@ -189,8 +210,9 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
       }
     });
     const _PolygonList = (res as { data: any[] }).data;
+    const _list = unnamedTitleAndSort(_PolygonList, "SitePolygon");
     setPolygonList(
-      _PolygonList.map((item: any) => ({
+      _list.map((item: any) => ({
         title: item?.poly_name,
         uuid: item?.uuid,
         name: item?.poly_name,
@@ -199,15 +221,15 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         status: item?.status
       }))
     );
-    if (_PolygonList.length > 0) {
+    if (_list.length > 0) {
       if (selectedPolygon?.title === undefined || !selectedPolygon) {
         setSelectedPolygon({
-          title: _PolygonList[0]?.poly_name,
-          uuid: _PolygonList[0]?.uuid,
-          name: _PolygonList[0]?.poly_name,
-          value: _PolygonList[0]?.uuid,
-          meta: _PolygonList[0]?.status,
-          status: _PolygonList[0]?.status
+          title: _list[0]?.poly_name,
+          uuid: _list[0]?.uuid,
+          name: _list[0]?.poly_name,
+          value: _list[0]?.uuid,
+          meta: _list[0]?.status,
+          status: _list[0]?.status
         });
       } else {
         const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.uuid);

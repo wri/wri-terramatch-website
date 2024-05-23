@@ -81,6 +81,19 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const { data: attachmentData, refetch: attachmentRefetch } = useGetV2Attachment<AttachmentResponse>({});
 
+  const unnamedTitleAndSort = (list: any[]) => {
+    const unnamedItems = list?.map((item: any) => {
+      if (!item.poly_name) {
+        return { ...item, poly_name: "Unnamed Polygon" };
+      }
+      return item;
+    });
+
+    return unnamedItems?.sort((a: { poly_name: string }, b: { poly_name: string }) => {
+      return a?.poly_name?.localeCompare(b?.poly_name);
+    });
+  };
+
   const loadSitePolygonList = async () => {
     console.log("loadSitePolygonList", record.uuid);
     const res = await fetchGetV2AdminSitePolygonUUID({
@@ -89,9 +102,9 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
       }
     });
     const _polygonList = (res as { data: SitePolygonResponse[] }).data;
-    console.log("data", res);
+    const _list = unnamedTitleAndSort(_polygonList);
     setPolygonList(
-      _polygonList.map((item: any) => ({
+      _list.map((item: any) => ({
         title: item?.poly_name,
         uuid: item?.uuid,
         name: item?.poly_name,
@@ -100,15 +113,15 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
         status: item?.status
       }))
     );
-    if (_polygonList.length > 0) {
+    if (_list.length > 0) {
       if (selectedPolygon?.title === undefined || !selectedPolygon) {
         setSelectedPolygon({
-          title: _polygonList[0]?.poly_name,
-          uuid: _polygonList[0]?.uuid,
-          name: _polygonList[0]?.poly_name,
-          value: _polygonList[0]?.uuid,
-          meta: _polygonList[0]?.status,
-          status: _polygonList[0]?.status
+          title: _list[0]?.poly_name,
+          uuid: _list[0]?.uuid,
+          name: _list[0]?.poly_name,
+          value: _list[0]?.uuid,
+          meta: _list[0]?.status,
+          status: _list[0]?.status
         });
       } else {
         const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.uuid);
