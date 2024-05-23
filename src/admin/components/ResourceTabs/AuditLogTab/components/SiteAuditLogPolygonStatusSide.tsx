@@ -5,25 +5,6 @@ import { usePostV2AuditStatus } from "@/generated/apiComponents";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
-const polygonStatusLabels = [
-  { id: "1", label: "Submitted" },
-  { id: "2", label: "Needs More Information" },
-  { id: "3", label: "Approved" }
-];
-
-function getValueForStatus(status: string): number {
-  switch (status) {
-    case "Submitted":
-      return 0;
-    case "needs-more-information":
-      return 50;
-    case "approved":
-      return 100;
-    default:
-      return 0;
-  }
-}
-
 interface auditLogItem {
   type: string;
   is_active: boolean;
@@ -40,7 +21,9 @@ const SiteAuditLogPolygonStatusSide = ({
   auditLogData,
   recentRequestData,
   recordType = "Polygon",
-  mutate
+  mutate,
+  getValueForStatus,
+  progressBarLabels
 }: {
   recordType?: string;
   refresh?: any;
@@ -51,6 +34,8 @@ const SiteAuditLogPolygonStatusSide = ({
   auditLogData?: any;
   recentRequestData?: any;
   mutate?: any;
+  getValueForStatus?: any;
+  progressBarLabels?: any;
 }) => {
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
   const { mutate: upload } = usePostV2AuditStatus();
@@ -101,7 +86,7 @@ const SiteAuditLogPolygonStatusSide = ({
       <StepProgressbar
         color="secondary"
         value={getValueForStatus(record?.meta)}
-        labels={polygonStatusLabels}
+        labels={progressBarLabels}
         classNameLabels="min-w-[111px]"
         className="w-[98%] !pl-[6%]"
       />

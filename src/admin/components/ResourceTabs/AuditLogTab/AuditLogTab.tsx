@@ -72,6 +72,50 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
   }
 };
 
+function getValueForStatusPolygon(status: string): number {
+  switch (status) {
+    case "Submitted":
+      return 0;
+    case "needs-more-information":
+      return 50;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
+
+function getValueForStatusSite(status: string): number {
+  switch (status) {
+    case "draft":
+      return 0;
+    case "awaiting-approval":
+      return 25;
+    case "needs-more-information":
+      return 50;
+    case "planting-in-progress":
+      return 75;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
+
+const polygonProgressBarStatusLabels = [
+  { id: "1", label: "Submitted" },
+  { id: "2", label: "Needs More Information" },
+  { id: "3", label: "Approved" }
+];
+
+const siteProgressBarStatusLabels = [
+  { id: "1", label: "Draft" },
+  { id: "2", label: "Awaiting Approval" },
+  { id: "3", label: "Needs More Information" },
+  { id: "4", label: "Planting in Progress" },
+  { id: "4", label: "Approved" }
+];
+
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { record: project, isLoading } = useShowContext();
@@ -245,6 +289,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
               <SiteAuditLogPolygonStatusSide
+                getValueForStatus={getValueForStatusSite}
+                progressBarLabels={siteProgressBarStatusLabels}
                 mutate={mutateSite}
                 recordType="Site"
                 refresh={() => {
@@ -261,6 +307,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
+                getValueForStatus={getValueForStatusPolygon}
+                progressBarLabels={polygonProgressBarStatusLabels}
                 mutate={mutateSitePolygons}
                 refresh={() => {
                   refetch();
