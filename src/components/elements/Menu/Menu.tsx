@@ -102,10 +102,7 @@ const Menu = (props: MenuProps) => {
   };
 
   const calculateMenuStyleForHorizontalTop = () => {
-    if (!menuContainerRef.current) {
-      return {};
-    }
-    if (!menuRef.current) {
+    if (menuContainerRef.current == null || menuRef.current == null) {
       return {};
     }
     const bottom = menuContainerRef.current.getBoundingClientRect().bottom;
@@ -127,10 +124,7 @@ const Menu = (props: MenuProps) => {
   };
 
   const calculateMenuStyleForLeftHalfTop = () => {
-    if (!menuContainerRef.current) {
-      return {};
-    }
-    if (!menuRef.current) {
+    if (!menuContainerRef.current == null || !menuRef.current == null) {
       return {};
     }
     const rect = menuContainerRef.current.getBoundingClientRect();
@@ -193,7 +187,7 @@ const Menu = (props: MenuProps) => {
           {menu?.map(item => (
             <MenuItem
               MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
-              selected={setSelectedOption && selectedOption === (item?.country_slug || item?.data?.label)}
+              selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
               key={item.id}
               render={
                 (item?.data?.icon ? (
@@ -207,7 +201,7 @@ const Menu = (props: MenuProps) => {
                   </div>
                 ) : (
                   item?.data?.label
-                )) || item?.render()
+                )) ?? item?.render()
               }
               onClick={() => {
                 if (item.onClick) {
@@ -217,7 +211,7 @@ const Menu = (props: MenuProps) => {
                     item.onClick();
                   }
                 }
-                if (setSelectedOption) setSelectedOption(item?.country_slug || item?.data?.label);
+                if (setSelectedOption) setSelectedOption(item?.country_slug ?? item?.data?.label);
               }}
             />
           ))}

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import clsx from "clsx";
 import React from "react";
@@ -30,17 +31,17 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   selectedOption,
   menu
 }) => {
+  const t = useT();
   const MenuOption: MenuItemProps[] = options ?? [
     {
       id: "1",
       render: () => (
         <Text variant="text-12-bold" className="text-primary">
-          Select Fund
+          {t("Select Fund")}
         </Text>
       )
     }
   ];
-
   const displayOption = options?.find(m => {
     if (selectedOption === null) {
       return false;
@@ -80,7 +81,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
             selectedOption={selectedOption}
           >
             <Text variant="text-12-bold" className="text-primary">
-              {titleOptions || "Select Fund"}
+              {titleOptions || t("Select Fund")}
               {diplayTitle ? `: ${diplayTitle}` : ""}
             </Text>
           </Menu>
