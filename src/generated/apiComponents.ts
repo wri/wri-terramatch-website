@@ -32732,22 +32732,22 @@ export type GetV2AuditStatusIdVariables = {
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AuditStatusId = (variables: GetV2AuditStatusIdVariables, signal?: AbortSignal) =>
-  apiFetch<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, undefined, {}, {}, GetV2AuditStatusIdPathParams>({
+  apiFetch<Schemas.SitePolygonResponse, GetV2AuditStatusIdError, undefined, {}, {}, GetV2AuditStatusIdPathParams>({
     url: "/v2/audit-status/{id}",
     method: "get",
     ...variables,
     signal
   });
 
-export const useGetV2AuditStatusId = <TData = Schemas.AuditStatusResponse>(
+export const useGetV2AuditStatusId = <TData = Schemas.SitePolygonResponse>(
   variables: GetV2AuditStatusIdVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, TData>,
+    reactQuery.UseQueryOptions<Schemas.SitePolygonResponse, GetV2AuditStatusIdError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, TData>(
+  return reactQuery.useQuery<Schemas.SitePolygonResponse, GetV2AuditStatusIdError, TData>(
     queryKeyFn({ path: "/v2/audit-status/{id}", operationId: "getV2AuditStatusId", variables }),
     ({ signal }) => fetchGetV2AuditStatusId({ ...fetcherOptions, ...variables }, signal),
     {

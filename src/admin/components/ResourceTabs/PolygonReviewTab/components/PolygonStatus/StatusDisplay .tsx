@@ -136,8 +136,9 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
                 type: "status"
               }
             });
-            console.log("response", response.poly_id);
-            setSelectedPolygon(response.poly_id);
+            if (response.poly_id) {
+              setSelectedPolygon(response?.poly_id);
+            }
           } catch (e) {
             alert("The request encountered an issue, or the comment exceeds 255 characters.");
             console.error(e);
