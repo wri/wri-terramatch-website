@@ -126,28 +126,35 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           <Button variant="text" iconProps={{ name: IconNames.SEND, className: "h-4 w-4 text-darkCustom" }} />
         </When>
       </div>
-      <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
-        {charCount}/255 characters
-      </div>
-      <When condition={files.length > 0}>
-        <div className="grid gap-2">
-          {...files.map((file: any) => (
-            <div key={file.name} className="flex items-baseline justify-between rounded-xl bg-neutral-150 px-2 py-1">
-              <Text variant="text-14-light" className="text-grey-700">
-                {file?.name}
-              </Text>
-              <button
-                className="rounded-full bg-red p-2 text-white hover:bg-error-400 hover:text-red"
-                onClick={() => {
-                  setFiles(files.filter((f: any) => f.name !== file.name));
-                }}
+      <div className="flex flex-1 justify-between gap-4">
+        <div className="flex flex-wrap gap-2">
+          <When condition={files.length > 0}>
+            {...files.map((file: any) => (
+              <div
+                key={file.name}
+                className="flex items-baseline justify-between gap-2 rounded-xl bg-neutral-150 px-2 py-1"
               >
-                <Icon name={IconNames.CLEAR} className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
+                <Text variant="text-12-light" className="text-nowrap text-darkCustom">
+                  {file?.name}
+                </Text>
+                <button
+                  className="bg-transparent p-0 text-darkCustom hover:text-red"
+                  onClick={() => {
+                    setFiles(files.filter((f: any) => f.name !== file.name));
+                  }}
+                >
+                  <Icon name={IconNames.CLEAR} className="h-2.5 w-2.5 lg:h-3 lg:w-3" />
+                </button>
+              </div>
+            ))}
+          </When>
         </div>
-      </When>
+
+        <div className={`text-nowrap text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
+          {charCount}/255 characters
+        </div>
+      </div>
+
       {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
         <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }} onClick={submitComment}>
