@@ -1,9 +1,10 @@
 import { Grid, Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { Button, Link, TabbedShowLayout, TabProps, useBasename, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
+import modules from "@/admin/modules";
 import {
   fetchGetV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
@@ -16,7 +17,7 @@ import { Entity } from "@/types/common";
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
 import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
 import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
-import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
+// import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
 import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
 import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
 import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
@@ -57,6 +58,7 @@ interface recentRequestItem {
 
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { record, isLoading } = useShowContext();
+  const basename = useBasename();
   const { project } = record;
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
@@ -157,14 +159,21 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                <SiteAuditLogProjectStatus
+                <Button
+                  className="button-aside-page-admin"
+                  component={Link}
+                  to={`${basename}/${modules.project.ResourceName}/${record.project.uuid}/show/5`}
+                  fullWidth
+                  label="OPEN PROJECT AUDIT LOG"
+                />
+                {/* <SiteAuditLogProjectStatus
                   record={project}
                   auditLogData={auditLogData}
                   refresh={refetch}
                   recordAttachments={attachmentData?.data}
                   refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
-                />
+                /> */}
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
                 <SiteAuditLogSiteStatus

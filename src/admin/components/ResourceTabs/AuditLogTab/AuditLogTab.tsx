@@ -1,94 +1,160 @@
-import { Typography } from "@mui/material";
-import { FC } from "react";
-import {
-  Datagrid,
-  DateField,
-  FunctionField,
-  Pagination,
-  ReferenceField,
-  ReferenceManyField,
-  TabbedShowLayout,
-  TabProps,
-  useShowContext
-} from "react-admin";
+import { Grid, Stack } from "@mui/material";
+import { FC, useState } from "react";
+import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
-import modules from "@/admin/modules";
-import { V2AdminUserRead } from "@/generated/apiSchemas";
+import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
+import { GetV2AuditStatusResponse, useGetV2Attachment, useGetV2AuditStatus } from "@/generated/apiComponents";
 import { Entity } from "@/types/common";
+
+import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
+// import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
+// import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
+import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
+import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
+// import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
+// import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: Entity["entityName"];
 }
 
-interface FeedbackProps {
-  comment: string | undefined;
+interface AttachmentItem {
+  id: number;
+  entity_id: number;
+  attachment: string;
+  url_file: string;
 }
 
-const Feedback: FC<FeedbackProps> = ({ comment }) => {
-  if (comment == null) {
-    return <>-</>;
-  }
+interface AttachmentResponse {
+  data: [AttachmentItem];
+}
 
-  return (
-    <>
-      {comment.split("\n").map(fragment => (
-        <>
-          {fragment}
-          <br />
-        </>
-      ))}
-    </>
-  );
+interface recentRequestItem {
+  first_name: string;
+  last_name: string;
+  date_created: string;
+}
+
+export const ButtonStates = {
+  PROJECTS: 0,
+  SITE: 1,
+  POLYGON: 2
+};
+
+const ReverseButtonStates: { [key: number]: string } = {
+  0: "Project",
+  1: "Site",
+  2: "SitePolygon"
+};
+
+const formattedTextStatus = (text: string) => {
+  return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+};
+
+const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
+  if (item.type === "comment") {
+    return "New Comment";
+  } else if (item.type === "status") {
+    return `New Status: ${formattedTextStatus(item.status)}`;
+  } else if (item.request_removed) {
+    return "Change Request Removed";
+  } else {
+    return "Change Requested Added";
+  }
 };
 
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
-  const ctx = useShowContext();
-  const resource = entity ?? ctx.resource;
+  const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
+  const { record: project, isLoading } = useShowContext();
+
+  const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
+    queryParams: {
+      entity: ReverseButtonStates[buttonToogle],
+      uuid: project.uuid
+    }
+  });
+
+  const { data: attachmentData, refetch: attachmentRefetch } = useGetV2Attachment<AttachmentResponse>({});
+
+  const recentRequestData = (recentRequest: recentRequestItem) => {
+    return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
+    ${convertDateFormat(recentRequest.date_created) ?? ""}`;
+  };
 
   return (
-    <When condition={!ctx.isLoading}>
+    <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
-        <Typography variant="h5" component="h3">
-          Audit Log
-        </Typography>
-        <ReferenceManyField
-          pagination={<Pagination />}
-          reference={modules.audit.ResourceName}
-          filter={{ entity: resource }}
-          target="uuid"
-          label=""
-        >
-          <Datagrid bulkActionButtons={false}>
-            <DateField
-              source="created_at"
-              label="Date and time"
-              showTime
-              locales="en-GB"
-              options={{ dateStyle: "short", timeStyle: "short" }}
-            />
-            <ReferenceField source="user_uuid" reference={modules.user.ResourceName} label="User">
-              <FunctionField
-                source="first_name"
-                render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
+        <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
+          <Grid xs={8}>
+            <Stack gap={4} className="pl-8 pt-9">
+              <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
+              <When condition={buttonToogle === ButtonStates.PROJECTS}>
+                <SiteAuditLogProjectStatus
+                  record={project}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  recordAttachments={attachmentData?.data}
+                  refreshAttachments={attachmentRefetch}
+                  getTextForActionTable={getTextForActionTable}
+                />
+              </When>
+              <When condition={buttonToogle === ButtonStates.SITE}>
+                {/* <SiteAuditLogSiteStatus
+                  record={record}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  recordAttachments={attachmentData?.data}
+                  refreshAttachments={attachmentRefetch}
+                  getTextForActionTable={getTextForActionTable}
+                /> */}
+              </When>
+              <When condition={buttonToogle === ButtonStates.POLYGON}>
+                {/* <SiteAuditLogPolygonStatus
+                  record={selectedPolygon}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  recordAttachments={attachmentData?.data}
+                  refreshAttachments={attachmentRefetch}
+                  getTextForActionTable={getTextForActionTable}
+                /> */}
+              </When>
+            </Stack>
+          </Grid>
+          <Grid xs={4} className="pl-8 pr-4 pt-9">
+            <When condition={buttonToogle === ButtonStates.PROJECTS}>
+              <SiteAuditLogProjectStatusSide
+                record={project}
+                refresh={refetch}
+                auditLogData={auditLogData?.data}
+                recentRequestData={recentRequestData}
               />
-            </ReferenceField>
-            <FunctionField
-              label="Action"
-              className="capitalize"
-              render={(record: any) => {
-                const str: string = record?.new_values?.status ?? record?.event ?? "";
-
-                return str.replaceAll("-", " ");
-              }}
-            />
-            <FunctionField
-              label="Comments"
-              render={(record: any) => <Feedback comment={record?.new_values?.feedback} />}
-            />
-          </Datagrid>
-        </ReferenceManyField>
+            </When>
+            <When condition={buttonToogle === ButtonStates.SITE}>
+              {/* <SiteAuditLogSiteStatusSide
+                record={record}
+                refresh={refetch}
+                auditLogData={auditLogData?.data}
+                recentRequestData={recentRequestData}
+              /> */}
+            </When>
+            <When condition={buttonToogle === ButtonStates.POLYGON}>
+              {/* <SiteAuditLogPolygonStatusSide
+                refresh={() => {
+                  refetch();
+                  loadSitePolygonList();
+                }}
+                record={selectedPolygon}
+                polygonList={polygonList}
+                selectedPolygon={selectedPolygon}
+                setSelectedPolygon={setSelectedPolygon}
+                auditLogData={auditLogData?.data}
+                recentRequestData={recentRequestData}
+              /> */}
+            </When>
+          </Grid>
+        </Grid>
       </TabbedShowLayout.Tab>
     </When>
   );
