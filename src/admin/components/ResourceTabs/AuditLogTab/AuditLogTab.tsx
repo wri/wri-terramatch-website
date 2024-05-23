@@ -1,18 +1,23 @@
 import { Grid, Stack } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
-import { GetV2AuditStatusResponse, useGetV2Attachment, useGetV2AuditStatus } from "@/generated/apiComponents";
+import {
+  fetchGetV2ProjectsUUIDSites,
+  GetV2AuditStatusResponse,
+  useGetV2Attachment,
+  useGetV2AuditStatus
+} from "@/generated/apiComponents";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
 // import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
-// import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
+import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
 import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
-// import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
+import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
 // import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -68,13 +73,64 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { record: project, isLoading } = useShowContext();
+  const [selectedSite, setSelectedSite] = useState<any>(null);
+  const [siteList, setSiteList] = useState<any[]>([]);
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
-      uuid: project.uuid
+      uuid: buttonToogle === ButtonStates.PROJECTS ? project.uuid : selectedSite.uuid
     }
   });
+
+  const loadSiteList = async () => {
+    const res = await fetchGetV2ProjectsUUIDSites({
+      pathParams: {
+        uuid: project.uuid
+      }
+    });
+    const _siteList = (res as { data: any[] }).data;
+    setSiteList(
+      _siteList.map((item: any) => ({
+        title: item?.name,
+        uuid: item?.uuid,
+        name: item?.name,
+        value: item?.uuid,
+        meta: item?.status,
+        status: item?.status
+      }))
+    );
+    if (_siteList.length > 0) {
+      if (selectedSite?.title === undefined || !selectedSite) {
+        setSelectedSite({
+          title: _siteList[0]?.name,
+          uuid: _siteList[0]?.uuid,
+          name: _siteList[0]?.name,
+          value: _siteList[0]?.uuid,
+          meta: _siteList[0]?.status,
+          status: _siteList[0]?.status
+        });
+      } else {
+        const currentSelectedSite = (res as { data: any[] }).data.find(item => item.uuid === selectedSite?.uuid);
+        setSelectedSite({
+          title: currentSelectedSite?.name,
+          uuid: currentSelectedSite?.uuid,
+          name: currentSelectedSite?.name,
+          value: currentSelectedSite?.uuid,
+          meta: currentSelectedSite?.status,
+          status: currentSelectedSite?.status
+        });
+      }
+    } else {
+      setSelectedSite(null);
+    }
+  };
+
+  useEffect(() => {
+    if (buttonToogle === ButtonStates.SITE) {
+      loadSiteList();
+    }
+  }, [buttonToogle, project]);
 
   const { data: attachmentData, refetch: attachmentRefetch } = useGetV2Attachment<AttachmentResponse>({});
 
@@ -101,14 +157,14 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
-                {/* <SiteAuditLogSiteStatus
-                  record={record}
+                <SiteAuditLogSiteStatus
+                  record={selectedSite}
                   auditLogData={auditLogData}
                   refresh={refetch}
                   recordAttachments={attachmentData?.data}
                   refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
-                /> */}
+                />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
                 {/* <SiteAuditLogPolygonStatus
@@ -132,12 +188,19 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               />
             </When>
             <When condition={buttonToogle === ButtonStates.SITE}>
-              {/* <SiteAuditLogSiteStatusSide
-                record={record}
-                refresh={refetch}
+              <SiteAuditLogPolygonStatusSide
+                recordType="Site"
+                refresh={() => {
+                  refetch();
+                  loadSiteList();
+                }}
+                record={selectedSite}
+                polygonList={siteList}
+                selectedPolygon={selectedSite}
+                setSelectedPolygon={setSelectedSite}
                 auditLogData={auditLogData?.data}
                 recentRequestData={recentRequestData}
-              /> */}
+              />
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               {/* <SiteAuditLogPolygonStatusSide

@@ -216,6 +216,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
+                recordType="Polygon"
                 refresh={() => {
                   refetch();
                   loadSitePolygonList();

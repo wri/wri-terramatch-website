@@ -38,8 +38,10 @@ const SiteAuditLogPolygonStatusSide = ({
   selectedPolygon,
   setSelectedPolygon,
   auditLogData,
-  recentRequestData
+  recentRequestData,
+  recordType = "Polygon"
 }: {
+  recordType?: string;
   refresh?: any;
   record?: any;
   polygonList?: any[];
@@ -58,7 +60,7 @@ const SiteAuditLogPolygonStatusSide = ({
         body: {
           entity_uuid: record?.uuid,
           status: record?.status,
-          entity: "SitePolygon",
+          entity: recordType === "Polygon" ? "SitePolygon" : recordType,
           comment: "",
           type: "change-request",
           is_active: false,
@@ -75,26 +77,26 @@ const SiteAuditLogPolygonStatusSide = ({
 
   const unnamedPolygons = polygonList?.map((polygon: any) => {
     if (!polygon.title) {
-      return { ...polygon, title: "Unnamed Polygon" };
+      return { ...polygon, title: `Unnamed ${recordType}` };
     }
     return polygon;
   });
   return (
     <div className="flex flex-col gap-6 overflow-hidden">
       <Dropdown
-        label="Select Polygon"
+        label={`Select ${recordType}`}
         labelVariant="text-16-bold"
         labelClassName="capitalize"
         optionsClassName="max-w-full"
         value={[selectedPolygon?.uuid]}
-        placeholder={"Select Polygon"}
+        placeholder={`Select ${recordType}`}
         options={unnamedPolygons!}
         onChange={e => {
           console.log("onChange", e);
           setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
         }}
       />
-      <Text variant="text-16-bold">Polygon Status</Text>
+      <Text variant="text-16-bold">{`${recordType} Status`}</Text>
       <StepProgressbar
         color="secondary"
         value={getValueForStatus(record?.meta)}
@@ -118,7 +120,7 @@ const SiteAuditLogPolygonStatusSide = ({
         </div>
       )}
       <StatusDisplay
-        titleStatus={"Polygon"}
+        titleStatus={recordType as any}
         name={selectedPolygon?.title}
         refresh={refresh}
         mutate={mutate}
