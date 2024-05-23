@@ -5,6 +5,7 @@ import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import modules from "@/admin/modules";
+import Text from "@/components/elements/Text/Text";
 import {
   fetchGetV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
@@ -15,6 +16,7 @@ import { SitePolygonResponse } from "@/generated/apiSchemas";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
+import { getValueForStatusPolygon, polygonProgressBarStatusLabels } from "./AuditLogTab";
 import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
 import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 // import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
@@ -159,6 +161,10 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
+                <Text variant="text-24-bold">Project Status</Text>
+                <Text variant="text-14-light" className="mb-4">
+                  Update the site status, view updates, or add comments
+                </Text>
                 <Button
                   className="button-aside-page-admin"
                   component={Link}
@@ -216,6 +222,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
               <SiteAuditLogPolygonStatusSide
+                getValueForStatus={getValueForStatusPolygon}
+                progressBarLabels={polygonProgressBarStatusLabels}
                 recordType="Polygon"
                 refresh={() => {
                   refetch();
