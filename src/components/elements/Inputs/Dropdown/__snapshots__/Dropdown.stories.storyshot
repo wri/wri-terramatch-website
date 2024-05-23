@@ -42,6 +42,14 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
       >
         placeholder
       </span>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>
@@ -89,6 +97,14 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
       >
         placeholder
       </span>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>
@@ -136,6 +152,14 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
       >
         placeholder
       </span>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>
@@ -183,6 +207,14 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
       >
         placeholder
       </span>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>

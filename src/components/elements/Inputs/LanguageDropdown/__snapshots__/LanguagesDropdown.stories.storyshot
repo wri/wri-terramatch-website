@@ -19,11 +19,27 @@ exports[`Storyshots Components/Elements/Inputs/LanguagesDropdown Default 1`] = `
       onMouseDown={[Function]}
       type="button"
     >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
       <span
         className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
       >
         English
       </span>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 8,
+          }
+        }
+      />
     </button>
   </div>
 </div>

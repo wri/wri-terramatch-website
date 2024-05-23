@@ -31,6 +31,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           >
             Show All
           </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
         </div>
       </div>
     </div>
@@ -70,6 +78,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -79,11 +95,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -144,11 +178,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -209,11 +261,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -265,6 +335,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -274,11 +352,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -339,11 +435,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -395,6 +509,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -404,11 +526,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -469,11 +609,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -534,11 +692,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -590,6 +766,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -599,11 +783,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -655,6 +857,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -664,11 +874,29 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
                 className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -723,7 +951,16 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           </div>
           <div
             className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
-          />
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 20,
+                }
+              }
+            />
+          </div>
         </div>
         <p
           className="text-bold-subtitle-500"
@@ -746,7 +983,16 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
         disabled={true}
         onClick={[Function]}
-      />
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
+      </button>
       <p
         className="text-neutral-1000 underline text-bold-subtitle-500"
         data-testid="txt"
@@ -769,7 +1015,16 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
         disabled={false}
         onClick={[Function]}
-      />
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
+      </button>
     </div>
   </div>
 </div>
