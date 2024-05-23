@@ -5,6 +5,7 @@ import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import {
+  fetchGetV2AuditStatusId,
   fetchGetV2ProjectsUUIDSites,
   GetV2AuditStatusResponse,
   useGetV2Attachment,
@@ -13,7 +14,7 @@ import {
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
-// import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
+import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
 import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
 import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
@@ -75,11 +76,18 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { record: project, isLoading } = useShowContext();
   const [selectedSite, setSelectedSite] = useState<any>(null);
   const [siteList, setSiteList] = useState<any[]>([]);
+  const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
+  const [polygonList, setPolygonList] = useState<any[]>([]);
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
-      uuid: buttonToogle === ButtonStates.PROJECTS ? project.uuid : selectedSite?.uuid
+      uuid:
+        buttonToogle === ButtonStates.PROJECTS
+          ? project.uuid
+          : buttonToogle === ButtonStates.SITE
+          ? selectedSite?.uuid
+          : selectedPolygon?.uuid
     }
   });
 
@@ -126,9 +134,54 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   };
 
+  const loadPolygonList = async () => {
+    const res = await fetchGetV2AuditStatusId({
+      pathParams: {
+        id: project.uuid
+      }
+    });
+    const _PolygonList = (res as { data: any[] }).data;
+    setPolygonList(
+      _PolygonList.map((item: any) => ({
+        title: item?.poly_name,
+        uuid: item?.uuid,
+        name: item?.poly_name,
+        value: item?.uuid,
+        meta: item?.status,
+        status: item?.status
+      }))
+    );
+    if (_PolygonList.length > 0) {
+      if (selectedPolygon?.title === undefined || !selectedPolygon) {
+        setSelectedPolygon({
+          title: _PolygonList[0]?.poly_name,
+          uuid: _PolygonList[0]?.uuid,
+          name: _PolygonList[0]?.poly_name,
+          value: _PolygonList[0]?.uuid,
+          meta: _PolygonList[0]?.status,
+          status: _PolygonList[0]?.status
+        });
+      } else {
+        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.uuid);
+        setSelectedPolygon({
+          title: currentSelectedPolygon?.poly_name,
+          uuid: currentSelectedPolygon?.uuid,
+          name: currentSelectedPolygon?.poly_name,
+          value: currentSelectedPolygon?.uuid,
+          meta: currentSelectedPolygon?.status,
+          status: currentSelectedPolygon?.status
+        });
+      }
+    } else {
+      setSelectedPolygon(null);
+    }
+  };
+
   useEffect(() => {
     if (buttonToogle === ButtonStates.SITE) {
       loadSiteList();
+    } else if (buttonToogle === ButtonStates.POLYGON) {
+      loadPolygonList();
     }
   }, [buttonToogle, project]);
 
@@ -167,14 +220,14 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
-                {/* <SiteAuditLogPolygonStatus
+                <SiteAuditLogPolygonStatus
                   record={selectedPolygon}
                   auditLogData={auditLogData}
                   refresh={refetch}
                   recordAttachments={attachmentData?.data}
                   refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
-                /> */}
+                />
               </When>
             </Stack>
           </Grid>
@@ -203,10 +256,10 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               />
             </When>
             <When condition={buttonToogle === ButtonStates.POLYGON}>
-              {/* <SiteAuditLogPolygonStatusSide
+              <SiteAuditLogPolygonStatusSide
                 refresh={() => {
                   refetch();
-                  loadSitePolygonList();
+                  loadPolygonList();
                 }}
                 record={selectedPolygon}
                 polygonList={polygonList}
@@ -214,7 +267,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 setSelectedPolygon={setSelectedPolygon}
                 auditLogData={auditLogData?.data}
                 recentRequestData={recentRequestData}
-              /> */}
+              />
             </When>
           </Grid>
         </Grid>
