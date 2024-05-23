@@ -79,7 +79,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
-      uuid: buttonToogle === ButtonStates.PROJECTS ? project.uuid : selectedSite.uuid
+      uuid: buttonToogle === ButtonStates.PROJECTS ? project.uuid : selectedSite?.uuid
     }
   });
 
