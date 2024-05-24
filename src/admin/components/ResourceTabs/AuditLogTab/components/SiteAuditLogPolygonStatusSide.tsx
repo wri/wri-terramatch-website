@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useState } from "react";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -96,7 +97,7 @@ const SiteAuditLogPolygonStatusSide = ({
         value={getValueForStatus(record?.meta)}
         labels={progressBarLabels}
         classNameLabels="min-w-[99px] "
-        className="mb-4 w-[99%] !pl-[3%]"
+        className={classNames("w-[98%] pl-[1%]", recordType === "Polygon" && "pl-[6%]")}
       />
       {recentRequest && (
         <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-3">
