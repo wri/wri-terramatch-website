@@ -95,7 +95,7 @@ const SignUpPage = ({
         callback_url: window.location.origin + "/auth/verify/email/",
         primary_role: primary_role as string,
         country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
-        program: selectedTitleOption == "Select Framework" ? (selectedOption as any) : null
+        program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
       }
     });
   };

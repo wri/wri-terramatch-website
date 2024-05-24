@@ -25,7 +25,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
   useEffect(() => {
     form.setValue("primary_role", primary_role);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [primary_role]);
 
   return (
     <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
@@ -140,9 +140,10 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
                 )}
                 error={errors.terms}
                 required
-                className="letter-spacing-normal text-xs font-normal lg:text-sm wide:text-base"
+                className="letter-spacing-normal relative text-xs font-normal lg:text-sm wide:text-base"
                 inputClassName="rounded-full"
                 textClassName="!text-12-light"
+                errorClassName="!text-left mt-2"
               />
               <Checkbox
                 name="consent"
@@ -152,9 +153,10 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
                 )}
                 error={errors.consent}
                 required
-                className="letter-spacing-normal text-12-light text-xs font-normal lg:text-sm wide:text-base"
+                className="letter-spacing-normal text-12-light relative text-xs font-normal lg:text-sm wide:text-base"
                 inputClassName="rounded-full"
                 textClassName="!text-12-light"
+                errorClassName="!text-left mt-2"
               />
             </div>
           </div>
