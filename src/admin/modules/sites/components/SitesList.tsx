@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   BooleanField,
@@ -21,12 +21,10 @@ import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
-import FrameworkSelectionDialog, { useFrameworkSelection } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -77,7 +75,6 @@ const SiteDataGrid: FC = () => {
 };
 
 export const SitesList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
   const frameworkChoices = useFrameworkChoices();
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
@@ -122,20 +119,7 @@ export const SitesList: FC = () => {
     />
   ];
 
-  const { openExportDialog, frameworkDialogProps } = useFrameworkSelection((framework: string) => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "sites",
-        framework
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, `Sites - ${framework}.csv`);
-      })
-      .finally(() => setExporting(false));
-  });
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("sites");
 
   return (
     <>

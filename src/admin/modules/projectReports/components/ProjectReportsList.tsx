@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -18,12 +18,10 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
-import FrameworkSelectionDialog, { useFrameworkSelection } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -62,7 +60,6 @@ const ProjectReportDataGrid: FC = () => {
 };
 
 export const ProjectReportsList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
   const frameworkChoices = useFrameworkChoices();
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
@@ -89,20 +86,7 @@ export const ProjectReportsList: FC = () => {
     <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />
   ];
 
-  const { openExportDialog, frameworkDialogProps } = useFrameworkSelection((framework: string) => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "project-reports",
-        framework
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, `Project Reports - ${framework}.csv`);
-      })
-      .finally(() => setExporting(false));
-  });
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("project-reports");
 
   return (
     <>
