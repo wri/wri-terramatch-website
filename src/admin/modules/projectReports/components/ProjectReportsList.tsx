@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -29,19 +29,8 @@ import { optionToChoices } from "@/utils/options";
 import modules from "../..";
 
 const ProjectReportDataGrid: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
+  const frameworkChoices = useFrameworkChoices();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
       <TextField source="title" label="Report Name" />
@@ -75,19 +64,7 @@ const ProjectReportDataGrid: FC = () => {
 export const ProjectReportsList: FC = () => {
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [exporting, setExporting] = useState<boolean>(false);
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkChoices = useFrameworkChoices();
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
     <ReferenceInput
