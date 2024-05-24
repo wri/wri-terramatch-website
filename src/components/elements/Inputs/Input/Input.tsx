@@ -161,6 +161,14 @@ const Input = forwardRef(
       input.value = formattedValue;
     };
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (format === "number") {
+        formatNumber(event);
+      } else if (inputProps.type === "password") {
+        registeredFormProps?.onChange(event);
+      }
+    };
+
     return (
       <InputWrapper
         inputId={id}
@@ -182,7 +190,8 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
-            onChange={format === "number" ? formatNumber : undefined}
+            // onChange={format === "number" ? formatNumber : undefined}
+            onChange={handleChange}
             ref={registeredFormProps?.ref || ref}
             id={id}
             className={inputClasses}
