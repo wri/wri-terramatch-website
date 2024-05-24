@@ -1,6 +1,6 @@
 import { CheckCircle, InfoOutlined } from "@mui/icons-material";
 import { Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle } from "@mui/material";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { AutocompleteInput, Form } from "react-admin";
 import { FieldValues } from "react-hook-form";
 import * as yup from "yup";
@@ -56,6 +56,24 @@ const FrameworkSelectionDialogContent: FC<FrameworkSelectionDialogContentProps> 
     </>
   );
 };
+
+export function useFrameworkSelection(handleExport: (framework: string) => void) {
+  const [modalOpen, setModalOpen] = useState(false);
+  return {
+    openExportDialog: useCallback(() => setModalOpen(true), []),
+    frameworkDialogProps: {
+      open: modalOpen,
+      onCancel: useCallback(() => setModalOpen(false), []),
+      onExport: useCallback(
+        (framework: string) => {
+          handleExport(framework);
+          setModalOpen(false);
+        },
+        [handleExport]
+      )
+    }
+  };
+}
 
 interface FrameworkSelectionDialogProps extends DialogProps {
   onExport: (framework: string) => void;

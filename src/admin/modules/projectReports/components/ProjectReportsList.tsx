@@ -18,7 +18,7 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
-import FrameworkSelectionDialog from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import FrameworkSelectionDialog, { useFrameworkSelection } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
@@ -62,7 +62,6 @@ const ProjectReportDataGrid: FC = () => {
 };
 
 export const ProjectReportsList: FC = () => {
-  const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [exporting, setExporting] = useState<boolean>(false);
   const frameworkChoices = useFrameworkChoices();
   const filters = [
@@ -90,15 +89,7 @@ export const ProjectReportsList: FC = () => {
     <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />
   ];
 
-  const handleExportOpen = () => {
-    setExportModalOpen(true);
-  };
-
-  const handleExportClose = () => {
-    setExportModalOpen(false);
-  };
-
-  const handleExport = (framework: string) => {
+  const { openExportDialog, frameworkDialogProps } = useFrameworkSelection((framework: string) => {
     setExporting(true);
 
     fetchGetV2AdminENTITYExportFRAMEWORK({
@@ -111,9 +102,7 @@ export const ProjectReportsList: FC = () => {
         downloadFileBlob(response, `Project Reports - ${framework}.csv`);
       })
       .finally(() => setExporting(false));
-
-    handleExportClose();
-  };
+  });
 
   return (
     <>
@@ -123,11 +112,11 @@ export const ProjectReportsList: FC = () => {
         <Divider />
       </Stack>
 
-      <List actions={<ListActions onExport={handleExportOpen} />} filters={filters}>
+      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
         <ProjectReportDataGrid />
       </List>
 
-      <FrameworkSelectionDialog open={exportModalOpen} onCancel={handleExportClose} onExport={handleExport} />
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>
