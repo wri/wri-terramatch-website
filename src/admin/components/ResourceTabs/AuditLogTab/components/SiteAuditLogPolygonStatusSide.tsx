@@ -87,10 +87,9 @@ const SiteAuditLogPolygonStatusSide = ({
         color="secondary"
         value={getValueForStatus(record?.meta)}
         labels={progressBarLabels}
-        classNameLabels="min-w-[111px]"
-        className="w-[98%] !pl-[6%]"
+        classNameLabels="min-w-[99px] "
+        className="mb-4 w-[99%] !pl-[3%]"
       />
-
       {recentRequest && (
         <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-3">
           <div>
