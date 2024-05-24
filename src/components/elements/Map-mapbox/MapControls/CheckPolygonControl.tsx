@@ -7,7 +7,6 @@ import { fetchGetV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationS
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
-import Notification from "../../Notification/Notification";
 import Text from "../../Text/Text";
 
 export interface CheckSitePolygonProps {
@@ -30,7 +29,6 @@ interface TransformedData {
 }
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const [openNotification, setOpenNotification] = useState(false);
   const { siteRecord } = props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
@@ -102,16 +100,10 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-          onClick={() => setOpenNotification(!openNotification)}
+          onClick={() => setClickedValidation(true)}
         >
           Check Polygons
         </Button>
-        <Notification
-          open={openNotification}
-          message="Your polygons have been updated"
-          title="Polygon Checks"
-          type="success"
-        />
       </div>
       <div className="relative flex w-[231px] flex-col gap-2 rounded-xl p-3">
         <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
