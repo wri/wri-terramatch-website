@@ -89,6 +89,7 @@ const Page = () => {
                       setSelectedOption={setSelectedOption}
                       selectedOption={selectedOption}
                       refContentCard={refContentCard}
+                      icon={item.icon}
                     />
                   </Button>
                 )
