@@ -2,7 +2,6 @@ import { FC, Fragment } from "react";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
-import { fetchPostV2AuditStatus } from "@/generated/apiComponents";
 
 import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 
@@ -44,7 +43,6 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
   refreshAttachments,
   getTextForActionTable
 }) => {
-  const mutateComment = fetchPostV2AuditStatus;
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -58,7 +56,6 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
           record={record}
           entity={"Site"}
           auditLogData={auditLogData?.data}
-          mutate={mutateComment}
           refresh={refresh}
           viewCommentsList={false}
           attachmentRefetch={refreshAttachments}

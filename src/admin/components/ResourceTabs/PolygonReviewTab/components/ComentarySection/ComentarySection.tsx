@@ -8,7 +8,6 @@ import { useGetAuthMe } from "@/generated/apiComponents";
 
 const ComentarySection = ({
   auditLogData,
-  mutate,
   refresh,
   record,
   entity,
@@ -16,7 +15,6 @@ const ComentarySection = ({
   attachmentRefetch
 }: {
   auditLogData?: any;
-  mutate?: any;
   refresh?: any;
   record?: any;
   entity?: "Project" | "SitePolygon" | "Site";
@@ -37,7 +35,6 @@ const ComentarySection = ({
       <ComentaryBox
         name={authMe?.data.first_name}
         lastName={authMe?.data.last_name}
-        mutate={mutate}
         refresh={refresh}
         record={record}
         entity={entity}

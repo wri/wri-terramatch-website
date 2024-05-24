@@ -185,14 +185,6 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   fullWidth
                   label="OPEN PROJECT AUDIT LOG"
                 />
-                {/* <SiteAuditLogProjectStatus
-                  record={project}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                  recordAttachments={attachmentData?.data}
-                  refreshAttachments={attachmentRefetch}
-                  getTextForActionTable={getTextForActionTable}
-                /> */}
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
                 <SiteAuditLogSiteStatus

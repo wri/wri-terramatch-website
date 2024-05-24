@@ -3,6 +3,7 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
+import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
@@ -20,11 +21,13 @@ export interface ComentaryBoxProps {
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox, refresh, record, entity } = props;
-  const { mutate: upload } = usePostV2AuditStatus();
+  const { mutate: sendCommentary } = usePostV2AuditStatus();
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [charCount, setCharCount] = useState<number>(0);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validFileTypes = [
     "application/pdf",
@@ -69,18 +72,24 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
     files.forEach((element: File, index: number) => {
       body.append(`file[${index}]`, element);
     });
-    upload?.(
+    setLoading(true);
+    sendCommentary?.(
       {
         //@ts-ignore swagger issue
         body
       },
       {
         onSuccess: () => {
+          setShowNotification(true);
+          setTimeout(() => {
+            setShowNotification(false);
+          }, 3000);
           setComment("");
           setError("");
           setFiles([]);
           props.attachmentRefetch();
           refresh();
+          setLoading(false);
         }
       }
     );
@@ -157,12 +166,24 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
 
       {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
-        <Button className="self-end" iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }} onClick={submitComment}>
+        <Button
+          className="self-end"
+          disabled={loading}
+          iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}
+          onClick={submitComment}
+        >
           <Text variant="text-12-bold" className="text-white">
             SEND
           </Text>
+          {loading && <Icon name={IconNames.ELLIPSE_POLYGON} className={"h-6 w-6 animate-spin"} />}
         </Button>
       </When>
+      <Notification
+        title="Success!"
+        message="Your comment was just added!"
+        type="success"
+        open={showNotification}
+      ></Notification>
     </div>
   );
 };

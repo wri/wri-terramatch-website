@@ -2,7 +2,6 @@ import { FC, Fragment, useMemo } from "react";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
-import { fetchPostV2AuditStatus } from "@/generated/apiComponents";
 
 import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 
@@ -44,7 +43,6 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({
   refreshAttachments,
   getTextForActionTable
 }) => {
-  const mutateComment = fetchPostV2AuditStatus;
   const polygonData = useMemo(
     () => ({
       uuid: record?.uuid,
@@ -67,7 +65,6 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({
         record={polygonData}
         entity={"SitePolygon"}
         auditLogData={auditLogData?.data}
-        mutate={mutateComment}
         refresh={refresh}
         viewCommentsList={false}
         attachmentRefetch={refreshAttachments}
