@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   BooleanField,
@@ -21,12 +21,10 @@ import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
-import FrameworkSelectionDialog from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -43,19 +41,8 @@ const monitoringDataChoices = [
 ];
 
 const ProjectDataGrid = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
+  const frameworkChoices = useFrameworkChoices();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
       <TextField source="name" label="Project Name" />
@@ -88,21 +75,8 @@ const ProjectDataGrid = () => {
 };
 
 export const ProjectsList: FC = () => {
-  const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
-  const [exporting, setExporting] = useState<boolean>(false);
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
+  const frameworkChoices = useFrameworkChoices();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
     <SelectInput key="country" label="Country" source="country" choices={optionToChoices(getCountriesOptions())} />,
@@ -134,30 +108,7 @@ export const ProjectsList: FC = () => {
     <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />
   ];
 
-  const handleExportOpen = () => {
-    setExportModalOpen(true);
-  };
-
-  const handleExportClose = () => {
-    setExportModalOpen(false);
-  };
-
-  const handleExport = (framework: string) => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "projects",
-        framework
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, `Projects - ${framework}.csv`);
-      })
-      .finally(() => setExporting(false));
-
-    handleExportClose();
-  };
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("projects");
 
   return (
     <>
@@ -167,11 +118,11 @@ export const ProjectsList: FC = () => {
         <Divider />
       </Stack>
 
-      <List actions={<ListActions onExport={handleExportOpen} />} filters={filters}>
+      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
         <ProjectDataGrid />
       </List>
 
-      <FrameworkSelectionDialog open={exportModalOpen} onCancel={handleExportClose} onExport={handleExport} />
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>
