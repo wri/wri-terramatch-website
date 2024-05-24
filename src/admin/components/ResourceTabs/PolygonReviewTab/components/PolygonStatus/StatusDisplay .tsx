@@ -167,7 +167,20 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               });
             }, 3000);
           } catch (e) {
-            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            setNotificationStatus({
+              open: true,
+              message: "The request encountered an issue, or the comment exceeds 255 characters.",
+              type: "error",
+              title: "Error!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "error",
+                title: "Error!"
+              });
+            }, 3000);
             console.error(e);
           } finally {
             refresh();
@@ -214,7 +227,20 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               });
             }, 3000);
           } catch (e) {
-            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            setNotificationStatus({
+              open: true,
+              message: "The request encountered an issue, or the comment exceeds 255 characters.",
+              type: "error",
+              title: "Error!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "error",
+                title: "Error!"
+              });
+            }, 3000);
             console.error(e);
           } finally {
             refresh();
