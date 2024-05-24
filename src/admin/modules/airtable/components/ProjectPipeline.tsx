@@ -352,7 +352,7 @@ const ProjectPipeline: FC = () => {
     <>
       <div className="flex justify-between pb-6">
         <Text variant="text-36-bold" className="leading-none">
-          Restore Local Project Pipeline
+          Curated Insights
         </Text>
         <Button
           variant="white-page-admin"
