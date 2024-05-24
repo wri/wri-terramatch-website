@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
+import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
@@ -102,6 +104,17 @@ const DescriptionRequestMap = {
 
 const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record, setSelectedPolygon }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
+  const [notificationStatus, setNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: "Success!"
+  });
 
   const { openModal, closeModal } = useModalContext();
   const contentStatus = (
@@ -139,6 +152,20 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             if (response.poly_id) {
               setSelectedPolygon(response?.poly_id);
             }
+            setNotificationStatus({
+              open: true,
+              message: "Your Status Update was just saved!",
+              type: "success",
+              title: "Success!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "success",
+                title: "Success!"
+              });
+            }, 3000);
           } catch (e) {
             alert("The request encountered an issue, or the comment exceeds 255 characters.");
             console.error(e);
@@ -172,6 +199,20 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
                 request_removed: false
               }
             });
+            setNotificationStatus({
+              open: true,
+              message: "Your Change Request was just added!",
+              type: "success",
+              title: "Success!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "success",
+                title: "Success!"
+              });
+            }, 3000);
           } catch (e) {
             alert("The request encountered an issue, or the comment exceeds 255 characters.");
             console.error(e);
@@ -185,16 +226,23 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
     );
   };
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="flex w-full items-center gap-4">
-        <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
-          <Text variant="text-12-bold">change status</Text>
-        </Button>
-        <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>
-          <Text variant="text-12-bold">Change Request</Text>
-        </Button>
+    <>
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex w-full items-center gap-4">
+          <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
+            <Text variant="text-12-bold">change status</Text>
+          </Button>
+          <Button
+            variant="semi-black"
+            className="w-full flex-1 whitespace-nowrap"
+            onClick={openFormModalHandlerRequest}
+          >
+            <Text variant="text-12-bold">Change Request</Text>
+          </Button>
+        </div>
       </div>
-    </div>
+      <Notification {...notificationStatus} />
+    </>
   );
 };
 

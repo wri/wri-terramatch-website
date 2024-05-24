@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
@@ -37,6 +40,7 @@ const SiteAuditLogPolygonStatusSide = ({
   getValueForStatus?: any;
   progressBarLabels?: any;
 }) => {
+  const [open, setOpen] = useState(false);
   const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
   const { mutate: upload } = usePostV2AuditStatus();
   const deactivateRecentRequest = async () => {
@@ -55,6 +59,10 @@ const SiteAuditLogPolygonStatusSide = ({
       },
       {
         onSuccess: () => {
+          setOpen(true);
+          setTimeout(() => {
+            setOpen(false);
+          }, 3000);
           refresh();
         }
       }
@@ -112,6 +120,7 @@ const SiteAuditLogPolygonStatusSide = ({
         record={record}
         setSelectedPolygon={setSelectedPolygon}
       />
+      <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>
   );
 };

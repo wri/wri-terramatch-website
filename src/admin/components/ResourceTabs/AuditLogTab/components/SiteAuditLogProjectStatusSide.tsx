@@ -1,3 +1,6 @@
+import { useState } from "react";
+
+import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AdminProjectsUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
@@ -15,6 +18,7 @@ const SiteAuditLogProjectStatusSide = ({
   auditLogData?: any;
   recentRequestData?: any;
 }) => {
+  const [open, setOpen] = useState(false);
   const { mutate: upload } = usePostV2AuditStatus();
   const mutate = fetchPutV2AdminProjectsUUID;
   const recentRequest = auditLogData?.find(
@@ -37,6 +41,10 @@ const SiteAuditLogProjectStatusSide = ({
       },
       {
         onSuccess: () => {
+          setOpen(true);
+          setTimeout(() => {
+            setOpen(false);
+          }, 3000);
           refresh();
         }
       }
@@ -91,6 +99,7 @@ const SiteAuditLogProjectStatusSide = ({
         </div>
       )}
       <StatusDisplay titleStatus="Project" record={record} name={record?.name} mutate={mutate} refresh={refresh} />
+      <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>
   );
 };
