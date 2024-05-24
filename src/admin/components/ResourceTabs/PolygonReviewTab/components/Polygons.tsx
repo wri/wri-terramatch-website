@@ -10,8 +10,6 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
-import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -24,7 +22,7 @@ import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
-  status: "Draft" | "Submitted" | "Approved" | "Needs More Info";
+  status: "draft" | "submitted" | "approved" | "needs-more-info";
   label: string;
   uuid: string;
 }
@@ -39,10 +37,10 @@ export interface IPolygonProps {
   setPolygonFromMap?: any;
 }
 const statusColor = {
-  Draft: "bg-pinkCustom",
-  Submitted: "bg-blue",
-  Approved: "bg-green",
-  "Needs More Info": "bg-tertiary-600"
+  draft: "bg-pinkCustom",
+  submitted: "bg-blue",
+  approved: "bg-green",
+  "needs-more-info": "bg-tertiary-600"
 };
 
 export const polygonData = [
@@ -60,12 +58,12 @@ const Polygons = (props: IPolygonProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
+  const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
   const { toggleUserDrawing } = context || {};
 
   useEffect(() => {
-    console.log("props.menu", props.menu);
     setPolygonMenu(props.menu);
   }, [props.menu]);
   useEffect(() => {
@@ -129,33 +127,6 @@ const Polygons = (props: IPolygonProps) => {
     );
   };
 
-  const openFormModalHandlerAddCommentary = () => {
-    openModal(
-      <ModalWithLogo
-        title="Blue Forest"
-        onCLose={closeModal}
-        status="Under Review"
-        toogleButton
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      />
-    );
-  };
-
-  const openFormModalHandlerRequestPolygonSupport = (item: any) => {
-    openModal(
-      <ModalWithMap
-        polygonSelected={item?.uuid || ""}
-        title="Request Support"
-        onCLose={closeModal}
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Submit"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
-    );
-  };
-
   const polygonMenuItems = (item: any) => [
     {
       id: "1",
@@ -169,6 +140,7 @@ const Polygons = (props: IPolygonProps) => {
         setSelectedPolygon(item);
         setPolygonFromMap({ isOpen: true, uuid: item.uuid });
         setIsOpenPolygonDrawer(true);
+        setIsPolygonStatusOpen(false);
       }
     },
     {
@@ -203,27 +175,19 @@ const Polygons = (props: IPolygonProps) => {
           <Text variant="text-12-bold">Comment</Text>
         </div>
       ),
-      onClick: openFormModalHandlerAddCommentary
-    },
-    {
-      id: "5",
-      render: () => (
-        <div className="flex items-center gap-2">
-          <Icon name={IconNames.REQUEST} className="h-6 w-6" />
-          <Text variant="text-12-bold">Request Support</Text>
-        </div>
-      ),
       onClick: () => {
-        openFormModalHandlerRequestPolygonSupport(item);
+        setSelectedPolygon(item);
+        setIsOpenPolygonDrawer(true);
+        setIsPolygonStatusOpen(true);
       }
     },
     {
-      id: "6",
+      id: "5",
       render: () => <div className="h-[1px] w-full bg-grey-750" />,
       MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
     },
     {
-      id: "7",
+      id: "6",
       render: () => (
         <div className="flex items-center gap-2">
           <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
@@ -239,7 +203,7 @@ const Polygons = (props: IPolygonProps) => {
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
-        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} />
+        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} isPolygonStatusOpen={isPolygonStatusOpen} />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
         <Text variant="text-16-bold" className="pl-2 text-darkCustom">

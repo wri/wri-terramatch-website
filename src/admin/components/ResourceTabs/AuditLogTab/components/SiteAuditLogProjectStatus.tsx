@@ -1,14 +1,17 @@
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
 
-export interface SiteAuditLogTable {
-  resource: string;
-  uuid?: string;
+import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
+
+export interface SiteAuditLogProjectStatusProps {
   record?: any;
   auditLogData?: any;
+  refresh?: any;
+  recordAttachments?: any;
+  refreshAttachments?: any;
+  getTextForActionTable?: any;
 }
 
 export const gridData = [
@@ -56,40 +59,34 @@ export const gridData = [
 ];
 
 interface AuditLogItem {
+  id: number;
   entity_uuid: string;
+  type: string;
   status: string;
   comment: string;
   attachment_url: string;
   date_created: string;
   created_by: string;
+  first_name: string;
+  last_name: string;
+  request_removed: boolean;
 }
 
-const projectStatusLabels = [
-  { id: "1", label: "Draft" },
-  { id: "2", label: "Awaiting Approval" },
-  { id: "3", label: "Needs More Information" },
-  { id: "4", label: "Approved" }
-];
-
-function getValueForStatus(status: string): number {
-  switch (status) {
-    case "started":
-      return 0;
-    case "awaiting-approval":
-      return 34;
-    case "needs-more-information":
-      return 67;
-    case "approved":
-      return 100;
-    default:
-      return 0;
-  }
+interface AttachmentItem {
+  id: number;
+  entity_id: number;
+  attachment: string;
+  url_file: string;
 }
-const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
-  const formattedText = (text: string) => {
-    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
-  };
 
+const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
+  record,
+  auditLogData,
+  refresh,
+  recordAttachments,
+  refreshAttachments,
+  getTextForActionTable
+}) => {
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -99,65 +96,71 @@ const SiteAuditLogProjectStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-14-light" className="mb-4">
           Update the project status, view updates, or add comments
         </Text>
-        <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-          <div className="flex items-center justify-between">
-            <Text variant="text-16-bold">Change Requested</Text>
-            <Button variant="orange">Remove Request</Button>
-          </div>
-          <Text variant="text-14-semibold">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.
-          </Text>
-        </div>
-      </div>
-      <div className="flex flex-col gap-4">
-        <Text variant="text-16-bold">Project Status</Text>
-        <StepProgressbar
-          color="secondary"
-          value={getValueForStatus(props.record.project.status)}
-          labels={projectStatusLabels}
-          classNameLabels="min-w-[111px]"
-          className="w-[62%]"
+        <ComentarySection
+          record={record}
+          entity={"Project"}
+          auditLogData={auditLogData?.data}
+          refresh={refresh}
+          viewCommentsList={false}
+          attachmentRefetch={refreshAttachments}
         />
       </div>
-      <Text variant="text-16-bold">History for {props.record.project.name}</Text>
-      <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Date and Time
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          User
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Site
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Status
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Comments
-        </Text>
-        {props.auditLogData?.data?.map((item: AuditLogItem, index: number) => (
-          <Fragment key={index}>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item?.date_created}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.created_by}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {/* {item.site || "-"} */}
-              {"-"}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {formattedText(item.status)}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comment || "-"}
-            </Text>
-          </Fragment>
-        ))}
+      <Text variant="text-16-bold">History and Discussion for {record.name}</Text>
+      <div>
+        <div className="grid grid-cols-[14%_20%_15%_30%_21%]">
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Date
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            User
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Action
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Comments
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Attachments
+          </Text>
+        </div>
+        <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_15%_30%_21%] overflow-auto pr-[7px]">
+          {auditLogData?.data.map((item: AuditLogItem, index: number) => (
+            <Fragment key={index}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {convertDateFormat(item?.date_created)}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {`${item.first_name} ${item.last_name}`}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {getTextForActionTable(item)}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                {item.comment || "-"}
+              </Text>
+              <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
+                {recordAttachments
+                  ?.filter((attachmentItem: AttachmentItem) => {
+                    return attachmentItem.entity_id == item.id;
+                  })
+                  ?.map((attachmentItem: AttachmentItem) => (
+                    <Text
+                      key={attachmentItem.id}
+                      variant="text-12-light"
+                      className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
+                      as={"span"}
+                      onClick={() => {
+                        attachmentItem.url_file && window.open(attachmentItem.url_file, "_blank");
+                      }}
+                    >
+                      {attachmentItem.attachment}
+                    </Text>
+                  ))}
+              </div>
+            </Fragment>
+          ))}
+        </div>
       </div>
     </div>
   );

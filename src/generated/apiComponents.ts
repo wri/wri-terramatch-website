@@ -8122,7 +8122,7 @@ export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTI
 
 export type GetV2WorkdaysENTITYUUIDPathParams = {
   /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+   * allowed values project-report/site-report
    */
   entity: string;
   uuid: string;
@@ -8133,26 +8133,15 @@ export type GetV2WorkdaysENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type GetV2WorkdaysENTITYUUIDResponse = {
   data?: {
     uuid?: string;
-    amount?: number;
     collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
-    indigeneity?: string;
+    readable_collection?: string;
+    demographics?: {
+      type?: "gender" | "age" | "ethnicity";
+      subtype?: string;
+      name?: string;
+      amount?: number;
+    }[];
   }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
 };
 
 export type GetV2WorkdaysENTITYUUIDVariables = {
@@ -30909,44 +30898,15 @@ export type PostV2SitesUUIDGeometryResponse = {
         | "TABLE_SCHEMA"
         | "DATA_COMPLETED";
       /**
-       * Human readable string in english to describe the error.
+       * Human readable string in English to describe the error.
        */
       message?: string;
     }[];
   };
 };
 
-export type PostV2SitesUUIDGeometryRequestBody = {
-  geometries?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-      };
-      geometry?: {
-        type?: "Polygon";
-        coordinates?: number[][][];
-      };
-    }[];
-  }[];
-};
-
 export type PostV2SitesUUIDGeometryVariables = {
-  body?: PostV2SitesUUIDGeometryRequestBody;
+  body?: RequestBodies.PostV2SitesUuidGeometryBody;
   pathParams: PostV2SitesUUIDGeometryPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -30954,7 +30914,7 @@ export const fetchPostV2SitesUUIDGeometry = (variables: PostV2SitesUUIDGeometryV
   apiFetch<
     PostV2SitesUUIDGeometryResponse,
     PostV2SitesUUIDGeometryError,
-    PostV2SitesUUIDGeometryRequestBody,
+    RequestBodies.PostV2SitesUuidGeometryBody,
     {},
     {},
     PostV2SitesUUIDGeometryPathParams
@@ -32772,22 +32732,22 @@ export type GetV2AuditStatusIdVariables = {
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AuditStatusId = (variables: GetV2AuditStatusIdVariables, signal?: AbortSignal) =>
-  apiFetch<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, undefined, {}, {}, GetV2AuditStatusIdPathParams>({
+  apiFetch<Schemas.SitePolygonResponse, GetV2AuditStatusIdError, undefined, {}, {}, GetV2AuditStatusIdPathParams>({
     url: "/v2/audit-status/{id}",
     method: "get",
     ...variables,
     signal
   });
 
-export const useGetV2AuditStatusId = <TData = Schemas.AuditStatusResponse>(
+export const useGetV2AuditStatusId = <TData = Schemas.SitePolygonResponse>(
   variables: GetV2AuditStatusIdVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, TData>,
+    reactQuery.UseQueryOptions<Schemas.SitePolygonResponse, GetV2AuditStatusIdError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Schemas.AuditStatusResponse, GetV2AuditStatusIdError, TData>(
+  return reactQuery.useQuery<Schemas.SitePolygonResponse, GetV2AuditStatusIdError, TData>(
     queryKeyFn({ path: "/v2/audit-status/{id}", operationId: "getV2AuditStatusId", variables }),
     ({ signal }) => fetchGetV2AuditStatusId({ ...fetcherOptions, ...variables }, signal),
     {
@@ -32956,6 +32916,504 @@ export const usePutV2AdminSitePolygonUUID = (
   >(
     (variables: PutV2AdminSitePolygonUUIDVariables) =>
       fetchPutV2AdminSitePolygonUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2TerrafundValidationPolygonQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundValidationPolygonError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundValidationPolygonResponse = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+  }[];
+};
+
+export type GetV2TerrafundValidationPolygonVariables = {
+  queryParams: GetV2TerrafundValidationPolygonQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundValidationPolygon = (
+  variables: GetV2TerrafundValidationPolygonVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundValidationPolygonResponse,
+    GetV2TerrafundValidationPolygonError,
+    undefined,
+    {},
+    GetV2TerrafundValidationPolygonQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/polygon", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundValidationPolygon = <TData = GetV2TerrafundValidationPolygonResponse>(
+  variables: GetV2TerrafundValidationPolygonVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundValidationPolygonResponse, GetV2TerrafundValidationPolygonError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2TerrafundValidationPolygonResponse, GetV2TerrafundValidationPolygonError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/validation/polygon", operationId: "getV2TerrafundValidationPolygon", variables }),
+    ({ signal }) => fetchGetV2TerrafundValidationPolygon({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2TerrafundValidationCriteriaDataQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundValidationCriteriaDataError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundValidationCriteriaDataResponse = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+  }[];
+};
+
+export type GetV2TerrafundValidationCriteriaDataVariables = {
+  queryParams: GetV2TerrafundValidationCriteriaDataQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundValidationCriteriaData = (
+  variables: GetV2TerrafundValidationCriteriaDataVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundValidationCriteriaDataResponse,
+    GetV2TerrafundValidationCriteriaDataError,
+    undefined,
+    {},
+    GetV2TerrafundValidationCriteriaDataQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/criteria-data", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundValidationCriteriaDataResponse>(
+  variables: GetV2TerrafundValidationCriteriaDataVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2TerrafundValidationCriteriaDataResponse,
+      GetV2TerrafundValidationCriteriaDataError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2TerrafundValidationCriteriaDataResponse,
+    GetV2TerrafundValidationCriteriaDataError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/terrafund/validation/criteria-data",
+      operationId: "getV2TerrafundValidationCriteriaData",
+      variables
+    }),
+    ({ signal }) => fetchGetV2TerrafundValidationCriteriaData({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2TerrafundValidationSitePolygonsQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundValidationSitePolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundValidationSitePolygonsResponse = {
+  /**
+   * A message indicating the completion of validation for all site polygons.
+   */
+  message?: string;
+};
+
+export type GetV2TerrafundValidationSitePolygonsVariables = {
+  queryParams: GetV2TerrafundValidationSitePolygonsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundValidationSitePolygons = (
+  variables: GetV2TerrafundValidationSitePolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundValidationSitePolygonsResponse,
+    GetV2TerrafundValidationSitePolygonsError,
+    undefined,
+    {},
+    GetV2TerrafundValidationSitePolygonsQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/sitePolygons", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundValidationSitePolygons = <TData = GetV2TerrafundValidationSitePolygonsResponse>(
+  variables: GetV2TerrafundValidationSitePolygonsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2TerrafundValidationSitePolygonsResponse,
+      GetV2TerrafundValidationSitePolygonsError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2TerrafundValidationSitePolygonsResponse,
+    GetV2TerrafundValidationSitePolygonsError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/terrafund/validation/sitePolygons",
+      operationId: "getV2TerrafundValidationSitePolygons",
+      variables
+    }),
+    ({ signal }) => fetchGetV2TerrafundValidationSitePolygons({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2TerrafundValidationSiteQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundValidationSiteError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundValidationSiteResponse = {
+  /**
+   * The UUID of the polygon.
+   */
+  uuid?: string;
+  /**
+   * Indicates if the polygon is valid or not.
+   */
+  valid?: boolean;
+  /**
+   * Indicates if the polygon has been checked before or not.
+   */
+  checked?: boolean;
+}[];
+
+export type GetV2TerrafundValidationSiteVariables = {
+  queryParams: GetV2TerrafundValidationSiteQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundValidationSite = (
+  variables: GetV2TerrafundValidationSiteVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundValidationSiteResponse,
+    GetV2TerrafundValidationSiteError,
+    undefined,
+    {},
+    GetV2TerrafundValidationSiteQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/site", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundValidationSite = <TData = GetV2TerrafundValidationSiteResponse>(
+  variables: GetV2TerrafundValidationSiteVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/validation/site", operationId: "getV2TerrafundValidationSite", variables }),
+    ({ signal }) => fetchGetV2TerrafundValidationSite({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2AttachmentQueryParams = {
+  /**
+   * required.
+   */
+  entity_uuid?: string;
+};
+
+export type GetV2AttachmentError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AttachmentResponse = Schemas.AuditStatusResponse[];
+
+export type GetV2AttachmentVariables = {
+  queryParams?: GetV2AttachmentQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2Attachment = (variables: GetV2AttachmentVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2AttachmentResponse, GetV2AttachmentError, undefined, {}, GetV2AttachmentQueryParams, {}>({
+    url: "/v2/attachment",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2Attachment = <TData = GetV2AttachmentResponse>(
+  variables: GetV2AttachmentVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AttachmentResponse, GetV2AttachmentError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AttachmentResponse, GetV2AttachmentError, TData>(
+    queryKeyFn({ path: "/v2/attachment", operationId: "getV2Attachment", variables }),
+    ({ signal }) => fetchGetV2Attachment({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2GeometryValidateError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: {
+    /**
+     * This array is ordered in the same order as the original geometries. If a given geometry had no errors, an empty array is included in its spot.
+     */
+    errors?: {
+      key?:
+        | "SELF_INTERSECTION"
+        | "COORDINATE_SYSTEM"
+        | "SIZE_LIMIT"
+        | "SPIKE"
+        | "GEOMETRY_TYPE"
+        | "TABLE_SCHEMA"
+        | "DATA_COMPLETED";
+      /**
+       * Human readable string in English to describe the error.
+       */
+      message?: string;
+      /**
+       * A path string indicating where the error occurred.
+       */
+      field?: string;
+    }[][];
+  };
+}>;
+
+export type PostV2GeometryValidateResponse = {
+  /**
+   * An empty array on the OK response is included for ease of parsing on the client side.
+   */
+  errors?: any[];
+};
+
+export type PostV2GeometryValidateVariables = {
+  body?: RequestBodies.PostV2SitesUuidGeometryBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2GeometryValidate = (variables: PostV2GeometryValidateVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2GeometryValidateResponse,
+    PostV2GeometryValidateError,
+    RequestBodies.PostV2SitesUuidGeometryBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/geometry/validate", method: "post", ...variables, signal });
+
+export const usePostV2GeometryValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2GeometryValidateResponse,
+      PostV2GeometryValidateError,
+      PostV2GeometryValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2GeometryValidateResponse,
+    PostV2GeometryValidateError,
+    PostV2GeometryValidateVariables
+  >(
+    (variables: PostV2GeometryValidateVariables) => fetchPostV2GeometryValidate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2GeometryQueryParams = {
+  ["uuids[]"]: string[];
+};
+
+export type DeleteV2GeometryError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2GeometryVariables = {
+  queryParams: DeleteV2GeometryQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2Geometry = (variables: DeleteV2GeometryVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2GeometryError, undefined, {}, DeleteV2GeometryQueryParams, {}>({
+    url: "/v2/geometry",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2Geometry = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2GeometryError, DeleteV2GeometryVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2GeometryError, DeleteV2GeometryVariables>(
+    (variables: DeleteV2GeometryVariables) => fetchDeleteV2Geometry({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PutV2GeometryUUIDPathParams = {
+  uuid: string;
+};
+
+export type PutV2GeometryUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2GeometryUUIDResponse = {
+  errors?: {
+    key?:
+      | "OVERLAPPING_POLYGON"
+      | "SELF_INTERSECTION"
+      | "COORDINATE_SYSTEM"
+      | "SIZE_LIMIT"
+      | "WITHIN_COUNTRY"
+      | "SPIKE"
+      | "GEOMETRY_TYPE"
+      | "TOTAL_AREA_EXPECTED"
+      | "TABLE_SCHEMA"
+      | "DATA_COMPLETED";
+    /**
+     * Human readable string in English to describe the error.
+     */
+    message?: string;
+  }[];
+};
+
+export type PutV2GeometryUUIDRequestBody = {
+  geometry?: {
+    type?: "FeatureCollection";
+    features?: {
+      type?: "Feature";
+      properties?: {
+        poly_name?: string;
+        /**
+         * @format date
+         */
+        plantstart?: string;
+        /**
+         * @format date
+         */
+        plantend?: string;
+        practice?: string;
+        target_sys?: string;
+        distr?: string;
+        num_trees?: number;
+        site_id?: string;
+      };
+      geometry?: {
+        type?: "Polygon";
+        coordinates?: number[][][];
+      };
+    }[];
+  };
+};
+
+export type PutV2GeometryUUIDVariables = {
+  body?: PutV2GeometryUUIDRequestBody;
+  pathParams: PutV2GeometryUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2GeometryUUID = (variables: PutV2GeometryUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2GeometryUUIDResponse,
+    PutV2GeometryUUIDError,
+    PutV2GeometryUUIDRequestBody,
+    {},
+    {},
+    PutV2GeometryUUIDPathParams
+  >({ url: "/v2/geometry/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2GeometryUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PutV2GeometryUUIDResponse, PutV2GeometryUUIDError, PutV2GeometryUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PutV2GeometryUUIDResponse, PutV2GeometryUUIDError, PutV2GeometryUUIDVariables>(
+    (variables: PutV2GeometryUUIDVariables) => fetchPutV2GeometryUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -33470,4 +33928,29 @@ export type QueryOperation =
       path: "/v2/admin/site-polygon/{UUID}";
       operationId: "getV2AdminSitePolygonUUID";
       variables: GetV2AdminSitePolygonUUIDVariables;
+    }
+  | {
+      path: "/v2/terrafund/validation/polygon";
+      operationId: "getV2TerrafundValidationPolygon";
+      variables: GetV2TerrafundValidationPolygonVariables;
+    }
+  | {
+      path: "/v2/terrafund/validation/criteria-data";
+      operationId: "getV2TerrafundValidationCriteriaData";
+      variables: GetV2TerrafundValidationCriteriaDataVariables;
+    }
+  | {
+      path: "/v2/terrafund/validation/sitePolygons";
+      operationId: "getV2TerrafundValidationSitePolygons";
+      variables: GetV2TerrafundValidationSitePolygonsVariables;
+    }
+  | {
+      path: "/v2/terrafund/validation/site";
+      operationId: "getV2TerrafundValidationSite";
+      variables: GetV2TerrafundValidationSiteVariables;
+    }
+  | {
+      path: "/v2/attachment";
+      operationId: "getV2Attachment";
+      variables: GetV2AttachmentVariables;
     };

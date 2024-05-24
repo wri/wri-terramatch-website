@@ -25,7 +25,7 @@ export const ModalBaseSubmit: FC<ModalBaseProps> = ({ children, className, ...re
   );
 };
 
-export interface ModalSubmitProps extends ModalProps {
+export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
@@ -33,7 +33,7 @@ export interface ModalSubmitProps extends ModalProps {
   onCLose?: () => void;
 }
 
-const ModalSubmit: FC<ModalSubmitProps> = ({
+const ModalApprove: FC<ModalApproveProps> = ({
   iconProps,
   title,
   content,
@@ -82,20 +82,30 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
             <Text variant="text-12" className="flex-[2]">
               Name
             </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Status
+            <Text variant="text-12" className="flex flex-1 items-center justify-start">
+              Polygon Check
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Submit
+              Approve
             </Text>
           </header>
-          {dataSubmitPolygons.map(item => (
+          {dataSubmitPolygons.map((item, index) => (
             <div key={item.id} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
                 {item.name}
               </Text>
               <div className="flex flex-1 items-center justify-center">
-                <Status status={item.status} />
+                {index % 2 === 0 ? (
+                  <div className="flex w-full items-center justify-start gap-2">
+                    <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
+                    <Text variant="text-10-light">Verified</Text>
+                  </div>
+                ) : (
+                  <div className="flex w-full items-center justify-start gap-2">
+                    <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-green-500" />
+                    <Text variant="text-10-light">Self-Intersection</Text>
+                  </div>
+                )}
               </div>
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox name={""} />
@@ -104,7 +114,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           ))}
         </div>
       </div>
-      <div className="flex w-full justify-end gap-3 py-4 px-8">
+      <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
           <Button {...secondaryButtonProps!} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
@@ -122,4 +132,4 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   );
 };
 
-export default ModalSubmit;
+export default ModalApprove;

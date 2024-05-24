@@ -28,8 +28,8 @@ const Comentary = (props: ComentaryProps) => {
         <div className="flex items-center gap-2">
           <div className="ml-3 flex h-fit min-h-[32px] min-w-[32px] items-center justify-center rounded-full bg-primary-500">
             <Text variant="text-14-semibold" className="uppercase text-white">
-              {name[0]}
-              {lastName[0]}
+              {name?.[0]}
+              {lastName?.[0]}
             </Text>
           </div>
           <div className="flex w-full flex-col gap-1">
@@ -61,10 +61,10 @@ const Comentary = (props: ComentaryProps) => {
         {comentary}
       </Text>
       <div className="flex flex-wrap gap-2">
-        {files.map(file => (
+        {files?.map((file: any) => (
           <div key={file.id} className="rounded-xl bg-neutral-150 px-2 py-1">
             <Text variant="text-14-light" className="text-grey-700">
-              {file.file}
+              {file?.attachment}
             </Text>
           </div>
         ))}

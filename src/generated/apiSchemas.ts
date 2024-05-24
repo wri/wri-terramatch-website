@@ -4933,37 +4933,14 @@ export type V2SeedingPaginated = {
 
 export type V2WorkdayRead = {
   uuid?: string;
-  amount?: number;
   collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-  indigeneity?: string;
-};
-
-export type V2WorkdaysPaginated = {
-  data?: {
-    uuid?: string;
+  readable_collection?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity";
+    subtype?: string;
+    name?: string;
     amount?: number;
-    collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
-    indigeneity?: string;
   }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
 };
 
 export type V2DisturbanceRead = {
@@ -23123,6 +23100,7 @@ export type SitePolygonResponse = {
    * @format float
    */
   calc_area?: number;
+  status?: string;
 };
 
 export type SitePolygonCreateResponse = {
@@ -23305,9 +23283,16 @@ export type AuditStatusResponse = {
    */
   date_created?: string;
   created_by?: string;
+  is_active?: boolean;
+  is_submitted?: boolean;
+  type?: string;
+  first_name?: string;
+  last_name?: string;
+  request_removed?: boolean;
 };
 
 export type AuditStatusPost = {
+  entity?: string;
   entity_uuid?: string;
   status?: string;
   comment?: string;
@@ -23317,15 +23302,19 @@ export type AuditStatusPost = {
    */
   date_created?: string;
   created_by?: string;
+  is_active?: boolean;
+  is_submitted?: boolean;
+  type?: string;
+  first_name?: string;
+  last_name?: string;
+  request_removed?: boolean;
 };
 
-export type AttachmentResponse = {
-  attachment_url?: string;
-  /**
-   * @format date
-   */
-  date_created?: string;
-  created_by?: string;
+export type WorkdayDemographic = {
+  type?: "gender" | "age" | "ethnicity";
+  subtype?: string;
+  name?: string;
+  amount?: number;
 };
 
 export type GeoJSON = {
@@ -23377,9 +23366,41 @@ export type SiteGeometryPost = {
         | "TABLE_SCHEMA"
         | "DATA_COMPLETED";
       /**
-       * Human readable string in english to describe the error.
+       * Human readable string in English to describe the error.
        */
       message?: string;
     }[];
   };
+};
+
+export type V2TerrafundCriteriaData = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+  }[];
+};
+
+export type AttachmentResponse = {
+  entity_id?: string;
+  attachment?: string;
+  created_by?: string;
 };

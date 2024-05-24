@@ -15,11 +15,24 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
   className?: string;
   textClassName?: string;
   inputClassName?: string;
+  errorClassName?: string;
 }
 
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   (
-    { label, required, error, className, disabled, defaultChecked, textClassName, form, inputClassName, ...props },
+    {
+      label,
+      required,
+      error,
+      className,
+      disabled,
+      defaultChecked,
+      textClassName,
+      form,
+      inputClassName,
+      errorClassName,
+      ...props
+    },
     ref
   ) => {
     const id = useId();
@@ -72,7 +85,10 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           )}
         />
         <When condition={!!error}>
-          <Text variant="text-body-500" className="absolute right-0 -bottom-6 w-full text-right text-error">
+          <Text
+            variant="text-body-500"
+            className={classNames("absolute right-0 -bottom-6 w-full text-right text-error", errorClassName)}
+          >
             {error?.message ?? ""}
           </Text>
         </When>

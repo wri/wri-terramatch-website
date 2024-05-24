@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { ChangeEvent, DetailedHTMLProps, TextareaHTMLAttributes, useId, useState } from "react";
+import { ChangeEvent, DetailedHTMLProps, TextareaHTMLAttributes, useEffect, useId, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -25,6 +25,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     labelVariant,
     ...inputProps
   } = inputWrapperProps;
+
   const id = useId();
   const inputClasses = cn(
     "min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent",
@@ -32,10 +33,13 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     { "border-light ": !error },
     { ["border border-error focus:border-error"]: error }
   );
-  if (error && formHook?.watch(inputWrapperProps.name)) {
-    formHook && formHook.trigger();
-    formHook && formHook.reset(formHook.getValues());
-  }
+
+  useEffect(() => {
+    if (inputProps.value === "") {
+      setTextValue("");
+    }
+  }, [inputProps.value]);
+
   const [textValue, setTextValue] = useState("");
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     if (externalOnChange) {

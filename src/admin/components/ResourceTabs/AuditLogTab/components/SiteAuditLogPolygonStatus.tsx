@@ -1,56 +1,56 @@
-import { Fragment } from "react";
+import { FC, Fragment, useMemo } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2AuditStatus } from "@/generated/apiComponents";
 
-import { SiteAuditLogTable } from "./SiteAuditLogProjectStatus";
+import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 
-interface AuditLogResponse {
-  data: [AuditLogItem];
+export interface SiteAuditLogPolygonStatusProps {
+  record?: any;
+  auditLogData?: any;
+  refresh?: any;
+  recordAttachments?: any;
+  refreshAttachments?: any;
+  getTextForActionTable?: any;
 }
 
 interface AuditLogItem {
+  id: number;
   entity_uuid: string;
+  type: string;
   status: string;
   comment: string;
   attachment_url: string;
   date_created: string;
   created_by: string;
+  first_name: string;
+  last_name: string;
+  request_removed: boolean;
 }
 
-const polygonStatusLabels = [
-  { id: "1", label: "Submitted" },
-  { id: "2", label: "Needs More Information" },
-  { id: "3", label: "Approved" }
-];
-
-function getValueForStatus(status: string): number {
-  switch (status) {
-    case "Submitted":
-      return 20;
-    case "needs-more-information":
-      return 60;
-    case "approved":
-      return 100;
-    default:
-      return 0;
-  }
+interface AttachmentItem {
+  id: number;
+  entity_id: number;
+  attachment: string;
+  url_file: string;
 }
 
-const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
-  const formattedText = (text: string) => {
-    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
-  };
-
-  const { data: polygonAuditLog } = useGetV2AuditStatus({
-    queryParams: {
-      entity: "SitePolygon",
-      uuid: props.record?.value as string
-    }
-  }) as { data: AuditLogResponse };
-
+const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({
+  record,
+  auditLogData,
+  refresh,
+  recordAttachments,
+  refreshAttachments,
+  getTextForActionTable
+}) => {
+  const polygonData = useMemo(
+    () => ({
+      uuid: record?.uuid,
+      status: record?.meta,
+      title: record?.title
+    }),
+    [record]
+  );
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -60,98 +60,71 @@ const SiteAuditLogPolygonStatus = (props: SiteAuditLogTable) => {
         <Text variant="text-14-light" className="mb-4">
           Update the polygon status, view updates, or add comments
         </Text>
-        <div className="flex flex-col gap-1 rounded-xl border border-yellow-500 bg-yellow p-4">
-          <div className="flex items-center justify-between">
-            <Text variant="text-16-bold">Change Requested</Text>
-            <Button variant="orange">Remove Request</Button>
-          </div>
-          <Text variant="text-14-semibold">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.
+      </div>
+      <ComentarySection
+        record={polygonData}
+        entity={"SitePolygon"}
+        auditLogData={auditLogData?.data}
+        refresh={refresh}
+        viewCommentsList={false}
+        attachmentRefetch={refreshAttachments}
+      />
+      <Text variant="text-16-bold">History and Discussion for {record?.title}</Text>
+      <div>
+        <div className="grid grid-cols-[14%_20%_15%_30%_21%]">
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Date
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            User
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Action
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Comments
+          </Text>
+          <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            Attachments
           </Text>
         </div>
-      </div>
-      <div className="flex flex-col gap-4">
-        <Text variant="text-16-bold">Polygon Status</Text>
-        <StepProgressbar
-          color="secondary"
-          value={getValueForStatus(props.record?.meta)}
-          labels={polygonStatusLabels}
-          classNameLabels="min-w-[111px]"
-          className="w-[44%]"
-        />
-      </div>
-      <Text variant="text-16-bold">History for {props.record?.title}</Text>
-      {/*OLD TABLE*/}
-      {/* <ReferenceManyField
-        pagination={<Pagination />}
-        reference={modules.audit.ResourceName}
-        filter={{ entity: props.resource }}
-        target="uuid"
-        label=""
-      >
-        <Datagrid bulkActionButtons={false}>
-          <DateField
-            source="created_at"
-            label="Date and time"
-            showTime
-            locales="en-GB"
-            options={{ dateStyle: "short", timeStyle: "short" }}
-          />
-          <ReferenceField source="user_uuid" reference={modules.user.ResourceName} label="User">
-            <FunctionField
-              source="first_name"
-              render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
-            />
-          </ReferenceField>
-          <FunctionField
-            label="Action"
-            className="capitalize"
-            render={(record: any) => {
-              const str: string = record?.new_values?.status ?? record?.event ?? "";
-
-              return str.replaceAll("-", " ");
-            }}
-          />
-          <FunctionField label="Comments" render={(record: any) => record?.new_values?.feedback ?? "-"} />
-        </Datagrid>
-      </ReferenceManyField> */}
-      <div className="grid grid-cols-[14%_20%_18%_15%_33%]">
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Date and Time
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          User
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Polygon
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Status
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Comments
-        </Text>
-        {polygonAuditLog?.data?.map((item: AuditLogItem, index: number) => (
-          <Fragment key={index}>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.date_created}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {item.created_by}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {props?.record?.title || "-"}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {formattedText(item.status)}
-            </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comment || "-"}
-            </Text>
-          </Fragment>
-        ))}
+        <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_15%_30%_21%] overflow-auto pr-[7px]">
+          {auditLogData?.data.map((item: AuditLogItem, index: number) => (
+            <Fragment key={index}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {convertDateFormat(item?.date_created)}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {`${item.first_name} ${item.last_name}`}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {getTextForActionTable(item)}
+              </Text>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                {item.comment || "-"}
+              </Text>
+              <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
+                {recordAttachments
+                  ?.filter((attachmentItem: AttachmentItem) => {
+                    return attachmentItem.entity_id == item.id;
+                  })
+                  ?.map((attachmentItem: AttachmentItem) => (
+                    <Text
+                      key={attachmentItem.id}
+                      variant="text-12-light"
+                      className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
+                      as={"span"}
+                      onClick={() => {
+                        attachmentItem.url_file && window.open(attachmentItem.url_file, "_blank");
+                      }}
+                    >
+                      {attachmentItem.attachment}
+                    </Text>
+                  ))}
+              </div>
+            </Fragment>
+          ))}
+        </div>
       </div>
     </div>
   );

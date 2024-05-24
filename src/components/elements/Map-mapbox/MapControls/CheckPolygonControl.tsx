@@ -1,62 +1,106 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { fetchGetV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
+import { SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
-const CheckPolygonControl = () => {
+export interface CheckSitePolygonProps {
+  siteRecord?: {
+    uuid: string;
+  };
+}
+
+interface CheckedPolygon {
+  uuid: string;
+  valid: boolean;
+  checked: boolean;
+}
+
+interface TransformedData {
+  id: number;
+  valid: boolean;
+  checked: boolean;
+  label: string | null;
+}
+
+const CheckPolygonControl = (props: CheckSitePolygonProps) => {
+  const { siteRecord } = props;
+  const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const polygonCheckData = [
+  const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
+  const [clickedValidation, setClickedValidation] = useState(false);
+  const context = useSitePolygonData();
+  const sitePolygonData = context?.sitePolygonData;
+  const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
+    CheckedPolygon[]
+  >(
     {
-      id: "1",
-      status: true,
-      label: "Polygon 1213023412"
+      queryParams: {
+        uuid: siteUuid ?? ""
+      }
     },
     {
-      id: "2",
-      status: true,
-      label: "Polygon 1234825234"
-    },
-    {
-      id: "3",
-      status: false,
-      label: "Polygon 2321340880"
-    },
-    {
-      id: "4",
-      status: false,
-      label: "Polygon 1234825235"
-    },
-    {
-      id: "5",
-      status: true,
-      label: "Polygon 2321340881"
-    },
-    {
-      id: "6",
-      status: true,
-      label: "Polygon 2321340882"
-    },
-    {
-      id: "7",
-      status: false,
-      label: "Polygon 2321340883"
-    },
-    {
-      id: "8",
-      status: false,
-      label: "Polygon 2321340884"
+      enabled: !!siteUuid
     }
-  ];
+  );
+
+  const validatePolygons = () => {
+    fetchGetV2TerrafundValidationSitePolygons({
+      queryParams: {
+        uuid: siteUuid ?? ""
+      }
+    }).then(() => {
+      reloadSitePolygonValidation();
+      setClickedValidation(false);
+    });
+  };
+
+  const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
+    return currentValidationSite.map((checkedPolygon, index) => {
+      const matchingPolygon = Array.isArray(sitePolygonData)
+        ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
+        : null;
+      return {
+        id: index + 1,
+        valid: checkedPolygon.valid,
+        checked: checkedPolygon.checked,
+        label: matchingPolygon?.poly_name ?? null
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (currentValidationSite) {
+      const transformedData = getTransformedData(currentValidationSite);
+      setSitePolygonCheckData(transformedData);
+    }
+  }, [currentValidationSite, sitePolygonData]);
+
+  useEffect(() => {
+    if (sitePolygonData) {
+      reloadSitePolygonValidation();
+    }
+  }, [sitePolygonData]);
+
+  useEffect(() => {
+    if (clickedValidation) {
+      validatePolygons();
+    }
+  }, [clickedValidation]);
+
   return (
     <div className="grid gap-2">
-      <div className=" rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
+      <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <Text variant="text-10-light">Your polygons have been updated</Text>
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+          onClick={() => setClickedValidation(true)}
         >
           Check Polygons
         </Button>
@@ -81,14 +125,11 @@ const CheckPolygonControl = () => {
           />
         </button>
         {openCollapse &&
-          polygonCheckData.map(polygon => (
+          sitePolygonCheckData.map(polygon => (
             <div key={polygon.id} className="flex items-center gap-2">
-              <Icon
-                name={polygon.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                className="h-4 w-4"
-              />
+              <Icon name={polygon.valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS} className="h-4 w-4" />
               <Text variant="text-10-light" className="text-white">
-                {polygon.label}
+                {`${polygon.label || "Unnamed Polygon"} ${polygon.checked ? "" : "(not checked yet)"}`}
               </Text>
             </div>
           ))}

@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
-import Status from "@/components/elements/Status/Status";
+import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
@@ -74,12 +75,13 @@ const menuProjectOptions = [
 ];
 
 export interface StatusProps {
-  titleStatus?: "Site" | "Project" | "Polygon";
-  status: "Draft" | "Submitted" | "Approved" | "Under Review" | "Needs More Info" | "Planting in Progress";
+  titleStatus: "Site" | "Project" | "Polygon";
   mutate?: any;
   record?: any;
   refresh?: any;
-  name?: any;
+  name: any;
+  refetchPolygon?: any;
+  setSelectedPolygon?: any;
 }
 
 const menuOptionsMap = {
@@ -100,21 +102,29 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name, record }: StatusProps) => {
-  const ctx = useShowContext();
-  const rec: any = ctx.record as any;
-  console.log("rec", rec);
-  console.log("ctx.resource", ctx.resource);
+const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record, setSelectedPolygon }: StatusProps) => {
+  const { refetch: reloadEntity } = useShowContext();
+  const [notificationStatus, setNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: "Success!"
+  });
 
   const { openModal, closeModal } = useModalContext();
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name ?? "Monitoring Begins"}</b>?
+      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name ?? "Malanga"}</b>?
+      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
 
@@ -123,23 +133,47 @@ const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name,
       <ModalConfirm
         title={`${titleStatus} Status Change`}
         commentArea
-        menuLabel={status}
+        menuLabel={""}
         menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
-          const response = await mutate({
-            pathParams: { uuid: record.uuid || record.value },
-            body: {
-              status: option?.status,
-              comment: text
+          let response;
+          try {
+            response = await mutate({
+              pathParams: { uuid: record?.uuid },
+              body: {
+                status: option?.status,
+                comment: text,
+                type: "status"
+              }
+            });
+            if (response.poly_id) {
+              setSelectedPolygon(response?.poly_id);
             }
-          });
-          console.log("response", response);
-          refresh();
-          closeModal;
-          ctx.refetch();
+            setNotificationStatus({
+              open: true,
+              message: "Your Status Update was just saved!",
+              type: "success",
+              title: "Success!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "success",
+                title: "Success!"
+              });
+            }, 3000);
+          } catch (e) {
+            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            console.error(e);
+          } finally {
+            refresh();
+            reloadEntity();
+            closeModal;
+          }
         }}
       />
     );
@@ -148,31 +182,67 @@ const StatusDisplay = ({ titleStatus = "Polygon", status, mutate, refresh, name,
   const openFormModalHandlerRequest = () => {
     openModal(
       <ModalConfirm
-        title={"Request Change"}
+        title={"Change Request"}
         content={contentRequest}
         commentArea
         onClose={closeModal}
-        onConfirm={() => {
-          closeModal;
+        onConfirm={async (text: any, opt) => {
+          const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
+          try {
+            await mutate({
+              pathParams: { uuid: record?.uuid },
+              body: {
+                status: option?.status,
+                comment: text,
+                type: "change-request",
+                is_active: true,
+                request_removed: false
+              }
+            });
+            setNotificationStatus({
+              open: true,
+              message: "Your Change Request was just added!",
+              type: "success",
+              title: "Success!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "success",
+                title: "Success!"
+              });
+            }, 3000);
+          } catch (e) {
+            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            console.error(e);
+          } finally {
+            refresh();
+            reloadEntity();
+            closeModal;
+          }
         }}
       />
     );
   };
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="flex w-full items-center gap-2">
-        <Text variant="text-16-bold">{titleStatus === "Polygon" ? "" : `${titleStatus} `}Status:</Text>
-        <Status status={status} className="py-[2px] px-[6px]"></Status>
+    <>
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex w-full items-center gap-4">
+          <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
+            <Text variant="text-12-bold">change status</Text>
+          </Button>
+          <Button
+            variant="semi-black"
+            className="w-full flex-1 whitespace-nowrap"
+            onClick={openFormModalHandlerRequest}
+          >
+            <Text variant="text-12-bold">Change Request</Text>
+          </Button>
+        </div>
       </div>
-      <div className="flex w-full items-center gap-4">
-        <Button variant="semi-black" className="w-full flex-1 whitespace-nowrap" onClick={openFormModalHandlerRequest}>
-          <Text variant="text-12-bold">Request change</Text>
-        </Button>
-        <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
-          <Text variant="text-12-bold">change status</Text>
-        </Button>
-      </div>
-    </div>
+      <Notification {...notificationStatus} />
+    </>
   );
 };
 

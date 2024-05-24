@@ -6,78 +6,108 @@ import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import {
+  fetchGetV2TerrafundValidationPolygon,
+  useGetV2TerrafundValidationCriteriaData
+} from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import ComentarySection from "../ComentarySection/ComentarySection";
-import StatusDisplay from "../PolygonStatus/StatusDisplay ";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
 import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
-  Draft: "bg-pinkCustom",
-  Submitted: "bg-blue",
-  Approved: "bg-green",
-  "Needs More Info": "bg-tertiary-600"
+  draft: "bg-pinkCustom",
+  submitted: "bg-blue",
+  approved: "bg-green",
+  "needs-more-info": "bg-tertiary-600"
 };
 
-const polygonValidationItems = [
-  {
-    id: "1",
-    status: true,
-    label: "GeoJSON Format"
-  },
-  {
-    id: "2",
-    status: true,
-    label: "WGS84 Projection"
-  },
-  {
-    id: "3",
-    status: false,
-    label: "Earth Location"
-  },
-  {
-    id: "4",
-    status: false,
-    label: "Country"
-  },
-  {
-    id: "5",
-    status: true,
-    label: "Reasonable Size Self-Intersecting Topology"
-  },
-  {
-    id: "6",
-    status: false,
-    label: "Overlapping Polygons"
-  },
-  {
-    id: "7",
-    status: true,
-    label: "Spike"
-  },
-  {
-    id: "8",
-    status: true,
-    label: "Polygon Integrity"
-  },
-  {
-    id: "9",
-    status: true,
-    label: "Feature Type"
-  }
-];
+const validationLabels: any = {
+  3: "No Overlapping Polygon",
+  4: "No Self-Intersection",
+  6: "Inside Size Limit",
+  7: "Within Country",
+  8: "No Spike",
+  10: "Polygon Type",
+  12: "Within Total Area Expected",
+  14: "Data Completed"
+};
 
-const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
+export interface ICriteriaCheckItem {
+  id: string;
+  status: boolean;
+  label: string;
+  date?: string;
+}
+
+const PolygonDrawer = ({
+  polygonSelected,
+  isPolygonStatusOpen
+}: {
+  polygonSelected: string;
+  isPolygonStatusOpen: any;
+}) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
-  const [openAttributes, setOpenAttributes] = useState(false);
+  const [openAttributes, setOpenAttributes] = useState(true);
+  const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
+  const [validationStatus, setValidationStatus] = useState(false);
+  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
 
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const openEditNewPolygon = context?.isUserDrawingEnabled;
+
+  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: {
+        uuid: polygonSelected
+      }
+    },
+    {
+      enabled: !!polygonSelected
+    }
+  );
+
+  const validatePolygon = () => {
+    fetchGetV2TerrafundValidationPolygon({
+      queryParams: {
+        uuid: polygonSelected
+      }
+    }).then(() => {
+      reloadCriteriaValidation();
+      setCheckPolygonValidation(false);
+    });
+  };
+
+  useEffect(() => {
+    if (checkPolygonValidation) {
+      validatePolygon();
+      reloadCriteriaValidation();
+    }
+  }, [checkPolygonValidation]);
+
+  useEffect(() => {
+    setButtonToogle(!isPolygonStatusOpen);
+  }, [isPolygonStatusOpen]);
+
+  useEffect(() => {
+    if (criteriaData && criteriaData.criteria_list) {
+      const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
+        id: criteria.criteria_id,
+        date: criteria.latest_created_at,
+        status: criteria.valid === 1,
+        label: validationLabels[criteria.criteria_id]
+      }));
+      setPolygonValidationData(transformedData);
+      setValidationStatus(true);
+    } else {
+      setValidationStatus(false);
+    }
+  }, [criteriaData]);
 
   useEffect(() => {
     console.log("polugon selected", polygonSelected);
@@ -93,7 +123,7 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
   useEffect(() => {
     console.log("openEditNewPolygon", openEditNewPolygon);
     if (openEditNewPolygon) {
-      setButtonToogle(false);
+      setButtonToogle(true);
       setOpenAttributes(true);
     }
   }, [openEditNewPolygon]);
@@ -111,33 +141,36 @@ const PolygonDrawer = ({ polygonSelected }: { polygonSelected: string }) => {
           variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setButtonToogle(!buttonToogle)}
         >
-          Polygon Status
+          Attributes
         </Button>
         <Button
           variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
           onClick={() => setButtonToogle(!buttonToogle)}
         >
-          Attributes
+          Polygon Status
         </Button>
       </div>
-      <If condition={buttonToogle}>
+      <If condition={!buttonToogle}>
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <StatusDisplay status={"Approved"} />
             <ComentarySection></ComentarySection>
           </div>
         </Then>
         <Else>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <Accordion variant="drawer" title={"Validation"}>
-              <PolygonValidation menu={polygonValidationItems} />
+            <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
+              <PolygonValidation
+                menu={polygonValidationData ?? []}
+                clickedValidation={setCheckPolygonValidation}
+                status={validationStatus}
+              />
             </Accordion>
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
             </Accordion>
             <Divider />
-            <Accordion variant="drawer" title={"Version History"}>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
               <VersionHistory />
             </Accordion>
             <Divider />

@@ -221,7 +221,7 @@ export const Map = ({
         ref.current.addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => {
           if (polygonsData) {
             const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-            const statuses = ["Submitted", "Approved", "Need More Info"];
+            const statuses = ["submitted", "approved", "need-more-info"];
             statuses.forEach(status => {
               if (newPolygonData[status]) {
                 newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
@@ -296,9 +296,9 @@ export const Map = ({
             <SiteStatus record={record} refresh={refresh} />
           </ControlGroup>
         </When> */}
-        <When condition={!!status}>
+        <When condition={!!status && !!record.uuid}>
           <ControlGroup position="top-left">
-            <CheckPolygonControl />
+            <CheckPolygonControl siteRecord={record} />
           </ControlGroup>
         </When>
         <When condition={!editable && !viewImages && !status}>
