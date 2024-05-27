@@ -9,7 +9,6 @@ import Text from "@/components/elements/Text/Text";
 import {
   fetchGetV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
-  useGetV2Attachment,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
 import { SitePolygonResponse } from "@/generated/apiSchemas";
@@ -41,17 +40,6 @@ const ReverseButtonStates: { [key: number]: string } = {
   2: "SitePolygon"
 };
 
-interface AttachmentItem {
-  id: number;
-  entity_id: number;
-  attachment: string;
-  url_file: string;
-}
-
-interface AttachmentResponse {
-  data: [AttachmentItem];
-}
-
 interface recentRequestItem {
   first_name: string;
   last_name: string;
@@ -78,8 +66,6 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           : selectedPolygon?.uuid
     }
   });
-
-  const { data: attachmentData, refetch: attachmentRefetch } = useGetV2Attachment<AttachmentResponse>({});
 
   const unnamedTitleAndSort = (list: any[]) => {
     const unnamedItems = list?.map((item: any) => {
@@ -191,8 +177,6 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   record={record}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  recordAttachments={attachmentData?.data}
-                  refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
                 />
               </When>
@@ -201,8 +185,6 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   record={selectedPolygon}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  recordAttachments={attachmentData?.data}
-                  refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
                 />
               </When>

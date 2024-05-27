@@ -23277,7 +23277,6 @@ export type AuditStatusResponse = {
   entity?: string;
   status?: string;
   comment?: string;
-  attachment_url?: string;
   /**
    * @format date
    */
@@ -23296,7 +23295,6 @@ export type AuditStatusPost = {
   entity_uuid?: string;
   status?: string;
   comment?: string;
-  attachment_url?: string;
   /**
    * @format date
    */

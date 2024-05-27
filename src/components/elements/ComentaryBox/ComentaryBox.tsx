@@ -16,7 +16,6 @@ export interface ComentaryBoxProps {
   refresh?: any;
   record?: any;
   entity?: string;
-  attachmentRefetch?: any;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
@@ -69,7 +68,6 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
     body.append("entity", entity as string);
     body.append("comment", comment);
     body.append("type", "comment");
-    body.append("attachment", "test");
     files.forEach((element: File, index: number) => {
       body.append(`file[${index}]`, element);
     });
@@ -88,7 +86,6 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           setComment("");
           setError("");
           setFiles([]);
-          props.attachmentRefetch();
           refresh();
           setLoading(false);
         }
