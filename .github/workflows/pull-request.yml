@@ -1,7 +1,7 @@
 name: pull-request
-on: workflow_dispatch
-#  pull_request:
-#    branches: [main, staging, release/**]
+on:
+  pull_request:
+    branches: [main, staging, release/**]
 jobs:
   test:
     runs-on: ubuntu-latest
