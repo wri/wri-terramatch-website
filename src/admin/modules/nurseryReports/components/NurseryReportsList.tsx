@@ -1,10 +1,11 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
   DateField,
   EditButton,
+  FunctionField,
   List,
   ReferenceInput,
   SearchInput,
@@ -17,15 +18,17 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
+import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 const NurseryReportDataGrid: FC = () => {
+  const frameworkChoices = useFrameworkChoices();
+
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
       <TextField source="nursery.name" label="Nursery Name" sortable={false} />
@@ -41,6 +44,15 @@ const NurseryReportDataGrid: FC = () => {
       <DateField source="due_at" label="Due Date" locales="en-GB" />
       <DateField source="updated_at" label="Last Updated" locales="en-GB" />
       <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
+      <FunctionField
+        source="framework_key"
+        label="Framework"
+        render={(record: any) =>
+          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ??
+          record?.framework_key
+        }
+        sortable={false}
+      />
       <ShowButton />
       <EditButton />
     </Datagrid>
@@ -48,7 +60,7 @@ const NurseryReportDataGrid: FC = () => {
 };
 
 export const NurseryReportsList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
+  const frameworkChoices = useFrameworkChoices();
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
@@ -77,6 +89,7 @@ export const NurseryReportsList: FC = () => {
       <AutocompleteInput optionText="name" label="Nursery" />
     </ReferenceInput>,
     <SelectInput key="country" label="Country" source="country" choices={optionToChoices(getCountriesOptions())} />,
+    <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />,
     <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getReportStatusOptions())} />,
     <SelectInput
       key="update_request_status"
@@ -86,20 +99,7 @@ export const NurseryReportsList: FC = () => {
     />
   ];
 
-  const handleExport = () => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "nursery-reports",
-        framework: "terrafund"
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, "Nursery Reports - terrafund.csv");
-      })
-      .finally(() => setExporting(false));
-  };
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("nursery-reports");
 
   return (
     <>
@@ -109,9 +109,11 @@ export const NurseryReportsList: FC = () => {
         <Divider />
       </Stack>
 
-      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
         <NurseryReportDataGrid />
       </List>
+
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>
