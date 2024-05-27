@@ -1,5 +1,5 @@
 import { remove } from "lodash";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -11,7 +11,6 @@ import Map from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { fetchGetV2TerrafundPolygonBboxUuid, fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -52,33 +51,6 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
-  const [polygonData, setPolygonData] = useState<any>();
-  const [initialPolygonData, setInitialPolygonData] = useState<any>();
-  const [polygonBbox, setPolygonBbox] = useState<any>();
-
-  useEffect(() => {
-    const getPolygonData = async () => {
-      if (polygonSelected) {
-        const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-          pathParams: { uuid: polygonSelected }
-        });
-        setInitialPolygonData(polygonGeojson);
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonSelected } });
-        setPolygonBbox(bbox?.bbox);
-      }
-    };
-
-    getPolygonData();
-  }, [polygonSelected]);
-
-  useEffect(() => {
-    if (initialPolygonData) {
-      const selectedPolygon: any = {};
-      const entry = initialPolygonData?.site_polygon;
-      selectedPolygon[entry?.status] = entry?.poly_id;
-      setPolygonData(selectedPolygon);
-    }
-  }, [initialPolygonData]);
 
   return (
     <ModalBaseWithMap {...rest}>
@@ -155,13 +127,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
           </div>
         </div>
         <div className="relative h-[700px] w-[60%]">
-          <Map
-            className="h-full w-full"
-            hasControls={false}
-            polygonChecks
-            polygonsData={polygonData}
-            bbox={polygonBbox}
-          />
+          <Map className="h-full w-full" hasControls={false} />
           <button onClick={onCLose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
             <Icon name={IconNames.CLEAR} className="h-4 w-4 text-darkCustom-100" />
           </button>
