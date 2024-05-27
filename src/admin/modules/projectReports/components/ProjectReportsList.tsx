@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -18,30 +18,17 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
-import FrameworkSelectionDialog from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 const ProjectReportDataGrid: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
+  const frameworkChoices = useFrameworkChoices();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
       <TextField source="title" label="Report Name" />
@@ -73,21 +60,7 @@ const ProjectReportDataGrid: FC = () => {
 };
 
 export const ProjectReportsList: FC = () => {
-  const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
-  const [exporting, setExporting] = useState<boolean>(false);
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkChoices = useFrameworkChoices();
   const filters = [
     <SearchInput key="search" source="search" alwaysOn />,
     <ReferenceInput
@@ -113,30 +86,7 @@ export const ProjectReportsList: FC = () => {
     <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />
   ];
 
-  const handleExportOpen = () => {
-    setExportModalOpen(true);
-  };
-
-  const handleExportClose = () => {
-    setExportModalOpen(false);
-  };
-
-  const handleExport = (framework: string) => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "project-reports",
-        framework
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, `Project Reports - ${framework}.csv`);
-      })
-      .finally(() => setExporting(false));
-
-    handleExportClose();
-  };
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("project-reports");
 
   return (
     <>
@@ -146,11 +96,11 @@ export const ProjectReportsList: FC = () => {
         <Divider />
       </Stack>
 
-      <List actions={<ListActions onExport={handleExportOpen} />} filters={filters}>
+      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
         <ProjectReportDataGrid />
       </List>
 
-      <FrameworkSelectionDialog open={exportModalOpen} onCancel={handleExportClose} onExport={handleExport} />
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>

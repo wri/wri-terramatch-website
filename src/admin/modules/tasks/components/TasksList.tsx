@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -18,17 +18,7 @@ import { optionToChoices } from "@/utils/options";
 import modules from "../..";
 
 const TaskDataGrid: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      setFrameworkChoices(await useFrameworkChoices());
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkChoices = useFrameworkChoices();
 
   return (
     <Datagrid rowClick="show" bulkActionButtons={false}>
@@ -51,18 +41,7 @@ const TaskDataGrid: FC = () => {
 };
 
 export const TasksList: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-
-  const fetchData = async () => {
-    try {
-      setFrameworkChoices(await useFrameworkChoices());
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkChoices = useFrameworkChoices();
 
   const filters = [
     <ReferenceInput

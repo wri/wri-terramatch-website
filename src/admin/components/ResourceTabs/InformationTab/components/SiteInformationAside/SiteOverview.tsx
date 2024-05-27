@@ -2,6 +2,7 @@ import { Check } from "@mui/icons-material";
 import { Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { BooleanField, FunctionField, Labeled, TextField, useShowContext } from "react-admin";
+import { When } from "react-if";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
@@ -18,10 +19,22 @@ const SiteOverview: FC = () => {
           Site Overview
         </Typography>
 
-        <Stack gap={3}>
-          <Labeled label="Site">
-            <TextField source="name" />
-          </Labeled>
+        <Stack gap={1}>
+          <Grid spacing={2} marginBottom={2} container>
+            <Grid xs={8} item>
+              <Labeled label="Site">
+                <TextField source="name" />
+              </Labeled>
+            </Grid>
+
+            <When condition={record.ppc_external_id != null}>
+              <Grid xs={2} item>
+                <Labeled label="Site ID">
+                  <TextField source="ppc_external_id" />
+                </Labeled>
+              </Grid>
+            </When>
+          </Grid>
 
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={4} item>

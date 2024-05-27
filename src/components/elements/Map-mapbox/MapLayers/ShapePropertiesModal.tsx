@@ -26,10 +26,13 @@ interface ShapePropertiesModalProps {
 }
 
 export interface AdditionalPolygonProperties {
+  Framework: string;
   Plant_Date: string;
-  Site_ID: string;
+  Site_ID?: number;
+  Site_UUID: string;
   Site_Name: string;
-  Project_ID: string;
+  Project_ID?: number;
+  Project_UUID: string;
   Project_Name: string;
   Org_Name: string;
   Country: string;
