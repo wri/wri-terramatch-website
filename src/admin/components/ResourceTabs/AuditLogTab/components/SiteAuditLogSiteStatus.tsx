@@ -9,8 +9,6 @@ export interface SiteAuditLogSiteStatusProps {
   record?: any;
   auditLogData?: any;
   refresh?: any;
-  recordAttachments?: any;
-  refreshAttachments?: any;
   getTextForActionTable?: any;
 }
 
@@ -33,14 +31,13 @@ interface AuditLogItem {
   first_name: string;
   last_name: string;
   request_removed: boolean;
+  attachments: [AttachmentItem];
 }
 
 const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
   record,
   auditLogData,
   refresh,
-  recordAttachments,
-  refreshAttachments,
   getTextForActionTable
 }) => {
   return (
@@ -58,7 +55,6 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
           auditLogData={auditLogData?.data}
           refresh={refresh}
           viewCommentsList={false}
-          attachmentRefetch={refreshAttachments}
         />
       </div>
       <Text variant="text-16-bold">History and Discussion for {record?.name}</Text>
@@ -96,23 +92,19 @@ const SiteAuditLogSiteStatus: FC<SiteAuditLogSiteStatusProps> = ({
                 {item.comment || "-"}
               </Text>
               <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
-                {recordAttachments
-                  ?.filter((attachmentItem: AttachmentItem) => {
-                    return attachmentItem.entity_id == item.id;
-                  })
-                  ?.map((attachmentItem: AttachmentItem) => (
-                    <Text
-                      key={attachmentItem.id}
-                      variant="text-12-light"
-                      className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
-                      as={"span"}
-                      onClick={() => {
-                        attachmentItem.url_file && window.open(attachmentItem.url_file, "_blank");
-                      }}
-                    >
-                      {attachmentItem.attachment}
-                    </Text>
-                  ))}
+                {item?.attachments?.map((attachmentItem: AttachmentItem) => (
+                  <Text
+                    key={attachmentItem.id}
+                    variant="text-12-light"
+                    className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
+                    as={"span"}
+                    onClick={() => {
+                      attachmentItem.url_file && window.open(attachmentItem.url_file, "_blank");
+                    }}
+                  >
+                    {attachmentItem.attachment}
+                  </Text>
+                ))}
               </div>
             </Fragment>
           ))}

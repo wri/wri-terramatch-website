@@ -11,15 +11,13 @@ const ComentarySection = ({
   refresh,
   record,
   entity,
-  viewCommentsList = true,
-  attachmentRefetch
+  viewCommentsList = true
 }: {
   auditLogData?: any;
   refresh?: any;
   record?: any;
   entity?: "Project" | "SitePolygon" | "Site";
   viewCommentsList?: boolean;
-  attachmentRefetch?: any;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
     data: {
@@ -38,7 +36,6 @@ const ComentarySection = ({
         refresh={refresh}
         record={record}
         entity={entity}
-        attachmentRefetch={attachmentRefetch}
       />
       <When condition={viewCommentsList}>
         <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
