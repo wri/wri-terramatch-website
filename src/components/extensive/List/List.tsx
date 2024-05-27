@@ -38,7 +38,7 @@ const List = <T extends Record<any, any>, U>({
     <ListComponent {...listComponentClassnames}>
       {startListElement ? <ItemComponent>{startListElement}</ItemComponent> : <></>}
       {items.map((item, i, array) => (
-        <Fragment key={uniqueId ? item[uniqueId] : i}>
+        <Fragment key={uniqueId ? `${item[uniqueId]}-${i}` : i}>
           <ItemComponent {...listItemComponentClassnames}>{render(item, i, array)}</ItemComponent>
           <When condition={i < items.length - 1}>{dividerComponent}</When>
         </Fragment>
