@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -12,8 +12,8 @@ export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, H
 export interface ModalProps extends ModalBaseProps {
   title: string;
   iconProps?: IconProps;
-  content?: string;
-  primaryButtonProps: IButtonProps;
+  content?: ReactNode;
+  primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
 }
 
