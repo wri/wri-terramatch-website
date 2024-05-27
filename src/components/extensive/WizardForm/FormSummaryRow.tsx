@@ -1,6 +1,5 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
@@ -16,6 +15,7 @@ import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/R
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetV2SitesSiteBbox, useGetV2SitesSitePolygon } from "@/generated/apiComponents";
@@ -25,8 +25,6 @@ import { EntityName } from "@/types/common";
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
 import { getAnswer, getFormattedAnswer } from "./utils";
-
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
@@ -87,7 +85,7 @@ export const getFormEntries = (
           title: f.label,
           type: f.type,
           value: siteGeojson ? (
-            <Map polygonsData={siteGeojson} bbox={bbox} className="h-[240px] flex-1" hasControls={false} />
+            <MapContainer polygonsData={siteGeojson} bbox={bbox} className="h-[240px] flex-1" hasControls={false} />
           ) : (
             <></>
           )

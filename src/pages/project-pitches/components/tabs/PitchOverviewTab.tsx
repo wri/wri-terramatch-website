@@ -1,10 +1,10 @@
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
 import { Fragment } from "react";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import SectionBody from "@/components/elements/Section/SectionBody";
 import SectionEntryRow from "@/components/elements/Section/SectionEntryRow";
 import SectionHeader from "@/components/elements/Section/SectionHeader";
@@ -23,9 +23,6 @@ import TabContainer from "@/pages/project-pitches/components/tabs/TabContainer";
 import { UploadedFile } from "@/types/common";
 import { notEmpty } from "@/utils/array";
 import { formatOptionsList } from "@/utils/options";
-
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
-
 interface PitchOverviewTabProps {
   pitch: ProjectPitchRead;
 }
@@ -96,7 +93,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
       <Accordion title={t("Proposed Project Area")} defaultOpen className="mb-15 w-full bg-white shadow">
         <SectionBody>
           <Text variant="text-heading-300">{t("Geospatial polygon of your proposed restoration area.")}</Text>
-          <Map geojson={projectBoundary} />
+          <MapContainer geojson={projectBoundary} />
 
           <SectionEntryRow title={t("Description of Project Area")} isEmpty={!pitch.proj_area_description}>
             <Text variant="text-heading-100">{pitch.proj_area_description}</Text>

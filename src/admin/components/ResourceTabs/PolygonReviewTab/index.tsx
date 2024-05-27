@@ -6,7 +6,7 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import Map from "@/components/elements/Map-mapbox/Map";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import _MapService from "@/components/elements/Map-mapbox/MapService";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
@@ -506,7 +506,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
               </div>
 
-              <Map
+              <MapContainer
                 record={record}
                 polygonsData={polygonDataMap}
                 bbox={siteBbox}
