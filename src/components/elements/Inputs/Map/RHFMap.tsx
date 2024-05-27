@@ -93,7 +93,7 @@ const RHFMap = ({
         editable
         onError={onError}
         additionalPolygonProperties={additionalPolygonProperties}
-        captureAdditionalPolygonProperties={!!entity}
+        captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
       />
     </InputWrapper>
   );
