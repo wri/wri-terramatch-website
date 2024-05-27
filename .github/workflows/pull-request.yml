@@ -1,0 +1,16 @@
+name: pull-request
+on: workflow_dispatch
+#  pull_request:
+#    branches: [main, staging, release/**]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - name: Install modules
+        run: yarn
+      - name: Test
+        run: yarn run jest --ci
