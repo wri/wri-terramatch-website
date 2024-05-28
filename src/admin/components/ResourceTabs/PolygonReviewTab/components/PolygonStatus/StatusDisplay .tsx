@@ -78,7 +78,7 @@ export interface StatusProps {
   titleStatus: "Site" | "Project" | "Polygon";
   mutate?: any;
   record?: any;
-  refresh?: any;
+  refresh?: () => void;
   name: any;
   refetchPolygon?: any;
   setSelectedPolygon?: any;
@@ -183,7 +183,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             }, 3000);
             console.error(e);
           } finally {
-            refresh();
+            refresh && refresh();
             reloadEntity();
             closeModal;
           }
@@ -243,7 +243,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             }, 3000);
             console.error(e);
           } finally {
-            refresh();
+            refresh && refresh();
             reloadEntity();
             closeModal;
           }

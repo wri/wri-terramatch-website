@@ -8,10 +8,11 @@ import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import {
   fetchGetV2AdminSitePolygonUUID,
+  fetchPutV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
-import { SitePolygonResponse } from "@/generated/apiSchemas";
+import { AuditStatusResponse, SitePolygonResponse } from "@/generated/apiSchemas";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
@@ -28,6 +29,15 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: Entity["entityName"];
 }
 
+interface selectedPolygon {
+  title: string | undefined;
+  uuid: string | undefined;
+  name: string | undefined;
+  value: string | undefined;
+  meta: string | undefined;
+  status: string | undefined;
+}
+
 export const ButtonStates = {
   PROJECTS: 0,
   SITE: 1,
@@ -40,20 +50,15 @@ const ReverseButtonStates: { [key: number]: string } = {
   2: "SitePolygon"
 };
 
-interface recentRequestItem {
-  first_name: string;
-  last_name: string;
-  date_created: string;
-}
-
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { record, isLoading } = useShowContext();
   const basename = useBasename();
   const { project } = record;
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
-  const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
+  const [selectedPolygon, setSelectedPolygon] = useState<selectedPolygon | null>();
   const [polygonList, setPolygonList] = useState<any[]>([]);
+  const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
@@ -67,16 +72,16 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   });
 
-  const unnamedTitleAndSort = (list: any[]) => {
-    const unnamedItems = list?.map((item: any) => {
+  const unnamedTitleAndSort = (list: SitePolygonResponse[]) => {
+    const unnamedItems = list?.map((item: SitePolygonResponse) => {
       if (!item.poly_name) {
         return { ...item, poly_name: "Unnamed Polygon" };
       }
       return item;
     });
 
-    return unnamedItems?.sort((a: { poly_name: string }, b: { poly_name: string }) => {
-      return a?.poly_name?.localeCompare(b?.poly_name);
+    return unnamedItems?.sort((a: SitePolygonResponse, b: SitePolygonResponse) => {
+      return a.poly_name?.localeCompare(b.poly_name || "") || 0;
     });
   };
 
@@ -90,7 +95,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     const _polygonList = (res as { data: SitePolygonResponse[] }).data;
     const _list = unnamedTitleAndSort(_polygonList);
     setPolygonList(
-      _list.map((item: any) => ({
+      _list.map((item: SitePolygonResponse) => ({
         title: item?.poly_name,
         uuid: item?.uuid,
         name: item?.poly_name,
@@ -131,25 +136,9 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   }, [buttonToogle, record]);
 
-  const recentRequestData = (recentRequest: recentRequestItem) => {
+  const recentRequestData = (recentRequest: AuditStatusResponse) => {
     return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
     ${convertDateFormat(recentRequest.date_created) ?? ""}`;
-  };
-
-  const formattedTextStatus = (text: string) => {
-    return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
-  };
-
-  const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
-    if (item.type === "comment") {
-      return "New Comment";
-    } else if (item.type === "status") {
-      return `New Status: ${formattedTextStatus(item.status)}`;
-    } else if (item.request_removed) {
-      return "Change Request Removed";
-    } else {
-      return "Change Requested Added";
-    }
   };
 
   return (
@@ -173,20 +162,10 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 />
               </When>
               <When condition={buttonToogle === ButtonStates.SITE}>
-                <SiteAuditLogSiteStatus
-                  record={record}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                  getTextForActionTable={getTextForActionTable}
-                />
+                <SiteAuditLogSiteStatus record={record} auditLogData={auditLogData} refresh={refetch} />
               </When>
               <When condition={buttonToogle === ButtonStates.POLYGON}>
-                <SiteAuditLogPolygonStatus
-                  record={selectedPolygon}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                  getTextForActionTable={getTextForActionTable}
-                />
+                <SiteAuditLogPolygonStatus record={selectedPolygon} auditLogData={auditLogData} refresh={refetch} />
               </When>
             </Stack>
           </Grid>
@@ -222,6 +201,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 setSelectedPolygon={setSelectedPolygon}
                 auditLogData={auditLogData?.data}
                 recentRequestData={recentRequestData}
+                mutate={mutateSitePolygons}
               />
             </When>
           </Grid>

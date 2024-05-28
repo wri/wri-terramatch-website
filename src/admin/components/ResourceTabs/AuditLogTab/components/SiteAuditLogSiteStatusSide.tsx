@@ -1,18 +1,9 @@
 import { useState } from "react";
 
-import Notification from "@/components/elements/Notification/Notification";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
-import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AdminSitesUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
 
-import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
-
-interface auditLogItem {
-  type: string;
-  is_active: boolean;
-  id: number;
-  comment: string;
-}
+import AuditLogStatusSide from "./AuditLogStatusSide";
 
 const SiteAuditLogSiteStatusSide = ({
   record,
@@ -21,40 +12,14 @@ const SiteAuditLogSiteStatusSide = ({
   recentRequestData
 }: {
   record?: any;
-  refresh?: any;
-  auditLogData?: any;
-  recentRequestData?: any;
+  refresh?: () => void;
+  auditLogData?: AuditStatusResponse[];
+  recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;
 }) => {
-  const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
   const [open, setOpen] = useState(false);
 
   const { mutate: upload } = usePostV2AuditStatus();
   const mutate = fetchPutV2AdminSitesUUID;
-  const deactivateRecentRequest = async () => {
-    upload?.(
-      {
-        //@ts-ignore swagger issue
-        body: {
-          entity_uuid: record?.uuid,
-          status: record?.status,
-          entity: "Site",
-          comment: "",
-          type: "change-request",
-          is_active: false,
-          request_removed: true
-        }
-      },
-      {
-        onSuccess: () => {
-          setOpen(true);
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
-          refresh();
-        }
-      }
-    );
-  };
 
   const siteStatusLabels = [
     { id: "1", label: "Draft" },
@@ -81,32 +46,19 @@ const SiteAuditLogSiteStatusSide = ({
     }
   }
   return (
-    <div className="flex flex-col gap-6 overflow-hidden">
-      <Text variant="text-16-bold">Site Status</Text>
-      <StepProgressbar
-        color="secondary"
-        value={getValueForStatus(record.status)}
-        labels={siteStatusLabels}
-        classNameLabels="min-w-[99px]"
-        className="w-[99%]"
-      />
-      {recentRequest && (
-        <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-3">
-          <div>
-            <div className="flex items-baseline justify-between">
-              <Text variant="text-16-bold">Change Requested</Text>
-              <button onClick={deactivateRecentRequest} className="text-14-bold text-tertiary-600">
-                Remove
-              </button>
-            </div>
-            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
-          </div>
-          <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
-        </div>
-      )}
-      <StatusDisplay titleStatus="Site" name={record.name} refresh={refresh} record={record} mutate={mutate} />
-      <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
-    </div>
+    <AuditLogStatusSide
+      record={record}
+      refresh={refresh}
+      auditLogData={auditLogData}
+      recentRequestData={recentRequestData}
+      getValueForStatus={getValueForStatus}
+      statusLabels={siteStatusLabels}
+      entity="Site"
+      upload={upload}
+      mutate={mutate}
+      openModal={open}
+      setOpenModal={setOpen}
+    />
   );
 };
 

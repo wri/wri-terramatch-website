@@ -6,15 +6,9 @@ import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
-
-interface auditLogItem {
-  type: string;
-  is_active: boolean;
-  id: number;
-  comment: string;
-}
 
 const SiteAuditLogPolygonStatusSide = ({
   refresh,
@@ -29,20 +23,22 @@ const SiteAuditLogPolygonStatusSide = ({
   getValueForStatus,
   progressBarLabels
 }: {
-  recordType?: string;
-  refresh?: any;
+  recordType?: "Polygon" | "Site";
+  refresh?: () => void;
   record?: any;
   polygonList?: any[];
   selectedPolygon?: any;
   setSelectedPolygon?: any;
-  auditLogData?: any;
-  recentRequestData?: any;
+  auditLogData?: AuditStatusResponse[];
+  recentRequestData?: (recentRequest: AuditStatusResponse) => string | undefined;
   mutate?: any;
-  getValueForStatus?: any;
-  progressBarLabels?: any;
+  getValueForStatus?: ((status: string) => number) | undefined;
+  progressBarLabels?: Array<{ id: string; label: string }>;
 }) => {
   const [open, setOpen] = useState(false);
-  const recentRequest = auditLogData?.find((item: auditLogItem) => item.type == "change-request" && item.is_active);
+  const recentRequest = auditLogData?.find(
+    (item: AuditStatusResponse) => item.type == "change-request" && item.is_active
+  );
   const { mutate: upload } = usePostV2AuditStatus();
   const deactivateRecentRequest = async () => {
     upload?.(
@@ -64,7 +60,7 @@ const SiteAuditLogPolygonStatusSide = ({
           setTimeout(() => {
             setOpen(false);
           }, 3000);
-          refresh();
+          refresh && refresh();
         }
       }
     );
@@ -94,7 +90,7 @@ const SiteAuditLogPolygonStatusSide = ({
       <Text variant="text-16-bold">{`${recordType} Status`}</Text>
       <StepProgressbar
         color="secondary"
-        value={getValueForStatus(record?.meta)}
+        value={getValueForStatus ? getValueForStatus(record.status) : 0}
         labels={progressBarLabels}
         classNameLabels="min-w-[99px] "
         className={classNames("w-[98%] pl-[1%]", recordType === "Polygon" && "pl-[6%]")}
@@ -108,13 +104,13 @@ const SiteAuditLogPolygonStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
+            {recentRequestData && <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>}
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
       )}
       <StatusDisplay
-        titleStatus={recordType as any}
+        titleStatus={recordType}
         name={selectedPolygon?.title}
         refresh={refresh}
         mutate={mutate}

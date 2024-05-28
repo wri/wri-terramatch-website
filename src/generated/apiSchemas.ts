@@ -23272,6 +23272,10 @@ export type ProjectStatusResponse = {
   created_by?: string;
 };
 
+export type AuditStatusResponseWithData = {
+  data?: AuditStatusResponse[];
+};
+
 export type AuditStatusResponse = {
   entity_uuid?: string;
   entity?: string;
@@ -23288,6 +23292,7 @@ export type AuditStatusResponse = {
   first_name?: string;
   last_name?: string;
   request_removed?: boolean;
+  attachments?: AttachmentResponse[];
 };
 
 export type AuditStatusPost = {
@@ -23398,7 +23403,9 @@ export type V2TerrafundCriteriaData = {
 };
 
 export type AttachmentResponse = {
+  id?: number;
   entity_id?: string;
   attachment?: string;
   created_by?: string;
+  url_file?: string;
 };

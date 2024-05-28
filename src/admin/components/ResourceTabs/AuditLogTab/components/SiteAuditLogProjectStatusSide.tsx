@@ -1,11 +1,9 @@
 import { useState } from "react";
 
-import Notification from "@/components/elements/Notification/Notification";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
-import Text from "@/components/elements/Text/Text";
 import { fetchPutV2AdminProjectsUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
 
-import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
+import AuditLogStatusSide from "./AuditLogStatusSide";
 
 const SiteAuditLogProjectStatusSide = ({
   record,
@@ -14,42 +12,13 @@ const SiteAuditLogProjectStatusSide = ({
   recentRequestData
 }: {
   record?: any;
-  refresh?: any;
-  auditLogData?: any;
-  recentRequestData?: any;
+  refresh?: () => void;
+  auditLogData?: AuditStatusResponse[];
+  recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;
 }) => {
   const [open, setOpen] = useState(false);
   const { mutate: upload } = usePostV2AuditStatus();
   const mutate = fetchPutV2AdminProjectsUUID;
-  const recentRequest = auditLogData?.find(
-    (item: { type: string; is_active: boolean }) => item.type == "change-request" && item.is_active
-  );
-
-  const deactivateRecentRequest = () => {
-    upload?.(
-      {
-        //@ts-ignore swagger issue
-        body: {
-          entity_uuid: record?.uuid,
-          status: record?.status,
-          entity: "Project",
-          comment: "",
-          type: "change-request",
-          is_active: false,
-          request_removed: true
-        }
-      },
-      {
-        onSuccess: () => {
-          setOpen(true);
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
-          refresh();
-        }
-      }
-    );
-  };
 
   const projectStatusLabels = [
     { id: "1", label: "Draft" },
@@ -74,33 +43,19 @@ const SiteAuditLogProjectStatusSide = ({
   }
 
   return (
-    <div className="flex flex-col gap-6 overflow-hidden">
-      <Text variant="text-16-bold">Project Status</Text>
-      <StepProgressbar
-        color="secondary"
-        value={getValueForStatus(record.status)}
-        labels={projectStatusLabels}
-        classNameLabels="min-w-[99px]"
-        className="w-[99%]"
-      />
-
-      {recentRequest && (
-        <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-3">
-          <div>
-            <div className="flex items-baseline justify-between">
-              <Text variant="text-16-bold">Change Requested</Text>
-              <button onClick={deactivateRecentRequest} className="text-14-bold text-tertiary-600">
-                Remove
-              </button>
-            </div>
-            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
-          </div>
-          <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
-        </div>
-      )}
-      <StatusDisplay titleStatus="Project" record={record} name={record?.name} mutate={mutate} refresh={refresh} />
-      <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
-    </div>
+    <AuditLogStatusSide
+      record={record}
+      refresh={refresh}
+      auditLogData={auditLogData}
+      recentRequestData={recentRequestData}
+      getValueForStatus={getValueForStatus}
+      statusLabels={projectStatusLabels}
+      entity="Project"
+      upload={upload}
+      mutate={mutate}
+      openModal={open}
+      setOpenModal={setOpen}
+    />
   );
 };
 
