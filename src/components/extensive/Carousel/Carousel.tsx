@@ -19,7 +19,7 @@ export interface CarouselProps<T> extends SwiperProps {
   swiperButtonsClassName?: string;
   hidePaginationBullet?: boolean;
   breakpoints?: CarouselBreakPoints;
-  setSelectedImage?: (index: number) => void;
+  setSelectecImage?: (index: number) => void;
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
 }
@@ -38,7 +38,7 @@ const Carousel = <T extends Record<any, any>>({
   swiperSlideClassName,
   swiperButtonsClassName,
   hidePaginationBullet,
-  setSelectedImage,
+  setSelectecImage,
   buttonsOutside = false,
   smallSwiperButtons,
   ...swiperProps
@@ -47,7 +47,11 @@ const Carousel = <T extends Record<any, any>>({
 
   const swiperButtonSize = smallSwiperButtons ? 12 : 24;
 
-  const handleSlideChange = (swiper: { activeIndex: any }) => setSelectedImage?.(swiper.activeIndex);
+  const handleSlideChange = (swiper: { activeIndex: any }) => {
+    if (setSelectecImage) {
+      setSelectecImage(swiper.activeIndex);
+    }
+  };
 
   return (
     <div className={classNames("relative mx-auto", className)}>

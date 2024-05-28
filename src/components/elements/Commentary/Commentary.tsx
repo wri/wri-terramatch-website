@@ -10,13 +10,13 @@ export interface ComentaryProps {
   lastName: string;
   date: string;
   comentary: string;
-  status?: "Submitted" | "Draft";
+  status?: "draft" | "submitted";
   files?: ComentaryFilesProps[];
 }
 
 const statusStyle = {
-  Submitted: { container: "bg-primary-200", textColor: "text-primary" },
-  Draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" }
+  submitted: { container: "bg-primary-200", textColor: "text-primary" },
+  draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" }
 };
 
 const Comentary = (props: ComentaryProps) => {
