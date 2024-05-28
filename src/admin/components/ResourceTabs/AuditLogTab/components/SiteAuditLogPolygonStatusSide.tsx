@@ -90,7 +90,7 @@ const SiteAuditLogPolygonStatusSide = ({
       <Text variant="text-16-bold">{`${recordType} Status`}</Text>
       <StepProgressbar
         color="secondary"
-        value={getValueForStatus ? getValueForStatus(record.status) : 0}
+        value={getValueForStatus ? getValueForStatus(record?.status) : 0}
         labels={progressBarLabels}
         classNameLabels="min-w-[99px] "
         className={classNames("w-[98%] pl-[1%]", recordType === "Polygon" && "pl-[6%]")}
