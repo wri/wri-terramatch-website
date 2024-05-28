@@ -258,24 +258,6 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
-            <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
-            >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
-              <p
-                className="pt-0.5 text-bold-caption-100"
-                data-testid="txt"
-              >
-                Rejected
-              </p>
-            </div>
           </div>
           <p
             className="text-body-300 with-inner-html"
@@ -328,6 +310,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
+            <div
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+              <p
+                className="pt-0.5 text-bold-caption-100"
+                data-testid="txt"
+              >
+                More info requested
+              </p>
+            </div>
           </div>
           <p
             className="text-body-300 with-inner-html"
@@ -395,7 +395,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
                 className="pt-0.5 text-bold-caption-100"
                 data-testid="txt"
               >
-                Awaiting Review
+                Awaiting approval
               </p>
             </div>
           </div>
