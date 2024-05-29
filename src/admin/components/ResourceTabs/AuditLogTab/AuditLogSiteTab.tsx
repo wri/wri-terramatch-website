@@ -7,12 +7,12 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import {
-  fetchGetV2AdminSitePolygonUUID,
   fetchPutV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
-import { AuditStatusResponse, SitePolygonResponse } from "@/generated/apiSchemas";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
+import useLoadEntityList from "@/hooks/useLoadEntityList";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
@@ -27,15 +27,6 @@ import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide"
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: Entity["entityName"];
-}
-
-interface selectedPolygon {
-  title: string | undefined;
-  uuid: string | undefined;
-  name: string | undefined;
-  value: string | undefined;
-  meta: string | undefined;
-  status: string | undefined;
 }
 
 export const ButtonStates = {
@@ -56,10 +47,16 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { project } = record;
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
-  const [selectedPolygon, setSelectedPolygon] = useState<selectedPolygon | null>();
-  const [polygonList, setPolygonList] = useState<any[]>([]);
   const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
-
+  const {
+    loadEntityList: loadSitePolygonList,
+    selected: selectedPolygon,
+    setSelected: setSelectedPolygon,
+    entityList: polygonList
+  } = useLoadEntityList({
+    entityUuid: record.uuid,
+    entityType: "sitePolygon"
+  });
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
@@ -71,64 +68,6 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
           : selectedPolygon?.uuid
     }
   });
-
-  const unnamedTitleAndSort = (list: SitePolygonResponse[]) => {
-    const unnamedItems = list?.map((item: SitePolygonResponse) => {
-      if (!item.poly_name) {
-        return { ...item, poly_name: "Unnamed Polygon" };
-      }
-      return item;
-    });
-
-    return unnamedItems?.sort((a: SitePolygonResponse, b: SitePolygonResponse) => {
-      return a.poly_name?.localeCompare(b.poly_name || "") || 0;
-    });
-  };
-
-  const loadSitePolygonList = async () => {
-    console.log("loadSitePolygonList", record.uuid);
-    const res = await fetchGetV2AdminSitePolygonUUID({
-      pathParams: {
-        uuid: record.uuid
-      }
-    });
-    const _polygonList = (res as { data: SitePolygonResponse[] }).data;
-    const _list = unnamedTitleAndSort(_polygonList);
-    setPolygonList(
-      _list.map((item: SitePolygonResponse) => ({
-        title: item?.poly_name,
-        uuid: item?.uuid,
-        name: item?.poly_name,
-        value: item?.uuid,
-        meta: item?.status,
-        status: item?.status
-      }))
-    );
-    if (_list.length > 0) {
-      if (selectedPolygon?.title === undefined || !selectedPolygon) {
-        setSelectedPolygon({
-          title: _list[0]?.poly_name,
-          uuid: _list[0]?.uuid,
-          name: _list[0]?.poly_name,
-          value: _list[0]?.uuid,
-          meta: _list[0]?.status,
-          status: _list[0]?.status
-        });
-      } else {
-        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.uuid);
-        setSelectedPolygon({
-          title: currentSelectedPolygon?.poly_name,
-          uuid: currentSelectedPolygon?.uuid,
-          name: currentSelectedPolygon?.poly_name,
-          value: currentSelectedPolygon?.value,
-          meta: currentSelectedPolygon?.status,
-          status: currentSelectedPolygon?.status
-        });
-      }
-    } else {
-      setSelectedPolygon(null);
-    }
-  };
 
   useEffect(() => {
     if (buttonToogle === ButtonStates.POLYGON) {

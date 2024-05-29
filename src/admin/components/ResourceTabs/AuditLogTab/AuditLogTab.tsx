@@ -5,15 +5,13 @@ import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import {
-  fetchGetV2AuditStatusId,
-  fetchGetV2ProjectsUUIDSites,
   fetchPutV2AdminSitePolygonUUID,
   fetchPutV2AdminSitesUUID,
   GetV2AuditStatusResponse,
-  GetV2ProjectsUUIDSitesResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
-import { AuditStatusResponse, SitePolygonResponse } from "@/generated/apiSchemas";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
+import useLoadEntityList from "@/hooks/useLoadEntityList";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
@@ -27,24 +25,6 @@ import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: Entity["entityName"];
-}
-
-interface selectedSite {
-  title: string | undefined;
-  uuid: string | undefined;
-  name: string | undefined;
-  value: string | undefined;
-  meta: string | undefined;
-  status: string | undefined;
-}
-
-interface selectedPolygon {
-  title: string | undefined;
-  uuid: string | undefined;
-  name: string | undefined;
-  value: string | undefined;
-  meta: string | undefined;
-  status: string | undefined;
 }
 
 export const ButtonStates = {
@@ -106,13 +86,28 @@ const siteProgressBarStatusLabels = [
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { record: project, isLoading } = useShowContext();
-  const [selectedSite, setSelectedSite] = useState<selectedSite | null>(null);
-  const [siteList, setSiteList] = useState<GetV2ProjectsUUIDSitesResponse[]>([]);
-  const [selectedPolygon, setSelectedPolygon] = useState<selectedPolygon | null>(null);
-  const [polygonList, setPolygonList] = useState<selectedPolygon[]>([]);
   const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
   const mutateSite = fetchPutV2AdminSitesUUID;
 
+  const {
+    loadEntityList: loadPolygonList,
+    selected: selectedPolygon,
+    setSelected: setSelectedPolygon,
+    entityList: polygonList
+  } = useLoadEntityList({
+    entityUuid: project.uuid,
+    entityType: "Project"
+  });
+
+  const {
+    loadEntityList: loadSiteList,
+    selected: selectedSite,
+    setSelected: setSelectedSite,
+    entityList: siteList
+  } = useLoadEntityList({
+    entityUuid: project.uuid,
+    entityType: "Site"
+  });
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
@@ -124,114 +119,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           : selectedPolygon?.uuid
     }
   });
-
-  const unnamedTitleAndSort = (list: any[], entity: string) => {
-    const unnamedItems = list?.map((item: any) => {
-      if (!item.poly_name && entity === "SitePolygon") {
-        return { ...item, poly_name: "Unnamed Polygon" };
-      }
-      if (!item.name && entity === "Site") {
-        return { ...item, name: "Unnamed Site" };
-      }
-      return item;
-    });
-
-    return unnamedItems?.sort((a: { poly_name: string; name: string }, b: { poly_name: string; name: string }) => {
-      if (a.name) {
-        return a?.name?.localeCompare(b?.name);
-      } else {
-        return a?.poly_name?.localeCompare(b?.poly_name);
-      }
-    });
-  };
-
-  const loadSiteList = async () => {
-    const res = await fetchGetV2ProjectsUUIDSites({
-      pathParams: {
-        uuid: project.uuid
-      }
-    });
-    const _siteList = (res as { data: GetV2ProjectsUUIDSitesResponse[] }).data;
-    const _list = unnamedTitleAndSort(_siteList, "Site");
-    setSiteList(
-      _list.map((item: any) => ({
-        title: item?.name,
-        uuid: item?.uuid,
-        name: item?.name,
-        value: item?.uuid,
-        meta: item?.status,
-        status: item?.status
-      }))
-    );
-    if (_list.length > 0) {
-      if (selectedSite?.title === undefined || !selectedSite) {
-        setSelectedSite({
-          title: _list[0]?.name,
-          uuid: _list[0]?.uuid,
-          name: _list[0]?.name,
-          value: _list[0]?.uuid,
-          meta: _list[0]?.status,
-          status: _list[0]?.status
-        });
-      } else {
-        const currentSelectedSite = (res as { data: any[] }).data.find(item => item.uuid === selectedSite?.uuid);
-        setSelectedSite({
-          title: currentSelectedSite?.name,
-          uuid: currentSelectedSite?.uuid,
-          name: currentSelectedSite?.name,
-          value: currentSelectedSite?.uuid,
-          meta: currentSelectedSite?.status,
-          status: currentSelectedSite?.status
-        });
-      }
-    } else {
-      setSelectedSite(null);
-    }
-  };
-
-  const loadPolygonList = async () => {
-    const res = await fetchGetV2AuditStatusId({
-      pathParams: {
-        id: project.uuid
-      }
-    });
-    const _PolygonList = (res as { data: AuditStatusResponse[] }).data;
-    const _list = unnamedTitleAndSort(_PolygonList, "SitePolygon");
-    setPolygonList(
-      _list.map((item: SitePolygonResponse) => ({
-        title: item?.poly_name,
-        uuid: item?.uuid,
-        name: item?.poly_name,
-        value: item?.uuid,
-        meta: item?.status,
-        status: item?.status
-      }))
-    );
-    if (_list.length > 0) {
-      if (selectedPolygon?.title === undefined || !selectedPolygon) {
-        setSelectedPolygon({
-          title: _list[0]?.poly_name,
-          uuid: _list[0]?.uuid,
-          name: _list[0]?.poly_name,
-          value: _list[0]?.uuid,
-          meta: _list[0]?.status,
-          status: _list[0]?.status
-        });
-      } else {
-        const currentSelectedPolygon = (res as { data: any[] }).data.find(item => item.uuid === selectedPolygon?.uuid);
-        setSelectedPolygon({
-          title: currentSelectedPolygon?.poly_name,
-          uuid: currentSelectedPolygon?.uuid,
-          name: currentSelectedPolygon?.poly_name,
-          value: currentSelectedPolygon?.uuid,
-          meta: currentSelectedPolygon?.status,
-          status: currentSelectedPolygon?.status
-        });
-      }
-    } else {
-      setSelectedPolygon(null);
-    }
-  };
 
   useEffect(() => {
     if (buttonToogle === ButtonStates.SITE) {
