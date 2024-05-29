@@ -15,11 +15,10 @@ import useLoadEntityList from "@/hooks/useLoadEntityList";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
-import SiteAuditLogPolygonStatus from "./components/SiteAuditLogPolygonStatus";
+import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
 import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
-import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
 // import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -133,6 +132,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ${convertDateFormat(recentRequest.date_created) ?? ""}`;
   };
 
+  const recordToEntity = buttonToogle === ButtonStates.POLYGON ? selectedPolygon : selectedSite;
+
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
@@ -143,11 +144,14 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               <When condition={buttonToogle === ButtonStates.PROJECTS}>
                 <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
               </When>
-              <When condition={buttonToogle === ButtonStates.SITE}>
-                <SiteAuditLogSiteStatus record={selectedSite} auditLogData={auditLogData} refresh={refetch} />
-              </When>
-              <When condition={buttonToogle === ButtonStates.POLYGON}>
-                <SiteAuditLogPolygonStatus record={selectedPolygon} auditLogData={auditLogData} refresh={refetch} />
+              <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+                <SiteAuditLogEntityStatus
+                  record={recordToEntity}
+                  auditLogData={auditLogData}
+                  refresh={refetch}
+                  buttonToogle={buttonToogle}
+                  buttonStates={ButtonStates}
+                />
               </When>
             </Stack>
           </Grid>

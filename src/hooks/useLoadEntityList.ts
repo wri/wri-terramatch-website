@@ -9,7 +9,6 @@ import {
 interface SelectedItem {
   title: string | undefined;
   uuid: string | undefined;
-  name: string | undefined;
   value: string | undefined;
   meta: string | undefined;
   status: string | undefined;
@@ -83,7 +82,6 @@ const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) 
       _list.map((item: EntityList) => ({
         title: item[nameProperty],
         uuid: item?.uuid,
-        name: item[nameProperty],
         value: item?.uuid,
         meta: item?.status,
         status: item?.status
@@ -94,7 +92,6 @@ const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) 
         setSelected({
           title: _list[0]?.[nameProperty],
           uuid: _list[0]?.uuid,
-          name: _list[0]?.[nameProperty],
           value: _list[0]?.uuid,
           meta: _list[0]?.status,
           status: _list[0]?.status
@@ -104,7 +101,6 @@ const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) 
         setSelected({
           title: currentSelected?.[nameProperty],
           uuid: currentSelected?.uuid,
-          name: currentSelected?.[nameProperty],
           value: currentSelected?.value,
           meta: currentSelected?.status,
           status: currentSelected?.status
