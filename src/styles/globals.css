@@ -50,6 +50,9 @@ input[type=number]::-webkit-outer-spin-button {
   @apply rounded-bl-lg
 }
 
+#mapContainer .mapboxgl-popup {
+  z-index: 20;
+}
 
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
