@@ -24,11 +24,11 @@ const HighLevelMetics: FC = () => {
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
           <When condition={isPPC}>
-            <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
-              <NumberField source="workday_count" emptyText="0" />
-            </Labeled>
-            <Labeled label="Self Reported Workdays Created" sx={inlineLabelSx}>
+            <Labeled label="Workdays Created (Old Calculation)" sx={inlineLabelSx}>
               <NumberField source="self_reported_workday_count" emptyText="0" />
+            </Labeled>
+            <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx}>
+              <NumberField source="workday_count" emptyText="0" />
             </Labeled>
           </When>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
