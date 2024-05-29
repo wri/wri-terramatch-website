@@ -110,7 +110,6 @@ const PolygonDrawer = ({
   }, [criteriaData]);
 
   useEffect(() => {
-    console.log("polugon selected", polygonSelected);
     if (sitePolygonData && Array.isArray(sitePolygonData)) {
       const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
       setSelectedPolygonData(PolygonData || {});
