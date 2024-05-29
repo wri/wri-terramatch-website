@@ -4,9 +4,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 //@ts-ignore
 import mapboxgl from "mapbox-gl";
 //@ts-ignore
-import React, { useEffect, useId, useRef } from "react";
+import React, { useEffect } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
-import { useRefresh } from "react-admin";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -16,27 +15,31 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2TerrafundPolygonGeojsonUuid,
-  fetchPostV2TerrafundPolygon,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  // fetchPostV2TerrafundSitePolygonUuid,
-  fetchPutV2TerrafundPolygonUuid
-} from "@/generated/apiComponents";
+import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import { AdminPopup } from "./components/AdminPopup";
+import { useMap } from "./hooks/useMap";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
-// import { useSitePolygonData } from "@/context/sitePolygon.provider";
-// import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
-// import SiteStatus from "./MapControls/SiteStatus";
 import { StyleControl } from "./MapControls/StyleControl";
+import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
-import { GeoJSONLayer } from "./MapLayers/GeoJSONLayer";
-import _MapService from "./MapService";
+import {
+  addFilterOfPolygonsData,
+  addFilterOnLayer,
+  addGeojsonToDraw,
+  addPopupsToMap,
+  addSourcesToLayers,
+  removePopups,
+  startDrawing,
+  stopDrawing,
+  zoomToBbox
+} from "./utils";
 
 mapboxgl.accessToken =
   process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
@@ -65,16 +68,17 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonChecks?: boolean;
   legend?: LegendItem[];
   centroids?: any;
-  polygonsData?: any[];
+  polygonsData?: SitePolygonsDataResponse;
   bbox?: any;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
   isUserDrawing?: boolean;
   setIsUserDrawing?: React.Dispatch<React.SetStateAction<boolean>>;
+  showPopups?: boolean;
 }
 
-export const Map = ({
+export const MapContainer = ({
   onError: _onError,
   editable,
   geojson,
@@ -92,18 +96,19 @@ export const Map = ({
   record,
   isUserDrawing = false,
   setIsUserDrawing,
+  showPopups = false,
   ...props
 }: MapProps) => {
-  const ref = useRef<typeof _MapService | null>(null);
   const [viewImages, setViewImages] = useState(false);
+  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
-  const mapId = useId();
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const { isUserDrawingEnabled } = isUserDrawing
     ? { isUserDrawingEnabled: isUserDrawing }
     : context || { isUserDrawingEnabled: false };
   const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context || {};
+  const { map, mapContainer, draw, onCancel, styleLoaded } = useMap(polygonsData, setPolygonFromMap);
 
   useEffect(() => {
     if (isUserDrawing) {
@@ -112,148 +117,74 @@ export const Map = ({
     }
   }, [isUserDrawing]);
 
-  const refresh = useRefresh();
   useEffect(() => {
-    if (ref.current && isUserDrawingEnabled && ref.current.draw) {
-      ref.current.startDrawing();
-    } else {
-      ref.current?.stopDrawing();
+    if (map?.current && draw?.current) {
+      if (isUserDrawingEnabled) {
+        startDrawing(draw.current, map.current);
+      } else {
+        stopDrawing(draw.current, map.current);
+      }
     }
   }, [isUserDrawingEnabled]);
 
-  const storePolygon = async (geojson: any) => {
-    toggleUserDrawing?.(false);
-    setIsUserDrawing?.(false);
-    if (geojson && geojson[0]) {
-      const response = await fetchPostV2TerrafundPolygon({
-        body: { geometry: JSON.stringify(geojson[0].geometry) }
-      });
-      const polygonUUID = response.uuid;
-      if (polygonUUID) {
-        const site_id = record.uuid;
-        console.log("{ uuid: polygonUUID, siteUuid: site_id }", { uuid: polygonUUID, siteUuid: site_id });
-        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
-          body: {},
-          pathParams: { uuid: polygonUUID, siteUuid: site_id }
-        });
-        if (reloadSiteData) {
-          reloadSiteData();
-        }
-        loadLayersInMap();
-        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
-        toggleAttribute?.(true);
-      }
-      onCancel();
-    }
-  };
   useEffect(() => {
-    if (!ref.current) {
-      ref.current = _MapService;
-      ref.current.initMap(mapId, storePolygon);
-      const onLoad = () => {
-        layersList.forEach((layer: any) => {
-          if (ref.current) {
-            ref.current.addSource(layer, sitePolygonData, setPolygonFromMap, hasControls);
-            setTimeout(() => {
-              refresh();
-            }, 500);
-          }
-        });
-      };
+    if (map?.current && styleLoaded && showPopups) {
+      const currentMap = map.current;
 
-      if (ref.current && ref.current.map) {
-        ref.current.map.on("style.load", onLoad);
-      }
-    }
-    return () => {
-      if (ref.current && ref.current.map) {
-        ref.current.map.remove();
-        ref.current = null;
-      }
-    };
-  }, []);
-  const addFilterOfPolygonsData = () => {
-    if (ref.current && ref.current.map) {
-      if (ref.current && ref.current.map.loaded()) {
-        ref.current.addFilterOnLayer(
-          layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-          polygonsData ? polygonsData : [],
-          "uuid"
-        );
-      } else {
-        ref.current?.map.on("load", () => {
-          ref.current?.addFilterOnLayer(
-            layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-            polygonsData ? polygonsData : [],
-            "uuid"
-          );
-        });
-      }
-    }
-  };
-  useEffect(() => {
-    if (polygonsData) {
-      addFilterOfPolygonsData();
-    }
-  }, [polygonsData]);
-
-  const zoomToBbox = (bbox: any) => {
-    if (ref.current && ref.current.map && bbox) {
-      ref.current.map.fitBounds(bbox, {
-        padding: hasControls ? 100 : 30,
-        linear: false,
-        animate: true
+      map.current.on("load", () => {
+        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData);
       });
     }
-  };
+  }, [styleLoaded, sitePolygonData]);
+
   useEffect(() => {
-    if (bbox && ref.current && ref.current.map) {
-      zoomToBbox(bbox);
+    if (map?.current) {
+      const currentMap = map.current as mapboxgl.Map;
+      addFilterOfPolygonsData(currentMap, polygonsData);
+    }
+  }, [sitePolygonData, currentStyle]);
+
+  useEffect(() => {
+    if (bbox && map.current && map) {
+      zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);
+
+  function handleAddGeojsonToDraw(polygonuuid: string) {
+    if (polygonsData && map.current && draw.current) {
+      const currentMap = map.current;
+      const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
+      const statuses = ["submitted", "approved", "need-more-info"];
+      statuses.forEach(status => {
+        if (newPolygonData[status]) {
+          newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
+        }
+      });
+      addFilterOnLayer(
+        layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
+        "uuid",
+        newPolygonData,
+        currentMap
+      );
+    }
+  }
+
   const handleEditPolygon = async () => {
+    removePopups();
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap.uuid;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
         pathParams: { uuid: polygonuuid }
       });
-      if (ref.current && ref.current.draw && polygonGeojson) {
-        ref.current.addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => {
-          if (polygonsData) {
-            const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-            const statuses = ["submitted", "approved", "need-more-info"];
-            statuses.forEach(status => {
-              if (newPolygonData[status]) {
-                newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
-              }
-            });
-            ref.current?.addFilterOnLayer(
-              layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-              newPolygonData,
-              "uuid"
-            );
-          }
-        });
+      if (map.current && draw.current && polygonGeojson) {
+        addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
       }
     }
   };
-  const loadLayersInMap = () => {
-    layersList.forEach((layer: any) => {
-      if (ref.current && ref.current.map) {
-        ref.current.addSource(layer, polygonsData, setPolygonFromMap, true);
-        if (setPolygonFromMap) {
-          console.log("Polygon from map", "false");
-          setPolygonFromMap({ uuid: "", isOpen: false });
-        }
-        ref.current.map.once("idle", () => {
-          refresh();
-        });
-      }
-    });
-  };
-  const onSave = async () => {
-    if (ref.current && ref.current.draw) {
-      const geojson = ref.current.draw.getAll();
+
+  const onSaveEdit = async () => {
+    if (map.current && draw.current) {
+      const geojson = draw.current.getAll();
       if (geojson) {
         if (polygonFromMap?.uuid) {
           const feature = geojson.features[0];
@@ -261,41 +192,36 @@ export const Map = ({
             body: { geometry: JSON.stringify(feature) },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
+          reloadSiteData?.();
           if (response.message == "Geometry updated successfully.") {
-            loadLayersInMap();
-            onCancel();
+            onCancel(map.current, draw.current);
+            addSourcesToLayers(map.current);
           }
         }
       }
     }
   };
-  const onCancel = () => {
-    if (ref.current && ref.current.draw) {
-      ref.current.draw.deleteAll();
-      addFilterOfPolygonsData();
+
+  const onCancelEdit = () => {
+    if (map.current && draw.current) {
+      onCancel(map.current, draw.current);
     }
   };
 
   return (
-    <div id={mapId} className={twMerge("h-[500px] wide:h-[700px]", className)}>
-      {ref.current && ref.current.map && <GeoJSONLayer mapRef={ref} geojson={geojson} />}
+    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="mapContainer">
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen}>
           <ControlGroup position="top-center">
-            <EditControl onClick={handleEditPolygon} onSave={onSave} onCancel={onCancel} />
+            <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">
-          <StyleControl mapRef={ref} />
+          <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
         </ControlGroup>
         <ControlGroup position="top-right" className="top-21">
-          <ZoomControl mapRef={ref} />
+          <ZoomControl map={map.current} />
         </ControlGroup>
-        {/* <When condition={!!status}>
-          <ControlGroup position="top-left">
-            <SiteStatus record={record} refresh={refresh} />
-          </ControlGroup>
-        </When> */}
         <When condition={!!status && !!record.uuid}>
           <ControlGroup position="top-left">
             <CheckPolygonControl siteRecord={record} />
@@ -318,7 +244,6 @@ export const Map = ({
             </button>
           </ControlGroup>
         </When>
-
         <When condition={!editable && !viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}></ControlGroup>
         </When>
@@ -326,7 +251,7 @@ export const Map = ({
           <button
             type="button"
             className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
-            onClick={() => zoomToBbox(bbox)}
+            onClick={() => bbox && map.current && zoomToBbox(bbox, map.current, hasControls)}
           >
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
@@ -350,4 +275,4 @@ export const Map = ({
   );
 };
 
-export default Map;
+export default MapContainer;
