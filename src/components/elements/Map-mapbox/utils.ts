@@ -135,7 +135,7 @@ export const removePopups = () => {
 
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
   if (map && polygonsData) {
-    if (map.isStyleLoaded() && map.loaded()) {
+    if (map.isStyleLoaded() || map.loaded()) {
       loadLayersInMap(map, polygonsData);
     } else {
       map.on("style.load", () => {
@@ -164,7 +164,7 @@ export function addGeojsonToDraw(geojson: any, uuid: string, cb: Function, curre
   }
 }
 
-export function addSourcesToLayers(map: mapboxgl.Map, popupComponent?: any) {
+export function addSourcesToLayers(map: mapboxgl.Map) {
   layersList.forEach((layer: LayerType) => {
     if (map) {
       addSourceToLayer(layer, map);

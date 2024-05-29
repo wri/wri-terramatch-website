@@ -1,11 +1,10 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxgl from "mapbox-gl";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchPostV2TerrafundPolygon, fetchPostV2TerrafundSitePolygonUuidSiteUuid } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
@@ -17,10 +16,7 @@ const MAPBOX_TOKEN =
   process.env.REACT_APP_MAPBOX_TOKEN ||
   "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
 
-export const useMap = (
-  parsedPolygonData?: SitePolygonsDataResponse,
-  setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>
-) => {
+export const useMap = () => {
   const { record } = useShowContext();
   const context = useSitePolygonData();
 
@@ -32,10 +28,11 @@ export const useMap = (
 
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [styleLoaded, setStyleLoaded] = useState(false);
+  const [polygonCreated, setPolygonCreated] = useState(false);
 
   async function storePolygon(geojson: any, record: any) {
+    setPolygonCreated(false);
     const currentMap = map.current as mapboxgl.Map;
-    const currentDraw = draw.current as ControlType;
     if (geojson && geojson[0]) {
       const response = await fetchPostV2TerrafundPolygon({
         body: { geometry: JSON.stringify(geojson[0].geometry) }
@@ -51,15 +48,14 @@ export const useMap = (
             reloadSiteData();
           }
           addSourcesToLayers(currentMap);
+          setPolygonCreated(true);
         });
-        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
         toggleAttribute?.(true);
       }
-      onCancel(currentMap, currentDraw);
     }
   }
 
-  const onCancel = (map: mapboxgl.Map, draw: MapboxDraw) => {
+  const onCancel = (map: mapboxgl.Map, draw: MapboxDraw, parsedPolygonData: any) => {
     if (map && draw) {
       draw.deleteAll();
       addFilterOfPolygonsData(map, parsedPolygonData);
@@ -71,7 +67,7 @@ export const useMap = (
     storePolygon(geojson, record);
   }
 
-  useEffect(() => {
+  function initMap() {
     if (map.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
@@ -111,7 +107,7 @@ export const useMap = (
       addControlToMap();
       map.current.on("draw.create", (feature: FeatureCollection) => handleCreateDraw(feature, record));
     }
-  });
+  }
 
   return {
     mapContainer,
@@ -119,6 +115,8 @@ export const useMap = (
     setZoom,
     styleLoaded,
     draw,
-    onCancel
+    onCancel,
+    initMap,
+    polygonCreated
   };
 };

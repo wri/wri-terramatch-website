@@ -39,9 +39,11 @@ const TooltipMap = (props: TooltipMapProps) => {
     return formattedPlantStartDate;
   };
 
+  const polygonDataStatus = polygonData?.status ? polygonData.status : "submitted";
+
   return (
     <div
-      className={`w-[295px] rounded border-t-[5px] ${topBorderColorPopup[polygon?.status]} bg-white px-3 pb-3 pt-[7px]`}
+      className={`w-[295px] rounded border-t-[5px] ${topBorderColorPopup[polygonDataStatus]} bg-white px-3 pb-3 pt-[7px]`}
       style={{
         bottom: "0",
         transform: "translate(-50%, 0px)"

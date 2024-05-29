@@ -19,7 +19,6 @@ import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid }
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { AdminPopup } from "./components/AdminPopup";
-import { useMap } from "./hooks/useMap";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -76,6 +75,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isUserDrawing?: boolean;
   setIsUserDrawing?: React.Dispatch<React.SetStateAction<boolean>>;
   showPopups?: boolean;
+  showLegend?: boolean;
+  mapFunctions?: any;
 }
 
 export const MapContainer = ({
@@ -97,6 +98,8 @@ export const MapContainer = ({
   isUserDrawing = false,
   setIsUserDrawing,
   showPopups = false,
+  showLegend = false,
+  mapFunctions,
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
@@ -108,7 +111,14 @@ export const MapContainer = ({
     ? { isUserDrawingEnabled: isUserDrawing }
     : context || { isUserDrawingEnabled: false };
   const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context || {};
-  const { map, mapContainer, draw, onCancel, styleLoaded } = useMap(polygonsData, setPolygonFromMap);
+  if (!mapFunctions) {
+    return null;
+  }
+  const { map, mapContainer, draw, onCancel, styleLoaded, initMap, polygonCreated } = mapFunctions;
+
+  useEffect(() => {
+    initMap();
+  });
 
   useEffect(() => {
     if (isUserDrawing) {
@@ -142,7 +152,7 @@ export const MapContainer = ({
       const currentMap = map.current as mapboxgl.Map;
       addFilterOfPolygonsData(currentMap, polygonsData);
     }
-  }, [sitePolygonData, currentStyle]);
+  }, [sitePolygonData, currentStyle, polygonCreated]);
 
   useEffect(() => {
     if (bbox && map.current && map) {
@@ -194,7 +204,7 @@ export const MapContainer = ({
           });
           reloadSiteData?.();
           if (response.message == "Geometry updated successfully.") {
-            onCancel(map.current, draw.current);
+            onCancel(map.current, draw.current, polygonsData);
             addSourcesToLayers(map.current);
           }
         }
@@ -204,7 +214,7 @@ export const MapContainer = ({
 
   const onCancelEdit = () => {
     if (map.current && draw.current) {
-      onCancel(map.current, draw.current);
+      onCancel(map.current, draw.current, polygonsData);
     }
   };
 
@@ -227,7 +237,7 @@ export const MapContainer = ({
             <CheckPolygonControl siteRecord={record} />
           </ControlGroup>
         </When>
-        <When condition={!editable && !viewImages && !status}>
+        <When condition={showLegend}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <FilterControl />
           </ControlGroup>

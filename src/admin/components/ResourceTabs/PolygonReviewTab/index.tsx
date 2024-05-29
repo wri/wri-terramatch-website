@@ -6,8 +6,8 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import _MapService from "@/components/elements/Map-mapbox/MapService";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -73,11 +73,17 @@ const PolygonReviewAside: FC<{
   data: IPolygonItem[];
   polygonFromMap: IpolygonFromMap;
   setPolygonFromMap: any;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap }) => {
+  mapFunctions: any;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, mapFunctions }) => {
   switch (type) {
     case "sites":
       return (
-        <SitePolygonReviewAside data={data} polygonFromMap={polygonFromMap} setPolygonFromMap={setPolygonFromMap} />
+        <SitePolygonReviewAside
+          data={data}
+          polygonFromMap={polygonFromMap}
+          setPolygonFromMap={setPolygonFromMap}
+          mapFunctions={mapFunctions}
+        />
       );
     default:
       return null;
@@ -91,6 +97,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [isUserDrawing, setIsUserDrawing] = useState<boolean>(false);
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+  const mapFunctions = useMap();
 
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<{
     data: SitePolygonsDataResponse;
@@ -142,12 +149,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   const flyToPolygonBounds = async (uuid: string) => {
     const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
     const bboxArray = bbox?.bbox;
-    if (bboxArray) {
+    const { map } = mapFunctions;
+    if (bboxArray && map?.current) {
       const bounds: LngLatBoundsLike = [
         [bboxArray[0], bboxArray[1]],
         [bboxArray[2], bboxArray[3]]
       ];
-      _MapService.map?.fitBounds(bounds, {
+      map.current.fitBounds(bounds, {
         padding: 100,
         linear: false
       });
@@ -515,7 +523,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                 polygonFromMap={polygonFromMap}
                 isUserDrawing={isUserDrawing}
                 setIsUserDrawing={setIsUserDrawing}
-                showPopups={true}
+                showPopups
+                showLegend
+                mapFunctions={mapFunctions}
               />
               <div className="mb-6">
                 <div className="mb-4">
@@ -582,6 +592,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               data={transformedSiteDataForList as IPolygonItem[]}
               polygonFromMap={polygonFromMap}
               setPolygonFromMap={setPolygonFromMap}
+              mapFunctions={mapFunctions}
             />
           </Grid>
         </Grid>
