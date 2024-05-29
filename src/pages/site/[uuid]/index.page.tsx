@@ -81,7 +81,7 @@ const SiteDetailPage = () => {
 
   const subtitles = [
     `${t("Organisation")}: ${site.organisation?.name}`,
-    isPPC ? t("Priceless Planet Coalition") : isHBF ? "HBF" : t("TerraFund")
+    isPPC ? t("Priceless Planet Coalition") : isHBF ? "Harit Bharat Fund" : t("TerraFund")
   ];
   if (isPPC) {
     subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));
