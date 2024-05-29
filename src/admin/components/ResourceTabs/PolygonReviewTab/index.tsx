@@ -505,7 +505,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                   </div>
                 </div>
               </div>
-
               <MapContainer
                 record={record}
                 polygonsData={polygonDataMap}
@@ -516,6 +515,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 polygonFromMap={polygonFromMap}
                 isUserDrawing={isUserDrawing}
                 setIsUserDrawing={setIsUserDrawing}
+                showPopups={true}
               />
               <div className="mb-6">
                 <div className="mb-4">
