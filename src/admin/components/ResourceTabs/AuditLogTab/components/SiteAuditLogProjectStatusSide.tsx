@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { fetchPutV2AdminProjectsUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { AuditStatusResponse, ProjectLiteRead } from "@/generated/apiSchemas";
 
 import AuditLogStatusSide from "./AuditLogStatusSide";
 
@@ -11,7 +11,7 @@ const SiteAuditLogProjectStatusSide = ({
   auditLogData,
   recentRequestData
 }: {
-  record?: any;
+  record?: ProjectLiteRead | null;
   refresh?: () => void;
   auditLogData?: AuditStatusResponse[];
   recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;

@@ -5,6 +5,7 @@ import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import {
+  fetchPutV2AdminProjectsUUID,
   fetchPutV2AdminSitePolygonUUID,
   fetchPutV2AdminSitesUUID,
   GetV2AuditStatusResponse,
@@ -16,9 +17,10 @@ import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
-import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
+import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
+// import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
-import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
+// import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
 // import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -68,6 +70,21 @@ function getValueForStatusSite(status: string): number {
   }
 }
 
+function getValueForStatusProject(status: string): number {
+  switch (status) {
+    case "started":
+      return 0;
+    case "awaiting-approval":
+      return 34;
+    case "needs-more-information":
+      return 67;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
+
 export const polygonProgressBarStatusLabels = [
   { id: "1", label: "Submitted" },
   { id: "2", label: "Needs More Information" },
@@ -82,11 +99,18 @@ const siteProgressBarStatusLabels = [
   { id: "4", label: "Approved" }
 ];
 
+const projectStatusLabels = [
+  { id: "1", label: "Draft" },
+  { id: "2", label: "Awaiting Approval" },
+  { id: "3", label: "Needs More Information" },
+  { id: "4", label: "Approved" }
+];
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { record: project, isLoading } = useShowContext();
   const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
   const mutateSite = fetchPutV2AdminSitesUUID;
+  const mutateProject = fetchPutV2AdminProjectsUUID;
 
   const {
     loadEntityList: loadPolygonList,
@@ -132,8 +156,60 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ${convertDateFormat(recentRequest.date_created) ?? ""}`;
   };
 
-  const recordToEntity = buttonToogle === ButtonStates.POLYGON ? selectedPolygon : selectedSite;
+  const recordToEntity =
+    buttonToogle === ButtonStates.PROJECTS
+      ? project
+      : buttonToogle === ButtonStates.POLYGON
+      ? selectedPolygon
+      : selectedSite;
 
+  const entityType =
+    buttonToogle === ButtonStates.PROJECTS ? "Project" : buttonToogle === ButtonStates.POLYGON ? "Polygon" : "Site";
+
+  const statusLabels =
+    buttonToogle === ButtonStates.PROJECTS
+      ? projectStatusLabels
+      : buttonToogle === ButtonStates.POLYGON
+      ? polygonProgressBarStatusLabels
+      : siteProgressBarStatusLabels;
+
+  const valuesForStatus =
+    buttonToogle === ButtonStates.PROJECTS
+      ? getValueForStatusProject
+      : buttonToogle === ButtonStates.POLYGON
+      ? getValueForStatusPolygon
+      : getValueForStatusSite;
+
+  const mutateToEntity =
+    buttonToogle === ButtonStates.PROJECTS
+      ? mutateProject
+      : buttonToogle === ButtonStates.POLYGON
+      ? mutateSitePolygons
+      : mutateSite;
+
+  const loadList =
+    buttonToogle === ButtonStates.PROJECTS
+      ? refetch
+      : buttonToogle === ButtonStates.POLYGON
+      ? loadPolygonList
+      : loadSiteList;
+
+  const selectItem =
+    buttonToogle === ButtonStates.PROJECTS
+      ? null
+      : buttonToogle === ButtonStates.POLYGON
+      ? selectedPolygon
+      : selectedSite;
+
+  const setSelectItem =
+    buttonToogle === ButtonStates.PROJECTS
+      ? []
+      : buttonToogle === ButtonStates.POLYGON
+      ? setSelectedPolygon
+      : setSelectedSite;
+
+  const entityList =
+    buttonToogle === ButtonStates.PROJECTS ? [] : buttonToogle === ButtonStates.POLYGON ? polygonList : siteList;
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
@@ -156,7 +232,23 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </Stack>
           </Grid>
           <Grid xs={4} className="pl-8 pr-4 pt-9">
-            <When condition={buttonToogle === ButtonStates.PROJECTS}>
+            <SiteAuditLogEntityStatusSide
+              getValueForStatus={valuesForStatus}
+              progressBarLabels={statusLabels}
+              mutate={mutateToEntity}
+              recordType={entityType}
+              refresh={() => {
+                refetch();
+                loadList();
+              }}
+              record={recordToEntity}
+              polygonList={entityList}
+              selectedPolygon={selectItem}
+              setSelectedPolygon={setSelectItem}
+              auditLogData={auditLogData?.data}
+              recentRequestData={recentRequestData}
+            />
+            {/* <When condition={buttonToogle === ButtonStates.PROJECTS}>
               <SiteAuditLogProjectStatusSide
                 record={project}
                 refresh={refetch}
@@ -198,7 +290,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 auditLogData={auditLogData?.data}
                 recentRequestData={recentRequestData}
               />
-            </When>
+            </When> */}
           </Grid>
         </Grid>
       </TabbedShowLayout.Tab>

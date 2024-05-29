@@ -1,13 +1,13 @@
 import { FC } from "react";
 
 import Text from "@/components/elements/Text/Text";
-import { AuditStatusResponseWithData } from "@/generated/apiSchemas";
+import { AuditStatusResponseWithData, ProjectLiteRead } from "@/generated/apiSchemas";
 
 import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogProjectStatusProps {
-  record?: any;
+  record?: ProjectLiteRead | null;
   refresh?: () => void;
   auditLogData?: AuditStatusResponseWithData;
 }
