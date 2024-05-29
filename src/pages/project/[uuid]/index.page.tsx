@@ -109,7 +109,7 @@ const ProjectDetailPage = () => {
           isPPC
             ? t("Priceless Planet Coalition")
             : isHBF
-            ? "HBF"
+            ? "Harit Bharat Fund"
             : isTerrafund
             ? t("TerraFund")
             : reportingFramework.name
