@@ -31639,6 +31639,39 @@ export const useGetV2SitesSitePolygon = <TData = Schemas.SitePolygonsDataRespons
   );
 };
 
+export type GetV2TerrafundPolygonUuidPathParams = {
+  uuid: string;
+};
+
+export type GetV2TerrafundPolygonUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundPolygonUuidVariables = {
+  pathParams: GetV2TerrafundPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundPolygonUuid = (variables: GetV2TerrafundPolygonUuidVariables, signal?: AbortSignal) =>
+  apiFetch<Schemas.SitePolygon, GetV2TerrafundPolygonUUIDError, undefined, {}, {}, GetV2TerrafundPolygonUuidPathParams>(
+    { url: "/v2/terrafund/polygon/{uuid}", method: "get", ...variables, signal }
+  );
+
+export const useGetV2TerrafundPolygonUuid = <TData = Schemas.SitePolygon>(
+  variables: GetV2TerrafundPolygonUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.SitePolygon, GetV2TerrafundPolygonUUIDError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Schemas.SitePolygon, GetV2TerrafundPolygonUUIDError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/polygon/{uuid}", operationId: "getV2TerrafundPolygonUuid", variables }),
+    ({ signal }) => fetchGetV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardCountriesQueryParams = {
   /**
    * Optional. Filter counts and metrics by country.
@@ -33953,4 +33986,9 @@ export type QueryOperation =
       path: "/v2/attachment";
       operationId: "getV2Attachment";
       variables: GetV2AttachmentVariables;
+    }
+  | {
+      path: "/v2/terrafund/polygon/{uuid}";
+      operationId: "getV2TerrafundPolygonUuid";
+      variables: GetV2TerrafundPolygonUuidVariables;
     };
