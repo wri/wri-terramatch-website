@@ -29,6 +29,9 @@ const HighLevelMetics: FC = () => {
           <Labeled label="Workdays Created" sx={inlineLabelSx}>
             <NumberField source="workday_count" emptyText="0" />
           </Labeled>
+          <Labeled label="Self Reported Workdays Created" sx={inlineLabelSx}>
+            <NumberField source="self_reported_workday_count" emptyText="0" />
+          </Labeled>
         </When>
         <Labeled label="Trees Planted" sx={inlineLabelSx}>
           <NumberField source="trees_planted_count" emptyText="0" />
