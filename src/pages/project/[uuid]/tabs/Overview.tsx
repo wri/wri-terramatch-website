@@ -52,7 +52,11 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <div className="flex w-full flex-wrap gap-6">
             <If condition={isPPC}>
               <Then>
-                <GoalProgressCard label={t("Workday (PPC)")} value={project.workday_count} className="w-[170px]" />
+                <GoalProgressCard
+                  label={t("Workday (PPC)")}
+                  value={project.self_reported_workday_count}
+                  className="w-[170px]"
+                />
               </Then>
               <Else>
                 <GoalProgressCard
