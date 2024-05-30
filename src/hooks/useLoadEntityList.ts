@@ -6,12 +6,12 @@ import {
   fetchGetV2ProjectsUUIDSites
 } from "@/generated/apiComponents";
 
-interface SelectedItem {
-  title: string | undefined;
-  uuid: string | undefined;
-  value: string | undefined;
-  meta: string | undefined;
-  status: string | undefined;
+export interface SelectedItem {
+  title?: string | undefined;
+  uuid?: string | undefined;
+  value?: string | undefined;
+  meta?: string | undefined;
+  status?: string | undefined;
 }
 
 interface UseLoadEntityListParams {
@@ -19,7 +19,7 @@ interface UseLoadEntityListParams {
   entityType: "sitePolygon" | "Site" | "Project";
 }
 
-interface EntityList {
+export interface EntityList {
   poly_name?: string | undefined;
   name?: string | undefined;
   uuid?: string | undefined;

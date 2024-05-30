@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Notification from "@/components/elements/Notification/Notification";
@@ -7,6 +7,8 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Text from "@/components/elements/Text/Text";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { SelectedItem } from "@/hooks/useLoadEntityList";
+import { Option } from "@/types/common";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -25,10 +27,10 @@ const SiteAuditLogPolygonStatusSide = ({
 }: {
   recordType?: "Polygon" | "Site";
   refresh?: () => void;
-  record?: any;
-  polygonList?: any[];
-  selectedPolygon?: any;
-  setSelectedPolygon?: any;
+  record?: SelectedItem | null;
+  polygonList?: SelectedItem[];
+  selectedPolygon?: SelectedItem | null;
+  setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>>;
   auditLogData?: AuditStatusResponse[];
   recentRequestData?: (recentRequest: AuditStatusResponse) => string | undefined;
   mutate?: any;
@@ -66,12 +68,6 @@ const SiteAuditLogPolygonStatusSide = ({
     );
   };
 
-  const unnamedPolygons = polygonList?.map((polygon: any) => {
-    if (!polygon.title) {
-      return { ...polygon, title: `Unnamed ${recordType}` };
-    }
-    return polygon;
-  });
   return (
     <div className="flex flex-col gap-6 overflow-hidden">
       <Dropdown
@@ -79,18 +75,18 @@ const SiteAuditLogPolygonStatusSide = ({
         labelVariant="text-16-bold"
         labelClassName="capitalize"
         optionsClassName="max-w-full"
-        value={[selectedPolygon?.uuid]}
+        value={[selectedPolygon?.uuid ?? ""]}
         placeholder={`Select ${recordType}`}
-        options={unnamedPolygons!}
+        options={polygonList! as Option[]}
         onChange={e => {
           console.log("onChange", e);
-          setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
+          setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]) as SelectedItem);
         }}
       />
       <Text variant="text-16-bold">{`${recordType} Status`}</Text>
       <StepProgressbar
         color="secondary"
-        value={getValueForStatus ? getValueForStatus(record?.status) : 0}
+        value={getValueForStatus ? getValueForStatus(record?.status ?? "") : 0}
         labels={progressBarLabels}
         classNameLabels="min-w-[99px] "
         className={classNames("w-[98%] pl-[1%]", recordType === "Polygon" && "pl-[6%]")}

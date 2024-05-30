@@ -80,7 +80,7 @@ export interface StatusProps {
   record?: any;
   refresh?: () => void;
   name: any;
-  refetchPolygon?: any;
+  refetchPolygon?: () => void;
   setSelectedPolygon?: any;
 }
 

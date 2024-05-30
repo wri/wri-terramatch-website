@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { fetchPutV2AdminSitesUUID, usePostV2AuditStatus } from "@/generated/apiComponents";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { AuditStatusResponse, SiteLiteRead } from "@/generated/apiSchemas";
 
 import AuditLogStatusSide from "./AuditLogStatusSide";
 
@@ -11,7 +11,7 @@ const SiteAuditLogSiteStatusSide = ({
   auditLogData,
   recentRequestData
 }: {
-  record?: any;
+  record?: SiteLiteRead | null;
   refresh?: () => void;
   auditLogData?: AuditStatusResponse[];
   recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;
