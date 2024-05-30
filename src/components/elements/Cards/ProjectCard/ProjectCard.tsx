@@ -56,6 +56,12 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
     );
   };
 
+  const frameworkNames: { [key: string]: string } = {
+    ppc: "Priceless Planet Coalition",
+    hbf: "Harit Bharat Fund",
+    terrafund: "TerraFund"
+  };
+
   return (
     <Paper {...rest} className={classNames(className, "p-0")}>
       <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6">
@@ -72,11 +78,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
           <div className="flex">
             <Text variant="text-bold-subtitle-500">{t("Framework")}:&#160;</Text>
             <Text variant="text-light-subtitle-400" className="capitalize">
-              {project.framework_key === "ppc"
-                ? t("Priceless Planet Coalition")
-                : project.framework_key === "terrafund"
-                ? t("TerraFund")
-                : project.framework_key}
+              {frameworkNames[project.framework_key] ? t(frameworkNames[project.framework_key]) : project.framework_key}
             </Text>
           </div>
           <div className="flex">
