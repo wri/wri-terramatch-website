@@ -68,7 +68,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
       updatedDemographics.splice(index, 1);
       onChange(updatedDemographics);
     },
-    [demographics, onChange, type]
+    [demographics, onChange]
   );
 
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.

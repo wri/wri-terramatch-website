@@ -41,7 +41,7 @@ exports[`Storyshots Components/Elements/Cards/FundingCard Default 1`] = `
         Location:
       </p>
       <p
-        className="text-light-caption-200"
+        className="max-h-10 overflow-hidden text-light-caption-200"
         data-testid="txt"
       >
         London, United Kingdom
@@ -54,10 +54,10 @@ exports[`Storyshots Components/Elements/Cards/FundingCard Default 1`] = `
       The funding application is designed for restoration projects in Africa. This application provides an opportunity for project developers to seek financial support for their restoration initiatives across the African continent.
     </p>
     <div
-      className="mt-8 flex gap-3"
+      className="mt-4 flex flex-col gap-3 sm:flex-row"
     >
       <a
-        className="flex-1 bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="w-full flex-1 bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         disabled={false}
         href="#"
         onClick={[Function]}
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Elements/Cards/FundingCard Default 1`] = `
         </span>
       </a>
       <a
-        className="flex-1 bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="w-full flex-1 bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         disabled={false}
         href="#"
         onClick={[Function]}

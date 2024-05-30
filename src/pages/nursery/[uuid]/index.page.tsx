@@ -93,7 +93,11 @@ const NurseryDetailPage = () => {
         title={nursery.name}
         subtitles={[
           `${t("Project name")}: ${nursery.project?.name}`,
-          nursery.framework_key === "ppc" ? t("Priceless Planet Coalition") : t("TerraFund")
+          nursery.framework_key === "ppc"
+            ? t("Priceless Planet Coalition")
+            : nursery.framework_key === "hbf"
+            ? "Harit Bharat Fund"
+            : t("TerraFund")
         ]}
         hasBackButton={false}
       >

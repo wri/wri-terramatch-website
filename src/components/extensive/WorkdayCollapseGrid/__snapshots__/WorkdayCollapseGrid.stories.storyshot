@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/WorkdayCollapse Complete Green 1`] = `
+<div
+  className=" rounded-2xl"
+>
+  <div>
+    <button
+      className="flex w-full items-center justify-between p-4 rounded-t-2xl bg-customGreen-100 rounded-2xl"
+      onClick={[Function]}
+    >
+      <p
+        className="text-18-bold"
+        data-testid="txt"
+      >
+        A. Site Establishment Paid - 90 Days
+      </p>
+      <div
+        className="flex items-baseline gap-2"
+      >
+        <p
+          className="flex items-start gap-2 leading-normal text-customGreen-200 text-14-bold"
+          data-testid="txt"
+        >
+          Complete
+          <div
+            style={
+              Object {
+                "height": 16,
+                "width": 16,
+              }
+            }
+          />
+        </p>
+        <div
+          style={
+            Object {
+              "height": 9,
+              "width": 16,
+            }
+          }
+        />
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Extensive/WorkdayCollapse Default 1`] = `
+<div
+  className=" rounded-2xl"
+>
+  <div>
+    <button
+      className="flex w-full items-center justify-between p-4 rounded bg-neutral-350 undefined"
+      onClick={[Function]}
+    >
+      <p
+        className="text-18-bold"
+        data-testid="txt"
+      >
+        A. Site Establishment Paid - 210 Days
+      </p>
+      <div
+        className="flex items-baseline gap-2"
+      >
+        <div
+          style={
+            Object {
+              "height": 9,
+              "width": 16,
+            }
+          }
+        />
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Extensive/WorkdayCollapse In Progress Green 1`] = `
+<div
+  className="rounded-2xl"
+>
+  <div>
+    <button
+      className="flex w-full items-center justify-between p-4 rounded-t-2xl bg-customGreen-100 rounded-2xl"
+      onClick={[Function]}
+    >
+      <p
+        className="text-18-bold"
+        data-testid="txt"
+      >
+        A. Site Establishment Paid - 75 Days
+      </p>
+      <div
+        className="flex items-baseline gap-2"
+      >
+        <p
+          className="flex items-start gap-2 leading-normal text-tertiary-450 text-14-bold"
+          data-testid="txt"
+        >
+          In Progress
+        </p>
+        <div
+          style={
+            Object {
+              "height": 9,
+              "width": 16,
+            }
+          }
+        />
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Extensive/WorkdayCollapse Not Started Green 1`] = `
+<div
+  className=" rounded-2xl"
+>
+  <div>
+    <button
+      className="flex w-full items-center justify-between p-4 rounded-t-2xl bg-customGreen-100 rounded-2xl"
+      onClick={[Function]}
+    >
+      <p
+        className="text-18-bold"
+        data-testid="txt"
+      >
+        A. Site Establishment Paid - 0 Days
+      </p>
+      <div
+        className="flex items-baseline gap-2"
+      >
+        <p
+          className="flex items-start gap-2 leading-normal text-neutral-550 text-14-bold"
+          data-testid="txt"
+        >
+          Not Started
+        </p>
+        <div
+          style={
+            Object {
+              "height": 9,
+              "width": 16,
+            }
+          }
+        />
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Extensive/WorkdayCollapse Variant Narrow 1`] = `
+<div
+  className="w-1/2 rounded-2xl"
+>
+  <div>
+    <button
+      className="flex w-full items-center justify-between p-4 rounded bg-neutral-350 undefined"
+      onClick={[Function]}
+    >
+      <p
+        className="text-18-bold"
+        data-testid="txt"
+      >
+        A. Nursery Operations Volunteer - 220 Days
+      </p>
+      <div
+        className="flex items-baseline gap-2"
+      >
+        <div
+          style={
+            Object {
+              "height": 9,
+              "width": 16,
+            }
+          }
+        />
+      </div>
+    </button>
+  </div>
+</div>
+`;

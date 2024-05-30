@@ -46,7 +46,7 @@ const SiteDetailPage = () => {
   });
 
   const site = (data?.data || {}) as any;
-  const { isPPC } = useFramework(site);
+  const { isPPC, isHBF } = useFramework(site);
   const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
   const { handleExport } = useGetExportEntityHandler("sites", site.uuid, site.name);
   const { handleEdit } = useGetEditEntityHandler({
@@ -81,7 +81,7 @@ const SiteDetailPage = () => {
 
   const subtitles = [
     `${t("Organisation")}: ${site.organisation?.name}`,
-    isPPC ? t("Priceless Planet Coalition") : t("TerraFund")
+    isPPC ? t("Priceless Planet Coalition") : isHBF ? "Harit Bharat Fund" : t("TerraFund")
   ];
   if (isPPC) {
     subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));

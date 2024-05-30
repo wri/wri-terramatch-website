@@ -13,6 +13,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
       <div
         className="w-64 relative"
       >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
         <input
           className="placeholder:text-light-subtitle-400 text-light-subtitle-400 h-8 w-full rounded-lg border border-neutral-100 pl-8 text-neutral-1000 placeholder:text-neutral-1000"
           onChange={[Function]}
@@ -57,6 +65,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               >
                 Show All
               </p>
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 20,
+                  }
+                }
+              />
             </div>
           </div>
         </div>
@@ -94,6 +110,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           onClick={[Function]}
         >
           Funding source
+          <div
+            style={
+              Object {
+                "height": 14,
+                "width": 11,
+              }
+            }
+          />
         </th>
         <th
           align="left"
@@ -102,6 +126,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           onClick={[Function]}
         >
           Funding amount
+          <div
+            style={
+              Object {
+                "height": 14,
+                "width": 11,
+              }
+            }
+          />
         </th>
         <th
           align="left"
@@ -150,6 +182,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -201,6 +241,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -252,6 +300,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -303,6 +359,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -354,6 +418,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -405,6 +477,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -456,6 +536,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -507,6 +595,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -558,6 +654,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -609,6 +713,14 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           <div
             className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
             <p
               className="text-bold-caption-100"
               data-testid="txt"
@@ -668,7 +780,16 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
           </div>
           <div
             className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
-          />
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 20,
+                }
+              }
+            />
+          </div>
         </div>
         <p
           className="text-bold-subtitle-500"
@@ -692,7 +813,16 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
         disabled={true}
         onClick={[Function]}
-      />
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
+      </button>
       <p
         className="text-neutral-1000 underline text-bold-subtitle-500"
         data-testid="txt"
@@ -715,7 +845,16 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
         disabled={false}
         onClick={[Function]}
-      />
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
+      </button>
     </div>
   </div>
 </div>

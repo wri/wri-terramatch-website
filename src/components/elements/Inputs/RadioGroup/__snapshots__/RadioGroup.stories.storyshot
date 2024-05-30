@@ -44,6 +44,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
             className="flex flex-row-reverse items-center justify-end gap-3 "
             id=":r1g:"
             label="Yes"
+            onChange={[Function]}
             type="radio"
           />
         </label>
@@ -77,6 +78,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
             className="flex flex-row-reverse items-center justify-end gap-3 "
             id=":r1i:"
             label="No"
+            onChange={[Function]}
             type="radio"
           />
         </label>
