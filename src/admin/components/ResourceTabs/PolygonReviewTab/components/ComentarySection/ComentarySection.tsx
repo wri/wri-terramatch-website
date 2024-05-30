@@ -41,7 +41,7 @@ const ComentarySection = ({
       />
       <When condition={viewCommentsList}>
         <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
-          {auditLogData !== null && auditLogData !== undefined ? (
+          {auditLogData ? (
             auditLogData.length > 0 ? (
               auditLogData
                 .filter((item: any) => item.type === "comment")
