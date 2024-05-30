@@ -12,6 +12,10 @@ import type { LayerType, LayerWithStyle } from "./Map.d";
 
 const GEOSERVER = "https://geoserver-prod.wri-restoration-marketplace-api.com";
 
+export function getFeatureProperties<T extends any>(properties: any, key: string): T | undefined {
+  return properties[key] || properties[`user_${key}`];
+}
+
 export function convertToGeoJSON(featureCollection: FeatureCollection) {
   const { features } = featureCollection;
   return features.reduce((acc: turfHelper.Feature[], feature) => {
