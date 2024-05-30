@@ -7,7 +7,9 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import {
+  fetchPutV2AdminProjectsUUID,
   fetchPutV2AdminSitePolygonUUID,
+  fetchPutV2AdminSitesUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -16,12 +18,20 @@ import useLoadEntityList from "@/hooks/useLoadEntityList";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
-import { getValueForStatusPolygon, polygonProgressBarStatusLabels } from "./AuditLogTab";
+import {
+  getValueForStatusPolygon,
+  getValueForStatusProject,
+  getValueForStatusSite,
+  polygonProgressBarStatusLabels,
+  projectStatusLabels,
+  siteProgressBarStatusLabels
+} from "./AuditLogTab";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
-import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
+import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
+// import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
 // import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
-import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
-import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
+// import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
+// import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -47,6 +57,8 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
+  const mutateSite = fetchPutV2AdminSitesUUID;
+  const mutateProject = fetchPutV2AdminProjectsUUID;
   const {
     loadEntityList: loadSitePolygonList,
     selected: selectedPolygon,
@@ -79,7 +91,48 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ${convertDateFormat(recentRequest.date_created) ?? ""}`;
   };
 
-  const recordToEntity = buttonToogle === ButtonStates.POLYGON ? selectedPolygon : record;
+  const recordToEntity =
+    buttonToogle === ButtonStates.PROJECTS ? project : buttonToogle === ButtonStates.POLYGON ? selectedPolygon : record;
+
+  const entityType =
+    buttonToogle === ButtonStates.PROJECTS ? "Project" : buttonToogle === ButtonStates.POLYGON ? "Polygon" : "Site";
+
+  const statusLabels =
+    buttonToogle === ButtonStates.PROJECTS
+      ? projectStatusLabels
+      : buttonToogle === ButtonStates.POLYGON
+      ? polygonProgressBarStatusLabels
+      : siteProgressBarStatusLabels;
+
+  const valuesForStatus =
+    buttonToogle === ButtonStates.PROJECTS
+      ? getValueForStatusProject
+      : buttonToogle === ButtonStates.POLYGON
+      ? getValueForStatusPolygon
+      : getValueForStatusSite;
+
+  const mutateToEntity =
+    buttonToogle === ButtonStates.PROJECTS
+      ? mutateProject
+      : buttonToogle === ButtonStates.POLYGON
+      ? mutateSitePolygons
+      : mutateSite;
+
+  const loadList =
+    buttonToogle === ButtonStates.PROJECTS
+      ? refetch
+      : buttonToogle === ButtonStates.POLYGON
+      ? loadSitePolygonList
+      : refetch;
+
+  const selectItem =
+    buttonToogle === ButtonStates.PROJECTS ? null : buttonToogle === ButtonStates.POLYGON ? selectedPolygon : null;
+
+  const setSelectItem =
+    buttonToogle === ButtonStates.PROJECTS ? [] : buttonToogle === ButtonStates.POLYGON ? setSelectedPolygon : null;
+
+  const entityList =
+    buttonToogle === ButtonStates.PROJECTS ? [] : buttonToogle === ButtonStates.POLYGON ? polygonList : [];
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
@@ -112,7 +165,23 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </Stack>
           </Grid>
           <Grid xs={4} className="pl-8 pr-4 pt-9">
-            <When condition={buttonToogle === ButtonStates.PROJECTS}>
+            <SiteAuditLogEntityStatusSide
+              getValueForStatus={valuesForStatus}
+              progressBarLabels={statusLabels}
+              mutate={mutateToEntity}
+              recordType={entityType}
+              refresh={() => {
+                refetch();
+                loadList();
+              }}
+              record={recordToEntity}
+              polygonList={entityList}
+              selectedPolygon={selectItem}
+              setSelectedPolygon={setSelectItem}
+              auditLogData={auditLogData?.data}
+              recentRequestData={recentRequestData}
+            />
+            {/* <When condition={buttonToogle === ButtonStates.PROJECTS}>
               <SiteAuditLogProjectStatusSide
                 record={project}
                 refresh={refetch}
@@ -145,7 +214,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 recentRequestData={recentRequestData}
                 mutate={mutateSitePolygons}
               />
-            </When>
+            </When> */}
           </Grid>
         </Grid>
       </TabbedShowLayout.Tab>
