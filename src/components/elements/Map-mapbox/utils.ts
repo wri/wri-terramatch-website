@@ -123,10 +123,11 @@ function handleLayerClick(
   const feature = e.features[0];
 
   let popupContent = document.createElement("div");
+  popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
   root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, sitePolygonData }));
 
-  popup = new mapboxgl.Popup().setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
+  popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
 
   arrayPopups.push(popup);
 }
