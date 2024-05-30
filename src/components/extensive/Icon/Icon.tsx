@@ -107,7 +107,7 @@ export enum IconNames {
   FORMS = "forms",
   APPLICATIONS = "applications",
   REPORTING_FRAMEWORKS = "reporting-frameworks",
-  FUJDING_PROGRAMMES = "funding-programmes",
+  FUNDING_PROGRAMMES = "funding-programmes",
   PITCHES = "pitches",
   ORGANISATIONS = "organisations",
   USERS = "users",

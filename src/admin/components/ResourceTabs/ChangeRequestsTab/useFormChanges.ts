@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { isEqual } from "lodash";
 import { useMemo } from "react";
 
 import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
@@ -50,7 +51,7 @@ export default function useFormChanges(current: any, changed: any, steps: FormSt
               title: entry.title,
               type: entry.type,
               currentValue,
-              newValue: currentValue === newValue ? undefined : newValue
+              newValue: isEqual(currentValue, newValue) ? undefined : newValue
             };
           })
         };
