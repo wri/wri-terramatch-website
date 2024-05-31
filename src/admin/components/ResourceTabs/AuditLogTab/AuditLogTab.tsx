@@ -10,7 +10,6 @@ import {
   fetchPutV2AdminSitePolygonUUID,
   fetchPutV2AdminSitesUUID,
   GetV2AuditStatusResponse,
-  useGetV2Attachment,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
 import { Entity } from "@/types/common";
@@ -26,17 +25,6 @@ import SiteAuditLogSiteStatus from "./components/SiteAuditLogSiteStatus";
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: Entity["entityName"];
-}
-
-interface AttachmentItem {
-  id: number;
-  entity_id: number;
-  attachment: string;
-  url_file: string;
-}
-
-interface AttachmentResponse {
-  data: [AttachmentItem];
 }
 
 interface recentRequestItem {
@@ -255,8 +243,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   }, [buttonToogle, project]);
 
-  const { data: attachmentData, refetch: attachmentRefetch } = useGetV2Attachment<AttachmentResponse>({});
-
   const recentRequestData = (recentRequest: recentRequestItem) => {
     return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
     ${convertDateFormat(recentRequest.date_created) ?? ""}`;
@@ -274,8 +260,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   record={project}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  recordAttachments={attachmentData?.data}
-                  refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
                 />
               </When>
@@ -284,8 +268,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   record={selectedSite}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  recordAttachments={attachmentData?.data}
-                  refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
                 />
               </When>
@@ -294,8 +276,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   record={selectedPolygon}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  recordAttachments={attachmentData?.data}
-                  refreshAttachments={attachmentRefetch}
                   getTextForActionTable={getTextForActionTable}
                 />
               </When>
