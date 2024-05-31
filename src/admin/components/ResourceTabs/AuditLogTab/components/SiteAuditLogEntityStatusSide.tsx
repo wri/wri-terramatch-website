@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Notification from "@/components/elements/Notification/Notification";
@@ -7,6 +7,7 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Text from "@/components/elements/Text/Text";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { SelectedItem } from "@/hooks/useLoadEntityList";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -27,8 +28,8 @@ const SiteAuditLogEntityStatusSide = ({
   refresh?: () => void;
   record?: any;
   polygonList?: any[];
-  selectedPolygon?: any;
-  setSelectedPolygon?: any;
+  selectedPolygon?: SelectedItem | null;
+  setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>> | null;
   auditLogData?: AuditStatusResponse[];
   recentRequestData?: (recentRequest: AuditStatusResponse) => string | undefined;
   mutate?: any;
@@ -76,7 +77,7 @@ const SiteAuditLogEntityStatusSide = ({
           labelVariant="text-16-bold"
           labelClassName="capitalize"
           optionsClassName="max-w-full"
-          value={[selectedPolygon?.uuid]}
+          value={[selectedPolygon?.uuid ?? ""]}
           placeholder={`Select ${recordType}`}
           options={polygonList!}
           onChange={e => {

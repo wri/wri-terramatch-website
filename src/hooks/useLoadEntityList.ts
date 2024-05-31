@@ -16,7 +16,9 @@ export interface SelectedItem {
 
 interface UseLoadEntityListParams {
   entityUuid: string;
-  entityType: "sitePolygon" | "Site" | "Project";
+  entityType: "sitePolygon" | "Site" | "projectPolygon";
+  refetch?: () => void;
+  buttonToogle?: number;
 }
 
 export interface EntityList {
@@ -28,7 +30,7 @@ export interface EntityList {
   status?: string | undefined;
 }
 
-const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) => {
+const useLoadEntityList = ({ entityUuid, entityType, refetch, buttonToogle }: UseLoadEntityListParams) => {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
   const [entityList, setEntityList] = useState<EntityList[]>([]);
 
@@ -36,7 +38,7 @@ const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) 
     switch (entityType) {
       case "sitePolygon":
         return "poly_name";
-      case "Project":
+      case "projectPolygon":
         return "poly_name";
       case "Site":
         return "name";
@@ -66,7 +68,7 @@ const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) 
     const fetchAction =
       entityType == "sitePolygon"
         ? fetchGetV2AdminSitePolygonUUID
-        : entityType == "Project"
+        : entityType == "projectPolygon"
         ? fetchGetV2AuditStatusId
         : fetchGetV2ProjectsUUIDSites;
     const params = entityType == "sitePolygon" || entityType == "Site" ? { uuid: entityUuid } : { id: entityUuid };
@@ -109,11 +111,12 @@ const useLoadEntityList = ({ entityUuid, entityType }: UseLoadEntityListParams) 
     } else {
       setSelected(null);
     }
+    refetch && refetch();
   };
 
   useEffect(() => {
     loadEntityList();
-  }, [entityUuid]);
+  }, [buttonToogle]);
 
   return { entityList, selected, setSelected, loadEntityList };
 };
