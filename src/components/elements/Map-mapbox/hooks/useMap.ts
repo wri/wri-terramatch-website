@@ -3,12 +3,9 @@ import mapboxgl from "mapbox-gl";
 import { useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchPostV2TerrafundPolygon, fetchPostV2TerrafundSitePolygonUuidSiteUuid } from "@/generated/apiComponents";
-
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
-import { addFilterOfPolygonsData, addSourcesToLayers, convertToGeoJSON } from "../utils";
+import { addFilterOfPolygonsData, convertToGeoJSON, loadLayersInMap } from "../utils";
 
 const MAP_STYLE = "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu";
 const INITIAL_ZOOM = 2.5;
@@ -16,11 +13,8 @@ const MAPBOX_TOKEN =
   process.env.REACT_APP_MAPBOX_TOKEN ||
   "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
 
-export const useMap = () => {
+export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const { record } = useShowContext();
-  const context = useSitePolygonData();
-
-  const { toggleAttribute, reloadSiteData } = context || {};
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -28,43 +22,26 @@ export const useMap = () => {
 
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [styleLoaded, setStyleLoaded] = useState(false);
-  const [polygonCreated, setPolygonCreated] = useState(false);
+  const [changeStyle, setChangeStyle] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  async function storePolygon(geojson: any, record: any) {
-    setPolygonCreated(false);
-    const currentMap = map.current as mapboxgl.Map;
-    if (geojson && geojson[0]) {
-      const response = await fetchPostV2TerrafundPolygon({
-        body: { geometry: JSON.stringify(geojson[0].geometry) }
-      });
-      const polygonUUID = response.uuid;
-      if (polygonUUID) {
-        const site_id = record.uuid;
-        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
-          body: {},
-          pathParams: { uuid: polygonUUID, siteUuid: site_id }
-        }).then(() => {
-          if (reloadSiteData) {
-            reloadSiteData();
-          }
-          addSourcesToLayers(currentMap);
-          setPolygonCreated(true);
-        });
-        toggleAttribute?.(true);
-      }
-    }
-  }
-
-  const onCancel = (map: mapboxgl.Map, draw: MapboxDraw, parsedPolygonData: any) => {
-    if (map && draw) {
-      draw.deleteAll();
-      addFilterOfPolygonsData(map, parsedPolygonData);
+  const onCancel = (parsedPolygonData: any) => {
+    if (map?.current && draw?.current) {
+      const currentMap = map.current as mapboxgl.Map;
+      const currentDraw = draw.current as MapboxDraw;
+      currentDraw.deleteAll();
+      addFilterOfPolygonsData(currentMap, parsedPolygonData);
     }
   };
 
   function handleCreateDraw(featureCollection: FeatureCollection, record: any) {
     const geojson = convertToGeoJSON(featureCollection);
-    storePolygon(geojson, record);
+    onSave?.(geojson, record);
+  }
+
+  function refreshMapPolygon(parsedPolygonData: any) {
+    const currentMap = map.current as mapboxgl.Map;
+    loadLayersInMap(currentMap, parsedPolygonData);
   }
 
   function initMap() {
@@ -88,12 +65,10 @@ export const useMap = () => {
     });
 
     const onLoad = () => {
-      const currentMap = map.current as mapboxgl.Map;
-      addSourcesToLayers(currentMap);
+      setStyleLoaded(true);
     };
 
     const addControlToMap = () => {
-      setStyleLoaded(true);
       const currentMap = map.current as mapboxgl.Map;
       const currentDraw = draw.current as ControlType;
       if (currentMap.hasControl(currentDraw)) {
@@ -117,6 +92,11 @@ export const useMap = () => {
     draw,
     onCancel,
     initMap,
-    polygonCreated
+    refreshMapPolygon,
+    setStyleLoaded,
+    setChangeStyle,
+    changeStyle,
+    mapLoaded,
+    setMapLoaded
   };
 };
