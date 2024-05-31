@@ -249,11 +249,6 @@ export const MapContainer = ({
             <CheckPolygonControl siteRecord={record} />
           </ControlGroup>
         </When>
-        <When condition={showLegend}>
-          <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-            <FilterControl />
-          </ControlGroup>
-        </When>
         <When condition={!!viewImages}>
           <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
             <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
@@ -280,6 +275,11 @@ export const MapContainer = ({
         </ControlGroup>
         <ControlGroup position="bottom-right" className="bottom-8">
           <ViewImageCarousel viewImages={viewImages} setViewImages={setViewImages} />
+        </ControlGroup>
+      </When>
+      <When condition={showLegend}>
+        <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+          <FilterControl />
         </ControlGroup>
       </When>
       <When condition={captureAdditionalPolygonProperties}>
