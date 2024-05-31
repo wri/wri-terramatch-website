@@ -104,7 +104,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
   async function storePolygon(geojson: any, record: any) {
-    if (geojson && geojson[0]) {
+    if (geojson?.length) {
       const response = await fetchPostV2TerrafundPolygon({
         body: { geometry: JSON.stringify(geojson[0].geometry) }
       });

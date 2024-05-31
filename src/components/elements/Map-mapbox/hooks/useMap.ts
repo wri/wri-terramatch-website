@@ -34,17 +34,17 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
-  function handleCreateDraw(featureCollection: FeatureCollection, record: any) {
+  const handleCreateDraw = (featureCollection: FeatureCollection, record: any) => {
     const geojson = convertToGeoJSON(featureCollection);
     onSave?.(geojson, record);
-  }
+  };
 
-  function refreshMapPolygon(parsedPolygonData: any) {
+  const refreshMapPolygon = (parsedPolygonData: any) => {
     const currentMap = map.current as mapboxgl.Map;
     loadLayersInMap(currentMap, parsedPolygonData);
-  }
+  };
 
-  function initMap() {
+  const initMap = () => {
     if (map.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
@@ -82,7 +82,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       addControlToMap();
       map.current.on("draw.create", (feature: FeatureCollection) => handleCreateDraw(feature, record));
     }
-  }
+  };
 
   return {
     mapContainer,

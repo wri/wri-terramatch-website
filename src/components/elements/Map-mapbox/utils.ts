@@ -12,11 +12,11 @@ import type { LayerType, LayerWithStyle } from "./Map.d";
 
 const GEOSERVER = "https://geoserver-prod.wri-restoration-marketplace-api.com";
 
-export function getFeatureProperties<T extends any>(properties: any, key: string): T | undefined {
+export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] || properties[`user_${key}`];
-}
+};
 
-export function convertToGeoJSON(featureCollection: FeatureCollection) {
+export const convertToGeoJSON = (featureCollection: FeatureCollection) => {
   const { features } = featureCollection;
   return features.reduce((acc: turfHelper.Feature[], feature) => {
     const { geometry, properties } = feature;
@@ -26,9 +26,9 @@ export function convertToGeoJSON(featureCollection: FeatureCollection) {
     acc.push(featureGeoJSON);
     return acc;
   }, []);
-}
+};
 
-export function convertToAcceptedGEOJSON(geojson: any) {
+export const convertToAcceptedGEOJSON = (geojson: any) => {
   if (geojson.type !== "FeatureCollection" && geojson.type !== "GeometryCollection") {
     const templateGeoJSON = {
       type: "Feature",
@@ -52,36 +52,36 @@ export function convertToAcceptedGEOJSON(geojson: any) {
     return geojsonFormatted;
   }
   return geojson;
-}
+};
 
-export function startDrawing(draw: MapboxDraw, map: mapboxgl.Map) {
+export const startDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
   draw.changeMode("draw_polygon");
   map.getCanvas().style.cursor = "crosshair";
-}
+};
 
-export function stopDrawing(draw: MapboxDraw, map: mapboxgl.Map) {
+export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
   draw.changeMode("simple_select");
   map.getCanvas().style.cursor = "auto";
-}
+};
 
-export function addFilterOnLayer(
+export const addFilterOnLayer = (
   layer: any,
   field: string,
   parsedPolygonData: SitePolygonsDataResponse,
   map: mapboxgl.Map
-) {
+) => {
   addSourceToLayer(layer, map, parsedPolygonData);
   const { name, styles } = layer;
   showPolygons(styles, name, map, field, parsedPolygonData);
-}
+};
 
-function showPolygons(
+const showPolygons = (
   styles: LayerWithStyle[],
   name: string,
   map: mapboxgl.Map,
   field: string,
   parsedPolygonData: any
-) {
+) => {
   styles.forEach((style: LayerWithStyle, index: number) => {
     const layerName = `${name}-${index}`;
     if (!map.getLayer(layerName)) {
@@ -98,7 +98,7 @@ function showPolygons(
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
   });
-}
+};
 
 let popup: mapboxgl.Popup | null = null;
 let arrayPopups: mapboxgl.Popup[] = [];
@@ -111,13 +111,13 @@ export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: SitePolygonsDat
   });
 };
 
-function handleLayerClick(
+const handleLayerClick = (
   e: any,
   popupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonData | undefined
-) {
+) => {
   removePopups();
   const { lng, lat } = e.lngLat;
   const feature = e.features[0];
@@ -130,7 +130,7 @@ function handleLayerClick(
   popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
 
   arrayPopups.push(popup);
-}
+};
 
 export const removePopups = () => {
   arrayPopups.forEach(popup => {
@@ -153,7 +153,7 @@ export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: SitePol
   }
 };
 
-export function addGeojsonToDraw(geojson: any, uuid: string, cb: Function, currentDraw: MapboxDraw) {
+export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, currentDraw: MapboxDraw) => {
   if (geojson) {
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
     const addToDrawAndFilter = () => {
@@ -167,15 +167,15 @@ export function addGeojsonToDraw(geojson: any, uuid: string, cb: Function, curre
     };
     addToDrawAndFilter();
   }
-}
+};
 
-export function addSourcesToLayers(map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) {
+export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
   layersList.forEach((layer: LayerType) => {
     if (map) {
       addSourceToLayer(layer, map, polygonsData);
     }
   });
-}
+};
 
 export const addPopupsToMap = (
   map: mapboxgl.Map,
@@ -212,7 +212,7 @@ export const addPopupToLayer = (
   }
 };
 
-export function addSourceToLayer(layer: any, map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) {
+export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
   const { name, styles } = layer;
   if (map.getSource(name)) {
     styles?.forEach((_: unknown, index: number) => {
@@ -230,16 +230,16 @@ export function addSourceToLayer(layer: any, map: mapboxgl.Map, polygonsData: Si
     addLayerStyle(map, name, style, index);
   });
   loadLayersInMap(map, polygonsData);
-}
+};
 
-export function addLayerStyle(map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) {
+export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
   map.addLayer({
     id: `${sourceName}-${index}`,
     source: sourceName,
     "source-layer": sourceName,
     ...style
   } as mapboxgl.AnyLayer);
-}
+};
 
 export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
   if (map && bbox) {
