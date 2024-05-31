@@ -47,7 +47,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-info";
+  status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
 }
@@ -73,11 +73,17 @@ const PolygonReviewAside: FC<{
   data: IPolygonItem[];
   polygonFromMap: IpolygonFromMap;
   setPolygonFromMap: any;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap }) => {
+  refresh?: () => void;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh }) => {
   switch (type) {
     case "sites":
       return (
-        <SitePolygonReviewAside data={data} polygonFromMap={polygonFromMap} setPolygonFromMap={setPolygonFromMap} />
+        <SitePolygonReviewAside
+          data={data}
+          polygonFromMap={polygonFromMap}
+          setPolygonFromMap={setPolygonFromMap}
+          refresh={refresh}
+        />
       );
     default:
       return null;
@@ -582,6 +588,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               data={transformedSiteDataForList as IPolygonItem[]}
               polygonFromMap={polygonFromMap}
               setPolygonFromMap={setPolygonFromMap}
+              refresh={refetch}
             />
           </Grid>
         </Grid>
