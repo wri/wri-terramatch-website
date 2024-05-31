@@ -23645,6 +23645,7 @@ export type ProjectStatusResponse = {
   entity_uuid?: string;
   status?: string;
   comment?: string;
+  attachment_url?: string;
   /**
    * @format date
    */

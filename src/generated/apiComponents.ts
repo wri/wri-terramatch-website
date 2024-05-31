@@ -35798,9 +35798,4 @@ export type QueryOperation =
       path: "/v2/terrafund/polygon/geojson/{uuid}";
       operationId: "getV2TerrafundPolygonGeojsonUuid";
       variables: GetV2TerrafundPolygonGeojsonUuidVariables;
-    }
-  | {
-      path: "/v2/terrafund/polygon/{uuid}";
-      operationId: "getV2TerrafundPolygonUuid";
-      variables: GetV2TerrafundPolygonUuidVariables;
     };
