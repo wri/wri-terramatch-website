@@ -48,7 +48,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "needs-more-info" },
+        metadata: { polygonStatus: "needs-more-information" },
         type: "fill",
         layout: {},
         paint: {
@@ -58,7 +58,7 @@ export const layersList = [
         filter: ["==", ["get", "uuid"], ""]
       },
       {
-        metadata: { polygonStatus: "needs-more-info" },
+        metadata: { polygonStatus: "needs-more-information" },
         type: "line",
         layout: {},
         paint: {

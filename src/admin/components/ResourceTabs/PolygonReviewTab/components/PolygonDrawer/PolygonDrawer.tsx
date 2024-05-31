@@ -26,7 +26,7 @@ const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
   submitted: "bg-blue",
   approved: "bg-green",
-  "needs-more-info": "bg-tertiary-600"
+  "needs-more-information": "bg-tertiary-600"
 };
 
 const validationLabels: any = {

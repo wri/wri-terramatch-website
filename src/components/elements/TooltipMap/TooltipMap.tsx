@@ -13,7 +13,7 @@ export interface TooltipMapProps {
 const topBorderColorPopup: any = {
   submitted: "border-t-primary",
   approved: "border-t-[#72D961]",
-  "needs-more-info": "border-t-[#FF8938]"
+  "needs-more-information": "border-t-[#FF8938]"
 };
 
 const TooltipMap = (props: TooltipMapProps) => {
