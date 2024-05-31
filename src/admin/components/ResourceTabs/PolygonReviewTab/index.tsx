@@ -50,7 +50,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-info";
+  status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
 }
@@ -76,8 +76,9 @@ const PolygonReviewAside: FC<{
   data: IPolygonItem[];
   polygonFromMap: IpolygonFromMap;
   setPolygonFromMap: any;
+  refresh?: () => void;
   mapFunctions: any;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, mapFunctions }) => {
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions }) => {
   switch (type) {
     case "sites":
       return (
@@ -86,6 +87,7 @@ const PolygonReviewAside: FC<{
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
           mapFunctions={mapFunctions}
+          refresh={refresh}
         />
       );
     default:

@@ -8,6 +8,7 @@ import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import {
   fetchGetV2AdminSitePolygonUUID,
+  fetchPutV2AdminSitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -54,6 +55,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [polygonList, setPolygonList] = useState<any[]>([]);
+  const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
@@ -222,6 +224,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 setSelectedPolygon={setSelectedPolygon}
                 auditLogData={auditLogData?.data}
                 recentRequestData={recentRequestData}
+                mutate={mutateSitePolygons}
               />
             </When>
           </Grid>

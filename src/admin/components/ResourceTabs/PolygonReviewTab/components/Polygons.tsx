@@ -21,7 +21,7 @@ import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-info";
+  status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
 }
@@ -34,13 +34,14 @@ export interface IPolygonProps {
   menu: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
   setPolygonFromMap?: any;
+  refresh?: () => void;
   mapFunctions: any;
 }
 const statusColor = {
   draft: "bg-pinkCustom",
   submitted: "bg-blue",
   approved: "bg-green",
-  "needs-more-info": "bg-tertiary-600"
+  "needs-more-information": "bg-tertiary-600"
 };
 
 export const polygonData = [
@@ -207,7 +208,11 @@ const Polygons = (props: IPolygonProps) => {
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
-        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} isPolygonStatusOpen={isPolygonStatusOpen} />
+        <PolygonDrawer
+          polygonSelected={selectedPolygon?.uuid || ""}
+          isPolygonStatusOpen={isPolygonStatusOpen}
+          refresh={props?.refresh}
+        />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
         <Text variant="text-16-bold" className="pl-2 text-darkCustom">

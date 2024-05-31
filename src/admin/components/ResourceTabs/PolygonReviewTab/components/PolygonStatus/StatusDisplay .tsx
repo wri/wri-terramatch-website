@@ -82,6 +82,7 @@ export interface StatusProps {
   name: any;
   refetchPolygon?: any;
   setSelectedPolygon?: any;
+  tab?: string;
 }
 
 const menuOptionsMap = {
@@ -102,7 +103,15 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record, setSelectedPolygon }: StatusProps) => {
+const StatusDisplay = ({
+  titleStatus = "Polygon",
+  mutate,
+  refresh,
+  name,
+  record,
+  setSelectedPolygon,
+  tab
+}: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
@@ -149,7 +158,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
                 type: "status"
               }
             });
-            if (response.poly_id) {
+            if (response.poly_id && tab != "polygonReview") {
               setSelectedPolygon(response?.poly_id);
             }
             setNotificationStatus({
@@ -259,8 +268,9 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
+            disabled={tab == "polygonReview"}
             variant="semi-black"
-            className="w-full flex-1 whitespace-nowrap"
+            className={`w-full flex-1 whitespace-nowrap ${tab == "polygonReview" ? "opacity-0" : ""}`}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">Change Request</Text>

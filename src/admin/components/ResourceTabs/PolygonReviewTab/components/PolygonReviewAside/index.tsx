@@ -6,6 +6,7 @@ interface SitePolygonReviewAsideProps {
   data: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
   setPolygonFromMap?: any;
+  refresh?: () => void;
   mapFunctions: any;
 }
 
@@ -16,6 +17,7 @@ const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => {
         menu={props?.data}
         polygonFromMap={props?.polygonFromMap}
         setPolygonFromMap={props?.setPolygonFromMap}
+        refresh={props?.refresh}
         mapFunctions={props?.mapFunctions}
       />
     </Stack>

@@ -13,7 +13,7 @@ export interface ComentaryBoxProps {
   lastName: string;
   buttonSendOnBox?: boolean;
   mutate?: any;
-  refresh?: any;
+  refresh?: () => void;
   record?: any;
   entity?: string;
 }
@@ -86,7 +86,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           setComment("");
           setError("");
           setFiles([]);
-          refresh();
+          refresh && refresh();
           setLoading(false);
         }
       }
