@@ -9,19 +9,24 @@ import { useModalContext } from "@/context/modal.provider";
 
 const menuPolygonOptions = [
   {
+    title: "Draft",
+    status: "draft",
+    value: 1
+  },
+  {
     title: "Submitted",
     status: "submitted",
-    value: 1
+    value: 2
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 2
+    value: 3
   },
   {
     title: "Approved",
     status: "approved",
-    value: 3
+    value: 4
   }
 ];
 const menuSiteOptions = [
