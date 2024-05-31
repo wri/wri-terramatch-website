@@ -8,6 +8,7 @@ import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { addSourcesToLayers } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -192,6 +193,10 @@ const PolygonReviewTab: FC<IProps> = props => {
         if (response && response?.uuid) {
           if (reloadSiteData) {
             reloadSiteData();
+          }
+          const { map } = mapFunctions;
+          if (map?.current) {
+            addSourcesToLayers(map.current, polygonDataMap);
           }
           closeModal();
         }
