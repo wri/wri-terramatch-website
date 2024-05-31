@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import _ from "lodash";
 //@ts-ignore
 //@ts-ignore
 import mapboxgl from "mapbox-gl";
@@ -29,7 +30,6 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
-  addFilterOfPolygonsData,
   addFilterOnLayer,
   addGeojsonToDraw,
   addPopupsToMap,
@@ -114,7 +114,8 @@ export const MapContainer = ({
   if (!mapFunctions) {
     return null;
   }
-  const { map, mapContainer, draw, onCancel, styleLoaded, initMap, polygonCreated } = mapFunctions;
+  const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
+    mapFunctions;
 
   useEffect(() => {
     initMap();
@@ -148,11 +149,24 @@ export const MapContainer = ({
   }, [styleLoaded, sitePolygonData]);
 
   useEffect(() => {
-    if (map?.current) {
+    if (map?.current && styleLoaded && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
-      addFilterOfPolygonsData(currentMap, polygonsData);
+      addSourcesToLayers(currentMap, polygonsData);
+      setChangeStyle(true);
     }
-  }, [sitePolygonData, currentStyle, polygonCreated]);
+  }, [sitePolygonData, styleLoaded]);
+
+  useEffect(() => {
+    if (currentStyle) {
+      setChangeStyle(false);
+    }
+  }, [currentStyle]);
+
+  useEffect(() => {
+    if (!changeStyle) {
+      setStyleLoaded(false);
+    }
+  }, [changeStyle]);
 
   useEffect(() => {
     if (bbox && map.current && map) {
@@ -204,8 +218,8 @@ export const MapContainer = ({
           });
           reloadSiteData?.();
           if (response.message == "Geometry updated successfully.") {
-            onCancel(map.current, draw.current, polygonsData);
-            addSourcesToLayers(map.current);
+            onCancel(polygonsData);
+            addSourcesToLayers(map.current, polygonsData);
           }
         }
       }
@@ -213,9 +227,7 @@ export const MapContainer = ({
   };
 
   const onCancelEdit = () => {
-    if (map.current && draw.current) {
-      onCancel(map.current, draw.current, polygonsData);
-    }
+    onCancel(polygonsData);
   };
 
   return (

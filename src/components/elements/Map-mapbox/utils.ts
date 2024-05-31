@@ -67,10 +67,10 @@ export function stopDrawing(draw: MapboxDraw, map: mapboxgl.Map) {
 export function addFilterOnLayer(
   layer: any,
   field: string,
-  parsedPolygonData: SitePolygonsDataResponse | undefined,
+  parsedPolygonData: SitePolygonsDataResponse,
   map: mapboxgl.Map
 ) {
-  addSourceToLayer(layer, map);
+  addSourceToLayer(layer, map, parsedPolygonData);
   const { name, styles } = layer;
   showPolygons(styles, name, map, field, parsedPolygonData);
 }
@@ -103,7 +103,7 @@ function showPolygons(
 let popup: mapboxgl.Popup | null = null;
 let arrayPopups: mapboxgl.Popup[] = [];
 
-export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse) => {
+export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
   layersList.forEach((layer: any) => {
     if (map) {
       showPolygons(layer.styles, layer.name, map, "uuid", polygonsData);
@@ -168,10 +168,10 @@ export function addGeojsonToDraw(geojson: any, uuid: string, cb: Function, curre
   }
 }
 
-export function addSourcesToLayers(map: mapboxgl.Map) {
+export function addSourcesToLayers(map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) {
   layersList.forEach((layer: LayerType) => {
     if (map) {
-      addSourceToLayer(layer, map);
+      addSourceToLayer(layer, map, polygonsData);
     }
   });
 }
@@ -211,7 +211,7 @@ export const addPopupToLayer = (
   }
 };
 
-export function addSourceToLayer(layer: any, map: mapboxgl.Map) {
+export function addSourceToLayer(layer: any, map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) {
   const { name, styles } = layer;
   if (map.getSource(name)) {
     styles?.forEach((_: unknown, index: number) => {
@@ -220,7 +220,7 @@ export function addSourceToLayer(layer: any, map: mapboxgl.Map) {
     map.removeSource(name);
   }
   const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}`;
+    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
   map.addSource(name, {
     type: "vector",
     tiles: [URL_GEOSERVER]
@@ -228,6 +228,7 @@ export function addSourceToLayer(layer: any, map: mapboxgl.Map) {
   styles?.forEach((style: LayerWithStyle, index: number) => {
     addLayerStyle(map, name, style, index);
   });
+  loadLayersInMap(map, polygonsData);
 }
 
 export function addLayerStyle(map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) {

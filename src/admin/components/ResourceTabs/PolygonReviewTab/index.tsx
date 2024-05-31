@@ -24,6 +24,8 @@ import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TerrafundPolygonBboxUuid,
+  fetchPostV2TerrafundPolygon,
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
@@ -97,7 +99,27 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [isUserDrawing, setIsUserDrawing] = useState<boolean>(false);
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
-  const mapFunctions = useMap();
+
+  async function storePolygon(geojson: any, record: any) {
+    if (geojson && geojson[0]) {
+      const response = await fetchPostV2TerrafundPolygon({
+        body: { geometry: JSON.stringify(geojson[0].geometry) }
+      });
+      const polygonUUID = response.uuid;
+      if (polygonUUID) {
+        const site_id = record.uuid;
+        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
+          body: {},
+          pathParams: { uuid: polygonUUID, siteUuid: site_id }
+        }).then(() => {
+          refetch();
+          setPolygonFromMap({ uuid: polygonUUID, isOpen: true });
+        });
+      }
+    }
+  }
+
+  const mapFunctions = useMap(storePolygon);
 
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<{
     data: SitePolygonsDataResponse;
