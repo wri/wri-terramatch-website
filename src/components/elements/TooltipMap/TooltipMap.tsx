@@ -44,12 +44,8 @@ const TooltipMap = (props: TooltipMapProps) => {
   return (
     <div
       className={`w-[295px] rounded border-t-[5px] ${topBorderColorPopup[polygonDataStatus]} bg-white px-3 pb-3 pt-[7px]`}
-      style={{
-        bottom: "0",
-        transform: "translate(-50%, 0px)"
-      }}
     >
-      <button onClick={setTooltipOpen} className="right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800">
+      <button onClick={setTooltipOpen} className="absolute right-2 top-2 ml-2 rounded p-1 hover:bg-grey-800">
         <Icon name={IconNames.CLEAR} className="h-3 w-3 text-darkCustom-100" />
       </button>
 
