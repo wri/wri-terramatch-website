@@ -8,6 +8,27 @@ export type PutV2AdminUpdateRequestsUuidStatusBody = {
   feedback_fields?: string[];
 };
 
+export type PostV2FprojectPipeline = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  SubmittedBy?: string;
+  Program?: string;
+  Cohort?: string;
+  PublishFor?: string;
+  URL?: string;
+  /**
+   * @format date
+   */
+  CreatedDate?: string;
+  /**
+   * @format date
+   */
+  ModifiedDate?: string;
+};
+
 export type V2PostOrganisationsApproveUserBody = {
   organisation_uuid: string;
   user_uuid: string;
@@ -382,27 +403,6 @@ export type GetV2FundingProgrammeIDBody = {
   deleted_at?: string;
   created_at?: string;
   updated_at?: string;
-};
-
-export type PostV2FprojectPipeline = {
-  /**
-   * @format date
-   */
-  date?: string;
-  id?: number;
-  SubmittedBy?: string;
-  Program?: string;
-  Cohort?: string;
-  PublishFor?: string;
-  URL?: string;
-  /**
-   * @format date
-   */
-  CreatedDate?: string;
-  /**
-   * @format date
-   */
-  ModifiedDate?: string;
 };
 
 export type PostV2AuditStatus = {
