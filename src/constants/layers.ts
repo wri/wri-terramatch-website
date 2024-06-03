@@ -1,9 +1,11 @@
+import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
+
 export const LAYERS_NAMES = {
   WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry"
 };
 
-export const layersList = [
+export const layersList: LayerType[] = [
   {
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [

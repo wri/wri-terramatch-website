@@ -7,7 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
-import Map from "@/components/elements/Map-mapbox/Map";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -155,7 +155,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
           </div>
         </div>
         <div className="relative h-[700px] w-[60%]">
-          <Map
+          <MapContainer
             className="h-full w-full"
             hasControls={false}
             polygonChecks

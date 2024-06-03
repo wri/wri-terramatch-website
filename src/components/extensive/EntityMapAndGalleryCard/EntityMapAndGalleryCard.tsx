@@ -4,7 +4,7 @@ import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
-import Map from "@/components/elements/Map-mapbox/Map";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
@@ -90,7 +90,7 @@ const EntityMapAndGalleryCard = ({
   return (
     <>
       <PageCard title={`${modelTitle} ${t("Area")}`}>
-        <Map
+        <MapContainer
           className="rounded-lg"
           geojson={geoJSON}
           imageLayerGeojson={imagesGeoJson}

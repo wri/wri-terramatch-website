@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
 import { When } from "react-if";
 
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import TextRow from "@/components/extensive/TextRow/TextRow";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
@@ -10,8 +10,6 @@ import { V2OrganisationRead } from "@/generated/apiSchemas";
 type PastRestorationExperienceProps = {
   organization?: V2OrganisationRead;
 };
-
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
 
 const PastRestorationExperience = ({ organization }: PastRestorationExperienceProps) => {
   const t = useT();
@@ -97,7 +95,7 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
                 <br />
               </>
             </Text>
-            <Map geojson={projectBoundary} />
+            <MapContainer geojson={projectBoundary} />
           </div>
         </When>
       </div>

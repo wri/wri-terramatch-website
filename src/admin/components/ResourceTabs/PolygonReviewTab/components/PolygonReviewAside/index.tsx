@@ -2,19 +2,23 @@ import { Stack } from "@mui/material";
 
 import Polygons, { IpolygonFromMap, IPolygonItem } from "../Polygons";
 
-const SitePolygonReviewAside = (data: {
+interface SitePolygonReviewAsideProps {
   data: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
   setPolygonFromMap?: any;
   refresh?: () => void;
-}) => {
+  mapFunctions: any;
+}
+
+const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => {
   return (
     <Stack gap={8} className="h-full">
       <Polygons
-        menu={data?.data}
-        polygonFromMap={data?.polygonFromMap}
-        setPolygonFromMap={data?.setPolygonFromMap}
-        refresh={data.refresh}
+        menu={props?.data}
+        polygonFromMap={props?.polygonFromMap}
+        setPolygonFromMap={props?.setPolygonFromMap}
+        refresh={props?.refresh}
+        mapFunctions={props?.mapFunctions}
       />
     </Stack>
   );
