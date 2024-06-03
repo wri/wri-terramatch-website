@@ -23825,3 +23825,16 @@ export type GeojsonData = {
 export type DashboardPolygonResponse = {
   uuid?: string;
 };
+
+export type EntityTypeResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+};

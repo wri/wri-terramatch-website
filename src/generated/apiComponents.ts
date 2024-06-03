@@ -33081,6 +33081,64 @@ export const useGetV2DashboardGetPolygonsStatuses = <TData = GetV2DashboardGetPo
   );
 };
 
+export type GetV2DashboardGetPolygonsProjectQueryParams = {
+  /**
+   * uuid for the given project
+   */
+  uuid?: string;
+};
+
+export type GetV2DashboardGetPolygonsProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardGetPolygonsProjectResponse = {
+  data?: any[];
+};
+
+export type GetV2DashboardGetPolygonsProjectVariables = {
+  queryParams?: GetV2DashboardGetPolygonsProjectQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all polygons by project uuid.
+ */
+export const fetchGetV2DashboardGetPolygonsProject = (
+  variables: GetV2DashboardGetPolygonsProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardGetPolygonsProjectResponse,
+    GetV2DashboardGetPolygonsProjectError,
+    undefined,
+    {},
+    GetV2DashboardGetPolygonsProjectQueryParams,
+    {}
+  >({ url: "/v2/dashboard/get-polygons/project", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all polygons by project uuid.
+ */
+export const useGetV2DashboardGetPolygonsProject = <TData = GetV2DashboardGetPolygonsProjectResponse>(
+  variables: GetV2DashboardGetPolygonsProjectVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardGetPolygonsProjectResponse, GetV2DashboardGetPolygonsProjectError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardGetPolygonsProjectResponse, GetV2DashboardGetPolygonsProjectError, TData>(
+    queryKeyFn({
+      path: "/v2/dashboard/get-polygons/project",
+      operationId: "getV2DashboardGetPolygonsProject",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardGetPolygonsProject({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardCountryCountryPathParams = {
   /**
    * ISO code of the country
@@ -33231,6 +33289,51 @@ export const useGetV2DashboardGetBboxProject = <TData = GetV2DashboardGetBboxPro
   return reactQuery.useQuery<GetV2DashboardGetBboxProjectResponse, GetV2DashboardGetBboxProjectError, TData>(
     queryKeyFn({ path: "/v2/dashboard/get-bbox-project", operationId: "getV2DashboardGetBboxProject", variables }),
     ({ signal }) => fetchGetV2DashboardGetBboxProject({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardBboxProjectQueryParams = {
+  /**
+   * UUID of the project
+   */
+  uuid: string;
+};
+
+export type GetV2DashboardBboxProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardBboxProjectResponse = {
+  bbox?: any[];
+};
+
+export type GetV2DashboardBboxProjectVariables = {
+  queryParams: GetV2DashboardBboxProjectQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardBboxProject = (variables: GetV2DashboardBboxProjectVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2DashboardBboxProjectResponse,
+    GetV2DashboardBboxProjectError,
+    undefined,
+    {},
+    GetV2DashboardBboxProjectQueryParams,
+    {}
+  >({ url: "/v2/dashboard/bbox/project", method: "get", ...variables, signal });
+
+export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectResponse>(
+  variables: GetV2DashboardBboxProjectVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/bbox/project", operationId: "getV2DashboardBboxProject", variables }),
+    ({ signal }) => fetchGetV2DashboardBboxProject({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -35163,6 +35266,72 @@ export const usePostV2TerrafundPolygon = (
   );
 };
 
+export type GetV2TypeEntityQueryParams = {
+  /**
+   * UUID of the entity
+   */
+  uuid: string;
+};
+
+export type GetV2TypeEntityError = Fetcher.ErrorWrapper<{
+  status: 500;
+  payload: {
+    /**
+     * Error message
+     */
+    error?: string;
+  };
+}>;
+
+export type GetV2TypeEntityResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+};
+
+export type GetV2TypeEntityVariables = {
+  queryParams: GetV2TypeEntityQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Determine the type of entity based on UUID.
+ */
+export const fetchGetV2TypeEntity = (variables: GetV2TypeEntityVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2TypeEntityResponse, GetV2TypeEntityError, undefined, {}, GetV2TypeEntityQueryParams, {}>({
+    url: "/v2/type-entity",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+/**
+ * Determine the type of entity based on UUID.
+ */
+export const useGetV2TypeEntity = <TData = GetV2TypeEntityResponse>(
+  variables: GetV2TypeEntityVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TypeEntityResponse, GetV2TypeEntityError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2TypeEntityResponse, GetV2TypeEntityError, TData>(
+    queryKeyFn({ path: "/v2/type-entity", operationId: "getV2TypeEntity", variables }),
+    ({ signal }) => fetchGetV2TypeEntity({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -35710,6 +35879,11 @@ export type QueryOperation =
       variables: GetV2DashboardGetPolygonsStatusesVariables;
     }
   | {
+      path: "/v2/dashboard/get-polygons/project";
+      operationId: "getV2DashboardGetPolygonsProject";
+      variables: GetV2DashboardGetPolygonsProjectVariables;
+    }
+  | {
       path: "/v2/dashboard/country/{country}";
       operationId: "getV2DashboardCountryCountry";
       variables: GetV2DashboardCountryCountryVariables;
@@ -35723,6 +35897,11 @@ export type QueryOperation =
       path: "/v2/dashboard/get-bbox-project";
       operationId: "getV2DashboardGetBboxProject";
       variables: GetV2DashboardGetBboxProjectVariables;
+    }
+  | {
+      path: "/v2/dashboard/bbox/project";
+      operationId: "getV2DashboardBboxProject";
+      variables: GetV2DashboardBboxProjectVariables;
     }
   | {
       path: "/v2/dashboard/project-data/{uuid}";
@@ -35798,4 +35977,9 @@ export type QueryOperation =
       path: "/v2/terrafund/polygon/geojson/{uuid}";
       operationId: "getV2TerrafundPolygonGeojsonUuid";
       variables: GetV2TerrafundPolygonGeojsonUuidVariables;
+    }
+  | {
+      path: "/v2/type-entity";
+      operationId: "getV2TypeEntity";
+      variables: GetV2TypeEntityVariables;
     };
