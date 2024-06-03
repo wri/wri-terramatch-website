@@ -10,6 +10,10 @@ export interface ComentaryBoxProps {
   name: string;
   lastName: string;
   buttonSendOnBox?: boolean;
+  mutate?: any;
+  refresh?: any;
+  record?: any;
+  entity?: string;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {

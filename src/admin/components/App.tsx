@@ -1,12 +1,3 @@
-import { WatchLater } from "@mui/icons-material";
-import ArticleIcon from "@mui/icons-material/Article";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import BusinessIcon from "@mui/icons-material/Business";
-import ForestIcon from "@mui/icons-material/Forest";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import UserIcon from "@mui/icons-material/Group";
-import LanguageIcon from "@mui/icons-material/Language";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import { useEffect, useState } from "react";
 import { Admin, Resource } from "react-admin";
@@ -15,6 +6,7 @@ import { authProvider } from "@/admin/apiProvider/authProvider";
 import { dataProvider } from "@/admin/apiProvider/dataProviders";
 import { AppLayout } from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import modules from "../modules";
 import AdminLoginPage from "../pages/AdminLoginPage";
@@ -50,21 +42,21 @@ const App = () => {
         list={modules.user.List}
         show={modules.user.Show}
         edit={modules.user.Edit}
-        icon={UserIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.USERS} />}
       />
       <Resource
         name={modules.organisation.ResourceName}
         list={modules.organisation.List}
         show={modules.organisation.Show}
         edit={modules.organisation.Edit}
-        icon={BusinessIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.ORGANISATIONS} />}
       />
       <Resource
         name={modules.pitch.ResourceName}
         list={modules.pitch.List}
         show={modules.pitch.Show}
         edit={modules.pitch.Edit}
-        icon={ForestIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.PITCHES} />}
       />
       <Resource
         name={modules.fundingProgramme.ResourceName}
@@ -72,7 +64,7 @@ const App = () => {
         edit={modules.fundingProgramme.Edit}
         show={modules.fundingProgramme.Show}
         create={modules.fundingProgramme.Create}
-        icon={AttachMoneyIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.FUNDING_PROGRAMMES} />}
         options={{ label: "Funding Programmes" }}
       />
       <Resource
@@ -81,14 +73,14 @@ const App = () => {
         show={modules.reportingFramework.Show}
         edit={modules.reportingFramework.Edit}
         {...(canCreate ? { create: modules.reportingFramework.Create } : null)}
-        icon={WatchLater}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTING_FRAMEWORKS} />}
         options={{ label: "Reporting Frameworks" }}
       />
       <Resource
         name={modules.application.ResourceName}
         list={modules.application.List}
         show={modules.application.Show}
-        icon={LibraryBooksIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.APPLICATIONS} />}
       />
       <Resource
         name={modules.stage.ResourceName}
@@ -100,6 +92,7 @@ const App = () => {
         name={modules.form.ResourceName}
         list={modules.form.List}
         edit={modules.form.Edit}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.FORMS} />}
         create={modules.form.Create}
       />
       <Resource
@@ -107,21 +100,21 @@ const App = () => {
         list={modules.project.List}
         show={modules.project.Show}
         edit={modules.project.Edit}
-        icon={ArticleIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
       />
       <Resource
         name={modules.site.ResourceName}
         list={modules.site.List}
         show={modules.site.Show}
         edit={modules.site.Edit}
-        icon={LanguageIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.SITES} />}
       />
       <Resource
         name={modules.nursery.ResourceName}
         list={modules.nursery.List}
         show={modules.nursery.Show}
         edit={modules.nursery.Edit}
-        icon={FullscreenIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.NURSERIES} />}
       />
       <Resource
         name={modules.task.ResourceName}
@@ -135,7 +128,7 @@ const App = () => {
         list={modules.projectReport.List}
         show={modules.projectReport.Show}
         edit={modules.projectReport.Edit}
-        icon={SummarizeIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
         options={{ label: "Project Reports" }}
       />
       <Resource
@@ -143,7 +136,7 @@ const App = () => {
         list={modules.siteReport.List}
         show={modules.siteReport.Show}
         edit={modules.siteReport.Edit}
-        icon={SummarizeIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
         options={{ label: "Site Reports" }}
       />
       <Resource
@@ -151,7 +144,7 @@ const App = () => {
         list={modules.nurseryReport.List}
         show={modules.nurseryReport.Show}
         edit={modules.nurseryReport.Edit}
-        icon={SummarizeIcon}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
         options={{ label: "Nursery Reports" }}
       />
       <Resource name={modules.audit.ResourceName} />
