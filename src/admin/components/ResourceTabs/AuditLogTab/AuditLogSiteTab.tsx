@@ -6,19 +6,14 @@ import { When } from "react-if";
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { GetV2AuditStatusResponse, useGetV2AuditStatus } from "@/generated/apiComponents";
+import { SITE } from "@/constants/entities";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 import useAuditLogActions from "@/hooks/useAuditLogActions";
-import useLoadEntityList from "@/hooks/useLoadEntityList";
 import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
-// import SiteAuditLogPolygonStatusSide from "./components/SiteAuditLogPolygonStatusSide";
-// import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
-// import SiteAuditLogProjectStatusSide from "./components/SiteAuditLogProjectStatusSide";
-// import SiteAuditLogSiteStatusSide from "./components/SiteAuditLogSiteStatusSide";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -31,42 +26,31 @@ export const ButtonStates = {
   POLYGON: 2
 };
 
-const ReverseButtonStates: { [key: number]: string } = {
-  0: "Project",
-  1: "Site",
-  2: "SitePolygon"
-};
-
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { record, isLoading } = useShowContext();
   const basename = useBasename();
-  const { project } = record;
-
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = useAuditLogActions({ buttonToogle });
-  const isProject = buttonToogle === ButtonStates.PROJECTS;
-  const isPolygon = buttonToogle === ButtonStates.POLYGON;
+
   const {
-    loadEntityList: loadSitePolygonList,
-    selected: selectedPolygon,
-    setSelected: setSelectedPolygon,
-    entityList: polygonList
-  } = useLoadEntityList({
-    entityUuid: record.uuid,
-    entityType: "sitePolygon"
-  });
-  const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
-    queryParams: {
-      entity: ReverseButtonStates[buttonToogle],
-      uuid: isProject ? project.uuid : isPolygon ? selectedPolygon?.uuid : record.uuid
-    }
+    mutateEntity,
+    valuesForStatus,
+    statusLabels,
+    entityType,
+    entityListItem,
+    loadEntityList,
+    selected,
+    setSelected,
+    auditLogData,
+    refetch
+  } = useAuditLogActions({
+    buttonToogle,
+    entityLevel: SITE
   });
 
   useEffect(() => {
-    if (buttonToogle === ButtonStates.POLYGON) {
-      loadSitePolygonList();
-    }
-  }, [buttonToogle, record]);
+    refetch();
+    loadEntityList();
+  }, [buttonToogle]);
 
   const recentRequestData = (recentRequest: AuditStatusResponse) => {
     return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
@@ -95,7 +79,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               </When>
               <When condition={buttonToogle !== ButtonStates.PROJECTS}>
                 <SiteAuditLogEntityStatus
-                  record={isProject ? project : isPolygon ? selectedPolygon : record}
+                  record={selected}
                   auditLogData={auditLogData}
                   refresh={refetch}
                   buttonToogle={buttonToogle}
@@ -109,15 +93,15 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               getValueForStatus={valuesForStatus}
               progressBarLabels={statusLabels}
               mutate={mutateEntity}
-              recordType={entityType == "projectPolygon" ? "Polygon" : (entityType as "Site" | "Project")}
+              recordType={entityType as "Project" | "Site" | "Polygon"}
               refresh={() => {
                 refetch();
-                isPolygon ? loadSitePolygonList() : refetch();
+                loadEntityList();
               }}
-              record={isProject ? project : isPolygon ? selectedPolygon : record}
-              polygonList={isPolygon ? polygonList : []}
-              selectedPolygon={isPolygon ? selectedPolygon : null}
-              setSelectedPolygon={isPolygon ? setSelectedPolygon : null}
+              record={selected}
+              polygonList={entityListItem}
+              selectedPolygon={selected}
+              setSelectedPolygon={setSelected}
               auditLogData={auditLogData?.data}
               recentRequestData={recentRequestData}
             />

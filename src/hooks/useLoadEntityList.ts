@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2AdminSitePolygonUUID,
   fetchGetV2AuditStatusId,
@@ -16,12 +17,12 @@ export interface SelectedItem {
 
 interface UseLoadEntityListParams {
   entityUuid: string;
-  entityType: "sitePolygon" | "Site" | "projectPolygon";
-  refetch?: () => void;
+  entityType: "Site" | "Polygon" | "Project";
   buttonToogle?: number;
+  entityLevel?: string;
 }
 
-export interface EntityList {
+export interface EntityListItem {
   poly_name?: string | undefined;
   name?: string | undefined;
   uuid?: string | undefined;
@@ -30,25 +31,24 @@ export interface EntityList {
   status?: string | undefined;
 }
 
-const useLoadEntityList = ({ entityUuid, entityType, refetch, buttonToogle }: UseLoadEntityListParams) => {
+const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }: UseLoadEntityListParams) => {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
-  const [entityList, setEntityList] = useState<EntityList[]>([]);
+  const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
+  const isFirstLoad = useRef(true);
 
-  const getNameProperty = (entityType: string): keyof EntityList => {
+  const getNameProperty = (entityType: string): keyof EntityListItem => {
     switch (entityType) {
-      case "sitePolygon":
+      case POLYGON:
         return "poly_name";
-      case "projectPolygon":
-        return "poly_name";
-      case "Site":
+      case SITE:
         return "name";
       default:
         return "name";
     }
   };
 
-  const unnamedTitleAndSort = (list: EntityList[], nameProperty: keyof EntityList) => {
-    const unnamedItems = list?.map((item: EntityList) => {
+  const unnamedTitleAndSort = (list: EntityListItem[], nameProperty: keyof EntityListItem) => {
+    const unnamedItems = list?.map((item: EntityListItem) => {
       if (!item[nameProperty]) {
         return {
           ...item,
@@ -64,33 +64,32 @@ const useLoadEntityList = ({ entityUuid, entityType, refetch, buttonToogle }: Us
       return nameA && nameB ? nameA.localeCompare(nameB) : 0;
     });
   };
-  const loadEntityList = async () => {
-    const fetchAction =
-      entityType == "sitePolygon"
-        ? fetchGetV2AdminSitePolygonUUID
-        : entityType == "projectPolygon"
-        ? fetchGetV2AuditStatusId
-        : fetchGetV2ProjectsUUIDSites;
-    const params = entityType == "sitePolygon" || entityType == "Site" ? { uuid: entityUuid } : { id: entityUuid };
 
+  const loadEntityList = async () => {
+    const isSiteProject = entityLevel === PROJECT;
+    const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2AuditStatusId;
+    const fetchAction = isSiteProject ? fetchToProject : fetchGetV2AdminSitePolygonUUID;
+    const params = isSiteProject && entityType == POLYGON ? { id: entityUuid } : { uuid: entityUuid };
     const res = await fetchAction({
       // @ts-ignore
       pathParams: params
     });
-    const _entityList = (res as { data: EntityList[] }).data;
+    const _entityList = (res as { data: EntityListItem[] }).data;
     const nameProperty = getNameProperty(entityType);
-    const _list = unnamedTitleAndSort(_entityList, nameProperty);
-    setEntityList(
-      _list.map((item: EntityList) => ({
+    const transformEntityListItem = (item: EntityListItem) => {
+      return {
         title: item[nameProperty],
         uuid: item?.uuid,
         value: item?.uuid,
         meta: item?.status,
         status: item?.status
-      }))
-    );
+      };
+    };
+    const _list = unnamedTitleAndSort(_entityList, nameProperty);
+    setEntityListItem(_list.map((item: EntityListItem) => transformEntityListItem(item)));
     if (_list.length > 0) {
-      if (selected?.title === undefined || !selected) {
+      if (isFirstLoad.current) {
+        isFirstLoad.current = false;
         setSelected({
           title: _list[0]?.[nameProperty],
           uuid: _list[0]?.uuid,
@@ -99,26 +98,20 @@ const useLoadEntityList = ({ entityUuid, entityType, refetch, buttonToogle }: Us
           status: _list[0]?.status
         });
       } else {
-        const currentSelected = (res as { data: EntityList[] }).data.find(item => item?.uuid === selected?.uuid);
-        setSelected({
-          title: currentSelected?.[nameProperty],
-          uuid: currentSelected?.uuid,
-          value: currentSelected?.value,
-          meta: currentSelected?.status,
-          status: currentSelected?.status
-        });
+        const currentSelected = (res as { data: EntityListItem[] }).data.find(item => item?.uuid === selected?.uuid);
+        setSelected(transformEntityListItem(currentSelected as EntityListItem));
       }
     } else {
       setSelected(null);
     }
-    refetch && refetch();
   };
-
   useEffect(() => {
-    loadEntityList();
-  }, [buttonToogle]);
+    setSelected(null);
+    setEntityListItem([]);
+    isFirstLoad.current = true;
+  }, [entityType, buttonToogle]);
 
-  return { entityList, selected, setSelected, loadEntityList };
+  return { entityListItem, selected, setSelected, loadEntityList };
 };
 
 export default useLoadEntityList;
