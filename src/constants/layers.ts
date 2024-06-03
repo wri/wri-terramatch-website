@@ -10,6 +10,26 @@ export const layersList: LayerType[] = [
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
       {
+        metadata: { polygonStatus: "draft" },
+        type: "fill",
+        layout: {},
+        paint: {
+          "fill-color": "#E468EF",
+          "fill-opacity": 0.7
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      },
+      {
+        metadata: { polygonStatus: "draft" },
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#E468EF",
+          "line-width": 2
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      },
+      {
         metadata: { polygonStatus: "submitted" },
         type: "fill",
         layout: {},

@@ -63,10 +63,12 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
 
 export function getValueForStatusPolygon(status: string): number {
   switch (status) {
-    case "Submitted":
+    case "draft":
       return 0;
+    case "submitted":
+      return 34;
     case "needs-more-information":
-      return 50;
+      return 67;
     case "approved":
       return 100;
     default:
@@ -92,9 +94,10 @@ function getValueForStatusSite(status: string): number {
 }
 
 export const polygonProgressBarStatusLabels = [
-  { id: "1", label: "Submitted" },
-  { id: "2", label: "Needs More Information" },
-  { id: "3", label: "Approved" }
+  { id: "1", label: "Draft" },
+  { id: "2", label: "Submitted" },
+  { id: "3", label: "Needs More Information" },
+  { id: "4", label: "Approved" }
 ];
 
 const siteProgressBarStatusLabels = [
