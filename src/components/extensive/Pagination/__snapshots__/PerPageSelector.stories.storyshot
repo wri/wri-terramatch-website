@@ -35,7 +35,16 @@ exports[`Storyshots Components/Elements/Table/PerPageSelector Default 1`] = `
         </div>
         <div
           className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
-        />
+        >
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
+        </div>
       </div>
       <p
         className="text-bold-subtitle-500"

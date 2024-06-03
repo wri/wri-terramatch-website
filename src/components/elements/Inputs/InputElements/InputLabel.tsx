@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isNumber } from "lodash";
-import { HTMLProps } from "react";
+import { forwardRef, HTMLProps, RefObject } from "react";
 import { When } from "react-if";
 
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
@@ -16,7 +16,7 @@ export interface InputLabelProps extends HTMLProps<HTMLLabelElement> {
   suffixLabelView?: boolean;
 }
 
-const InputLabel = (props: InputLabelProps) => {
+export default forwardRef(function InputLabel(props: InputLabelProps, ref) {
   const t = useT();
   const {
     feedbackRequired,
@@ -32,6 +32,7 @@ const InputLabel = (props: InputLabelProps) => {
     <When condition={!!props.children}>
       <Text<HTMLLabelElement>
         {...labelProps}
+        ref={ref as RefObject<HTMLLabelElement>}
         as="label"
         variant={labelVariant ?? "text-bold-body-300"}
         className={classNames("mr-2 inline uppercase", className)}
@@ -46,6 +47,4 @@ const InputLabel = (props: InputLabelProps) => {
       </When>
     </When>
   );
-};
-
-export default InputLabel;
+});

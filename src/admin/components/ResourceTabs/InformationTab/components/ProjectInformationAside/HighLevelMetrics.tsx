@@ -26,7 +26,10 @@ const HighLevelMetics: FC = () => {
           </Labeled>
         </When>
         <When condition={record?.framework_key === "ppc"}>
-          <Labeled label="Workdays Created" sx={inlineLabelSx}>
+          <Labeled label="Workdays Created (Old Calculation)" sx={inlineLabelSx}>
+            <NumberField source="self_reported_workday_count" emptyText="0" />
+          </Labeled>
+          <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx}>
             <NumberField source="workday_count" emptyText="0" />
           </Labeled>
         </When>

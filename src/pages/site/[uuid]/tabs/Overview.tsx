@@ -90,7 +90,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         >
           <div className="flex w-full flex-wrap gap-6">
             <When condition={isPPC}>
-              <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} className="w-[170px]" />
+              <GoalProgressCard
+                label={t("Workday Count (PPC)")}
+                value={site.self_reported_workday_count}
+                className="w-[170px]"
+              />
             </When>
             <GoalProgressCard
               label={t("Hectares Restored Goal")}
