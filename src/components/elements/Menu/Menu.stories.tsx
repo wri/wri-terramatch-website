@@ -19,12 +19,12 @@ type Story = StoryObj<typeof Menu>;
 const itemsMenu = [
   { id: "1", render: () => <div>Test1</div>, onClick: () => {} },
   { id: "2", render: () => <div>Test2</div>, onClick: () => {} },
-  { id: "2", render: () => <div>Test3</div>, onClick: () => {} }
+  { id: "3", render: () => <div>Test3</div>, onClick: () => {} }
 ];
 const itemsLargeMenu = [
   { id: "1", render: () => <div>Test 1 this is a large text example</div>, onClick: () => {} },
   { id: "2", render: () => <div>Test 2 this is a large text example</div>, onClick: () => {} },
-  { id: "2", render: () => <div>Test 3 this is a large text example</div>, onClick: () => {} }
+  { id: "3", render: () => <div>Test 3 this is a large text example</div>, onClick: () => {} }
 ];
 export const Primary: Story = {
   args: {

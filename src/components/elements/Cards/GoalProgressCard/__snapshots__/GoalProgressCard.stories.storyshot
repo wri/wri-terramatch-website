@@ -5,29 +5,34 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
   className="h-44 p-4"
 >
   <div
-    className="flex items-center rounded-lg bg-primary-100 px-4 py-3 shadow"
+    className="flex items-center rounded-lg"
   >
     <div
       className="mr-6 w-full"
     >
       <p
-        className="text-bold-caption-100"
+        className="mb-1 w-full text-16-light"
         data-testid="txt"
       >
         Hectors Restored
       </p>
       <p
-        className="text-bold-headline-1000"
+        className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
       >
         150
+         
+        <p
+          className="text-16-light"
+          data-testid="txt"
+        />
       </p>
       <div
-        className="h-[9px] w-full bg-neutral-200 bg-primary-200 opacity-0"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200 opacity-0"
         role="progressbar"
       >
         <div
-          className="h-full bg-primary transition-all duration-300"
+          className="h-full bg-primary rounded-full transition-all duration-300"
           style={
             Object {
               "width": "0%",
@@ -45,29 +50,41 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
   className="h-44 p-4"
 >
   <div
-    className="flex items-center rounded-lg bg-primary-100 px-4 py-3 shadow"
+    className="flex items-center rounded-lg"
   >
     <div
       className="mr-6 w-full"
     >
       <p
-        className="text-bold-caption-100"
+        className="mb-1 w-full text-16-light"
         data-testid="txt"
       >
         Trees Restored
       </p>
       <p
-        className="text-bold-headline-1000"
+        className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
       >
-        600/732
+        600
+         
+        <p
+          className="text-16-light"
+          data-testid="txt"
+        >
+          of 
+          732
+        </p>
+        <p
+          className="text-16-light"
+          data-testid="txt"
+        />
       </p>
       <div
-        className="h-[9px] w-full bg-neutral-200 bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200"
         role="progressbar"
       >
         <div
-          className="h-full bg-primary transition-all duration-300"
+          className="h-full bg-primary rounded-full transition-all duration-300"
           style={
             Object {
               "width": "81.9672131147541%",
@@ -77,10 +94,10 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
       </div>
     </div>
     <div
-      className="space-y-3 p-3"
+      className="w-full space-y-3 pl-6 "
     >
       <div
-        className="flex items-center justify-between"
+        className="flex w-full items-center"
       >
         <div
           style={
@@ -91,20 +108,20 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           }
         />
         <p
-          className="mr-auto whitespace-nowrap text-bold-caption-200"
+          className="w-[13vw] whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Organisations Joined
         </p>
         <p
-          className="ml-4 text-bold-subtitle-500"
+          className="text-14-bold"
           data-testid="txt"
         >
           23
         </p>
       </div>
       <div
-        className="flex items-center justify-between"
+        className="flex w-full items-center"
       >
         <div
           style={
@@ -115,20 +132,20 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           }
         />
         <p
-          className="mr-auto whitespace-nowrap text-bold-caption-200"
+          className="w-[13vw] whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Trees Planed
         </p>
         <p
-          className="ml-4 text-bold-subtitle-500"
+          className="text-14-bold"
           data-testid="txt"
         >
           1332
         </p>
       </div>
       <div
-        className="flex items-center justify-between"
+        className="flex w-full items-center"
       >
         <div
           style={
@@ -139,13 +156,13 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           }
         />
         <p
-          className="mr-auto whitespace-nowrap text-bold-caption-200"
+          className="w-[13vw] whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Trash Removed 
         </p>
         <p
-          className="ml-4 text-bold-subtitle-500"
+          className="text-14-bold"
           data-testid="txt"
         >
           530000
@@ -161,29 +178,41 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
   className="h-44 p-4"
 >
   <div
-    className="flex items-center rounded-lg bg-primary-100 px-4 py-3 shadow"
+    className="flex items-center rounded-lg"
   >
     <div
       className="mr-6 w-full"
     >
       <p
-        className="text-bold-caption-100"
+        className="mb-1 w-full text-16-light"
         data-testid="txt"
       >
         Workday (PPC)
       </p>
       <p
-        className="text-bold-headline-1000"
+        className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
       >
-        75/150
+        75
+         
+        <p
+          className="text-16-light"
+          data-testid="txt"
+        >
+          of 
+          150
+        </p>
+        <p
+          className="text-16-light"
+          data-testid="txt"
+        />
       </p>
       <div
-        className="h-[9px] w-full bg-neutral-200 bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200"
         role="progressbar"
       >
         <div
-          className="h-full bg-primary transition-all duration-300"
+          className="h-full bg-primary rounded-full transition-all duration-300"
           style={
             Object {
               "width": "50%",

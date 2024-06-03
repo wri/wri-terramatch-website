@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Accordion Default 1`] = `
 <div
-  className="rounded-lg border-2 border-neutral-100 shadow undefined"
+  className="undefined rounded-lg border-2 border-neutral-100 shadow"
   data-headlessui-state=""
 >
   <button
@@ -39,7 +39,7 @@ exports[`Storyshots Components/Elements/Accordion Default 1`] = `
 
 exports[`Storyshots Components/Elements/Accordion Secondary 1`] = `
 <div
-  className="rounded-lg border-2 border-neutral-100 shadow undefined rounded-lg"
+  className="undefined rounded-lg border-2 border-neutral-100 shadow"
   data-headlessui-state=""
 >
   <button
@@ -76,7 +76,7 @@ exports[`Storyshots Components/Elements/Accordion Secondary 1`] = `
 
 exports[`Storyshots Components/Elements/Accordion With CTA 1`] = `
 <div
-  className="rounded-lg border-2 border-neutral-100 shadow undefined"
+  className="undefined rounded-lg border-2 border-neutral-100 shadow"
   data-headlessui-state=""
 >
   <button

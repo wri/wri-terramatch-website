@@ -8,10 +8,10 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
     className="bg-primary-200 w-full"
   >
     <div
-      className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-4 px-10 xl:px-0"
+      className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0"
     >
       <div
-        className="flex flex-1 items-start"
+        className="flex flex-1 items-center"
       >
         <div
           className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
@@ -27,13 +27,13 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
         </div>
         <div>
           <p
-            className="text-bold-subtitle-400"
+            className="text-16-bold"
             data-testid="txt"
           >
             Status: Awaiting Feedback
           </p>
           <p
-            className="line-clamp-3 text-light-subtitle-400"
+            className="line-clamp-3 text-16-light"
             data-testid="txt"
             title="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
           >
@@ -45,28 +45,28 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
         className="flex gap-3"
       >
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             View Feedback
           </span>
         </button>
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Learn More
           </span>
         </button>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Setup Project
           </span>
@@ -85,10 +85,10 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
     className="bg-secondary-200 w-full"
   >
     <div
-      className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-4 px-10 xl:px-0"
+      className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0"
     >
       <div
-        className="flex flex-1 items-start"
+        className="flex flex-1 items-center"
       >
         <div
           className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
@@ -104,13 +104,13 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
         </div>
         <div>
           <p
-            className="text-bold-subtitle-400"
+            className="text-16-bold"
             data-testid="txt"
           >
             Status: Approved
           </p>
           <p
-            className="line-clamp-3 text-light-subtitle-400"
+            className="line-clamp-3 text-16-light"
             data-testid="txt"
             title="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
           >
@@ -122,28 +122,28 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
         className="flex gap-3"
       >
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             View Feedback
           </span>
         </button>
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Learn More
           </span>
         </button>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Setup Project
           </span>
@@ -162,10 +162,10 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
     className="bg-neutral-200 w-full"
   >
     <div
-      className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-4 px-10 xl:px-0"
+      className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0"
     >
       <div
-        className="flex flex-1 items-start"
+        className="flex flex-1 items-center"
       >
         <div
           className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
@@ -181,13 +181,13 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
         </div>
         <div>
           <p
-            className="text-bold-subtitle-400"
+            className="text-16-bold"
             data-testid="txt"
           >
             Status: Draft
           </p>
           <p
-            className="line-clamp-3 text-light-subtitle-400"
+            className="line-clamp-3 text-16-light"
             data-testid="txt"
             title="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
           >
@@ -199,28 +199,28 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
         className="flex gap-3"
       >
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             View Feedback
           </span>
         </button>
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Learn More
           </span>
         </button>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Setup Project
           </span>
@@ -239,10 +239,10 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
     className="bg-error-200 w-full"
   >
     <div
-      className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-4 px-10 xl:px-0"
+      className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0"
     >
       <div
-        className="flex flex-1 items-start"
+        className="flex flex-1 items-center"
       >
         <div
           className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
@@ -258,13 +258,13 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
         </div>
         <div>
           <p
-            className="text-bold-subtitle-400"
+            className="text-16-bold"
             data-testid="txt"
           >
             Status: Rejected
           </p>
           <p
-            className="line-clamp-3 text-light-subtitle-400"
+            className="line-clamp-3 text-16-light"
             data-testid="txt"
             title="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
           >
@@ -276,28 +276,28 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
         className="flex gap-3"
       >
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             View Feedback
           </span>
         </button>
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Learn More
           </span>
         </button>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Setup Project
           </span>
@@ -316,10 +316,10 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
     className="bg-tertiary-200 w-full"
   >
     <div
-      className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-4 px-10 xl:px-0"
+      className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0"
     >
       <div
-        className="flex flex-1 items-start"
+        className="flex flex-1 items-center"
       >
         <div
           className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
@@ -335,13 +335,13 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
         </div>
         <div>
           <p
-            className="text-bold-subtitle-400"
+            className="text-16-bold"
             data-testid="txt"
           >
             Status: More Info Requested
           </p>
           <p
-            className="line-clamp-3 text-light-subtitle-400"
+            className="line-clamp-3 text-16-light"
             data-testid="txt"
             title="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
           >
@@ -353,28 +353,28 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
         className="flex gap-3"
       >
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             View Feedback
           </span>
         </button>
         <button
-          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Learn More
           </span>
         </button>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Setup Project
           </span>

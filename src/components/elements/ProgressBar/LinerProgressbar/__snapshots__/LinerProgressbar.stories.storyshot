@@ -2,11 +2,11 @@
 
 exports[`Storyshots Components/Elements/ProgressBar Default 1`] = `
 <div
-  className="h-[9px] w-full bg-neutral-200 "
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
   role="progressbar"
 >
   <div
-    className="h-full bg-primary transition-all duration-300"
+    className="h-full bg-primary rounded-full transition-all duration-300"
     style={
       Object {
         "width": "50%",
@@ -18,11 +18,11 @@ exports[`Storyshots Components/Elements/ProgressBar Default 1`] = `
 
 exports[`Storyshots Components/Elements/ProgressBar Error 1`] = `
 <div
-  className="h-[9px] w-full bg-neutral-200 "
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
   role="progressbar"
 >
   <div
-    className="h-full bg-error transition-all duration-300"
+    className="h-full bg-error rounded-full transition-all duration-300"
     style={
       Object {
         "width": "50%",
@@ -34,11 +34,11 @@ exports[`Storyshots Components/Elements/ProgressBar Error 1`] = `
 
 exports[`Storyshots Components/Elements/ProgressBar Secondary 1`] = `
 <div
-  className="h-[9px] w-full bg-neutral-200 "
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
   role="progressbar"
 >
   <div
-    className="h-full bg-secondary transition-all duration-300"
+    className="h-full bg-secondary rounded-full transition-all duration-300"
     style={
       Object {
         "width": "50%",
@@ -50,11 +50,11 @@ exports[`Storyshots Components/Elements/ProgressBar Secondary 1`] = `
 
 exports[`Storyshots Components/Elements/ProgressBar Success 1`] = `
 <div
-  className="h-[9px] w-full bg-neutral-200 "
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
   role="progressbar"
 >
   <div
-    className="h-full bg-success transition-all duration-300"
+    className="h-full bg-success rounded-full transition-all duration-300"
     style={
       Object {
         "width": "50%",
@@ -66,11 +66,11 @@ exports[`Storyshots Components/Elements/ProgressBar Success 1`] = `
 
 exports[`Storyshots Components/Elements/ProgressBar Tertiary 1`] = `
 <div
-  className="h-[9px] w-full bg-neutral-200 "
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
   role="progressbar"
 >
   <div
-    className="h-full bg-tertiary transition-all duration-300"
+    className="h-full bg-tertiary rounded-full transition-all duration-300"
     style={
       Object {
         "width": "50%",

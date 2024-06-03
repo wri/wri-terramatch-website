@@ -2,10 +2,10 @@
 
 exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
 <header
-  className="sticky top-0 z-50 flex w-full flex-col justify-center border-b-4 border-primary bg-white px-4 lg:flex-row"
+  className="sticky top-0 z-50 flex w-full flex-col justify-center bg-white px-4 sm:flex-row"
 >
   <section
-    className="mx-auto w-full max-w-[1218px] flex h-[70px] items-center justify-between"
+    className="mx-auto w-full max-w-[82vw] flex h-[70px] items-center justify-between"
   >
     <div
       style={
@@ -16,20 +16,20 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
       }
     />
     <div
-      className="hidden items-center gap-8 lg:flex"
+      className="hidden items-center gap-8 sm:flex"
     >
       <div
         className="absolute top-4 left-[50%] translate-x-[-50%]"
       >
         <div
-          className="block lg:hidden relative w-fit"
+          className="block sm:hidden relative w-fit"
           data-headlessui-state=""
         >
           <button
             aria-expanded={false}
             className="flex items-center justify-between p-2"
             data-headlessui-state=""
-            id="headlessui-popover-button-:r4t:"
+            id="headlessui-popover-button-:r5o:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -45,7 +45,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
               }
             />
             <span
-              className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
             >
               English
             </span>
@@ -62,7 +62,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
       </div>
       <div>
         <div
-          className="font-regular uppercase xl:w-full hover:underline lg:mr-2 tour-help"
+          className="font-regular uppercase xl:w-full hover:opacity-50 text-darkCustom sm:mr-2 tour-help"
         >
           <a
             href="https://terramatchsupport.zendesk.com/"
@@ -74,7 +74,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
               className="flex items-center"
             >
               <span
-                className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+                className="whitespace-nowrap text-darkCustom text-14-light"
                 data-testid="txt"
               >
                 Help Center
@@ -84,10 +84,10 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
         </div>
       </div>
       <div
-        className="hidden h-4 w-[1px] bg-neutral-500 lg:mx-2 lg:block"
+        className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block"
       />
       <div
-        className="font-regular uppercase xl:w-full hover:underline"
+        className="font-regular uppercase xl:w-full hover:opacity-50"
       >
         <a
           href="/"
@@ -107,7 +107,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
               }
             />
             <span
-              className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+              className="whitespace-nowrap text-darkCustom text-14-light"
               data-testid="txt"
             >
               Logout
@@ -116,14 +116,14 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
         </a>
       </div>
       <div
-        className="hidden lg:block relative w-fit"
+        className="hidden sm:block relative w-fit"
         data-headlessui-state=""
       >
         <button
           aria-expanded={false}
           className="flex items-center justify-between p-2"
           data-headlessui-state=""
-          id="headlessui-popover-button-:r52:"
+          id="headlessui-popover-button-:r5t:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -139,7 +139,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
             }
           />
           <span
-            className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+            className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
           >
             English
           </span>
@@ -155,7 +155,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
       </div>
     </div>
     <button
-      className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block lg:hidden"
+      className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block sm:hidden"
       disabled={false}
       onClick={[Function]}
     >
@@ -174,10 +174,10 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
 
 exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
 <header
-  className="sticky top-0 z-50 flex w-full flex-col justify-center border-b-4 border-primary bg-white px-4 lg:flex-row"
+  className="sticky top-0 z-50 flex w-full flex-col justify-center bg-white px-4 sm:flex-row"
 >
   <section
-    className="mx-auto w-full max-w-[1218px] flex h-[70px] items-center justify-between"
+    className="mx-auto w-full max-w-[82vw] flex h-[70px] items-center justify-between"
   >
     <div
       style={
@@ -188,20 +188,20 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
       }
     />
     <div
-      className="hidden items-center gap-8 lg:flex"
+      className="hidden items-center gap-8 sm:flex"
     >
       <div
         className="absolute top-4 left-[50%] translate-x-[-50%]"
       >
         <div
-          className="block lg:hidden relative w-fit"
+          className="block sm:hidden relative w-fit"
           data-headlessui-state=""
         >
           <button
             aria-expanded={false}
             className="flex items-center justify-between p-2"
             data-headlessui-state=""
-            id="headlessui-popover-button-:r57:"
+            id="headlessui-popover-button-:r62:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -217,7 +217,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
               }
             />
             <span
-              className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
             >
               English
             </span>
@@ -234,7 +234,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
       </div>
       <div>
         <div
-          className="font-regular uppercase xl:w-full hover:underline lg:mr-2"
+          className="font-regular uppercase xl:w-full hover:opacity-50 text-darkCustom sm:mr-2"
         >
           <a
             href="/"
@@ -246,7 +246,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
               className="flex items-center"
             >
               <span
-                className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+                className="whitespace-nowrap text-darkCustom text-14-light"
                 data-testid="txt"
               >
                 Home
@@ -257,7 +257,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
       </div>
       <div>
         <div
-          className="font-regular uppercase xl:w-full hover:underline lg:mr-2"
+          className="font-regular uppercase xl:w-full hover:opacity-50 text-darkCustom sm:mr-2"
         >
           <a
             href="https://terramatchsupport.zendesk.com/"
@@ -269,7 +269,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
               className="flex items-center"
             >
               <span
-                className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+                className="whitespace-nowrap text-darkCustom text-14-light"
                 data-testid="txt"
               >
                 Support
@@ -279,10 +279,10 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
         </div>
       </div>
       <div
-        className="hidden h-4 w-[1px] bg-neutral-500 lg:mx-2 lg:block"
+        className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block"
       />
       <div
-        className="font-regular uppercase xl:w-full hover:underline"
+        className="font-regular uppercase xl:w-full hover:opacity-50"
       >
         <a
           href="/auth/login"
@@ -302,7 +302,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
               }
             />
             <span
-              className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
+              className="whitespace-nowrap text-darkCustom text-14-light"
               data-testid="txt"
             >
               Sign in
@@ -311,14 +311,14 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
         </a>
       </div>
       <div
-        className="hidden lg:block relative w-fit"
+        className="hidden sm:block relative w-fit"
         data-headlessui-state=""
       >
         <button
           aria-expanded={false}
           className="flex items-center justify-between p-2"
           data-headlessui-state=""
-          id="headlessui-popover-button-:r5c:"
+          id="headlessui-popover-button-:r67:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -334,7 +334,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
             }
           />
           <span
-            className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+            className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
           >
             English
           </span>
@@ -350,7 +350,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
       </div>
     </div>
     <button
-      className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block lg:hidden"
+      className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block sm:hidden"
       disabled={false}
       onClick={[Function]}
     >

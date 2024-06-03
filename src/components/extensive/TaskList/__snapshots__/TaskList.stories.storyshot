@@ -2,29 +2,32 @@
 
 exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
 <div
-  className="w-full overflow-hidden rounded-xl shadow"
+  className="w-[82vw] max-w-[82vw] overflow-hidden"
 >
   <div
     className="bg-white p-8"
   >
     <p
-      className="mb-2 text-bold-headline-800"
+      className="text-center text-36-bold with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "Get Ready for Funding Opportunities",
+        }
+      }
       data-testid="txt"
-    >
-      Get Ready for Funding Opportunities
-    </p>
+    />
     <p
-      className="text-light-subtitle-400"
+      className="mt-2 text-center text-16"
       data-testid="txt"
     >
       Keep your information updated to have more chances of having a successful application.
     </p>
   </div>
   <div
-    className="flex flex-col gap-8 bg-taskList bg-cover bg-no-repeat p-8 pb-10"
+    className="flex flex-col gap-8 bg-no-repeat pt-8 pb-10"
   >
     <div
-      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-5 shadow  border-neutral-200 bg-white"
+      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-12  border-neutral-200 bg-white"
     >
       <div
         className="flex min-w-0 items-center gap-4"
@@ -45,7 +48,7 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
             Organizational Information
           </p>
           <p
-            className="text-light-body-300 with-inner-html"
+            className="text-body-400 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Keep your profile updated to have more chances of having a successful application. ",
@@ -55,19 +58,23 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
           />
         </div>
       </div>
-      <a
-        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
-        href="/"
+      <div
+        className="w-[148px]"
       >
-        <span
-          className="text-bold-caption-200 pt-0.75 leading-3"
+        <a
+          className="h-fit py-4 bg-primary-200 rounded-lg flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full flex-1"
+          href="/"
         >
-          View
-        </span>
-      </a>
+          <span
+            className="flex items-center font-inter font-bold text-16 leading-snug tracking-tighter uppercase text-primary"
+          >
+            View
+          </span>
+        </a>
+      </div>
     </div>
     <div
-      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-5 shadow  border-neutral-200 bg-white"
+      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-12  border-neutral-200 bg-white"
     >
       <div
         className="flex min-w-0 items-center gap-4"
@@ -88,7 +95,7 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
             Pitches
           </p>
           <p
-            className="text-light-body-300 with-inner-html"
+            className="text-body-400 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Start a pitch or edit your pitches to apply for funding opportunities. To go to create a pitch, manage your pitches/funding applications, tap on \\"view\\".",
@@ -98,16 +105,20 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
           />
         </div>
       </div>
-      <a
-        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
-        href="/"
+      <div
+        className="w-[148px]"
       >
-        <span
-          className="text-bold-caption-200 pt-0.75 leading-3"
+        <a
+          className="h-fit py-4 bg-primary-200 rounded-lg flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full flex-1"
+          href="/"
         >
-          View
-        </span>
-      </a>
+          <span
+            className="flex items-center font-inter font-bold text-16 leading-snug tracking-tighter uppercase text-primary"
+          >
+            View
+          </span>
+        </a>
+      </div>
     </div>
   </div>
 </div>

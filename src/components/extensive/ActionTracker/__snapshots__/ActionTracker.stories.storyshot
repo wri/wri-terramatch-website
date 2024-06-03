@@ -7,8 +7,8 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
   <div
     style={
       Object {
-        "height": 36,
-        "width": 36,
+        "height": undefined,
+        "width": 24,
       }
     }
   />
@@ -19,7 +19,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
     A title
   </p>
   <ul
-    className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4"
+    className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4 wide:p-6"
   >
     <li>
       <a
@@ -31,7 +31,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 1"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -54,7 +54,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Awaiting
@@ -72,10 +72,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             cta
@@ -101,7 +101,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 2"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -124,7 +124,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Edit
@@ -142,10 +142,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             cta
@@ -171,7 +171,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 3"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -194,7 +194,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Error
@@ -212,10 +212,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             cta
@@ -241,7 +241,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 4"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -264,7 +264,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Success
@@ -282,10 +282,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             cta
@@ -311,7 +311,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 5"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -334,7 +334,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Warning
@@ -352,10 +352,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             cta
@@ -382,8 +382,8 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Empty 1
   <div
     style={
       Object {
-        "height": 36,
-        "width": 36,
+        "height": undefined,
+        "width": 24,
       }
     }
   />
@@ -409,10 +409,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Empty 1
       Empty Subtitle
     </p>
     <button
-      className="mt-6 bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content mt-6"
     >
       <span
-        className="text-bold-caption-200 pt-0.75 leading-3"
+        className="flex items-center text-bold-caption-200"
       >
         CTA here
       </span>

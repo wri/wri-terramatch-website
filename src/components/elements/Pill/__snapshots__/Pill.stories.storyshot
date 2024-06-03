@@ -8,7 +8,7 @@ exports[`Storyshots Components/Elements/Pill Default 1`] = `
     className="bg-tertiary flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       Pill children
@@ -25,7 +25,7 @@ exports[`Storyshots Components/Elements/Pill Error 1`] = `
     className="bg-error-200 flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       Error
@@ -42,7 +42,7 @@ exports[`Storyshots Components/Elements/Pill Neutral 1`] = `
     className="bg-neutral-200 flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       Neutral
@@ -59,7 +59,7 @@ exports[`Storyshots Components/Elements/Pill Primary 1`] = `
     className="bg-primary-200 flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       Primary
@@ -76,7 +76,7 @@ exports[`Storyshots Components/Elements/Pill Secondary 1`] = `
     className="bg-secondary-200 flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       Secondary
@@ -93,7 +93,7 @@ exports[`Storyshots Components/Elements/Pill Success 1`] = `
     className="bg-success-200 flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       success
@@ -110,7 +110,7 @@ exports[`Storyshots Components/Elements/Pill Tertiary 1`] = `
     className="bg-tertiary-200 flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
   >
     <p
-      className="text-black mt-[3px] text-bold-caption-200"
+      className="text-black flex h-fit items-center text-bold-caption-200"
       data-testid="txt"
     >
       Tertiary

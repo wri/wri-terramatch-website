@@ -7,26 +7,26 @@ exports[`Storyshots Components/Elements/Inputs/Select Default 1`] = `
   <label
     className="mr-2 inline uppercase text-bold-body-300"
     data-testid="txt"
-    htmlFor=":r1j:"
+    htmlFor=":r1n:"
   >
     Select label 
   </label>
   <p
-    className="text-light-body-300 with-inner-html"
+    className="text-body-400 with-inner-html"
     dangerouslySetInnerHTML={
       Object {
         "__html": "Select description",
       }
     }
     data-testid="txt"
-    id=":r1j:-description"
+    id=":r1n:-description"
   />
   <div
     className="space-y-3"
   >
     <label
       className="flex items-center flex-row-reverse justify-end gap-3"
-      htmlFor=":r1k:"
+      htmlFor=":r1o:"
     >
       <p
         className="text-light-caption-200"
@@ -37,84 +37,8 @@ exports[`Storyshots Components/Elements/Inputs/Select Default 1`] = `
       <input
         checked={false}
         className="flex-row-reverse justify-end gap-3"
-        id=":r1k:"
-        label="Option 1"
-        onClick={[Function]}
-        type="radio"
-      />
-    </label>
-    <label
-      className="flex items-center flex-row-reverse justify-end gap-3"
-      htmlFor=":r1l:"
-    >
-      <p
-        className="text-light-caption-200"
-        data-testid="txt"
-      >
-        Option 2
-      </p>
-      <input
-        checked={false}
-        className="flex-row-reverse justify-end gap-3"
-        id=":r1l:"
-        label="Option 2"
-        onClick={[Function]}
-        type="radio"
-      />
-    </label>
-    <label
-      className="flex items-center flex-row-reverse justify-end gap-3"
-      htmlFor=":r1m:"
-    >
-      <p
-        className="text-light-caption-200"
-        data-testid="txt"
-      >
-        Option 3
-      </p>
-      <input
-        checked={false}
-        className="flex-row-reverse justify-end gap-3"
-        id=":r1m:"
-        label="Option 3"
-        onClick={[Function]}
-        type="radio"
-      />
-    </label>
-    <label
-      className="flex items-center flex-row-reverse justify-end gap-3"
-      htmlFor=":r1n:"
-    >
-      <p
-        className="text-light-caption-200"
-        data-testid="txt"
-      >
-        Option 4
-      </p>
-      <input
-        checked={false}
-        className="flex-row-reverse justify-end gap-3"
-        id=":r1n:"
-        label="Option 4"
-        onClick={[Function]}
-        type="radio"
-      />
-    </label>
-    <label
-      className="flex items-center flex-row-reverse justify-end gap-3"
-      htmlFor=":r1o:"
-    >
-      <p
-        className="text-light-caption-200"
-        data-testid="txt"
-      >
-        Option 5
-      </p>
-      <input
-        checked={false}
-        className="flex-row-reverse justify-end gap-3"
         id=":r1o:"
-        label="Option 5"
+        label="Option 1"
         onClick={[Function]}
         type="radio"
       />
@@ -127,13 +51,13 @@ exports[`Storyshots Components/Elements/Inputs/Select Default 1`] = `
         className="text-light-caption-200"
         data-testid="txt"
       >
-        Option 6
+        Option 2
       </p>
       <input
         checked={false}
         className="flex-row-reverse justify-end gap-3"
         id=":r1p:"
-        label="Option 6"
+        label="Option 2"
         onClick={[Function]}
         type="radio"
       />
@@ -146,13 +70,13 @@ exports[`Storyshots Components/Elements/Inputs/Select Default 1`] = `
         className="text-light-caption-200"
         data-testid="txt"
       >
-        Option 7
+        Option 3
       </p>
       <input
         checked={false}
         className="flex-row-reverse justify-end gap-3"
         id=":r1q:"
-        label="Option 7"
+        label="Option 3"
         onClick={[Function]}
         type="radio"
       />
@@ -165,13 +89,13 @@ exports[`Storyshots Components/Elements/Inputs/Select Default 1`] = `
         className="text-light-caption-200"
         data-testid="txt"
       >
-        Option 8
+        Option 4
       </p>
       <input
         checked={false}
         className="flex-row-reverse justify-end gap-3"
         id=":r1r:"
-        label="Option 8"
+        label="Option 4"
         onClick={[Function]}
         type="radio"
       />
@@ -184,12 +108,88 @@ exports[`Storyshots Components/Elements/Inputs/Select Default 1`] = `
         className="text-light-caption-200"
         data-testid="txt"
       >
-        Option 9
+        Option 5
       </p>
       <input
         checked={false}
         className="flex-row-reverse justify-end gap-3"
         id=":r1s:"
+        label="Option 5"
+        onClick={[Function]}
+        type="radio"
+      />
+    </label>
+    <label
+      className="flex items-center flex-row-reverse justify-end gap-3"
+      htmlFor=":r1t:"
+    >
+      <p
+        className="text-light-caption-200"
+        data-testid="txt"
+      >
+        Option 6
+      </p>
+      <input
+        checked={false}
+        className="flex-row-reverse justify-end gap-3"
+        id=":r1t:"
+        label="Option 6"
+        onClick={[Function]}
+        type="radio"
+      />
+    </label>
+    <label
+      className="flex items-center flex-row-reverse justify-end gap-3"
+      htmlFor=":r1u:"
+    >
+      <p
+        className="text-light-caption-200"
+        data-testid="txt"
+      >
+        Option 7
+      </p>
+      <input
+        checked={false}
+        className="flex-row-reverse justify-end gap-3"
+        id=":r1u:"
+        label="Option 7"
+        onClick={[Function]}
+        type="radio"
+      />
+    </label>
+    <label
+      className="flex items-center flex-row-reverse justify-end gap-3"
+      htmlFor=":r1v:"
+    >
+      <p
+        className="text-light-caption-200"
+        data-testid="txt"
+      >
+        Option 8
+      </p>
+      <input
+        checked={false}
+        className="flex-row-reverse justify-end gap-3"
+        id=":r1v:"
+        label="Option 8"
+        onClick={[Function]}
+        type="radio"
+      />
+    </label>
+    <label
+      className="flex items-center flex-row-reverse justify-end gap-3"
+      htmlFor=":r20:"
+    >
+      <p
+        className="text-light-caption-200"
+        data-testid="txt"
+      >
+        Option 9
+      </p>
+      <input
+        checked={false}
+        className="flex-row-reverse justify-end gap-3"
+        id=":r20:"
         label="Option 9"
         onClick={[Function]}
         type="radio"
