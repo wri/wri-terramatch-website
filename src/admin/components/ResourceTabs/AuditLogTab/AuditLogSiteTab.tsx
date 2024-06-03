@@ -7,8 +7,8 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import {
-  fetchGetV2AdminSitePolygonUUID,
-  fetchPutV2AdminSitePolygonUUID,
+  fetchGetV2SitePolygonUUID,
+  fetchPutV2SitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -55,7 +55,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [polygonList, setPolygonList] = useState<any[]>([]);
-  const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
+  const mutateSitePolygons = fetchPutV2SitePolygonUUID;
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
@@ -84,7 +84,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const loadSitePolygonList = async () => {
     console.log("loadSitePolygonList", record.uuid);
-    const res = await fetchGetV2AdminSitePolygonUUID({
+    const res = await fetchGetV2SitePolygonUUID({
       pathParams: {
         uuid: record.uuid
       }

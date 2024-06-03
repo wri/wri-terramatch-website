@@ -7,8 +7,8 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import {
   fetchGetV2AuditStatusId,
   fetchGetV2ProjectsUUIDSites,
-  fetchPutV2AdminSitePolygonUUID,
   fetchPutV2AdminSitesUUID,
+  fetchPutV2SitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -115,7 +115,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [siteList, setSiteList] = useState<any[]>([]);
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [polygonList, setPolygonList] = useState<any[]>([]);
-  const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
+  const mutateSitePolygons = fetchPutV2SitePolygonUUID;
   const mutateSite = fetchPutV2AdminSitesUUID;
 
   const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({

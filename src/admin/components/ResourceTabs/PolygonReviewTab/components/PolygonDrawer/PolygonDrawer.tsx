@@ -4,12 +4,12 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
-import Status from "@/components/elements/Status/Status";
+import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundValidationPolygon,
-  fetchPutV2AdminSitePolygonUUID,
+  fetchPutV2SitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus,
   useGetV2TerrafundValidationCriteriaData
@@ -70,7 +70,7 @@ const PolygonDrawer = ({
   const selectedPolygon = (sitePolygonData as any as Array<SitePolygon>)?.find(
     (item: SitePolygon) => item?.poly_id === polygonSelected
   );
-  const mutateSitePolygons = fetchPutV2AdminSitePolygonUUID;
+  const mutateSitePolygons = fetchPutV2SitePolygonUUID;
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
@@ -178,19 +178,7 @@ const PolygonDrawer = ({
                 Status:
               </Text>
               <When condition={selectedPolygon?.status}>
-                <Status
-                  className="w-[35%]"
-                  status={
-                    selectedPolygon?.status as
-                      | "draft"
-                      | "submitted"
-                      | "approved"
-                      | "under-review"
-                      | "needs-more-information"
-                      | "planting-in-progress"
-                      | "awaiting-approval"
-                  }
-                />
+                <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
               </When>
             </div>
             <StatusDisplay

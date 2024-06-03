@@ -9,7 +9,7 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "@/components/eleme
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
-import Status from "@/components/elements/Status/Status";
+import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { fetchGetV2TerrafundPolygonBboxUuid, fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
@@ -88,7 +88,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
             <div className="flex items-center">
               <When condition={status}>
-                <Status status={status ? status : "draft"} />
+                <Status status={(status ? status : "draft") as StatusEnum} />
               </When>
             </div>
           </header>

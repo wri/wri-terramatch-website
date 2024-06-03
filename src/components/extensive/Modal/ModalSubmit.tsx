@@ -1,15 +1,16 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
-import Status from "@/components/elements/Status/Status";
+import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { fetchGetV2SitePolygonUUID } from "@/generated/apiComponents";
+import { SitePolygonResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBaseProps, ModalProps } from "./Modal";
-import { dataSubmitPolygons } from "./ModalContent/MockedData";
 
 export const ModalBaseSubmit: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
   return (
@@ -31,6 +32,7 @@ export interface ModalSubmitProps extends ModalProps {
   toogleButton?: boolean;
   status?: "under-review" | "approved" | "draft" | "submitted";
   onCLose?: () => void;
+  site: any;
 }
 
 const ModalSubmit: FC<ModalSubmitProps> = ({
@@ -45,15 +47,36 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   children,
   status,
   onCLose,
+  site,
   ...rest
 }) => {
+  const [polygonList, setPolygonList] = useState<SitePolygonResponse[]>([]);
+
+  const loadPolygonList = async () => {
+    const res = await fetchGetV2SitePolygonUUID({
+      pathParams: {
+        uuid: site.uuid
+      }
+    });
+    const _polygonList = (res as { data: SitePolygonResponse[] }).data;
+    setPolygonList(_polygonList);
+  };
+
+  useEffect(() => {
+    loadPolygonList();
+  }, []);
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
           <When condition={status}>
-            <Status status={status ? status : "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
+            <Status
+              status={(status ? status : "draft") as StatusEnum}
+              className="rounded px-2 py-[2px]"
+              textVariant="text-14-bold"
+            />
           </When>
           <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
@@ -89,13 +112,13 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               Submit
             </Text>
           </header>
-          {dataSubmitPolygons.map(item => (
-            <div key={item.id} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
+          {polygonList.map(polygon => (
+            <div key={polygon.uuid} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
-                {item.name}
+                {polygon.poly_name}
               </Text>
               <div className="flex flex-1 items-center justify-center">
-                <Status status={item.status} />
+                <Status status={polygon.status as StatusEnum} />
               </div>
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox name={""} />
