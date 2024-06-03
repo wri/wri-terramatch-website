@@ -6,11 +6,11 @@ interface ListActionsCreateProps {
   onExport?: () => void;
 }
 
-const ListActionsCreate = (props: ListActionsCreateProps) => (
+const ListActionsCreate = ({ onExport }: ListActionsCreateProps) => (
   <TopToolbar>
     <CreateButton className="filter-button-page-admin" />
-    <When condition={!!props.onExport}>
-      <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
+    <When condition={!!onExport}>
+      <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={onExport} />
     </When>
   </TopToolbar>
 );
