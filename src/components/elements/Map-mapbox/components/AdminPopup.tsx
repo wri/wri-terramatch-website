@@ -5,12 +5,13 @@ import TooltipMap from "../../TooltipMap/TooltipMap";
 const client = new QueryClient();
 
 export const AdminPopup = (event: any) => {
-  const { feature, popup, setPolygonFromMap } = event;
+  const { feature, popup, setPolygonFromMap, type } = event;
   const uuidPolygon = feature.properties?.uuid;
   return (
     <QueryClientProvider client={client}>
       <TooltipMap
         polygon={uuidPolygon}
+        type={type}
         setTooltipOpen={() => {
           if (popup) {
             popup.remove();
