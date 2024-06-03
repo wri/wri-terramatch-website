@@ -22,7 +22,10 @@ const HighLevelMetics: FC = () => {
             High Level Metrics
           </Text>
           <When condition={isPPC}>
-            <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx} className="label-field-aside">
+            <Labeled label="Workdays Created (Old Calculation)" sx={inlineLabelSx}>
+              <NumberField source="self_reported_workday_count" emptyText="0" />
+            </Labeled>
+            <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx}>
               <NumberField source="workday_count" emptyText="0" />
             </Labeled>
           </When>

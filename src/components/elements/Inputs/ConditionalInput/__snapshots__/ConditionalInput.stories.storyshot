@@ -54,6 +54,7 @@ Array [
               className="flex flex-row-reverse items-center justify-end gap-3 "
               id=":rl:"
               label="Yes"
+              onChange={[Function]}
               type="radio"
             />
           </label>
@@ -87,6 +88,7 @@ Array [
               className="flex flex-row-reverse items-center justify-end gap-3 "
               id=":rn:"
               label="No"
+              onChange={[Function]}
               type="radio"
             />
           </label>

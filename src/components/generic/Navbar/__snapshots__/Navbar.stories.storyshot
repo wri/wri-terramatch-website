@@ -8,6 +8,14 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
     className="mx-auto w-full max-w-[1218px] flex h-[70px] items-center justify-between"
   >
     <div
+      style={
+        Object {
+          "height": 30,
+          "width": 108,
+        }
+      }
+    />
+    <div
       className="hidden items-center gap-8 lg:flex"
     >
       <div
@@ -28,11 +36,27 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
             onMouseDown={[Function]}
             type="button"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
+              }
+            />
             <span
               className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
             >
               English
             </span>
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
+              }
+            />
           </button>
         </div>
       </div>
@@ -74,6 +98,14 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
           <div
             className="flex items-center"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
+              }
+            />
             <span
               className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
               data-testid="txt"
@@ -98,11 +130,27 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
           onMouseDown={[Function]}
           type="button"
         >
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 16,
+              }
+            }
+          />
           <span
             className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
           >
             English
           </span>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 8,
+              }
+            }
+          />
         </button>
       </div>
     </div>
@@ -110,7 +158,16 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
       className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block lg:hidden"
       disabled={false}
       onClick={[Function]}
-    />
+    >
+      <div
+        style={
+          Object {
+            "height": 16,
+            "width": 28,
+          }
+        }
+      />
+    </button>
   </section>
 </header>
 `;
@@ -122,6 +179,14 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
   <section
     className="mx-auto w-full max-w-[1218px] flex h-[70px] items-center justify-between"
   >
+    <div
+      style={
+        Object {
+          "height": 30,
+          "width": 108,
+        }
+      }
+    />
     <div
       className="hidden items-center gap-8 lg:flex"
     >
@@ -143,11 +208,27 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
             onMouseDown={[Function]}
             type="button"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
+              }
+            />
             <span
               className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
             >
               English
             </span>
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
+              }
+            />
           </button>
         </div>
       </div>
@@ -212,6 +293,14 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
           <div
             className="flex items-center"
           >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
+              }
+            />
             <span
               className="whitespace-nowrap text-neutral-900 lg:text-body-300 text-heading-400"
               data-testid="txt"
@@ -236,11 +325,27 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
           onMouseDown={[Function]}
           type="button"
         >
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 16,
+              }
+            }
+          />
           <span
             className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
           >
             English
           </span>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 8,
+              }
+            }
+          />
         </button>
       </div>
     </div>
@@ -248,7 +353,16 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
       className="flex items-center justify-center rounded-full hover:bg-opacity-60 tour-menu-button block lg:hidden"
       disabled={false}
       onClick={[Function]}
-    />
+    >
+      <div
+        style={
+          Object {
+            "height": 16,
+            "width": 28,
+          }
+        }
+      />
+    </button>
   </section>
 </header>
 `;

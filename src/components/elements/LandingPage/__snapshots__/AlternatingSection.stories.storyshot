@@ -44,7 +44,7 @@ exports[`Storyshots Components/Elements/LandingPage/AlternatingSection Left 1`] 
     className="flex justify-center bg-background md:w-[50%]"
   >
     <div
-      className="relative h-[278px] w-full md:h-[472px]"
+      className="relative h-[278px] w-full md:h-[510px]"
     >
       <img
         alt="image"
@@ -122,7 +122,7 @@ exports[`Storyshots Components/Elements/LandingPage/AlternatingSection Right 1`]
     className="flex justify-center bg-background md:w-[50%]"
   >
     <div
-      className="relative h-[278px] w-full md:h-[472px]"
+      className="relative h-[278px] w-full md:h-[510px]"
     >
       <img
         alt="image"

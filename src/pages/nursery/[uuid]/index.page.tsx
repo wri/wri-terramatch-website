@@ -96,7 +96,7 @@ const NurseryDetailPage = () => {
           nursery.framework_key === "ppc"
             ? t("Priceless Planet Coalition")
             : nursery.framework_key === "hbf"
-            ? "HBF"
+            ? "Harit Bharat Fund"
             : t("TerraFund")
         ]}
         hasBackButton={false}

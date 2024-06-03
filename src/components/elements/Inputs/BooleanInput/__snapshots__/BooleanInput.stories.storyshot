@@ -53,6 +53,7 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
             className="flex flex-row-reverse items-center justify-end gap-3 "
             id=":re:"
             label="Yes"
+            onChange={[Function]}
             type="radio"
           />
         </label>
@@ -86,6 +87,7 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
             className="flex flex-row-reverse items-center justify-end gap-3 "
             id=":rg:"
             label="No"
+            onChange={[Function]}
             type="radio"
           />
         </label>
