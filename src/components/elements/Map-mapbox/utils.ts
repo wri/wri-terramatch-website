@@ -8,7 +8,7 @@ import { SitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { BBox, FeatureCollection } from "./GeoJSON";
-import type { LayerType, LayerWithStyle } from "./Map.d";
+import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 
 const GEOSERVER = "https://geoserver-prod.wri-restoration-marketplace-api.com";
 
@@ -116,7 +116,8 @@ const handleLayerClick = (
   popupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonData | undefined
+  sitePolygonData: SitePolygonData | undefined,
+  type: TooltipType
 ) => {
   removePopups();
   const { lng, lat } = e.lngLat;
@@ -125,7 +126,7 @@ const handleLayerClick = (
   let popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
-  root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, sitePolygonData }));
+  root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, sitePolygonData, type }));
 
   popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
 
@@ -181,11 +182,12 @@ export const addPopupsToMap = (
   map: mapboxgl.Map,
   popupComponent: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonData | undefined
+  sitePolygonData: SitePolygonData | undefined,
+  type: TooltipType
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
-      addPopupToLayer(map, popupComponent, layer, setPolygonFromMap, sitePolygonData);
+      addPopupToLayer(map, popupComponent, layer, setPolygonFromMap, sitePolygonData, type);
     });
   }
 };
@@ -195,7 +197,8 @@ export const addPopupToLayer = (
   popupComponent: any,
   layer: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonData | undefined
+  sitePolygonData: SitePolygonData | undefined,
+  type: TooltipType
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -206,7 +209,7 @@ export const addPopupToLayer = (
 
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) =>
-        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData)
+        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData, type)
       );
     });
   }

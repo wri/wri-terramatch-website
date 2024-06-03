@@ -15,11 +15,12 @@ import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGro
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { SitePolygonData, useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { AdminPopup } from "./components/AdminPopup";
+import type { TooltipType } from "./Map.d";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -77,6 +78,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showPopups?: boolean;
   showLegend?: boolean;
   mapFunctions?: any;
+  TooltipType?: TooltipType;
+  sitePolygonData?: SitePolygonData;
 }
 
 export const MapContainer = ({
@@ -100,13 +103,13 @@ export const MapContainer = ({
   showPopups = false,
   showLegend = false,
   mapFunctions,
+  TooltipType = "view",
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
-  const sitePolygonData = context?.sitePolygonData;
   const { isUserDrawingEnabled } = isUserDrawing
     ? { isUserDrawingEnabled: isUserDrawing }
     : context || { isUserDrawingEnabled: false };
@@ -143,7 +146,7 @@ export const MapContainer = ({
       const currentMap = map.current;
 
       map.current.on("load", () => {
-        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData);
+        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, TooltipType);
       });
     }
   }, [styleLoaded, sitePolygonData]);
