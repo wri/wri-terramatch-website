@@ -1,0 +1,427 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
+<div
+  className="flex items-center justify-center bg-primary-400 p-8"
+>
+  <div
+    className="margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white"
+  >
+    <header
+      className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5"
+    >
+      <div
+        style={
+          Object {
+            "height": 30,
+            "width": 108,
+          }
+        }
+      />
+      <div
+        className="flex items-center"
+      >
+        <button
+          className="ml-2 rounded p-1 hover:bg-grey-800"
+        >
+          <div
+            style={
+              Object {
+                "height": 16,
+                "width": 16,
+              }
+            }
+          />
+        </button>
+      </div>
+    </header>
+    <div
+      className="max-h-[100%] w-full overflow-auto px-8 py-8"
+    >
+      <div
+        className="flex items-center justify-between"
+      >
+        <p
+          className="text-24-bold"
+          data-testid="txt"
+        >
+          Submit Polygons
+        </p>
+      </div>
+      <div
+        className="mt-1 mb-4 text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Project Developers may submit one or all polygons for review.",
+          }
+        }
+        data-testid="txt"
+      />
+      <div
+        className="mb-6 flex flex-col rounded-lg border border-grey-750"
+      >
+        <header
+          className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Name
+          </p>
+          <p
+            className="flex flex-1 items-center justify-center text-12"
+            data-testid="txt"
+          >
+            Status
+          </p>
+          <p
+            className="flex flex-1 items-center justify-center text-12"
+            data-testid="txt"
+          >
+            Submit
+          </p>
+        </header>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Aerobic-agroforestry
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-secondary-200"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-green-500 text-12-semibold"
+                data-testid="txt"
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                Approved
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3d:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Arcos
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-tertiary-50"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-tertiary-600 text-12-semibold"
+                data-testid="txt"
+              >
+                Needs More Information
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3e:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Bccp
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                data-testid="txt"
+              >
+                Submitted
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3f:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Blue-forest
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-secondary-200"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-green-500 text-12-semibold"
+                data-testid="txt"
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                Approved
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3g:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Durrell
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                data-testid="txt"
+              >
+                Submitted
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3h:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Ecofix
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                data-testid="txt"
+              >
+                Submitted
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3i:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Env-coffee-forest-forum
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                data-testid="txt"
+              >
+                Submitted
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3j:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Env-found-afr-sl
+          </p>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-tertiary-50"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-tertiary-600 text-12-semibold"
+                data-testid="txt"
+              >
+                Needs More Information
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center"
+          >
+            <div>
+              <input
+                className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+                id=":r3k:"
+                name=""
+                type="checkbox"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex w-full justify-end gap-3 py-4 px-8"
+    >
+      <button
+        className="bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-8 py-3"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+        >
+          <p
+            className="capitalize text-14-bold"
+            data-testid="txt"
+          >
+            Cancel
+          </p>
+        </span>
+      </button>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 !text-white rounded-md uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-8 py-3"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          <p
+            className="capitalize text-white text-14-bold"
+            data-testid="txt"
+          >
+            Next
+          </p>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

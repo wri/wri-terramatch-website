@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Modal/ModalWithClose Default 1`] = `
+<div
+  className="flex items-center justify-center bg-primary-400 p-8"
+>
+  <div
+    className="margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-8"
+  >
+    <div
+      className="mb-6 flex w-full items-center justify-between"
+    >
+      <p
+        className="whitespace-nowrap !font-[900] text-24-bold"
+        data-testid="txt"
+      >
+        Are you sure?
+      </p>
+      <button
+        className="ml-2 rounded p-1 hover:bg-grey-800"
+        onClick={[Function]}
+      >
+        <div
+          style={
+            Object {
+              "height": 16,
+              "width": 16,
+            }
+          }
+        />
+      </button>
+    </div>
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "minHeight": 40,
+          "width": 40,
+        }
+      }
+    />
+    <p
+      className="mt-2 text-center text-light-body-300 with-inner-html"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Applications' section.Would you like to close this form and continue later?",
+        }
+      }
+      data-testid="txt"
+    />
+    <div
+      className="mt-6 flex w-full gap-3 justify-between"
+    >
+      <button
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          Cancel
+        </span>
+      </button>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          Close and continue later
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
