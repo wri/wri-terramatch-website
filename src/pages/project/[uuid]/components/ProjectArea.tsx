@@ -100,6 +100,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
             subtitle: t("Created {date}", { date: format(item.created_at) })
           })) || []) as any[]
         }
+        mapFunctions={mapFunctions}
         onSelectItem={setSelected}
         onSearch={setQuery}
         className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8 backdrop-blur-md "

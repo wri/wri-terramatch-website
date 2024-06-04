@@ -7,6 +7,7 @@ import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/M
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+import { fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -19,6 +20,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onSearch: (query: string) => void;
   onLoadMore: () => void;
   emptyText?: string;
+  mapFunctions: any;
 }
 
 const MapSidePanel = ({
@@ -29,6 +31,7 @@ const MapSidePanel = ({
   onSearch,
   onLoadMore,
   emptyText,
+  mapFunctions,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -36,8 +39,39 @@ const MapSidePanel = ({
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState(false);
+  const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
+  const { map } = mapFunctions;
 
+  const flyToPolygonBounds = async (polygonUuid: string) => {
+    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonUuid } });
+    const bounds: any = bbox.bbox;
+    if (!map.current) {
+      return;
+    }
+    map.current.fitBounds(bounds, {
+      padding: 100,
+      linear: false
+    });
+  };
+
+  useEffect(() => {
+    console.log("clickedButton", clickedButton);
+    if (clickedButton === "site") {
+      console.log("Site");
+      setClickedButton("");
+    } else if (clickedButton === "zoomTo") {
+      console.log("Zoom to");
+      console.log(selected);
+      if (selected) {
+        flyToPolygonBounds(selected?.poly_id ?? "");
+      }
+      setClickedButton("");
+    } else if (clickedButton === "download") {
+      console.log("Download");
+      setClickedButton("");
+    }
+  }, [clickedButton, selected]);
   useEffect(() => {
     const handleChange = () => {
       const checked = checkboxRefs.current.some(ref => ref.checked);
@@ -161,6 +195,7 @@ const MapSidePanel = ({
                   setSelected(item);
                   onSelectItem(item);
                 }}
+                setClickedButton={setClickedButton}
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
               />
