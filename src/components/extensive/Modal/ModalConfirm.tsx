@@ -91,7 +91,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
             rows={4}
           />
           <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
-            {charCount}/255 characters
+            {charCount}/255 {t("characters")}
           </div>
         </When>
       </div>
