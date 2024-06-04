@@ -21,9 +21,10 @@ interface ReportingTasksProps {
   site: any;
   label?: string;
   entity?: Entity["entityName"];
+  refresh?: () => void;
 }
 
-const AuditLog = ({ label, entity, site, ...rest }: ReportingTasksProps) => {
+const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: ReportingTasksProps) => {
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
@@ -76,7 +77,7 @@ const AuditLog = ({ label, entity, site, ...rest }: ReportingTasksProps) => {
                       </Text>
                       <Link
                         className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
-                        href={`/project/${site.project.uuid}?tab=audit-log`}
+                        href={`/project/${site?.project?.uuid}?tab=audit-log`}
                       >
                         OPEN PROJECT AUDIT LOG
                       </Link>
@@ -101,6 +102,7 @@ const AuditLog = ({ label, entity, site, ...rest }: ReportingTasksProps) => {
                     refresh={() => {
                       loadEntityList();
                       refetch();
+                      refreshSite && refreshSite();
                     }}
                     record={selected}
                     polygonList={entityListItem}

@@ -20,9 +20,10 @@ interface ReportingTasksProps {
   project: any;
   label?: string;
   entity?: Entity["entityName"];
+  refresh?: () => void;
 }
 
-const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
+const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: ReportingTasksProps) => {
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
@@ -91,6 +92,7 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
                     refresh={() => {
                       loadEntityList();
                       refetch();
+                      refreshProject && refreshProject();
                     }}
                     record={selected}
                     polygonList={entityListItem}

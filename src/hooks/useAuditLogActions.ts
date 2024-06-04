@@ -2,9 +2,9 @@ import { useEffect } from "react";
 
 import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
-  fetchPutV2AdminProjectsUUID,
-  fetchPutV2AdminSitesUUID,
   fetchPutV2SitePolygonUUID,
+  fetchPutV2SiteProjectUUID,
+  fetchPutV2SiteSiteUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -33,13 +33,13 @@ const ReverseButtonStates: { [key: number]: string } = {
 
 const statusActionsMap = {
   [ButtonStates.PROJECTS]: {
-    mutateEntity: fetchPutV2AdminProjectsUUID,
+    mutateEntity: fetchPutV2SiteProjectUUID,
     valuesForStatus: getValueForStatusProject,
     statusLabels: projectStatusLabels,
     entityType: PROJECT
   },
   [ButtonStates.SITE]: {
-    mutateEntity: fetchPutV2AdminSitesUUID,
+    mutateEntity: fetchPutV2SiteSiteUUID,
     valuesForStatus: getValueForStatusSite,
     statusLabels: siteProgressBarStatusLabels,
     entityType: SITE

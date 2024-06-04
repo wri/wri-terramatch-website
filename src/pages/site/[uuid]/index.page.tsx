@@ -35,7 +35,11 @@ const SiteDetailPage = () => {
   const siteUUID = router.query.uuid as string;
   const { openToast } = useToastContext();
 
-  const { data, isLoading } = useGetV2SitesUUID({
+  const {
+    data,
+    isLoading,
+    refetch: refetchSite
+  } = useGetV2SitesUUID({
     pathParams: { uuid: siteUUID }
   });
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
@@ -153,7 +157,7 @@ const SiteDetailPage = () => {
           {
             key: "audit-log",
             title: t("Audit Log"),
-            body: <AuditLog site={site} />
+            body: <AuditLog site={site} refresh={refetchSite} />
           }
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
