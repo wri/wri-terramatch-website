@@ -13,10 +13,9 @@ export interface ComentaryBoxProps {
   lastName: string;
   buttonSendOnBox?: boolean;
   mutate?: any;
-  refresh?: any;
+  refresh?: () => void;
   record?: any;
   entity?: string;
-  attachmentRefetch?: any;
 }
 
 const ComentaryBox = (props: ComentaryBoxProps) => {
@@ -28,6 +27,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
   const [charCount, setCharCount] = useState<number>(0);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [warning, setWarning] = useState<string>("");
 
   const validFileTypes = [
     "application/pdf",
@@ -68,7 +68,6 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
     body.append("entity", entity as string);
     body.append("comment", comment);
     body.append("type", "comment");
-    body.append("attachment", "test");
     files.forEach((element: File, index: number) => {
       body.append(`file[${index}]`, element);
     });
@@ -87,8 +86,7 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           setComment("");
           setError("");
           setFiles([]);
-          props.attachmentRefetch();
-          refresh();
+          refresh && refresh();
           setLoading(false);
         }
       }
@@ -98,6 +96,11 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
   const handleCommentChange = (e: any) => {
     setComment(e.target.value);
     setCharCount(e.target.value.length);
+    if (charCount >= 255) {
+      setWarning("Your comment exceeds 255 characters.");
+    } else {
+      setWarning("");
+    }
   };
 
   return (
@@ -159,8 +162,11 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
           </When>
         </div>
 
-        <div className={`text-nowrap text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
-          {charCount}/255 characters
+        <div className="display-grid">
+          {warning && charCount > 255 && <div className="text-right text-xs text-red">{warning}</div>}
+          <div className={`text-nowrap text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
+            {charCount}/255 characters
+          </div>
         </div>
       </div>
 

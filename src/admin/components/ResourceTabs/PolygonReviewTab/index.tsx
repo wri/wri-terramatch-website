@@ -6,8 +6,9 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import Map from "@/components/elements/Map-mapbox/Map";
-import _MapService from "@/components/elements/Map-mapbox/MapService";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { addSourcesToLayers } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -24,6 +25,8 @@ import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TerrafundPolygonBboxUuid,
+  fetchPostV2TerrafundPolygon,
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
@@ -47,7 +50,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-info";
+  status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
 }
@@ -73,11 +76,19 @@ const PolygonReviewAside: FC<{
   data: IPolygonItem[];
   polygonFromMap: IpolygonFromMap;
   setPolygonFromMap: any;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap }) => {
+  refresh?: () => void;
+  mapFunctions: any;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions }) => {
   switch (type) {
     case "sites":
       return (
-        <SitePolygonReviewAside data={data} polygonFromMap={polygonFromMap} setPolygonFromMap={setPolygonFromMap} />
+        <SitePolygonReviewAside
+          data={data}
+          polygonFromMap={polygonFromMap}
+          setPolygonFromMap={setPolygonFromMap}
+          mapFunctions={mapFunctions}
+          refresh={refresh}
+        />
       );
     default:
       return null;
@@ -91,6 +102,27 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [isUserDrawing, setIsUserDrawing] = useState<boolean>(false);
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+
+  async function storePolygon(geojson: any, record: any) {
+    if (geojson?.length) {
+      const response = await fetchPostV2TerrafundPolygon({
+        body: { geometry: JSON.stringify(geojson[0].geometry) }
+      });
+      const polygonUUID = response.uuid;
+      if (polygonUUID) {
+        const site_id = record.uuid;
+        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
+          body: {},
+          pathParams: { uuid: polygonUUID, siteUuid: site_id }
+        }).then(() => {
+          refetch();
+          setPolygonFromMap({ uuid: polygonUUID, isOpen: true });
+        });
+      }
+    }
+  }
+
+  const mapFunctions = useMap(storePolygon);
 
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<{
     data: SitePolygonsDataResponse;
@@ -142,12 +174,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   const flyToPolygonBounds = async (uuid: string) => {
     const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
     const bboxArray = bbox?.bbox;
-    if (bboxArray) {
+    const { map } = mapFunctions;
+    if (bboxArray && map?.current) {
       const bounds: LngLatBoundsLike = [
         [bboxArray[0], bboxArray[1]],
         [bboxArray[2], bboxArray[3]]
       ];
-      _MapService.map?.fitBounds(bounds, {
+      map.current.fitBounds(bounds, {
         padding: 100,
         linear: false
       });
@@ -162,6 +195,10 @@ const PolygonReviewTab: FC<IProps> = props => {
         if (response && response?.uuid) {
           if (reloadSiteData) {
             reloadSiteData();
+          }
+          const { map } = mapFunctions;
+          if (map?.current) {
+            addSourcesToLayers(map.current, polygonDataMap);
           }
           closeModal();
         }
@@ -505,8 +542,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   </div>
                 </div>
               </div>
-
-              <Map
+              <MapContainer
                 record={record}
                 polygonsData={polygonDataMap}
                 bbox={siteBbox}
@@ -516,6 +552,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                 polygonFromMap={polygonFromMap}
                 isUserDrawing={isUserDrawing}
                 setIsUserDrawing={setIsUserDrawing}
+                showPopups
+                showLegend
+                mapFunctions={mapFunctions}
               />
               <div className="mb-6">
                 <div className="mb-4">
@@ -582,6 +621,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               data={transformedSiteDataForList as IPolygonItem[]}
               polygonFromMap={polygonFromMap}
               setPolygonFromMap={setPolygonFromMap}
+              mapFunctions={mapFunctions}
             />
           </Grid>
         </Grid>

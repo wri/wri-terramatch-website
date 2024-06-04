@@ -21,7 +21,7 @@ const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
           <div>
             <Typography className={LabeledClasses.label}>
               <Text variant="text-14-light" className="capitalize text-grey-700">
-                {entry.title}
+                {entry.title === "Upload Site Boundary" ? "Site Boundary" : entry.title}
               </Text>
             </Typography>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>

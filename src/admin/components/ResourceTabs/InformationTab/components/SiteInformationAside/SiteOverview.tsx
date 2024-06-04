@@ -53,8 +53,8 @@ const SiteOverview: FC = () => {
               </Labeled>
             </Grid>
 
-            <Grid xs={4} item>
-              <Labeled label="Change Request Status">
+            <Grid xs={6} item>
+              <Labeled label="Change Request Status" className="label-field-aside">
                 <TextField source="readable_update_request_status" />
               </Labeled>
             </Grid>

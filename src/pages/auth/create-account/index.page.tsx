@@ -71,14 +71,13 @@ const Page = () => {
               item => (
                 console.log(item),
                 (
-                  <Button
+                  <div
                     key={item.id}
-                    variant="transparent-toggle"
                     onClick={() => {
                       setSelected(item.id);
                       setSelectedTitleOption(item.titleOption);
                     }}
-                    className="h-full w-full"
+                    className="mouse-pointer h-full w-full"
                   >
                     <UserRoleCard
                       selected={selected == item.id && selectedTitleOption == item.titleOption}
@@ -91,7 +90,7 @@ const Page = () => {
                       refContentCard={refContentCard}
                       icon={item.icon}
                     />
-                  </Button>
+                  </div>
                 )
               )
             )}

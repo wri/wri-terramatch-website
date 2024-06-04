@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
-import Map from "@/components/elements/Map-mapbox/Map";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapPolygonPanel from "@/components/elements/MapPolygonPanel/MapPolygonPanel";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -170,7 +170,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           </div>
         </div>
       </When>
-      <Map
+      <MapContainer
         geojson={geoJSON}
         siteData={true}
         imageLayerGeojson={imagesGeoJson}

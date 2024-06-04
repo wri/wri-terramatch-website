@@ -9,19 +9,24 @@ import { useModalContext } from "@/context/modal.provider";
 
 const menuPolygonOptions = [
   {
+    title: "Draft",
+    status: "draft",
+    value: 1
+  },
+  {
     title: "Submitted",
     status: "submitted",
-    value: 1
+    value: 2
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 2
+    value: 3
   },
   {
     title: "Approved",
     status: "approved",
-    value: 3
+    value: 4
   }
 ];
 const menuSiteOptions = [
@@ -78,10 +83,11 @@ export interface StatusProps {
   titleStatus: "Site" | "Project" | "Polygon";
   mutate?: any;
   record?: any;
-  refresh?: any;
+  refresh?: () => void;
   name: any;
-  refetchPolygon?: any;
+  refetchPolygon?: () => void;
   setSelectedPolygon?: any;
+  tab?: string;
 }
 
 const menuOptionsMap = {
@@ -102,7 +108,15 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record, setSelectedPolygon }: StatusProps) => {
+const StatusDisplay = ({
+  titleStatus = "Polygon",
+  mutate,
+  refresh,
+  name,
+  record,
+  setSelectedPolygon,
+  tab
+}: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
@@ -139,9 +153,8 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
         content={contentStatus}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
-          let response;
           try {
-            response = await mutate({
+            const response = await mutate({
               pathParams: { uuid: record?.uuid },
               body: {
                 status: option?.status,
@@ -149,7 +162,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
                 type: "status"
               }
             });
-            if (response.poly_id) {
+            if (response.poly_id && tab != "polygonReview") {
               setSelectedPolygon(response?.poly_id);
             }
             setNotificationStatus({
@@ -167,10 +180,23 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               });
             }, 3000);
           } catch (e) {
-            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            setNotificationStatus({
+              open: true,
+              message: "The request encountered an issue, or the comment exceeds 255 characters.",
+              type: "error",
+              title: "Error!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "error",
+                title: "Error!"
+              });
+            }, 3000);
             console.error(e);
           } finally {
-            refresh();
+            refresh && refresh();
             reloadEntity();
             closeModal;
           }
@@ -214,10 +240,23 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               });
             }, 3000);
           } catch (e) {
-            alert("The request encountered an issue, or the comment exceeds 255 characters.");
+            setNotificationStatus({
+              open: true,
+              message: "The request encountered an issue, or the comment exceeds 255 characters.",
+              type: "error",
+              title: "Error!"
+            });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "error",
+                title: "Error!"
+              });
+            }, 3000);
             console.error(e);
           } finally {
-            refresh();
+            refresh && refresh();
             reloadEntity();
             closeModal;
           }
@@ -233,8 +272,9 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
+            disabled={tab == "polygonReview"}
             variant="semi-black"
-            className="w-full flex-1 whitespace-nowrap"
+            className={`w-full flex-1 whitespace-nowrap ${tab == "polygonReview" ? "opacity-0" : ""}`}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">Change Request</Text>

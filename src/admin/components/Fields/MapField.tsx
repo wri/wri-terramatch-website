@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import { get } from "lodash";
 import { useRecordContext } from "react-admin";
 
-import Map from "@/components/elements/Map-mapbox/Map";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 
 interface MapFieldProps {
   source: string;
@@ -25,7 +25,7 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
   }
 
   return record && projectBoundary ? (
-    <Map geojson={projectBoundary} />
+    <MapContainer geojson={projectBoundary} />
   ) : (
     <Typography component="span" variant="body2">
       {emptyText}

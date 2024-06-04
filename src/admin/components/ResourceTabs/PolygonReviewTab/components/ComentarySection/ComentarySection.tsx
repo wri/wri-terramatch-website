@@ -5,6 +5,7 @@ import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
 import { useGetAuthMe } from "@/generated/apiComponents";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 const ComentarySection = ({
   auditLogData,
@@ -12,14 +13,14 @@ const ComentarySection = ({
   record,
   entity,
   viewCommentsList = true,
-  attachmentRefetch
+  loading = false
 }: {
-  auditLogData?: any;
-  refresh?: any;
+  auditLogData?: AuditStatusResponse[];
+  refresh?: () => void;
   record?: any;
   entity?: "Project" | "SitePolygon" | "Site";
   viewCommentsList?: boolean;
-  attachmentRefetch?: any;
+  loading?: boolean;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
     data: {
@@ -38,29 +39,26 @@ const ComentarySection = ({
         refresh={refresh}
         record={record}
         entity={entity}
-        attachmentRefetch={attachmentRefetch}
       />
       <When condition={viewCommentsList}>
-        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%] overflow-auto">
-          {auditLogData !== null && auditLogData !== undefined ? (
-            auditLogData.length > 0 ? (
-              auditLogData
-                .filter((item: any) => item.type === "comment")
-                .map((item: any) => (
-                  <Comentary
-                    key={item.id}
-                    name={item?.first_name || item.created_by}
-                    lastName={item?.last_name}
-                    date={item.date_created}
-                    comentary={item.comment}
-                    // files={attachment?.data?.filter((attachment: any) => attachment.entity_id == item.id)}
-                  />
-                ))
-            ) : (
-              <></>
-            )
-          ) : (
+        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">
+          {loading ? (
             <Loader />
+          ) : auditLogData && auditLogData.length > 0 ? (
+            auditLogData
+              .filter(item => item.type === "comment")
+              .map((item: any) => (
+                <Comentary
+                  key={item.id}
+                  name={item?.first_name || item.created_by}
+                  lastName={item?.last_name}
+                  date={item.date_created}
+                  comentary={item.comment}
+                  files={item.attachments}
+                />
+              ))
+          ) : (
+            <></>
           )}
         </div>
       </When>
