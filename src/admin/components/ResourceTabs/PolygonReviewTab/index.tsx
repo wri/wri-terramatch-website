@@ -544,7 +544,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 showPopups
                 showLegend
                 mapFunctions={mapFunctions}
-                TooltipType="edit"
+                tooltipType="edit"
                 sitePolygonData={sitePolygonData}
               />
               <div className="mb-6">
