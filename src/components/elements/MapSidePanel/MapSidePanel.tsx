@@ -7,7 +7,7 @@ import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/M
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -55,23 +55,33 @@ const MapSidePanel = ({
     });
   };
 
+  const downloadGeoJsonPolygon = async (polygonUuid: string) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygonUuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `polygon.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     console.log("clickedButton", clickedButton);
     if (clickedButton === "site") {
       console.log("Site");
       setClickedButton("");
     } else if (clickedButton === "zoomTo") {
-      console.log("Zoom to");
-      console.log(selected);
-      if (selected) {
-        flyToPolygonBounds(selected?.poly_id ?? "");
-      }
+      flyToPolygonBounds(selected?.poly_id ?? "");
       setClickedButton("");
     } else if (clickedButton === "download") {
-      console.log("Download");
+      downloadGeoJsonPolygon(selected?.poly_id ?? "");
       setClickedButton("");
     }
   }, [clickedButton, selected]);
+
   useEffect(() => {
     const handleChange = () => {
       const checked = checkboxRefs.current.some(ref => ref.checked);
