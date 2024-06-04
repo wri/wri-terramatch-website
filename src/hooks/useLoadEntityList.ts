@@ -90,13 +90,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
     if (_list.length > 0) {
       if (isFirstLoad.current) {
         isFirstLoad.current = false;
-        setSelected({
-          title: _list[0]?.[nameProperty],
-          uuid: _list[0]?.uuid,
-          value: _list[0]?.uuid,
-          meta: _list[0]?.status,
-          status: _list[0]?.status
-        });
+        setSelected(transformEntityListItem(_list[0]));
       } else {
         const currentSelected = (res as { data: EntityListItem[] }).data.find(item => item?.uuid === selected?.uuid);
         setSelected(transformEntityListItem(currentSelected as EntityListItem));
