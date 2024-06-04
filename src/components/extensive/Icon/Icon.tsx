@@ -151,7 +151,7 @@ export enum IconNames {
   CLICK = "click",
   IC_APPROVED = "ic-approved",
   IC_DRAFT = "ic-draft",
-  IC_NEEDS_MORE_INFO = "ic-needs-more-info",
+  IC_NEEDS_MORE_INFO = "ic_needs-more-info",
   IC_SUBMITTED = "ic-submitted"
 }
 
