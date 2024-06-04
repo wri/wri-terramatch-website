@@ -6,7 +6,7 @@ import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
 import { useGetAuthMe } from "@/generated/apiComponents";
 
-const ComentarySection = ({
+const CommentarySection = ({
   auditLogData,
   refresh,
   record,
@@ -51,7 +51,7 @@ const ComentarySection = ({
                     name={item?.first_name || item.created_by}
                     lastName={item?.last_name}
                     date={item.date_created}
-                    comentary={item.comment}
+                    commentary={item.comment}
                   />
                 ))
             ) : (
@@ -66,4 +66,4 @@ const ComentarySection = ({
   );
 };
 
-export default ComentarySection;
+export default CommentarySection;
