@@ -1,10 +1,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// import Map from "@/components/elements/Map-mapbox/Map";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
-import { fetchGetV2ProjectsUUIDSitePolygons } from "@/generated/apiComponents";
+import { fetchGetV2ProjectsUUIDSitePolygons, fetchGetV2TypeEntity } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 // import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 // import { useJSONParser } from "@/hooks/useJSONParser";
@@ -19,8 +21,44 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const { format } = useDate();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<any>();
+  const [polygonsData, setPolygonsData] = useState<any[]>([]);
+  const [polygonDataMap, setPolygonDataMap] = useState<any>({});
+  const [projectBbox, setProjectBbox] = useState<any[]>([]);
+  const mapFunctions = useMap();
 
   console.warn(selected);
+
+  const getPolygonsData = (uuid: string) => {
+    fetchGetV2TypeEntity({
+      queryParams: {
+        uuid: uuid
+      }
+    }).then(result => {
+      if (result.polygonsData) {
+        setPolygonsData(result.polygonsData);
+        setProjectBbox(result.bbox || []);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (project?.uuid) {
+      getPolygonsData(project.uuid);
+    }
+  }, [project]);
+
+  useEffect(() => {
+    if (polygonsData?.length > 0) {
+      const dataMap = ((polygonsData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
+        if (!acc[data.status]) {
+          acc[data.status] = [];
+        }
+        acc[data.status].push(data.poly_id);
+        return acc;
+      }, {});
+      setPolygonDataMap(dataMap);
+    }
+  }, [polygonsData]);
 
   const { data, fetchNextPage } = useInfiniteQuery<any>({
     queryKey: ["sites", query],
@@ -67,7 +105,15 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
       />
-      {/* <Map geojson={geoJSON} siteData={true} imageLayerGeojson={imagesGeoJson} className="flex-1 rounded-r-lg" /> */}
+      {projectBbox.length > 0 && (
+        <MapContainer
+          mapFunctions={mapFunctions}
+          polygonsData={polygonDataMap}
+          bbox={projectBbox}
+          showPopups
+          className="flex-1 rounded-r-lg"
+        />
+      )}
     </div>
   );
 };
