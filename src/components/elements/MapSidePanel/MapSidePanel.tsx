@@ -156,6 +156,7 @@ const MapSidePanel = ({
                 uuid={item.uuid}
                 title={item.title}
                 subtitle={item.subtitle}
+                status={item.status}
                 onClick={() => {
                   setSelected(item);
                   onSelectItem(item);

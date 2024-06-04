@@ -87,15 +87,16 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   // const imagesGeoJson = useGetImagesGeoJSON("projects", project.uuid);
   // const geoJSON = useJSONParser(selected?.geojson || project.boundary_geojson);
   const sites = usePaginatedResult<any>(data);
+  console.log(sites);
 
   return (
     <div className="flex h-[500px] rounded-lg  text-darkCustom">
       <MapSidePanel
-        title={t("Sites")}
+        title={t("Polygons")}
         items={
-          (sites?.map(item => ({
+          (polygonsData?.map(item => ({
             ...item,
-            title: item.name,
+            title: item.poly_name || "Unnamed Polygon",
             subtitle: t("Created {date}", { date: format(item.created_at) })
           })) || []) as any[]
         }

@@ -149,10 +149,10 @@ export enum IconNames {
   IC_INFO_WHITE = "ic-info-white",
   ERROR_WHITE_BORDER_RED = "error-white-border-red",
   CLICK = "click",
-  IC_APPROVED = "ic-approved",
-  IC_DRAFT = "ic-draft",
-  IC_NEEDS_MORE_INFO = "ic_needs-more-info",
-  IC_SUBMITTED = "ic-submitted"
+  IC_APPROVED = "ic_approved",
+  IC_DRAFT = "ic_draft",
+  IC_NEEDS_MORE_INFORMATION = "ic_needs-more-information",
+  IC_SUBMITTED = "ic_submitted"
 }
 
 export interface IconProps {

@@ -11,6 +11,7 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   uuid: string;
   title: string;
   subtitle: string;
+  status: string;
   isSelected?: boolean;
   refContainer: React.RefObject<HTMLDivElement> | null;
 }
@@ -18,11 +19,14 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
 const MapSidePanelItem = ({
   title,
   subtitle,
+  status,
   isSelected,
   className,
   refContainer,
   ...props
 }: MapSidePanelItemProps) => {
+  let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
+
   const itemsPrimaryMenu = [
     {
       id: "1",
@@ -63,7 +67,10 @@ const MapSidePanelItem = ({
         })}
       >
         <div className="flex items-center gap-2">
-          <Icon name={IconNames.MAP_THUMBNAIL} className="h-11 w-11 rounded-lg bg-neutral-300" />
+          <Icon
+            name={IconNames[imageStatus as keyof typeof IconNames]}
+            className="h-11 w-11 rounded-lg bg-neutral-300"
+          />
           <div className="flex flex-1 flex-col">
             <Text variant="text-14-bold" className="">
               {title}
