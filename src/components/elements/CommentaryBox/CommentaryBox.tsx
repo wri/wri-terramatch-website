@@ -6,7 +6,7 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-export interface ComentaryBoxProps {
+export interface CommentaryBoxProps {
   name: string;
   lastName: string;
   buttonSendOnBox?: boolean;
@@ -16,7 +16,7 @@ export interface ComentaryBoxProps {
   entity?: string;
 }
 
-const ComentaryBox = (props: ComentaryBoxProps) => {
+const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
   const t = useT();
 
@@ -59,4 +59,4 @@ const ComentaryBox = (props: ComentaryBoxProps) => {
   );
 };
 
-export default ComentaryBox;
+export default CommentaryBox;

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { ComentaryBoxProps as Props } from "./CommentaryBox";
+import { CommentaryBoxProps as Props } from "./CommentaryBox";
 import Component from "./CommentaryBox";
 
 const meta: Meta<typeof Component> = {

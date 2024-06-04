@@ -1,17 +1,17 @@
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-export interface ComentaryFilesProps {
+export interface CommentaryFilesProps {
   id: string;
   file: string;
 }
-export interface ComentaryProps {
+export interface CommentaryProps {
   name: string;
   lastName: string;
   date: string;
-  comentary: string;
+  commentary: string;
   status?: "draft" | "submitted";
-  files?: ComentaryFilesProps[];
+  files?: CommentaryFilesProps[];
 }
 
 const statusStyle = {
@@ -19,8 +19,8 @@ const statusStyle = {
   draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" }
 };
 
-const Comentary = (props: ComentaryProps) => {
-  const { name, lastName, date, comentary, files = [], status } = props;
+const Commentary = (props: CommentaryProps) => {
+  const { name, lastName, date, commentary, files = [], status } = props;
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between">
@@ -57,7 +57,7 @@ const Comentary = (props: ComentaryProps) => {
         variant="text-12-light"
         className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-blueCustom-250 opacity-50"
       >
-        {comentary}
+        {commentary}
       </Text>
       <div className="flex flex-wrap gap-2">
         {files.map(file => (
@@ -72,4 +72,4 @@ const Comentary = (props: ComentaryProps) => {
   );
 };
 
-export default Comentary;
+export default Commentary;
