@@ -79,7 +79,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showPopups?: boolean;
   showLegend?: boolean;
   mapFunctions?: any;
-  TooltipType?: TooltipType;
+  tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonsDataResponse;
 }
 
@@ -104,7 +104,7 @@ export const MapContainer = ({
   showPopups = false,
   showLegend = false,
   mapFunctions,
-  TooltipType = "view",
+  tooltipType = "view",
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
@@ -147,7 +147,7 @@ export const MapContainer = ({
       const currentMap = map.current;
 
       map.current.on("load", () => {
-        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, TooltipType);
+        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, tooltipType);
       });
     }
   }, [styleLoaded, sitePolygonData]);
