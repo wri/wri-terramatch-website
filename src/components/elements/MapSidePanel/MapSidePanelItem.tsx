@@ -14,6 +14,7 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   status: string;
   isSelected?: boolean;
   poly_id?: string;
+  site_id?: string;
   setClickedButton: React.Dispatch<React.SetStateAction<string>>;
   refContainer: React.RefObject<HTMLDivElement> | null;
 }
