@@ -139,11 +139,9 @@ function Table<TData extends RowData>({
                           key={header.id}
                           colSpan={header.colSpan}
                           onClick={header.column.getToggleSortingHandler()}
-                          className={classNames(
-                            tw(
-                              `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
-                              header.column.getCanSort() && "cursor-pointer"
-                            )
+                          className={tw(
+                            `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
+                            classNames({ "cursor-pointer": header.column.getCanSort() })
                           )}
                           align="left"
                         >
@@ -164,7 +162,7 @@ function Table<TData extends RowData>({
                                 name={
                                   { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
                                     header.column.getIsSorted() as string
-                                  ] || IconNames.SORT
+                                  ] ?? IconNames.SORT
                                 }
                                 className="ml-2 inline fill-neutral-900"
                                 width={11}

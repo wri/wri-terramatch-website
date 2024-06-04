@@ -1,11 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { has } from "lodash";
 import { FC, useMemo } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import Text from "../Text/Text";
+import { TYPE_CLASSES } from "./constants/baseClasses";
+import { TEXT_CLASSES } from "./constants/textClasses";
 
 export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "success" | "error" | "warning";
@@ -14,34 +17,16 @@ export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 const Notification: FC<NotificationProps> = props => {
-  const { type, message, className, title, ...rest } = props;
+  const { type = "default", message, className, title, ...rest } = props;
   const t = useT();
-  const notificationClasses = useMemo(() => {
-    const baseClasses =
-      "flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)]";
-    switch (type) {
-      case "success":
-        return classNames(baseClasses, "text-bold-body-300 group:text-success-600");
-      case "error":
-        return classNames(baseClasses, "text-bold-body-300 group:text-error-600");
-      case "warning":
-        return classNames(baseClasses, "text-bold-body-300 group:text-tertiary-600");
-      default:
-        return classNames(baseClasses, "text-bold-body-300 group:text-success-600");
-    }
-  }, [type]);
-  const TextClasses = useMemo(() => {
-    switch (type) {
-      case "success":
-        return "text-success-600";
-      case "error":
-        return "text-error-600";
-      case "warning":
-        return "text-tertiary-600";
-      default:
-        return "text-success-600";
-    }
-  }, [type]);
+
+  const textClasses = useMemo(() => (has(TEXT_CLASSES, type) ? TEXT_CLASSES[type] : TEXT_CLASSES.default), [type]);
+
+  const notificationClasses = useMemo(
+    () => (has(TYPE_CLASSES, type) ? TYPE_CLASSES[type] : TYPE_CLASSES.default),
+    [type]
+  );
+
   return (
     <div {...rest} className={classNames(notificationClasses, className)}>
       <div className="mr-2">
@@ -56,7 +41,7 @@ const Notification: FC<NotificationProps> = props => {
         </When>
       </div>
       <div>
-        <Text variant="text-bold-body-300" className={TextClasses}>
+        <Text variant="text-bold-body-300" className={textClasses}>
           {t(title)}
         </Text>
         <Text variant="text-body-200" className="mt-2 !font-primary">

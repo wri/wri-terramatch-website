@@ -65,11 +65,10 @@ const Menu = (props: MenuProps) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
+  }, []);
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // console.log(selectedOption);
   useEffect(() => {
     const hideMenu = () => {
       if (menuContainerRef.current) {
@@ -81,7 +80,7 @@ const Menu = (props: MenuProps) => {
     hideMenu();
 
     return () => {
-      container?.addEventListener("scroll", hideMenu);
+      container?.removeEventListener("scroll", hideMenu);
       window.removeEventListener("scroll", hideMenu);
     };
   }, [container]);
@@ -124,10 +123,7 @@ const Menu = (props: MenuProps) => {
   };
 
   const calculateMenuStyleForLeftHalfTop = () => {
-    if (!menuContainerRef.current) {
-      return {};
-    }
-    if (!menuRef.current) {
+    if (!menuContainerRef.current || !menuRef.current) {
       return {};
     }
     const rect = menuContainerRef.current.getBoundingClientRect();
@@ -189,9 +185,9 @@ const Menu = (props: MenuProps) => {
         >
           {menu?.map(item => (
             <MenuItem
-              MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
+              MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
               selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
-              key={item.id}
+              key={item?.id}
               render={
                 (item?.data?.icon ? (
                   <div className="flex items-center">
@@ -207,14 +203,14 @@ const Menu = (props: MenuProps) => {
                 )) ?? item?.render()
               }
               onClick={() => {
-                if (item.onClick) {
-                  if (item.is_airtable) {
-                    item.onClick(extraData);
+                if (item?.onClick) {
+                  if (item?.is_airtable) {
+                    item?.onClick(extraData);
                   } else {
-                    item.onClick();
+                    item?.onClick();
                   }
                 }
-                if (setSelectedOption) setSelectedOption(item?.country_slug ?? item?.data?.label);
+                setSelectedOption?.(item?.country_slug ?? item?.data?.label);
               }}
             />
           ))}
