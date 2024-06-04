@@ -15,11 +15,12 @@ import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGro
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { SitePolygonData, useSitePolygonData } from "@/context/sitePolygon.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { AdminPopup } from "./components/AdminPopup";
+import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
@@ -68,8 +69,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonChecks?: boolean;
   legend?: LegendItem[];
   centroids?: any;
-  polygonsData?: SitePolygonsDataResponse;
-  bbox?: any;
+  polygonsData?: Record<string, string[]>;
+  bbox?: BBox;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
@@ -79,7 +80,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showLegend?: boolean;
   mapFunctions?: any;
   TooltipType?: TooltipType;
-  sitePolygonData?: SitePolygonData;
+  sitePolygonData?: SitePolygonsDataResponse;
 }
 
 export const MapContainer = ({

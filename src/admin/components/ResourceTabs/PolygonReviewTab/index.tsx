@@ -6,9 +6,10 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { addSourcesToLayers } from "@/components/elements/Map-mapbox/utils";
+import { addSourcesToLayers, mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -124,9 +125,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const mapFunctions = useMap(storePolygon);
 
-  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<{
-    data: SitePolygonsDataResponse;
-  }>({
+  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: record.uuid
     }
@@ -138,36 +137,26 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   });
 
-  const siteBbox = sitePolygonBbox?.bbox;
-  const sitePolygonDataTable = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(
-    (data: SitePolygon, index) => ({
-      "polygon-name": data.poly_name || `Unnamed Polygon`,
-      "restoration-practice": data.practice,
-      "target-land-use-system": data.target_sys,
-      "tree-distribution": data.distr,
-      "planting-start-date": data.plantstart,
-      source: data.org_name,
-      uuid: data.poly_id,
-      ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
-    })
-  );
+  const siteBbox = sitePolygonBbox?.bbox as BBox;
+  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
+    "polygon-name": data.poly_name || `Unnamed Polygon`,
+    "restoration-practice": data.practice,
+    "target-land-use-system": data.target_sys,
+    "tree-distribution": data.distr,
+    "planting-start-date": data.plantstart,
+    source: data.org_name,
+    uuid: data.poly_id,
+    ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
+  }));
 
-  const transformedSiteDataForList = ((sitePolygonData ?? []) as SitePolygonsDataResponse).map(
-    (data: SitePolygon, index: number) => ({
-      id: (index + 1).toString(),
-      status: data.status,
-      label: data.poly_name || `Unnamed Polygon`,
-      uuid: data.poly_id
-    })
-  );
+  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygon, index: number) => ({
+    id: (index + 1).toString(),
+    status: data.status,
+    label: data.poly_name || `Unnamed Polygon`,
+    uuid: data.poly_id
+  }));
 
-  const polygonDataMap = ((sitePolygonData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
-    if (!acc[data.status]) {
-      acc[data.status] = [];
-    }
-    acc[data.status].push(data.poly_id);
-    return acc;
-  }, {});
+  const polygonDataMap = mapPolygonData(sitePolygonData);
 
   const { openModal, closeModal } = useModalContext();
 
