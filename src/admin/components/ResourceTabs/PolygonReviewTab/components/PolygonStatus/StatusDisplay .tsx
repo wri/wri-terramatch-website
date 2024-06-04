@@ -83,9 +83,9 @@ export interface StatusProps {
   titleStatus: "Site" | "Project" | "Polygon";
   mutate?: any;
   record?: any;
-  refresh?: any;
+  refresh?: () => void;
   name: any;
-  refetchPolygon?: any;
+  refetchPolygon?: () => void;
   setSelectedPolygon?: any;
   tab?: string;
 }
@@ -153,9 +153,8 @@ const StatusDisplay = ({
         content={contentStatus}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
-          let response;
           try {
-            response = await mutate({
+            const response = await mutate({
               pathParams: { uuid: record?.uuid },
               body: {
                 status: option?.status,
@@ -197,7 +196,7 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh();
+            refresh && refresh();
             reloadEntity();
             closeModal;
           }
@@ -257,7 +256,7 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh();
+            refresh && refresh();
             reloadEntity();
             closeModal;
           }
