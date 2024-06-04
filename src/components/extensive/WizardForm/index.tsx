@@ -163,7 +163,7 @@ function WizardForm(props: WizardFormProps) {
 
   const stepTabItems = props.steps.map((step, index) => ({
     title:
-      step.tabTitle ||
+      step.tabTitle ??
       t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title: step.title }),
     done: props.tabOptions?.markDone && index < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
