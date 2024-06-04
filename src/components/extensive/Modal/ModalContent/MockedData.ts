@@ -23,27 +23,45 @@ export const dataImageGallery = [
     images: [
       {
         id: "1",
-        src: "/Images/image-modal-main.png"
+        src: "/Images/image-modal-main.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "2",
-        src: "/Images/image-modal-1.png"
+        src: "/Images/image-modal-1.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "3",
-        src: "/Images/image-modal-2.png"
+        src: "/Images/image-modal-2.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "4",
-        src: "/Images/image-modal-3.png"
+        src: "/Images/image-modal-3.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "5",
-        src: "/Images/image-modal-4.png"
+        src: "/Images/image-modal-4.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "6",
-        src: "/Images/image-modal-5.png"
+        src: "/Images/image-modal-5.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       }
     ]
   },
@@ -53,27 +71,45 @@ export const dataImageGallery = [
     images: [
       {
         id: "1",
-        src: "/Images/image-modal-main.png"
+        src: "/Images/image-modal-main.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "2",
-        src: "/Images/image-modal-1.png"
+        src: "/Images/image-modal-1.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "3",
-        src: "/Images/image-modal-2.png"
+        src: "/Images/image-modal-2.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "4",
-        src: "/Images/image-modal-3.png"
+        src: "/Images/image-modal-3.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "5",
-        src: "/Images/image-modal-4.png"
+        src: "/Images/image-modal-4.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       },
       {
         id: "6",
-        src: "/Images/image-modal-5.png"
+        src: "/Images/image-modal-5.png",
+        title: "TerraMatch Sample",
+        dateCreated: "December 29, 2024",
+        geoTag: "Not Geo-Referenced"
       }
     ]
   }

@@ -28,6 +28,9 @@ export const ModalBaseImageGallery: FC<ModalBaseProps> = ({ children, className,
 export interface ImageItem {
   id: string;
   src: string;
+  title: string;
+  dateCreated: string;
+  geoTag: string;
 }
 
 export interface TabImagesItem {
@@ -101,9 +104,29 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             carouselItem={item => {
               return (
                 <div className="relative h-full px-24">
-                  <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
-                    <Text variant="text-13" className="text-white">
-                      {selectecImage + 1} of {tabItems.find(tab => tab.id === selectedTab)?.images.length}
+                  <div className="absolute left-[24px] top-[24px] z-10 flex translate-x-[75%] flex-col items-center justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3">
+                    <Text variant="text-12-bold" className="text-black">
+                      {
+                        tabItems
+                          .find(tab => tab.id === selectedTab)
+                          ?.images.find((_, index: number) => index === selectecImage)?.title
+                      }
+                    </Text>
+                    <Text variant="text-12-light" className="text-black">
+                      {
+                        tabItems
+                          .find(tab => tab.id === selectedTab)
+                          ?.images.find((_, index: number) => index === selectecImage)?.dateCreated
+                      }
+                    </Text>
+                  </div>
+                  <div className="absolute right-[24px] top-[24px] z-10 flex translate-x-[-75%] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3">
+                    <Text variant="text-12-semibold" className="text-red-200">
+                      {
+                        tabItems
+                          .find(tab => tab.id === selectedTab)
+                          ?.images.find((_, index: number) => index === selectecImage)?.geoTag
+                      }
                     </Text>
                   </div>
                   <ImageWithPlaceholder
@@ -111,6 +134,11 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                     alt={"image no available"}
                     imageUrl={item.src}
                   ></ImageWithPlaceholder>
+                  <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
+                    <Text variant="text-13" className="text-white">
+                      {selectecImage + 1} of {tabItems.find(tab => tab.id === selectedTab)?.images.length}
+                    </Text>
+                  </div>
                 </div>
               );
             }}
