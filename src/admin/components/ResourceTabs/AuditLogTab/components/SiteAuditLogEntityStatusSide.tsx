@@ -8,11 +8,10 @@ import Text from "@/components/elements/Text/Text";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 import { SelectedItem } from "@/hooks/useLoadEntityList";
-import { Option } from "@/types/common";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
-const SiteAuditLogPolygonStatusSide = ({
+const SiteAuditLogEntityStatusSide = ({
   refresh,
   record,
   polygonList,
@@ -25,23 +24,25 @@ const SiteAuditLogPolygonStatusSide = ({
   getValueForStatus,
   progressBarLabels
 }: {
-  recordType?: "Polygon" | "Site";
+  recordType?: "Polygon" | "Site" | "Project";
   refresh?: () => void;
-  record?: SelectedItem | null;
-  polygonList?: SelectedItem[];
+  record?: any;
+  polygonList?: any[];
   selectedPolygon?: SelectedItem | null;
-  setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>>;
+  setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>> | null;
   auditLogData?: AuditStatusResponse[];
   recentRequestData?: (recentRequest: AuditStatusResponse) => string | undefined;
   mutate?: any;
-  getValueForStatus?: ((status: string) => number) | undefined;
+  getValueForStatus?: (status: string) => number;
   progressBarLabels?: Array<{ id: string; label: string }>;
 }) => {
   const [open, setOpen] = useState(false);
   const recentRequest = auditLogData?.find(
     (item: AuditStatusResponse) => item.type == "change-request" && item.is_active
   );
-  const { mutate: upload } = usePostV2AuditStatus();
+  const mutateUpload = recordType === "Project" ? usePostV2AuditStatus : usePostV2AuditStatus;
+  const { mutate: upload } = mutateUpload();
+
   const deactivateRecentRequest = async () => {
     upload?.(
       {
@@ -70,23 +71,25 @@ const SiteAuditLogPolygonStatusSide = ({
 
   return (
     <div className="flex flex-col gap-6 overflow-hidden">
-      <Dropdown
-        label={`Select ${recordType}`}
-        labelVariant="text-16-bold"
-        labelClassName="capitalize"
-        optionsClassName="max-w-full"
-        value={[selectedPolygon?.uuid ?? ""]}
-        placeholder={`Select ${recordType}`}
-        options={polygonList! as Option[]}
-        onChange={e => {
-          console.log("onChange", e);
-          setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]) as SelectedItem);
-        }}
-      />
+      {polygonList && polygonList?.length > 0 && (
+        <Dropdown
+          label={`Select ${recordType}`}
+          labelVariant="text-16-bold"
+          labelClassName="capitalize"
+          optionsClassName="max-w-full"
+          value={[selectedPolygon?.uuid ?? ""]}
+          placeholder={`Select ${recordType}`}
+          options={polygonList!}
+          onChange={e => {
+            console.log("onChange", e);
+            setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
+          }}
+        />
+      )}
       <Text variant="text-16-bold">{`${recordType} Status`}</Text>
       <StepProgressbar
         color="secondary"
-        value={getValueForStatus ? getValueForStatus(record?.status ?? "") : 0}
+        value={(getValueForStatus && getValueForStatus(record?.status)) ?? 0}
         labels={progressBarLabels}
         classNameLabels="min-w-[99px] "
         className={classNames("w-[98%] pl-[1%]", recordType === "Polygon" && "pl-[6%]")}
@@ -107,7 +110,7 @@ const SiteAuditLogPolygonStatusSide = ({
       )}
       <StatusDisplay
         titleStatus={recordType}
-        name={selectedPolygon?.title}
+        name={recordType}
         refresh={refresh}
         mutate={mutate}
         record={record}
@@ -118,4 +121,4 @@ const SiteAuditLogPolygonStatusSide = ({
   );
 };
 
-export default SiteAuditLogPolygonStatusSide;
+export default SiteAuditLogEntityStatusSide;

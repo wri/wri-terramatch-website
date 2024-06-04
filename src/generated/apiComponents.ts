@@ -33845,8 +33845,29 @@ export type PostV2ProjectPipelineResponse = {
   ModifiedDate?: string;
 };
 
+export type PostV2ProjectPipelineRequestBody = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  SubmittedBy?: string;
+  Program?: string;
+  Cohort?: string;
+  PublishFor?: string;
+  URL?: string;
+  /**
+   * @format date
+   */
+  CreatedDate?: string;
+  /**
+   * @format date
+   */
+  ModifiedDate?: string;
+};
+
 export type PostV2ProjectPipelineVariables = {
-  body?: RequestBodies.PostV2FprojectPipeline;
+  body?: PostV2ProjectPipelineRequestBody;
   queryParams?: PostV2ProjectPipelineQueryParams;
 } & ApiContext["fetcherOptions"];
 
@@ -33854,7 +33875,7 @@ export const fetchPostV2ProjectPipeline = (variables: PostV2ProjectPipelineVaria
   apiFetch<
     PostV2ProjectPipelineResponse,
     PostV2ProjectPipelineError,
-    RequestBodies.PostV2FprojectPipeline,
+    PostV2ProjectPipelineRequestBody,
     {},
     PostV2ProjectPipelineQueryParams,
     {}
@@ -33881,11 +33902,11 @@ export const usePostV2ProjectPipeline = (
   );
 };
 
-export type GetV2AdminSitePolygonUUIDPathParams = {
+export type GetV2SitePolygonUUIDPathParams = {
   uuid: string;
 };
 
-export type GetV2AdminSitePolygonUUIDError = Fetcher.ErrorWrapper<{
+export type GetV2SitePolygonUUIDError = Fetcher.ErrorWrapper<{
   status: 404;
   payload: {
     /**
@@ -33895,7 +33916,7 @@ export type GetV2AdminSitePolygonUUIDError = Fetcher.ErrorWrapper<{
   };
 }>;
 
-export type GetV2AdminSitePolygonUUIDResponse = {
+export type GetV2SitePolygonUUIDResponse = {
   id?: number;
   uuid?: string;
   poly_name?: string;
@@ -33918,31 +33939,29 @@ export type GetV2AdminSitePolygonUUIDResponse = {
   status?: string;
 };
 
-export type GetV2AdminSitePolygonUUIDVariables = {
-  pathParams: GetV2AdminSitePolygonUUIDPathParams;
+export type GetV2SitePolygonUUIDVariables = {
+  pathParams: GetV2SitePolygonUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2AdminSitePolygonUUID = (variables: GetV2AdminSitePolygonUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2AdminSitePolygonUUIDResponse,
-    GetV2AdminSitePolygonUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2AdminSitePolygonUUIDPathParams
-  >({ url: "/v2/admin/site-polygon/{uuid}", method: "get", ...variables, signal });
+export const fetchGetV2SitePolygonUUID = (variables: GetV2SitePolygonUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2SitePolygonUUIDResponse, GetV2SitePolygonUUIDError, undefined, {}, {}, GetV2SitePolygonUUIDPathParams>({
+    url: "/v2/site-polygon/{uuid}",
+    method: "get",
+    ...variables,
+    signal
+  });
 
-export const useGetV2AdminSitePolygonUUID = <TData = GetV2AdminSitePolygonUUIDResponse>(
-  variables: GetV2AdminSitePolygonUUIDVariables,
+export const useGetV2SitePolygonUUID = <TData = GetV2SitePolygonUUIDResponse>(
+  variables: GetV2SitePolygonUUIDVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminSitePolygonUUIDResponse, GetV2AdminSitePolygonUUIDError, TData>,
+    reactQuery.UseQueryOptions<GetV2SitePolygonUUIDResponse, GetV2SitePolygonUUIDError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminSitePolygonUUIDResponse, GetV2AdminSitePolygonUUIDError, TData>(
-    queryKeyFn({ path: "/v2/admin/site-polygon/{UUID}", operationId: "getV2AdminSitePolygonUUID", variables }),
-    ({ signal }) => fetchGetV2AdminSitePolygonUUID({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<GetV2SitePolygonUUIDResponse, GetV2SitePolygonUUIDError, TData>(
+    queryKeyFn({ path: "/v2/site-polygon/{UUID}", operationId: "getV2SitePolygonUUID", variables }),
+    ({ signal }) => fetchGetV2SitePolygonUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -33950,16 +33969,16 @@ export const useGetV2AdminSitePolygonUUID = <TData = GetV2AdminSitePolygonUUIDRe
   );
 };
 
-export type PutV2AdminSitePolygonUUIDPathParams = {
+export type PutV2SitePolygonUUIDPathParams = {
   /**
    * The UUID of the polygon site
    */
   uuid: string;
 };
 
-export type PutV2AdminSitePolygonUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type PutV2SitePolygonUUIDError = Fetcher.ErrorWrapper<undefined>;
 
-export type PutV2AdminSitePolygonUUIDResponse = {
+export type PutV2SitePolygonUUIDResponse = {
   entity_uuid?: string;
   status?: string;
   comment?: string;
@@ -33971,39 +33990,34 @@ export type PutV2AdminSitePolygonUUIDResponse = {
   created_by?: string;
 };
 
-export type PutV2AdminSitePolygonUUIDVariables = {
+export type PutV2SitePolygonUUIDVariables = {
   body?: RequestBodies.PutV2AdminSitesUuid;
-  pathParams: PutV2AdminSitePolygonUUIDPathParams;
+  pathParams: PutV2SitePolygonUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPutV2AdminSitePolygonUUID = (variables: PutV2AdminSitePolygonUUIDVariables, signal?: AbortSignal) =>
+export const fetchPutV2SitePolygonUUID = (variables: PutV2SitePolygonUUIDVariables, signal?: AbortSignal) =>
   apiFetch<
-    PutV2AdminSitePolygonUUIDResponse,
-    PutV2AdminSitePolygonUUIDError,
+    PutV2SitePolygonUUIDResponse,
+    PutV2SitePolygonUUIDError,
     RequestBodies.PutV2AdminSitesUuid,
     {},
     {},
-    PutV2AdminSitePolygonUUIDPathParams
-  >({ url: "/v2/admin/site-polygon/{uuid}", method: "put", ...variables, signal });
+    PutV2SitePolygonUUIDPathParams
+  >({ url: "/v2/site-polygon/{uuid}", method: "put", ...variables, signal });
 
-export const usePutV2AdminSitePolygonUUID = (
+export const usePutV2SitePolygonUUID = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      PutV2AdminSitePolygonUUIDResponse,
-      PutV2AdminSitePolygonUUIDError,
-      PutV2AdminSitePolygonUUIDVariables
+      PutV2SitePolygonUUIDResponse,
+      PutV2SitePolygonUUIDError,
+      PutV2SitePolygonUUIDVariables
     >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PutV2AdminSitePolygonUUIDResponse,
-    PutV2AdminSitePolygonUUIDError,
-    PutV2AdminSitePolygonUUIDVariables
-  >(
-    (variables: PutV2AdminSitePolygonUUIDVariables) =>
-      fetchPutV2AdminSitePolygonUUID({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<PutV2SitePolygonUUIDResponse, PutV2SitePolygonUUIDError, PutV2SitePolygonUUIDVariables>(
+    (variables: PutV2SitePolygonUUIDVariables) => fetchPutV2SitePolygonUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -35083,8 +35097,29 @@ export type PutV2ProjectPipelineIdResponse = {
   ModifiedDate?: string;
 };
 
+export type PutV2ProjectPipelineIdRequestBody = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  SubmittedBy?: string;
+  Program?: string;
+  Cohort?: string;
+  PublishFor?: string;
+  URL?: string;
+  /**
+   * @format date
+   */
+  CreatedDate?: string;
+  /**
+   * @format date
+   */
+  ModifiedDate?: string;
+};
+
 export type PutV2ProjectPipelineIdVariables = {
-  body?: RequestBodies.PostV2FprojectPipeline;
+  body?: PutV2ProjectPipelineIdRequestBody;
   pathParams: PutV2ProjectPipelineIdPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -35092,7 +35127,7 @@ export const fetchPutV2ProjectPipelineId = (variables: PutV2ProjectPipelineIdVar
   apiFetch<
     PutV2ProjectPipelineIdResponse,
     PutV2ProjectPipelineIdError,
-    RequestBodies.PostV2FprojectPipeline,
+    PutV2ProjectPipelineIdRequestBody,
     {},
     {},
     PutV2ProjectPipelineIdPathParams
@@ -35337,6 +35372,10 @@ export type GetV2TypeEntityResponse = {
     status?: string;
     country?: string;
   }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: any[];
 };
 
 export type GetV2TypeEntityVariables = {
@@ -35967,9 +36006,9 @@ export type QueryOperation =
       variables: GetV2ProjectPipelineVariables;
     }
   | {
-      path: "/v2/admin/site-polygon/{UUID}";
-      operationId: "getV2AdminSitePolygonUUID";
-      variables: GetV2AdminSitePolygonUUIDVariables;
+      path: "/v2/site-polygon/{UUID}";
+      operationId: "getV2SitePolygonUUID";
+      variables: GetV2SitePolygonUUIDVariables;
     }
   | {
       path: "/v2/audit-status";

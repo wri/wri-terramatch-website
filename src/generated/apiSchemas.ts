@@ -23880,4 +23880,8 @@ export type EntityTypeResponse = {
     status?: string;
     country?: string;
   }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: any[];
 };

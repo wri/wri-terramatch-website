@@ -192,6 +192,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+        site={site}
       ></ModalSubmit>
     );
   };
