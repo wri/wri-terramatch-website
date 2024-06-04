@@ -1,7 +1,7 @@
+import { useT } from "@transifex/react";
 import { remove } from "lodash";
 import { FC, useState } from "react";
 import { When } from "react-if";
-import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
@@ -14,28 +14,15 @@ import Text from "@/components/elements/Text/Text";
 import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
+import { ModalProps } from "./Modal";
+import { ModalBaseWithMap } from "./ModalBases";
 import { polygonStatusLabels } from "./ModalContent/MockedData";
-
-export const ModalBaseWithMap: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex h-[504px] max-h-full w-[80vw] flex-col items-center justify-start overflow-hidden rounded-lg border-2 border-neutral-100 bg-white wide:h-[700px]",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
 
 export interface ModalWithMapProps extends ModalProps {
   polygonSelected?: string;
   primaryButtonText?: string;
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
 }
 
 const ModalWithMap: FC<ModalWithMapProps> = ({
@@ -47,10 +34,11 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   primaryButtonText,
   children,
   status,
-  onCLose,
+  onClose,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const t = useT();
 
   return (
     <ModalBaseWithMap {...rest}>
@@ -60,7 +48,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
             <div className="flex items-center">
               <When condition={status}>
-                <Status status={status ? status : "draft"} />
+                <Status status={status ?? "draft"} />
               </When>
             </div>
           </header>
@@ -86,7 +74,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
               rows={4}
             />
             <Text variant="text-12-light" className="mt-6 mb-2">
-              Attachments
+              {t("Attachments")}
             </Text>
             <FileInput
               descriptionInput="Drag and drop documents or images to help reviewer"
@@ -128,7 +116,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
         </div>
         <div className="relative h-[700px] w-[60%]">
           <Map className="h-full w-full" hasControls={false} />
-          <button onClick={onCLose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
+          <button onClick={onClose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
             <Icon name={IconNames.CLEAR} className="h-4 w-4 text-darkCustom-100" />
           </button>
         </div>

@@ -9,7 +9,7 @@ export interface LinerProgressbarProps extends DetailedHTMLProps<HTMLAttributes<
   colorProgress?: string;
 }
 
-const LinerProgressbar = ({
+const LinearProgressBar = ({
   value,
   color = "primary",
   textColor,
@@ -24,4 +24,4 @@ const LinerProgressbar = ({
   );
 };
 
-export default LinerProgressbar;
+export default LinearProgressBar;

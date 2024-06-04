@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
-import { EditModalBase } from "@/components/extensive/Modal/EditModalBase";
+import { EditModalBase } from "@/components/extensive/Modal/ModalBases";
 import ConfirmationModal from "@/components/extensive/WizardForm/modals/ConfirmationModal";
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";

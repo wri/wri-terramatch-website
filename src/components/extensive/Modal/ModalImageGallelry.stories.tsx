@@ -19,7 +19,7 @@ export const Default: Story = {
     </div>
   ),
   args: {
-    onCLose: () => {},
+    onClose: () => {},
     tabItems: dataImageGallery,
     title: ""
   }

@@ -1,7 +1,6 @@
 import { remove } from "lodash";
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
-import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
@@ -14,21 +13,8 @@ import Text from "@/components/elements/Text/Text";
 import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
-
-export const ModalAddBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex h-[80%] max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ModalProps } from "./Modal";
+import { ModalAddBase } from "./ModalBases";
 
 export interface ModalAddProps extends ModalProps {
   primaryButtonText?: string;
@@ -39,7 +25,7 @@ export interface ModalAddProps extends ModalProps {
   descriptionListStatus?: string;
   acceptedTYpes?: FileType[];
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
 }
 
@@ -59,17 +45,16 @@ const ModalAdd: FC<ModalAddProps> = ({
   children,
   status,
   setFile,
-  onCLose,
+  onClose,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
   useEffect(() => {
     if (setFile && files) {
-      console.log("gets here", files);
       setFile(files);
     }
-  }, [files]);
+  }, [files, setFile]);
 
   return (
     <ModalAddBase {...rest}>
@@ -79,20 +64,12 @@ const ModalAdd: FC<ModalAddProps> = ({
           <When condition={status}>
             <Status status={status ? status : "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
           </When>
-          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
-          <Icon
-            {...iconProps!}
-            width={iconProps?.width || 40}
-            className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
-          />
-        </When>
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>

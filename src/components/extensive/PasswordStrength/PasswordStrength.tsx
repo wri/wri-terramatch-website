@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import clsx from "clsx";
 import { useMemo } from "react";
 
-import LinerProgressbar from "@/components/elements/ProgressBar/LinerProgressbar/LinerProgressbar";
+import LinearProgressBar from "@/components/elements/ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Colors } from "@/types/common";
@@ -69,7 +69,7 @@ const PasswordStrength = ({ password = "" }: PasswordStrengthProps) => {
         </Text>
       </div>
       <div className="w-2/3 rounded-lg bg-grey-500">
-        <LinerProgressbar value={progressValue} colorProgress={bgColor} color={progressColor} className={""} />
+        <LinearProgressBar value={progressValue} colorProgress={bgColor} color={progressColor} className={""} />
       </div>
       <div>
         <ul className="flex flex-col gap-2">

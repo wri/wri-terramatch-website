@@ -4,7 +4,7 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
-import LinerProgressbar from "../../ProgressBar/LinerProgressbar/LinerProgressbar";
+import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
 import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressCardItem";
 
 export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -49,7 +49,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             </When>
             <Text variant="text-16-light">{labelValue}</Text>
           </Text>
-          <LinerProgressbar
+          <LinearProgressBar
             color="primary"
             value={progressValue}
             className={classNames("mt-2 bg-primary-200", {

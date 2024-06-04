@@ -93,21 +93,21 @@ export const polygonStatusLabels = [
   { id: "3", label: "Approved" }
 ];
 
-export const comentaryFiles = [
+export const commentaryFiles = [
   { id: "1", file: "img-attachment.jpeg" },
   { id: "2", file: "img-attachment-with-large-name.jpeg" },
   { id: "3", file: "img-attachment.jpeg" },
   { id: "4", file: "img-attachment.jpeg" }
 ];
 
-export const comentariesItems = [
+export const commentariesItems = [
   {
     id: "1",
     name: "Ricardo",
     lastName: "Saavedra",
     date: "Oct 6, 2022 at 1:12 AM",
     comentary: `Don't see the outline. the source code also needs to be updated.re: aligned to one source. we need to make sure whether this is appropriate. consider that we have the organization in sign-up/profile, mask, and work request boards. On Thursday will provide the the source tables requested`,
-    files: comentaryFiles,
+    files: commentaryFiles,
     status: "submitted"
   },
   {

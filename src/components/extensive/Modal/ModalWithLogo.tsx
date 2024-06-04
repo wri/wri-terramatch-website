@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
@@ -10,29 +11,16 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
-import { comentariesItems, polygonStatusLabels } from "./ModalContent/MockedData";
-
-export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex h-[80%] max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ModalProps } from "./Modal";
+import { ModalBaseWithLogo } from "./ModalBases";
+import { commentariesItems, polygonStatusLabels } from "./ModalContent/MockedData";
 
 export interface ModalWithLogoProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
 }
 
 const ModalWithLogo: FC<ModalWithLogoProps> = ({
@@ -46,10 +34,12 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   toogleButton,
   children,
   status,
-  onCLose,
+  onClose,
   ...rest
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
+  const t = useT();
+
   return (
     <ModalBaseWithLogo {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -58,7 +48,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           <When condition={status}>
             <Status status={status ? status : "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
           </When>
-          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>
@@ -67,9 +57,9 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
-            width={iconProps?.width || 40}
+            width={iconProps?.width ?? 40}
             className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
+            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
           />
         </When>
         <div className="flex items-center justify-between">
@@ -81,14 +71,14 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
                 onClick={() => setButtonToogle(!buttonToogle)}
                 className="w-[111px]"
               >
-                <Text variant="text-14-semibold">Comments</Text>
+                <Text variant="text-14-semibold">{t("Comments")}</Text>
               </Button>
               <Button
                 variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
                 onClick={() => setButtonToogle(!buttonToogle)}
                 className="w-[111px]"
               >
-                <Text variant="text-14-semibold">History</Text>
+                <Text variant="text-14-semibold">{t("History")}</Text>
               </Button>
             </div>
           </When>
@@ -103,7 +93,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         </div>
         <div className="flex flex-col gap-4">
           <CommentaryBox name={"Ricardo"} lastName={"Saavedra"} />
-          {comentariesItems.map(item => (
+          {commentariesItems.map(item => (
             <Commentary
               key={item.id}
               name={item.name}

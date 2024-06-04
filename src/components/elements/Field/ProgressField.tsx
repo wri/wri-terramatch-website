@@ -1,8 +1,8 @@
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
-import LinerProgressbar from "@/components/elements/ProgressBar/LinerProgressbar/LinerProgressbar";
 import Text from "@/components/elements/Text/Text";
 
+import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import BaseField from "./BaseField";
 
 export interface ProgressFieldProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -23,7 +23,7 @@ const ProgressField: FC<ProgressFieldProps> = ({ label, value: _val, limit: _lim
           <Text variant="text-light-subtitle-400">
             {value}/{limit}
           </Text>
-          <LinerProgressbar value={limit ? (value / limit) * 100 : 0} />
+          <LinearProgressBar value={limit ? (value / limit) * 100 : 0} />
         </div>
       </div>
     </BaseField>
