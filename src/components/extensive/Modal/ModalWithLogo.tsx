@@ -12,8 +12,8 @@ import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalBaseWithLogo } from "./ModalBases";
 import { commentariesItems, polygonStatusLabels } from "./ModalContent/MockedData";
+import { ModalBaseWithLogo } from "./ModalsBases";
 
 export interface ModalWithLogoProps extends ModalProps {
   primaryButtonText?: string;

@@ -9,8 +9,8 @@ import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalBaseSubmit } from "./ModalBases";
 import { dataSubmitPolygons } from "./ModalContent/MockedData";
+import { ModalBaseSubmit } from "./ModalsBases";
 
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;

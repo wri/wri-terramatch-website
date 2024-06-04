@@ -7,7 +7,7 @@ import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconProps } from "../Icon/Icon";
-import { ModalBase } from "./ModalBases";
+import { ModalBase } from "./ModalsBases";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 export interface ModalProps extends ModalBaseProps {

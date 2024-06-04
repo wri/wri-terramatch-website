@@ -10,7 +10,7 @@ import Text from "@/components/elements/Text/Text";
 import Carousel from "../Carousel/Carousel";
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalBaseImageGallery } from "./ModalBases";
+import { ModalBaseImageGallery } from "./ModalsBases";
 export interface ImageItem {
   id: string;
   src: string;

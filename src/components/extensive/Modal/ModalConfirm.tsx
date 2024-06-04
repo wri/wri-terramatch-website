@@ -10,7 +10,7 @@ import Text from "@/components/elements/Text/Text";
 import { Option } from "@/types/common";
 
 import { ModalProps } from "./Modal";
-import { ModalBase } from "./ModalBases";
+import { ModalBase } from "./ModalsBases";
 
 export interface ModalConfirmProps extends ModalProps {
   onClose: () => void;

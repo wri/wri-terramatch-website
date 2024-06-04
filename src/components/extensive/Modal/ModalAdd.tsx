@@ -14,7 +14,7 @@ import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalAddBase } from "./ModalBases";
+import { ModalAddBase } from "./ModalsBases";
 
 export interface ModalAddProps extends ModalProps {
   primaryButtonText?: string;

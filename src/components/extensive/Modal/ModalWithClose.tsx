@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalBaseWithClose } from "./ModalBases";
+import { ModalBaseWithClose } from "./ModalsBases";
 
 export interface ModalCloseProps extends ModalProps {
   onClose: () => void;

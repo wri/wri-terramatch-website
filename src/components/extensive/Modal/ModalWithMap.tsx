@@ -15,8 +15,8 @@ import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalBaseWithMap } from "./ModalBases";
 import { polygonStatusLabels } from "./ModalContent/MockedData";
+import { ModalBaseWithMap } from "./ModalsBases";
 
 export interface ModalWithMapProps extends ModalProps {
   polygonSelected?: string;
