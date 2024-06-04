@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { When } from "react-if";
 
-// import SiteAuditLogPolygonStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatus";
-// import SiteAuditLogPolygonStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogPolygonStatusSide";
-// import SiteAuditLogProjectStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatus";
-// import SiteAuditLogProjectStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatusSide";
-// import SiteAuditLogSiteStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogSiteStatus";
-// import SiteAuditLogSiteStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogSiteStatusSide";
-import Button from "@/components/elements/Button/Button";
+import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
+import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/AuditLogSiteTabSelection";
+import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
+import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
+import SiteAuditLogProjectStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatus";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ENTITYUUIDReports } from "@/generated/apiComponents";
+import { PROJECT } from "@/constants/entities";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
+import useAuditLogActions from "@/hooks/useAuditLogActions";
 import { Entity } from "@/types/common";
 
 interface ReportingTasksProps {
@@ -29,13 +29,29 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
     POLYGON: 2
   };
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
-  const { data: reports, isLoading } = useGetV2ENTITYUUIDReports(
-    {
-      pathParams: { entity: "projects", uuid: project.uuid }
-    },
-    { keepPreviousData: true }
-  );
-  console.log(reports, "REPORTS");
+
+  const {
+    mutateEntity,
+    valuesForStatus,
+    statusLabels,
+    entityType,
+    entityListItem,
+    loadEntityList,
+    selected,
+    setSelected,
+    auditLogData,
+    refetch,
+    isLoading
+  } = useAuditLogActions({
+    record: project,
+    buttonToogle,
+    entityLevel: PROJECT
+  });
+
+  const recentRequestData = (recentRequest: AuditStatusResponse) => {
+    return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
+    ${convertDateFormat(recentRequest.date_created) ?? ""}`;
+  };
 
   return (
     <PageBody>
@@ -46,41 +62,38 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-2/3 gap-6">
                   <div className="gap-6">
-                    <div className="mb-6 flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
-                      <Button
-                        variant={`${buttonToogle === ButtonStates.PROJECTS ? "white-toggle" : "transparent-toggle"}`}
-                        onClick={() => setButtonToogle(ButtonStates.PROJECTS)}
-                      >
-                        Project Status
-                      </Button>
-                      <Button
-                        variant={`${buttonToogle === ButtonStates.SITE ? "white-toggle" : "transparent-toggle"}`}
-                        onClick={() => setButtonToogle(ButtonStates.SITE)}
-                      >
-                        Site Status
-                      </Button>
-                      <Button
-                        variant={`${buttonToogle === ButtonStates.POLYGON ? "white-toggle" : "transparent-toggle"}`}
-                        onClick={() => setButtonToogle(ButtonStates.POLYGON)}
-                      >
-                        Polygon Status
-                      </Button>
-                    </div>
+                    <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
                     <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                      {/* <SiteAuditLogProjectStatus /> */}
+                      <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
                     </When>
-                    <When condition={buttonToogle === ButtonStates.SITE}>{/* <SiteAuditLogSiteStatus /> */}</When>
-                    <When condition={buttonToogle === ButtonStates.POLYGON}>{/* <SiteAuditLogPolygonStatus /> */}</When>
+                    <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+                      <SiteAuditLogEntityStatus
+                        record={selected}
+                        auditLogData={auditLogData}
+                        refresh={refetch}
+                        buttonToogle={buttonToogle}
+                        buttonStates={ButtonStates}
+                      />
+                    </When>
                   </div>
                 </div>
                 <div className="w-1/3 pl-8">
-                  <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                    {/* <SiteAuditLogProjectStatusSide /> */}
-                  </When>
-                  <When condition={buttonToogle === ButtonStates.SITE}>{/* <SiteAuditLogSiteStatusSide /> */}</When>
-                  <When condition={buttonToogle === ButtonStates.POLYGON}>
-                    {/* <SiteAuditLogPolygonStatusSide /> */}
-                  </When>
+                  <SiteAuditLogEntityStatusSide
+                    getValueForStatus={valuesForStatus}
+                    progressBarLabels={statusLabels}
+                    mutate={mutateEntity}
+                    recordType={entityType as "Project" | "Site" | "Polygon"}
+                    refresh={() => {
+                      loadEntityList();
+                      refetch();
+                    }}
+                    record={selected}
+                    polygonList={entityListItem}
+                    selectedPolygon={selected}
+                    setSelectedPolygon={setSelected}
+                    auditLogData={auditLogData?.data}
+                    recentRequestData={recentRequestData}
+                  />
                 </div>
               </div>
             </PageCard>

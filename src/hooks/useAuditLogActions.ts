@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useShowContext } from "react-admin";
 
 import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
@@ -53,9 +52,16 @@ const statusActionsMap = {
   }
 };
 
-const useAuditLogActions = ({ buttonToogle, entityLevel }: { buttonToogle: number; entityLevel: string }) => {
+const useAuditLogActions = ({
+  record,
+  buttonToogle,
+  entityLevel
+}: {
+  record: any;
+  buttonToogle: number;
+  entityLevel: string;
+}) => {
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
-  const { record } = useShowContext();
   const isProject = buttonToogle === ButtonStates.PROJECTS;
   const isSite = buttonToogle === ButtonStates.SITE;
   const isSiteProject = entityLevel === PROJECT;
@@ -84,7 +90,11 @@ const useAuditLogActions = ({ buttonToogle, entityLevel }: { buttonToogle: numbe
     }
   })();
 
-  const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
+  const {
+    data: auditLogData,
+    refetch,
+    isLoading
+  } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
       uuid: entityHandlers.selectedEntityItem?.uuid
@@ -105,7 +115,8 @@ const useAuditLogActions = ({ buttonToogle, entityLevel }: { buttonToogle: numbe
     selected: entityHandlers.selectedEntityItem,
     setSelected: entityHandlers.setSelectedToEntity,
     auditLogData,
-    refetch
+    refetch,
+    isLoading
   };
 };
 

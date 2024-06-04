@@ -153,7 +153,7 @@ const SiteDetailPage = () => {
           {
             key: "audit-log",
             title: t("Audit Log"),
-            body: <AuditLog project={site} />
+            body: <AuditLog site={site} />
           }
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
