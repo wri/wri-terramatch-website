@@ -35372,6 +35372,10 @@ export type GetV2TypeEntityResponse = {
     status?: string;
     country?: string;
   }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: any[];
 };
 
 export type GetV2TypeEntityVariables = {
