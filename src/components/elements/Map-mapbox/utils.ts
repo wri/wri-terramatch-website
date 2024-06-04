@@ -4,8 +4,7 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { layersList } from "@/constants/layers";
-import { SitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { BBox, FeatureCollection } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
@@ -67,7 +66,7 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
 export const addFilterOnLayer = (
   layer: any,
   field: string,
-  parsedPolygonData: SitePolygonsDataResponse,
+  parsedPolygonData: Record<string, string[]>,
   map: mapboxgl.Map
 ) => {
   addSourceToLayer(layer, map, parsedPolygonData);
@@ -103,7 +102,7 @@ const showPolygons = (
 let popup: mapboxgl.Popup | null = null;
 let arrayPopups: mapboxgl.Popup[] = [];
 
-export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
+export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   layersList.forEach((layer: any) => {
     if (map) {
       showPolygons(layer.styles, layer.name, map, "uuid", polygonsData);
@@ -116,7 +115,7 @@ const handleLayerClick = (
   popupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonData | undefined,
+  sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType
 ) => {
   removePopups();
@@ -139,7 +138,7 @@ export const removePopups = () => {
   });
 };
 
-export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
+export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   if (map && polygonsData) {
     if (map.isStyleLoaded() || map.loaded()) {
       loadLayersInMap(map, polygonsData);
@@ -170,7 +169,7 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
   }
 };
 
-export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
+export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   layersList.forEach((layer: LayerType) => {
     if (map) {
       addSourceToLayer(layer, map, polygonsData);
@@ -182,7 +181,7 @@ export const addPopupsToMap = (
   map: mapboxgl.Map,
   popupComponent: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonData | undefined,
+  sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType
 ) => {
   if (popupComponent) {
@@ -197,7 +196,7 @@ export const addPopupToLayer = (
   popupComponent: any,
   layer: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonData | undefined,
+  sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType
 ) => {
   if (popupComponent) {
@@ -215,7 +214,7 @@ export const addPopupToLayer = (
   }
 };
 
-export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: SitePolygonsDataResponse | undefined) => {
+export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   const { name, styles } = layer;
   if (map.getSource(name)) {
     styles?.forEach((_: unknown, index: number) => {
@@ -264,3 +263,15 @@ export const formatPlannedStartDate = (plantStartDate: Date | null | undefined):
       })
     : "Unknown";
 };
+
+export function mapPolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
+  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygon) => {
+    if (data.status && data.poly_id !== undefined) {
+      if (!acc[data.status]) {
+        acc[data.status] = [];
+      }
+      acc[data.status].push(data.poly_id);
+    }
+    return acc;
+  }, {});
+}

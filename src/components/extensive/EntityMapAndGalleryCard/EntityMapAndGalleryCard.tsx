@@ -5,18 +5,19 @@ import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import {
+  GetV2TypeEntityResponse,
   useDeleteV2FilesUUID,
   useGetV2MODELUUIDFiles,
-  useGetV2SitesSiteBbox,
-  useGetV2SitesSitePolygon
+  useGetV2TypeEntity
 } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
@@ -55,28 +56,15 @@ const EntityMapAndGalleryCard = ({
     queryParams[filter?.key] = filter?.value;
   }
 
-  const { data: sitePolygonData } = useGetV2SitesSitePolygon<{
-    data: SitePolygonsDataResponse;
-  }>({
-    pathParams: {
-      site: projectUUID
+  const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
+    queryParams: {
+      uuid: projectUUID
     }
   });
 
-  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
-    pathParams: {
-      site: projectUUID
-    }
-  });
+  const mapBbox = sitePolygonData?.bbox as BBox;
 
-  const polygonDataMap = ((sitePolygonData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
-    if (!acc[data.status]) {
-      acc[data.status] = [];
-    }
-    acc[data.status].push(data.poly_id);
-    return acc;
-  }, {});
-  const siteBbox = sitePolygonBbox?.bbox;
+  const polygonDataMap = mapPolygonData(sitePolygonData?.polygonsData);
 
   const { data, refetch } = useGetV2MODELUUIDFiles({
     // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
@@ -126,8 +114,8 @@ const EntityMapAndGalleryCard = ({
       <PageCard title={`${modelTitle} ${t("Area")}`}>
         <MapContainer
           polygonsData={polygonDataMap}
-          sitePolygonData={sitePolygonData}
-          bbox={siteBbox}
+          sitePolygonData={sitePolygonData?.polygonsData}
+          bbox={mapBbox}
           className="rounded-lg"
           geojson={geoJSON}
           imageLayerGeojson={imagesGeoJson}
