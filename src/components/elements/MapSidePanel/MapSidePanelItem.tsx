@@ -5,7 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import Menu from "../Menu/Menu";
-import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
+import { MENU_PLACEMENT_RIGHT_TOP } from "../Menu/MenuVariant";
 
 export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -78,7 +78,7 @@ const MapSidePanelItem = ({
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
           <div className="lex h-full self-start">
-            <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
+            <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_TOP} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
                 className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
