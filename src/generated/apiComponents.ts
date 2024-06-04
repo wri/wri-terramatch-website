@@ -28743,6 +28743,55 @@ export const useDeleteV2AdminSiteReportsUUID = (
   );
 };
 
+export type PutV2SiteStatusUUIDPathParams = {
+  /**
+   * The UUID of the site
+   */
+  uuid: string;
+};
+
+export type PutV2SiteStatusUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2SiteStatusUUIDResponse = {
+  entity_uuid?: string;
+  status?: string;
+  comment?: string;
+  attachment_url?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type PutV2SiteStatusUUIDVariables = {
+  body?: RequestBodies.PutV2AdminSitesUuid;
+  pathParams: PutV2SiteStatusUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2SiteStatusUUID = (variables: PutV2SiteStatusUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2SiteStatusUUIDResponse,
+    PutV2SiteStatusUUIDError,
+    RequestBodies.PutV2AdminSitesUuid,
+    {},
+    {},
+    PutV2SiteStatusUUIDPathParams
+  >({ url: "/v2/site-status/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2SiteStatusUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PutV2SiteStatusUUIDResponse, PutV2SiteStatusUUIDError, PutV2SiteStatusUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PutV2SiteStatusUUIDResponse, PutV2SiteStatusUUIDError, PutV2SiteStatusUUIDVariables>(
+    (variables: PutV2SiteStatusUUIDVariables) => fetchPutV2SiteStatusUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostV2AdminSiteMonitoringsError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2AdminSiteMonitoringsResponse = {
@@ -28938,6 +28987,59 @@ export const useDeleteV2AdminSiteMonitoringsUUID = (
   >(
     (variables: DeleteV2AdminSiteMonitoringsUUIDVariables) =>
       fetchDeleteV2AdminSiteMonitoringsUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PutV2SiteProjectUUIDPathParams = {
+  /**
+   * The UUID of the project
+   */
+  uuid: string;
+};
+
+export type PutV2SiteProjectUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2SiteProjectUUIDResponse = {
+  entity_uuid?: string;
+  status?: string;
+  comment?: string;
+  attachment_url?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type PutV2SiteProjectUUIDVariables = {
+  body?: RequestBodies.PutV2AdminSitesUuid;
+  pathParams: PutV2SiteProjectUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2SiteProjectUUID = (variables: PutV2SiteProjectUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2SiteProjectUUIDResponse,
+    PutV2SiteProjectUUIDError,
+    RequestBodies.PutV2AdminSitesUuid,
+    {},
+    {},
+    PutV2SiteProjectUUIDPathParams
+  >({ url: "/v2/site-project/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2SiteProjectUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PutV2SiteProjectUUIDResponse,
+      PutV2SiteProjectUUIDError,
+      PutV2SiteProjectUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PutV2SiteProjectUUIDResponse, PutV2SiteProjectUUIDError, PutV2SiteProjectUUIDVariables>(
+    (variables: PutV2SiteProjectUUIDVariables) => fetchPutV2SiteProjectUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
