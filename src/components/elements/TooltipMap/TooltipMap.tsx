@@ -4,12 +4,14 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGetV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
+import type { TooltipType } from "../Map-mapbox/Map.d";
 import { formatPlannedStartDate } from "../Map-mapbox/utils";
 import Text from "../Text/Text";
 export interface TooltipMapProps {
   setTooltipOpen: () => void;
   setEditPolygon: () => void;
   polygon: any;
+  type?: TooltipType;
   popup?: any;
 }
 const topBorderColorPopup: any = {
@@ -20,7 +22,7 @@ const topBorderColorPopup: any = {
 };
 
 const TooltipMap = (props: TooltipMapProps) => {
-  const { setTooltipOpen, setEditPolygon, polygon } = props;
+  const { setTooltipOpen, setEditPolygon, polygon, type } = props;
   const [polygonData, setPolygonData] = React.useState<SitePolygon>();
   const { data: sitePolygonData } = useGetV2TerrafundPolygonUuid<{
     site_polygon: SitePolygon;
@@ -95,14 +97,16 @@ const TooltipMap = (props: TooltipMapProps) => {
       </div>
 
       <hr className="my-2 border border-grey-750" />
-      <div className="flex w-full items-center justify-center">
-        <button className="flex items-center justify-center gap-1" onClick={setEditPolygon}>
-          <Icon name={IconNames.CLICK} className="h-4 w-4" />
-          <Text variant="text-10-light" className="italic text-black">
-            click to see polygon details
-          </Text>
-        </button>
-      </div>
+      {type === "edit" && (
+        <div className="flex w-full items-center justify-center">
+          <button className="flex items-center justify-center gap-1" onClick={setEditPolygon}>
+            <Icon name={IconNames.CLICK} className="h-4 w-4" />
+            <Text variant="text-10-light" className="italic text-black">
+              click to see polygon details
+            </Text>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

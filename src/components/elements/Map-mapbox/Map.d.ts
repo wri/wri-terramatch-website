@@ -8,3 +8,5 @@ export interface LayerType {
 }
 
 export type ControlType = Control | IControl;
+
+export type TooltipType = "edit" | "goTo" | "view";

@@ -7,7 +7,7 @@ export type SitePolygonData = {
 };
 
 type SitePolygonContextType = {
-  sitePolygonData: SitePolygonData | undefined;
+  sitePolygonData: SitePolygonsDataResponse | undefined;
   reloadSiteData: () => void;
   isUserDrawingEnabled: boolean;
   toggleUserDrawing: (arg0: boolean) => void;
@@ -18,13 +18,13 @@ type SitePolygonContextType = {
 const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
 
 export const SitePolygonDataProvider: React.FC<{
-  sitePolygonData: SitePolygonData | undefined;
+  sitePolygonData: SitePolygonsDataResponse | undefined;
   reloadSiteData: () => void;
   children: ReactNode;
 }> = ({ sitePolygonData, reloadSiteData, children }) => {
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
   type SitePolygonContextType = {
-    sitePolygonData: SitePolygonData | undefined;
+    sitePolygonData: SitePolygonsDataResponse | undefined;
     reloadSiteData: () => void;
     isUserDrawingEnabled: boolean;
     toggleUserDrawing: (arg0: boolean) => void;
