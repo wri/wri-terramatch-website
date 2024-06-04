@@ -622,6 +622,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               polygonFromMap={polygonFromMap}
               setPolygonFromMap={setPolygonFromMap}
               mapFunctions={mapFunctions}
+              refresh={refetch}
             />
           </Grid>
         </Grid>

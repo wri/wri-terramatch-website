@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
@@ -47,6 +47,11 @@ const AuditLog = ({ label, entity, project, ...rest }: ReportingTasksProps) => {
     buttonToogle,
     entityLevel: PROJECT
   });
+
+  useEffect(() => {
+    refetch();
+    loadEntityList();
+  }, [buttonToogle]);
 
   const recentRequestData = (recentRequest: AuditStatusResponse) => {
     return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
