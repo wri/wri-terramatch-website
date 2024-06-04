@@ -28743,16 +28743,16 @@ export const useDeleteV2AdminSiteReportsUUID = (
   );
 };
 
-export type PutV2SiteSiteUUIDPathParams = {
+export type PutV2SiteStatusUUIDPathParams = {
   /**
    * The UUID of the site
    */
   uuid: string;
 };
 
-export type PutV2SiteSiteUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type PutV2SiteStatusUUIDError = Fetcher.ErrorWrapper<undefined>;
 
-export type PutV2SiteSiteUUIDResponse = {
+export type PutV2SiteStatusUUIDResponse = {
   entity_uuid?: string;
   status?: string;
   comment?: string;
@@ -28764,30 +28764,30 @@ export type PutV2SiteSiteUUIDResponse = {
   created_by?: string;
 };
 
-export type PutV2SiteSiteUUIDVariables = {
+export type PutV2SiteStatusUUIDVariables = {
   body?: RequestBodies.PutV2AdminSitesUuid;
-  pathParams: PutV2SiteSiteUUIDPathParams;
+  pathParams: PutV2SiteStatusUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPutV2SiteSiteUUID = (variables: PutV2SiteSiteUUIDVariables, signal?: AbortSignal) =>
+export const fetchPutV2SiteStatusUUID = (variables: PutV2SiteStatusUUIDVariables, signal?: AbortSignal) =>
   apiFetch<
-    PutV2SiteSiteUUIDResponse,
-    PutV2SiteSiteUUIDError,
+    PutV2SiteStatusUUIDResponse,
+    PutV2SiteStatusUUIDError,
     RequestBodies.PutV2AdminSitesUuid,
     {},
     {},
-    PutV2SiteSiteUUIDPathParams
-  >({ url: "/v2/site-site/{uuid}", method: "put", ...variables, signal });
+    PutV2SiteStatusUUIDPathParams
+  >({ url: "/v2/site-status/{uuid}", method: "put", ...variables, signal });
 
-export const usePutV2SiteSiteUUID = (
+export const usePutV2SiteStatusUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<PutV2SiteSiteUUIDResponse, PutV2SiteSiteUUIDError, PutV2SiteSiteUUIDVariables>,
+    reactQuery.UseMutationOptions<PutV2SiteStatusUUIDResponse, PutV2SiteStatusUUIDError, PutV2SiteStatusUUIDVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PutV2SiteSiteUUIDResponse, PutV2SiteSiteUUIDError, PutV2SiteSiteUUIDVariables>(
-    (variables: PutV2SiteSiteUUIDVariables) => fetchPutV2SiteSiteUUID({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<PutV2SiteStatusUUIDResponse, PutV2SiteStatusUUIDError, PutV2SiteStatusUUIDVariables>(
+    (variables: PutV2SiteStatusUUIDVariables) => fetchPutV2SiteStatusUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -35474,6 +35474,10 @@ export type GetV2TypeEntityResponse = {
     status?: string;
     country?: string;
   }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: any[];
 };
 
 export type GetV2TypeEntityVariables = {

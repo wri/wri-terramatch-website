@@ -4,7 +4,7 @@ import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
   fetchPutV2SitePolygonUUID,
   fetchPutV2SiteProjectUUID,
-  fetchPutV2SiteSiteUUID,
+  fetchPutV2SiteStatusUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -39,7 +39,7 @@ const statusActionsMap = {
     entityType: PROJECT
   },
   [ButtonStates.SITE]: {
-    mutateEntity: fetchPutV2SiteSiteUUID,
+    mutateEntity: fetchPutV2SiteStatusUUID,
     valuesForStatus: getValueForStatusSite,
     statusLabels: siteProgressBarStatusLabels,
     entityType: SITE
