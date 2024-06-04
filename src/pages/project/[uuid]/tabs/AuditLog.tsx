@@ -100,6 +100,7 @@ const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: 
                     setSelectedPolygon={setSelected}
                     auditLogData={auditLogData?.data}
                     recentRequestData={recentRequestData}
+                    tab="polygonReview"
                   />
                 </div>
               </div>
