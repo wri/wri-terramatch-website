@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
@@ -48,6 +48,11 @@ const AuditLog = ({ label, entity, site, ...rest }: ReportingTasksProps) => {
     buttonToogle,
     entityLevel: SITE
   });
+
+  useEffect(() => {
+    refetch();
+    loadEntityList();
+  }, [buttonToogle]);
 
   const recentRequestData = (recentRequest: AuditStatusResponse) => {
     return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
