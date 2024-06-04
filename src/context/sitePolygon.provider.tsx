@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
-type SitePolygonData = {
+export type SitePolygonData = {
   data: SitePolygonsDataResponse;
 };
 

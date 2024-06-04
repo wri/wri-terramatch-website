@@ -3,8 +3,6 @@
  *
  * @version 1.0.0
  */
-import type * as Schemas from "./apiSchemas";
-
 export type PutV2AdminUpdateRequestsUuidStatusBody = {
   feedback?: string;
   feedback_fields?: string[];
@@ -17,6 +15,34 @@ export type V2PostOrganisationsApproveUserBody = {
 
 export type PatchV2AuthVerifyBody = {
   token?: string;
+};
+
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type PutV2AdminSitesUuid = {
+  status?: string;
+  comment?: string;
 };
 
 export type PostV2FundingProgrammeBody = {
@@ -358,8 +384,20 @@ export type GetV2FundingProgrammeIDBody = {
   updated_at?: string;
 };
 
-export type SitePolygonResponse = Schemas.SitePolygonResponse;
-
-export type PostV2FprojectPipeline = Schemas.ProjectPipelinePost;
-
-export type PostV2AuditStatus = Schemas.AuditStatusPost;
+export type PostV2AuditStatus = {
+  entity?: string;
+  entity_uuid?: string;
+  status?: string;
+  comment?: string;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  is_active?: boolean;
+  is_submitted?: boolean;
+  type?: string;
+  first_name?: string;
+  last_name?: string;
+  request_removed?: boolean;
+};

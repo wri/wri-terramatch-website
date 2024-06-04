@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
-  fetchGetV2AdminSitePolygonUUID,
   fetchGetV2AuditStatusId,
-  fetchGetV2ProjectsUUIDSites
+  fetchGetV2ProjectsUUIDSites,
+  fetchGetV2SitePolygonUUID
 } from "@/generated/apiComponents";
 
 export interface SelectedItem {
@@ -68,7 +68,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
   const loadEntityList = async () => {
     const isSiteProject = entityLevel === PROJECT;
     const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2AuditStatusId;
-    const fetchAction = isSiteProject ? fetchToProject : fetchGetV2AdminSitePolygonUUID;
+    const fetchAction = isSiteProject ? fetchToProject : fetchGetV2SitePolygonUUID;
     const params = isSiteProject && entityType == POLYGON ? { id: entityUuid } : { uuid: entityUuid };
     const res = await fetchAction({
       // @ts-ignore

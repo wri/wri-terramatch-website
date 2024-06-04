@@ -4,8 +4,8 @@ import { useShowContext } from "react-admin";
 import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
   fetchPutV2AdminProjectsUUID,
-  fetchPutV2AdminSitePolygonUUID,
   fetchPutV2AdminSitesUUID,
+  fetchPutV2SitePolygonUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -46,7 +46,7 @@ const statusActionsMap = {
     entityType: SITE
   },
   [ButtonStates.POLYGON]: {
-    mutateEntity: fetchPutV2AdminSitePolygonUUID,
+    mutateEntity: fetchPutV2SitePolygonUUID,
     valuesForStatus: getValueForStatusPolygon,
     statusLabels: polygonProgressBarStatusLabels,
     entityType: POLYGON

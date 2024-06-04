@@ -1,18 +1,23 @@
 import { Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Else, If, Then } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundValidationPolygon,
+  fetchPutV2SitePolygonUUID,
+  GetV2AuditStatusResponse,
+  useGetV2AuditStatus,
   useGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import ComentarySection from "../ComentarySection/ComentarySection";
+import StatusDisplay from "../PolygonStatus/StatusDisplay ";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
 import VersionHistory from "./components/VersionHistory";
@@ -21,7 +26,7 @@ const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
   submitted: "bg-blue",
   approved: "bg-green",
-  "needs-more-info": "bg-tertiary-600"
+  "needs-more-information": "bg-tertiary-600"
 };
 
 const validationLabels: any = {
@@ -44,10 +49,12 @@ export interface ICriteriaCheckItem {
 
 const PolygonDrawer = ({
   polygonSelected,
-  isPolygonStatusOpen
+  isPolygonStatusOpen,
+  refresh
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
+  refresh?: () => void;
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
@@ -60,7 +67,10 @@ const PolygonDrawer = ({
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const openEditNewPolygon = context?.isUserDrawingEnabled;
-
+  const selectedPolygon = (sitePolygonData as any as Array<SitePolygon>)?.find(
+    (item: SitePolygon) => item?.poly_id === polygonSelected
+  );
+  const mutateSitePolygons = fetchPutV2SitePolygonUUID;
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
@@ -71,6 +81,17 @@ const PolygonDrawer = ({
       enabled: !!polygonSelected
     }
   );
+
+  const {
+    data: auditLogData,
+    refetch,
+    isLoading
+  } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
+    queryParams: {
+      entity: "SitePolygon",
+      uuid: selectedPolygon?.uuid ?? ""
+    }
+  });
 
   const validatePolygon = () => {
     fetchGetV2TerrafundValidationPolygon({
@@ -110,7 +131,6 @@ const PolygonDrawer = ({
   }, [criteriaData]);
 
   useEffect(() => {
-    console.log("polugon selected", polygonSelected);
     if (sitePolygonData && Array.isArray(sitePolygonData)) {
       const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
       setSelectedPolygonData(PolygonData || {});
@@ -153,7 +173,29 @@ const PolygonDrawer = ({
       <If condition={!buttonToogle}>
         <Then>
           <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <ComentarySection></ComentarySection>
+            <div className="flex items-center gap-2">
+              <Text variant="text-14-semibold" className="w-[15%] break-words">
+                Status:
+              </Text>
+              <When condition={selectedPolygon?.status}>
+                <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
+              </When>
+            </div>
+            <StatusDisplay
+              titleStatus="Polygon"
+              name={selectedPolygon?.poly_name}
+              refresh={refresh}
+              record={selectedPolygon}
+              mutate={mutateSitePolygons}
+              tab="polygonReview"
+            />
+            <ComentarySection
+              auditLogData={auditLogData?.data}
+              refresh={refetch}
+              record={selectedPolygon}
+              entity={"SitePolygon"}
+              loading={isLoading}
+            ></ComentarySection>
           </div>
         </Then>
         <Else>

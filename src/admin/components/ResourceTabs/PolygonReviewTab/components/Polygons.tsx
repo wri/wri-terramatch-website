@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
-import _MapService from "@/components/elements/Map-mapbox/MapService";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
@@ -22,7 +21,7 @@ import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-info";
+  status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
 }
@@ -35,12 +34,14 @@ export interface IPolygonProps {
   menu: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
   setPolygonFromMap?: any;
+  refresh?: () => void;
+  mapFunctions: any;
 }
 const statusColor = {
   draft: "bg-pinkCustom",
   submitted: "bg-blue",
   approved: "bg-green",
-  "needs-more-info": "bg-tertiary-600"
+  "needs-more-information": "bg-tertiary-600"
 };
 
 export const polygonData = [
@@ -54,7 +55,8 @@ export const polygonData = [
 const Polygons = (props: IPolygonProps) => {
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
   const [polygonMenu, setPolygonMenu] = useState<IPolygonItem[]>(props.menu);
-  const { polygonFromMap, setPolygonFromMap } = props;
+  const { polygonFromMap, setPolygonFromMap, mapFunctions } = props;
+  const { map } = mapFunctions;
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
@@ -98,7 +100,10 @@ const Polygons = (props: IPolygonProps) => {
   const flyToPolygonBounds = async (polygon: IPolygonItem) => {
     const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygon.uuid } });
     const bounds: any = bbox.bbox;
-    _MapService.map?.fitBounds(bounds, {
+    if (!map.current) {
+      return;
+    }
+    map.current.fitBounds(bounds, {
       padding: 100,
       linear: false
     });
@@ -203,7 +208,11 @@ const Polygons = (props: IPolygonProps) => {
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
-        <PolygonDrawer polygonSelected={selectedPolygon?.uuid || ""} isPolygonStatusOpen={isPolygonStatusOpen} />
+        <PolygonDrawer
+          polygonSelected={selectedPolygon?.uuid || ""}
+          isPolygonStatusOpen={isPolygonStatusOpen}
+          refresh={props?.refresh}
+        />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
         <Text variant="text-16-bold" className="pl-2 text-darkCustom">

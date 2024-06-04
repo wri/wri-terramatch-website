@@ -30,7 +30,7 @@ import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
 
-import SiteArea from "../components/SiteArea";
+// import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
   site: any;
@@ -192,6 +192,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+        site={site}
       ></ModalSubmit>
     );
   };
@@ -212,7 +213,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         </Text>
       ),
       onClick: () => {
-        console.log("Create Polygons");
+        console.log("Create Polygons", editPolygon);
         setEditPolygon(true);
       }
     },
@@ -377,7 +378,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} classNameLabels="" />
               </div>
             </div>
-            <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
+            {/* <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} /> */}
           </PageCard>
         </PageColumn>
       </PageRow>

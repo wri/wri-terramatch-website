@@ -1,15 +1,21 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useState } from "react";
+import mapboxgl from "mapbox-gl";
 
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
 
-export const StyleControl = ({ mapRef }: { mapRef: any }) => {
-  const map = mapRef.current?.map;
+export const StyleControl = ({
+  map,
+  currentStyle,
+  setCurrentStyle
+}: {
+  map: mapboxgl.Map | null;
+  currentStyle: MapStyle;
+  setCurrentStyle: (style: MapStyle) => void;
+}) => {
   const t = useT();
-  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
 
   const setMapStyle = (style: MapStyle) => {
     if (map && currentStyle !== style) {

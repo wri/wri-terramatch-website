@@ -62,7 +62,13 @@ const Comentary = (props: ComentaryProps) => {
       </Text>
       <div className="flex flex-wrap gap-2">
         {files?.map((file: any) => (
-          <div key={file.id} className="rounded-xl bg-neutral-150 px-2 py-1">
+          <div
+            key={file.id}
+            className="cursor-pointer rounded-xl bg-neutral-150 px-2 py-1"
+            onClick={() => {
+              file.url_file && window.open(file.url_file, "_blank");
+            }}
+          >
             <Text variant="text-14-light" className="text-grey-700">
               {file?.attachment}
             </Text>
