@@ -69,7 +69,7 @@ const SiteAuditLogPolygonStatusSide = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 overflow-hidden">
+    <div className="flex flex-col gap-6 overflow-visible">
       <Dropdown
         label={`Select ${recordType}`}
         labelVariant="text-16-bold"

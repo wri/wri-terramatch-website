@@ -67,24 +67,22 @@ const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: 
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
-                <div className="grid w-2/3 gap-6">
-                  <div className="gap-6">
-                    <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-                    <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                      <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
-                    </When>
-                    <When condition={buttonToogle !== ButtonStates.PROJECTS}>
-                      <SiteAuditLogEntityStatus
-                        record={selected}
-                        auditLogData={auditLogData}
-                        refresh={refetch}
-                        buttonToogle={buttonToogle}
-                        buttonStates={ButtonStates}
-                      />
-                    </When>
-                  </div>
+                <div className="grid w-[64.5%] gap-6">
+                  <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
+                  <When condition={buttonToogle === ButtonStates.PROJECTS}>
+                    <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
+                  </When>
+                  <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+                    <SiteAuditLogEntityStatus
+                      record={selected}
+                      auditLogData={auditLogData}
+                      refresh={refetch}
+                      buttonToogle={buttonToogle}
+                      buttonStates={ButtonStates}
+                    />
+                  </When>
                 </div>
-                <div className="w-1/3 pl-8">
+                <div className="w-[33%] pl-8">
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}

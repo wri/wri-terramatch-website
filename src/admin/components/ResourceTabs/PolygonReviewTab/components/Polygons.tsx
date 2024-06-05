@@ -222,7 +222,7 @@ const Polygons = (props: IPolygonProps) => {
           <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
         </Button>
       </div>
-      <div ref={containerRef} className="flex max-h-full flex-col overflow-auto">
+      <div ref={containerRef} className="flex max-h-full max-h-screen flex-col overflow-auto">
         {polygonMenu.map(item => {
           return (
             <div

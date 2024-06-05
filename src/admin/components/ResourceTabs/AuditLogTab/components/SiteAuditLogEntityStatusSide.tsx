@@ -76,7 +76,7 @@ const SiteAuditLogEntityStatusSide = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 overflow-hidden">
+    <div className="flex flex-col gap-6 overflow-visible">
       {polygonList && polygonList?.length > 0 && (
         <Dropdown
           label={`Select ${recordType}`}

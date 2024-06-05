@@ -63,7 +63,7 @@ const AuditLogStatusSide = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 overflow-hidden">
+    <div className="flex flex-col gap-6 overflow-visible">
       <Text variant="text-16-bold">{entity} Status</Text>
       <StepProgressbar
         color="secondary"
