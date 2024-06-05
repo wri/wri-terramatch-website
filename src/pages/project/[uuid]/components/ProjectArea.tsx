@@ -26,13 +26,15 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [projectBbox, setProjectBbox] = useState<BBox>();
   const mapFunctions = useMap();
+  const [checkedValues, setCheckedValues] = useState<string[]>([]);
 
   console.warn(selected);
 
   const getPolygonsData = (uuid: string) => {
     fetchGetV2TypeEntity({
       queryParams: {
-        uuid: uuid
+        uuid: uuid,
+        type: "projects"
       }
     }).then(result => {
       if (result.polygonsData) {
@@ -84,12 +86,17 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
     },
     keepPreviousData: true
   });
-
+  const handleCheckboxChange = (value: string, checked: boolean) => {
+    if (checked) {
+      setCheckedValues([...checkedValues, value]);
+    } else {
+      setCheckedValues(checkedValues.filter(val => val !== value));
+    }
+  };
   // const imagesGeoJson = useGetImagesGeoJSON("projects", project.uuid);
   // const geoJSON = useJSONParser(selected?.geojson || project.boundary_geojson);
   const sites = usePaginatedResult<any>(data);
   console.log(sites);
-
   return (
     <div className="flex h-[500px] rounded-lg  text-darkCustom">
       <MapSidePanel
@@ -107,6 +114,8 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
+        checkedValues={checkedValues}
+        onCheckboxChange={handleCheckboxChange}
       />
       {projectBbox && projectBbox.length > 0 && (
         <MapContainer
