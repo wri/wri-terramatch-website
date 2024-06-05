@@ -19,15 +19,13 @@ interface ProjectAreaProps {
 const ProjectArea = ({ project }: ProjectAreaProps) => {
   const t = useT();
   const { format } = useDate();
-  const [selected, setSelected] = useState<any>();
+  const [setSelected] = useState<any>();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [projectBbox, setProjectBbox] = useState<BBox>();
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-
-  console.warn(selected);
 
   const getPolygonsData = (uuid: string, statusFilter: string, sortOrder: string) => {
     fetchGetV2TypeEntity({

@@ -45,7 +45,6 @@ const TooltipMap = (props: TooltipMapProps) => {
   const polygonDataStatus = polygonData?.status ? polygonData.status : "submitted";
 
   const goToRelatedSiteProfile = () => {
-    console.log("Go to related site profile", polygonData);
     const siteUrl = `/site/${polygonData?.site_id}`;
     window.open(siteUrl, "_blank");
   };
