@@ -107,9 +107,18 @@ const EditEntityPage = () => {
     )
   };
 
+  const initialStepProps = useMemo(() => {
+    if (isLoading) return {};
+
+    const initialStepIndex = formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
+
+    return { initialStepIndex, disableInitialAutoProgress: initialStepIndex != null };
+  }, [isLoading]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
+        !isLoading &&{" "}
         <WizardForm
           steps={formSteps!}
           errors={error}
@@ -152,6 +161,7 @@ const EditEntityPage = () => {
               router.push(getEntityDetailPageLink(entityName, entityUUID));
             }
           }}
+          {...initialStepProps}
         />
       </LoadingContainer>
     </BackgroundLayout>
