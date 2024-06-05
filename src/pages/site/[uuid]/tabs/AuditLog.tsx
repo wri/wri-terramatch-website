@@ -68,7 +68,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
-                <div className="grid w-[64.5%] gap-6">
+                <div className="grid w-[64%] gap-6">
                   <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
                   <When condition={buttonToogle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
@@ -92,7 +92,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
                     />
                   </When>
                 </div>
-                <div className="w-[33%] pl-8">
+                <div className="w-[32%] pl-8">
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
