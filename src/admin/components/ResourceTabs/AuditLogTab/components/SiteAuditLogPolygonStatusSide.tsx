@@ -69,7 +69,7 @@ const SiteAuditLogPolygonStatusSide = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 overflow-hidden">
+    <div className="flex flex-col gap-6 overflow-visible">
       <Dropdown
         label={`Select ${recordType}`}
         labelVariant="text-16-bold"
@@ -111,7 +111,6 @@ const SiteAuditLogPolygonStatusSide = ({
         refresh={refresh}
         mutate={mutate}
         record={record}
-        setSelectedPolygon={setSelectedPolygon}
       />
       <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>

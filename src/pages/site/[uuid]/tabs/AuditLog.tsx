@@ -43,7 +43,8 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
     setSelected,
     auditLogData,
     refetch,
-    isLoading
+    isLoading,
+    checkPolygonsSite
   } = useAuditLogActions({
     record: site,
     buttonToogle,
@@ -67,33 +68,31 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
-                <div className="grid w-2/3 gap-6">
-                  <div className="gap-6">
-                    <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-                    <When condition={buttonToogle === ButtonStates.PROJECTS}>
-                      <Text variant="text-24-bold">Project Status</Text>
-                      <Text variant="text-14-light" className="mb-4">
-                        Update the site status, view updates, or add comments
-                      </Text>
-                      <Link
-                        className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
-                        href={`/project/${site?.project?.uuid}?tab=audit-log`}
-                      >
-                        OPEN PROJECT AUDIT LOG
-                      </Link>
-                    </When>
-                    <When condition={buttonToogle !== ButtonStates.PROJECTS}>
-                      <SiteAuditLogEntityStatus
-                        record={selected}
-                        auditLogData={auditLogData}
-                        refresh={refetch}
-                        buttonToogle={buttonToogle}
-                        buttonStates={ButtonStates}
-                      />
-                    </When>
-                  </div>
+                <div className="grid w-[64%] gap-6">
+                  <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
+                  <When condition={buttonToogle === ButtonStates.PROJECTS}>
+                    <Text variant="text-24-bold">Project Status</Text>
+                    <Text variant="text-14-light" className="mb-4">
+                      Update the site status, view updates, or add comments
+                    </Text>
+                    <Link
+                      className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
+                      href={`/project/${site?.project?.uuid}?tab=audit-log`}
+                    >
+                      OPEN PROJECT AUDIT LOG
+                    </Link>
+                  </When>
+                  <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+                    <SiteAuditLogEntityStatus
+                      record={selected}
+                      auditLogData={auditLogData}
+                      refresh={refetch}
+                      buttonToogle={buttonToogle}
+                      buttonStates={ButtonStates}
+                    />
+                  </When>
                 </div>
-                <div className="w-1/3 pl-8">
+                <div className="w-[32%] pl-8">
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
@@ -111,6 +110,8 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
                     auditLogData={auditLogData?.data}
                     recentRequestData={recentRequestData}
                     tab="polygonReview"
+                    checkPolygonsSite={checkPolygonsSite}
+                    viewPD={true}
                   />
                 </div>
               </div>

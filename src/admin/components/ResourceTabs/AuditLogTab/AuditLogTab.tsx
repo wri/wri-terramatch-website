@@ -47,7 +47,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     selected,
     setSelected,
     auditLogData,
-    refetch
+    refetch,
+    checkPolygonsSite
   } = useAuditLogActions({
     record,
     buttonToogle,
@@ -101,6 +102,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               setSelectedPolygon={setSelected}
               auditLogData={auditLogData?.data}
               recentRequestData={recentRequestData}
+              checkPolygonsSite={checkPolygonsSite}
             />
           </Grid>
         </Grid>
