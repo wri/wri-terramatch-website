@@ -20,6 +20,8 @@ import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid }
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { AdminPopup } from "./components/AdminPopup";
+import { BBox } from "./GeoJSON";
+import type { TooltipType } from "./Map.d";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -67,8 +69,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonChecks?: boolean;
   legend?: LegendItem[];
   centroids?: any;
-  polygonsData?: SitePolygonsDataResponse;
-  bbox?: any;
+  polygonsData?: Record<string, string[]>;
+  bbox?: BBox;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
@@ -77,6 +79,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showPopups?: boolean;
   showLegend?: boolean;
   mapFunctions?: any;
+  tooltipType?: TooltipType;
+  sitePolygonData?: SitePolygonsDataResponse;
 }
 
 export const MapContainer = ({
@@ -100,13 +104,13 @@ export const MapContainer = ({
   showPopups = false,
   showLegend = false,
   mapFunctions,
+  tooltipType = "view",
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
-  const sitePolygonData = context?.sitePolygonData;
   const { isUserDrawingEnabled } = isUserDrawing
     ? { isUserDrawingEnabled: isUserDrawing }
     : context || { isUserDrawingEnabled: false };
@@ -143,7 +147,7 @@ export const MapContainer = ({
       const currentMap = map.current;
 
       map.current.on("load", () => {
-        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData);
+        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, tooltipType);
       });
     }
   }, [styleLoaded, sitePolygonData]);
