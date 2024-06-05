@@ -49,7 +49,7 @@ export const typeGraph: Story = {
     className: "col-span-4",
     type: "graph",
     img: IconNames.GRAPH1,
-    leyends: [
+    legends: [
       {
         color: "bg-blueCustom",
         title: "Average Number of Trees per hectare"
