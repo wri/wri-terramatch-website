@@ -103,7 +103,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         mapFunctions={mapFunctions}
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8 backdrop-blur-md "
+        className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
       />
