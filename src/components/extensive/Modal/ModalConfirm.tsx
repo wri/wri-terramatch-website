@@ -16,6 +16,7 @@ export interface ModalConfirmProps extends ModalProps {
   menu?: Option[];
   menuLabel?: string;
   commentArea?: boolean;
+  checkPolygonsSite?: boolean | undefined;
 }
 
 const ModalConfirm: FC<ModalConfirmProps> = ({
@@ -28,6 +29,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   menu = [],
   menuLabel,
   commentArea = false,
+  checkPolygonsSite,
   ...rest
 }) => {
   const [data, useData] = useState("");
@@ -75,6 +77,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               onChange={opt => {
                 setSelectedOption(opt);
               }}
+              disableOption={checkPolygonsSite}
             />
             <If condition={showError}>
               <Text variant="text-12-bold" className="text-red">

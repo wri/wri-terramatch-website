@@ -88,6 +88,7 @@ export interface StatusProps {
   refetchPolygon?: () => void;
   setSelectedPolygon?: any;
   tab?: string;
+  checkPolygonsSite?: boolean | undefined;
 }
 
 const menuOptionsMap = {
@@ -114,6 +115,7 @@ const StatusDisplay = ({
   refresh,
   name,
   record,
+  checkPolygonsSite,
   setSelectedPolygon,
   tab
 }: StatusProps) => {
@@ -151,6 +153,7 @@ const StatusDisplay = ({
         menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
+        checkPolygonsSite={checkPolygonsSite}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           try {
