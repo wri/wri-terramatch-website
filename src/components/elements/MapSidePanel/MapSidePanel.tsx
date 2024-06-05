@@ -19,8 +19,8 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   title: string;
   items: MapSidePanelItemProps[];
   onSelectItem: (item: MapSidePanelItemProps) => void;
-  onSearch: (query: string) => void;
-  onLoadMore: () => void;
+  onSearch?: (query: string) => void;
+  onLoadMore?: () => void;
   emptyText?: string;
   mapFunctions: any;
   checkedValues: string[];
@@ -90,31 +90,6 @@ const MapSidePanel = ({
       setClickedButton("");
     }
   }, [clickedButton, selected]);
-
-  useEffect(() => {
-    const handleChange = () => {
-      // const checked = checkboxRefs.current.some(ref => ref.checked);
-      // setOpenSubMenu(checked);
-    };
-
-    const checkbox = checkboxRefs.current;
-
-    checkbox.forEach(ref => {
-      if (ref) {
-        ref.addEventListener("change", handleChange);
-      }
-    });
-
-    handleChange();
-
-    return () => {
-      checkbox.forEach(ref => {
-        if (ref) {
-          ref.removeEventListener("change", handleChange);
-        }
-      });
-    };
-  }, [openMenu]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -204,15 +179,7 @@ const MapSidePanel = ({
             {emptyText || t("No result")}
           </Text>
         )}
-        <div
-          ref={refContainer}
-          className="mr-[-12px] h-full space-y-4 overflow-y-auto pr-3"
-          onScroll={e => {
-            //@ts-ignore
-            const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-            if (bottom) onLoadMore();
-          }}
-        >
+        <div ref={refContainer} className="mr-[-12px] h-full space-y-4 overflow-y-auto pr-3">
           <List
             as={Fragment}
             items={items}

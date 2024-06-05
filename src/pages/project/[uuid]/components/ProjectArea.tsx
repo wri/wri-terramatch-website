@@ -1,4 +1,3 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
@@ -7,12 +6,11 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
-import { fetchGetV2ProjectsUUIDSitePolygons, fetchGetV2TypeEntity } from "@/generated/apiComponents";
+import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 // import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 // import { useJSONParser } from "@/hooks/useJSONParser";
-import { usePaginatedResult } from "@/hooks/usePaginatedResult";
 
 interface ProjectAreaProps {
   project: any;
@@ -21,7 +19,6 @@ interface ProjectAreaProps {
 const ProjectArea = ({ project }: ProjectAreaProps) => {
   const t = useT();
   const { format } = useDate();
-  const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<any>();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
@@ -75,29 +72,6 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
     }
   }, [polygonsData]);
 
-  const { data, fetchNextPage } = useInfiniteQuery<any>({
-    queryKey: ["sites", query],
-    queryFn: ({ pageParam }) => {
-      const queryParams: any = {
-        sort: "created_at",
-        page: pageParam || 1,
-        per_page: 5
-      };
-      if (query) queryParams.search = query;
-
-      return fetchGetV2ProjectsUUIDSitePolygons({
-        pathParams: { uuid: project.uuid },
-        queryParams
-      });
-    },
-    getNextPageParam: (lastPage: number) => {
-      //@ts-ignore
-      const meta: any = lastPage.meta;
-      if (!meta) return 1;
-      return meta?.last_page > meta?.current_page ? meta?.current_page + 1 : undefined;
-    },
-    keepPreviousData: true
-  });
   const handleCheckboxChange = (value: string, checked: boolean) => {
     if (checked) {
       setCheckedValues([...checkedValues, value]);
@@ -107,8 +81,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   };
   // const imagesGeoJson = useGetImagesGeoJSON("projects", project.uuid);
   // const geoJSON = useJSONParser(selected?.geojson || project.boundary_geojson);
-  const sites = usePaginatedResult<any>(data);
-  console.log(sites);
+
   return (
     <div className="flex h-[500px] rounded-lg  text-darkCustom">
       <MapSidePanel
@@ -122,9 +95,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         }
         mapFunctions={mapFunctions}
         onSelectItem={setSelected}
-        onSearch={setQuery}
         className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
-        onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
         checkedValues={checkedValues}
         onCheckboxChange={handleCheckboxChange}
