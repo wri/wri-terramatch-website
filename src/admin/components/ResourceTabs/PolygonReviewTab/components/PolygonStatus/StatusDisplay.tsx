@@ -166,8 +166,12 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               });
             }, 3000);
           } catch (e) {
-            alert("The request encountered an issue, or the comment exceeds 255 characters.");
-            console.error(e);
+            setNotificationStatus({
+              open: true,
+              message: "The request encountered an issue, or the comment exceeds 255 characters.",
+              type: "error",
+              title: "Error!"
+            });
           } finally {
             refresh();
             reloadEntity();
@@ -213,8 +217,12 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               });
             }, 3000);
           } catch (e) {
-            alert("The request encountered an issue, or the comment exceeds 255 characters.");
-            console.error(e);
+            setNotificationStatus({
+              open: true,
+              message: "The request encountered an issue, or the comment exceeds 255 characters.",
+              type: "error",
+              title: "Error!"
+            });
           } finally {
             refresh();
             reloadEntity();
@@ -229,7 +237,7 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
       <div className="flex flex-col items-center gap-4">
         <div className="flex w-full items-center gap-4">
           <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
-            <Text variant="text-12-bold">change status</Text>
+            <Text variant="text-12-bold">Change status</Text>
           </Button>
           <Button
             variant="semi-black"
