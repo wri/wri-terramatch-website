@@ -115,7 +115,6 @@ const handleLayerClick = (
   popupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType
 ) => {
   removePopups();
@@ -125,7 +124,7 @@ const handleLayerClick = (
   let popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
-  root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, sitePolygonData, type }));
+  root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, type }));
 
   popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
 
@@ -177,16 +176,10 @@ export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<strin
   });
 };
 
-export const addPopupsToMap = (
-  map: mapboxgl.Map,
-  popupComponent: any,
-  setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
-) => {
+export const addPopupsToMap = (map: mapboxgl.Map, popupComponent: any, setPolygonFromMap: any, type: TooltipType) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
-      addPopupToLayer(map, popupComponent, layer, setPolygonFromMap, sitePolygonData, type);
+      addPopupToLayer(map, popupComponent, layer, setPolygonFromMap, type);
     });
   }
 };
@@ -196,7 +189,6 @@ export const addPopupToLayer = (
   popupComponent: any,
   layer: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType
 ) => {
   if (popupComponent) {
@@ -207,9 +199,7 @@ export const addPopupToLayer = (
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
 
     targetLayers.forEach(targetLayer => {
-      map.on("click", targetLayer.id, (e: any) =>
-        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData, type)
-      );
+      map.on("click", targetLayer.id, (e: any) => handleLayerClick(e, popupComponent, map, setPolygonFromMap, type));
     });
   }
 };

@@ -143,20 +143,13 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    if (map?.current && styleLoaded && showPopups) {
-      const currentMap = map.current;
-
-      map.current.on("load", () => {
-        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, tooltipType);
-      });
-    }
-  }, [styleLoaded, sitePolygonData]);
-
-  useEffect(() => {
     if (map?.current && styleLoaded && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
       addSourcesToLayers(currentMap, polygonsData);
       setChangeStyle(true);
+      if (showPopups) {
+        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, tooltipType);
+      }
     }
   }, [sitePolygonData, styleLoaded]);
 
