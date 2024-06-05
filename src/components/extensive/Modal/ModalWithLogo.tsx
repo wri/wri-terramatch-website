@@ -99,7 +99,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
               name={item.name}
               lastName={item.lastName}
               date={item.date}
-              commentary={item.Commentary}
+              commentary={item.commentary}
               files={item.files}
               status={item.status as "draft" | "submitted" | undefined}
             />
