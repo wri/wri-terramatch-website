@@ -11,6 +11,8 @@ import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid 
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
+import Menu from "../Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 import { MenuItem } from "../MenuItem/MenuItem";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -22,6 +24,33 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   emptyText?: string;
   mapFunctions: any;
 }
+
+const itemsPrimaryMenu = [
+  {
+    id: "1",
+    render: () => (
+      <Text variant="text-14-semibold" className="flex items-center">
+        Mame
+      </Text>
+    )
+  },
+  {
+    id: "2",
+    render: () => (
+      <Text variant="text-14-semibold" className="flex items-center">
+        Status
+      </Text>
+    )
+  },
+  {
+    id: "3",
+    render: () => (
+      <Text variant="text-14-semibold" className="flex items-center">
+        Date Created
+      </Text>
+    )
+  }
+];
 
 const MapSidePanel = ({
   title,
@@ -35,6 +64,7 @@ const MapSidePanel = ({
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
+  const menuCheckboxRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<MapSidePanelItemProps>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
@@ -107,6 +137,18 @@ const MapSidePanel = ({
     };
   }, [openMenu]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuCheckboxRef.current && !menuCheckboxRef.current?.contains(event.target as Node)) {
+        setOpenMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+
   return (
     <div {...props} className={classNames(className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
@@ -115,7 +157,7 @@ const MapSidePanel = ({
           {title}
         </Text>
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="relative" ref={menuCheckboxRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
               <Icon name={IconNames.IC_FILTER} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
             </div>
@@ -150,7 +192,7 @@ const MapSidePanel = ({
                   textClassName="text-10-semibold"
                 />
                 <When condition={openSubMenu}>
-                  <div className="absolute left-full top-0 ml-2 rounded-lg bg-white p-1">
+                  <div className="absolute top-0 left-full ml-2 rounded-lg bg-white p-1">
                     <MenuItem
                       render="Sort by date"
                       className="text-10-semibold"
@@ -171,9 +213,16 @@ const MapSidePanel = ({
             </When>
           </div>
           <div className="rounded bg-white p-1.5">
-            <Button variant="text" onClick={() => {}}>
-              <Icon name={IconNames.IC_SORT} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
-            </Button>
+            <Menu
+              container={refContainer?.current}
+              placement={MENU_PLACEMENT_BOTTOM_BOTTOM}
+              menu={itemsPrimaryMenu}
+              classNameContentMenu="!mt-3 ml-[-7px]"
+            >
+              <Button variant="text" onClick={() => {}}>
+                <Icon name={IconNames.IC_SORT} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
+              </Button>
+            </Menu>
           </div>
         </div>
       </div>
