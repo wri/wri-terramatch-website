@@ -23885,3 +23885,9 @@ export type EntityTypeResponse = {
    */
   bbox?: any[];
 };
+
+export type CheckPolygonsResponse = {
+  data?: {
+    check_polygons?: boolean;
+  };
+};

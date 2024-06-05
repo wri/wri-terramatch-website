@@ -35516,6 +35516,60 @@ export const useGetV2TypeEntity = <TData = GetV2TypeEntityResponse>(
   );
 };
 
+export type GetV2CheckApprovedPolygonsUuidPathParams = {
+  /**
+   * show a boolean value.
+   */
+  uuid: string;
+};
+
+export type GetV2CheckApprovedPolygonsUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2CheckApprovedPolygonsUuidResponse = {
+  data?: {
+    check_polygons?: boolean;
+  };
+};
+
+export type GetV2CheckApprovedPolygonsUuidVariables = {
+  pathParams: GetV2CheckApprovedPolygonsUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2CheckApprovedPolygonsUuid = (
+  variables: GetV2CheckApprovedPolygonsUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2CheckApprovedPolygonsUuidResponse,
+    GetV2CheckApprovedPolygonsUuidError,
+    undefined,
+    {},
+    {},
+    GetV2CheckApprovedPolygonsUuidPathParams
+  >({ url: "/v2/check-approved-polygons/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2CheckApprovedPolygonsUuid = <TData = GetV2CheckApprovedPolygonsUuidResponse>(
+  variables: GetV2CheckApprovedPolygonsUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2CheckApprovedPolygonsUuidResponse, GetV2CheckApprovedPolygonsUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2CheckApprovedPolygonsUuidResponse, GetV2CheckApprovedPolygonsUuidError, TData>(
+    queryKeyFn({
+      path: "/v2/check-approved-polygons/{uuid}",
+      operationId: "getV2CheckApprovedPolygonsUuid",
+      variables
+    }),
+    ({ signal }) => fetchGetV2CheckApprovedPolygonsUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -36166,4 +36220,9 @@ export type QueryOperation =
       path: "/v2/type-entity";
       operationId: "getV2TypeEntity";
       variables: GetV2TypeEntityVariables;
+    }
+  | {
+      path: "/v2/check-approved-polygons/{uuid}";
+      operationId: "getV2CheckApprovedPolygonsUuid";
+      variables: GetV2CheckApprovedPolygonsUuidVariables;
     };

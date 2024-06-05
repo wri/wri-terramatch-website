@@ -23,7 +23,9 @@ const SiteAuditLogEntityStatusSide = ({
   mutate,
   getValueForStatus,
   progressBarLabels,
-  tab
+  tab,
+  checkPolygonsSite,
+  viewPD = false
 }: {
   recordType?: "Polygon" | "Site" | "Project";
   refresh?: () => void;
@@ -37,6 +39,8 @@ const SiteAuditLogEntityStatusSide = ({
   getValueForStatus?: (status: string) => number;
   progressBarLabels?: Array<{ id: string; label: string }>;
   tab?: string;
+  checkPolygonsSite?: boolean | undefined;
+  viewPD?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const recentRequest = auditLogData?.find(
@@ -116,8 +120,9 @@ const SiteAuditLogEntityStatusSide = ({
         refresh={refresh}
         mutate={mutate}
         record={record}
-        setSelectedPolygon={setSelectedPolygon}
         tab={tab}
+        checkPolygonsSite={checkPolygonsSite}
+        viewPD={viewPD}
       />
       <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>

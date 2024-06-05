@@ -46,6 +46,7 @@ export interface DropdownProps {
   feedbackRequired?: boolean;
   formHook?: UseFormReturn;
   onChangeConfirm?: boolean;
+  disableOption?: boolean | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
@@ -147,6 +148,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return colorMap[option] || "";
   };
 
+  const verifyDisableOption = (title: string) => {
+    return props?.disableOption && title === "Approved";
+  };
+
   return (
     <div className={tw("space-y-2", props.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
@@ -229,9 +234,11 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                           "w-full cursor-pointer hover:bg-primary-100",
                           props.multiSelect ? "p-3.5" : "p-3",
                           isSelected && !props.multiSelect && "bg-primary-100",
-                          props.optionClassName
+                          props.optionClassName,
+                          verifyDisableOption(option.title) ? "cursor-not-allowed bg-grey-750 hover:bg-grey-750" : ""
                         )
                       )}
+                      disabled={verifyDisableOption(option.title)}
                     >
                       <If condition={props.multiSelect}>
                         <Then>

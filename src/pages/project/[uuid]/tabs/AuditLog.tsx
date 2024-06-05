@@ -42,7 +42,8 @@ const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: 
     setSelected,
     auditLogData,
     refetch,
-    isLoading
+    isLoading,
+    checkPolygonsSite
   } = useAuditLogActions({
     record: project,
     buttonToogle,
@@ -101,6 +102,8 @@ const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: 
                     auditLogData={auditLogData?.data}
                     recentRequestData={recentRequestData}
                     tab="polygonReview"
+                    checkPolygonsSite={checkPolygonsSite}
+                    viewPD={true}
                   />
                 </div>
               </div>
