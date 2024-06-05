@@ -111,7 +111,6 @@ const SiteAuditLogPolygonStatusSide = ({
         refresh={refresh}
         mutate={mutate}
         record={record}
-        setSelectedPolygon={setSelectedPolygon}
       />
       <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>

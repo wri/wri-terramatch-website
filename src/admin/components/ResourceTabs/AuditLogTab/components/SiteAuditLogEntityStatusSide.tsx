@@ -120,7 +120,6 @@ const SiteAuditLogEntityStatusSide = ({
         refresh={refresh}
         mutate={mutate}
         record={record}
-        setSelectedPolygon={setSelectedPolygon}
         tab={tab}
         checkPolygonsSite={checkPolygonsSite}
         viewPD={viewPD}

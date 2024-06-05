@@ -99,7 +99,6 @@ export interface StatusProps {
   refresh?: () => void;
   name: any;
   refetchPolygon?: () => void;
-  setSelectedPolygon?: any;
   tab?: string;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
@@ -130,7 +129,6 @@ const StatusDisplay = ({
   name,
   record,
   checkPolygonsSite,
-  setSelectedPolygon,
   tab,
   viewPD
 }: StatusProps) => {
