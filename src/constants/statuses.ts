@@ -8,15 +8,15 @@ export const STATUSES = [
     value: DRAFT
   },
   {
+    label: "Submitted",
+    value: SUBMITTED
+  },
+  {
     label: "Needs More Information",
     value: NEEDS_MORE_INFORMATION
   },
   {
     label: "Approved",
     value: APPROVED
-  },
-  {
-    label: "Submitted",
-    value: SUBMITTED
   }
 ];

@@ -136,6 +136,8 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         bbox={projectBbox}
         tooltipType="goTo"
         showPopups
+        showLegend
+        siteData={true}
         className="flex-1 rounded-r-lg"
       />
     </div>
