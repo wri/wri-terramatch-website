@@ -21,6 +21,8 @@ import {
 
 import useLoadEntityList from "./useLoadEntityList";
 
+const ESTIMATED_AREA_CRITERIA_ID = 12;
+
 export const ButtonStates = {
   PROJECTS: 0,
   SITE: 1,
@@ -108,7 +110,7 @@ const useAuditLogActions = ({
 
   const isValidData = (criteriaData: any) => {
     for (const criteria of criteriaData.criteria_list || []) {
-      if (criteria.criteria_id === 12) {
+      if (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID) {
         continue;
       }
       if (criteria.valid !== 1) {
