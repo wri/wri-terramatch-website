@@ -2,6 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
@@ -23,7 +24,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const [selected, setSelected] = useState<any>();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
-  const [projectBbox, setProjectBbox] = useState<any[]>([]);
+  const [projectBbox, setProjectBbox] = useState<BBox>();
   const mapFunctions = useMap();
 
   console.warn(selected);
@@ -36,7 +37,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
     }).then(result => {
       if (result.polygonsData) {
         setPolygonsData(result.polygonsData);
-        setProjectBbox(result.bbox || []);
+        setProjectBbox(result.bbox as BBox);
       }
     });
   };
@@ -107,11 +108,12 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
       />
-      {projectBbox.length > 0 && (
+      {projectBbox && projectBbox.length > 0 && (
         <MapContainer
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
           bbox={projectBbox}
+          tooltipType="goTo"
           showPopups
           className="flex-1 rounded-r-lg"
         />

@@ -44,6 +44,12 @@ const TooltipMap = (props: TooltipMapProps) => {
 
   const polygonDataStatus = polygonData?.status ? polygonData.status : "submitted";
 
+  const goToRelatedSiteProfile = () => {
+    console.log("Go to related site profile", polygonData);
+    const siteUrl = `/site/${polygonData?.site_id}`;
+    window.open(siteUrl, "_blank");
+  };
+
   return (
     <div
       className={`w-[295px] rounded border-t-[5px] ${topBorderColorPopup[polygonDataStatus]} bg-white px-3 pb-3 pt-[7px]`}
@@ -103,6 +109,16 @@ const TooltipMap = (props: TooltipMapProps) => {
             <Icon name={IconNames.CLICK} className="h-4 w-4" />
             <Text variant="text-10-light" className="italic text-black">
               click to see polygon details
+            </Text>
+          </button>
+        </div>
+      )}
+      {type === "goTo" && (
+        <div className="flex w-full items-center justify-center">
+          <button className="flex items-center justify-center gap-1" onClick={() => goToRelatedSiteProfile()}>
+            <Icon name={IconNames.CLICK} className="h-4 w-4" />
+            <Text variant="text-10-light" className="italic text-black">
+              click to open site profile page
             </Text>
           </button>
         </div>
