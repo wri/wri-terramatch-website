@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
   fetchGetV2CheckApprovedPolygonsUuid,
+  fetchGetV2TerrafundValidationCriteriaData,
   fetchPutV2SitePolygonUUID,
   fetchPutV2SiteProjectUUID,
   fetchPutV2SiteStatusUUID,
@@ -65,8 +66,10 @@ const useAuditLogActions = ({
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
   const isProject = buttonToogle === ButtonStates.PROJECTS;
   const isSite = buttonToogle === ButtonStates.SITE;
+  const isPolygon = buttonToogle === ButtonStates.POLYGON;
   const isSiteProject = entityLevel === PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
+  const [criteriaValidation, setCriteriaValidation] = useState<boolean>(false);
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entityUuid: record?.uuid,
     entityType: entityType as "Project" | "Site" | "Polygon",
@@ -84,8 +87,36 @@ const useAuditLogActions = ({
       }
     };
 
+    const fetchCriteriaValidation = async () => {
+      try {
+        if (selected?.uuid && isPolygon) {
+          const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
+            queryParams: {
+              uuid: selected?.uuid as string
+            }
+          });
+          setCriteriaValidation(isValidData(criteriaData?.criteria_list || []));
+        }
+      } catch (error) {
+        setCriteriaValidation(true);
+      }
+    };
+
     fetchCheckPolygons();
+    fetchCriteriaValidation();
   }, [entityType, record, selected]);
+
+  const isValidData = (criteriaData: any) => {
+    for (const criteria of criteriaData.criteria_list || []) {
+      if (criteria.criteria_id === 12) {
+        continue;
+      }
+      if (criteria.valid !== 1) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const entityHandlers = (() => {
     if (isSiteProject) {
@@ -94,7 +125,7 @@ const useAuditLogActions = ({
         loadToEntity: !isProject ? loadEntityList : () => {},
         ListItemToEntity: !isProject ? entityListItem : [],
         setSelectedToEntity: !isProject ? setSelected : null,
-        checkPolygons: isSite ? checkPolygons : false
+        checkPolygons: isSite ? checkPolygons : isPolygon ? criteriaValidation : false
       };
     } else {
       return {
@@ -102,7 +133,7 @@ const useAuditLogActions = ({
         loadToEntity: !isProject && !isSite ? loadEntityList : () => {},
         ListItemToEntity: !isProject && !isSite ? entityListItem : [],
         setSelectedToEntity: !isProject && !isSite ? setSelected : null,
-        checkPolygons: isSite ? checkPolygons : false
+        checkPolygons: isSite ? checkPolygons : isPolygon ? criteriaValidation : false
       };
     }
   })();
