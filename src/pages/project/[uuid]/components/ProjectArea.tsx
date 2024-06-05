@@ -6,6 +6,7 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { fetchGetV2ProjectsUUIDSitePolygons, fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -62,6 +63,13 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         return acc;
       }, {});
       setPolygonDataMap(dataMap);
+    } else {
+      setPolygonDataMap({
+        [SUBMITTED]: [],
+        [APPROVED]: [],
+        [NEEDS_MORE_INFORMATION]: [],
+        [DRAFT]: []
+      });
     }
   }, [polygonsData]);
 

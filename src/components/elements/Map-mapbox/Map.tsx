@@ -174,7 +174,6 @@ export const MapContainer = ({
 
   useEffect(() => {
     if (bbox && map.current && map) {
-      console.log("WAnt to zzomtToBBOX", bbox);
       zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);
