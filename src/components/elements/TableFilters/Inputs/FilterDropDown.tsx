@@ -1,4 +1,5 @@
 import { Listbox, Transition } from "@headlessui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { PropsWithChildren, useState } from "react";
 import { When } from "react-if";
@@ -23,6 +24,7 @@ export interface FilterDropDownProps {
 
 const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
   const [selected, setSelected] = useState(props.defaultValue);
+  const t = useT();
 
   const onChangeHandler = (value: any) => {
     setSelected(value);
@@ -34,21 +36,21 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
       {({ open, value }) => (
         <div className="flex items-center gap-3">
           <When condition={!!props.label}>
-            <Listbox.Label as={Text} variant="text-bold-subtitle-500">
-              {props.label}
+            <Listbox.Label as={Text} variant="text-16-bold">
+              {t(props.label)}
             </Listbox.Label>
           </When>
           <div className="relative">
             <Listbox.Button
               as="div"
-              className="flex h-8 items-center justify-center gap-1 rounded-md border bg-white px-10"
+              className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
             >
-              <Text variant="text-bold-caption-200" className="mt-1 w-full uppercase line-clamp-1">
+              <Text variant="text-14-bold" className="w-full uppercase line-clamp-1">
                 {formatOptionsList(props.options, toArray<any>(value)) || props.placeholder}
               </Text>
               <Icon
                 name={IconNames.CHEVRON_DOWN}
-                className={classNames("mb-[2px] fill-neutral-900 transition", open && "rotate-180")}
+                className={classNames(" top-3 right-4 fill-neutral-900 transition", open && "rotate-180")}
                 width={20}
               />
             </Listbox.Button>

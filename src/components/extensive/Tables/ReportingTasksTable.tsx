@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import { useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
@@ -37,6 +38,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTab
       data={reportingTasks?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      variant={VARIANT_TABLE_BORDER_ALL}
       initialTableState={{ sorting: [{ id: "due_at", desc: true }] }}
       columns={[
         {
@@ -60,7 +62,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTab
           cell: props => {
             const value = props.getValue() as string;
             return (
-              <p className="whitespace-nowrap">
+              <p className="text-14-light whitespace-nowrap">
                 {t("Project Report") + ` ${getReportingWindow(value, reportingPeriod)}`}
               </p>
             );

@@ -59,7 +59,7 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
           <When condition={onChange != null}>
             <input
               placeholder={t(`Enter ${startCase(type)}`)}
-              className="text-14-light h-min w-3/5 rounded border border-transparent px-2 py-1 outline-0 hover:border hover:border-primary hover:shadow-blue-border-input"
+              className="text-14-light hover:shadow-blue-border-input h-min w-3/5 rounded border border-transparent px-2 py-1 outline-0 hover:border hover:border-primary"
               value={userLabel ?? ""}
               onChange={onUserLabelChange}
             />
@@ -79,7 +79,7 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onChange={onAmountChange}
-            className="text-14-light w-16 border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary hover:shadow-blue-border-input"
+            className="text-14-light hover:shadow-blue-border-input w-16 border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
           />
           <When condition={subtypes != null}>
             <div className="absolute ml-20 cursor-pointer opacity-30 hover:opacity-60" onClick={onDelete}>

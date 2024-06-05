@@ -6,33 +6,37 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
 >
   <div>
     <div
-      className="sticky top-[74px] z-40 flex border-primary-50 bg-leavesWithOverlay bg-cover bg-center p-6"
+      className="sticky top-[74px] z-40 flex border-neutral-150 bg-treesHeaderWithOverlay bg-cover bg-no-repeat px-10 py-3 md:py-8"
     >
       <div
-        className="mx-auto flex w-full min-w-0 max-w-7xl items-center gap-8"
+        className="mx-auto flex w-full min-w-0 max-w-[82vw] items-center gap-8"
       >
         <div
           className="min-w-0 flex-grow text-white"
         >
-          <p
-            className="overflow-hidden text-ellipsis whitespace-nowrap text-bold-body-300"
-            data-testid="txt"
+          <div
+            className="flex"
           >
-            Progress: 1/6 steps complete
-          </p>
-          <p
-            className="text-bold-caption-200"
-            data-testid="txt"
-          >
-            Unsaved
-          </p>
+            <p
+              className="overflow-hidden text-ellipsis whitespace-nowrap text-14-light"
+              data-testid="txt"
+            >
+              Progress: 1/6 steps complete
+            </p>
+            <p
+              className="text-14-light"
+              data-testid="txt"
+            >
+              Unsaved
+            </p>
+          </div>
         </div>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
           onClick={[Function]}
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Close and continue later
           </span>
@@ -40,10 +44,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
       </div>
     </div>
     <div
-      className="mx-auto mt-0 max-w-7xl px-6 py-10 xl:px-0"
+      className="mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0"
     >
       <div
-        className="flex h-full w-full"
+        className="flex h-full w-full shadow"
       >
         <div
           aria-orientation="vertical"
@@ -53,10 +57,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="true"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
-            id="headlessui-tabs-tab-:r3o:"
+            id="headlessui-tabs-tab-:r4j:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -64,10 +68,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={0}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "Step 1<br/> Organizational Information: Governance  ",
+                  "__html": "Step 1<br/> <p className=\\"text-14-light\\">Organizational Information: Governance   </p>",
                 }
               }
               data-testid="txt"
@@ -76,18 +80,18 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r3p:"
+            id="headlessui-tabs-tab-:r4k:"
             role="option"
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "Step 2<br/> Organizational Information: Past Community Engagement Experience",
+                  "__html": "Step 2<br/> <p className=\\"text-14-light\\">Organizational Information: Past Community Engagement Experience </p>",
                 }
               }
               data-testid="txt"
@@ -96,18 +100,18 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r3q:"
+            id="headlessui-tabs-tab-:r4l:"
             role="option"
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "Step 3<br/> Organizational Information: Financial History ",
+                  "__html": "Step 3<br/> <p className=\\"text-14-light\\">Organizational Information: Financial History  </p>",
                 }
               }
               data-testid="txt"
@@ -116,18 +120,18 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r3r:"
+            id="headlessui-tabs-tab-:r4m:"
             role="option"
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "Step 4<br/> Organizational Information: Past Restoration Experience ",
+                  "__html": "Step 4<br/> <p className=\\"text-14-light\\">Organizational Information: Past Restoration Experience  </p>",
                 }
               }
               data-testid="txt"
@@ -136,18 +140,18 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r3s:"
+            id="headlessui-tabs-tab-:r4n:"
             role="option"
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "Step 5<br/> Proposed Project Information",
+                  "__html": "Step 5<br/> <p className=\\"text-14-light\\">Proposed Project Information </p>",
                 }
               }
               data-testid="txt"
@@ -156,18 +160,18 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r3t:"
+            id="headlessui-tabs-tab-:r4o:"
             role="option"
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-bold-caption-200 with-inner-html"
+              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "Step 6<br/> Additional Information ",
+                  "__html": "Step 6<br/> <p className=\\"text-14-light\\">Additional Information  </p>",
                 }
               }
               data-testid="txt"
@@ -181,767 +185,789 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           className="w-full overflow-hidden border border-l-0 border-neutral-100"
         >
           <div
-            className="flex-1 bg-white px-16 pt-8 pb-15 h-[calc(100vh-287px)] overflow-auto"
-            id="step"
+            className="h-[calc(100vh-287px)] overflow-auto"
           >
             <div
-              className="flex items-center justify-between"
-            >
-              <p
-                className="text-heading-700"
-                data-testid="txt"
-              >
-                Organizational Information: Governance  
-              </p>
-            </div>
-            <p
-              className="mt-8 text-body-600 with-inner-html"
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Please answer the questions below so that we can understand your organization's mission and structure. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\\" target=\\"_blank\\">EOI-Resources</a>",
-                }
-              }
-              data-testid="txt"
-            />
-            <div
-              className="my-8 h-[2px] w-full bg-neutral-200"
-            />
-            <ul>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-headlessui-state=""
-                    data-testid="txt"
-                    id="headlessui-listbox-label-:r3u:"
-                    onClick={[Function]}
-                  >
-                    Headquarters address Country 
-                  </label>
-                  <div
-                    aria-expanded={false}
-                    aria-haspopup="listbox"
-                    aria-labelledby="headlessui-listbox-label-:r3u: headlessui-listbox-button-:r3v:"
-                    className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
-                    data-headlessui-state=""
-                    disabled={false}
-                    id="headlessui-listbox-button-:r3v:"
-                    onClick={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyUp={[Function]}
-                  >
-                    <span
-                      className="w-full line-clamp-1"
-                    />
-                    <div
-                      style={
-                        Object {
-                          "height": undefined,
-                          "width": 16,
-                        }
-                      }
-                    />
-                  </div>
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-headlessui-state=""
-                    data-testid="txt"
-                    id="headlessui-listbox-label-:r40:"
-                    onClick={[Function]}
-                  >
-                    What Countries is your organisation legally registered in? 
-                  </label>
-                  <p
-                    className="text-light-body-300 with-inner-html"
-                    dangerouslySetInnerHTML={
-                      Object {
-                        "__html": "Please select the relevant countries where your organization is legally registered to operate.",
-                      }
-                    }
-                    data-testid="txt"
-                  />
-                  <div
-                    aria-expanded={false}
-                    aria-haspopup="listbox"
-                    aria-labelledby="headlessui-listbox-label-:r40: headlessui-listbox-button-:r41:"
-                    className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
-                    data-headlessui-state=""
-                    disabled={false}
-                    id="headlessui-listbox-button-:r41:"
-                    onClick={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyUp={[Function]}
-                  >
-                    <span
-                      className="w-full line-clamp-1"
-                    />
-                    <div
-                      style={
-                        Object {
-                          "height": undefined,
-                          "width": 16,
-                        }
-                      }
-                    />
-                  </div>
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="relative space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-testid="txt"
-                    htmlFor=":r42:"
-                  >
-                    Organization Mission *
-                  </label>
-                  <p
-                    className="text-light-body-300 with-inner-html"
-                    dangerouslySetInnerHTML={
-                      Object {
-                        "__html": "Please describe your organization's mission.",
-                      }
-                    }
-                    data-testid="txt"
-                    id=":r42:-description"
-                  />
-                  <textarea
-                    className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-light "
-                    id=":r42:"
-                    maxLength={300}
-                    name="d64877a6-fc33-4bd8-9f75-43e77a5112ab"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    onChangeCapture={[Function]}
-                  />
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="relative space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-testid="txt"
-                    htmlFor=":r43:"
-                  >
-                    On what date was your organisation founded? 
-                  </label>
-                  <div
-                    className="relative"
-                  >
-                    <input
-                      aria-describedby=":r43:-description"
-                      aria-invalid={false}
-                      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
-                      id=":r43:"
-                      name="ced1d792-2f5f-40b0-8686-86e048c98406"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      onChangeCapture={[Function]}
-                      type="date"
-                    />
-                  </div>
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-headlessui-state=""
-                    data-testid="txt"
-                    id="headlessui-listbox-label-:r44:"
-                    onClick={[Function]}
-                  >
-                    In what languages can your organisation communicate? *
-                  </label>
-                  <p
-                    className="text-light-body-300 with-inner-html"
-                    dangerouslySetInnerHTML={
-                      Object {
-                        "__html": "Please select as many as apply. TerraMatch is available only in the languages listed below.",
-                      }
-                    }
-                    data-testid="txt"
-                  />
-                  <div
-                    aria-expanded={false}
-                    aria-haspopup="listbox"
-                    aria-labelledby="headlessui-listbox-label-:r44: headlessui-listbox-button-:r45:"
-                    className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
-                    data-headlessui-state=""
-                    disabled={false}
-                    id="headlessui-listbox-button-:r45:"
-                    onClick={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyUp={[Function]}
-                  >
-                    <span
-                      className="w-full line-clamp-1"
-                    />
-                    <div
-                      style={
-                        Object {
-                          "height": undefined,
-                          "width": 16,
-                        }
-                      }
-                    />
-                  </div>
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="relative space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-testid="txt"
-                    htmlFor=":r46:"
-                  >
-                    What interventions do you intend to use to restore land? 
-                  </label>
-                  <p
-                    className="text-light-body-300 with-inner-html"
-                    dangerouslySetInnerHTML={
-                      Object {
-                        "__html": "Please indicate all of the restoration interventions you have used in previous projects. If you intend to use multiple different restoration interventions, check all that apply. ",
-                      }
-                    }
-                    data-testid="txt"
-                    id=":r46:-description"
-                  />
-                  <div
-                    className="mx-auto !mt-4 flex max-w-[573px] flex-wrap justify-center gap-4"
-                  >
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r47:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Agroforestry
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r47:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r48:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Applied Nucleation
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r48:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r49:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Assisted Natural Regeneration
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r49:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r4a:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Direct Seeding
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r4a:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r4b:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Enrichment Planting
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r4b:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r4c:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Mangrove Restoration
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r4c:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r4d:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Reforestation
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r4d:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r4e:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Riparian Restoration
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r4e:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                    <div
-                      className="flex-row-reverse justify-end gap-3 relative flex items-start gap-4"
-                    >
-                      <label
-                        className="w-full"
-                        htmlFor=":r4f:"
-                      >
-                        <div
-                          className="flex flex-col items-center gap-2 cursor-pointer"
-                        >
-                          <div
-                            className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-                            style={
-                              Object {
-                                "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-                              }
-                            }
-                          />
-                          <p
-                            className="max-w-[96px] text-center leading-4 text-light-body-300"
-                            data-testid="txt"
-                          >
-                            Silvopasture
-                          </p>
-                        </div>
-                      </label>
-                      <input
-                        checked={false}
-                        className="h-5 w-5 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 absolute opacity-0"
-                        id=":r4f:"
-                        name=""
-                        onClick={[Function]}
-                        type="checkbox"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="relative space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-testid="txt"
-                    htmlFor=":r4g:"
-                  >
-                    Please provide at least two letters of reference 
-                  </label>
-                  <p
-                    className="text-light-body-300 with-inner-html"
-                    dangerouslySetInnerHTML={
-                      Object {
-                        "__html": "Reference letters could come from a verifiable former donor or investor, a former or current project partner, a traditional or community leader, or any other individual or organization that can vouch for your work. We highly recommend that applicants submit an endorsement letter from a local or national government agency. Upload only .pdf files less than 5mb.",
-                      }
-                    }
-                    data-testid="txt"
-                    id=":r4g:-description"
-                  />
-                  <div
-                    className="border-dashed-2 relative cursor-pointer rounded-xl p-10 bg-white"
-                    onBlur={[Function]}
-                    onClick={[Function]}
-                    onDragEnter={[Function]}
-                    onDragLeave={[Function]}
-                    onDragOver={[Function]}
-                    onDrop={[Function]}
-                    onFocus={[Function]}
-                    onKeyDown={[Function]}
-                    role="presentation"
-                    tabIndex={0}
-                  >
-                    <input
-                      accept="application/pdf"
-                      hidden={true}
-                      id=":r4g:"
-                      multiple={true}
-                      onChange={[Function]}
-                      onClick={[Function]}
-                      style={
-                        Object {
-                          "display": "none",
-                        }
-                      }
-                      tabIndex={-1}
-                      type="file"
-                    />
-                    <div
-                      className="m-auto flex w-fit items-center justify-center gap-3"
-                    >
-                      <div
-                        className="bg-primary-100 flex h-15 w-15 items-center justify-center rounded-lg bg-cover bg-no-repeat"
-                        style={Object {}}
-                      >
-                        <div
-                          style={
-                            Object {
-                              "height": 32,
-                              "width": 24,
-                            }
-                          }
-                        />
-                      </div>
-                      <div
-                        className="flex-1"
-                      >
-                        <p
-                          className="mb-1 line-clamp-1 text-bold-subtitle-400"
-                          data-testid="txt"
-                          title="Upload File (File format: PDF max. 10MB)"
-                        >
-                          Upload File (File format: PDF max. 10MB)
-                        </p>
-                        <p
-                          className="line-clamp-1 text-light-body-300 with-inner-html"
-                          dangerouslySetInnerHTML={
-                            Object {
-                              "__html": "Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>",
-                            }
-                          }
-                          data-testid="txt"
-                          title="Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="mt-8 flex flex-col items-center justify-center gap-8"
-                />
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="relative space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-testid="txt"
-                    htmlFor=":r4h:"
-                  >
-                    Organization Twitter URL(optional) 
-                  </label>
-                  <div
-                    className="relative"
-                  >
-                    <input
-                      aria-describedby=":r4h:-description"
-                      aria-invalid={false}
-                      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
-                      id=":r4h:"
-                      name="981edb54-739e-4971-b078-4e2a971d9ffd"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      onChangeCapture={[Function]}
-                      type="url"
-                    />
-                  </div>
-                </div>
-              </li>
-              <li
-                className="mt-8"
-              >
-                <div
-                  className="relative space-y-2"
-                >
-                  <label
-                    className="mr-2 inline uppercase text-bold-body-300"
-                    data-testid="txt"
-                    htmlFor=":r4i:"
-                  >
-                    List the people who have a ownership stake in your company 
-                  </label>
-                  <p
-                    className="text-light-body-300 with-inner-html"
-                    dangerouslySetInnerHTML={
-                      Object {
-                        "__html": "Please list the individuals who own your company. For each person listed, please indicate their name, title, gender and age:<br>Name<br>Title<br>Gender<br>Age",
-                      }
-                    }
-                    data-testid="txt"
-                    id=":r4i:-description"
-                  />
-                  <textarea
-                    className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-light "
-                    id=":r4i:"
-                    name="4388ff23-a5e7-486a-9b37-7ad41cce5e77"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    onChangeCapture={[Function]}
-                  />
-                </div>
-              </li>
-            </ul>
-            <div
-              className="w-full"
+              className="flex-1 bg-white px-16 pt-8 pb-15"
+              id="step"
             >
               <div
-                className="flex w-full items-center justify-between mt-12"
+                className="flex items-center justify-between"
               >
-                <button
-                  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
-                  onClick={[Function]}
+                <p
+                  className="text-heading-700"
+                  data-testid="txt"
                 >
-                  <span
-                    className="text-bold-caption-200 pt-0.75 leading-3"
-                  >
-                    Back
-                  </span>
-                </button>
-                <button
-                  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
-                  disabled={false}
-                  onClick={[Function]}
+                  Organizational Information: Governance  
+                </p>
+              </div>
+              <p
+                className="mt-8 text-body-600 with-inner-html"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Please answer the questions below so that we can understand your organization's mission and structure. If you need more information on any of the questions outlined below, please visit our resources page: <a href=\\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\\" target=\\"_blank\\">EOI-Resources</a>",
+                  }
+                }
+                data-testid="txt"
+              />
+              <div
+                className="my-8 h-[2px] w-full bg-neutral-200"
+              />
+              <ul>
+                <li
+                  className="mt-8"
                 >
-                  <span
-                    className="text-bold-caption-200 pt-0.75 leading-3"
+                  <div
+                    className="space-y-2"
                   >
-                    Save and Continue
-                  </span>
-                </button>
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-headlessui-state=""
+                      data-testid="txt"
+                      id="headlessui-listbox-label-:r4p:"
+                      onClick={[Function]}
+                    >
+                      Headquarters address Country 
+                    </label>
+                    <div
+                      aria-expanded={false}
+                      aria-haspopup="listbox"
+                      aria-labelledby="headlessui-listbox-label-:r4p: headlessui-listbox-button-:r4q:"
+                      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+                      data-headlessui-state=""
+                      disabled={false}
+                      id="headlessui-listbox-button-:r4q:"
+                      onClick={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                    >
+                      <div
+                        className="flex items-center gap-2"
+                      >
+                        <p
+                          className="w-full line-clamp-1 text-14-light"
+                          data-testid="txt"
+                        />
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 16,
+                          }
+                        }
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-headlessui-state=""
+                      data-testid="txt"
+                      id="headlessui-listbox-label-:r4r:"
+                      onClick={[Function]}
+                    >
+                      What Countries is your organisation legally registered in? 
+                    </label>
+                    <p
+                      className="text-body-400 with-inner-html"
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "Please select the relevant countries where your organization is legally registered to operate.",
+                        }
+                      }
+                      data-testid="txt"
+                    />
+                    <div
+                      aria-expanded={false}
+                      aria-haspopup="listbox"
+                      aria-labelledby="headlessui-listbox-label-:r4r: headlessui-listbox-button-:r4s:"
+                      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+                      data-headlessui-state=""
+                      disabled={false}
+                      id="headlessui-listbox-button-:r4s:"
+                      onClick={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                    >
+                      <div
+                        className="flex items-center gap-2"
+                      >
+                        <p
+                          className="w-full line-clamp-1 text-14-light"
+                          data-testid="txt"
+                        />
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 16,
+                          }
+                        }
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="relative space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-testid="txt"
+                      htmlFor=":r4t:"
+                    >
+                      Organization Mission *
+                    </label>
+                    <p
+                      className="text-body-400 with-inner-html"
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "Please describe your organization's mission.",
+                        }
+                      }
+                      data-testid="txt"
+                      id=":r4t:-description"
+                    />
+                    <textarea
+                      className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-light "
+                      id=":r4t:"
+                      maxLength={300}
+                      name="d64877a6-fc33-4bd8-9f75-43e77a5112ab"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onChangeCapture={[Function]}
+                      value=""
+                    />
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="relative space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-testid="txt"
+                      htmlFor=":r4u:"
+                    >
+                      On what date was your organisation founded? 
+                    </label>
+                    <div
+                      className="relative"
+                    >
+                      <input
+                        aria-describedby=":r4u:-description"
+                        aria-invalid={false}
+                        className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
+                        id=":r4u:"
+                        name="ced1d792-2f5f-40b0-8686-86e048c98406"
+                        onBlur={[Function]}
+                        onChangeCapture={[Function]}
+                        type="date"
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-headlessui-state=""
+                      data-testid="txt"
+                      id="headlessui-listbox-label-:r4v:"
+                      onClick={[Function]}
+                    >
+                      In what languages can your organisation communicate? *
+                    </label>
+                    <p
+                      className="text-body-400 with-inner-html"
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "Please select as many as apply. TerraMatch is available only in the languages listed below.",
+                        }
+                      }
+                      data-testid="txt"
+                    />
+                    <div
+                      aria-expanded={false}
+                      aria-haspopup="listbox"
+                      aria-labelledby="headlessui-listbox-label-:r4v: headlessui-listbox-button-:r50:"
+                      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+                      data-headlessui-state=""
+                      disabled={false}
+                      id="headlessui-listbox-button-:r50:"
+                      onClick={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                    >
+                      <div
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className="min-h-[8px] min-w-[8px] rounded-full undefined"
+                        />
+                        <p
+                          className="w-full line-clamp-1 text-14-light"
+                          data-testid="txt"
+                        />
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 16,
+                          }
+                        }
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="relative space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-testid="txt"
+                      htmlFor=":r51:"
+                    >
+                      What interventions do you intend to use to restore land? 
+                    </label>
+                    <p
+                      className="text-body-400 with-inner-html"
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "Please indicate all of the restoration interventions you have used in previous projects. If you intend to use multiple different restoration interventions, check all that apply. ",
+                        }
+                      }
+                      data-testid="txt"
+                      id=":r51:-description"
+                    />
+                    <div
+                      className="mx-auto !mt-4 flex max-w-[573px] flex-wrap justify-center gap-4"
+                    >
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r52:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Agroforestry
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r52:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r53:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Applied Nucleation
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r53:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r54:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Assisted Natural Regeneration
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r54:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r55:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Direct Seeding
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r55:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r56:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Enrichment Planting
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r56:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r57:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Mangrove Restoration
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r57:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r58:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Reforestation
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r58:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r59:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Riparian Restoration
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r59:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                      <div
+                        className="flex-row-reverse justify-end gap-3"
+                      >
+                        <label
+                          className="w-full"
+                          htmlFor=":r5a:"
+                        >
+                          <div
+                            className="flex flex-col items-center gap-2 cursor-pointer"
+                          >
+                            <div
+                              className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+                              style={
+                                Object {
+                                  "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+                                }
+                              }
+                            />
+                            <p
+                              className="max-w-[96px] text-center leading-4 text-light-body-300"
+                              data-testid="txt"
+                            >
+                              Silvopasture
+                            </p>
+                          </div>
+                        </label>
+                        <input
+                          checked={false}
+                          className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
+                          id=":r5a:"
+                          name=""
+                          onClick={[Function]}
+                          type="checkbox"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="relative space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-testid="txt"
+                      htmlFor=":r5b:"
+                    >
+                      Please provide at least two letters of reference 
+                    </label>
+                    <p
+                      className="text-body-400 with-inner-html"
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "Reference letters could come from a verifiable former donor or investor, a former or current project partner, a traditional or community leader, or any other individual or organization that can vouch for your work. We highly recommend that applicants submit an endorsement letter from a local or national government agency. Upload only .pdf files less than 5mb.",
+                        }
+                      }
+                      data-testid="txt"
+                      id=":r5b:-description"
+                    />
+                    <div
+                      className="bg-white border-dashed-2 relative cursor-pointer rounded-xl p-10"
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onDragEnter={[Function]}
+                      onDragLeave={[Function]}
+                      onDragOver={[Function]}
+                      onDrop={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      role="presentation"
+                      tabIndex={0}
+                    >
+                      <input
+                        accept="application/pdf"
+                        hidden={true}
+                        id=":r5b:"
+                        multiple={true}
+                        onChange={[Function]}
+                        onClick={[Function]}
+                        style={
+                          Object {
+                            "display": "none",
+                          }
+                        }
+                        tabIndex={-1}
+                        type="file"
+                      />
+                      <div
+                        className="m-auto flex w-fit items-center justify-center gap-3"
+                      >
+                        <div
+                          className="bg-primary-100 flex h-15 w-15 items-center justify-center rounded-lg bg-cover bg-no-repeat"
+                          style={Object {}}
+                        >
+                          <div
+                            style={
+                              Object {
+                                "height": undefined,
+                                "width": 24,
+                              }
+                            }
+                          />
+                        </div>
+                        <div
+                          className="flex-1"
+                        >
+                          <p
+                            className="mb-1 line-clamp-1 text-bold-subtitle-400"
+                            data-testid="txt"
+                            title="Upload File (File format: PDF max. 10MB)"
+                          >
+                            Upload File (File format: PDF max. 10MB)
+                          </p>
+                          <p
+                            className="line-clamp-1 text-light-body-300 with-inner-html"
+                            dangerouslySetInnerHTML={
+                              Object {
+                                "__html": "Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>",
+                              }
+                            }
+                            data-testid="txt"
+                            title="Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="mt-8 flex flex-col items-center justify-center gap-8"
+                  />
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="relative space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-testid="txt"
+                      htmlFor=":r5c:"
+                    >
+                      Organization Twitter URL(optional) 
+                    </label>
+                    <div
+                      className="relative"
+                    >
+                      <input
+                        aria-describedby=":r5c:-description"
+                        aria-invalid={false}
+                        className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
+                        id=":r5c:"
+                        name="981edb54-739e-4971-b078-4e2a971d9ffd"
+                        onBlur={[Function]}
+                        onChangeCapture={[Function]}
+                        type="url"
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li
+                  className="mt-8"
+                >
+                  <div
+                    className="relative space-y-2"
+                  >
+                    <label
+                      className="mr-2 inline uppercase text-bold-body-300"
+                      data-testid="txt"
+                      htmlFor=":r5d:"
+                    >
+                      List the people who have a ownership stake in your company 
+                    </label>
+                    <p
+                      className="text-body-400 with-inner-html"
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "Please list the individuals who own your company. For each person listed, please indicate their name, title, gender and age:<br>Name<br>Title<br>Gender<br>Age",
+                        }
+                      }
+                      data-testid="txt"
+                      id=":r5d:-description"
+                    />
+                    <textarea
+                      className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-light "
+                      id=":r5d:"
+                      name="4388ff23-a5e7-486a-9b37-7ad41cce5e77"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onChangeCapture={[Function]}
+                      value=""
+                    />
+                  </div>
+                </li>
+              </ul>
+              <div
+                className="w-full"
+              >
+                <div
+                  className="flex w-full items-center justify-between mt-12"
+                >
+                  <button
+                    className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="flex items-center text-bold-caption-200"
+                    >
+                      Back
+                    </span>
+                  </button>
+                  <button
+                    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                    disabled={false}
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="flex items-center text-bold-caption-200"
+                    >
+                      Save and Continue
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

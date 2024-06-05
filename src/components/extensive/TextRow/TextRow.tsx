@@ -16,10 +16,10 @@ export type TextRowProps = {
 
 const TextRow = ({
   name,
-  nameVariant = "text-body-500",
+  nameVariant = "text-body-900",
   nameClassName,
   value,
-  valueVariant = "text-body-300",
+  valueVariant = "text-body-800",
   valueClassName,
   className
 }: TextRowProps) => {

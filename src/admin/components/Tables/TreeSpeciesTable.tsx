@@ -5,6 +5,7 @@ import { FC } from "react";
 import { Else, If, Then } from "react-if";
 
 import modules from "@/admin/modules";
+import Text from "@/components/elements/Text/Text";
 import { useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 type TreeSpeciesTableProps = {
@@ -43,10 +44,12 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = ({ uuid, entity }) => {
   if (!rows || !rows.data) return null;
 
   return (
-    <Card>
+    <Card className="!shadow-none">
       <Stack>
         <Box paddingX={3} paddingY={2}>
-          <Typography variant="h5">Tree Species</Typography>
+          <Text variant="text-16-semibold" className="text-darkCustom">
+            Tree Species
+          </Text>
         </Box>
 
         <Divider />

@@ -5,20 +5,20 @@ exports[`Storyshots Components/Extensive/Page/Card Default 1`] = `
   className="h-[500px]"
 >
   <div
-    className="w-full rounded-xl bg-white p-8 shadow"
+    className="w-full rounded-xl border border-neutral-200 bg-white p-8"
   >
     <div
       className="flex flex-wrap justify-between"
     >
       <p
-        className="flex-1 text-bold-headline-1000"
+        className="flex flex-1 items-baseline text-darkCustom text-24-bold"
         data-testid="txt"
       >
         Card title
       </p>
     </div>
     <p
-      className="mt-3 text-light-subtitle-400"
+      className="mt-3 text-darkCustom text-light-subtitle-400"
       data-testid="txt"
     >
       Card subtitle
