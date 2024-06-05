@@ -113,6 +113,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
                     recentRequestData={recentRequestData}
                     tab="polygonReview"
                     checkPolygonsSite={checkPolygonsSite}
+                    viewPD={true}
                   />
                 </div>
               </div>
