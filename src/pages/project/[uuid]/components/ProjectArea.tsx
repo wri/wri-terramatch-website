@@ -28,15 +28,17 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   const [projectBbox, setProjectBbox] = useState<BBox>();
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
+  const [sortOrder, setSortOrder] = useState<string>("created_at");
 
   console.warn(selected);
 
-  const getPolygonsData = (uuid: string, statusFilter: string) => {
+  const getPolygonsData = (uuid: string, statusFilter: string, sortOrder: string) => {
     fetchGetV2TypeEntity({
       queryParams: {
         uuid: uuid,
         type: "projects",
-        status: statusFilter
+        status: statusFilter,
+        [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
       }
     }).then(result => {
       if (result.polygonsData) {
@@ -49,9 +51,9 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   useEffect(() => {
     if (project?.uuid) {
       const statusFilter = checkedValues.join(",");
-      getPolygonsData(project.uuid, statusFilter);
+      getPolygonsData(project.uuid, statusFilter, sortOrder);
     }
-  }, [project, checkedValues]);
+  }, [project, checkedValues, sortOrder]);
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
@@ -126,6 +128,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         emptyText={t("No polygons are available.")}
         checkedValues={checkedValues}
         onCheckboxChange={handleCheckboxChange}
+        setSortOrder={setSortOrder}
       />
       <MapContainer
         mapFunctions={mapFunctions}

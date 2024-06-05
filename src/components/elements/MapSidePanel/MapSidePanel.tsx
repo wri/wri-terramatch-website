@@ -25,34 +25,8 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   mapFunctions: any;
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
+  setSortOrder: React.Dispatch<React.SetStateAction<string>>;
 }
-
-const itemsPrimaryMenu = [
-  {
-    id: "1",
-    render: () => (
-      <Text variant="text-14-semibold" className="flex items-center">
-        Name
-      </Text>
-    )
-  },
-  {
-    id: "2",
-    render: () => (
-      <Text variant="text-14-semibold" className="flex items-center">
-        Status
-      </Text>
-    )
-  },
-  {
-    id: "3",
-    render: () => (
-      <Text variant="text-14-semibold" className="flex items-center">
-        Date Created
-      </Text>
-    )
-  }
-];
 
 const MapSidePanel = ({
   title,
@@ -65,6 +39,7 @@ const MapSidePanel = ({
   mapFunctions,
   checkedValues,
   onCheckboxChange,
+  setSortOrder,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -152,6 +127,33 @@ const MapSidePanel = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+
+  const itemsPrimaryMenu = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("poly_name")}>
+          Name
+        </Text>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("status")}>
+          Status
+        </Text>
+      )
+    },
+    {
+      id: "3",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("created_at")}>
+          Date Created
+        </Text>
+      )
+    }
+  ];
 
   return (
     <div {...props} className={classNames(className)}>
