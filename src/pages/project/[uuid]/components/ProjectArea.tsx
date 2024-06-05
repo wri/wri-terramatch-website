@@ -30,11 +30,12 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
 
   console.warn(selected);
 
-  const getPolygonsData = (uuid: string) => {
+  const getPolygonsData = (uuid: string, statusFilter: string) => {
     fetchGetV2TypeEntity({
       queryParams: {
         uuid: uuid,
-        type: "projects"
+        type: "projects",
+        status: statusFilter
       }
     }).then(result => {
       if (result.polygonsData) {
@@ -46,9 +47,10 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
 
   useEffect(() => {
     if (project?.uuid) {
-      getPolygonsData(project.uuid);
+      const statusFilter = checkedValues.join(",");
+      getPolygonsData(project.uuid, statusFilter);
     }
-  }, [project]);
+  }, [project, checkedValues]);
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
@@ -117,16 +119,14 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         checkedValues={checkedValues}
         onCheckboxChange={handleCheckboxChange}
       />
-      {projectBbox && projectBbox.length > 0 && (
-        <MapContainer
-          mapFunctions={mapFunctions}
-          polygonsData={polygonDataMap}
-          bbox={projectBbox}
-          tooltipType="goTo"
-          showPopups
-          className="flex-1 rounded-r-lg"
-        />
-      )}
+      <MapContainer
+        mapFunctions={mapFunctions}
+        polygonsData={polygonDataMap}
+        bbox={projectBbox}
+        tooltipType="goTo"
+        showPopups
+        className="flex-1 rounded-r-lg"
+      />
     </div>
   );
 };

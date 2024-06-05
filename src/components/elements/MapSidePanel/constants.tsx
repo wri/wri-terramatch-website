@@ -1,5 +1,5 @@
 export const DRAFT = "draft";
-export const NEEDS_MORE_INFORMATION = "needs_more_information";
+export const NEEDS_MORE_INFORMATION = "needs-more-information";
 export const APPROVED = "approved";
 export const SUBMITTED = "submitted";
 export const STATUSES = [
