@@ -203,7 +203,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
       className="flex items-center gap-2"
     >
       <div
-        className="min-h-[8px] min-w-[8px] rounded-full "
+        className="min-h-[8px] min-w-[8px] rounded-full undefined"
       />
       <p
         className="w-full line-clamp-1 text-14-light"

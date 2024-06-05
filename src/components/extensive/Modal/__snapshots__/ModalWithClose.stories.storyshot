@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithClose Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-8"
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white max-w-[800px] p-8 margin-4 z-50"
   >
     <div
       className="mb-6 flex w-full items-center justify-between"
@@ -30,15 +30,6 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithClose Default 1`] = `
         />
       </button>
     </div>
-    <div
-      style={
-        Object {
-          "height": undefined,
-          "minHeight": 40,
-          "width": 40,
-        }
-      }
-    />
     <p
       className="mt-2 text-center text-light-body-300 with-inner-html"
       dangerouslySetInnerHTML={
