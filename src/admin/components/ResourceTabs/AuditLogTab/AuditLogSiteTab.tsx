@@ -43,6 +43,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
     auditLogData,
     refetch
   } = useAuditLogActions({
+    record,
     buttonToogle,
     entityLevel: SITE
   });

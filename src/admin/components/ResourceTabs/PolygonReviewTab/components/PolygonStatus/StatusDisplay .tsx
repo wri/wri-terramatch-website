@@ -154,7 +154,7 @@ const StatusDisplay = ({
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           try {
-            const response = await mutate({
+            await mutate({
               pathParams: { uuid: record?.uuid },
               body: {
                 status: option?.status,
@@ -162,9 +162,6 @@ const StatusDisplay = ({
                 type: "status"
               }
             });
-            if (response.poly_id && tab != "polygonReview") {
-              setSelectedPolygon(response?.poly_id);
-            }
             setNotificationStatus({
               open: true,
               message: "Your Status Update was just saved!",
@@ -197,7 +194,7 @@ const StatusDisplay = ({
             console.error(e);
           } finally {
             refresh && refresh();
-            reloadEntity();
+            reloadEntity && reloadEntity();
             closeModal;
           }
         }}
@@ -257,7 +254,7 @@ const StatusDisplay = ({
             console.error(e);
           } finally {
             refresh && refresh();
-            reloadEntity();
+            reloadEntity && reloadEntity();
             closeModal;
           }
         }}

@@ -1,11 +1,10 @@
 import { useEffect } from "react";
-import { useShowContext } from "react-admin";
 
 import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
-  fetchPutV2AdminProjectsUUID,
-  fetchPutV2AdminSitesUUID,
   fetchPutV2SitePolygonUUID,
+  fetchPutV2SiteProjectUUID,
+  fetchPutV2SiteStatusUUID,
   GetV2AuditStatusResponse,
   useGetV2AuditStatus
 } from "@/generated/apiComponents";
@@ -34,13 +33,13 @@ const ReverseButtonStates: { [key: number]: string } = {
 
 const statusActionsMap = {
   [ButtonStates.PROJECTS]: {
-    mutateEntity: fetchPutV2AdminProjectsUUID,
+    mutateEntity: fetchPutV2SiteProjectUUID,
     valuesForStatus: getValueForStatusProject,
     statusLabels: projectStatusLabels,
     entityType: PROJECT
   },
   [ButtonStates.SITE]: {
-    mutateEntity: fetchPutV2AdminSitesUUID,
+    mutateEntity: fetchPutV2SiteStatusUUID,
     valuesForStatus: getValueForStatusSite,
     statusLabels: siteProgressBarStatusLabels,
     entityType: SITE
@@ -53,9 +52,16 @@ const statusActionsMap = {
   }
 };
 
-const useAuditLogActions = ({ buttonToogle, entityLevel }: { buttonToogle: number; entityLevel: string }) => {
+const useAuditLogActions = ({
+  record,
+  buttonToogle,
+  entityLevel
+}: {
+  record: any;
+  buttonToogle: number;
+  entityLevel: string;
+}) => {
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
-  const { record } = useShowContext();
   const isProject = buttonToogle === ButtonStates.PROJECTS;
   const isSite = buttonToogle === ButtonStates.SITE;
   const isSiteProject = entityLevel === PROJECT;
@@ -84,7 +90,11 @@ const useAuditLogActions = ({ buttonToogle, entityLevel }: { buttonToogle: numbe
     }
   })();
 
-  const { data: auditLogData, refetch } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
+  const {
+    data: auditLogData,
+    refetch,
+    isLoading
+  } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
     queryParams: {
       entity: ReverseButtonStates[buttonToogle],
       uuid: entityHandlers.selectedEntityItem?.uuid
@@ -105,7 +115,8 @@ const useAuditLogActions = ({ buttonToogle, entityLevel }: { buttonToogle: numbe
     selected: entityHandlers.selectedEntityItem,
     setSelected: entityHandlers.setSelectedToEntity,
     auditLogData,
-    refetch
+    refetch,
+    isLoading
   };
 };
 
