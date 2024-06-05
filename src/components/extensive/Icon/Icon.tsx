@@ -148,7 +148,11 @@ export enum IconNames {
   IMAGE = "image",
   IC_INFO_WHITE = "ic-info-white",
   ERROR_WHITE_BORDER_RED = "error-white-border-red",
-  CLICK = "click"
+  CLICK = "click",
+  IC_APPROVED = "ic_approved",
+  IC_DRAFT = "ic_draft",
+  IC_NEEDS_MORE_INFORMATION = "ic_needs-more-information",
+  IC_SUBMITTED = "ic_submitted"
 }
 
 export interface IconProps {
