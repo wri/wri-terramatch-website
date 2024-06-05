@@ -68,7 +68,7 @@ const useAuditLogActions = ({
   const isSiteProject = entityLevel === PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
-    entityUuid: record.uuid,
+    entityUuid: record?.uuid,
     entityType: entityType as "Project" | "Site" | "Polygon",
     buttonToogle,
     entityLevel
