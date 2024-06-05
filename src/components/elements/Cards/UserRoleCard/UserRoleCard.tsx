@@ -42,18 +42,19 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
       )
     }
   ];
-  const displayOption = options?.find(m => {
-    if (selectedOption === null) {
-      return false;
-    } else {
-      if (title === "I’m a Government Official") {
-        return m.country_slug === selectedOption;
-      } else {
-        return m.data.label === selectedOption;
-      }
-    }
-  });
-  const diplayTitle = displayOption ? displayOption.data.label : "";
+
+  const displayOptions =
+    selectedOption == null
+      ? null
+      : options?.find(m => {
+          if (title === "I’m a Government Official") {
+            return m.country_slug === selectedOption;
+          } else {
+            return m.data.label === selectedOption;
+          }
+        });
+
+  const diplayTitle = displayOptions ? displayOptions.data.label : "";
 
   return (
     <article
@@ -81,7 +82,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
             selectedOption={selectedOption}
           >
             <Text variant="text-12-bold" className="text-primary">
-              {titleOptions || t("Select Fund")}
+              {titleOptions ?? t("Select Fund")}
               {diplayTitle ? `: ${diplayTitle}` : ""}
             </Text>
           </Menu>

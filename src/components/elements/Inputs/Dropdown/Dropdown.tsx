@@ -19,6 +19,7 @@ import { formatOptionsList, statusColor } from "@/utils/options";
 import Status from "../../Status/Status";
 import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
+import { COLOR_MAP } from "./constants/colorMap";
 
 export interface DropdownProps {
   customName?: string;
@@ -82,7 +83,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       updateControl.current++;
     }
   }, [props.value, props.options, props.hasOtherOptions]);
-  const onChange = async (value: OptionValue | OptionValue[], _otherValue?: string) => {
+  const onChange = (value: OptionValue | OptionValue[], _otherValue?: string) => {
     let otherStr = typeof _otherValue === "string" ? _otherValue : otherValue;
     if (Array.isArray(value)) {
       if (props.onChangeConfirm) {
@@ -135,18 +136,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherIsSelected, otherValue, t]);
 
-  const getColorStatus = (option: string): string => {
-    const colorMap: { [key: string]: string } = {
-      approved: "bg-green",
-      submitted: "bg-blue",
-      draft: "bg-pinkCustom",
-      "Under Review": "bg-tertiary-600",
-      "Needs More Info": "bg-tertiary-600"
-    };
-
-    return colorMap[option] ?? "";
-  };
-
   return (
     <div className={tw("space-y-2", props.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
@@ -179,9 +168,9 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <div className="flex items-center gap-2">
                 <When condition={options?.[0]?.meta != null}>
                   <div
-                    className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
-                      statusColor(options, toArray<any>(value)) ?? ""
-                    )}`}
+                    className={`min-h-[8px] min-w-[8px] rounded-full ${
+                      COLOR_MAP[statusColor(options, toArray<any>(value)) ?? ""]
+                    }`}
                   />
                 </When>
                 <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">

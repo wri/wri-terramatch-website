@@ -30,7 +30,7 @@ const Accordion = ({
     <Disclosure
       as="div"
       defaultOpen={defaultOpen}
-      className={classNames(`${className}`, {
+      className={classNames(className, {
         "rounded-lg border-2 border-neutral-100 shadow": variant === "default" || variant === "secondary"
       })}
     >

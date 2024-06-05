@@ -12,6 +12,9 @@ import { useFileSize } from "@/hooks/useFileSize";
 import { UploadedFile } from "@/types/common";
 
 import Text from "../../Text/Text";
+import { SUBTITLE_MAP_ON_FAILED } from "./constants/subtitleMapOnFailed";
+import { SUBTITLE_MAP_ON_UPLOADED } from "./constants/subtitleMapOnUploaded";
+import { SUBTITLE_MAP_ON_UPLOADING } from "./constants/subtitleMapOnUploading";
 import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./FileInputVariants";
 
 export interface FilePreviewCardProps {
@@ -38,6 +41,7 @@ const FilePreviewCard = ({
 
     onPrivateChange?.(file, checked);
   };
+  const t = useT();
 
   return (
     <div className={tw(variant.fileWrapper, className)}>
@@ -72,7 +76,7 @@ const FilePreviewCard = ({
             <IconButton
               type="button"
               onClick={() => onDelete?.(file)}
-              aria-label="Delete button"
+              aria-label={t("Delete button")}
               iconProps={{
                 name:
                   variant.type === "image" || variant.type === "geoFile" ? IconNames.TRASH_PA : IconNames.TRASH_CIRCLE,
@@ -95,7 +99,7 @@ const FilePreviewCard = ({
                     "text-red": !fileStatus
                   })}
                 >
-                  {fileStatus ? "GeoTagged Verified" : "Not Verified"}
+                  {fileStatus ? t("GeoTagged Verified") : t("Not Verified")}
                 </Text>
               </div>
             </When>
@@ -118,14 +122,10 @@ interface UploadingProps {
 const Uploading = ({ title, file, variant }: UploadingProps) => {
   const t = useT();
   const { format } = useFileSize();
-  const subtitleMap = {
-    image: "Image is being uploaded.",
-    geoFile: "Data is being uploaded."
-  };
 
   let subtitle;
-  if (variant.type !== undefined && subtitleMap[variant.type] !== undefined) {
-    subtitle = subtitleMap[variant.type];
+  if (variant.type !== undefined && SUBTITLE_MAP_ON_UPLOADING[variant.type] !== undefined) {
+    subtitle = SUBTITLE_MAP_ON_UPLOADING[variant.type];
   } else {
     subtitle = "Uploading document ...";
   }
@@ -149,14 +149,10 @@ interface UploadedProps extends UploadingProps {
 const Uploaded = ({ title, file, showPrivateCheckbox, onPrivateChange, variant }: UploadedProps) => {
   const t = useT();
   const { format } = useFileSize();
-  const subtitleMap = {
-    image: "Image uploaded successfully!",
-    geoFile: "Data uploaded successfully!"
-  };
 
   let subtitle;
-  if (variant.type !== undefined && subtitleMap[variant.type] !== undefined) {
-    subtitle = subtitleMap[variant.type];
+  if (variant.type !== undefined && SUBTITLE_MAP_ON_UPLOADED[variant.type] !== undefined) {
+    subtitle = SUBTITLE_MAP_ON_UPLOADED[variant.type];
   } else {
     subtitle = "Document Uploaded";
   }
@@ -183,14 +179,10 @@ interface FailedContentProps {
 
 const Failed = ({ title, errorMessage: errorState, variant }: FailedContentProps) => {
   const t = useT();
-  const subtitleMap = {
-    image: "Error uploading image.",
-    geoFile: "Error uploading data."
-  };
 
   let errorMessage;
-  if (variant.type !== undefined && subtitleMap[variant.type] !== undefined) {
-    errorMessage = subtitleMap[variant.type];
+  if (variant.type !== undefined && SUBTITLE_MAP_ON_FAILED[variant.type] !== undefined) {
+    errorMessage = SUBTITLE_MAP_ON_FAILED[variant.type];
   } else {
     errorMessage = "Upload Failed";
   }
