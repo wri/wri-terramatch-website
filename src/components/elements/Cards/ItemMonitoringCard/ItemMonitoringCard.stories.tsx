@@ -26,7 +26,7 @@ export const Default: Story = {
   }
 };
 
-export const typeMap: Story = {
+export const TypeMap: Story = {
   render: (args: Props) => (
     <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3">
       <Component {...args} />
@@ -38,7 +38,7 @@ export const typeMap: Story = {
   }
 };
 
-export const typeGraph: Story = {
+export const TypeGraph: Story = {
   render: (args: Props) => (
     <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3">
       <Component {...args} />
@@ -62,7 +62,7 @@ export const typeGraph: Story = {
   }
 };
 
-export const typeGraphButton: Story = {
+export const TypeGraphButton: Story = {
   render: (args: Props) => (
     <PageRow className="mx-auto grid max-w-full grid-cols-17 gap-3">
       <Component {...args} />
