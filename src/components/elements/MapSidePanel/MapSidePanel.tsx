@@ -69,9 +69,9 @@ const MapSidePanel = ({
   };
 
   useEffect(() => {
-    console.log("clickedButton", clickedButton);
     if (clickedButton === "site") {
-      console.log("Site");
+      const siteUrl = `/site/${selected?.site_id}`;
+      window.open(siteUrl, "_blank");
       setClickedButton("");
     } else if (clickedButton === "zoomTo") {
       flyToPolygonBounds(selected?.poly_id ?? "");
