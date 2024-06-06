@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { POLYGON, PROJECT, SITE, SITE_POLYGON } from "@/constants/entities";
 import {
   fetchGetV2CheckApprovedPolygonsUuid,
-  fetchGetV2TerrafundValidationCriteriaData,
+  fetchGetV2TerrafundValidationPolygon,
   fetchPutV2SitePolygonUUID,
   fetchPutV2SiteProjectUUID,
   fetchPutV2SiteStatusUUID,
@@ -71,7 +71,7 @@ const useAuditLogActions = ({
   const isPolygon = buttonToogle === ButtonStates.POLYGON;
   const isSiteProject = entityLevel === PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
-  const [criteriaValidation, setCriteriaValidation] = useState<boolean>(false);
+  const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entityUuid: record?.uuid,
     entityType: entityType as "Project" | "Site" | "Polygon",
@@ -90,17 +90,13 @@ const useAuditLogActions = ({
     };
 
     const fetchCriteriaValidation = async () => {
-      try {
-        if (selected?.uuid && isPolygon) {
-          const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
-            queryParams: {
-              uuid: selected?.poly_id as string
-            }
-          });
-          setCriteriaValidation(isValidData(criteriaData?.criteria_list || []));
-        }
-      } catch (error) {
-        setCriteriaValidation(true);
+      if (selected?.poly_id && isPolygon) {
+        const criteriaData = await fetchGetV2TerrafundValidationPolygon({
+          queryParams: {
+            uuid: selected?.poly_id as string
+          }
+        });
+        setCriteriaValidation(criteriaData);
       }
     };
 
@@ -108,16 +104,13 @@ const useAuditLogActions = ({
     fetchCriteriaValidation();
   }, [entityType, record, selected]);
 
-  const isValidData = (criteriaData: any) => {
-    for (const criteria of criteriaData.criteria_list || []) {
-      if (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID) {
-        continue;
-      }
-      if (criteria.valid !== 1) {
-        return true;
-      }
+  const isValidCriteriaData = (criteriaData: any) => {
+    if (!criteriaData?.criteria_list?.length) {
+      return true;
     }
-    return false;
+    return criteriaData.criteria_list.some(
+      (criteria: any) => criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID && criteria.valid !== 1
+    );
   };
 
   const entityHandlers = (() => {
@@ -127,7 +120,7 @@ const useAuditLogActions = ({
         loadToEntity: !isProject ? loadEntityList : () => {},
         ListItemToEntity: !isProject ? entityListItem : [],
         setSelectedToEntity: !isProject ? setSelected : null,
-        checkPolygons: isSite ? checkPolygons : isPolygon ? criteriaValidation : false
+        checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
       };
     } else {
       return {
@@ -135,7 +128,7 @@ const useAuditLogActions = ({
         loadToEntity: !isProject && !isSite ? loadEntityList : () => {},
         ListItemToEntity: !isProject && !isSite ? entityListItem : [],
         setSelectedToEntity: !isProject && !isSite ? setSelected : null,
-        checkPolygons: isSite ? checkPolygons : isPolygon ? criteriaValidation : false
+        checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
       };
     }
   })();

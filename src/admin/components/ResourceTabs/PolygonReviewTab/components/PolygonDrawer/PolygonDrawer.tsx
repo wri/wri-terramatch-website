@@ -65,7 +65,7 @@ const PolygonDrawer = ({
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
-  const [criteriaValidation, setCriteriaValidation] = useState<boolean>(false);
+  const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
 
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
@@ -81,10 +81,7 @@ const PolygonDrawer = ({
       }
     },
     {
-      enabled: !!polygonSelected,
-      onError: () => {
-        setCriteriaValidation(true);
-      }
+      enabled: !!polygonSelected
     }
   );
 
@@ -145,8 +142,6 @@ const PolygonDrawer = ({
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
-    const criteriaDataLength = criteriaData?.criteria_list?.length || 0;
-    setCriteriaValidation(criteriaDataLength > 0 ? isValidData(criteriaData?.criteria_list) : true);
   }, [polygonSelected, sitePolygonData]);
   useEffect(() => {
     console.log("openEditNewPolygon", openEditNewPolygon);
@@ -156,17 +151,29 @@ const PolygonDrawer = ({
     }
   }, [openEditNewPolygon]);
 
-  const isValidData = (criteriaData: any) => {
-    for (const criteria of criteriaData.criteria_list || []) {
-      if (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID) {
-        continue;
-      }
-      if (criteria.valid !== 1) {
-        return true;
-      }
+  const isValidCriteriaData = (criteriaData: any) => {
+    if (!criteriaData?.criteria_list?.length) {
+      return true;
     }
-    return false;
+    return criteriaData.criteria_list.some(
+      (criteria: any) => criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID && criteria.valid !== 1
+    );
   };
+
+  useEffect(() => {
+    const fetchCriteriaValidation = async () => {
+      if (!buttonToogle) {
+        const criteriaData = await fetchGetV2TerrafundValidationPolygon({
+          queryParams: {
+            uuid: polygonSelected
+          }
+        });
+        setCriteriaValidation(criteriaData);
+      }
+    };
+
+    fetchCriteriaValidation();
+  }, [buttonToogle, selectedPolygonData]);
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
@@ -209,7 +216,7 @@ const PolygonDrawer = ({
               record={selectedPolygon}
               mutate={mutateSitePolygons}
               tab="polygonReview"
-              checkPolygonsSite={criteriaValidation}
+              checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
             <ComentarySection
               auditLogData={auditLogData?.data}
