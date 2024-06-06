@@ -107,8 +107,13 @@ export const NurseriesList: FC = () => {
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
-    <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />,
-    <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getStatusOptions())} />,
+    <SelectInput
+      key="framework_key"
+      label="Framework"
+      source="framework_key"
+      choices={frameworkChoices}
+      className="select-page-admin"
+    />,
     <SelectInput
       key="status"
       label="Status"
