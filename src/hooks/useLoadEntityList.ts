@@ -13,6 +13,7 @@ export interface SelectedItem {
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
+  poly_id?: string | undefined;
 }
 
 interface UseLoadEntityListParams {
@@ -29,6 +30,7 @@ export interface EntityListItem {
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
+  poly_id?: string | undefined;
 }
 
 const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }: UseLoadEntityListParams) => {
@@ -82,7 +84,8 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
         uuid: item?.uuid,
         value: item?.uuid,
         meta: item?.status,
-        status: item?.status
+        status: item?.status,
+        poly_id: item?.poly_id
       };
     };
     const _list = unnamedTitleAndSort(_entityList, nameProperty);

@@ -47,6 +47,8 @@ export interface ICriteriaCheckItem {
   date?: string;
 }
 
+const ESTIMATED_AREA_CRITERIA_ID = 12;
+
 const PolygonDrawer = ({
   polygonSelected,
   isPolygonStatusOpen,
@@ -63,6 +65,7 @@ const PolygonDrawer = ({
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
+  const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
 
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
@@ -147,6 +150,31 @@ const PolygonDrawer = ({
       setOpenAttributes(true);
     }
   }, [openEditNewPolygon]);
+
+  const isValidCriteriaData = (criteriaData: any) => {
+    if (!criteriaData?.criteria_list?.length) {
+      return true;
+    }
+    return criteriaData.criteria_list.some(
+      (criteria: any) => criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID && criteria.valid !== 1
+    );
+  };
+
+  useEffect(() => {
+    const fetchCriteriaValidation = async () => {
+      if (!buttonToogle) {
+        const criteriaData = await fetchGetV2TerrafundValidationPolygon({
+          queryParams: {
+            uuid: polygonSelected
+          }
+        });
+        setCriteriaValidation(criteriaData);
+      }
+    };
+
+    fetchCriteriaValidation();
+  }, [buttonToogle, selectedPolygonData]);
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -188,6 +216,7 @@ const PolygonDrawer = ({
               record={selectedPolygon}
               mutate={mutateSitePolygons}
               tab="polygonReview"
+              checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
             <ComentarySection
               auditLogData={auditLogData?.data}

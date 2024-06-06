@@ -1,5 +1,8 @@
+import Link from "next/link";
 import { FC } from "react";
+import { Link as RaLink, useBasename } from "react-admin";
 
+import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponseWithData } from "@/generated/apiSchemas";
 
@@ -14,6 +17,7 @@ export interface SiteAuditLogEntityStatusProps {
   entityName?: string;
   buttonToogle?: number;
   buttonStates?: { PROJECTS: number; SITE: number; POLYGON: number };
+  viewPD?: boolean;
 }
 
 interface SelectedItem {
@@ -30,9 +34,12 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   auditLogData,
   refresh,
   buttonToogle,
-  buttonStates
+  buttonStates,
+  viewPD = true
 }) => {
   const entityType = buttonToogle === buttonStates?.POLYGON;
+  const isSite = buttonToogle === buttonStates?.SITE;
+  const basename = useBasename();
   const title = () => {
     if (!record?.title) {
       return record?.name;
@@ -40,7 +47,9 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
       return record?.title;
     }
   };
-
+  const redirectTo = viewPD
+    ? `/site/${record?.uuid}?tab=audit-log`
+    : `${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`;
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -58,7 +67,23 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
           viewCommentsList={false}
         />
       </div>
-      <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+      <div>
+        {!isSite && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
+        {isSite && (
+          <Text variant="text-16-bold">
+            History and Discussion for{" "}
+            {viewPD ? (
+              <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
+                {title()}
+              </Link>
+            ) : (
+              <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                {title()}
+              </RaLink>
+            )}
+          </Text>
+        )}
+      </div>
       {auditLogData && <AuditLogTable auditLogData={auditLogData} />}
     </div>
   );

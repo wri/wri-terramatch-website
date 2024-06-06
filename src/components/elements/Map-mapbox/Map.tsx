@@ -158,7 +158,7 @@ export const MapContainer = ({
       addSourcesToLayers(currentMap, polygonsData);
       setChangeStyle(true);
     }
-  }, [sitePolygonData, styleLoaded]);
+  }, [sitePolygonData, styleLoaded, polygonsData]);
 
   useEffect(() => {
     if (currentStyle) {
@@ -293,9 +293,6 @@ export const MapContainer = ({
         <ControlGroup position="bottom-left" className="bottom-13">
           <PolygonCheck />
         </ControlGroup>
-      </When>
-      <When condition={!!siteData}>
-        <div className="absolute z-10 h-full w-[23vw] bg-[#ffffff26] backdrop-blur-md" />
       </When>
     </div>
   );

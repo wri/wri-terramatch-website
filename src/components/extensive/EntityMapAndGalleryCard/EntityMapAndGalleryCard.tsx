@@ -58,7 +58,8 @@ const EntityMapAndGalleryCard = ({
 
   const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
     queryParams: {
-      uuid: projectUUID
+      uuid: projectUUID,
+      type: modelName
     }
   });
 

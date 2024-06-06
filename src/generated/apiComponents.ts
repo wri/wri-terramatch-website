@@ -35408,6 +35408,18 @@ export type GetV2TypeEntityQueryParams = {
    * UUID of the entity
    */
   uuid: string;
+  /**
+   * type of the entity
+   */
+  type: string;
+  /**
+   * Comma-separated list of status values to filter by
+   */
+  status?: string;
+  /**
+   * Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`
+   */
+  sort?: string;
 };
 
 export type GetV2TypeEntityError = Fetcher.ErrorWrapper<{
