@@ -25,7 +25,7 @@ export interface InputProps
   descriptionClassName?: string;
   descriptionFooter?: string;
   format?: "number";
-  sufixLabelView?: boolean;
+  suffixLabelView?: boolean;
   classNameContainerInput?: string;
   classNameError?: string;
 }
@@ -61,7 +61,7 @@ const Input = forwardRef(
       labelVariant,
       readOnly,
       format,
-      sufixLabelView,
+      suffixLabelView,
       classNameContainerInput,
       classNameError,
       ...inputWrapperProps
@@ -181,7 +181,7 @@ const Input = forwardRef(
         feedbackRequired={feedbackRequired}
         labelClassName={labelClassName}
         descriptionClassName={descriptionClassName}
-        sufixLabelView={sufixLabelView}
+        suffixLabelView={suffixLabelView}
         classNameError={classNameError}
       >
         <div className={classNames("relative", classNameContainerInput)}>

@@ -13,7 +13,6 @@ import { SitePolygonResponse } from "@/generated/apiSchemas";
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
-import { onCLose } from "./ModalWithClose.stories";
 
 export interface ModalSubmitProps extends ModalProps {
   primaryButtonText?: string;
@@ -67,7 +66,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               textVariant="text-14-bold"
             />
           </When>
-          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>

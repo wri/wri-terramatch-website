@@ -493,7 +493,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 title={t("Interventions (ha)")}
                 className="col-span-4"
                 type="graph"
-                leyends={[
+                legends={[
                   {
                     color: "bg-black",
                     title: t("Agroforestry")
