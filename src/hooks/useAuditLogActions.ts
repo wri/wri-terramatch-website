@@ -94,7 +94,7 @@ const useAuditLogActions = ({
         if (selected?.uuid && isPolygon) {
           const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
             queryParams: {
-              uuid: selected?.uuid as string
+              uuid: selected?.poly_id as string
             }
           });
           setCriteriaValidation(isValidData(criteriaData?.criteria_list || []));
@@ -107,7 +107,7 @@ const useAuditLogActions = ({
     fetchCheckPolygons();
     fetchCriteriaValidation();
   }, [entityType, record, selected]);
-
+  console.log(selected);
   const isValidData = (criteriaData: any) => {
     for (const criteria of criteriaData.criteria_list || []) {
       if (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID) {
