@@ -32,6 +32,11 @@ const HighLevelMetics: FC = () => {
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="trees_planted_count" emptyText="0" />
           </Labeled>
+          <When condition={isPPC}>
+            <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx} className="label-field-aside">
+              <NumberField source="seeds_planted_count" emptyText="0" />
+            </Labeled>
+          </When>
           <Labeled label="Hectares Under Restoration" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="hectares_to_restore_goal" emptyText="0" />
           </Labeled>
