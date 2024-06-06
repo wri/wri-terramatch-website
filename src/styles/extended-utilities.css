@@ -581,19 +581,19 @@
 
   /* Text 32px */
   .text-32-light {
-    @apply text-3xx font-normal lg:text-5xl wide:text-6xl;
+    @apply font-normal text-3xx lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
   .text-32 {
-    @apply text-3xx font-medium lg:text-5xl wide:text-6xl;
+    @apply font-medium text-3xx lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
   .text-32-semibold {
-    @apply text-3xx font-semibold lg:text-5xl wide:text-6xl;
+    @apply font-semibold text-3xx lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
   .text-32-bold {
-    @apply text-3xx font-bold lg:text-5xl wide:text-6xl;
+    @apply font-bold text-3xx lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
 

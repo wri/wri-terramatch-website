@@ -115,7 +115,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           ))}
         </div>
       </div>
-      <div className="flex w-full justify-end gap-3 py-4 px-8">
+      <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
           <Button {...secondaryButtonProps!} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">

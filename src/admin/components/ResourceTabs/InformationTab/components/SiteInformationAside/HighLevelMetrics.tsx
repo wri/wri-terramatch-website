@@ -22,13 +22,21 @@ const HighLevelMetics: FC = () => {
             High Level Metrics
           </Text>
           <When condition={isPPC}>
-            <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx} className="label-field-aside">
+            <Labeled label="Workdays Created (Old Calculation)" sx={inlineLabelSx} className="label-field-aside">
+              <NumberField source="self_reported_workday_count" emptyText="0" />
+            </Labeled>
+            <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx} className="label-field-aside">
               <NumberField source="workday_count" emptyText="0" />
             </Labeled>
           </When>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="trees_planted_count" emptyText="0" />
           </Labeled>
+          <When condition={isPPC}>
+            <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx} className="label-field-aside">
+              <NumberField source="seeds_planted_count" emptyText="0" />
+            </Labeled>
+          </When>
           <Labeled label="Hectares Under Restoration" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="hectares_to_restore_goal" emptyText="0" />
           </Labeled>

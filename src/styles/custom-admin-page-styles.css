@@ -11,7 +11,7 @@
 }
 
 .filter-button-page-admin span {
-  @apply text-blueCustom-900 text-sm font-bold lg:text-base wide:text-md tracking-normal opacity-100;
+  @apply text-sm font-bold tracking-normal opacity-100 text-blueCustom-900 lg:text-base wide:text-md;
 }
 
 .filter-button-page-admin button {

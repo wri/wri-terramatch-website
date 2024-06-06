@@ -104,7 +104,7 @@ const TeamTabContent = () => {
         <Text variant="text-heading-2000">{t("Meet the Team")}</Text>
 
         <When condition={!!approvedUsers?.data.length}>
-          <div className="mt-12 rounded-lg bg-neutral-150 px-14 py-8">
+          <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
             <Text variant="text-heading-200">
               {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.data.length })}
             </Text>
@@ -116,7 +116,7 @@ const TeamTabContent = () => {
           </div>
         </When>
         <When condition={!!pendingUsers?.data.length}>
-          <div className="mt-12 rounded-lg bg-neutral-150 px-14 py-8">
+          <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
             <Text variant="text-heading-200">
               {t("Requests to Join Organization ({n})", { n: pendingUsers?.data.length })}
             </Text>

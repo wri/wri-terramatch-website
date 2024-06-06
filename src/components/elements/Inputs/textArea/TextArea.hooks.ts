@@ -23,8 +23,7 @@ export const useTextAreaAuto = (
     ref: React.RefObject<HTMLTextAreaElement>;
   } = {
     onChange: handleChange,
-    ref: textAreaRef,
-    value
+    ref: textAreaRef
   };
 
   return { value, handleChange, textareaProps };
