@@ -12,6 +12,7 @@ const HighLevelMetics: FC = () => {
   };
 
   const isTerraFund = record.framework_key === "terrafund";
+  const isPPC = record.framework_key === "ppc";
   const workdaysType = resource === "projectReport" ? "Project" : resource === "siteReport" ? "Site" : null;
 
   return (
@@ -48,6 +49,14 @@ const HighLevelMetics: FC = () => {
               emptyText="0"
             />
           </Labeled>
+          <When condition={isPPC && (resource === "projectReport" || resource === "siteReport")}>
+            <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
+              <NumberField
+                source={record.seeds_planted_count ? "trees_planted_count" : "total_seeds_planted_count"}
+                emptyText="0"
+              />
+            </Labeled>
+          </When>
           <When condition={isTerraFund}>
             <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
               <NumberField source="seedlings_grown" emptyText="0" />

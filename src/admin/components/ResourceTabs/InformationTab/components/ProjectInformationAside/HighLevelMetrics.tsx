@@ -36,6 +36,11 @@ const HighLevelMetics: FC = () => {
         <Labeled label="Trees Planted" sx={inlineLabelSx}>
           <NumberField source="trees_planted_count" emptyText="0" />
         </Labeled>
+        <When condition={record?.framework_key === "ppc"}>
+          <Labeled label="Seeds Planted" sx={inlineLabelSx}>
+            <NumberField source="seeds_planted_count" emptyText="0" />
+          </Labeled>
+        </When>
       </Stack>
     </Card>
   );
