@@ -94,7 +94,7 @@ const useAuditLogActions = ({
         if (selected?.uuid && isPolygon) {
           const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
             queryParams: {
-              uuid: selected?.uuid as string
+              uuid: selected?.poly_id as string
             }
           });
           setCriteriaValidation(isValidData(criteriaData?.criteria_list || []));
