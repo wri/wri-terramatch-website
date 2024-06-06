@@ -11,23 +11,32 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   uuid: string;
   title: string;
   subtitle: string;
+  status: string;
   isSelected?: boolean;
+  poly_id?: string;
+  site_id?: string;
+  setClickedButton: React.Dispatch<React.SetStateAction<string>>;
   refContainer: React.RefObject<HTMLDivElement> | null;
 }
 
 const MapSidePanelItem = ({
+  uuid,
   title,
   subtitle,
+  status,
   isSelected,
+  setClickedButton,
   className,
   refContainer,
   ...props
 }: MapSidePanelItemProps) => {
+  let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
+
   const itemsPrimaryMenu = [
     {
       id: "1",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center">
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("site")}>
           <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; View Site
         </Text>
@@ -36,7 +45,7 @@ const MapSidePanelItem = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center">
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("zoomTo")}>
           <Icon name={IconNames.SEARCH} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Zoom to
         </Text>
@@ -45,7 +54,7 @@ const MapSidePanelItem = ({
     {
       id: "3",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center">
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("download")}>
           <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; Download
         </Text>
@@ -63,7 +72,10 @@ const MapSidePanelItem = ({
         })}
       >
         <div className="flex items-center gap-2">
-          <Icon name={IconNames.MAP_THUMBNAIL} className="h-11 w-11 rounded-lg bg-neutral-300" />
+          <Icon
+            name={IconNames[imageStatus as keyof typeof IconNames]}
+            className="h-11 w-11 rounded-lg bg-neutral-300"
+          />
           <div className="flex flex-1 flex-col">
             <Text variant="text-14-bold" className="">
               {title}

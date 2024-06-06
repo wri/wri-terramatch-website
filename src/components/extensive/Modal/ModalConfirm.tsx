@@ -80,7 +80,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               onChange={opt => {
                 setSelectedOption(opt);
               }}
-              disableOption={checkPolygonsSite}
+              disableOptionTitles={checkPolygonsSite ? ["Approved"] : undefined}
             />
             <If condition={showError}>
               <Text variant="text-12-bold" className="text-red">

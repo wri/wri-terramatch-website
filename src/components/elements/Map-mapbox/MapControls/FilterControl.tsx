@@ -11,10 +11,10 @@ export const FilterControl = () => {
   const t = useT();
 
   const buttons = [
+    { color: "pinkCustom", text: "Draft" },
     { color: "blue", text: "Submitted" },
     { color: "tertiary-600", text: "Needs More Info" },
-    { color: "green", text: "Approved" },
-    { color: "pinkCustom", text: "Draft" }
+    { color: "green", text: "Approved" }
   ];
 
   return (

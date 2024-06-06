@@ -8,13 +8,11 @@ import AuditLogStatusSide from "./AuditLogStatusSide";
 const SiteAuditLogProjectStatusSide = ({
   record,
   refresh,
-  auditLogData,
-  recentRequestData
+  auditLogData
 }: {
   record?: ProjectLiteRead | null;
   refresh?: () => void;
   auditLogData?: AuditStatusResponse[];
-  recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;
 }) => {
   const [open, setOpen] = useState(false);
   const { mutate: upload } = usePostV2AuditStatus();
@@ -47,7 +45,6 @@ const SiteAuditLogProjectStatusSide = ({
       record={record}
       refresh={refresh}
       auditLogData={auditLogData}
-      recentRequestData={recentRequestData}
       getValueForStatus={getValueForStatus}
       statusLabels={projectStatusLabels}
       entity="Project"
