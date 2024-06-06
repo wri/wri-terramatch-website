@@ -107,7 +107,7 @@ const useAuditLogActions = ({
     fetchCheckPolygons();
     fetchCriteriaValidation();
   }, [entityType, record, selected]);
-  console.log(selected);
+
   const isValidData = (criteriaData: any) => {
     for (const criteria of criteriaData.criteria_list || []) {
       if (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID) {
