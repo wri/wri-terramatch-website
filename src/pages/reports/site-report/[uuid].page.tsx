@@ -161,9 +161,23 @@ const SiteReportDetailPage = () => {
                     <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                   </When>
                   <GenericField label={t("Trees Planted")}>
+                    <When condition={isPPC}>
+                      <TextField
+                        className="mt-2"
+                        label={t("Total Trees Planted")}
+                        value={siteReport.total_trees_planted_count}
+                      />
+                    </When>
                     <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} />
                   </GenericField>
                   <GenericField label={t("Direct Seeding")}>
+                    <When condition={isPPC}>
+                      <TextField
+                        className="mt-2"
+                        label={t("Total Direct Seedings")}
+                        value={siteReport.total_seeds_planted_count}
+                      />
+                    </When>
                     <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
                   </GenericField>
                   <GenericField label={t("Disturbances")}>
