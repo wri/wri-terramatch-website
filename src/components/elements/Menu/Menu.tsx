@@ -162,7 +162,6 @@ const Menu = (props: MenuProps) => {
 
     return styles;
   };
-
   return (
     <div
       ref={menuContainerRef}

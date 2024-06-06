@@ -47,6 +47,7 @@ export interface DropdownProps {
   feedbackRequired?: boolean;
   formHook?: UseFormReturn;
   onChangeConfirm?: boolean;
+  disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
@@ -136,6 +137,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherIsSelected, otherValue, t]);
 
+  const verifyDisableOption = (title: string) => {
+    return props?.disableOptionTitles?.includes(title);
+  };
+
   return (
     <div className={tw("space-y-2", props.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
@@ -197,7 +202,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <Listbox.Options
                 as="div"
                 className={tw(
-                  "border-light absolute mt-2 max-h-[400px] min-w-full overflow-auto rounded-lg bg-white",
+                  "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white lg:max-h-[250px] wide:max-h-[266px]",
                   props.optionsClassName
                 )}
               >
@@ -218,9 +223,11 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                           "w-full cursor-pointer hover:bg-primary-100",
                           props.multiSelect ? "p-3.5" : "p-3",
                           isSelected && !props.multiSelect && "bg-primary-100",
-                          props.optionClassName
+                          props.optionClassName,
+                          verifyDisableOption(option.title) ? "cursor-not-allowed bg-grey-750 hover:bg-grey-750" : ""
                         )
                       )}
+                      disabled={verifyDisableOption(option.title)}
                     >
                       <If condition={props.multiSelect}>
                         <Then>

@@ -1,6 +1,7 @@
 import { remove } from "lodash";
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
+import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
@@ -8,7 +9,7 @@ import {
   FileInputVariant,
   VARIANT_FILE_INPUT_MODAL_ADD
 } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import Status from "@/components/elements/Status/Status";
+import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { FileType, UploadedFile } from "@/types/common";
 
@@ -62,7 +63,11 @@ const ModalAdd: FC<ModalAddProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
           <When condition={status}>
-            <Status status={status ? status : "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
+            <Status
+              status={(status ? status : "draft") as StatusEnum}
+              className="rounded px-2 py-[2px]"
+              textVariant="text-14-bold"
+            />
           </When>
           <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
@@ -70,6 +75,14 @@ const ModalAdd: FC<ModalAddProps> = ({
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
+        <When condition={!!iconProps}>
+          <Icon
+            {...iconProps!}
+            width={iconProps?.width || 40}
+            className={twMerge("mb-8", iconProps?.className)}
+            style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
+          />
+        </When>
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
