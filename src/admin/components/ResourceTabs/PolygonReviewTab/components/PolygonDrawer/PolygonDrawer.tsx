@@ -145,6 +145,8 @@ const PolygonDrawer = ({
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
+    const criteriaDataLength = criteriaData?.criteria_list?.length || 0;
+    setCriteriaValidation(criteriaDataLength > 0 ? isValidData(criteriaData?.criteria_list) : true);
   }, [polygonSelected, sitePolygonData]);
   useEffect(() => {
     console.log("openEditNewPolygon", openEditNewPolygon);
@@ -153,16 +155,6 @@ const PolygonDrawer = ({
       setOpenAttributes(true);
     }
   }, [openEditNewPolygon]);
-
-  useEffect(() => {
-    const fetchCriteriaValidation = async () => {
-      if (selectedPolygon?.poly_id) {
-        setCriteriaValidation(isValidData(criteriaData?.criteria_list || []));
-      }
-    };
-
-    fetchCriteriaValidation();
-  }, [selectedPolygon]);
 
   const isValidData = (criteriaData: any) => {
     for (const criteria of criteriaData.criteria_list || []) {
