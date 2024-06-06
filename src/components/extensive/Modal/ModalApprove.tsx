@@ -1,6 +1,7 @@
+import { useT } from "@transifex/react";
 import { FC } from "react";
 import { When } from "react-if";
-import { twMerge } from "tailwind-merge";
+import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -8,29 +9,15 @@ import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
+import { ModalProps } from "./Modal";
 import { dataSubmitPolygons } from "./ModalContent/MockedData";
-
-export const ModalBaseSubmit: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
+import { ModalBaseSubmit } from "./ModalsBases";
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
 }
 
 const ModalApprove: FC<ModalApproveProps> = ({
@@ -44,9 +31,10 @@ const ModalApprove: FC<ModalApproveProps> = ({
   toogleButton,
   children,
   status,
-  onCLose,
+  onClose,
   ...rest
 }) => {
+  const t = useT();
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -59,7 +47,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
               textVariant="text-14-bold"
             />
           </When>
-          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>
@@ -69,7 +57,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
           <Icon
             {...iconProps!}
             width={iconProps?.width || 40}
-            className={twMerge("mb-8", iconProps?.className)}
+            className={tw("mb-8", iconProps?.className)}
             style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
           />
         </When>
@@ -84,13 +72,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
-              Name
+              {t("Name")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-start">
-              Polygon Check
+              {t("Polygon Check")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Approve
+              {t("Approve")}
             </Text>
           </header>
           {dataSubmitPolygons.map((item, index) => (
@@ -102,12 +90,12 @@ const ModalApprove: FC<ModalApproveProps> = ({
                 {index % 2 === 0 ? (
                   <div className="flex w-full items-center justify-start gap-2">
                     <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
-                    <Text variant="text-10-light">Verified</Text>
+                    <Text variant="text-10-light">{t("Verified")}</Text>
                   </div>
                 ) : (
                   <div className="flex w-full items-center justify-start gap-2">
                     <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-green-500" />
-                    <Text variant="text-10-light">Self-Intersection</Text>
+                    <Text variant="text-10-light">{t("Self-Intersection")} </Text>
                   </div>
                 )}
               </div>

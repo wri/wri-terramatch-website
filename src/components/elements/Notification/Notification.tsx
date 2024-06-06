@@ -1,4 +1,6 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { has } from "lodash";
 import { FC, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { When } from "react-if";
@@ -7,6 +9,8 @@ import { twMerge as tw } from "tailwind-merge";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import Text from "../Text/Text";
+import { TYPE_CLASSES } from "./constants/baseClasses";
+import { TEXT_CLASSES } from "./constants/textClasses";
 
 export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "success" | "error" | "warning";
@@ -16,36 +20,16 @@ export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 const Notification: FC<NotificationProps> = props => {
-  const { type, message, className, title, open, ...rest } = props;
+  const { type = "default", message, className, title, open, ...rest } = props;
+  const t = useT();
   const [openNotification, setOpenNotification] = useState(open);
 
-  const notificationClasses = useMemo(() => {
-    const baseClasses =
-      "flex items-start rounded-lg font-bold w-full tracking-tighter leading-16 p-4 bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)]";
-    switch (type) {
-      case "success":
-        return classNames(baseClasses, "text-bold-body-300 group:text-success-600");
-      case "error":
-        return classNames(baseClasses, "text-bold-body-300 group:text-error-600");
-      case "warning":
-        return classNames(baseClasses, "text-bold-body-300 group:text-tertiary-600");
-      default:
-        return classNames(baseClasses, "text-bold-body-300 group:text-success-600");
-    }
-  }, [type]);
+  const textClasses = useMemo(() => (has(TEXT_CLASSES, type) ? TEXT_CLASSES[type] : TEXT_CLASSES.default), [type]);
 
-  const TextClasses = useMemo(() => {
-    switch (type) {
-      case "success":
-        return "text-success-600";
-      case "error":
-        return "text-error-600";
-      case "warning":
-        return "text-tertiary-600";
-      default:
-        return "text-success-600";
-    }
-  }, [type]);
+  const notificationClasses = useMemo(
+    () => (has(TYPE_CLASSES, type) ? TYPE_CLASSES[type] : TYPE_CLASSES.default),
+    [type]
+  );
 
   useEffect(() => {
     setOpenNotification(open);
@@ -73,16 +57,16 @@ const Notification: FC<NotificationProps> = props => {
             </div>
             <div className="w-full">
               <div>
-                <Text variant="text-bold-body-300" className={tw("w-full", TextClasses)}>
+                <Text variant="text-bold-body-300" className={tw("w-full", textClasses)}>
                   <button onClick={closeNotification} className="float-right text-neutral-400 hover:opacity-60">
                     <Icon name={IconNames.CLEAR} className={tw("h-3 w-3 lg:h-4 lg:w-4 wide:h-5 wide:w-5")} />
                   </button>
-                  {title}
+                  {t(title)}
                 </Text>
               </div>
               <When condition={!!message}>
                 <Text variant="text-body-200" className="mt-2 !font-primary">
-                  {message}
+                  {t(message)}
                 </Text>
               </When>
             </div>
@@ -92,7 +76,6 @@ const Notification: FC<NotificationProps> = props => {
         <></>
       )}
     </div>,
-
     document.body
   );
 };

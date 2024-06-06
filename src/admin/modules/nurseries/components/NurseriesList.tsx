@@ -1,10 +1,11 @@
 import { Stack } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
   DateField,
   EditButton,
+  FunctionField,
   List,
   ReferenceInput,
   SearchInput,
@@ -19,14 +20,14 @@ import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
+import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -51,6 +52,8 @@ const tableMenu = [
 ];
 
 const NurseryDataGrid: FC = () => {
+  const frameworkChoices = useFrameworkChoices();
+
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
       <TextField source="name" label="Nursery Name" />
@@ -64,6 +67,15 @@ const NurseryDataGrid: FC = () => {
       <TextField source="project.name" label="Project Name" />
       <TextField source="organisation.name" label="Organization" />
       <DateField source="start_date" label="Establishment" locales="en-GB" />
+      <FunctionField
+        source="framework_key"
+        label="Framework"
+        render={(record: any) =>
+          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ??
+          record?.framework_key
+        }
+        sortable={false}
+      />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -72,7 +84,7 @@ const NurseryDataGrid: FC = () => {
 };
 
 export const NurseriesList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
+  const frameworkChoices = useFrameworkChoices();
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -95,6 +107,8 @@ export const NurseriesList: FC = () => {
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
+    <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />,
+    <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getStatusOptions())} />,
     <SelectInput
       key="status"
       label="Status"
@@ -123,20 +137,7 @@ export const NurseriesList: FC = () => {
     </ReferenceInput>
   ];
 
-  const handleExport = () => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "nurseries",
-        framework: "terrafund"
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, "Nurseries - terrafund.csv");
-      })
-      .finally(() => setExporting(false));
-  };
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("nurseries");
 
   return (
     <>
@@ -146,9 +147,11 @@ export const NurseriesList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
         <NurseryDataGrid />
       </List>
+
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>

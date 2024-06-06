@@ -10,13 +10,13 @@ exports[`Storyshots Components/Extensive/IconSocial Facebook 1`] = `
   target="_blank"
 >
   <div
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white bg-[#002633]"
   >
     <div
       style={
         Object {
           "height": undefined,
-          "width": 18,
+          "width": 17,
         }
       }
     />
@@ -34,13 +34,13 @@ exports[`Storyshots Components/Extensive/IconSocial Instagram 1`] = `
   target="_blank"
 >
   <div
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white bg-[#002633]"
   >
     <div
       style={
         Object {
           "height": undefined,
-          "width": 18,
+          "width": 17,
         }
       }
     />
@@ -58,13 +58,13 @@ exports[`Storyshots Components/Extensive/IconSocial Linkedin 1`] = `
   target="_blank"
 >
   <div
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white bg-[#002633]"
   >
     <div
       style={
         Object {
           "height": undefined,
-          "width": 18,
+          "width": 17,
         }
       }
     />
@@ -82,13 +82,13 @@ exports[`Storyshots Components/Extensive/IconSocial Twitter 1`] = `
   target="_blank"
 >
   <div
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white bg-[#002633]"
   >
     <div
       style={
         Object {
           "height": undefined,
-          "width": 18,
+          "width": 17,
         }
       }
     />
@@ -106,13 +106,13 @@ exports[`Storyshots Components/Extensive/IconSocial Website 1`] = `
   target="_blank"
 >
   <div
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-black"
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white bg-[#002633]"
   >
     <div
       style={
         Object {
           "height": undefined,
-          "width": 18,
+          "width": 17,
         }
       }
     />

@@ -3,7 +3,7 @@ import { FC } from "react";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponseWithData, ProjectLiteRead } from "@/generated/apiSchemas";
 
-import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
+import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogProjectStatusProps {
@@ -19,7 +19,7 @@ export const gridData = [
     user: "Jessica Chaimers",
     site: null,
     status: "Need More Information",
-    comentary: null
+    commentary: null
   },
   {
     id: "2",
@@ -27,7 +27,7 @@ export const gridData = [
     user: "Teresa Muthoni",
     site: null,
     status: "Need More Information",
-    comentary:
+    commentary:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   },
   {
@@ -36,7 +36,7 @@ export const gridData = [
     user: "Jessica Chaimers",
     site: null,
     status: "Awaiting Approval",
-    comentary: null
+    commentary: null
   },
   {
     id: "4",
@@ -44,7 +44,7 @@ export const gridData = [
     user: "Jessica Chaimers",
     site: null,
     status: "Awaiting Approval",
-    comentary: null
+    commentary: null
   },
   {
     id: "5",
@@ -52,7 +52,7 @@ export const gridData = [
     user: "Jessica Chaimers",
     site: null,
     status: "Awaiting Approval",
-    comentary: null
+    commentary: null
   }
 ];
 
@@ -66,7 +66,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
         <Text variant="text-14-light" className="mb-4">
           Update the project status, view updates, or add comments
         </Text>
-        <ComentarySection
+        <CommentarySection
           record={record}
           entity={"Project"}
           auditLogData={auditLogData?.data}

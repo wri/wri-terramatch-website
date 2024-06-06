@@ -3,7 +3,7 @@ import { FC } from "react";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponseWithData } from "@/generated/apiSchemas";
 
-import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
+import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogEntityStatusProps {
@@ -50,7 +50,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         <Text variant="text-14-light" className="mb-4">
           Update the {entityType ? "polygon" : "site"} status, view updates, or add comments
         </Text>
-        <ComentarySection
+        <CommentarySection
           record={record}
           entity={entityType ? "SitePolygon" : "Site"}
           auditLogData={auditLogData?.data}

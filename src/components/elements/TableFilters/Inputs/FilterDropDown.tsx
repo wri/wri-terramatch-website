@@ -1,4 +1,5 @@
 import { Listbox, Transition } from "@headlessui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { PropsWithChildren, useState } from "react";
 import { When } from "react-if";
@@ -23,6 +24,7 @@ export interface FilterDropDownProps {
 
 const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
   const [selected, setSelected] = useState(props.defaultValue);
+  const t = useT();
 
   const onChangeHandler = (value: any) => {
     setSelected(value);
@@ -35,7 +37,7 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
         <div className="flex items-center gap-3">
           <When condition={!!props.label}>
             <Listbox.Label as={Text} variant="text-16-bold">
-              {props.label}
+              {t(props.label)}
             </Listbox.Label>
           </When>
           <div className="relative">

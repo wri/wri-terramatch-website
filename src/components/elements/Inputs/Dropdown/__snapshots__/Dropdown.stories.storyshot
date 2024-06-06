@@ -11,13 +11,13 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
       className="mr-2 inline uppercase text-bold-body-300"
       data-headlessui-state=""
       data-testid="txt"
-      id="headlessui-listbox-label-:rq:"
+      id="headlessui-listbox-label-:rr:"
       onClick={[Function]}
     >
       Drop down label 
     </label>
     <p
-      className="text-light-body-300 with-inner-html"
+      className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
         Object {
           "__html": "Drop down description",
@@ -28,20 +28,31 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
     <div
       aria-expanded={false}
       aria-haspopup="listbox"
-      aria-labelledby="headlessui-listbox-label-:rq: headlessui-listbox-button-:rr:"
+      aria-labelledby="headlessui-listbox-label-:rr: headlessui-listbox-button-:rs:"
       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
-      id="headlessui-listbox-button-:rr:"
+      id="headlessui-listbox-button-:rs:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
     >
-      <span
-        className="w-full line-clamp-1"
+      <div
+        className="flex items-center gap-2"
       >
-        placeholder
-      </span>
+        <p
+          className="w-full line-clamp-1 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>
@@ -58,13 +69,13 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
       className="mr-2 inline uppercase text-bold-body-300"
       data-headlessui-state=""
       data-testid="txt"
-      id="headlessui-listbox-label-:ru:"
+      id="headlessui-listbox-label-:rv:"
       onClick={[Function]}
     >
       Drop down label 
     </label>
     <p
-      className="text-light-body-300 with-inner-html"
+      className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
         Object {
           "__html": "Drop down description",
@@ -75,20 +86,31 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
     <div
       aria-expanded={false}
       aria-haspopup="listbox"
-      aria-labelledby="headlessui-listbox-label-:ru: headlessui-listbox-button-:rv:"
+      aria-labelledby="headlessui-listbox-label-:rv: headlessui-listbox-button-:r10:"
       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
-      id="headlessui-listbox-button-:rv:"
+      id="headlessui-listbox-button-:r10:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
     >
-      <span
-        className="w-full line-clamp-1"
+      <div
+        className="flex items-center gap-2"
       >
-        placeholder
-      </span>
+        <p
+          className="w-full line-clamp-1 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>
@@ -105,13 +127,13 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
       className="mr-2 inline uppercase text-bold-body-300"
       data-headlessui-state=""
       data-testid="txt"
-      id="headlessui-listbox-label-:ro:"
+      id="headlessui-listbox-label-:rp:"
       onClick={[Function]}
     >
       Drop down label 
     </label>
     <p
-      className="text-light-body-300 with-inner-html"
+      className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
         Object {
           "__html": "Drop down description",
@@ -122,21 +144,82 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
     <div
       aria-expanded={false}
       aria-haspopup="listbox"
-      aria-labelledby="headlessui-listbox-label-:ro: headlessui-listbox-button-:rp:"
+      aria-labelledby="headlessui-listbox-label-:rp: headlessui-listbox-button-:rq:"
       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
-      id="headlessui-listbox-button-:rp:"
+      id="headlessui-listbox-button-:rq:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
     >
-      <span
-        className="w-full line-clamp-1"
+      <div
+        className="flex items-center gap-2"
       >
-        placeholder
-      </span>
+        <p
+          className="w-full line-clamp-1 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta Data 1`] = `
+<div
+  className="space-y-2"
+>
+  <label
+    className="mr-2 inline uppercase capitalize text-16-bold"
+    data-headlessui-state=""
+    data-testid="txt"
+    id="headlessui-listbox-label-:r11:"
+    onClick={[Function]}
+  >
+    Select Polygon 
+  </label>
+  <div
+    aria-expanded={false}
+    aria-haspopup="listbox"
+    aria-labelledby="headlessui-listbox-label-:r11: headlessui-listbox-button-:r12:"
+    className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+    data-headlessui-state=""
+    disabled={false}
+    id="headlessui-listbox-button-:r12:"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+  >
+    <div
+      className="flex items-center gap-2"
+    >
+      <div
+        className="min-h-[8px] min-w-[8px] rounded-full undefined"
+      />
+      <p
+        className="w-full line-clamp-1 text-14-light"
+        data-testid="txt"
+      >
+        Aerobic Agroforestry
+      </p>
+    </div>
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "width": 16,
+        }
+      }
+    />
   </div>
 </div>
 `;
@@ -152,13 +235,13 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
       className="mr-2 inline uppercase text-bold-body-300"
       data-headlessui-state=""
       data-testid="txt"
-      id="headlessui-listbox-label-:rs:"
+      id="headlessui-listbox-label-:rt:"
       onClick={[Function]}
     >
       Drop down label 
     </label>
     <p
-      className="text-light-body-300 with-inner-html"
+      className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
         Object {
           "__html": "Drop down description",
@@ -169,20 +252,31 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
     <div
       aria-expanded={false}
       aria-haspopup="listbox"
-      aria-labelledby="headlessui-listbox-label-:rs: headlessui-listbox-button-:rt:"
+      aria-labelledby="headlessui-listbox-label-:rt: headlessui-listbox-button-:ru:"
       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
-      id="headlessui-listbox-button-:rt:"
+      id="headlessui-listbox-button-:ru:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
     >
-      <span
-        className="w-full line-clamp-1"
+      <div
+        className="flex items-center gap-2"
       >
-        placeholder
-      </span>
+        <p
+          className="w-full line-clamp-1 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
     </div>
   </div>
 </div>

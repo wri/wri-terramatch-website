@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IconNames } from "../Icon/Icon";
-import { ModalProps as Props } from "./Modal";
-import Component from "./ModalWithLogo";
+import Component, { ModalWithLogoProps as Props } from "./ModalWithLogo";
 
 const meta: Meta<typeof Component> = {
   title: "Components/Extensive/Modal/ModalWithLogo",

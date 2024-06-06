@@ -1,0 +1,331 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Menu Placement Bottom Left 1`] = `
+<div
+  className="relative w-fit-content"
+  onClick={[Function]}
+>
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  >
+    <span
+      className="flex items-center text-bold-caption-200"
+    >
+      Open/Close
+    </span>
+  </button>
+  <div
+    className="absolute z-40 right-0 top-full mt-[5px] visible"
+    style={
+      Object {
+        "width": "undefinedpx",
+      }
+    }
+  >
+    <div
+      className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+      style={Object {}}
+    >
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 1 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 2 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 3 this is a large text example
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Menu Placement Bottom Right 1`] = `
+<div
+  className="relative w-fit-content"
+  onClick={[Function]}
+>
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  >
+    <span
+      className="flex items-center text-bold-caption-200"
+    >
+      Open/Close
+    </span>
+  </button>
+  <div
+    className="absolute z-40 top-full mt-[5px] visible"
+    style={
+      Object {
+        "width": "undefinedpx",
+      }
+    }
+  >
+    <div
+      className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+      style={Object {}}
+    >
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 1 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 2 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 3 this is a large text example
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Menu Placement Left Bottom 1`] = `
+<div
+  className="relative w-fit-content"
+  onClick={[Function]}
+>
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  >
+    <span
+      className="flex items-center text-bold-caption-200"
+    >
+      Open/Close
+    </span>
+  </button>
+  <div
+    className="absolute z-40 right-full top-0 mr-[5px] visible"
+    style={
+      Object {
+        "width": "undefinedpx",
+      }
+    }
+  >
+    <div
+      className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+      style={Object {}}
+    >
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 1 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 2 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 3 this is a large text example
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Menu Placement Right Top 1`] = `
+<div
+  className="relative w-fit-content"
+  onClick={[Function]}
+>
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  >
+    <span
+      className="flex items-center text-bold-caption-200"
+    >
+      Open/Close
+    </span>
+  </button>
+  <div
+    className="absolute z-40 left-full bottom-0 ml-[5px] visible"
+    style={
+      Object {
+        "width": "undefinedpx",
+      }
+    }
+  >
+    <div
+      className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+      style={Object {}}
+    >
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 1 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 2 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 3 this is a large text example
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Menu Primary 1`] = `
+<div
+  className="relative w-fit-content"
+  onClick={[Function]}
+>
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  >
+    <span
+      className="flex items-center text-bold-caption-200"
+    >
+      Open/Close
+    </span>
+  </button>
+  <div
+    className="absolute z-40 top-full mt-[5px] visible"
+    style={
+      Object {
+        "width": "undefinedpx",
+      }
+    }
+  >
+    <div
+      className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+      style={Object {}}
+    >
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test1
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test2
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test3
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Menu Secondary 1`] = `
+<div
+  className="relative w-fit-content"
+  onClick={[Function]}
+>
+  <button
+    className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  >
+    <span
+      className="flex items-center text-bold-caption-200"
+    >
+      Open/Close
+    </span>
+  </button>
+  <div
+    className="absolute z-40 top-full mt-[5px] visible"
+    style={
+      Object {
+        "width": "undefinedpx",
+      }
+    }
+  >
+    <div
+      className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] border-b-4 border-tertiary"
+      style={Object {}}
+    >
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 1 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 2 this is a large text example
+        </div>
+      </button>
+      <button
+        className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+        onClick={[Function]}
+      >
+        <div>
+          Test 3 this is a large text example
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;

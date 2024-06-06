@@ -252,7 +252,7 @@ const ProjectPipeline: FC = () => {
         key={refreshKey}
         className="w-[556px]"
         title={title}
-        onCLose={closeModal}
+        onClose={closeModal}
         primaryButtonProps={{
           children: buttonName,
           className: "w-full text-white capitalize",

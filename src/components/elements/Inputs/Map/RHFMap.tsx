@@ -47,11 +47,14 @@ const RHFMap = ({
   const entityData: any = data?.data || {};
 
   const additionalPolygonProperties: AdditionalPolygonProperties = {
+    Framework: entityData.framework_key,
     Country: entityData.project?.country,
     Org_Name: entityData.organisation?.name,
     Plant_Date: entityData.start_date,
-    Project_ID: entityData.project?.uuid,
-    Site_ID: entityData.uuid,
+    Project_ID: entityData.project?.ppc_external_id,
+    Project_UUID: entityData.project?.uuid,
+    Site_ID: entityData.ppc_external_id,
+    Site_UUID: entityData.uuid,
     Project_Name: entityData.project?.name,
     Site_Name: entityData.name
   };
@@ -88,7 +91,7 @@ const RHFMap = ({
         editable
         onError={onError}
         additionalPolygonProperties={additionalPolygonProperties}
-        captureAdditionalPolygonProperties={!!entity}
+        captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
       />
     </InputWrapper>
   );

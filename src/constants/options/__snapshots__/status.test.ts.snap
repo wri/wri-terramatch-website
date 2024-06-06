@@ -7,10 +7,6 @@ exports[`snapShot getStatusOptions 1`] = `
     "value": "started",
   },
   {
-    "title": "Rejected",
-    "value": "rejected",
-  },
-  {
     "title": "Approved",
     "value": "approved",
   },

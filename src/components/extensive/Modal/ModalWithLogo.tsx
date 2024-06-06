@@ -1,38 +1,26 @@
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
-import Comentary from "@/components/elements/Comentary/Comentary";
-import ComentaryBox from "@/components/elements/ComentaryBox/ComentaryBox";
+import Commentary from "@/components/elements/Commentary/Commentary";
+import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Status, { StatusEnum } from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
-import { comentariesItems, polygonStatusLabels } from "./ModalContent/MockedData";
-
-export const ModalBaseWithLogo: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex h-[80%] max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ModalProps } from "./Modal";
+import { commentariesItems, polygonStatusLabels } from "./ModalContent/MockedData";
+import { ModalBaseWithLogo } from "./ModalsBases";
 
 export interface ModalWithLogoProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
 }
 
 const ModalWithLogo: FC<ModalWithLogoProps> = ({
@@ -46,10 +34,12 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   toogleButton,
   children,
   status,
-  onCLose,
+  onClose,
   ...rest
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
+  const t = useT();
+
   return (
     <ModalBaseWithLogo {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -62,7 +52,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
               textVariant="text-14-bold"
             />
           </When>
-          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>
@@ -71,9 +61,9 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
-            width={iconProps?.width || 40}
+            width={iconProps?.width ?? 40}
             className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
+            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
           />
         </When>
         <div className="flex items-center justify-between">
@@ -85,14 +75,14 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
                 onClick={() => setButtonToogle(!buttonToogle)}
                 className="w-[111px]"
               >
-                <Text variant="text-14-semibold">Comments</Text>
+                <Text variant="text-14-semibold">{t("Comments")}</Text>
               </Button>
               <Button
                 variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
                 onClick={() => setButtonToogle(!buttonToogle)}
                 className="w-[111px]"
               >
-                <Text variant="text-14-semibold">History</Text>
+                <Text variant="text-14-semibold">{t("History")}</Text>
               </Button>
             </div>
           </When>
@@ -106,21 +96,21 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
         </div>
         <div className="flex flex-col gap-4">
-          <ComentaryBox name={"Ricardo"} lastName={"Saavedra"} />
-          {comentariesItems.map(item => (
-            <Comentary
+          <CommentaryBox name={"Ricardo"} lastName={"Saavedra"} />
+          {commentariesItems.map(item => (
+            <Commentary
               key={item.id}
               name={item.name}
               lastName={item.lastName}
               date={item.date}
-              comentary={item.comentary}
+              commentary={item.commentary}
               files={item.files}
-              status={item.status}
+              status={item.status as "draft" | "submitted" | undefined}
             />
           ))}
         </div>
       </div>
-      <div className="flex w-full justify-end gap-3 py-4 px-8">
+      <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
           <Button {...secondaryButtonProps!} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">

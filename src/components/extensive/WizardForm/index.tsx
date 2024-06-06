@@ -108,7 +108,6 @@ function WizardForm(props: WizardFormProps) {
       props.onChange && props.onChange(formHook.getValues());
       props.onStepChange?.(data, selectedStep);
       formHook.clearErrors();
-      formHook.trigger();
     } else {
       //Step changes on last step
       if (!props.onSubmit) return props.onStepChange?.(data, selectedStep);
@@ -137,7 +136,6 @@ function WizardForm(props: WizardFormProps) {
       });
     }
     formHook.reset(formHook.getValues());
-    formHook.trigger();
   }, [formHook, props.errors]);
 
   const initialStepIndex = useMemo(() => {
@@ -165,7 +163,7 @@ function WizardForm(props: WizardFormProps) {
 
   const stepTabItems = props.steps.map((step, index) => ({
     title:
-      step.tabTitle ||
+      step.tabTitle ??
       t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title: step.title }),
     done: props.tabOptions?.markDone && index < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
@@ -182,7 +180,7 @@ function WizardForm(props: WizardFormProps) {
                 variant="text"
                 className="text-14-bold nowrap whitespace-nowrap rounded-lg border-2 border-transparent bg-[#ffb88891] px-4 py-0 uppercase text-white hover:border-white"
               >
-                edit polygon
+                {t("edit polygon")}
               </Button>
             </div>
           </div>
@@ -194,7 +192,6 @@ function WizardForm(props: WizardFormProps) {
           title={step.title}
           subtitle={step.subtitle}
           onChange={onChange}
-          className=""
         >
           <FormFooter
             className="mt-12"
@@ -215,8 +212,8 @@ function WizardForm(props: WizardFormProps) {
             submitButtonProps={{
               children:
                 selectedStepIndex < lastIndex
-                  ? props.nextButtonText || t("Save and continue")
-                  : props.submitButtonText || t("Submit"),
+                  ? props.nextButtonText ?? t("Save and continue")
+                  : props.submitButtonText ?? t("Submit"),
               onClick: formHook.handleSubmit(onSubmitStep),
               disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
             }}

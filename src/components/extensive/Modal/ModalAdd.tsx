@@ -14,21 +14,8 @@ import Text from "@/components/elements/Text/Text";
 import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
-
-export const ModalAddBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex h-[80%] max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ModalProps } from "./Modal";
+import { ModalAddBase } from "./ModalsBases";
 
 export interface ModalAddProps extends ModalProps {
   primaryButtonText?: string;
@@ -39,7 +26,7 @@ export interface ModalAddProps extends ModalProps {
   descriptionListStatus?: string;
   acceptedTYpes?: FileType[];
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
 }
 
@@ -59,17 +46,16 @@ const ModalAdd: FC<ModalAddProps> = ({
   children,
   status,
   setFile,
-  onCLose,
+  onClose,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
   useEffect(() => {
     if (setFile && files) {
-      console.log("gets here", files);
       setFile(files);
     }
-  }, [files]);
+  }, [files, setFile]);
 
   return (
     <ModalAddBase {...rest}>
@@ -83,7 +69,7 @@ const ModalAdd: FC<ModalAddProps> = ({
               textVariant="text-14-bold"
             />
           </When>
-          <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>

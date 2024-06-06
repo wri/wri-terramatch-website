@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React, { useEffect } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -23,6 +24,7 @@ const topBorderColorPopup: any = {
 
 const TooltipMap = (props: TooltipMapProps) => {
   const { setTooltipOpen, setEditPolygon, polygon, type } = props;
+  const t = useT();
   const [polygonData, setPolygonData] = React.useState<SitePolygon>();
   const { data: sitePolygonData } = useGetV2TerrafundPolygonUuid<{
     site_polygon: SitePolygon;
@@ -44,6 +46,11 @@ const TooltipMap = (props: TooltipMapProps) => {
 
   const polygonDataStatus = polygonData?.status ? polygonData.status : "submitted";
 
+  const goToRelatedSiteProfile = () => {
+    const siteUrl = `/site/${polygonData?.site_id}`;
+    window.open(siteUrl, "_blank");
+  };
+
   return (
     <div
       className={`w-[295px] rounded border-t-[5px] ${topBorderColorPopup[polygonDataStatus]} bg-white px-3 pb-3 pt-[7px]`}
@@ -54,41 +61,41 @@ const TooltipMap = (props: TooltipMapProps) => {
 
       <div className="text-10 flex items-center justify-center gap-1">
         <Text variant="text-10" className="mb-1 uppercase leading-[normal]">
-          {polygonData?.site_name} SITE
+          {polygonData?.site_name} {t("SITE")}
         </Text>
       </div>
       <Text variant="text-10-bold" className="text-center leading-[normal] text-black">
-        {polygonData?.poly_name ? polygonData?.poly_name : "Unnamed Polygon"}
+        {polygonData?.poly_name ? polygonData?.poly_name : t("Unnamed Polygon")}
       </Text>
       <hr className="my-2 border border-grey-750" />
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Text variant="text-10-light" className="mb-[2px] leading-[normal]">
-            Restoration Practice
+            {t("Restoration Practice")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {polygonData?.practice ? polygonData?.practice : "Unknown"}
+            {polygonData?.practice ? polygonData?.practice : t("Unknown")}
           </Text>
         </div>
         <div>
           <Text variant="text-10-light" className="mb-[2px] leading-[normal]">
-            Target Land Use System
+            {t("Target Land Use System")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {polygonData?.target_sys ? polygonData?.target_sys : "Unknown"}
+            {polygonData?.target_sys ? polygonData?.target_sys : t("Unknown")}
           </Text>
         </div>
         <div>
           <Text variant="text-10-light" className="mb-[2px] leading-[normal]">
-            Tree Distribution
+            {t("Tree Distribution")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black">
-            {polygonData?.distr ? polygonData?.distr : "Unknown"}
+            {polygonData?.distr ? polygonData?.distr : t("Unknown")}
           </Text>
         </div>
         <div>
           <Text variant="text-10-light" className="mb-[2px] leading-[normal]">
-            Planting Start Date
+            {t("Planting Start Date")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
             {formatDate(polygonData?.plantstart)}
@@ -102,7 +109,17 @@ const TooltipMap = (props: TooltipMapProps) => {
           <button className="flex items-center justify-center gap-1" onClick={setEditPolygon}>
             <Icon name={IconNames.CLICK} className="h-4 w-4" />
             <Text variant="text-10-light" className="italic text-black">
-              click to see polygon details
+              {t("click to see polygon details")}
+            </Text>
+          </button>
+        </div>
+      )}
+      {type === "goTo" && (
+        <div className="flex w-full items-center justify-center">
+          <button className="flex items-center justify-center gap-1" onClick={() => goToRelatedSiteProfile()}>
+            <Icon name={IconNames.CLICK} className="h-4 w-4" />
+            <Text variant="text-10-light" className="italic text-black">
+              {t("click to open site profile page")}
             </Text>
           </button>
         </div>

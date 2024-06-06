@@ -46,7 +46,7 @@ function PageSelector({
           <Text
             key={pageNumber}
             role="button"
-            variant={variantText || "text-bold-subtitle-500"}
+            variant={variantText ?? "text-bold-subtitle-500"}
             className={classNames(currentPage === pageNumber ? "text-neutral-1000 underline" : "text-neutral-600")}
             disabled={typeof pageNumber !== "number"}
             onClick={() => typeof pageNumber === "number" && setPageIndex(pageNumber - 1)}

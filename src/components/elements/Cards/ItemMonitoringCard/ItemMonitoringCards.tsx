@@ -27,7 +27,7 @@ export interface ItemMonitoringCardsProps
   className?: string;
   img?: IconNames;
   type?: "graph" | "map" | "graph-button";
-  leyends?: LeyendItemMonitoringCardsProps[];
+  legends?: LeyendItemMonitoringCardsProps[];
 }
 
 const ItemMonitoringCards = ({
@@ -42,7 +42,7 @@ const ItemMonitoringCards = ({
   type,
   img,
   item,
-  leyends,
+  legends,
   key,
   ...props
 }: ItemMonitoringCardsProps) => {
@@ -109,16 +109,15 @@ const ItemMonitoringCards = ({
             />
           </div>
         </When>
-        <When condition={!!leyends}>
+        <When condition={!!legends}>
           <div className="mt-2 flex flex-wrap justify-center gap-x-2">
-            {leyends &&
-              leyends.map((leyend: any, index: number) => (
-                <Text as="span" key={index} variant="text-8" className="flex items-center whitespace-nowrap">
-                  <div className={`h-1 w-1 lg:h-2 lg:w-2 ${leyend.color} rounded-full`} />
-                  &nbsp;
-                  {leyend.title}
-                </Text>
-              ))}
+            {legends?.map((legend: any, index: number) => (
+              <Text as="span" key={index} variant="text-8" className="flex items-center whitespace-nowrap">
+                <div className={`h-1 w-1 lg:h-2 lg:w-2 ${legend.color} rounded-full`} />
+                &nbsp;
+                {legend.title}
+              </Text>
+            ))}
           </div>
         </When>
       </div>

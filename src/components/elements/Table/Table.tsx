@@ -139,11 +139,9 @@ function Table<TData extends RowData>({
                           key={header.id}
                           colSpan={header.colSpan}
                           onClick={header.column.getToggleSortingHandler()}
-                          className={classNames(
-                            tw(
-                              `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
-                              header.column.getCanSort() && "cursor-pointer"
-                            )
+                          className={tw(
+                            `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
+                            classNames({ "cursor-pointer": header.column.getCanSort() })
                           )}
                           align="left"
                         >
@@ -164,7 +162,7 @@ function Table<TData extends RowData>({
                                 name={
                                   { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
                                     header.column.getIsSorted() as string
-                                  ] || IconNames.SORT
+                                  ] ?? IconNames.SORT
                                 }
                                 className="ml-2 inline fill-neutral-900"
                                 width={11}
@@ -184,7 +182,6 @@ function Table<TData extends RowData>({
                   <LoadingCell />
                 </Then>
                 <Else>
-                  {/* {console.log("cell1", getRowModel())} */}
                   {getRowModel().rows.length === 0 && (
                     <tr className={variant.trHeader}>
                       <td
@@ -197,10 +194,8 @@ function Table<TData extends RowData>({
                     </tr>
                   )}
                   {getRowModel().rows.map(row => (
-                    // console.log("cell1", row),
                     <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
                       {row.getVisibleCells().map(cell => (
-                        // console.log("row value", Object(cell.getValue()).id),
                         <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
                       ))}
                     </tr>
@@ -252,11 +247,12 @@ function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData,
 }
 
 function LoadingCell() {
+  const t = useT();
   return (
     <tr>
       <td align="center" colSpan={100} className="px-6 py-4">
         <Lottie animationData={SpinnerLottie} className="mb-8 h-8 w-8" />
-        <Text variant="text-normal-subtitle-400">Loading results, load times might increase with more data</Text>
+        <Text variant="text-normal-subtitle-400">{t("Loading results, load times might increase with more data")}</Text>
       </td>
     </tr>
   );

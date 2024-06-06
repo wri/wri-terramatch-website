@@ -30,13 +30,7 @@ const ModalRoot = () => {
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <Dialog.Panel
-            className={classNames(
-              // need review in all the modals
-              // !coverToolbar && "pt-20",
-              "fixed inset-0 flex w-full items-center justify-center p-4"
-            )}
-          >
+          <Dialog.Panel className={classNames("fixed inset-0 flex w-full items-center justify-center p-4")}>
             {modalContent}
           </Dialog.Panel>
         </Transition.Child>

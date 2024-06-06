@@ -11,6 +11,7 @@ export interface FileCardContentVariant {
   subTitletitleVariant: TextVariants;
   subTitleClassName: string;
   bodyTextVariant?: string;
+  status?: boolean;
 }
 
 export interface FilePreviewCardVariant {
@@ -58,7 +59,8 @@ export const VARIANT_FILE_CARD_MODAL_ADD_IMAGES: FileCardContentVariant = {
   titleClassName: "w-full truncate",
   subTitletitleVariant: "text-12",
   subTitleClassName: "opacity-50",
-  bodyTextVariant: "w-[50%] flex-none"
+  bodyTextVariant: "w-[50%] flex-none",
+  status: true
 };
 
 export const VARIANT_FILE_PREVIEW_CARD_DEFAULT: FilePreviewCardVariant = {

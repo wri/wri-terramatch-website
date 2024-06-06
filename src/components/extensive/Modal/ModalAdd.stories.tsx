@@ -16,7 +16,7 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   render: (args: Props) => (
     <div className="flex items-center justify-center bg-primary-400 p-8">
-      <Component onCLose={() => {}} {...args} />
+      <Component onClose={() => {}} {...args} />
     </div>
   ),
   args: {
@@ -28,7 +28,7 @@ export const Default: Story = {
         <Text variant="text-12-light">50 MB per upload</Text>
       </div>
     ),
-    onCLose: () => {},
+    onClose: () => {},
     content: "Start by adding polygons to your site.",
     primaryButtonText: "Close",
     primaryButtonProps: { className: "px-8 py-3", variant: "primary", onClick: () => {} }

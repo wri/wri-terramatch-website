@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
@@ -10,28 +11,16 @@ import { fetchGetV2SitePolygonUUID } from "@/generated/apiComponents";
 import { SitePolygonResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
-
-export const ModalBaseSubmit: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full w-[776px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ModalProps } from "./Modal";
+import { ModalBaseSubmit } from "./ModalsBases";
+import { onCLose } from "./ModalWithClose.stories";
 
 export interface ModalSubmitProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
   status?: "under-review" | "approved" | "draft" | "submitted";
-  onCLose?: () => void;
+  onClose?: () => void;
   site: any;
 }
 
@@ -46,12 +35,12 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   toogleButton,
   children,
   status,
-  onCLose,
+  onClose,
   site,
   ...rest
 }) => {
   const [polygonList, setPolygonList] = useState<SitePolygonResponse[]>([]);
-
+  const t = useT();
   const loadPolygonList = async () => {
     const res = await fetchGetV2SitePolygonUUID({
       pathParams: {
@@ -103,13 +92,13 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
-              Name
+              {t("Name")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Status
+              {t("Status")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              Submit
+              {t("Submit")}
             </Text>
           </header>
           {polygonList.map(polygon => (

@@ -11,7 +11,7 @@ const ChecklistInformation = () => {
     openModal(
       <ModalWithMap
         title="Request Support"
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}

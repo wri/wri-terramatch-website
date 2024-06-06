@@ -30,11 +30,7 @@ const Drawer = (props: DrawerProps) => {
       setIsScrolled(isElementScrolled);
       setPrevScrollPos(currentScrollPos);
 
-      if (isScrollingDown) {
-        setIsScrollingDown(true);
-      } else {
-        setIsScrollingDown(false);
-      }
+      setIsScrollingDown(isScrollingDown);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -62,7 +58,6 @@ const Drawer = (props: DrawerProps) => {
           className="ml-auto rounded p-1 hover:bg-grey-800"
           onClick={() => {
             setIsOpen(false);
-            console.log("Polygon from map", "false");
             setPolygonFromMap({ isOpen: false, uuid: "" });
           }}
         >

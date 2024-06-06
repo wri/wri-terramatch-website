@@ -54,7 +54,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
         }
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Start by adding polygons to your site."
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
@@ -98,7 +98,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             Uploaded Files
           </Text>
         }
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Start by adding images for processing."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
@@ -167,7 +167,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     openModal(
       <ModalWithMap
         title="Request Support"
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
@@ -179,7 +179,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     openModal(
       <ModalSubmit
         title="Submit Polygons"
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Project Developers may submit one or all polygons for review."
         primaryButtonText="Next"
         primaryButtonProps={{
@@ -313,7 +313,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           <div className="flex w-full">
             <div className="grid w-[50%] grid-cols-2 content-start gap-x-8 gap-y-7 pr-20">
               <When condition={isPPC}>
-                <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} className="" />
+                <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} />
               </When>
               <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
             </div>
@@ -466,7 +466,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 className="col-span-4"
                 type="graph"
                 img={IconNames.GRAPH1}
-                leyends={[
+                legends={[
                   {
                     color: "bg-blueCustom",
                     title: t("Average Number of Trees per hectare")
@@ -513,7 +513,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 title={t("Tree Cover Loss")}
                 className="col-span-4"
                 type="graph"
-                leyends={[
+                legends={[
                   {
                     color: "bg-blueCustom",
                     title: t("Tree Cover Loss by Fires (ha)")

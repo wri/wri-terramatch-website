@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
@@ -8,7 +9,8 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import { Option } from "@/types/common";
 
-import { ModalBase, ModalProps } from "./Modal";
+import { ModalProps } from "./Modal";
+import { ModalBase } from "./ModalsBases";
 
 export interface ModalConfirmProps extends ModalProps {
   onClose: () => void;
@@ -47,6 +49,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
       setWarning("");
     }
   };
+  const t = useT();
 
   return (
     <ModalBase {...rest} className={tw("max-w-xs p-5", className)}>
@@ -81,7 +84,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
             />
             <If condition={showError}>
               <Text variant="text-12-bold" className="text-red">
-                Please select an option
+                {t("Please select an option")}
               </Text>
             </If>
           </div>
@@ -99,7 +102,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
           <div className="display-grid">
             {warning && charCount > 255 && <div className="text-right text-xs text-red">{warning}</div>}
             <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
-              {charCount}/255 characters
+              {charCount}/255 {t("characters")}
             </div>
           </div>
         </When>
@@ -107,7 +110,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
       <div className="mt-4 flex w-full gap-4">
         <Button variant="white-page-admin" className="w-full" onClick={onClose}>
           <Text variant="text-12-bold" className="capitalize">
-            Cancel
+            {t("Cancel")}
           </Text>
         </Button>
         <Button
@@ -118,12 +121,12 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               setTimeout(() => setShowError(false), 3000);
               return;
             }
-            onConfirm(data, selectedOption || [0]);
+            onConfirm(data, selectedOption ?? [0]);
             onClose();
           }}
         >
           <Text variant="text-12-bold" className="capitalize">
-            Confirm
+            {t("Confirm")}
           </Text>
         </Button>
       </div>

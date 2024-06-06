@@ -21,7 +21,7 @@ const ViewImageCarousel = ({
   const { openModal, closeModal } = useModalContext();
 
   const openFormModalHandlerImageGallery = () => {
-    openModal(<ModalImageGallery onCLose={closeModal} tabItems={dataImageGallery} title={""} />);
+    openModal(<ModalImageGallery onClose={closeModal} tabItems={dataImageGallery} title={""} />);
   };
 
   return (

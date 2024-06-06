@@ -284,7 +284,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
         }
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Start by adding polygons to your site."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
@@ -345,7 +345,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             Uploaded Files
           </Text>
         }
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Start by adding images for processing."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
@@ -395,7 +395,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       <ModalApprove
         title="Approve Polygons"
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Administrators may approve polygons only if all checks pass."
         primaryButtonText="Next"
         primaryButtonProps={{

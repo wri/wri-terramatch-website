@@ -6,7 +6,7 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
 >
   <img
     alt=""
-    className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+    className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
     data-nimg="1"
     decoding="async"
     height={40}
@@ -30,7 +30,7 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
       className="m-auto flex h-full w-full max-w-7xl flex-col items-start justify-between p-10 text-white"
     >
       <button
-        className="gap-2 p-0 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="flex items-center justify-center tracking-wide w-fit-content gap-2 p-0"
       >
         <div
           style={
@@ -41,7 +41,7 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
           }
         />
         <span
-          className="text-bold-body-300"
+          className="text-12-bold"
         >
           Back to somewhere
         </span>

@@ -143,7 +143,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 className="col-span-4"
                 type="graph"
                 img={IconNames.GRAPH1}
-                leyends={[
+                legends={[
                   {
                     color: "bg-blueCustom",
                     title: t("Average Number of Trees per hectare")
@@ -170,7 +170,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 title={t("Interventions (ha)")}
                 className="col-span-4"
                 type="graph"
-                leyends={[
+                legends={[
                   {
                     color: "bg-black",
                     title: t("Agroforestry")
@@ -190,7 +190,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 title={t("Tree Cover Loss")}
                 className="col-span-4"
                 type="graph"
-                leyends={[
+                legends={[
                   {
                     color: "bg-blueCustom",
                     title: t("Tree Cover Loss by Fires (ha)")

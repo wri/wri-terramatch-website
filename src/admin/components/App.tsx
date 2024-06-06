@@ -64,7 +64,7 @@ const App = () => {
         edit={modules.fundingProgramme.Edit}
         show={modules.fundingProgramme.Show}
         create={modules.fundingProgramme.Create}
-        icon={() => <Icon className="h-8 w-8" name={IconNames.FUJDING_PROGRAMMES} />}
+        icon={() => <Icon className="h-8 w-8" name={IconNames.FUNDING_PROGRAMMES} />}
         options={{ label: "Funding Programmes" }}
       />
       <Resource

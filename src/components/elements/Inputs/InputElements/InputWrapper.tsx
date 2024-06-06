@@ -34,7 +34,7 @@ const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
         feedbackRequired={props.feedbackRequired}
         labelVariant={props.labelVariant}
         className={props.labelClassName}
-        sufixLabelView={props.sufixLabelView}
+        suffixLabelView={props.sufixLabelView}
       >
         {props.label}
       </InputLabel>

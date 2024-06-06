@@ -32,9 +32,7 @@ const InputTextArea = ({ formHook, className, ...inputProps }: InputTextAreaProp
   );
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    if (inputProps.onChange) {
-      inputProps.onChange(event);
-    }
+    inputProps.onChange?.(event);
   };
 
   return (

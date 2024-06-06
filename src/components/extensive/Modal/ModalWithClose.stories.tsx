@@ -15,7 +15,7 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   render: (args: Props) => (
     <div className="flex items-center justify-center bg-primary-400 p-8">
-      <Component onCLose={() => {}} {...args} />
+      <Component onClose={() => {}} {...args} />
     </div>
   ),
   args: {

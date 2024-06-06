@@ -1,6 +1,6 @@
 import cn from "classnames";
 import _ from "lodash";
-import { HTMLProps, ReactNode } from "react";
+import { ForwardedRef, forwardRef, HTMLProps, LegacyRef, ReactElement, ReactNode } from "react";
 
 import { TextVariants } from "@/types/common";
 
@@ -13,7 +13,7 @@ export type TextProps<T = HTMLParagraphElement> = HTMLProps<T> & {
   capitalize?: boolean;
 };
 
-function Text<T>(props: TextProps<T>): JSX.Element {
+function Text<T>(props: TextProps<T>, ref: ForwardedRef<T>): JSX.Element {
   const { as: As, className, children, variant, capitalize, containHtml, ...rest } = props;
 
   const Component = As || "p";
@@ -23,6 +23,7 @@ function Text<T>(props: TextProps<T>): JSX.Element {
     return (
       <Component
         {...rest}
+        ref={ref}
         data-testid="txt"
         className={cn(className, variant, { "with-inner-html": containHtml }, { capitalize })}
         dangerouslySetInnerHTML={{ __html }}
@@ -30,10 +31,10 @@ function Text<T>(props: TextProps<T>): JSX.Element {
     );
   } else
     return (
-      <Component {...rest} data-testid="txt" className={cn(className, variant, { capitalize })}>
+      <Component {...rest} ref={ref} data-testid="txt" className={cn(className, variant, { capitalize })}>
         {typeof children === "string" ? _.unescape(children) : children}
       </Component>
     );
 }
 
-export default Text;
+export default forwardRef(Text) as <T>(p: TextProps<T> & { ref?: LegacyRef<T> }) => ReactElement;

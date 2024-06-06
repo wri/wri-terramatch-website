@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
+<div
+  className="flex items-center justify-center bg-primary-400 p-8"
+>
+  <div
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white margin-4 z-50 max-w-xs p-5"
+  >
+    <div
+      className="flex flex-col gap-2"
+    >
+      <p
+        className="text-center text-14-bold"
+        data-testid="txt"
+      >
+        Confirm Site Status Change
+      </p>
+      <p
+        className="text-center text-14-light"
+        data-testid="txt"
+      >
+        Are you sure you want to change the site status to Planting In Progress?
+      </p>
+      <div
+        className="w-full relative space-y-2"
+      >
+        <textarea
+          className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 p-4 text-xs border-light "
+          id=":r3c:"
+          name=""
+          onChange={[Function]}
+          placeholder="Type comment here..."
+          rows={4}
+          value=""
+        />
+      </div>
+      <div
+        className="text-right text-xs text-grey-500"
+      >
+        0
+        /255 
+        characters
+      </div>
+    </div>
+    <div
+      className="mt-4 flex w-full gap-4"
+    >
+      <button
+        className="py-2 px-3 bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900 flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+        >
+          <p
+            className="capitalize text-12-bold"
+            data-testid="txt"
+          >
+            Cancel
+          </p>
+        </span>
+      </button>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          <p
+            className="capitalize text-12-bold"
+            data-testid="txt"
+          >
+            Confirm
+          </p>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

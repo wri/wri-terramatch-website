@@ -53,7 +53,7 @@ const SiteDetailPage = () => {
   });
 
   const site = (data?.data || {}) as any;
-  const { isPPC } = useFramework(site);
+  const { isPPC, isHBF } = useFramework(site);
   const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
   const { handleExport } = useGetExportEntityHandler("sites", site.uuid, site.name);
   const { handleEdit } = useGetEditEntityHandler({
@@ -86,6 +86,14 @@ const SiteDetailPage = () => {
     );
   };
 
+  const subtitles = [
+    `${t("Organisation")}: ${site.organisation?.name}`,
+    isPPC ? t("Priceless Planet Coalition") : isHBF ? "Harit Bharat Fund" : t("TerraFund")
+  ];
+  if (isPPC) {
+    subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));
+  }
+
   return (
     <LoadingContainer loading={isLoading}>
       <Head>
@@ -98,15 +106,7 @@ const SiteDetailPage = () => {
           { title: site.name }
         ]}
       />
-      <PageHeader
-        className="h-[203px]"
-        title={site.name}
-        subtitles={[
-          `${t("Organisation")}: ${site.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : t("TerraFund")
-        ]}
-        hasBackButton={false}
-      >
+      <PageHeader className="h-[203px]" title={site.name} subtitles={subtitles} hasBackButton={false}>
         <div className="flex gap-4">
           <When condition={site.site_reports_total === 0}>
             <Button variant="secondary" onClick={onDeleteSite}>

@@ -16,7 +16,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
-import ComentarySection from "../ComentarySection/ComentarySection";
+import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay ";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
@@ -189,13 +189,13 @@ const PolygonDrawer = ({
               mutate={mutateSitePolygons}
               tab="polygonReview"
             />
-            <ComentarySection
+            <CommentarySection
               auditLogData={auditLogData?.data}
               refresh={refetch}
               record={selectedPolygon}
               entity={"SitePolygon"}
               loading={isLoading}
-            ></ComentarySection>
+            ></CommentarySection>
           </div>
         </Then>
         <Else>

@@ -19,7 +19,7 @@ export interface CarouselProps<T> extends SwiperProps {
   swiperButtonsClassName?: string;
   hidePaginationBullet?: boolean;
   breakpoints?: CarouselBreakPoints;
-  setSelectecImage?: (index: number) => void;
+  setSelectedImage?: (index: number) => void;
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
 }
@@ -38,7 +38,7 @@ const Carousel = <T extends Record<any, any>>({
   swiperSlideClassName,
   swiperButtonsClassName,
   hidePaginationBullet,
-  setSelectecImage,
+  setSelectedImage,
   buttonsOutside = false,
   smallSwiperButtons,
   ...swiperProps
@@ -48,8 +48,8 @@ const Carousel = <T extends Record<any, any>>({
   const swiperButtonSize = smallSwiperButtons ? 12 : 24;
 
   const handleSlideChange = (swiper: { activeIndex: any }) => {
-    if (setSelectecImage) {
-      setSelectecImage(swiper.activeIndex);
+    if (setSelectedImage) {
+      setSelectedImage(swiper.activeIndex);
     }
   };
 

@@ -54,7 +54,7 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
             labelClassName="opacity-50 text-blueCustom-700 origin-left
             transition-transform duration-[0.3s,color] delay-[0.3s]
             absolute label-login text-14-light normal-case"
-            sufixLabelView={false}
+            suffixLabelView={false}
             classNameContainerInput="!mt-0"
             classNameError="!mt-0"
           />

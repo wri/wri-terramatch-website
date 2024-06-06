@@ -2,42 +2,57 @@ import { useT } from "@transifex/react";
 import { Else, If, Then } from "react-if";
 
 import TextField from "@/components/elements/Field/TextField";
+import Paper from "@/components/elements/Paper/Paper";
+import Text from "@/components/elements/Text/Text";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import {
-  COLLECTION_PROJECT_PAID_OTHER,
-  getReadableWorkdayCollectionName,
-  PROJECT_WORKDAY_COLLECTIONS
-} from "@/constants/workdayCollections";
+import Loader from "@/components/generic/Loading/Loader";
+import { COLLECTION_PROJECT_PAID_OTHER, PROJECT_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
+import { useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
+import useWorkdayData from "@/hooks/useWorkdayData";
 
 interface ReportOverviewTabProps {
   report: any;
-  dueAt?: string;
 }
 
 const PPCSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
   const t = useT();
 
+  const { data: response } = useGetV2WorkdaysENTITYUUID(
+    { pathParams: { entity: "project-report", uuid: report.uuid } },
+    { keepPreviousData: true }
+  );
+
+  const { grids, title } = useWorkdayData(response, PROJECT_WORKDAY_COLLECTIONS, "Project Workdays");
+
+  if (grids.length == 0) {
+    return (
+      <Paper>
+        <Loader />
+      </Paper>
+    );
+  }
+
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          {PROJECT_WORKDAY_COLLECTIONS.map(collection => (
-            <If key={collection} condition={collection === COLLECTION_PROJECT_PAID_OTHER}>
-              <Then>
-                <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4} key={collection}>
-                  <TextField label={t("Description")} value={report.paid_other_activity_description} />
-                </PageCard>
-              </Then>
-              <Else>
-                <Then key={collection}>
-                  <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4} key={collection}></PageCard>
+          <PageCard>
+            <Text variant="text-bold-headline-800">{title}</Text>
+            {grids.map(({ collection, grid }) => (
+              <If key={collection} condition={collection === COLLECTION_PROJECT_PAID_OTHER}>
+                <Then>
+                  <TextField label={t("Other Activities Description")} value={report.paid_other_activity_description} />
+                  {grid}
                 </Then>
-              </Else>
-            </If>
-          ))}
+                <Else>
+                  <Then key={collection}>{grid}</Then>
+                </Else>
+              </If>
+            ))}
+          </PageCard>
         </PageColumn>
       </PageRow>
     </PageBody>

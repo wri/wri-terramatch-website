@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -18,7 +18,7 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
-import FrameworkSelectionDialog from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -26,26 +26,12 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 const SiteReportDataGrid: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkChoices = useFrameworkChoices();
 
   const tableMenu = [
     {
@@ -90,21 +76,8 @@ const SiteReportDataGrid: FC = () => {
 };
 
 export const SiteReportsList: FC = () => {
-  const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
-  const [exporting, setExporting] = useState<boolean>(false);
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      const choices = await useFrameworkChoices();
-      setFrameworkChoices(choices);
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
+  const frameworkChoices = useFrameworkChoices();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
@@ -161,30 +134,7 @@ export const SiteReportsList: FC = () => {
     />
   ];
 
-  const handleExportOpen = () => {
-    setExportModalOpen(true);
-  };
-
-  const handleExportClose = () => {
-    setExportModalOpen(false);
-  };
-
-  const handleExport = (framework: string) => {
-    setExporting(true);
-
-    fetchGetV2AdminENTITYExportFRAMEWORK({
-      pathParams: {
-        entity: "site-reports",
-        framework
-      }
-    })
-      .then((response: any) => {
-        downloadFileBlob(response, `Site Reports - ${framework}.csv`);
-      })
-      .finally(() => setExporting(false));
-
-    handleExportClose();
-  };
+  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("site-reports");
 
   return (
     <>
@@ -194,11 +144,11 @@ export const SiteReportsList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={handleExportOpen} />} filters={filters}>
+      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
         <SiteReportDataGrid />
       </List>
 
-      <FrameworkSelectionDialog open={exportModalOpen} onCancel={handleExportClose} onExport={handleExport} />
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>

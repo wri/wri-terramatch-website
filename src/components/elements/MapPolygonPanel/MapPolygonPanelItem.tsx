@@ -35,7 +35,7 @@ const MapPolygonPanelItem = ({
     openModal(
       <ModalWithMap
         title="Request Support"
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
@@ -46,7 +46,7 @@ const MapPolygonPanelItem = ({
     openModal(
       <ModalWithLogo
         title="Blue Forest"
-        onCLose={closeModal}
+        onClose={closeModal}
         status="under-review"
         toogleButton
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"

@@ -3,7 +3,7 @@ import { FC, useMemo } from "react";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponseWithData } from "@/generated/apiSchemas";
 
-import ComentarySection from "../../PolygonReviewTab/components/ComentarySection/ComentarySection";
+import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogPolygonStatusProps {
@@ -31,7 +31,7 @@ const SiteAuditLogPolygonStatus: FC<SiteAuditLogPolygonStatusProps> = ({ record,
           Update the polygon status, view updates, or add comments
         </Text>
       </div>
-      <ComentarySection
+      <CommentarySection
         record={polygonData}
         entity={"SitePolygon"}
         auditLogData={auditLogData?.data}

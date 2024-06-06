@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import clsx from "clsx";
 import React from "react";
@@ -32,29 +33,30 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   menu,
   icon
 }) => {
-  const MenuOption: MenuItemProps[] = options || [
+  const t = useT();
+  const MenuOption: MenuItemProps[] = options ?? [
     {
       id: "1",
       render: () => (
         <Text variant="text-12-bold" className="text-primary">
-          Select Fund
+          {t("Select Fund")}
         </Text>
       )
     }
   ];
 
-  const displayOption = options?.find(m => {
-    if (selectedOption === null) {
-      return false;
-    } else {
-      if (title === "I’m a Government Official") {
-        return m.country_slug === selectedOption;
-      } else {
-        return m.data.label === selectedOption;
-      }
-    }
-  });
-  const diplayTitle = displayOption ? displayOption.data.label : "";
+  const displayOptions =
+    selectedOption == null
+      ? null
+      : options?.find(m => {
+          if (title === "I’m a Government Official") {
+            return m.country_slug === selectedOption;
+          } else {
+            return m.data.label === selectedOption;
+          }
+        });
+
+  const diplayTitle = displayOptions ? displayOptions.data.label : "";
 
   return (
     <article
@@ -82,7 +84,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
             selectedOption={selectedOption}
           >
             <Text variant="text-12-bold" className="text-primary">
-              {titleOptions || "Select Fund"}
+              {titleOptions ?? t("Select Fund")}
               {diplayTitle ? `: ${diplayTitle}` : ""}
             </Text>
           </Menu>

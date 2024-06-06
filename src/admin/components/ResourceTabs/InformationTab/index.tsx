@@ -8,7 +8,11 @@ import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/Informa
 import SeedingsTable from "@/admin/components/Tables/SeedingsTable";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import List from "@/components/extensive/List/List";
-import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import {
+  GetV2FormsENTITYUUIDResponse,
+  useGetV2FormsENTITYUUID,
+  useGetV2SeedingsENTITYUUID
+} from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
@@ -53,6 +57,14 @@ const InformationTab: FC<IProps> = props => {
     }
   });
 
+  const { data: seedlings } = useGetV2SeedingsENTITYUUID({
+    pathParams: {
+      uuid: record?.uuid,
+      entity: resource.replace("Report", "-report")
+    }
+  });
+
+  const totalSeedlings = seedlings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const t = useT();
 
   const isLoading = ctxLoading || queryLoading;
@@ -119,10 +131,30 @@ const InformationTab: FC<IProps> = props => {
                     />
                   </Card>
                   <When condition={record}>
+                    <When
+                      condition={
+                        record.framework_key === "ppc" && (props.type === "sites" || props.type === "site-reports")
+                      }
+                    >
+                      <Card sx={{ padding: 3 }}>
+                        <Typography variant="h6" component="h3" className="capitalize">
+                          Total Trees Planted
+                        </Typography>
+                        {record?.total_trees_planted_count}
+                      </Card>
+                    </When>
                     <TreeSpeciesTable uuid={record.uuid} entity={resource} />
                   </When>
 
                   <When condition={props.type === "sites" || props.type === "site-reports"}>
+                    <When condition={record.framework_key === "ppc"}>
+                      <Card sx={{ padding: 3 }}>
+                        <Typography variant="h6" component="h3" className="capitalize">
+                          Total Seeds Planted
+                        </Typography>
+                        {totalSeedlings}
+                      </Card>
+                    </When>
                     <SeedingsTable uuid={record.uuid} entity={resource} />
                   </When>
 

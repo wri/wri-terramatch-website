@@ -30,7 +30,7 @@ const ImageControl = ({
             Uploaded Files
           </Text>
         }
-        onCLose={closeModal}
+        onClose={closeModal}
         content="Start by adding images for processing."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}

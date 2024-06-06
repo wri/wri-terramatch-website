@@ -7,24 +7,11 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalBaseProps, ModalProps } from "./Modal";
-
-export const ModalBaseWithClose: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-8",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ModalProps } from "./Modal";
+import { ModalBaseWithClose } from "./ModalsBases";
 
 export interface ModalCloseProps extends ModalProps {
-  onCLose: () => void;
+  onClose: () => void;
 }
 
 const ModalCloseLogo: FC<ModalCloseProps> = ({
@@ -34,7 +21,7 @@ const ModalCloseLogo: FC<ModalCloseProps> = ({
   primaryButtonProps,
   secondaryButtonProps,
   children,
-  onCLose,
+  onClose,
   ...rest
 }) => {
   return (
@@ -43,7 +30,7 @@ const ModalCloseLogo: FC<ModalCloseProps> = ({
         <Text variant="text-24-bold" className="whitespace-nowrap !font-[900]">
           {title}
         </Text>
-        <button onClick={onCLose} className="ml-2 rounded p-1 hover:bg-grey-800">
+        <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
           <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
         </button>
       </div>

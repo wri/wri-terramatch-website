@@ -4,7 +4,7 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
-import LinerProgressbar from "../../ProgressBar/LinerProgressbar/LinerProgressbar";
+import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
 import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressCardItem";
 
 export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -28,8 +28,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   labelValue,
   ...rest
 }) => {
-  const value = _val || 0;
-  const valueText = value;
+  const value = _val ?? 0;
 
   // Calculates percentage and clamps between 0 and 100
   const progressValue = !limit ? 0 : Math.min(Math.max((value / limit) * 100, 0), 100);
@@ -43,13 +42,13 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             {label}
           </Text>
           <Text variant="text-24-bold" className="flex w-full items-baseline">
-            {valueText?.toLocaleString()}&nbsp;
+            {value?.toLocaleString()}&nbsp;
             <When condition={!!limit}>
               <Text variant="text-16-light">of {limit?.toLocaleString()}</Text>
             </When>
             <Text variant="text-16-light">{labelValue}</Text>
           </Text>
-          <LinerProgressbar
+          <LinearProgressBar
             color="primary"
             value={progressValue}
             className={classNames("mt-2 bg-primary-200", {
