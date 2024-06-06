@@ -189,7 +189,6 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
                 onChange={[Function]}
                 placeholder="Add a comment"
                 rows={1}
-                value=""
               />
             </div>
             <label

@@ -26,7 +26,6 @@ exports[`Storyshots Components/Elements/Inputs/TextArea Default 1`] = `
     id=":r2g:"
     onChange={[Function]}
     placeholder="Input placeholder"
-    value=""
   />
 </div>
 `;

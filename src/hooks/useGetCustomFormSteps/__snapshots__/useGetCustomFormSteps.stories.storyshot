@@ -346,7 +346,6 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       onBlur={[Function]}
                       onChange={[Function]}
                       onChangeCapture={[Function]}
-                      value=""
                     />
                   </div>
                 </li>
@@ -935,7 +934,6 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       onBlur={[Function]}
                       onChange={[Function]}
                       onChangeCapture={[Function]}
-                      value=""
                     />
                   </div>
                 </li>
