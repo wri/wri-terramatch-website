@@ -46,7 +46,7 @@ export interface DropdownProps {
   feedbackRequired?: boolean;
   formHook?: UseFormReturn;
   onChangeConfirm?: boolean;
-  disableOption?: boolean | undefined;
+  disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
@@ -151,7 +151,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   };
 
   const verifyDisableOption = (title: string) => {
-    return props?.disableOption && title === "Approved";
+    return props?.disableOptionTitles?.includes(title);
   };
 
   return (
