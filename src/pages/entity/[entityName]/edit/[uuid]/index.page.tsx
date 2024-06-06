@@ -110,15 +110,17 @@ const EditEntityPage = () => {
   const initialStepProps = useMemo(() => {
     if (isLoading) return {};
 
-    const initialStepIndex = formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
+    const stepIndex = formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
 
-    return { initialStepIndex, disableInitialAutoProgress: initialStepIndex != null };
+    return {
+      initialStepIndex: stepIndex < 0 ? undefined : stepIndex,
+      disableInitialAutoProgress: stepIndex >= 0
+    };
   }, [isLoading]);
 
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
-        !isLoading &&{" "}
         <WizardForm
           steps={formSteps!}
           errors={error}
