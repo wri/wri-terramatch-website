@@ -2,7 +2,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
@@ -13,7 +12,6 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { SITE } from "@/constants/entities";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
 import useAuditLogActions from "@/hooks/useAuditLogActions";
 import { Entity } from "@/types/common";
 
@@ -55,11 +53,6 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
     refetch();
     loadEntityList();
   }, [buttonToogle]);
-
-  const recentRequestData = (recentRequest: AuditStatusResponse) => {
-    return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
-    ${convertDateFormat(recentRequest.date_created) ?? ""}`;
-  };
 
   return (
     <PageBody>
@@ -108,7 +101,6 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
                     selectedPolygon={selected}
                     setSelectedPolygon={setSelected}
                     auditLogData={auditLogData?.data}
-                    recentRequestData={recentRequestData}
                     tab="polygonReview"
                     checkPolygonsSite={checkPolygonsSite}
                     viewPD={true}

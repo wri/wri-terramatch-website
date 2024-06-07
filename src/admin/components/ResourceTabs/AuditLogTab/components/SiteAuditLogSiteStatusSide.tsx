@@ -8,13 +8,11 @@ import AuditLogStatusSide from "./AuditLogStatusSide";
 const SiteAuditLogSiteStatusSide = ({
   record,
   refresh,
-  auditLogData,
-  recentRequestData
+  auditLogData
 }: {
   record?: SiteLiteRead | null;
   refresh?: () => void;
   auditLogData?: AuditStatusResponse[];
-  recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -50,7 +48,6 @@ const SiteAuditLogSiteStatusSide = ({
       record={record}
       refresh={refresh}
       auditLogData={auditLogData}
-      recentRequestData={recentRequestData}
       getValueForStatus={getValueForStatus}
       statusLabels={siteStatusLabels}
       entity="Site"

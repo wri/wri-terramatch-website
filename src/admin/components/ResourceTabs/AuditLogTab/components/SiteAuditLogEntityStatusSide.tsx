@@ -8,6 +8,7 @@ import Text from "@/components/elements/Text/Text";
 import { usePostV2AuditStatus } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 import { SelectedItem } from "@/hooks/useLoadEntityList";
+import { recentRequestData } from "@/utils/statusUtils";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -18,7 +19,6 @@ const SiteAuditLogEntityStatusSide = ({
   selectedPolygon,
   setSelectedPolygon,
   auditLogData,
-  recentRequestData,
   recordType = "Polygon",
   mutate,
   getValueForStatus,
@@ -34,7 +34,6 @@ const SiteAuditLogEntityStatusSide = ({
   selectedPolygon?: SelectedItem | null;
   setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>> | null;
   auditLogData?: AuditStatusResponse[];
-  recentRequestData?: (recentRequest: AuditStatusResponse) => string | undefined;
   mutate?: any;
   getValueForStatus?: (status: string) => number;
   progressBarLabels?: Array<{ id: string; label: string }>;
@@ -109,7 +108,7 @@ const SiteAuditLogEntityStatusSide = ({
                 Remove
               </button>
             </div>
-            {recentRequestData && <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>}
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>

@@ -3,9 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
-import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import { PROJECT } from "@/constants/entities";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
 import useAuditLogActions from "@/hooks/useAuditLogActions";
 import { Entity } from "@/types/common";
 
@@ -60,11 +58,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     loadEntityList();
   }, [buttonToogle]);
 
-  const recentRequestData = (recentRequest: AuditStatusResponse) => {
-    return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
-    ${convertDateFormat(recentRequest.date_created) ?? ""}`;
-  };
-
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
@@ -102,7 +95,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               selectedPolygon={selected}
               setSelectedPolygon={setSelected}
               auditLogData={auditLogData?.data}
-              recentRequestData={recentRequestData}
               checkPolygonsSite={checkPolygonsSite}
             />
           </Grid>

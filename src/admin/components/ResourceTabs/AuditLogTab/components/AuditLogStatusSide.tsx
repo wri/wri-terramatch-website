@@ -4,6 +4,7 @@ import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { recentRequestData } from "@/utils/statusUtils";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay ";
 
@@ -11,7 +12,6 @@ const AuditLogStatusSide = ({
   record,
   refresh,
   auditLogData,
-  recentRequestData,
   getValueForStatus,
   statusLabels,
   entity,
@@ -25,7 +25,6 @@ const AuditLogStatusSide = ({
   mutate?: any;
   refresh?: () => void;
   auditLogData?: AuditStatusResponse[];
-  recentRequestData?: ((recentRequest: AuditStatusResponse) => string) | undefined;
   getValueForStatus?: (status: string) => number;
   statusLabels?: Array<{ id: string; label: string }>;
   entity: "Site" | "Project" | "Polygon";
@@ -81,7 +80,7 @@ const AuditLogStatusSide = ({
                 Remove
               </button>
             </div>
-            {recentRequestData && <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>}
+            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
