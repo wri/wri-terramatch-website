@@ -6,7 +6,6 @@ import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { usePostV2AuditStatus } from "@/generated/apiComponents";
 
 import Notification from "../Notification/Notification";
 
@@ -21,13 +20,12 @@ export interface CommentaryBoxProps {
 }
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox, refresh, record, entity } = props;
-  const { mutate: sendCommentary } = usePostV2AuditStatus();
+  const { name, lastName, buttonSendOnBox, record, entity } = props;
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [charCount, setCharCount] = useState<number>(0);
-  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [showNotification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [warning, setWarning] = useState<string>("");
   const t = useT();
@@ -73,25 +71,6 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       body.append(`file[${index}]`, element);
     });
     setLoading(true);
-    sendCommentary?.(
-      {
-        //@ts-ignore swagger issue
-        body
-      },
-      {
-        onSuccess: () => {
-          setShowNotification(true);
-          setTimeout(() => {
-            setShowNotification(false);
-          }, 3000);
-          setComment("");
-          setError("");
-          setFiles([]);
-          refresh && refresh();
-          setLoading(false);
-        }
-      }
-    );
   };
   const handleCommentChange = (e: any) => {
     setComment(e.target.value);

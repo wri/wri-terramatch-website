@@ -1,21 +1,17 @@
 import { When } from "react-if";
 
-import Commentary from "@/components/elements/Commentary/Commentary";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
 import { useGetAuthMe } from "@/generated/apiComponents";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 const CommentarySection = ({
-  auditLogData,
   refresh,
   record,
   entity,
   viewCommentsList = true,
   loading = false
 }: {
-  auditLogData?: AuditStatusResponse[];
   refresh?: () => void;
   record?: any;
   entity?: "Project" | "SitePolygon" | "Site";
@@ -41,26 +37,7 @@ const CommentarySection = ({
         entity={entity}
       />
       <When condition={viewCommentsList}>
-        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">
-          {loading ? (
-            <Loader />
-          ) : auditLogData && auditLogData.length > 0 ? (
-            auditLogData
-              .filter(item => item.type === "comment")
-              .map((item: any) => (
-                <Commentary
-                  key={item.id}
-                  name={item?.first_name || item.created_by}
-                  lastName={item?.last_name}
-                  date={item.date_created}
-                  commentary={item.comment}
-                  files={item.attachments}
-                />
-              ))
-          ) : (
-            <></>
-          )}
-        </div>
+        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">{loading ? <Loader /> : <></>}</div>
       </When>
     </div>
   );

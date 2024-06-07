@@ -31,9 +31,6 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
-  PostV2TerrafundUploadGeojsonRequestBody,
-  PostV2TerrafundUploadKmlRequestBody,
-  PostV2TerrafundUploadShapefileRequestBody,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
@@ -240,19 +237,16 @@ const PolygonReviewTab: FC<IProps> = props => {
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
-      let newRequest: any;
+      let newRequest: any = formData;
 
       switch (fileType) {
         case "geojson":
-          newRequest = formData as PostV2TerrafundUploadGeojsonRequestBody;
           uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
           break;
         case "shapefile":
-          newRequest = formData as PostV2TerrafundUploadShapefileRequestBody;
           uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
           break;
         case "kml":
-          newRequest = formData as PostV2TerrafundUploadKmlRequestBody;
           uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
           break;
         default:

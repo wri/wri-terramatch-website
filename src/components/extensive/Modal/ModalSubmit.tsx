@@ -4,7 +4,7 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
-import Status from "@/components/elements/Status/Status";
+// import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -42,7 +42,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
           <When condition={status}>
-            <Status status={status ?? "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
+            {/* <Status status={status ?? "draft"} className="rounded px-2 py-[2px]" textVariant="text-14-bold" /> */}
           </When>
           <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
@@ -75,9 +75,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               <Text variant="text-12" className="flex-[2]">
                 {item.name}
               </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <Status status={item.status} />
-              </div>
+              <div className="flex flex-1 items-center justify-center">{/* <Status status={item.status} /> */}</div>
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox name={""} />
               </div>
