@@ -91,6 +91,8 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           </When>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };
