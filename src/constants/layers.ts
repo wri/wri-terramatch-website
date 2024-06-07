@@ -1,3 +1,5 @@
+import mapboxgl from "mapbox-gl";
+
 import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 
 export const LAYERS_NAMES = {
@@ -18,7 +20,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.7
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "draft" },
         type: "line",
@@ -28,7 +30,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "submitted" },
         type: "fill",
@@ -38,7 +40,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.7
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "submitted" },
         type: "line",
@@ -48,7 +50,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "approved" },
         type: "fill",
@@ -58,7 +60,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.7
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "approved" },
         type: "line",
@@ -68,7 +70,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "fill",
@@ -78,7 +80,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.7
         },
         filter: ["==", ["get", "uuid"], ""]
-      },
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "line",
@@ -88,7 +90,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      }
+      } as mapboxgl.Style & mapboxgl.LineLayer
     ]
   }
 ];

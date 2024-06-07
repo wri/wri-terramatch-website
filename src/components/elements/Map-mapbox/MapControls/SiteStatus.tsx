@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
-import { fetchPutV2AdminSitesUUID } from "@/generated/apiComponents";
 
 import Dropdown from "../../Inputs/Dropdown/Dropdown";
 import Text from "../../Text/Text";
@@ -51,19 +50,7 @@ const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
           </Text>
         }
         onClose={closeModal}
-        onConfirm={async (text: any) => {
-          const response = await fetchPutV2AdminSitesUUID({
-            pathParams: { uuid: record.uuid },
-            body: {
-              status: optionSelected?.status,
-              comment: text
-            }
-          });
-          console.log("response", response);
-          refresh();
-          setConfirmChange(true);
-          closeModal;
-        }}
+        onConfirm={() => {}}
       />
     );
   };
