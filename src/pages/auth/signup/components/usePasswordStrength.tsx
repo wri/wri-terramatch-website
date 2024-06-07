@@ -35,9 +35,9 @@ const usePasswordStrength = (props: UsePasswordStrengthProps): UsePasswordStreng
 
   useEffect(() => {
     const hasCorrectLength = password.length >= 8;
-    const hasUppercase = (password.match(/[A-Z]/g) || []).length > 0;
-    const hasLowercase = (password.match(/[a-z]/g) || []).length > 0;
-    const hasNumber = (password.match(/[0-9]/g) || []).length > 0;
+    const hasUppercase = (password.match(/[A-Z]/g) ?? []).length > 0;
+    const hasLowercase = (password.match(/[a-z]/g) ?? []).length > 0;
+    const hasNumber = (password.match(/[0-9]/g) ?? []).length > 0;
 
     const _validation = [hasUppercase, hasLowercase, hasNumber, hasCorrectLength];
 
