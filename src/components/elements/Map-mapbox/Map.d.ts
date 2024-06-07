@@ -1,6 +1,8 @@
-import mapboxgl, { Control, IControl } from "mapbox-gl";
+import mapboxgl, { FillLayer, LineLayer } from "mapbox-gl";
 
-export type LayerWithStyle = mapboxgl.Style & mapboxgl.AnyLayer;
+type LayerStyle = Pick<mapboxgl.Style, "metadata"> & (FillLayer | LineLayer);
+
+export type LayerWithStyle = LayerStyle;
 
 export interface LayerType {
   name: string;
