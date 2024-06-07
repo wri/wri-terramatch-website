@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { When } from "react-if";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
-import { useOnHoverFeature } from "@/components/elements/Map-mapbox/hooks/useOnHoverFeature";
 import { useSelectFeature } from "@/components/elements/Map-mapbox/hooks/useSelectFeature";
 import {
   AdditionalPolygonProperties,
@@ -21,6 +20,8 @@ import { getRestorationStrategyOptions } from "@/constants/options/restorationSt
 import { useMapContext } from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { formatOptionsList, getOptionTitle } from "@/utils/options";
+
+import { useOnHoverFeature } from "../hooks/useOnHoverFeature";
 
 interface FeatureDetailCardProps {
   editable?: boolean;

@@ -14,13 +14,11 @@ import { ValidationError } from "yup";
 
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { EditControl } from "@/components/elements/Map-mapbox/MapControls/EditControl";
-import { FeatureDetailCard } from "@/components/elements/Map-mapbox/MapControls/FeatureDetailCard";
 import { FilterControl } from "@/components/elements/Map-mapbox/MapControls/FilterLayer";
 import { StyleControl } from "@/components/elements/Map-mapbox/MapControls/StyleControl";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
 import { ZoomControl } from "@/components/elements/Map-mapbox/MapControls/ZoomControl";
 import { GeoJSONLayer } from "@/components/elements/Map-mapbox/MapLayers/GeoJsonLayer";
-import { ImagesLayer } from "@/components/elements/Map-mapbox/MapLayers/ImagesLayer";
 import {
   AdditionalPolygonProperties,
   user_shapePropertiesValidationSchema
@@ -28,6 +26,9 @@ import {
 import mapStyles from "@/components/elements/Map-mapbox/mapStyle";
 import MapProvider from "@/context/map.provider";
 import { useDebounce } from "@/hooks/useDebounce";
+
+import { FeatureDetailCard } from "./MapControls/FeatureDetailCard";
+import { ImagesLayer } from "./MapLayers/ImagesLayer";
 
 mapboxgl.accessToken =
   process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||

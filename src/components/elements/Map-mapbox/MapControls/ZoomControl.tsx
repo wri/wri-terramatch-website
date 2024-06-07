@@ -15,7 +15,7 @@ export const ZoomControl = () => {
           width: 16
         }}
         onClick={() => map?.zoomIn()}
-        className="h-8 w-8 rounded-b-none rounded-t-lg"
+        className="h-8 w-8 rounded-t-lg rounded-b-none"
         aria-label="Zoom in"
       />
       <ControlDivider direction="horizontal" />
