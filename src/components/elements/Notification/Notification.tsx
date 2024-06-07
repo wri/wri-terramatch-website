@@ -11,21 +11,22 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Text from "../Text/Text";
 import { TYPE_CLASSES } from "./constants/baseClasses";
 import { TEXT_CLASSES } from "./constants/textClasses";
+import withNotificationRoot from "./withNotificationRoot";
 
 export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "success" | "error" | "warning";
   message: string;
   title: string;
   open: boolean;
+  portalRootId?: string;
 }
 
 const Notification: FC<NotificationProps> = props => {
-  const { type = "default", message, className, title, open, ...rest } = props;
-  const t = useT();
+  const { type = "default", message, className, title, open, portalRootId = "notification-root", ...rest } = props;
   const [openNotification, setOpenNotification] = useState(open);
+  const t = useT();
 
   const textClasses = useMemo(() => (has(TEXT_CLASSES, type) ? TEXT_CLASSES[type] : TEXT_CLASSES.default), [type]);
-
   const notificationClasses = useMemo(
     () => (has(TYPE_CLASSES, type) ? TYPE_CLASSES[type] : TYPE_CLASSES.default),
     [type]
@@ -76,8 +77,8 @@ const Notification: FC<NotificationProps> = props => {
         <></>
       )}
     </div>,
-    document.body
+    document.getElementById(portalRootId)!
   );
 };
 
-export default Notification;
+export default withNotificationRoot(Notification);
