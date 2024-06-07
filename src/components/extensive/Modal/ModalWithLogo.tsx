@@ -47,7 +47,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         <div className="flex items-center">
           <When condition={status}>
             <Status
-              status={(status ? status : "draft") as StatusEnum}
+              status={(status ?? "draft") as StatusEnum}
               className="rounded px-2 py-[2px]"
               textVariant="text-14-bold"
             />
