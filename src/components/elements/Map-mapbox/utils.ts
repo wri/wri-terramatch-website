@@ -12,7 +12,7 @@ import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 const GEOSERVER = "https://geoserver-prod.wri-restoration-marketplace-api.com";
 
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
-  return properties[key] || properties[`user_${key}`];
+  return properties[key] ?? properties[`user_${key}`];
 };
 
 export const convertToGeoJSON = (featureCollection: FeatureCollection) => {

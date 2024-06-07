@@ -43,11 +43,6 @@ export interface MultiPolygon extends GeoJsonObject {
   type: "MultiPolygon";
   coordinates: Position[][][];
 }
-// uncomment this block if you need the GeometryCollection type
-// export interface GeometryCollection<G extends Geometry = Geometry> extends GeoJsonObject {
-//     type: "GeometryCollection";
-//     geometries: G[];
-// }
 
 export type GeoJsonProperties = { [name: string]: unknown } | null;
 
