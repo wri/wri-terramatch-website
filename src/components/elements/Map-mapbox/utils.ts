@@ -236,7 +236,7 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
 
 export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
   map.addLayer({
-    id: `${sourceName}-${index}`,
+    // id: `${sourceName}-${index}`,
     source: sourceName,
     "source-layer": sourceName,
     ...style
