@@ -55,6 +55,8 @@ const SiteCompletedReportsTab = ({ siteUUID }: SiteCompletedReportsTabProps) => 
           </LoadingContainer>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };
