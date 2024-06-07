@@ -372,6 +372,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         id=":r4u:"
                         name="ced1d792-2f5f-40b0-8686-86e048c98406"
                         onBlur={[Function]}
+                        onChange={[Function]}
                         onChangeCapture={[Function]}
                         type="date"
                       />
@@ -898,6 +899,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         id=":r5c:"
                         name="981edb54-739e-4971-b078-4e2a971d9ffd"
                         onBlur={[Function]}
+                        onChange={[Function]}
                         onChangeCapture={[Function]}
                         type="url"
                       />
