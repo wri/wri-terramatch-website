@@ -131,7 +131,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   });
 
-  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
+  const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
     pathParams: {
       site: record.uuid
     }
@@ -263,6 +263,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     await Promise.all(uploadPromises);
 
     refetch();
+    refetchSiteBbox();
     closeModal();
   };
 
