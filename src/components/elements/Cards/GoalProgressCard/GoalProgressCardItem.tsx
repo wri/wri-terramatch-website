@@ -20,9 +20,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({ iconName, label, 
         {label}
       </Text>
 
-      <Text variant="text-14-bold" className="">
-        {value}
-      </Text>
+      <Text variant="text-14-bold">{value?.toLocaleString()}</Text>
     </div>
   );
 };

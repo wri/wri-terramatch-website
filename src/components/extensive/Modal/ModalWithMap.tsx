@@ -76,7 +76,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
             <div className="flex items-center">
               <When condition={status}>
-                <Status status={(status ? status : "draft") as StatusEnum} />
+                <Status status={(status ?? "draft") as StatusEnum} />
               </When>
             </div>
           </header>

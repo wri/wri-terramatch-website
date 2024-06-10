@@ -298,9 +298,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               <p
                 className="text-grey-700 text-14-light"
                 data-testid="txt"
-              >
-                img-attachment.jpeg
-              </p>
+              />
             </div>
             <div
               className="rounded-xl bg-neutral-150 px-2 py-1"
@@ -308,9 +306,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               <p
                 className="text-grey-700 text-14-light"
                 data-testid="txt"
-              >
-                img-attachment-with-large-name.jpeg
-              </p>
+              />
             </div>
             <div
               className="rounded-xl bg-neutral-150 px-2 py-1"
@@ -318,9 +314,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               <p
                 className="text-grey-700 text-14-light"
                 data-testid="txt"
-              >
-                img-attachment.jpeg
-              </p>
+              />
             </div>
             <div
               className="rounded-xl bg-neutral-150 px-2 py-1"
@@ -328,9 +322,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               <p
                 className="text-grey-700 text-14-light"
                 data-testid="txt"
-              >
-                img-attachment.jpeg
-              </p>
+              />
             </div>
           </div>
         </div>

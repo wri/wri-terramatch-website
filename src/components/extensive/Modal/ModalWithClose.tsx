@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { FC } from "react";
 import { When } from "react-if";
+import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -35,6 +36,15 @@ const ModalCloseLogo: FC<ModalCloseProps> = ({
       </div>
 
       {children}
+      <When condition={!!iconProps}>
+        <Icon
+          {...iconProps!}
+          width={iconProps?.width ?? 40}
+          className={twMerge("mb-8", iconProps?.className)}
+          style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+        />
+      </When>
+
       <When condition={!!content}>
         <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
           {content}

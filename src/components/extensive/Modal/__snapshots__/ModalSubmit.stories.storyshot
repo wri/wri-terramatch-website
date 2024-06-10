@@ -95,22 +95,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-secondary-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-green-500 text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 24,
-                    }
-                  }
-                />
-                Approved
-              </p>
+              />
             </div>
           </div>
           <div
@@ -139,14 +129,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-tertiary-50"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-tertiary-600 text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                Needs More Information
-              </p>
+              />
             </div>
           </div>
           <div
@@ -175,14 +163,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                Submitted
-              </p>
+              />
             </div>
           </div>
           <div
@@ -211,22 +197,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-secondary-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-green-500 text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 24,
-                    }
-                  }
-                />
-                Approved
-              </p>
+              />
             </div>
           </div>
           <div
@@ -255,14 +231,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                Submitted
-              </p>
+              />
             </div>
           </div>
           <div
@@ -291,14 +265,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                Submitted
-              </p>
+              />
             </div>
           </div>
           <div
@@ -327,14 +299,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                Submitted
-              </p>
+              />
             </div>
           </div>
           <div
@@ -363,14 +333,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center"
           >
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-tertiary-50"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px]"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-tertiary-600 text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center undefined text-12-semibold"
                 data-testid="txt"
-              >
-                Needs More Information
-              </p>
+              />
             </div>
           </div>
           <div
@@ -389,7 +357,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
       </div>
     </div>
     <div
-      className="flex w-full justify-end gap-3 py-4 px-8"
+      className="flex w-full justify-end gap-3 px-8 py-4"
     >
       <button
         className="bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-8 py-3"

@@ -30,6 +30,15 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithClose Default 1`] = `
         />
       </button>
     </div>
+    <div
+      style={
+        Object {
+          "height": undefined,
+          "minHeight": 40,
+          "width": 40,
+        }
+      }
+    />
     <p
       className="mt-2 text-center text-light-body-300 with-inner-html"
       dangerouslySetInnerHTML={

@@ -18,7 +18,8 @@ export const Success: Story = {
   args: {
     title: "Success! Your notes were just saved!",
     message: "Your notes were just saved!",
-    type: "success"
+    type: "success",
+    open: true
   }
 };
 
@@ -31,7 +32,8 @@ export const Error: Story = {
   args: {
     title: "Your critical message - make it short",
     message: "Describe the event and give further instruction if needed, including links to other pages.",
-    type: "error"
+    type: "error",
+    open: true
   }
 };
 
@@ -44,6 +46,7 @@ export const Warning: Story = {
   args: {
     title: "Your polygon has been edited. Run a validation check.",
     message: "This is required for site approval.",
-    type: "warning"
+    type: "warning",
+    open: true
   }
 };
