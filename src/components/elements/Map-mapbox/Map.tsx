@@ -120,7 +120,7 @@ export const MapContainer = ({
 
   useEffect(() => {
     initMap();
-  });
+  }, []);
 
   useEffect(() => {
     if (isUserDrawing) {
