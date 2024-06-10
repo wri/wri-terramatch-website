@@ -12,6 +12,7 @@ import { useModalContext } from "@/context/modal.provider";
 import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
+import { StatusEnum } from "../Status/constants/statusMap";
 
 export interface MapPolygonCheckPanelItemProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -52,7 +53,7 @@ const MapPolygonCheckPanelItem = ({
       <ModalWithLogo
         title="Blue Forest"
         onClose={closeModal}
-        status="under-review"
+        status={StatusEnum.UNDER_REVIEW}
         toogleButton
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Close"

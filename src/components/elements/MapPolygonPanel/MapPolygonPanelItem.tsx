@@ -40,9 +40,10 @@ const MapPolygonPanelItem = ({
         content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
+      />
     );
   };
+
   const openFormModalHandlerAddCommentary = () => {
     openModal(
       <ModalWithLogo
@@ -56,6 +57,7 @@ const MapPolygonPanelItem = ({
       />
     );
   };
+
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
@@ -76,7 +78,7 @@ const MapPolygonPanelItem = ({
           &nbsp; Edit Polygon
         </Text>
       ),
-      onClick: setEditPolygon?.(true)
+      onClick: () => setEditPolygon?.(true)
     },
     {
       id: "2",
@@ -101,7 +103,7 @@ const MapPolygonPanelItem = ({
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
           <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.COMMENT} className="h-5 w-5 lg:h-6 lg:w-6 " />
+            <Icon name={IconNames.COMMENT} className="h-5 w-5 lg:h-6 lg:w-6" />
             &nbsp; Comment
           </Text>
         </Button>
@@ -112,7 +114,7 @@ const MapPolygonPanelItem = ({
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerRequestPolygonSupport}>
           <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.REQUEST} className="h-5 w-5 lg:h-6 lg:w-6 " />
+            <Icon name={IconNames.REQUEST} className="h-5 w-5 lg:h-6 lg:w-6" />
             &nbsp; Request Support
           </Text>
         </Button>
@@ -123,7 +125,7 @@ const MapPolygonPanelItem = ({
       render: () => (
         <Button variant="text" onClick={openFormModalHandlerConfirm}>
           <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.TRASH_PA} className="h-5 w-5 lg:h-6 lg:w-6 " />
+            <Icon name={IconNames.TRASH_PA} className="h-5 w-5 lg:h-6 lg:w-6" />
             &nbsp; Delete Polygon
           </Text>
         </Button>
@@ -135,7 +137,7 @@ const MapPolygonPanelItem = ({
     <div>
       <div
         {...props}
-        className={classNames(className, " rounded-lg border-2 border-transparent bg-white p-2 hover:border-primary", {
+        className={classNames(className, "rounded-lg border-2 border-transparent bg-white p-2 hover:border-primary", {
           "border-primary-500": isSelected,
           "border-neutral-500 hover:border-neutral-800": !isSelected
         })}
@@ -143,12 +145,10 @@ const MapPolygonPanelItem = ({
         <div className="flex items-center gap-2">
           <Icon name={IconNames.MAP_THUMBNAIL} className="h-11 w-11 rounded-lg bg-neutral-300" />
           <div className="flex flex-1 flex-col">
-            <Text variant="text-14-bold" className="">
-              {title}
-            </Text>
+            <Text variant="text-14-bold">{title}</Text>
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
-          <div className="lex h-full self-start">
+          <div className="flex h-full self-start">
             <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
