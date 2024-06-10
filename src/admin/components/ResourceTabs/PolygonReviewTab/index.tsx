@@ -268,7 +268,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
+        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record.name}.`}
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -304,7 +304,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        descriptionInput={`Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site ${record.name}.`}
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -394,7 +394,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const contentForApproval = (
     <Text variant="text-12-light" as="p" className="text-center">
       Are you sure you want to approve the polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>Tannous/Brayrton Road</b>?
+      <b style={{ fontSize: "inherit" }}>{record.name}</b>?
     </Text>
   );
 
