@@ -29,7 +29,7 @@ const Status = (props: StatusProps) => {
       "awaiting-approval": "Awaiting Approval"
     };
 
-    return statusMap[status] || "";
+    return statusMap[status] ?? "";
   };
 
   return (
