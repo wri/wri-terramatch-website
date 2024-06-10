@@ -25,8 +25,8 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       <div className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3">
         <div className="flex min-h-[32px] min-w-[32px] items-center justify-center self-start rounded-full bg-primary-500">
           <Text variant="text-14-semibold" className="uppercase text-white">
-            {name[0]}
-            {lastName[0]}
+            {(name && name[0]) ?? ""}
+            {(lastName && lastName[0]) ?? ""}
           </Text>
         </div>
         <TextArea

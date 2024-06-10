@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { has } from "lodash";
 import { FC, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
@@ -8,8 +7,6 @@ import { twMerge as tw } from "tailwind-merge";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import Text from "../Text/Text";
-import { TYPE_CLASSES } from "./constants/baseClasses";
-import { TEXT_CLASSES } from "./constants/textClasses";
 
 export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "success" | "error" | "warning";
@@ -23,12 +20,33 @@ const Notification: FC<NotificationProps> = props => {
   const t = useT();
   const [openNotification, setOpenNotification] = useState(open);
 
-  const textClasses = useMemo(() => (has(TEXT_CLASSES, type) ? TEXT_CLASSES[type] : TEXT_CLASSES.default), [type]);
+  const notificationClasses = useMemo(() => {
+    const baseClasses =
+      "flex items-start rounded-lg font-bold w-full tracking-tighter leading-16 p-4 bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)]";
+    switch (type) {
+      case "success":
+        return classNames(baseClasses, "text-bold-body-300 group:text-success-600");
+      case "error":
+        return classNames(baseClasses, "text-bold-body-300 group:text-error-600");
+      case "warning":
+        return classNames(baseClasses, "text-bold-body-300 group:text-tertiary-600");
+      default:
+        return classNames(baseClasses, "text-bold-body-300 group:text-success-600");
+    }
+  }, [type]);
 
-  const notificationClasses = useMemo(
-    () => (has(TYPE_CLASSES, type) ? TYPE_CLASSES[type] : TYPE_CLASSES.default),
-    [type]
-  );
+  const textClasses = useMemo(() => {
+    switch (type) {
+      case "success":
+        return "text-success-600";
+      case "error":
+        return "text-error-600";
+      case "warning":
+        return "text-tertiary-600";
+      default:
+        return "text-success-600";
+    }
+  }, [type]);
 
   useEffect(() => {
     setOpenNotification(open);
