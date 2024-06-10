@@ -1,8 +1,10 @@
 import { Grid, Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { Button, Link, TabbedShowLayout, TabProps, useBasename, useShowContext } from "react-admin";
 import { When } from "react-if";
 
+import modules from "@/admin/modules";
+import Text from "@/components/elements/Text/Text";
 import { PROJECT, SITE } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { Entity } from "@/types/common";
@@ -35,6 +37,7 @@ export interface EntityList {
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
   const { record, isLoading } = useShowContext();
+  const basename = useBasename();
 
   const {
     mutateEntity,
@@ -66,7 +69,20 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-              <When condition={buttonToogle === ButtonStates.PROJECTS}>
+              <When condition={buttonToogle === ButtonStates.PROJECTS && record?.project}>
+                <Text variant="text-24-bold">Project Status</Text>
+                <Text variant="text-14-light" className="mb-4">
+                  Update the site status, view updates, or add comments
+                </Text>
+                <Button
+                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
+                  component={Link}
+                  to={`${basename}/${modules.project.ResourceName}/${record?.project?.uuid}/show/5`}
+                  fullWidth
+                  label="OPEN PROJECT AUDIT LOG"
+                />
+              </When>
+              <When condition={buttonToogle === ButtonStates.PROJECTS && !record?.project}>
                 <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} refresh={refetch} />
               </When>
               <When condition={buttonToogle !== ButtonStates.PROJECTS}>
