@@ -75,11 +75,7 @@ const MapPolygonPanelItem = ({
           &nbsp; Edit Polygon
         </Text>
       ),
-      onClick: () => {
-        if (setEditPolygon) {
-          setEditPolygon(true);
-        }
-      }
+      onClick: setEditPolygon?.(true)
     },
     {
       id: "2",
