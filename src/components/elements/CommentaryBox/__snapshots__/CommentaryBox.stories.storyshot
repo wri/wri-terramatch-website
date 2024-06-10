@@ -31,6 +31,7 @@ exports[`Storyshots Components/Elements/CommentaryBox Default 1`] = `
           onChange={[Function]}
           placeholder="Add a comment"
           rows={1}
+          value=""
         />
       </div>
       <label
@@ -40,6 +41,7 @@ exports[`Storyshots Components/Elements/CommentaryBox Default 1`] = `
         <input
           className="absolute z-[-1] h-[0.1px] w-[0.1px] overflow-hidden opacity-0"
           id="input-files"
+          onChange={[Function]}
           type="file"
         />
         <div
@@ -67,6 +69,27 @@ exports[`Storyshots Components/Elements/CommentaryBox Default 1`] = `
         />
       </button>
     </div>
+    <div
+      className="flex flex-1 justify-between gap-4"
+    >
+      <div
+        className="flex flex-wrap gap-2"
+      />
+      <div
+        className="display-grid"
+      >
+        <div
+          className="text-nowrap text-right text-xs text-grey-500"
+        >
+          0
+          /255 
+          characters
+        </div>
+      </div>
+    </div>
+    <div
+      className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
+    />
   </div>
 </div>
 `;
