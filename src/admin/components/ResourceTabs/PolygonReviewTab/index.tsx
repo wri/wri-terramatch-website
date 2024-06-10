@@ -1,5 +1,4 @@
 import { Grid, Stack } from "@mui/material";
-import classNames from "classnames";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
@@ -35,7 +34,6 @@ import {
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { PolygonBboxResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { uploadImageData } from "@/pages/site/[uuid]/components/MockedData";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
@@ -283,7 +281,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={setFiles}
-      ></ModalAdd>
+      />
     );
   };
   const reloadSiteData = () => {
@@ -316,45 +314,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Start by adding images for processing."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
-          {uploadImageData.map(image => (
-            <div
-              key={image.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
-            >
-              <div className="flex gap-3">
-                <div className="rounded-lg bg-neutral-150 p-2">
-                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                </div>
-                <div>
-                  <Text variant="text-12">{image.name}</Text>
-                  <Text variant="text-12" className="opacity-50">
-                    {image.status}
-                  </Text>
-                </div>
-              </div>
-              <div
-                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-blue": image.isVerified,
-                  "border-red": !image.isVerified
-                })}
-              >
-                <Text
-                  variant="text-12-bold"
-                  className={classNames("text-center", {
-                    "text-blue": image.isVerified,
-                    "text-red": !image.isVerified
-                  })}
-                >
-                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
-                </Text>
-              </div>
-            </div>
-          ))}
-        </div>
-      </ModalAdd>
+      />
     );
   };
 
@@ -375,7 +335,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
-      ></ModalApprove>
+      />
     );
   };
 
