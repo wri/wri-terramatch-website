@@ -68,15 +68,15 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
   };
 
   const loadEntityList = async () => {
-    const isSiteProject = entityLevel === PROJECT;
+    const isSiteProjectLevel = entityLevel === PROJECT;
     const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2ProjectsUUIDSitePolygonsAll;
-    const fetchAction = isSiteProject ? fetchToProject : fetchGetV2SitesSitePolygon;
-    const params = isSiteProject && entityType == POLYGON ? { uuid: entityUuid } : { uuid: entityUuid };
+    const fetchAction = isSiteProjectLevel ? fetchToProject : fetchGetV2SitesSitePolygon;
+    const params = isSiteProjectLevel ? { uuid: entityUuid } : { site: entityUuid };
     const res = await fetchAction({
       // @ts-ignore
       pathParams: params
     });
-    const _entityList = (res as { data: EntityListItem[] }).data;
+    const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
     const nameProperty = getNameProperty(entityType);
     const transformEntityListItem = (item: EntityListItem) => {
       return {
@@ -89,13 +89,13 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
       };
     };
     const _list = unnamedTitleAndSort(_entityList, nameProperty);
-    setEntityListItem(_list.map((item: EntityListItem) => transformEntityListItem(item)));
-    if (_list.length > 0) {
+    setEntityListItem(_list?.map((item: EntityListItem) => transformEntityListItem(item)));
+    if (_list?.length > 0) {
       if (isFirstLoad.current) {
         isFirstLoad.current = false;
         setSelected(transformEntityListItem(_list[0]));
       } else {
-        const currentSelected = (res as { data: EntityListItem[] }).data.find(item => item?.uuid === selected?.uuid);
+        const currentSelected = _entityList?.find(item => item?.uuid === selected?.uuid);
         setSelected(transformEntityListItem(currentSelected as EntityListItem));
       }
     } else {
