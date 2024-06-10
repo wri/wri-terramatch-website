@@ -14,9 +14,12 @@ const SiteShow: FC = () => {
     <Show
       title={<ShowTitle moduleName="Site" getTitle={record => record?.name} />}
       actions={<ShowActions titleSource="name" resourceName="site" />}
+      className="-mt-[50px] bg-neutral-100"
     >
       <TabbedShowLayout>
-        <InformationTab type="sites" />
+        <TabbedShowLayout.Tab label="Site Information">
+          <InformationTab type="sites" />
+        </TabbedShowLayout.Tab>
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />
         <ChangeRequestsTab entity="sites" singularEntity="site" />
