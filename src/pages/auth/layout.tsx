@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@mui/material";
+import { useT } from "@transifex/react";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { When } from "react-if";
@@ -13,7 +14,7 @@ interface LoginLayoutProps {
 const LoginLayout: React.FC<LoginLayoutProps> = props => {
   const { children } = props;
   const pathname = usePathname();
-
+  const t = useT();
   return (
     <div className="relative flex h-screen w-full bg-square-pattern bg-contain bg-right bg-no-repeat">
       <div className="mt-[-78px] flex w-[45%] flex-col items-center justify-center py-[78px]">
@@ -22,7 +23,7 @@ const LoginLayout: React.FC<LoginLayoutProps> = props => {
           <div className="absolute bottom-[1.5vh] left-6">
             <Button>
               <Text variant="text-12-bold" className="text-primary">
-                English (United Kingdom)
+                {t("English (United Kingdom)")}
               </Text>
             </Button>
           </div>
