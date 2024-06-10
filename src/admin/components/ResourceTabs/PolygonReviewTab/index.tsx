@@ -35,7 +35,7 @@ import {
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { PolygonBboxResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
+import { uploadImageData } from "@/pages/site/[uuid]/components/MockedData";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
