@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
-import { SITE } from "@/constants/entities";
+import { PROJECT, SITE } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { Entity } from "@/types/common";
 
@@ -51,7 +51,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   } = useAuditLogActions({
     record,
     buttonToogle,
-    entityLevel: SITE
+    entityLevel: record?.project ? SITE : PROJECT
   });
 
   useEffect(() => {
