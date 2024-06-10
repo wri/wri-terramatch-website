@@ -37,7 +37,11 @@ const CommentarySection = ({
         entity={entity}
       />
       <When condition={viewCommentsList}>
-        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">{loading ? <Loader /> : <></>}</div>
+        {loading && (
+          <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">
+            <Loader />
+          </div>
+        )}
       </When>
     </div>
   );
