@@ -271,8 +271,8 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh && refresh();
-            reloadEntity && reloadEntity();
+            refresh?.();
+            reloadEntity?.();
             closeModal;
           }
         }}

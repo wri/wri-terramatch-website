@@ -63,7 +63,7 @@ const Polygons = (props: IPolygonProps) => {
   const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
-  const { toggleUserDrawing } = context || {};
+  const { toggleUserDrawing } = context ?? {};
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -209,7 +209,7 @@ const Polygons = (props: IPolygonProps) => {
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer
-          polygonSelected={selectedPolygon?.uuid || ""}
+          polygonSelected={selectedPolygon?.uuid ?? ""}
           isPolygonStatusOpen={isPolygonStatusOpen}
           refresh={props?.refresh}
         />
