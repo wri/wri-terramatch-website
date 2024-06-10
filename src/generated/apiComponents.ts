@@ -33682,6 +33682,41 @@ export const useGetV2SitesSiteCheckApprove = <TData = GetV2SitesSiteCheckApprove
   );
 };
 
+export type PutV2ENTITYUUIDStatusPathParams = {
+  /**
+   * allowed values project/site/site-polygons
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type PutV2ENTITYUUIDStatusError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2ENTITYUUIDStatusVariables = {
+  pathParams: PutV2ENTITYUUIDStatusPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2ENTITYUUIDStatus = (variables: PutV2ENTITYUUIDStatusVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, PutV2ENTITYUUIDStatusError, undefined, {}, {}, PutV2ENTITYUUIDStatusPathParams>({
+    url: "/v2/{entity}/{uuid}/status",
+    method: "put",
+    ...variables,
+    signal
+  });
+
+export const usePutV2ENTITYUUIDStatus = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, PutV2ENTITYUUIDStatusError, PutV2ENTITYUUIDStatusVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, PutV2ENTITYUUIDStatusError, PutV2ENTITYUUIDStatusVariables>(
+    (variables: PutV2ENTITYUUIDStatusVariables) => fetchPutV2ENTITYUUIDStatus({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";

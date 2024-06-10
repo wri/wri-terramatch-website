@@ -173,7 +173,10 @@ const StatusDisplay = ({
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           try {
             await mutate({
-              pathParams: { uuid: record?.uuid },
+              pathParams: {
+                uuid: record?.uuid,
+                entity: titleStatus.toLowerCase()
+              },
               body: {
                 status: option?.status,
                 comment: text,

@@ -4,9 +4,7 @@ import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
   fetchGetV2TerrafundValidationPolygon,
-  // fetchPutV2SitePolygonUUID,
-  // fetchPutV2SiteProjectUUID,
-  // fetchPutV2SiteStatusUUID,
+  fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
@@ -43,19 +41,19 @@ const ReverseButtonStates2: { [key: number]: string } = {
 
 const statusActionsMap = {
   [ButtonStates.PROJECTS]: {
-    mutateEntity: console.error, //fetchPutV2SiteProjectUUID,
+    mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusProject,
     statusLabels: projectStatusLabels,
     entityType: PROJECT
   },
   [ButtonStates.SITE]: {
-    mutateEntity: console.error, //fetchPutV2SiteStatusUUID,
+    mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusSite,
     statusLabels: siteProgressBarStatusLabels,
     entityType: SITE
   },
   [ButtonStates.POLYGON]: {
-    mutateEntity: console.error, //fetchPutV2SitePolygonUUID,
+    mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusPolygon,
     statusLabels: polygonProgressBarStatusLabels,
     entityType: POLYGON

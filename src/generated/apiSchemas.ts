@@ -23493,3 +23493,11 @@ export type SitePolygonResource = {
 export type SiteCheckApproveResponse = {
   can_approve?: boolean;
 };
+
+export type AuditStatusUpdateRequest = {
+  type?: string;
+  comment?: string;
+  status?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
