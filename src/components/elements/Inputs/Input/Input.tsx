@@ -25,7 +25,7 @@ export interface InputProps
   descriptionClassName?: string;
   descriptionFooter?: string;
   format?: "number";
-  sufixLabelView?: boolean;
+  suffixLabelView?: boolean;
   classNameContainerInput?: string;
   classNameError?: string;
 }
@@ -61,7 +61,7 @@ const Input = forwardRef(
       labelVariant,
       readOnly,
       format,
-      sufixLabelView,
+      suffixLabelView,
       classNameContainerInput,
       classNameError,
       ...inputWrapperProps
@@ -79,6 +79,7 @@ const Input = forwardRef(
       ...inputProps
     } = inputWrapperProps;
     const id = useId();
+    const customVariantClasses = customVariant ? customVariant : {};
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
@@ -113,7 +114,7 @@ const Input = forwardRef(
       "w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent",
       { ...variantClasses[variant] },
       { ["border border-error focus:border-error"]: error },
-      customVariant
+      customVariantClasses
     );
 
     const clearInput = () => formHook?.setValue(inputWrapperProps.name, "");
@@ -159,6 +160,14 @@ const Input = forwardRef(
       input.value = formattedValue;
     };
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (format === "number") {
+        formatNumber(event);
+      } else if (inputProps.type === "password") {
+        registeredFormProps?.onChange(event);
+      }
+    };
+
     return (
       <InputWrapper
         inputId={id}
@@ -172,7 +181,7 @@ const Input = forwardRef(
         feedbackRequired={feedbackRequired}
         labelClassName={labelClassName}
         descriptionClassName={descriptionClassName}
-        sufixLabelView={sufixLabelView}
+        suffixLabelView={suffixLabelView}
         classNameError={classNameError}
       >
         <div className={classNames("relative", classNameContainerInput)}>
@@ -180,7 +189,7 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
-            onChange={format === "number" ? formatNumber : undefined}
+            onChange={handleChange}
             ref={registeredFormProps?.ref || ref}
             id={id}
             className={inputClasses}

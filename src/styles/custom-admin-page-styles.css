@@ -26,6 +26,10 @@
  @apply !bg-white !rounded-lg
 }
 
+.select-page-admin label{
+  @apply pr-[14px]
+ }
+
 .button-aside-page-admin {
   @apply !w-full !bg-white !border !border-solid !border-primary-500 !uppercase !leading-[normal] !px-4 !py-[10.5px] !rounded-lg hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 !text-primary-500 disabled:!text-grey-730 !text-xs !font-bold lg:!text-sm wide:!text-base;
 }
@@ -47,7 +51,7 @@
 }
 
 .RaCreateButton-root{
-  @apply !text-blueCustom-900 !bg-white !text-sm !font-bold lg:text-base wide:text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4;
+  @apply !text-blueCustom-900 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px]
 }
 
 .RaCreateButton-root:hover {
