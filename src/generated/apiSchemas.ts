@@ -23201,6 +23201,18 @@ export type GeoJSONResponse = {
   }[];
 };
 
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type PolygonBboxResponse = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonResponse = {
+  uuid?: string;
+};
+
 export type DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;

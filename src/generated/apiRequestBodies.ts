@@ -17,6 +17,29 @@ export type PatchV2AuthVerifyBody = {
   token?: string;
 };
 
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
 export type PostV2FundingProgrammeBody = {
   name?: string;
   description?: string;

@@ -9,7 +9,8 @@ import {
   FileInputVariant,
   VARIANT_FILE_INPUT_MODAL_ADD
 } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import Status, { StatusEnum } from "@/components/elements/Status/Status";
+import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
+import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { FileType, UploadedFile } from "@/types/common";
 
@@ -25,7 +26,7 @@ export interface ModalAddProps extends ModalProps {
   variantFileInput?: FileInputVariant;
   descriptionListStatus?: string;
   acceptedTYpes?: FileType[];
-  status?: "under-review" | "approved" | "draft" | "submitted";
+  status?: StatusEnum;
   onClose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
 }
@@ -64,7 +65,7 @@ const ModalAdd: FC<ModalAddProps> = ({
         <div className="flex items-center">
           <When condition={status}>
             <Status
-              status={(status ? status : "draft") as StatusEnum}
+              status={status ? status : StatusEnum.DRAFT}
               className="rounded px-2 py-[2px]"
               textVariant="text-14-bold"
             />
