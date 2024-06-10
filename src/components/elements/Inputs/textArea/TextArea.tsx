@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { ChangeEvent, DetailedHTMLProps, TextareaHTMLAttributes, useCallback, useId, useState } from "react";
+import { ChangeEvent, DetailedHTMLProps, TextareaHTMLAttributes, useCallback, useEffect, useId, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -32,10 +32,12 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
     { "border-light ": !error },
     { ["border border-error focus:border-error"]: error }
   );
-  if (error && formHook?.watch(inputWrapperProps.name)) {
-    formHook?.trigger();
-    formHook?.reset(formHook.getValues());
-  }
+  useEffect(() => {
+    if (inputProps.value === "") {
+      setTextValue("");
+    }
+  }, [inputProps.value]);
+
   const [textValue, setTextValue] = useState("");
   const handleTextAreaChange = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -46,6 +48,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
   );
   const { textareaProps } = useTextAreaAuto(handleTextAreaChange, textValue?.toString());
   const mergedProps = { ...inputProps, ...textareaProps };
+
   return (
     <InputWrapper
       inputId={id}

@@ -27,7 +27,7 @@ const ImageControl = ({
         descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road.."
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
-            Uploaded Files
+            {t("Uploaded Files")}
           </Text>
         }
         onClose={closeModal}

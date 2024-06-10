@@ -21,7 +21,7 @@ export interface InputWrapperProps {
   feedbackRequired?: boolean;
   labelClassName?: string;
   descriptionClassName?: string;
-  sufixLabelView?: boolean;
+  suffixLabelView?: boolean;
   classNameError?: string;
 }
 
@@ -34,7 +34,7 @@ const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
         feedbackRequired={props.feedbackRequired}
         labelVariant={props.labelVariant}
         className={props.labelClassName}
-        suffixLabelView={props.sufixLabelView}
+        suffixLabelView={props.suffixLabelView}
       >
         {props.label}
       </InputLabel>

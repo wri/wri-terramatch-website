@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 
@@ -36,6 +37,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
+  const t = useT();
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
     CheckedPolygon[]
   >(
@@ -96,13 +98,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   return (
     <div className="grid gap-2">
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
-        <Text variant="text-10-light">Your polygons have been updated</Text>
+        <Text variant="text-10-light">{t("Your polygons have been updated")}</Text>
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
           onClick={() => setClickedValidation(true)}
         >
-          Check Polygons
+          {t("Check Polygons")}
         </Button>
       </div>
       <div className="relative flex w-[231px] flex-col gap-2 rounded-xl p-3">
@@ -114,7 +116,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           className="flex items-center justify-between"
         >
           <Text variant="text-10-bold" className="text-white">
-            Polygon Checks
+            {t("Polygon Checks")}
           </Text>
           <Icon
             name={IconNames.CHEVRON_DOWN}
@@ -129,7 +131,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
             <div key={polygon.id} className="flex items-center gap-2">
               <Icon name={polygon.valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS} className="h-4 w-4" />
               <Text variant="text-10-light" className="text-white">
-                {`${polygon.label || "Unnamed Polygon"} ${polygon.checked ? "" : "(not checked yet)"}`}
+                {`${polygon.label ?? "Unnamed Polygon"} ${polygon.checked ? "" : "(not checked yet)"}`}
               </Text>
             </div>
           ))}

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useState } from "react";
 
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -37,6 +38,7 @@ const dropdownOptions = [
 const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
   const { openModal, closeModal } = useModalContext();
   const [confirmChange, setConfirmChange] = useState(true);
+  const t = useT();
 
   const openFormModalHandler = (indexes: any[]) => {
     const optionSelected = dropdownOptions.find(option => option.value === indexes[0]);
@@ -46,7 +48,7 @@ const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
         commentArea
         content={
           <Text variant="text-14-light" className="text-center">
-            Are you sure you want to change the site status to {optionSelected?.title}?
+            {t("Are you sure you want to change the site status to")} {optionSelected?.title}?
           </Text>
         }
         onClose={closeModal}

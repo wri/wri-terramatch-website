@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { has } from "lodash";
 import { FC, useEffect, useMemo, useState } from "react";
-import ReactDOM from "react-dom";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -39,7 +38,7 @@ const Notification: FC<NotificationProps> = props => {
     setOpenNotification(false);
   };
 
-  return ReactDOM.createPortal(
+  return (
     <div className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black">
       {openNotification ? (
         <>
@@ -75,8 +74,7 @@ const Notification: FC<NotificationProps> = props => {
       ) : (
         <></>
       )}
-    </div>,
-    document.body
+    </div>
   );
 };
 

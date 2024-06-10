@@ -92,6 +92,9 @@ export enum IconNames {
   SUCCESS = "ic-success",
   CRITICAL = "ic-critical",
   USER_ROLE = "user-role",
+  USER_PROJECT_DEVELOPER = "ic-projectdeveloper",
+  USER_GOVERNMENT = "ic-government",
+  USER_INVESTOR = "ic-investor",
   NO_SUCCESS = "no-success",
   CLEAR = "clear",
   IC_ERROR = "ic-error",
@@ -147,6 +150,10 @@ export enum IconNames {
   IC_INFO_WHITE = "ic-info-white",
   ERROR_WHITE_BORDER_RED = "error-white-border-red",
   CLICK = "click",
+  IC_APPROVED = "ic_approved",
+  IC_DRAFT = "ic_draft",
+  IC_NEEDS_MORE_INFORMATION = "ic_needs-more-information",
+  IC_SUBMITTED = "ic_submitted",
   IC_ARROW_COLLAPSE = "ic-arrow-collapse"
 }
 

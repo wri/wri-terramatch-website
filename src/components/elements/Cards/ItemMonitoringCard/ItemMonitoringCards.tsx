@@ -9,7 +9,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 
 import Icon, { IconNames } from "../../../extensive/Icon/Icon";
 
-export interface LeyendItemMonitoringCardsProps {
+export interface LegendItemMonitoringCardsProps {
   title: string;
   color: string;
 }
@@ -27,7 +27,7 @@ export interface ItemMonitoringCardsProps
   className?: string;
   img?: IconNames;
   type?: "graph" | "map" | "graph-button";
-  legends?: LeyendItemMonitoringCardsProps[];
+  legends?: LegendItemMonitoringCardsProps[];
 }
 
 const ItemMonitoringCards = ({

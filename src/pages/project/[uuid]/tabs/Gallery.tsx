@@ -35,6 +35,8 @@ const GalleryTab = (props: EntityMapAndGalleryCardProps & { sharedDriveLink?: st
           </When>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

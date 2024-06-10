@@ -76,7 +76,9 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               <Text variant="text-12" className="flex-[2]">
                 {item.name}
               </Text>
-              <div className="flex flex-1 items-center justify-center">{/* <Status status={item.status} /> */}</div>
+              <div className="flex flex-1 items-center justify-center">
+                <Status status={item.status as StatusEnum} />
+              </div>
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox name={""} />
               </div>
@@ -84,7 +86,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           ))}
         </div>
       </div>
-      <div className="flex w-full justify-end gap-3 py-4 px-8">
+      <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
           <Button {...secondaryButtonProps!} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">

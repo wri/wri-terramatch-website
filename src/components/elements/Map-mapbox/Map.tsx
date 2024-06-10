@@ -1,10 +1,7 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import _ from "lodash";
-//@ts-ignore
-//@ts-ignore
 import mapboxgl from "mapbox-gl";
-//@ts-ignore
 import React, { useEffect } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
@@ -113,8 +110,8 @@ export const MapContainer = ({
   const context = useSitePolygonData();
   const { isUserDrawingEnabled } = isUserDrawing
     ? { isUserDrawingEnabled: isUserDrawing }
-    : context || { isUserDrawingEnabled: false };
-  const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context || {};
+    : context ?? { isUserDrawingEnabled: false };
+  const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context ?? {};
   if (!mapFunctions) {
     return null;
   }
@@ -123,7 +120,7 @@ export const MapContainer = ({
 
   useEffect(() => {
     initMap();
-  });
+  }, []);
 
   useEffect(() => {
     if (isUserDrawing) {

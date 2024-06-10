@@ -22,7 +22,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] 
     className="text-14-bold"
     data-testid="txt"
   >
-    530000
+    530,000
   </p>
 </div>
 `;

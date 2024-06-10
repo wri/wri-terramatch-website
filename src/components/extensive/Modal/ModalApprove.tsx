@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { FC } from "react";
 import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -12,7 +13,6 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { dataSubmitPolygons } from "./ModalContent/MockedData";
 import { ModalBaseSubmit } from "./ModalsBases";
-
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
@@ -50,6 +50,14 @@ const ModalApprove: FC<ModalApproveProps> = ({
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
+        <When condition={!!iconProps}>
+          <Icon
+            {...iconProps!}
+            width={iconProps?.width ?? 40}
+            className={tw("mb-8", iconProps?.className)}
+            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+          />
+        </When>
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>

@@ -1,6 +1,7 @@
 import { remove } from "lodash";
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
+import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
@@ -75,6 +76,14 @@ const ModalAdd: FC<ModalAddProps> = ({
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
+        <When condition={!!iconProps}>
+          <Icon
+            {...iconProps!}
+            width={iconProps?.width ?? 40}
+            className={twMerge("mb-8", iconProps?.className)}
+            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+          />
+        </When>
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
