@@ -7,3 +7,20 @@ export const STATUS_MAP: { [key: string]: string } = {
   "planting-in-progress": "Planting in Progress",
   "awaiting-approval": "Awaiting Approval"
 };
+
+export enum StatusEnum {
+  // eslint-disable-next-line no-unused-vars
+  DRAFT = "draft",
+  // eslint-disable-next-line no-unused-vars
+  SUBMITTED = "submitted",
+  // eslint-disable-next-line no-unused-vars
+  APPROVED = "approved",
+  // eslint-disable-next-line no-unused-vars
+  UNDER_REVIEW = "under-review",
+  // eslint-disable-next-line no-unused-vars
+  NEEDS_MORE_INFORMATION = "needs-more-information",
+  // eslint-disable-next-line no-unused-vars
+  PLANTING_IN_PROGRESS = "planting-in-progress",
+  // eslint-disable-next-line no-unused-vars
+  AWAITING_APPROVAL = "awaiting-approval"
+}

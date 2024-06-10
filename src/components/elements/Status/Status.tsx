@@ -7,23 +7,7 @@ import { TextVariants } from "@/types/common";
 import Text from "../Text/Text";
 import { COLOR_BG_MAP } from "./constants/colorBgMap";
 import { COLOR_TEXT_MAP } from "./constants/colorTextMap";
-
-export enum StatusEnum {
-  // eslint-disable-next-line no-unused-vars
-  DRAFT = "draft",
-  // eslint-disable-next-line no-unused-vars
-  SUBMITTED = "submitted",
-  // eslint-disable-next-line no-unused-vars
-  APPROVED = "approved",
-  // eslint-disable-next-line no-unused-vars
-  UNDER_REVIEW = "under-review",
-  // eslint-disable-next-line no-unused-vars
-  NEEDS_MORE_INFORMATION = "needs-more-information",
-  // eslint-disable-next-line no-unused-vars
-  PLANTING_IN_PROGRESS = "planting-in-progress",
-  // eslint-disable-next-line no-unused-vars
-  AWAITING_APPROVAL = "awaiting-approval"
-}
+import { StatusEnum } from "./constants/statusMap";
 
 export interface StatusProps {
   className?: string;
