@@ -117,9 +117,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
 
   useEffect(() => {
     const format =
-      calculatedArea !== null && calculatedArea !== undefined
-        ? calculatedArea.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : "";
+      calculatedArea?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "";
     setFormattedArea(format ?? "");
   }, [calculatedArea]);
 

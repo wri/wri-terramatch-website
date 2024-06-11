@@ -9,7 +9,7 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
-  fetchGetV2TerrafundValidationPolygon,
+  fetchPostV2TerrafundValidationPolygon,
   useGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -81,7 +81,7 @@ const PolygonDrawer = ({
   );
 
   const validatePolygon = async () => {
-    await fetchGetV2TerrafundValidationPolygon({ queryParams: { uuid: polygonSelected } });
+    await fetchPostV2TerrafundValidationPolygon({ queryParams: { uuid: polygonSelected } });
     reloadCriteriaValidation();
     setCheckPolygonValidation(false);
   };
@@ -141,7 +141,7 @@ const PolygonDrawer = ({
   useEffect(() => {
     const fetchCriteriaValidation = async () => {
       if (!buttonToogle) {
-        const criteriaData = await fetchGetV2TerrafundValidationPolygon({
+        const criteriaData = await fetchPostV2TerrafundValidationPolygon({
           queryParams: {
             uuid: polygonSelected
           }
