@@ -33661,7 +33661,7 @@ export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSit
 };
 
 export type GetV2SitesSiteCheckApprovePathParams = {
-  uuid: string;
+  site: string;
 };
 
 export type GetV2SitesSiteCheckApproveError = Fetcher.ErrorWrapper<undefined>;
