@@ -40,11 +40,6 @@ export type Body = {
   status?: string;
 };
 
-export type PutV2AdminSitesUuid = {
-  status?: string;
-  comment?: string;
-};
-
 export type PostV2FundingProgrammeBody = {
   name?: string;
   description?: string;
@@ -190,35 +185,6 @@ export type V2PostOrganisationsBody = {
     deleted_at?: string;
   }[];
   tags?: string[];
-};
-
-export type PostV2SitesUuidGeometryBody = {
-  geometries?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-      };
-      geometry?: {
-        type?: "Polygon";
-        coordinates?: number[][][];
-      };
-    }[];
-  }[];
 };
 
 export type V2AdminOrganisationApproveBody = {
@@ -384,20 +350,31 @@ export type GetV2FundingProgrammeIDBody = {
   updated_at?: string;
 };
 
-export type PostV2AuditStatus = {
-  entity?: string;
-  entity_uuid?: string;
-  status?: string;
-  comment?: string;
-  /**
-   * @format date
-   */
-  date_created?: string;
-  created_by?: string;
-  is_active?: boolean;
-  is_submitted?: boolean;
-  type?: string;
-  first_name?: string;
-  last_name?: string;
-  request_removed?: boolean;
+export type PostV2SitesUuidGeometryBody = {
+  geometries?: {
+    type?: "FeatureCollection";
+    features?: {
+      type?: "Feature";
+      properties?: {
+        poly_name?: string;
+        /**
+         * @format date
+         */
+        plantstart?: string;
+        /**
+         * @format date
+         */
+        plantend?: string;
+        practice?: string;
+        target_sys?: string;
+        distr?: string;
+        num_trees?: number;
+        site_id?: string;
+      };
+      geometry?: {
+        type?: "Polygon" | "Point";
+        coordinates?: any[];
+      };
+    }[];
+  }[];
 };
