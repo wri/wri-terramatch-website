@@ -9,8 +9,6 @@ import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/
 import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
-// import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-// import { useJSONParser } from "@/hooks/useJSONParser";
 
 interface ProjectAreaProps {
   project: any;
@@ -77,8 +75,6 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
       setCheckedValues(checkedValues.filter(val => val !== value));
     }
   };
-  // const imagesGeoJson = useGetImagesGeoJSON("projects", project.uuid);
-  // const geoJSON = useJSONParser(selected?.geojson || project.boundary_geojson);
 
   return (
     <div className="flex h-[500px] rounded-lg  text-darkCustom">

@@ -56,7 +56,6 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
         setPolygonBbox(bbox?.bbox);
       }
     };
-
     getPolygonData();
   }, [polygonSelected]);
 

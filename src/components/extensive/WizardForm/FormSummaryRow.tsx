@@ -16,12 +16,12 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 import { useGetV2SitesSiteBbox, useGetV2SitesSitePolygon } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { EntityName } from "@/types/common";
 
 import List from "../List/List";
@@ -206,14 +206,7 @@ const getSitePolygonData = (record: any) => {
       }
     });
     if (sitePolygonData) {
-      const polygonDataMap = ((sitePolygonData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
-        if (!acc[data.status]) {
-          acc[data.status] = [];
-        }
-        acc[data.status].push(data.poly_id);
-        return acc;
-      }, {});
-      result = polygonDataMap;
+      result = mapPolygonData(sitePolygonData);
     }
   }
   return result;
@@ -225,9 +218,9 @@ const getSiteBbox = (record: any) => {
       site: record.uuid
     }
   });
-  const siteBbox = sitePolygonBbox?.bbox;
-  return siteBbox;
+  return sitePolygonBbox?.bbox;
 };
+
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
