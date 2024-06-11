@@ -15,7 +15,7 @@ import {
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import CommentarySection from "../CommentarySection/CommentarySection";
-import StatusDisplay from "../PolygonStatus/StatusDisplay ";
+import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
 import VersionHistory from "./components/VersionHistory";

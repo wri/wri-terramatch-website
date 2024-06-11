@@ -82,6 +82,8 @@ export interface StatusProps {
   name: any;
   refetchPolygon?: any;
   setSelectedPolygon?: any;
+  tab?: string;
+  checkPolygonsSite?: any;
 }
 
 const menuOptionsMap = {
