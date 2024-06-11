@@ -166,7 +166,7 @@ const SiteReportDetailPage = () => {
                       label={t("Total Trees Planted")}
                       value={siteReport.total_trees_planted_count}
                     />
-                    <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} />
+                    <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="tree-planted" />
                   </GenericField>
                   <GenericField label={t("Direct Seeding")}>
                     <TextField
