@@ -63,16 +63,11 @@ const Polygons = (props: IPolygonProps) => {
   const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
-  const { toggleUserDrawing } = context || {};
+  const { toggleUserDrawing } = context ?? {};
 
   useEffect(() => {
     setPolygonMenu(props.menu);
   }, [props.menu]);
-  useEffect(() => {
-    if (!isOpenPolygonDrawer) {
-      setSelectedPolygon(undefined);
-    }
-  }, [isOpenPolygonDrawer]);
 
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
@@ -81,6 +76,7 @@ const Polygons = (props: IPolygonProps) => {
       setIsOpenPolygonDrawer(true);
     } else {
       setIsOpenPolygonDrawer(false);
+      setSelectedPolygon(undefined);
     }
   }, [polygonFromMap, polygonMenu]);
 
@@ -111,10 +107,8 @@ const Polygons = (props: IPolygonProps) => {
 
   const deletePolygon = async (polygon: IPolygonItem) => {
     const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
-    if (response && response?.uuid) {
-      if (reloadSiteData) {
-        reloadSiteData();
-      }
+    if (response?.uuid) {
+      reloadSiteData?.();
       closeModal();
     }
   };
@@ -209,7 +203,7 @@ const Polygons = (props: IPolygonProps) => {
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer
-          polygonSelected={selectedPolygon?.uuid || ""}
+          polygonSelected={selectedPolygon?.uuid ?? ""}
           isPolygonStatusOpen={isPolygonStatusOpen}
           refresh={props?.refresh}
         />
@@ -223,26 +217,20 @@ const Polygons = (props: IPolygonProps) => {
         </Button>
       </div>
       <div ref={containerRef} className="flex max-h-full max-h-screen flex-col overflow-auto">
-        {polygonMenu.map(item => {
-          return (
-            <div
-              key={item.id}
-              className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
-            >
-              <div className="flex items-center gap-2">
-                <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
-                <Text variant="text-14-light">{item.label}</Text>
-              </div>
-              <Menu
-                container={containerRef.current}
-                menu={polygonMenuItems(item)}
-                placement={MENU_PLACEMENT_LEFT_BOTTOM}
-              >
-                <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
-              </Menu>
+        {polygonMenu.map(item => (
+          <div
+            key={item.id}
+            className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
+          >
+            <div className="flex items-center gap-2">
+              <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
+              <Text variant="text-14-light">{item.label}</Text>
             </div>
-          );
-        })}
+            <Menu container={containerRef.current} menu={polygonMenuItems(item)} placement={MENU_PLACEMENT_LEFT_BOTTOM}>
+              <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
+            </Menu>
+          </div>
+        ))}
       </div>
     </div>
   );

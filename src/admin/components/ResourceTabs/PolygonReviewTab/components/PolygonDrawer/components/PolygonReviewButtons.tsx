@@ -21,7 +21,7 @@ const PolygonReviewButtons = ({
   openFormModalHandlerUploadImages: () => void;
 }) => {
   const context = useSitePolygonData();
-  const { toggleUserDrawing } = context || {};
+  const { toggleUserDrawing } = context ?? {};
 
   const addMenuItems = [
     {
@@ -68,7 +68,7 @@ const PolygonReviewButtons = ({
               className="h-fit w-full whitespace-nowrap"
               iconProps={{
                 className: "w-4 h-4",
-                name: IconNames.PLUS_PA // Replace IconNames.PLUS_PA with the actual icon name
+                name: IconNames.PLUS_PA
               }}
             >
               Add Data
@@ -79,7 +79,7 @@ const PolygonReviewButtons = ({
             className="flex-1"
             iconProps={{
               className: "w-4 h-4 group-hover-text-primary-500",
-              name: IconNames.DOWNLOAD_PA // Replace IconNames.DOWNLOAD_PA with the actual icon name
+              name: IconNames.DOWNLOAD_PA
             }}
             onClick={() => {
               downloadSiteGeoJsonPolygons(record.uuid);

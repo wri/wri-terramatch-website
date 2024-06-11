@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
+import { fetchPostV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
@@ -51,15 +51,10 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     }
   );
 
-  const validatePolygons = () => {
-    fetchGetV2TerrafundValidationSitePolygons({
-      queryParams: {
-        uuid: siteUuid ?? ""
-      }
-    }).then(() => {
-      reloadSitePolygonValidation();
-      setClickedValidation(false);
-    });
+  const validatePolygons = async () => {
+    await fetchPostV2TerrafundValidationSitePolygons({ queryParams: { uuid: siteUuid ?? "" } });
+    reloadSitePolygonValidation();
+    setClickedValidation(false);
   };
 
   const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {

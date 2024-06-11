@@ -31696,16 +31696,16 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
   );
 };
 
-export type GetV2TerrafundValidationPolygonQueryParams = {
+export type PostV2TerrafundValidationPolygonQueryParams = {
   /**
    * The UUID of the polygon
    */
   uuid: string;
 };
 
-export type GetV2TerrafundValidationPolygonError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2TerrafundValidationPolygonError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2TerrafundValidationPolygonResponse = {
+export type PostV2TerrafundValidationPolygonResponse = {
   /**
    * The ID of the polygon
    */
@@ -31731,38 +31731,42 @@ export type GetV2TerrafundValidationPolygonResponse = {
   }[];
 };
 
-export type GetV2TerrafundValidationPolygonVariables = {
-  queryParams: GetV2TerrafundValidationPolygonQueryParams;
+export type PostV2TerrafundValidationPolygonVariables = {
+  queryParams: PostV2TerrafundValidationPolygonQueryParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2TerrafundValidationPolygon = (
-  variables: GetV2TerrafundValidationPolygonVariables,
+export const fetchPostV2TerrafundValidationPolygon = (
+  variables: PostV2TerrafundValidationPolygonVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2TerrafundValidationPolygonResponse,
-    GetV2TerrafundValidationPolygonError,
+    PostV2TerrafundValidationPolygonResponse,
+    PostV2TerrafundValidationPolygonError,
     undefined,
     {},
-    GetV2TerrafundValidationPolygonQueryParams,
+    PostV2TerrafundValidationPolygonQueryParams,
     {}
-  >({ url: "/v2/terrafund/validation/polygon", method: "get", ...variables, signal });
+  >({ url: "/v2/terrafund/validation/polygon", method: "post", ...variables, signal });
 
-export const useGetV2TerrafundValidationPolygon = <TData = GetV2TerrafundValidationPolygonResponse>(
-  variables: GetV2TerrafundValidationPolygonVariables,
+export const usePostV2TerrafundValidationPolygon = (
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2TerrafundValidationPolygonResponse, GetV2TerrafundValidationPolygonError, TData>,
-    "queryKey" | "queryFn"
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationPolygonResponse,
+      PostV2TerrafundValidationPolygonError,
+      PostV2TerrafundValidationPolygonVariables
+    >,
+    "mutationFn"
   >
 ) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TerrafundValidationPolygonResponse, GetV2TerrafundValidationPolygonError, TData>(
-    queryKeyFn({ path: "/v2/terrafund/validation/polygon", operationId: "getV2TerrafundValidationPolygon", variables }),
-    ({ signal }) => fetchGetV2TerrafundValidationPolygon({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationPolygonResponse,
+    PostV2TerrafundValidationPolygonError,
+    PostV2TerrafundValidationPolygonVariables
+  >(
+    (variables: PostV2TerrafundValidationPolygonVariables) =>
+      fetchPostV2TerrafundValidationPolygon({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 
@@ -31848,66 +31852,58 @@ export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundVa
   );
 };
 
-export type GetV2TerrafundValidationSitePolygonsQueryParams = {
+export type PostV2TerrafundValidationSitePolygonsQueryParams = {
   /**
    * The UUID of the polygon
    */
   uuid: string;
 };
 
-export type GetV2TerrafundValidationSitePolygonsError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2TerrafundValidationSitePolygonsError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2TerrafundValidationSitePolygonsResponse = {
+export type PostV2TerrafundValidationSitePolygonsResponse = {
   /**
    * A message indicating the completion of validation for all site polygons.
    */
   message?: string;
 };
 
-export type GetV2TerrafundValidationSitePolygonsVariables = {
-  queryParams: GetV2TerrafundValidationSitePolygonsQueryParams;
+export type PostV2TerrafundValidationSitePolygonsVariables = {
+  queryParams: PostV2TerrafundValidationSitePolygonsQueryParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2TerrafundValidationSitePolygons = (
-  variables: GetV2TerrafundValidationSitePolygonsVariables,
+export const fetchPostV2TerrafundValidationSitePolygons = (
+  variables: PostV2TerrafundValidationSitePolygonsVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2TerrafundValidationSitePolygonsResponse,
-    GetV2TerrafundValidationSitePolygonsError,
+    PostV2TerrafundValidationSitePolygonsResponse,
+    PostV2TerrafundValidationSitePolygonsError,
     undefined,
     {},
-    GetV2TerrafundValidationSitePolygonsQueryParams,
+    PostV2TerrafundValidationSitePolygonsQueryParams,
     {}
-  >({ url: "/v2/terrafund/validation/sitePolygons", method: "get", ...variables, signal });
+  >({ url: "/v2/terrafund/validation/sitePolygons", method: "post", ...variables, signal });
 
-export const useGetV2TerrafundValidationSitePolygons = <TData = GetV2TerrafundValidationSitePolygonsResponse>(
-  variables: GetV2TerrafundValidationSitePolygonsVariables,
+export const usePostV2TerrafundValidationSitePolygons = (
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2TerrafundValidationSitePolygonsResponse,
-      GetV2TerrafundValidationSitePolygonsError,
-      TData
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationSitePolygonsResponse,
+      PostV2TerrafundValidationSitePolygonsError,
+      PostV2TerrafundValidationSitePolygonsVariables
     >,
-    "queryKey" | "queryFn"
+    "mutationFn"
   >
 ) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2TerrafundValidationSitePolygonsResponse,
-    GetV2TerrafundValidationSitePolygonsError,
-    TData
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationSitePolygonsResponse,
+    PostV2TerrafundValidationSitePolygonsError,
+    PostV2TerrafundValidationSitePolygonsVariables
   >(
-    queryKeyFn({
-      path: "/v2/terrafund/validation/sitePolygons",
-      operationId: "getV2TerrafundValidationSitePolygons",
-      variables
-    }),
-    ({ signal }) => fetchGetV2TerrafundValidationSitePolygons({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
+    (variables: PostV2TerrafundValidationSitePolygonsVariables) =>
+      fetchPostV2TerrafundValidationSitePolygons({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 
@@ -36034,19 +36030,9 @@ export type QueryOperation =
       variables: GetV2ENTITYUUIDExportVariables;
     }
   | {
-      path: "/v2/terrafund/validation/polygon";
-      operationId: "getV2TerrafundValidationPolygon";
-      variables: GetV2TerrafundValidationPolygonVariables;
-    }
-  | {
       path: "/v2/terrafund/validation/criteria-data";
       operationId: "getV2TerrafundValidationCriteriaData";
       variables: GetV2TerrafundValidationCriteriaDataVariables;
-    }
-  | {
-      path: "/v2/terrafund/validation/sitePolygons";
-      operationId: "getV2TerrafundValidationSitePolygons";
-      variables: GetV2TerrafundValidationSitePolygonsVariables;
     }
   | {
       path: "/v2/terrafund/validation/site";

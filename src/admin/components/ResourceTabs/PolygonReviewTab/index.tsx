@@ -1,5 +1,4 @@
 import { Grid, Stack } from "@mui/material";
-import classNames from "classnames";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
@@ -35,7 +34,6 @@ import {
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { PolygonBboxResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { uploadImageData } from "@/pages/site/[uuid]/components/MockecData";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
@@ -136,7 +134,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const siteBbox = sitePolygonBbox?.bbox as BBox;
   const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
-    "polygon-name": data.poly_name || `Unnamed Polygon`,
+    "polygon-name": data.poly_name ?? `Unnamed Polygon`,
     "restoration-practice": data.practice,
     "target-land-use-system": data.target_sys,
     "tree-distribution": data.distr,
@@ -149,7 +147,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygon, index: number) => ({
     id: (index + 1).toString(),
     status: data.status,
-    label: data.poly_name || `Unnamed Polygon`,
+    label: data.poly_name ?? `Unnamed Polygon`,
     uuid: data.poly_id
   }));
 
@@ -179,9 +177,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
       .then((response: DeletePolygonProps | undefined) => {
         if (response && response?.uuid) {
-          if (reloadSiteData) {
-            reloadSiteData();
-          }
+          reloadSiteData?.();
           const { map } = mapFunctions;
           if (map?.current) {
             addSourcesToLayers(map.current, polygonDataMap);
@@ -272,7 +268,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       <ModalAdd
         title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
+        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record.name}.`}
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -285,33 +281,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={setFiles}
-      >
-        {/* Next div is only Mocked data delete this children later*/}
-        {/* <div className="flex flex-col gap-4 mb-6">
-          {polygonData.map(polygon => (
-            <div
-              key={polygon.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-            >
-              <div className="flex gap-3">
-                <div className="p-2 rounded-lg bg-neutral-150">
-                  <Icon name={IconNames.POLYGON} className="w-6 h-6 text-grey-720" />
-                </div>
-                <div>
-                  <Text variant="text-12">{polygon.name}</Text>
-                  <Text variant="text-12" className="opacity-50">
-                    {polygon.status}
-                  </Text>
-                </div>
-              </div>
-              <Icon
-                name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
-                className={classNames("h-6 w-6", { "animate-spin": !polygon.isUploaded })}
-              />
-            </div>
-          ))}
-        </div> */}
-      </ModalAdd>
+      />
     );
   };
   const reloadSiteData = () => {
@@ -334,7 +304,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        descriptionInput={`Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site ${record.name}.`}
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -344,45 +314,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Start by adding images for processing."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
-          {uploadImageData.map(image => (
-            <div
-              key={image.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
-            >
-              <div className="flex gap-3">
-                <div className="rounded-lg bg-neutral-150 p-2">
-                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                </div>
-                <div>
-                  <Text variant="text-12">{image.name}</Text>
-                  <Text variant="text-12" className="opacity-50">
-                    {image.status}
-                  </Text>
-                </div>
-              </div>
-              <div
-                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-blue": image.isVerified,
-                  "border-red": !image.isVerified
-                })}
-              >
-                <Text
-                  variant="text-12-bold"
-                  className={classNames("text-center", {
-                    "text-blue": image.isVerified,
-                    "text-red": !image.isVerified
-                  })}
-                >
-                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
-                </Text>
-              </div>
-            </div>
-          ))}
-        </div>
-      </ModalAdd>
+      />
     );
   };
 
@@ -403,7 +335,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
-      ></ModalApprove>
+      />
     );
   };
 
@@ -462,7 +394,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const contentForApproval = (
     <Text variant="text-12-light" as="p" className="text-center">
       Are you sure you want to approve the polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>Tannous/Brayrton Road</b>?
+      <b style={{ fontSize: "inherit" }}>{record.name}</b>?
     </Text>
   );
 
