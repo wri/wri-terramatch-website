@@ -23242,6 +23242,18 @@ export type GeoJSONResponse = {
   }[];
 };
 
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type PolygonBboxResponse = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonResponse = {
+  uuid?: string;
+};
+
 export type DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;
@@ -23477,6 +23489,14 @@ export type EntityTypeResponse = {
   bbox?: number[];
 };
 
+export type AuditStatusUpdateRequest = {
+  type?: string;
+  comment?: string;
+  status?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
 export type SitePolygonResource = {
   id?: number;
   uuid?: string;
@@ -23491,12 +23511,4 @@ export type SitePolygonResource = {
 
 export type SiteCheckApproveResponse = {
   can_approve?: boolean;
-};
-
-export type AuditStatusUpdateRequest = {
-  type?: string;
-  comment?: string;
-  status?: string;
-  is_active?: boolean;
-  request_removed?: boolean;
 };

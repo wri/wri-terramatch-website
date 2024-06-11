@@ -66,13 +66,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
         <Text variant="text-14-light" className="mb-4">
           Update the project status, view updates, or add comments
         </Text>
-        <CommentarySection
-          record={record}
-          entity={"Project"}
-          auditLogData={auditLogData?.data}
-          refresh={refresh}
-          viewCommentsList={false}
-        />
+        <CommentarySection record={record} entity={"Project"} refresh={refresh} viewCommentsList={false} />
       </div>
       <Text variant="text-16-bold">History and Discussion for {record && record?.name}</Text>
       {auditLogData && <AuditLogTable auditLogData={auditLogData} />}

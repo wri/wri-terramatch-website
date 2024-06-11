@@ -62,7 +62,6 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         <CommentarySection
           record={record}
           entity={entityType ? "SitePolygon" : "Site"}
-          auditLogData={auditLogData?.data}
           refresh={refresh}
           viewCommentsList={false}
         />

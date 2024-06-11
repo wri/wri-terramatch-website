@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
-  fetchGetV2TerrafundValidationPolygon,
+  fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID
@@ -87,7 +87,7 @@ const useAuditLogActions = ({
     const fetchCheckPolygons = async () => {
       if (entityType === "Site" && record?.uuid && isSite) {
         const result = await fetchGetV2SitesSiteCheckApprove({
-          pathParams: { site: isSiteProject ? selected?.uuid : record.uuid }
+          pathParams: { uuid: isSiteProject ? selected?.uuid : record.uuid }
         });
         setCheckPolygons(result.data?.can_approve);
       }
@@ -95,7 +95,7 @@ const useAuditLogActions = ({
 
     const fetchCriteriaValidation = async () => {
       if (selected?.poly_id && isPolygon) {
-        const criteriaData = await fetchGetV2TerrafundValidationPolygon({
+        const criteriaData = await fetchPostV2TerrafundValidationPolygon({
           queryParams: {
             uuid: selected?.poly_id as string
           }

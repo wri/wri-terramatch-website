@@ -67,7 +67,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
               </Text>
             </div>
             <Text variant="text-body-900">
-              {formatOptionsList(getOrganisationTypeOptions(t), organization?.type!) || ""}
+              {formatOptionsList(getOrganisationTypeOptions(t), organization?.type!) ?? ""}
             </Text>
             <Text variant="text-body-400">{organization?.description}</Text>
           </div>
