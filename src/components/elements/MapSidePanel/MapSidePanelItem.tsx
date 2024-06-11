@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
@@ -31,6 +32,7 @@ const MapSidePanelItem = ({
   ...props
 }: MapSidePanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
+  const t = useT();
 
   const itemsPrimaryMenu = [
     {
@@ -38,7 +40,7 @@ const MapSidePanelItem = ({
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("site")}>
           <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; View Site
+          &nbsp; {t("View Site")}
         </Text>
       )
     },
@@ -47,7 +49,7 @@ const MapSidePanelItem = ({
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("zoomTo")}>
           <Icon name={IconNames.SEARCH} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; Zoom to
+          &nbsp; {t("Zoom to")}
         </Text>
       )
     },
@@ -56,7 +58,7 @@ const MapSidePanelItem = ({
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("download")}>
           <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; Download
+          &nbsp; {t("Download")}
         </Text>
       )
     }
@@ -78,7 +80,7 @@ const MapSidePanelItem = ({
           />
           <div className="flex flex-1 flex-col">
             <Text variant="text-14-bold" className="">
-              {title}
+              {t(title)}
             </Text>
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
