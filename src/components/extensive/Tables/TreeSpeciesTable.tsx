@@ -15,9 +15,9 @@ export interface TreeSpeciesTableProps {
 const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpeciesTableProps) => {
   const t = useT();
 
-  const [queryParams, setQueryParams] = useState<any>();
+  const [queryParams, setQueryParams] = useState<any>({});
 
-  if (collection && queryParams) {
+  if (collection != null) {
     queryParams["filter[collection]"] = collection;
   }
 
@@ -39,13 +39,13 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch }: TreeSpe
       : false;
 
   const showTreeSpecies = useProcessRecordData(modelUUID, modelName, "treeSpecies");
+  const data = showTreeSpecies ? treeSpecies?.data?.map(item => ({ ...item, amount: item.amount ?? 0 })) ?? [] : [];
   return (
     <div>
       <ServerSideTable
         meta={treeSpecies?.meta}
-        data={(showTreeSpecies ? treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) : []) ?? []}
+        data={data}
         isLoading={isLoading}
-        treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
         columns={[
           {
