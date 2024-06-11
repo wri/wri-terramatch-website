@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import classNames from "classnames";
 import { LabeledClasses } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -15,7 +16,10 @@ const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
         {props.step.title}
       </Text>
       <List
-        className={`${type == "sites" ? "grid grid-cols-3" : "flex flex-col"} mt-4 gap-4`}
+        className={classNames("mt-4 gap-4", {
+          "grid grid-cols-3": type === "sites",
+          "flex flex-col": type !== "sites"
+        })}
         items={entries}
         render={entry => (
           <div>
