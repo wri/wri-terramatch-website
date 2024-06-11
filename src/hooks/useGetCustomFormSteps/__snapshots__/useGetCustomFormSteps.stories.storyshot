@@ -419,7 +419,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         className="flex items-center gap-2"
                       >
                         <div
-                          className="min-h-[8px] min-w-[8px] rounded-full undefined"
+                          className="min-h-[8px] min-w-[8px] rounded-full "
                         />
                         <p
                           className="w-full line-clamp-1 text-14-light"

@@ -82,8 +82,7 @@ exports[`Storyshots Components/Elements/CommentaryBox Default 1`] = `
           className="text-nowrap text-right text-xs text-grey-500"
         >
           0
-          /255 
-          characters
+          /255 characters
         </div>
       </div>
     </div>
