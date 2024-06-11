@@ -33,7 +33,7 @@ const EditEntityPage = () => {
   const { getReportingWindow } = useGetReportingWindow();
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
-  const mode = router.query.mode as string; //edit, provide-feedback-entity, provide-feedback-change-request
+  const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
 
   const isReport = isEntityReport(entityName);
   const { data: entityData } = useGetV2ENTITYUUID({
@@ -108,6 +108,18 @@ const EditEntityPage = () => {
     )
   };
 
+  const initialStepProps = useMemo(() => {
+    if (isLoading) return {};
+
+    const stepIndex =
+      mode == null ? 0 : formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
+
+    return {
+      initialStepIndex: stepIndex < 0 ? undefined : stepIndex,
+      disableInitialAutoProgress: stepIndex >= 0
+    };
+  }, [isLoading]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
@@ -153,6 +165,7 @@ const EditEntityPage = () => {
               router.push(getEntityDetailPageLink(entityName, entityUUID));
             }
           }}
+          {...initialStepProps}
         />
       </LoadingContainer>
       <br />

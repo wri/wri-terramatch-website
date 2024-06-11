@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
-import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
@@ -18,7 +18,7 @@ import { FormFooter } from "./FormFooter";
 import { WizardFormHeader } from "./FormHeader";
 import FormSummary, { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
-import { downloadAnswersCSV, getSchema, getStepIndexByValues } from "./utils";
+import { downloadAnswersCSV, getSchema } from "./utils";
 
 export interface WizardFormProps {
   steps: FormStepSchema[];
@@ -67,7 +67,7 @@ function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
 
-  const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex || 0);
+  const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
   const selectedStep = props.steps?.[selectedStepIndex];
   const selectedValidationSchema = selectedStep ? getSchema(selectedStep.fields) : undefined;
   const lastIndex = props.summaryOptions ? props.steps.length : props.steps.length - 1;
@@ -96,7 +96,7 @@ function WizardForm(props: WizardFormProps) {
     console.debug("Form Errors", formHook.formState.errors);
   }
 
-  const onChange = useDebounce(() => !formHasError && props.onChange && props.onChange(formHook.getValues()));
+  const onChange = useDebounce(() => !formHasError && props.onChange?.(formHook.getValues()));
 
   const onSubmitStep = (data: any) => {
     if (selectedStepIndex < lastIndex) {
@@ -105,7 +105,7 @@ function WizardForm(props: WizardFormProps) {
         //Disable auto step progress if disableAutoProgress was passed
         setSelectedStepIndex(n => n + 1);
       }
-      props.onChange && props.onChange(formHook.getValues());
+      props.onChange?.(formHook.getValues());
       props.onStepChange?.(data, selectedStep);
       formHook.clearErrors();
     } else {
@@ -116,7 +116,7 @@ function WizardForm(props: WizardFormProps) {
   };
 
   const onClickSaveAndClose = () => {
-    props.onChange && props.onChange(formHook.getValues());
+    props.onChange?.(formHook.getValues());
     modal.openModal(
       <SaveAndCloseModal
         {...props.saveAndCloseModal}
@@ -138,13 +138,14 @@ function WizardForm(props: WizardFormProps) {
     formHook.reset(formHook.getValues());
   }, [formHook, props.errors]);
 
-  const initialStepIndex = useMemo(() => {
-    return getStepIndexByValues(props.defaultValues, props.steps);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.defaultValues, props.steps]);
-
   useEffect(() => {
-    if (!props.disableAutoProgress && !props.disableInitialAutoProgress) setSelectedStepIndex(initialStepIndex);
+    if (props.disableAutoProgress || props.disableInitialAutoProgress) return;
+
+    const stepIndex = props.steps.findIndex(step => !getSchema(step.fields).isValidSync(props.defaultValues));
+
+    // If none of the steps has an invalid field, use the last step
+    setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -4,14 +4,12 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
-import Status, { StatusEnum } from "@/components/elements/Status/Status";
+import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
+import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
-  fetchGetV2TerrafundValidationPolygon,
-  fetchPutV2SitePolygonUUID,
-  GetV2AuditStatusResponse,
-  useGetV2AuditStatus,
+  fetchPostV2TerrafundValidationPolygon,
   useGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -68,12 +66,9 @@ const PolygonDrawer = ({
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
 
   const context = useSitePolygonData();
-  const sitePolygonData = context?.sitePolygonData;
+  const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = context?.isUserDrawingEnabled;
-  const selectedPolygon = (sitePolygonData as any as Array<SitePolygon>)?.find(
-    (item: SitePolygon) => item?.poly_id === polygonSelected
-  );
-  const mutateSitePolygons = fetchPutV2SitePolygonUUID;
+  const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
@@ -85,26 +80,10 @@ const PolygonDrawer = ({
     }
   );
 
-  const {
-    data: auditLogData,
-    refetch,
-    isLoading
-  } = useGetV2AuditStatus<{ data: GetV2AuditStatusResponse }>({
-    queryParams: {
-      entity: "SitePolygon",
-      uuid: selectedPolygon?.uuid ?? ""
-    }
-  });
-
-  const validatePolygon = () => {
-    fetchGetV2TerrafundValidationPolygon({
-      queryParams: {
-        uuid: polygonSelected
-      }
-    }).then(() => {
-      reloadCriteriaValidation();
-      setCheckPolygonValidation(false);
-    });
+  const validatePolygon = async () => {
+    await fetchPostV2TerrafundValidationPolygon({ queryParams: { uuid: polygonSelected } });
+    reloadCriteriaValidation();
+    setCheckPolygonValidation(false);
   };
 
   useEffect(() => {
@@ -119,7 +98,7 @@ const PolygonDrawer = ({
   }, [isPolygonStatusOpen]);
 
   useEffect(() => {
-    if (criteriaData && criteriaData.criteria_list) {
+    if (criteriaData?.criteria_list) {
       const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
         id: criteria.criteria_id,
         date: criteria.latest_created_at,
@@ -134,17 +113,16 @@ const PolygonDrawer = ({
   }, [criteriaData]);
 
   useEffect(() => {
-    if (sitePolygonData && Array.isArray(sitePolygonData)) {
+    if (Array.isArray(sitePolygonData)) {
       const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
-      setSelectedPolygonData(PolygonData || {});
-      setStatusSelectedPolygon(PolygonData?.status || "");
+      setSelectedPolygonData(PolygonData ?? {});
+      setStatusSelectedPolygon(PolygonData?.status ?? "");
     } else {
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
   }, [polygonSelected, sitePolygonData]);
   useEffect(() => {
-    console.log("openEditNewPolygon", openEditNewPolygon);
     if (openEditNewPolygon) {
       setButtonToogle(true);
       setOpenAttributes(true);
@@ -163,7 +141,7 @@ const PolygonDrawer = ({
   useEffect(() => {
     const fetchCriteriaValidation = async () => {
       if (!buttonToogle) {
-        const criteriaData = await fetchGetV2TerrafundValidationPolygon({
+        const criteriaData = await fetchPostV2TerrafundValidationPolygon({
           queryParams: {
             uuid: polygonSelected
           }
@@ -214,17 +192,10 @@ const PolygonDrawer = ({
               name={selectedPolygon?.poly_name}
               refresh={refresh}
               record={selectedPolygon}
-              mutate={mutateSitePolygons}
               tab="polygonReview"
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
-            <CommentarySection
-              auditLogData={auditLogData?.data}
-              refresh={refetch}
-              record={selectedPolygon}
-              entity={"SitePolygon"}
-              loading={isLoading}
-            ></CommentarySection>
+            <CommentarySection record={selectedPolygon} entity={"SitePolygon"}></CommentarySection>
           </div>
         </Then>
         <Else>
