@@ -82,11 +82,11 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
           </header>
           <div className="max-h-[100%] w-full flex-[1_1_0] overflow-auto px-8 py-8">
             <div className="flex items-center justify-between">
-              <Text variant="text-24-bold">{title}</Text>
+              <Text variant="text-24-bold">{t(title)}</Text>
             </div>
             <When condition={!!content}>
               <Text as="div" variant="text-12-bold" className="mt-1 mb-8" containHtml>
-                {content}
+                {t(content)}
               </Text>
             </When>
             <div className="mb-[72px]">
@@ -137,7 +137,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
           <div className="flex w-full justify-end px-8 py-4">
             <Button {...primaryButtonProps}>
               <Text variant="text-14-bold" className="capitalize text-white">
-                {primaryButtonText}
+                {t(primaryButtonText)}
               </Text>
             </Button>
           </div>

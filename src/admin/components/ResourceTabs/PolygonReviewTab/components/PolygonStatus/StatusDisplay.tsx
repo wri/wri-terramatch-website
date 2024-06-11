@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useState } from "react";
 import { useShowContext } from "react-admin";
 
@@ -213,9 +214,9 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh && refresh();
-            reloadEntity && reloadEntity();
-            closeModal;
+            refresh?.();
+            reloadEntity?.();
+            closeModal?.();
           }
         }}
       />
@@ -273,9 +274,9 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh && refresh();
-            reloadEntity && reloadEntity();
-            closeModal;
+            refresh?.();
+            reloadEntity?.();
+            closeModal?.();
           }
         }}
       />
@@ -291,7 +292,7 @@ const StatusDisplay = ({
           <Button
             disabled={tab == "polygonReview"}
             variant="semi-black"
-            className={`w-full flex-1 whitespace-nowrap ${tab == "polygonReview" ? "opacity-0" : ""}`}
+            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": tab === "polygonReview" })}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">{t("Change Request")}</Text>
