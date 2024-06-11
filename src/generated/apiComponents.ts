@@ -32027,7 +32027,7 @@ export const usePutV2GeometryUUID = (
 
 export type GetV2AuditStatusENTITYUUIDPathParams = {
   /**
-   * allowed values project/site/site-polygons
+   * allowed values project/site/site-polygon
    */
   entity: string;
   uuid: string;
@@ -32100,9 +32100,17 @@ export const useGetV2AuditStatusENTITYUUID = <TData = GetV2AuditStatusENTITYUUID
   );
 };
 
-export type PostV2AuditStatusError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2AuditStatusENTITYUUIDPathParams = {
+  /**
+   * allowed values project/site/site-polygon
+   */
+  entity: string;
+  uuid: string;
+};
 
-export type PostV2AuditStatusResponse = {
+export type PostV2AuditStatusENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AuditStatusENTITYUUIDResponse = {
   id?: string;
   uuid?: string;
   entity_name?: string;
@@ -32135,36 +32143,50 @@ export type PostV2AuditStatusResponse = {
   }[];
 };
 
-export type PostV2AuditStatusRequestBody = {
-  auditable_type?: string;
-  auditable_uuid?: string;
+export type PostV2AuditStatusENTITYUUIDRequestBody = {
   status?: string;
   comment?: string;
   type?: string;
+  is_active?: boolean;
   request_removed?: boolean;
 };
 
-export type PostV2AuditStatusVariables = {
-  body?: PostV2AuditStatusRequestBody;
+export type PostV2AuditStatusENTITYUUIDVariables = {
+  body?: PostV2AuditStatusENTITYUUIDRequestBody;
+  pathParams: PostV2AuditStatusENTITYUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPostV2AuditStatus = (variables: PostV2AuditStatusVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2AuditStatusResponse, PostV2AuditStatusError, PostV2AuditStatusRequestBody, {}, {}, {}>({
-    url: "/v2/audit-status",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const fetchPostV2AuditStatusENTITYUUID = (
+  variables: PostV2AuditStatusENTITYUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2AuditStatusENTITYUUIDResponse,
+    PostV2AuditStatusENTITYUUIDError,
+    PostV2AuditStatusENTITYUUIDRequestBody,
+    {},
+    {},
+    PostV2AuditStatusENTITYUUIDPathParams
+  >({ url: "/v2/audit-status/{entity}/{uuid}", method: "post", ...variables, signal });
 
-export const usePostV2AuditStatus = (
+export const usePostV2AuditStatusENTITYUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<PostV2AuditStatusResponse, PostV2AuditStatusError, PostV2AuditStatusVariables>,
+    reactQuery.UseMutationOptions<
+      PostV2AuditStatusENTITYUUIDResponse,
+      PostV2AuditStatusENTITYUUIDError,
+      PostV2AuditStatusENTITYUUIDVariables
+    >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2AuditStatusResponse, PostV2AuditStatusError, PostV2AuditStatusVariables>(
-    (variables: PostV2AuditStatusVariables) => fetchPostV2AuditStatus({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<
+    PostV2AuditStatusENTITYUUIDResponse,
+    PostV2AuditStatusENTITYUUIDError,
+    PostV2AuditStatusENTITYUUIDVariables
+  >(
+    (variables: PostV2AuditStatusENTITYUUIDVariables) =>
+      fetchPostV2AuditStatusENTITYUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };

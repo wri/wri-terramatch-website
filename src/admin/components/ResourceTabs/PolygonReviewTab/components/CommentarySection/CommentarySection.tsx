@@ -11,15 +11,13 @@ const CommentarySection = ({
   refresh,
   record,
   entity,
-  viewCommentsList = true,
-  attachmentRefetch
+  viewCommentsList = true
 }: {
   auditLogData?: any;
-  refresh?: any;
+  refresh?: () => void;
   record?: any;
   entity?: "Project" | "SitePolygon" | "Site";
   viewCommentsList?: boolean;
-  attachmentRefetch?: any;
 }) => {
   const { data: authMe } = useGetAuthMe({}) as {
     data: {

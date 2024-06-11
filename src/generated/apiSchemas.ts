@@ -23005,11 +23005,10 @@ export type GeometryPost = {
 };
 
 export type AuditStatusCreateRequest = {
-  auditable_type?: string;
-  auditable_uuid?: string;
   status?: string;
   comment?: string;
   type?: string;
+  is_active?: boolean;
   request_removed?: boolean;
 };
 

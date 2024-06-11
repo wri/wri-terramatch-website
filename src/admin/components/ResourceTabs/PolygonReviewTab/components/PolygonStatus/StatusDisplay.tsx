@@ -175,7 +175,7 @@ const StatusDisplay = ({
             await mutate({
               pathParams: {
                 uuid: record?.uuid,
-                entity: titleStatus.toLowerCase()
+                entity: titleStatus.toLowerCase() == "polygon" ? "site-polygon" : titleStatus.toLowerCase()
               },
               body: {
                 status: option?.status,

@@ -5,7 +5,7 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { usePostV2AuditStatus } from "@/generated/apiComponents";
+import { usePostV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 import { SelectedItem } from "@/hooks/AuditStatus/useLoadEntityList";
 import { recentRequestData } from "@/utils/statusUtils";
@@ -45,33 +45,33 @@ const SiteAuditLogEntityStatusSide = ({
   const recentRequest = auditLogData?.find(
     (item: AuditStatusResponse) => item.type == "change-request" && item.is_active
   );
-  const mutateUpload = recordType === "Project" ? usePostV2AuditStatus : usePostV2AuditStatus;
-  const { mutate: upload } = mutateUpload();
+  const mutateUpload = recordType === "Project" ? usePostV2AuditStatusENTITYUUID : usePostV2AuditStatusENTITYUUID;
+  const { mutate: upload } = mutateUpload({
+    onSuccess: () => {
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+      refresh && refresh();
+    }
+  });
 
   const deactivateRecentRequest = async () => {
-    upload?.(
-      {
-        //@ts-ignore swagger issue
-        body: {
-          // entity_uuid: record?.uuid,
-          status: record?.status,
-          // entity: recordType === "Polygon" ? "SitePolygon" : recordType,
-          comment: "",
-          type: "change-request",
-          // is_active: false,
-          request_removed: true
-        }
+    upload?.({
+      pathParams: {
+        uuid: record?.uuid,
+        entity: recordType === "Polygon" ? "site-polygon" : recordType
       },
-      {
-        onSuccess: () => {
-          setOpen(true);
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
-          refresh && refresh();
-        }
+      body: {
+        // entity_uuid: record?.uuid,
+        status: record?.status,
+        // entity: recordType === "Polygon" ? "SitePolygon" : recordType,
+        comment: "",
+        type: "change-request",
+        // is_active: false,
+        request_removed: true
       }
-    );
+    });
   };
 
   return (

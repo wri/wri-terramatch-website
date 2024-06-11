@@ -6,7 +6,8 @@ import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { usePostV2AuditStatus } from "@/generated/apiComponents";
+import { fetchPostV2FileUploadMODELCOLLECTIONUUID, usePostV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 import Notification from "../Notification/Notification";
 
@@ -15,7 +16,7 @@ export interface CommentaryBoxProps {
   lastName: string;
   buttonSendOnBox?: boolean;
   mutate?: any;
-  refresh?: any;
+  refresh?: () => void;
   record?: any;
   entity?: string;
 }
@@ -24,7 +25,31 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
   const t = useT();
 
-  const { mutate: sendCommentary } = usePostV2AuditStatus();
+  const { mutate: sendCommentary } = usePostV2AuditStatusENTITYUUID({
+    onSuccess: (res: AuditStatusResponse) => {
+      const resAuditlog = res as { data: { uuid: string } };
+      const bodyFiles = new FormData();
+      files.forEach(element => {
+        if (element instanceof File) {
+          bodyFiles.append("upload_file", element);
+          fetchPostV2FileUploadMODELCOLLECTIONUUID({
+            //@ts-ignore swagger issue
+            body: bodyFiles,
+            pathParams: { model: "audit-status", collection: "attachments", uuid: resAuditlog.data.uuid as any }
+          });
+        }
+      });
+      setShowNotification(true);
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+      setComment("");
+      setError("");
+      setFiles([]);
+      props.refresh && props.refresh();
+      setLoading(false);
+    }
+  });
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -76,25 +101,17 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       body.append(`file[${index}]`, element);
     });
     setLoading(true);
-    sendCommentary?.(
-      {
-        //@ts-ignore swagger issue
-        body
+    sendCommentary?.({
+      pathParams: {
+        entity:
+          props.entity?.toLocaleLowerCase() == "sitepolygon"
+            ? "site-polygon"
+            : (props.entity?.toLocaleLowerCase() as string),
+        uuid: props.record?.uuid as string
       },
-      {
-        onSuccess: () => {
-          setShowNotification(true);
-          setTimeout(() => {
-            setShowNotification(false);
-          }, 3000);
-          setComment("");
-          setError("");
-          setFiles([]);
-          props.refresh && props.refresh();
-          setLoading(false);
-        }
-      }
-    );
+      //@ts-ignore swagger issue
+      body
+    });
   };
 
   const handleCommentChange = (e: any) => {
