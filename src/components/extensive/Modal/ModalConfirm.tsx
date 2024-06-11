@@ -18,6 +18,7 @@ export interface ModalConfirmProps extends ModalProps {
   menu?: Option[];
   menuLabel?: string;
   commentArea?: boolean;
+  checkPolygonsSite?: boolean | undefined;
 }
 
 const ModalConfirm: FC<ModalConfirmProps> = ({
@@ -30,16 +31,23 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   menu = [],
   menuLabel,
   commentArea = false,
+  checkPolygonsSite,
   ...rest
 }) => {
   const [data, useData] = useState("");
   const [selectedOption, setSelectedOption] = useState<any>(null);
   const [showError, setShowError] = useState(false);
   const [charCount, setCharCount] = useState<number>(0);
+  const [warning, setWarning] = useState<string>("");
 
   const handleCommentChange = (e: any) => {
     useData(e.target.value);
     setCharCount(e.target.value.length);
+    if (charCount >= 255) {
+      setWarning("Your comment exceeds 255 characters.");
+    } else {
+      setWarning("");
+    }
   };
   const t = useT();
 
@@ -72,6 +80,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               onChange={opt => {
                 setSelectedOption(opt);
               }}
+              disableOptionTitles={checkPolygonsSite ? ["Approved"] : undefined}
             />
             <If condition={showError}>
               <Text variant="text-12-bold" className="text-red">
@@ -90,8 +99,11 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
             containerClassName="w-full"
             rows={4}
           />
-          <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
-            {charCount}/255 {t("characters")}
+          <div className="display-grid">
+            {warning && charCount > 255 && <div className="text-right text-xs text-red">{warning}</div>}
+            <div className={`text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
+              {charCount}/255 {t("characters")}
+            </div>
           </div>
         </When>
       </div>

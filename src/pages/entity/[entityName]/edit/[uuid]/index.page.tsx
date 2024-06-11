@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -154,6 +155,8 @@ const EditEntityPage = () => {
           }}
         />
       </LoadingContainer>
+      <br />
+      <PageFooter />
     </BackgroundLayout>
   );
 };

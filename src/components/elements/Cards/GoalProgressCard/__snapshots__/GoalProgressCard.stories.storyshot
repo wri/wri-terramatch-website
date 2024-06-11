@@ -141,7 +141,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           className="text-14-bold"
           data-testid="txt"
         >
-          1332
+          1,332
         </p>
       </div>
       <div
@@ -165,7 +165,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           className="text-14-bold"
           data-testid="txt"
         >
-          530000
+          530,000
         </p>
       </div>
     </div>

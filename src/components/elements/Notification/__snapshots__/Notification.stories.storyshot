@@ -5,33 +5,54 @@ exports[`Storyshots Components/Elements/Notification Error 1`] = `
   className="p-10"
 >
   <div
-    className="flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-error-600"
+    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
   >
     <div
-      className="mr-2"
+      className="flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-error-600"
     >
       <div
-        style={
-          Object {
-            "height": 24,
-            "width": 24,
+        className="mr-2"
+      >
+        <div
+          style={
+            Object {
+              "height": 24,
+              "width": 24,
+            }
           }
-        }
-      />
-    </div>
-    <div>
-      <p
-        className="text-error-600 text-bold-body-300"
-        data-testid="txt"
+        />
+      </div>
+      <div
+        className="w-full"
       >
-        Your critical message - make it short
-      </p>
-      <p
-        className="mt-2 !font-primary text-body-200"
-        data-testid="txt"
-      >
-        Describe the event and give further instruction if needed, including links to other pages.
-      </p>
+        <div>
+          <p
+            className="w-full text-error-600 text-bold-body-300"
+            data-testid="txt"
+          >
+            <button
+              className="float-right text-neutral-400 hover:opacity-60"
+              onClick={[Function]}
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+            </button>
+            Your critical message - make it short
+          </p>
+        </div>
+        <p
+          className="mt-2 !font-primary text-body-200"
+          data-testid="txt"
+        >
+          Describe the event and give further instruction if needed, including links to other pages.
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -42,33 +63,54 @@ exports[`Storyshots Components/Elements/Notification Success 1`] = `
   className="p-10"
 >
   <div
-    className="flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-success-600"
+    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
   >
     <div
-      className="mr-2"
+      className="flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-success-600"
     >
       <div
-        style={
-          Object {
-            "height": 24,
-            "width": 24,
+        className="mr-2"
+      >
+        <div
+          style={
+            Object {
+              "height": 24,
+              "width": 24,
+            }
           }
-        }
-      />
-    </div>
-    <div>
-      <p
-        className="text-success-600 text-bold-body-300"
-        data-testid="txt"
+        />
+      </div>
+      <div
+        className="w-full"
       >
-        Success! Your notes were just saved!
-      </p>
-      <p
-        className="mt-2 !font-primary text-body-200"
-        data-testid="txt"
-      >
-        Your notes were just saved!
-      </p>
+        <div>
+          <p
+            className="w-full text-success-600 text-bold-body-300"
+            data-testid="txt"
+          >
+            <button
+              className="float-right text-neutral-400 hover:opacity-60"
+              onClick={[Function]}
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+            </button>
+            Success! Your notes were just saved!
+          </p>
+        </div>
+        <p
+          className="mt-2 !font-primary text-body-200"
+          data-testid="txt"
+        >
+          Your notes were just saved!
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -79,33 +121,54 @@ exports[`Storyshots Components/Elements/Notification Warning 1`] = `
   className="p-10"
 >
   <div
-    className="flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-tertiary-600"
+    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
   >
     <div
-      className="mr-2"
+      className="flex items-start rounded-lg font-bold tracking-tighter leading-16 p-4 max-w-[35vw] bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-tertiary-600"
     >
       <div
-        style={
-          Object {
-            "height": 24,
-            "width": 24,
+        className="mr-2"
+      >
+        <div
+          style={
+            Object {
+              "height": 24,
+              "width": 24,
+            }
           }
-        }
-      />
-    </div>
-    <div>
-      <p
-        className="text-tertiary-600 text-bold-body-300"
-        data-testid="txt"
+        />
+      </div>
+      <div
+        className="w-full"
       >
-        Your polygon has been edited. Run a validation check.
-      </p>
-      <p
-        className="mt-2 !font-primary text-body-200"
-        data-testid="txt"
-      >
-        This is required for site approval.
-      </p>
+        <div>
+          <p
+            className="w-full text-tertiary-600 text-bold-body-300"
+            data-testid="txt"
+          >
+            <button
+              className="float-right text-neutral-400 hover:opacity-60"
+              onClick={[Function]}
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+            </button>
+            Your polygon has been edited. Run a validation check.
+          </p>
+        </div>
+        <p
+          className="mt-2 !font-primary text-body-200"
+          data-testid="txt"
+        >
+          This is required for site approval.
+        </p>
+      </div>
     </div>
   </div>
 </div>

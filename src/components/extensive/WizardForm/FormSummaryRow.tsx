@@ -1,7 +1,7 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
 import { useMemo } from "react";
+import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
@@ -14,18 +14,22 @@ import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
+import { useGetV2SitesSiteBbox, useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
 import { getAnswer, getFormattedAnswer } from "./utils";
 
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
-
 export interface FormSummaryRowProps extends FormSummaryProps {
+  type?: EntityName;
   step: FormStepSchema;
   index: number;
   nullText?: string;
@@ -41,10 +45,21 @@ export interface FormEntry {
 
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
-  return useMemo<any[]>(() => getFormEntries(props, t), [props, t]);
+  const { record } = useShowContext();
+  const siteGeojson = getSitePolygonData(record);
+  const bbox = getSiteBbox(record);
+  const mapFunctions = useMap();
+
+  return useMemo<any[]>(() => getFormEntries(props, t, siteGeojson, bbox, mapFunctions), [props, t, siteGeojson, bbox]);
 };
 
-export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, t: typeof useT) => {
+export const getFormEntries = (
+  { step, values, nullText }: GetFormEntriesProps,
+  t: typeof useT,
+  siteGeojson?: any,
+  bbox?: any,
+  mapFunctions?: any
+) => {
   const outputArr: FormEntry[] = [];
 
   step.fields.forEach(f => {
@@ -83,7 +98,19 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
         outputArr.push({
           title: f.label,
           type: f.type,
-          value: <Map geojson={values[f.name]} className="h-[240px] flex-1" hasControls={false} />
+          value: siteGeojson ? (
+            <MapContainer
+              polygonsData={siteGeojson}
+              bbox={bbox}
+              className="h-[240px] flex-1"
+              hasControls={false}
+              showPopups
+              showLegend
+              mapFunctions={mapFunctions}
+            />
+          ) : (
+            <></>
+          )
         });
         break;
       }
@@ -170,6 +197,37 @@ export const getFormEntries = ({ step, values, nullText }: GetFormEntriesProps, 
   return outputArr;
 };
 
+const getSitePolygonData = (record: any) => {
+  let result = null;
+  if (record) {
+    const { data: sitePolygonData } = useGetV2SitesSitePolygon({
+      pathParams: {
+        site: record.uuid
+      }
+    });
+    if (sitePolygonData) {
+      const polygonDataMap = ((sitePolygonData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
+        if (!acc[data.status]) {
+          acc[data.status] = [];
+        }
+        acc[data.status].push(data.poly_id);
+        return acc;
+      }, {});
+      result = polygonDataMap;
+    }
+  }
+  return result;
+};
+
+const getSiteBbox = (record: any) => {
+  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
+    pathParams: {
+      site: record.uuid
+    }
+  });
+  const siteBbox = sitePolygonBbox?.bbox;
+  return siteBbox;
+};
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });

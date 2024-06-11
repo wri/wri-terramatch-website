@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 
-const InformationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
+const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
   return (
     <>
@@ -15,12 +15,13 @@ const InformationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
         {props.step.title}
       </Text>
       <List
+        className={`${type == "sites" ? "grid grid-cols-3" : "flex flex-col"} mt-4 gap-4`}
         items={entries}
         render={entry => (
           <div>
             <Typography className={LabeledClasses.label}>
               <Text variant="text-14-light" className="capitalize text-grey-700">
-                {entry.title}
+                {entry.title === "Upload Site Boundary" ? "Site Boundary" : entry.title}
               </Text>
             </Typography>
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>

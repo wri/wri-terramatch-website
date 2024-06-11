@@ -18,6 +18,7 @@ export interface UserRoleCardProps {
   setSelectedOption?: any;
   refContentCard?: React.RefObject<HTMLDivElement>;
   selectedOption?: string;
+  icon?: IconNames;
 }
 
 const UserRoleCard: React.FC<UserRoleCardProps> = ({
@@ -29,7 +30,8 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   setSelectedOption,
   refContentCard,
   selectedOption,
-  menu
+  menu,
+  icon
 }) => {
   const t = useT();
   const MenuOption: MenuItemProps[] = options ?? [
@@ -64,7 +66,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
       })}
     >
       <div className="rounded-lg border border-grey-350 p-2">
-        <Icon name={IconNames.USER_ROLE} className="h-10 w-10 lg:h-11 lg:w-11 wide:h-12 wide:w-12" />
+        <Icon name={icon ?? IconNames.USER_ROLE} className="h-10 w-10 lg:h-11 lg:w-11 wide:h-12 wide:w-12" />
       </div>
       <div className="flex flex-1 flex-col items-start gap-1">
         <Text variant="text-12-bold" className="text-darkCustom">
