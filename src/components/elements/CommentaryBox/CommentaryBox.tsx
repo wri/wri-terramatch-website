@@ -161,7 +161,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       <div className="flex flex-1 justify-between gap-4">
         <div className="flex flex-wrap gap-2">
           <When condition={files.length > 0}>
-            {...files.map((file: any) => (
+            {files.map((file: any) => (
               <div
                 key={file.name}
                 className="flex items-baseline justify-between gap-2 rounded-xl bg-neutral-150 px-2 py-1"
