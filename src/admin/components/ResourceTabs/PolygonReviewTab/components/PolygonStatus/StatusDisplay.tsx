@@ -220,13 +220,12 @@ const StatusDisplay = ({
         content={contentRequest}
         commentArea
         onClose={closeModal}
-        onConfirm={async (text: any, opt) => {
-          const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
+        onConfirm={async (text: any) => {
           try {
             await mutate({
-              pathParams: { uuid: record?.uuid },
+              pathParams: { uuid: record?.uuid, entity: getRequestPathParam(titleStatus) },
               body: {
-                status: option?.status,
+                status: "",
                 comment: text,
                 type: "change-request",
                 is_active: true,

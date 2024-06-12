@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -22,7 +22,7 @@ const SiteAuditLogEntityStatusSide = ({
   selectedPolygon,
   setSelectedPolygon,
   auditLogData,
-  entityType = "Polygon", //useAditLogEntity
+  entityType = "Polygon",
   mutate,
   getValueForStatus,
   progressBarLabels,
@@ -43,9 +43,11 @@ const SiteAuditLogEntityStatusSide = ({
   checkPolygonsSite?: boolean | undefined;
 }) => {
   const [open, setOpen] = useState(false);
-  const recentRequest = auditLogData?.find(
-    (item: AuditStatusResponse) => item.type == "change-request" && item.is_active
-  );
+
+  const recentRequest = useMemo(() => {
+    return auditLogData?.find((item: AuditStatusResponse) => item.type == "change-request" && item.is_active);
+  }, [auditLogData]);
+
   const mutateUpload = entityType === "Project" ? usePostV2AuditStatusENTITYUUID : usePostV2AuditStatusENTITYUUID;
   const { mutate: upload } = mutateUpload({
     onSuccess: () => {
@@ -64,7 +66,7 @@ const SiteAuditLogEntityStatusSide = ({
         entity: getRequestPathParam(entityType)
       },
       body: {
-        status: record?.status,
+        status: "",
         comment: "",
         type: "change-request",
         request_removed: true

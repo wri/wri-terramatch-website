@@ -70,7 +70,8 @@ export const projectStatusLabels = [
   { id: "4", label: "Approved" }
 ];
 
-export const recentRequestData = (recentRequest: AuditStatusResponse) => {
+export const recentRequestData = (recentRequest: AuditStatusResponse | undefined) => {
+  if (!recentRequest) return "";
   return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
   ${convertDateFormat(recentRequest.date_created) ?? ""}`;
 };
