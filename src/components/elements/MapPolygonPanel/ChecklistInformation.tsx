@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useModalContext } from "@/context/modal.provider";
@@ -7,12 +9,13 @@ import Text from "../Text/Text";
 
 const ChecklistInformation = () => {
   const { openModal, closeModal } = useModalContext();
+  const t = useT();
+
   const openFormModalHandlerRequestPolygonSupport = () => {
     openModal(
       <ModalWithMap
-        title="Request Support"
+        title={t("Request Support")}
         onClose={closeModal}
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
         primaryButtonText="Submit"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       ></ModalWithMap>
@@ -20,59 +23,59 @@ const ChecklistInformation = () => {
   };
   return (
     <div className="text-white">
-      <Text variant="text-14-bold">3 out 14</Text>
-      <Text variant="text-14-light">Validation criteria are not met</Text>
+      <Text variant="text-14-bold">3 {t("out")} 14</Text>
+      <Text variant="text-14-light">{t("Validation criteria are not met")}</Text>
       <Button variant="primary" className="mt-4" onClick={openFormModalHandlerRequestPolygonSupport}>
-        request support
+        {t("request support")}
       </Button>
       <div className="mt-3 grid gap-3">
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          GeoJSON Format
+          {t("GeoJSON Format")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          WGS84 Projection
+          {t("WGS84 Projection")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.IC_ERROR} className="h-5 w-5 lg:h-6 lg:w-6" />
-          Earth Location
+          {t("Earth Location")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.IC_ERROR} className="h-5 w-5 lg:h-6 lg:w-6" />
-          Country
+          {t("Country")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          Reasonable Size Self-Intersecting Topology
+          {t("Reasonable Size Self-Intersecting Topology")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.IC_ERROR} className="h-5 w-5 lg:h-6 lg:w-6" />
-          Overlapping Polygons
+          {t("Overlapping Polygons")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          Spike
+          {t("Spike")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          Polygon Integrity
+          {t("Polygon Integrity")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          GeoJSON Format
+          {t("GeoJSON Format")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.CHECK_PROGRESSBAR} className="h-4 w-4 text-green-400 lg:h-5 lg:w-5" />
-          WGS84 Projection
+          {t("WGS84 Projection")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.IC_ERROR} className="h-5 w-5 lg:h-6 lg:w-6" />
-          Earth Location
+          {t("Earth Location")}
         </Text>
         <Text variant="text-14-light" className="flex items-center gap-2">
           <Icon name={IconNames.IC_ERROR} className="h-5 w-5 lg:h-6 lg:w-6" />
-          Country
+          {t("Country")}
         </Text>
       </div>
     </div>
