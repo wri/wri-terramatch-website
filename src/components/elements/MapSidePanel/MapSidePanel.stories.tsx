@@ -25,8 +25,7 @@ export const Default: Story = {
     );
   },
   args: {
-    title: "Project Sites",
-    onSelectItem: console.log
+    title: "Project Sites"
   }
 };
 
