@@ -16,7 +16,8 @@ const ChecklistInformation = () => {
       <ModalWithMap
         title={t("Request Support")}
         onClose={closeModal}
-        primaryButtonText="Submit"
+        primaryButtonText={t("Submit")}
+        content="-&nbsp;&nbsp;•&nbsp;&nbsp;-"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       ></ModalWithMap>
     );
