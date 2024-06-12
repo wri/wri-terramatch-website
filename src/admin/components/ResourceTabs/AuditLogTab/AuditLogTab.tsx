@@ -20,15 +20,6 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: Entity["entityName"];
 }
 
-export interface EntityList {
-  poly_name?: string | undefined;
-  name?: string | undefined;
-  uuid?: string | undefined;
-  value?: string | undefined;
-  meta?: string | undefined;
-  status?: string | undefined;
-}
-
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(AuditLogButtonStates.PROJECT);
   const { record, isLoading } = useShowContext();
