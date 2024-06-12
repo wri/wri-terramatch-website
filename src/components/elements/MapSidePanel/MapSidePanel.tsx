@@ -18,7 +18,6 @@ import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
   items: MapSidePanelItemProps[];
-  onSelectItem: (item: MapSidePanelItemProps) => void;
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
@@ -32,7 +31,6 @@ const MapSidePanel = ({
   title,
   items,
   className,
-  onSelectItem,
   onSearch,
   onLoadMore,
   emptyText,
@@ -192,7 +190,6 @@ const MapSidePanel = ({
                 status={item.status}
                 onClick={() => {
                   setSelected(item);
-                  onSelectItem(item);
                 }}
                 setClickedButton={setClickedButton}
                 isSelected={selected?.uuid === item.uuid}

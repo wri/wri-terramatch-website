@@ -17,7 +17,6 @@ interface ProjectAreaProps {
 const ProjectArea = ({ project }: ProjectAreaProps) => {
   const t = useT();
   const { format } = useDate();
-  const [setSelected] = useState<any>();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [projectBbox, setProjectBbox] = useState<BBox>();
@@ -88,7 +87,6 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
           })) || []) as any[]
         }
         mapFunctions={mapFunctions}
-        onSelectItem={setSelected}
         className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
         emptyText={t("No polygons are available.")}
         checkedValues={checkedValues}
