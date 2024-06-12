@@ -135,7 +135,7 @@ const MapSidePanel = ({
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
         <Text variant="text-16-bold" className="text-white">
-          {title}
+          {t(title)}
         </Text>
         <div className="flex items-center gap-2">
           <div className="relative" ref={menuCheckboxRef}>

@@ -30,8 +30,6 @@ import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
 
-// import SiteArea from "../components/SiteArea";
-
 interface SiteOverviewTabProps {
   site: any;
 }
@@ -39,7 +37,6 @@ interface SiteOverviewTabProps {
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
-  // const { format } = useDate();
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
   const { openModal, closeModal } = useModalContext();
@@ -50,8 +47,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
         descriptionList={
           <div className="mt-9 flex">
-            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
-            <Text variant="text-12-light">50 MB per upload</Text>
+            <Text variant="text-12-bold">{t("TerraMatch upload limits:")}&nbsp;</Text>
+            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
           </div>
         }
         onClose={closeModal}
@@ -257,9 +254,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     }
   ];
 
-  // const landUseTypesOptions = useGetOptions(site.land_use_types);
-  // const restorationStrategyOptions = useGetOptions(site.restoration_strategy);
-
   const { data: allImages } = useGetV2MODELUUIDImageLocations({
     pathParams: { model: "sites", uuid: site.uuid }
   });
@@ -335,10 +329,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             </div>
           </div>
         </PageCard>
-
-        {/* <PageCard title={t("Site Area")} tooltip=" ">
-          <Map className="rounded-lg" geojson={geoJSON} imageLayerGeojson={imagesGeoJson} />
-        </PageCard> */}
       </PageRow>
       <PageRow>
         <PageColumn>
@@ -378,53 +368,9 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} classNameLabels="" />
               </div>
             </div>
-            {/* <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} /> */}
           </PageCard>
         </PageColumn>
       </PageRow>
-      {/* Old Site Information */}
-      {/* <PageRow>
-        <PageColumn>
-          <PageCard title={t("Site Information")} gap={8}>
-            <SelectImageListField
-              title={t("Target Land Use Types")}
-              options={landUseTypesOptions}
-              selectedValues={site.land_use_types}
-            />
-            <SelectImageListField
-              title={t("Restoration Strategies")}
-              options={restorationStrategyOptions}
-              selectedValues={site.restoration_strategy}
-            />
-          </PageCard>
-        </PageColumn>
-
-        <PageColumn>
-          <PageCard title={t("Site Details")} gap={4}>
-            <TextField label={t("Site Name")} value={site?.name} />
-            <When condition={isPPC}>
-              <TextField label={t("Site type")} value={site?.control_site ? t("Control Site") : t("Site")} />
-            </When>
-            <TextField label={t("Planting start date")} value={format(site.start_date)} />
-            <TextField label={t("Planting end date")} value={format(site.start_date)} />
-            <TextField label={t("Last Updated")} value={format(site.updated_at)} />
-          </PageCard>
-          <Paper>
-            <ButtonField
-              label={t("Tree Monitoring")}
-              subtitle={t(
-                "Tree monitoring must be completed for each site at baseline, 2.5 years and 5 years. Tree monitoring data is used to calculate the number of trees, natural regeneration, and survival rate of planted trees."
-              )}
-              buttonProps={{
-                as: Link,
-                variant: "secondary",
-                children: t("View"),
-                href: "https://ee.kobotoolbox.org/x/NKctF6KV"
-              }}
-            />
-          </Paper>
-        </PageColumn> 
-      </PageRow>*/}
       <PageRow>
         <PageColumn>
           <PageCard

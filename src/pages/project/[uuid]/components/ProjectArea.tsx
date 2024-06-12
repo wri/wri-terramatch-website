@@ -83,7 +83,7 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         items={
           (polygonsData?.map(item => ({
             ...item,
-            title: item.poly_name ?? "Unnamed Polygon",
+            title: item.poly_name ?? t("Unnamed Polygon"),
             subtitle: t("Created {date}", { date: format(item.created_at) })
           })) || []) as any[]
         }

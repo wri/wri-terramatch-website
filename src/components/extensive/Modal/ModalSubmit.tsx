@@ -55,9 +55,9 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
-            width={iconProps?.width || 40}
+            width={iconProps?.width ?? 40}
             className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
+            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
           />
         </When>
         <div className="flex items-center justify-between">
