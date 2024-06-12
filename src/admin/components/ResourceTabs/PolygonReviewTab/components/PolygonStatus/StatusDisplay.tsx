@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useState } from "react";
 import { useShowContext } from "react-admin";
 
@@ -36,49 +37,58 @@ const menuSiteOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1
+    value: 1,
+    viewPd: true
   },
   {
     title: "Awaiting Approval",
     status: "awaiting-approval",
-    value: 2
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3
+    value: 3,
+    viewPd: false
   },
   {
     title: "Planting in Progress",
     status: "planting-in-progress",
-    value: 4
+    value: 4,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 5
+    value: 5,
+    viewPd: false
   }
 ];
 const menuProjectOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1
+    value: 1,
+    viewPd: true
   },
   {
     title: "Awaiting Approval",
     status: "awaiting-approval",
-    value: 2
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3
+    value: 3,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4
+    value: 4,
+    viewPd: false
   }
 ];
 
@@ -279,7 +289,7 @@ const StatusDisplay = ({
           <Button
             disabled={tab == "polygonReview"}
             variant="semi-black"
-            className={`w-full flex-1 whitespace-nowrap ${tab == "polygonReview" ? "opacity-0" : ""}`}
+            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": tab === "polygonReview" })}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">Change Request</Text>
