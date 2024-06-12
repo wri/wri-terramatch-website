@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { Link as RaLink, useBasename } from "react-admin";
+import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
@@ -68,7 +69,9 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
           </Text>
         )}
       </div>
-      {auditLogData && <AuditLogTable auditLogData={auditLogData} />}
+      <When condition={!!auditLogData}>
+        <AuditLogTable auditLogData={auditLogData!} />
+      </When>
     </div>
   );
 };
