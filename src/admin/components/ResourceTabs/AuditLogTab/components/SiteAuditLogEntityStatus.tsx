@@ -37,13 +37,8 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
 }) => {
   const isSite = buttonToogle === AuditLogButtonStates.SITE;
   const basename = useBasename();
-  const getTitle = () => {
-    if (!record?.title) {
-      return record?.name;
-    } else {
-      return record?.title;
-    }
-  };
+
+  const getTitle = () => record?.title ?? record?.name;
 
   return (
     <div className="flex flex-col gap-6">

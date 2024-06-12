@@ -83,7 +83,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
             />
             <If condition={showError}>
               <Text variant="text-12-bold" className="text-red">
-                Please select an option
+                {t("Please select an option")}
               </Text>
             </If>
           </div>
@@ -120,7 +120,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               setTimeout(() => setShowError(false), 3000);
               return;
             }
-            onConfirm(data, selectedOption || [0]);
+            onConfirm(data, selectedOption ?? [0]);
             onClose();
           }}
         >

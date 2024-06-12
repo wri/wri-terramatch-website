@@ -55,7 +55,7 @@ const SiteAuditLogEntityStatusSide = ({
       setTimeout(() => {
         setOpen(false);
       }, 3000);
-      refresh && refresh();
+      refresh?.();
     }
   });
 

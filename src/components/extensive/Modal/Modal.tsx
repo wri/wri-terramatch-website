@@ -17,19 +17,17 @@ export interface ModalProps extends ModalBaseProps {
   secondaryButtonProps?: IButtonProps;
 }
 
-export const ModalBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-15",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+export const ModalBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => (
+  <div
+    {...rest}
+    className={twMerge(
+      "margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-15",
+      className
+    )}
+  >
+    {children}
+  </div>
+);
 
 const Modal: FC<ModalProps> = ({
   iconProps,

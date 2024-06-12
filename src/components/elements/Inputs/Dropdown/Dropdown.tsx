@@ -146,7 +146,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       "awaiting-approval": "bg-tertiary-600"
     };
 
-    return colorMap[option] || "";
+    return colorMap[option] ?? "";
   };
 
   const verifyDisableOption = (title: string) => {
@@ -183,7 +183,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               )}
             >
               <div className="flex items-center gap-2">
-                <When condition={options && options.length && options[0].meta}>
+                <When condition={options?.[0]?.meta != null}>
                   <div
                     className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
                       statusColor(options, toArray<any>(value)) ?? ""
