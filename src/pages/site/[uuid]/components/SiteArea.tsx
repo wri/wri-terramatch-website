@@ -42,37 +42,37 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
               <Icon name={IconNames.CLEAR} className="h-3 w-3 wide:h-4 wide:w-4" />
             </button>
             <Text variant="text-10-bold" className="mb-4 text-center">
-              Preview Attributes
+              {t("Preview Attributes")}
             </Text>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
-                Polygon ID
+                {t("Polygon ID")}
               </Text>
-              <Text variant="text-10-light">1213023412</Text>
+              <Text variant="text-10-light">-</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
-                Restoration Practice
+                {t("Restoration Practice")}
               </Text>
-              <Text variant="text-10-light">1213023412</Text>
+              <Text variant="text-10-light">-</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
-                Target Land Use System
+                {t("Target Land Use System")}
               </Text>
-              <Text variant="text-10-light">Riparian Area or Wetl...</Text>
+              <Text variant="text-10-light">-</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
-                Tree Distribution
+                {t("Tree Distribution")}
               </Text>
-              <Text variant="text-10-light">Single Line</Text>
+              <Text variant="text-10-light">-</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
-                Source
+                {t("Source")}
               </Text>
-              <Text variant="text-10-light">Flority</Text>
+              <Text variant="text-10-light">-</Text>
             </div>
           </div>
         </When>
