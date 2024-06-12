@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useState } from "react";
 import { useShowContext } from "react-admin";
@@ -134,7 +133,6 @@ const StatusDisplay = ({
   tab,
   viewPD
 }: StatusProps) => {
-  const t = useT();
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
@@ -151,12 +149,12 @@ const StatusDisplay = ({
   const { openModal, closeModal } = useModalContext();
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {t(DescriptionStatusMap[titleStatus])} <b style={{ fontSize: "inherit" }}>{t(name)}</b>?
+      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {t(DescriptionRequestMap[titleStatus])} <b style={{ fontSize: "inherit" }}>{t(name)}</b>?
+      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
   const filterViewPd = viewPD
@@ -287,7 +285,7 @@ const StatusDisplay = ({
       <div className="flex flex-col items-center gap-4">
         <div className="flex w-full items-center gap-4">
           <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
-            <Text variant="text-12-bold">{t("change status")}</Text>
+            <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
             disabled={tab == "polygonReview"}
@@ -295,7 +293,7 @@ const StatusDisplay = ({
             className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": tab === "polygonReview" })}
             onClick={openFormModalHandlerRequest}
           >
-            <Text variant="text-12-bold">{t("Change Request")}</Text>
+            <Text variant="text-12-bold">Change Request</Text>
           </Button>
         </div>
       </div>
