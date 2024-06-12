@@ -52,7 +52,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       setComment("");
       setError("");
       setFiles([]);
-      props.refresh && props.refresh();
+      props.refresh?.();
       setLoading(false);
     }
   });
