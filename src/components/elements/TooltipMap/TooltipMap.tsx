@@ -124,16 +124,6 @@ const TooltipMap = (props: TooltipMapProps) => {
           </button>
         </div>
       )}
-      {type === "goTo" && (
-        <div className="flex w-full items-center justify-center">
-          <button className="flex items-center justify-center gap-1" onClick={() => goToRelatedSiteProfile()}>
-            <Icon name={IconNames.CLICK} className="h-4 w-4" />
-            <Text variant="text-10-light" className="italic text-black">
-              click to open site profile page
-            </Text>
-          </button>
-        </div>
-      )}
     </div>
   );
 };
