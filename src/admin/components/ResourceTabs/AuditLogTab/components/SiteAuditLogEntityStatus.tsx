@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FC } from "react";
 import { Link as RaLink, useBasename } from "react-admin";
 
@@ -17,7 +16,6 @@ export interface SiteAuditLogEntityStatusProps {
   entityType?: number;
   entityName?: string;
   buttonToogle?: number;
-  viewPD?: boolean;
 }
 
 interface SelectedItem {
@@ -33,22 +31,19 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   record,
   auditLogData,
   refresh,
-  buttonToogle,
-  viewPD = true
+  buttonToogle
 }) => {
   const entityType = buttonToogle === AuditLogButtonStates.POLYGON;
   const isSite = buttonToogle === AuditLogButtonStates.SITE;
   const basename = useBasename();
-  const title = () => {
+  const getTitle = () => {
     if (!record?.title) {
       return record?.name;
     } else {
       return record?.title;
     }
   };
-  const redirectTo = viewPD
-    ? `/site/${record?.uuid}?tab=audit-log`
-    : `${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`;
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -66,19 +61,15 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         />
       </div>
       <div>
-        {!isSite && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
+        {!isSite && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
         {isSite && (
           <Text variant="text-16-bold">
-            History and Discussion for{" "}
-            {viewPD ? (
-              <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
-                {title()}
-              </Link>
-            ) : (
-              <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                {title()}
-              </RaLink>
-            )}
+            <RaLink
+              className="text-16-bold !text-[#000000DD]"
+              to={`${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`}
+            >
+              {getTitle()}
+            </RaLink>
           </Text>
         )}
       </div>

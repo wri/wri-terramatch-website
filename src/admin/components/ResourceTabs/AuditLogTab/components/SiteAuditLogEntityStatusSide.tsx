@@ -25,8 +25,7 @@ const SiteAuditLogEntityStatusSide = ({
   getValueForStatus,
   progressBarLabels,
   tab,
-  checkPolygonsSite,
-  viewPD = false
+  checkPolygonsSite
 }: {
   recordType?: AuditLogEntity;
   refresh?: () => void;
@@ -40,7 +39,6 @@ const SiteAuditLogEntityStatusSide = ({
   progressBarLabels?: Array<{ id: string; label: string }>;
   tab?: string;
   checkPolygonsSite?: boolean | undefined;
-  viewPD?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const recentRequest = auditLogData?.find(
@@ -121,7 +119,6 @@ const SiteAuditLogEntityStatusSide = ({
         record={record}
         tab={tab}
         checkPolygonsSite={checkPolygonsSite}
-        viewPD={viewPD}
       />
       <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>

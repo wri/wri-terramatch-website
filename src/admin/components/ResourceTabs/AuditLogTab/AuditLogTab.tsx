@@ -77,7 +77,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   auditLogData={auditLogData}
                   refresh={refetch}
                   buttonToogle={buttonToogle}
-                  viewPD={false}
                 />
               </When>
             </Stack>

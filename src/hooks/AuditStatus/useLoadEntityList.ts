@@ -80,6 +80,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
     const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
     const nameProperty = getNameProperty(entityType);
     const transformEntityListItem = (item: EntityListItem) => {
+      console.log("item", item);
       return {
         title: item?.[nameProperty],
         uuid: item?.uuid,

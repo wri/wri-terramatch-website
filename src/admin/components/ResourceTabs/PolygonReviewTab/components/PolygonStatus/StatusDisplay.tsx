@@ -13,84 +13,71 @@ const menuPolygonOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1,
-    viewPd: false
+    value: 1
   },
   {
     title: "Submitted",
     status: "submitted",
-    value: 2,
-    viewPd: true
+    value: 2
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3,
-    viewPd: false
+    value: 3
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4,
-    viewPd: false
+    value: 4
   }
 ];
 const menuSiteOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1,
-    viewPd: true
+    value: 1
   },
   {
     title: "Awaiting Approval",
     status: "awaiting-approval",
-    value: 2,
-    viewPd: true
+    value: 2
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3,
-    viewPd: false
+    value: 3
   },
   {
     title: "Planting in Progress",
     status: "planting-in-progress",
-    value: 4,
-    viewPd: false
+    value: 4
   },
   {
     title: "Approved",
     status: "approved",
-    value: 5,
-    viewPd: false
+    value: 5
   }
 ];
 const menuProjectOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1,
-    viewPd: true
+    value: 1
   },
   {
     title: "Awaiting Approval",
     status: "awaiting-approval",
-    value: 2,
-    viewPd: true
+    value: 2
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3,
-    viewPd: false
+    value: 3
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4,
-    viewPd: false
+    value: 4
   }
 ];
 
@@ -103,7 +90,6 @@ export interface StatusProps {
   refetchPolygon?: () => void;
   tab?: string;
   checkPolygonsSite?: boolean | undefined;
-  viewPD?: boolean;
 }
 
 const menuOptionsMap = {
@@ -131,8 +117,7 @@ const StatusDisplay = ({
   name,
   record,
   checkPolygonsSite,
-  tab,
-  viewPD
+  tab
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -158,16 +143,14 @@ const StatusDisplay = ({
       {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
-  const filterViewPd = viewPD
-    ? menuOptionsMap[titleStatus].filter(option => option.viewPd === true)
-    : menuOptionsMap[titleStatus];
+
   const openFormModalHandlerStatus = () => {
     openModal(
       <ModalConfirm
         title={`${titleStatus} Status Change`}
         commentArea
         menuLabel={""}
-        menu={filterViewPd}
+        menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}

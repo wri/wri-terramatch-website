@@ -33971,6 +33971,10 @@ export const usePutV2ENTITYUUIDStatus = (
   );
 };
 
+export type GetV2ProjectsUUIDSitePolygonsAllPathParams = {
+  uuid: string;
+};
+
 export type GetV2ProjectsUUIDSitePolygonsAllError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2ProjectsUUIDSitePolygonsAllResponse = {
@@ -33985,18 +33989,22 @@ export type GetV2ProjectsUUIDSitePolygonsAllResponse = {
   created_by?: string;
 }[];
 
-export type GetV2ProjectsUUIDSitePolygonsAllVariables = ApiContext["fetcherOptions"];
+export type GetV2ProjectsUUIDSitePolygonsAllVariables = {
+  pathParams: GetV2ProjectsUUIDSitePolygonsAllPathParams;
+} & ApiContext["fetcherOptions"];
 
 export const fetchGetV2ProjectsUUIDSitePolygonsAll = (
   variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
   signal?: AbortSignal
 ) =>
-  apiFetch<GetV2ProjectsUUIDSitePolygonsAllResponse, GetV2ProjectsUUIDSitePolygonsAllError, undefined, {}, {}, {}>({
-    url: "/v2/projects/{uuid}/site-polygons/all",
-    method: "get",
-    ...variables,
-    signal
-  });
+  apiFetch<
+    GetV2ProjectsUUIDSitePolygonsAllResponse,
+    GetV2ProjectsUUIDSitePolygonsAllError,
+    undefined,
+    {},
+    {},
+    GetV2ProjectsUUIDSitePolygonsAllPathParams
+  >({ url: "/v2/projects/{uuid}/site-polygons/all", method: "get", ...variables, signal });
 
 export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSitePolygonsAllResponse>(
   variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
@@ -34021,7 +34029,7 @@ export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSit
 };
 
 export type GetV2SitesSiteCheckApprovePathParams = {
-  uuid: string;
+  site: string;
 };
 
 export type GetV2SitesSiteCheckApproveError = Fetcher.ErrorWrapper<undefined>;

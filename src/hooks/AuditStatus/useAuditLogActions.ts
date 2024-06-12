@@ -92,7 +92,7 @@ const useAuditLogActions = ({
     const fetchCheckPolygons = async () => {
       if (entityType === "Site" && record?.uuid && isSite) {
         const result = await fetchGetV2SitesSiteCheckApprove({
-          pathParams: { uuid: isSiteProject ? selected?.uuid : record.uuid }
+          pathParams: { site: isSiteProject ? selected?.uuid : record.uuid }
         });
         setCheckPolygons(result.data?.can_approve);
       }
