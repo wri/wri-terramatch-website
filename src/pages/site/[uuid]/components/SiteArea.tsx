@@ -74,7 +74,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   };
 
   return (
-    <div className="relative flex h-[500px] rounded-lg  text-darkCustom wide:h-[700px]">
+    <div className="flex h-[500px] rounded-lg  text-darkCustom">
       <MapPolygonPanel
         title={t("Sites")}
         items={
@@ -86,7 +86,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
         }
         onSelectItem={setSelected}
         onSearch={setQuery}
-        className="absolute z-20 h-[500px] w-[23vw] p-8 wide:h-[700px] "
+        className="absolute z-20 h-[500px] w-[23vw] p-8"
         onLoadMore={fetchNextPage}
         emptyText={t("No polygons are available.")}
         setStateViewPanel={setStateViewPanel}
