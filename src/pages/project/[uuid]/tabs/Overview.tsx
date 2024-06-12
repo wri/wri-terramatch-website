@@ -104,14 +104,11 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
 
       <PageRow>
         <PageColumn>
-          <PageCard
-            title={t("Project Monitoring")}
-            tooltip="Lorem ipsum dolor sit amet, urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero."
-          >
+          <PageCard title={t("Project Monitoring")} tooltip={t("Project Monitoring")}>
             <div className="flex items-center justify-between text-darkCustom">
               <Text variant="text-14-light" className="w-[65%]">
-                Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
-                metrics useful for assessing the impact of the restoration effort.
+                {t(`Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
+                metrics useful for assessing the impact of the restoration effort.`)}
               </Text>
               <div className="relative w-[25%]">
                 <Dropdown
