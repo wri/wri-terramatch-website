@@ -14,7 +14,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useFramework } from "@/hooks/useFramework";
-import ProjectArea from "@/pages/project/[uuid]/components/ProjectArea";
+import OverviewMapArea from "@/pages/project/[uuid]/components/OverviewMapArea";
 
 interface ProjectOverviewTabProps {
   project: any;
@@ -97,7 +97,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               </Button>
             }
           >
-            <ProjectArea project={project} />
+            <OverviewMapArea entityModel={project} type="projects" />
           </PageCard>
         </PageColumn>
       </PageRow>

@@ -4,6 +4,7 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { layersList } from "@/constants/layers";
+import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { BBox, FeatureCollection } from "./GeoJSON";
@@ -274,4 +275,17 @@ export function mapPolygonData(sitePolygonData: SitePolygonsDataResponse | undef
     }
     return acc;
   }, {});
+}
+
+export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: string, type: string, cb: Function) {
+  fetchGetV2TypeEntity({
+    queryParams: {
+      uuid: uuid,
+      type: type,
+      status: statusFilter,
+      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+    }
+  }).then(result => {
+    cb(result);
+  });
 }
