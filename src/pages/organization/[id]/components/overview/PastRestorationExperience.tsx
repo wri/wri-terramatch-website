@@ -23,7 +23,7 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
   }
 
   return (
-    <section className="my-10 rounded-lg bg-neutral-150  p-8">
+    <section className="my-10 rounded-lg bg-neutral-150 p-8">
       <Text variant="text-heading-300">{t("Environmental Impact")}</Text>
       <div className="mt-10 flex flex-col gap-4">
         <TextRow
@@ -90,7 +90,7 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
           <div>
             <Text variant="text-body-900" className="w-1/3">
               <>
-                Historic Monitoring Shapefile Upload:
+                {t("Historic Monitoring Shapefile Upload:")}
                 <br />
                 <br />
               </>

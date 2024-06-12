@@ -55,17 +55,17 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         <When condition={!!iconProps}>
           <Icon
             {...iconProps!}
-            width={iconProps?.width || 40}
+            width={iconProps?.width ?? 40}
             className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
+            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
           />
         </When>
         <div className="flex items-center justify-between">
-          <Text variant="text-24-bold">{title}</Text>
+          <Text variant="text-24-bold">{t(title)}</Text>
         </div>
         <When condition={!!content}>
           <Text as="div" variant="text-12-light" className="mt-1 mb-4" containHtml>
-            {content}
+            {t(content)}
           </Text>
         </When>
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
