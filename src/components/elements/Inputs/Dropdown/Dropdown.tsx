@@ -183,7 +183,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               )}
             >
               <div className="flex items-center gap-2">
-                <When condition={options && options.length && options.length > 0 && options[0].meta}>
+                <When condition={options && options.length && options[0].meta}>
                   <div
                     className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
                       statusColor(options, toArray<any>(value)) ?? ""
