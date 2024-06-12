@@ -32,7 +32,6 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   };
 
   useEffect(() => {
-    console.log("entityModel", entityModel);
     if (entityModel?.uuid) {
       const statusFilter = checkedValues.join(",");
       getPolygonsData(entityModel.uuid, statusFilter, sortOrder, type, setResultValues);
