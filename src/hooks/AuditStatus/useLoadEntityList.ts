@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2ProjectsUUIDSitePolygonsAll,
@@ -18,7 +19,7 @@ export interface SelectedItem {
 
 interface UseLoadEntityListParams {
   entityUuid: string;
-  entityType: "Site" | "Polygon" | "Project";
+  entityType: AuditLogEntity;
   buttonToogle?: number;
   entityLevel?: string;
 }

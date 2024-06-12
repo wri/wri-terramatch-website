@@ -11,6 +11,7 @@ import { SelectedItem } from "@/hooks/AuditStatus/useLoadEntityList";
 import { recentRequestData } from "@/utils/statusUtils";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay";
+import { AuditLogEntity } from "../constants/types";
 
 const SiteAuditLogEntityStatusSide = ({
   refresh,
@@ -27,7 +28,7 @@ const SiteAuditLogEntityStatusSide = ({
   checkPolygonsSite,
   viewPD = false
 }: {
-  recordType?: "Polygon" | "Site" | "Project";
+  recordType?: AuditLogEntity;
   refresh?: () => void;
   record?: any;
   polygonList?: any[];
@@ -86,7 +87,6 @@ const SiteAuditLogEntityStatusSide = ({
           placeholder={`Select ${recordType}`}
           options={polygonList!}
           onChange={e => {
-            console.log("onChange", e);
             setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
           }}
         />

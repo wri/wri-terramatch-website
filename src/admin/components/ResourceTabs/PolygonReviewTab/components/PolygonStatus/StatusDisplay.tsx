@@ -7,6 +7,8 @@ import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
+import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
+
 const menuPolygonOptions = [
   {
     title: "Draft",
@@ -93,7 +95,7 @@ const menuProjectOptions = [
 ];
 
 export interface StatusProps {
-  titleStatus: "Site" | "Project" | "Polygon";
+  titleStatus: AuditLogEntity;
   mutate?: any;
   record?: any;
   refresh?: () => void;

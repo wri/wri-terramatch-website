@@ -87,7 +87,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               getValueForStatus={valuesForStatus}
               progressBarLabels={statusLabels}
               mutate={mutateEntity}
-              recordType={entityType as "Project" | "Site" | "Polygon"}
+              recordType={entityType}
               refresh={() => {
                 loadEntityList();
                 refetch();

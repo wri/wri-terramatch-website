@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
+import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
@@ -49,6 +50,21 @@ const statusActionsMap = {
   }
 };
 
+interface AuditLogActionsResponse {
+  mutateEntity: any;
+  valuesForStatus: any;
+  statusLabels: any;
+  entityType: AuditLogEntity;
+  loadEntityList: () => void;
+  entityListItem: any;
+  selected: any;
+  setSelected: any;
+  checkPolygonsSite: boolean | undefined;
+  auditLogData: { data: GetV2AuditStatusENTITYUUIDResponse } | undefined;
+  refetch: () => void;
+  isLoading: boolean;
+}
+
 const useAuditLogActions = ({
   record,
   buttonToogle,
@@ -57,7 +73,7 @@ const useAuditLogActions = ({
   record: any;
   buttonToogle: number;
   entityLevel: string;
-}) => {
+}): AuditLogActionsResponse => {
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
   const isProject = buttonToogle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToogle === AuditLogButtonStates.SITE;
@@ -67,7 +83,7 @@ const useAuditLogActions = ({
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entityUuid: record?.uuid,
-    entityType: entityType as "Project" | "Site" | "Polygon",
+    entityType: entityType as AuditLogEntity,
     buttonToogle,
     entityLevel
   });
@@ -145,7 +161,7 @@ const useAuditLogActions = ({
     mutateEntity,
     valuesForStatus,
     statusLabels,
-    entityType: entityType,
+    entityType: entityType as AuditLogEntity,
     loadEntityList: entityHandlers.loadToEntity,
     entityListItem: entityHandlers.ListItemToEntity,
     selected: entityHandlers.selectedEntityItem,
