@@ -75,11 +75,11 @@ const MapPlygonSitePanel = ({
 
   return (
     <>
-      <FilterSearchBox placeholder={"Search"} className="mb-4 w-full" onChange={() => {}} />
+      <FilterSearchBox placeholder={t("Search")} className="mb-4 w-full" onChange={() => {}} />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
         <Text variant="text-14-bold" className="flex items-center uppercase text-white">
           <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-          &nbsp; new Polygon
+          &nbsp; {t("new Polygon")}
         </Text>
         <div className="flex items-center gap-2">
           <div className="relative" ref={menuRef}>
@@ -147,7 +147,7 @@ const MapPlygonSitePanel = ({
       <div className="h-[calc(100%-159px)] rounded-bl-lg">
         {PolygonData.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
-            {emptyText || t("No result")}
+            {emptyText ?? t("No result")}
           </Text>
         )}
         <div
