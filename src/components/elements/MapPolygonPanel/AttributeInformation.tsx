@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 
@@ -67,81 +69,83 @@ const dropdownOptionsTree = [
   }
 ];
 const AttributeInformation = () => {
+  const t = useT();
+
   return (
     <div className="flex flex-col gap-4">
       <Input
-        label="Polygon Name"
+        label={t("Polygon Name")}
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
-        placeholder="Input Polygon Name"
+        placeholder={t("Input Polygon Name")}
         type="text"
         name=""
       />
       <label className="flex flex-col gap-2">
         <Text variant="text-14-light" className="text-white">
-          Plant Start Date
+          {t("Plant Start Date")}
         </Text>
         <input
           type="date"
           className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
-          placeholder="Input Plant Start Date"
+          placeholder={t("Input Plant Start Date")}
         />
       </label>
       <label className="flex flex-col gap-2">
         <Text variant="text-14-light" className="text-white">
-          Plant End Date
+          {t("Plant End Date")}
         </Text>
         <input
           type="date"
           className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
-          placeholder="Input Plant Start Date"
+          placeholder={t("Input Plant Start Date")}
         />
       </label>
       <Dropdown
         multiSelect
-        label="Restoration Practice"
+        label={t("Restoration Practice")}
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
-        placeholder="Select Restoration Practice"
+        placeholder={t("Select Restoration Practice")}
         options={dropdownOptionsRestoration}
-        value={["Planting Complete"]}
+        value={[t("Planting Complete")]}
         onChange={() => {}}
         className="bg-white"
       />
       <Dropdown
-        label="Target Land Use System"
+        label={t("Target Land Use System")}
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
-        placeholder="Select Target Land Use System"
+        placeholder={t("Select Target Land Use System")}
         options={dropdownOptionsTarget}
-        value={["Planting Complete"]}
+        value={[t("Planting Complete")]}
         onChange={() => {}}
         className="bg-white"
       />
       <Dropdown
         multiSelect
-        label="Tree Distribution"
+        label={t("Tree Distribution")}
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
-        placeholder="Select Tree Distribution"
+        placeholder={t("Select Tree Distribution")}
         options={dropdownOptionsTree}
-        value={["Planting Complete"]}
+        value={[t("Planting Complete")]}
         onChange={() => {}}
         className="bg-white"
       />
       <Input
-        label="Trees Planted"
+        label={t("Trees Planted")}
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
-        placeholder="Input Trees Planted"
+        placeholder={t("Input Trees Planted")}
         type="text"
         name=""
       />
       <Input
-        label="Estimated Area"
+        label={t("Estimated Area")}
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
-        placeholder="Input Estimated Area"
+        placeholder={t("Input Estimated Area")}
         type="text"
         name=""
       />
