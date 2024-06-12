@@ -1,11 +1,9 @@
 import { useT } from "@transifex/react";
-import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { When } from "react-if";
 
-import { polygonData } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
@@ -18,7 +16,6 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -26,7 +23,6 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useModalContext } from "@/context/modal.provider";
-import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
 
@@ -55,33 +51,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         content="Start by adding polygons to your site."
         primaryButtonText="Close"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
-          {polygonData.map(polygon => (
-            <div
-              key={polygon.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] pr-6 pl-4"
-            >
-              <div className="flex gap-3">
-                <div className="rounded-lg bg-neutral-150 p-2">
-                  <Icon name={IconNames.POLYGON} className="h-6 w-6 text-grey-720" />
-                </div>
-                <div>
-                  <Text variant="text-12">{polygon.name}</Text>
-                  <Text variant="text-12" className="opacity-50">
-                    {polygon.status}
-                  </Text>
-                </div>
-              </div>
-              <Icon
-                name={polygon.isUploaded ? IconNames.CHECK_POLYGON : IconNames.ELLIPSE_POLYGON}
-                className="h-6 w-6"
-              />
-            </div>
-          ))}
-        </div>
-      </ModalAdd>
+      ></ModalAdd>
     );
   };
   const openFormModalHandlerUploadImages = () => {
@@ -99,45 +69,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         content="Start by adding images for processing."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      >
-        {/* Next div is only Mocked data delete this children later*/}
-        <div className="mb-6 flex flex-col gap-4">
-          {uploadImageData.map(image => (
-            <div
-              key={image.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
-            >
-              <div className="flex gap-3">
-                <div className="rounded-lg bg-neutral-150 p-2">
-                  <Icon name={IconNames.IMAGE} className="h-6 w-6 text-grey-720" />
-                </div>
-                <div>
-                  <Text variant="text-12">{image.name}</Text>
-                  <Text variant="text-12" className="opacity-50">
-                    {image.status}
-                  </Text>
-                </div>
-              </div>
-              <div
-                className={classNames("flex w-[146px] items-center justify-center rounded border py-2", {
-                  "border-blue": image.isVerified,
-                  "border-red": !image.isVerified
-                })}
-              >
-                <Text
-                  variant="text-12-bold"
-                  className={classNames("text-center", {
-                    "text-blue": image.isVerified,
-                    "text-red": !image.isVerified
-                  })}
-                >
-                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
-                </Text>
-              </div>
-            </div>
-          ))}
-        </div>
-      </ModalAdd>
+      ></ModalAdd>
     );
   };
 
@@ -253,39 +185,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       onClick: () => openFormModalHandlerSubmitPolygon()
     }
   ];
-
-  const { data: allImages } = useGetV2MODELUUIDImageLocations({
-    pathParams: { model: "sites", uuid: site.uuid }
-  });
-  console.debug(allImages);
-  // const imagesGeoJson =
-  //   allImages?.data?.length! > 0
-  //     ? {
-  //         type: "FeatureCollection",
-  //         features: allImages?.data?.map(image => ({
-  //           type: "Feature",
-  //           properties: {
-  //             id: image.uuid,
-  //             image_url: image.thumb_url
-  //           },
-  //           geometry: {
-  //             type: "Point",
-  //             coordinates: [image.location?.lng, image.location?.lat]
-  //           }
-  //         }))
-  //       }
-  //     : undefined;
-
-  // const geoJSON = useMemo(() => {
-  //   try {
-  //     if (site.boundary_geojson) {
-  //       return JSON.parse(site.boundary_geojson);
-  //     }
-  //   } catch (e) {
-  //     return undefined;
-  //   }
-  //   return undefined;
-  // }, [site]);
 
   return (
     <PageBody>
