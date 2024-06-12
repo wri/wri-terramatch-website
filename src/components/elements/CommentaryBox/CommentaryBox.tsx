@@ -2,11 +2,16 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 import { When } from "react-if";
 
+import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { fetchPostV2FileUploadMODELCOLLECTIONUUID, usePostV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
+import {
+  fetchPostV2FileUploadMODELCOLLECTIONUUID,
+  PostV2AuditStatusENTITYUUIDRequestBody,
+  usePostV2AuditStatusENTITYUUID
+} from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 import Notification from "../Notification/Notification";
@@ -18,8 +23,15 @@ export interface CommentaryBoxProps {
   mutate?: any;
   refresh?: () => void;
   record?: any;
-  entity?: string;
+  entity?: AuditLogEntity;
 }
+
+const getRequestPathParam = (entityType: AuditLogEntity) => {
+  if (entityType === "Polygon") {
+    return "site-polygon";
+  }
+  return entityType.toLocaleLowerCase();
+};
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
@@ -91,22 +103,16 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
     }
   };
   const submitComment = () => {
-    const body = new FormData();
-    body.append("auditable_type", props.entity as string);
-    body.append("auditable_uuid", props.record?.uuid);
-    body.append("status", props.record?.status);
-    body.append("comment", comment);
-    body.append("type", "comment");
-    files.forEach((element: File, index: number) => {
-      body.append(`file[${index}]`, element);
-    });
+    const body: PostV2AuditStatusENTITYUUIDRequestBody = {
+      status: props.record?.status,
+      comment: comment,
+      type: "comment"
+    };
+
     setLoading(true);
     sendCommentary?.({
       pathParams: {
-        entity:
-          props.entity?.toLocaleLowerCase() == "sitepolygon"
-            ? "site-polygon"
-            : (props.entity?.toLocaleLowerCase() as string),
+        entity: getRequestPathParam(props.entity!),
         uuid: props.record?.uuid as string
       },
       //@ts-ignore swagger issue

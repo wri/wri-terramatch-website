@@ -7,15 +7,15 @@ import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
 import { AuditLogButtonStates } from "../constants/enum";
+import { AuditLogEntity } from "../constants/types";
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogEntityStatusProps {
-  record?: SelectedItem | null;
+  entityType: AuditLogEntity;
+  record: SelectedItem | null;
   auditLogData?: { data: AuditStatusResponse[] };
-  refresh?: () => void;
-  entityType?: number;
-  entityName?: string;
-  buttonToogle?: number;
+  refresh: () => void;
+  buttonToogle: number;
 }
 
 interface SelectedItem {
@@ -28,12 +28,12 @@ interface SelectedItem {
 }
 
 const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
+  entityType,
   record,
   auditLogData,
   refresh,
   buttonToogle
 }) => {
-  const entityType = buttonToogle === AuditLogButtonStates.POLYGON;
   const isSite = buttonToogle === AuditLogButtonStates.SITE;
   const basename = useBasename();
   const getTitle = () => {
@@ -48,17 +48,12 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
     <div className="flex flex-col gap-6">
       <div>
         <Text variant="text-24-bold" className="mb-1">
-          {entityType ? "Polygon" : "Site"} Status and Comments
+          {entityType} Status and Comments
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          Update the {entityType ? "polygon" : "site"} status, view updates, or add comments
+          Update the {entityType?.toLowerCase()} status, view updates, or add comments
         </Text>
-        <CommentarySection
-          record={record}
-          entity={entityType ? "SitePolygon" : "Site"}
-          refresh={refresh}
-          viewCommentsList={false}
-        />
+        <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
       <div>
         {!isSite && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}

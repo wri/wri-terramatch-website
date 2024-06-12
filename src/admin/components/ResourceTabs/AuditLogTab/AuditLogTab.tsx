@@ -7,7 +7,6 @@ import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import { PROJECT, SITE } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
-import { Entity } from "@/types/common";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
@@ -17,10 +16,9 @@ import { AuditLogButtonStates } from "./constants/enum";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
-  entity?: Entity["entityName"];
 }
 
-const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
+const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
   const [buttonToogle, setButtonToogle] = useState(AuditLogButtonStates.PROJECT);
   const { record, isLoading } = useShowContext();
   const basename = useBasename();
@@ -73,6 +71,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               </When>
               <When condition={buttonToogle !== AuditLogButtonStates.PROJECT}>
                 <SiteAuditLogEntityStatus
+                  entityType={entityType}
                   record={selected}
                   auditLogData={auditLogData}
                   refresh={refetch}
