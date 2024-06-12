@@ -8,6 +8,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
 import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
+import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
 
 const menuPolygonOptions = [
   {
@@ -144,6 +145,12 @@ const StatusDisplay = ({
     </Text>
   );
 
+  const onFinallyRequest = () => {
+    refresh && refresh();
+    reloadEntity && reloadEntity();
+    closeModal();
+  };
+
   const openFormModalHandlerStatus = () => {
     openModal(
       <ModalConfirm
@@ -160,7 +167,7 @@ const StatusDisplay = ({
             await mutate({
               pathParams: {
                 uuid: record?.uuid,
-                entity: titleStatus.toLowerCase() == "polygon" ? "site-polygon" : titleStatus.toLowerCase()
+                entity: getRequestPathParam(titleStatus)
               },
               body: {
                 status: option?.status,
@@ -199,9 +206,7 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh && refresh();
-            reloadEntity && reloadEntity();
-            closeModal;
+            onFinallyRequest();
           }
         }}
       />
@@ -259,9 +264,7 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh && refresh();
-            reloadEntity && reloadEntity();
-            closeModal;
+            onFinallyRequest();
           }
         }}
       />

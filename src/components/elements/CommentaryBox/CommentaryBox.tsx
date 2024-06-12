@@ -3,6 +3,7 @@ import { useState } from "react";
 import { When } from "react-if";
 
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab/utils/util";
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
@@ -25,13 +26,6 @@ export interface CommentaryBoxProps {
   record?: any;
   entity?: AuditLogEntity;
 }
-
-const getRequestPathParam = (entityType: AuditLogEntity) => {
-  if (entityType === "Polygon") {
-    return "site-polygon";
-  }
-  return entityType.toLocaleLowerCase();
-};
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;

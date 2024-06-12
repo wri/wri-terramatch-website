@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { Dispatch, SetStateAction, useState } from "react";
+import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Notification from "@/components/elements/Notification/Notification";
@@ -12,6 +13,7 @@ import { recentRequestData } from "@/utils/statusUtils";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay";
 import { AuditLogEntity } from "../constants/types";
+import { getRequestPathParam } from "../utils/util";
 
 const SiteAuditLogEntityStatusSide = ({
   refresh,
@@ -20,14 +22,14 @@ const SiteAuditLogEntityStatusSide = ({
   selectedPolygon,
   setSelectedPolygon,
   auditLogData,
-  recordType = "Polygon",
+  entityType = "Polygon", //useAditLogEntity
   mutate,
   getValueForStatus,
   progressBarLabels,
   tab,
   checkPolygonsSite
 }: {
-  recordType?: AuditLogEntity;
+  entityType: AuditLogEntity;
   refresh?: () => void;
   record?: any;
   polygonList?: any[];
@@ -44,7 +46,7 @@ const SiteAuditLogEntityStatusSide = ({
   const recentRequest = auditLogData?.find(
     (item: AuditStatusResponse) => item.type == "change-request" && item.is_active
   );
-  const mutateUpload = recordType === "Project" ? usePostV2AuditStatusENTITYUUID : usePostV2AuditStatusENTITYUUID;
+  const mutateUpload = entityType === "Project" ? usePostV2AuditStatusENTITYUUID : usePostV2AuditStatusENTITYUUID;
   const { mutate: upload } = mutateUpload({
     onSuccess: () => {
       setOpen(true);
@@ -59,15 +61,12 @@ const SiteAuditLogEntityStatusSide = ({
     upload?.({
       pathParams: {
         uuid: record?.uuid,
-        entity: recordType === "Polygon" ? "site-polygon" : recordType
+        entity: getRequestPathParam(entityType)
       },
       body: {
-        // entity_uuid: record?.uuid,
         status: record?.status,
-        // entity: recordType === "Polygon" ? "SitePolygon" : recordType,
         comment: "",
         type: "change-request",
-        // is_active: false,
         request_removed: true
       }
     });
@@ -75,29 +74,29 @@ const SiteAuditLogEntityStatusSide = ({
 
   return (
     <div className="flex flex-col gap-6 overflow-visible">
-      {polygonList && polygonList?.length > 0 && (
+      <When condition={polygonList?.length}>
         <Dropdown
-          label={`Select ${recordType}`}
+          label={`Select ${entityType}`}
           labelVariant="text-16-bold"
           labelClassName="capitalize"
           optionsClassName="max-w-full"
           value={[selectedPolygon?.uuid ?? ""]}
-          placeholder={`Select ${recordType}`}
+          placeholder={`Select ${entityType}`}
           options={polygonList!}
           onChange={e => {
             setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
           }}
         />
-      )}
-      <Text variant="text-16-bold">{`${recordType} Status`}</Text>
+      </When>
+      <Text variant="text-16-bold">{`${entityType} Status`}</Text>
       <StepProgressbar
         color="secondary"
         value={(getValueForStatus && getValueForStatus(record?.status)) ?? 0}
         labels={progressBarLabels}
         classNameLabels="min-w-[99px] "
-        className={classNames("w-[98%] pl-[1%]", recordType === "Polygon" && "pl-[6%]")}
+        className={classNames("w-[98%] pl-[1%]", entityType === "Polygon" && "pl-[6%]")}
       />
-      {recentRequest && (
+      <When condition={!!recentRequest}>
         <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-3">
           <div>
             <div className="flex items-baseline justify-between">
@@ -106,14 +105,14 @@ const SiteAuditLogEntityStatusSide = ({
                 Remove
               </button>
             </div>
-            <Text variant="text-14-light">{recentRequestData(recentRequest)}</Text>
+            <Text variant="text-14-light">{recentRequestData(recentRequest!)}</Text>
           </div>
           <Text variant="text-14-semibold">{recentRequest?.comment}</Text>
         </div>
-      )}
+      </When>
       <StatusDisplay
-        titleStatus={recordType}
-        name={recordType}
+        titleStatus={entityType}
+        name={entityType}
         refresh={refresh}
         mutate={mutate}
         record={record}
