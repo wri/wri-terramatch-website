@@ -68,7 +68,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   };
 
   return (
-    <div className="flex h-[500px] rounded-lg  text-darkCustom">
+    <>
       <MapSidePanel
         title={t("Polygons")}
         items={
@@ -95,7 +95,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         siteData={true}
         className="flex-1 rounded-r-lg"
       />
-    </div>
+    </>
   );
 };
 
