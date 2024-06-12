@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useState } from "react";
 import { useShowContext } from "react-admin";
 
@@ -9,68 +10,86 @@ import { useModalContext } from "@/context/modal.provider";
 
 const menuPolygonOptions = [
   {
+    title: "Draft",
+    status: "draft",
+    value: 1,
+    viewPd: false
+  },
+  {
     title: "Submitted",
     status: "submitted",
-    value: 1
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 2
+    value: 3,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 3
+    value: 4,
+    viewPd: false
   }
 ];
 const menuSiteOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1
+    value: 1,
+    viewPd: true
   },
   {
     title: "Awaiting Approval",
     status: "awaiting-approval",
-    value: 2
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3
+    value: 3,
+    viewPd: false
   },
   {
     title: "Planting in Progress",
     status: "planting-in-progress",
-    value: 4
+    value: 4,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 5
+    value: 5,
+    viewPd: false
   }
 ];
 const menuProjectOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1
+    value: 1,
+    viewPd: true
   },
   {
     title: "Awaiting Approval",
     status: "awaiting-approval",
-    value: 2
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3
+    value: 3,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4
+    value: 4,
+    viewPd: false
   }
 ];
 
@@ -78,12 +97,12 @@ export interface StatusProps {
   titleStatus: "Site" | "Project" | "Polygon";
   mutate?: any;
   record?: any;
-  refresh?: any;
+  refresh?: () => void;
   name: any;
-  refetchPolygon?: any;
-  setSelectedPolygon?: any;
+  refetchPolygon?: () => void;
   tab?: string;
-  checkPolygonsSite?: any;
+  checkPolygonsSite?: boolean | undefined;
+  viewPD?: boolean;
 }
 
 const menuOptionsMap = {
@@ -104,7 +123,16 @@ const DescriptionRequestMap = {
   Project: "Provide an explanation for your change request for the project"
 };
 
-const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record, setSelectedPolygon }: StatusProps) => {
+const StatusDisplay = ({
+  titleStatus = "Polygon",
+  mutate,
+  refresh,
+  name,
+  record,
+  checkPolygonsSite,
+  tab,
+  viewPD
+}: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
@@ -129,20 +157,23 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
       {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
-
+  const filterViewPd = viewPD
+    ? menuOptionsMap[titleStatus].filter(option => option.viewPd === true)
+    : menuOptionsMap[titleStatus];
   const openFormModalHandlerStatus = () => {
     openModal(
       <ModalConfirm
         title={`${titleStatus} Status Change`}
         commentArea
         menuLabel={""}
-        menu={menuOptionsMap[titleStatus]}
+        menu={filterViewPd}
         onClose={closeModal}
         content={contentStatus}
+        checkPolygonsSite={checkPolygonsSite}
         onConfirm={async (text: any, opt) => {
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           try {
-            const response = await mutate({
+            await mutate({
               pathParams: { uuid: record?.uuid },
               body: {
                 status: option?.status,
@@ -150,9 +181,6 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
                 type: "status"
               }
             });
-            if (response.poly_id) {
-              setSelectedPolygon(response?.poly_id);
-            }
             setNotificationStatus({
               open: true,
               message: "Your Status Update was just saved!",
@@ -174,10 +202,19 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               type: "error",
               title: "Error!"
             });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "error",
+                title: "Error!"
+              });
+            }, 3000);
+            console.error(e);
           } finally {
-            refresh();
-            reloadEntity();
-            closeModal();
+            refresh?.();
+            reloadEntity?.();
+            closeModal?.();
           }
         }}
       />
@@ -225,10 +262,19 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
               type: "error",
               title: "Error!"
             });
+            setTimeout(() => {
+              setNotificationStatus({
+                open: false,
+                message: "",
+                type: "error",
+                title: "Error!"
+              });
+            }, 3000);
+            console.error(e);
           } finally {
-            refresh();
-            reloadEntity();
-            closeModal();
+            refresh?.();
+            reloadEntity?.();
+            closeModal?.();
           }
         }}
       />
@@ -239,11 +285,12 @@ const StatusDisplay = ({ titleStatus = "Polygon", mutate, refresh, name, record,
       <div className="flex flex-col items-center gap-4">
         <div className="flex w-full items-center gap-4">
           <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
-            <Text variant="text-12-bold">Change status</Text>
+            <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
+            disabled={tab == "polygonReview"}
             variant="semi-black"
-            className="w-full flex-1 whitespace-nowrap"
+            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": tab === "polygonReview" })}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">Change Request</Text>

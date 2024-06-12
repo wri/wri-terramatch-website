@@ -1,5 +1,6 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
@@ -115,16 +116,23 @@ const InformationTab: FC<IProps> = props => {
               </Then>
               <Else>
                 <Stack gap={4}>
-                  <Card sx={{ padding: 4 }}>
+                  <Card sx={{ padding: 4 }} className="!shadow-none">
                     <List
-                      className="space-y-8"
+                      className={classNames("space-y-12", {
+                        "map-span-3": props.type === "sites"
+                      })}
                       items={formSteps}
                       render={(step, index) => (
-                        <InformationTabRow index={index} step={step} values={values} steps={formSteps} />
+                        <InformationTabRow
+                          index={index}
+                          step={step}
+                          values={values}
+                          steps={formSteps}
+                          type={props.type}
+                        />
                       )}
                     />
                   </Card>
-
                   <When condition={record}>
                     <When
                       condition={
