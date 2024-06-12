@@ -20,9 +20,9 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 
 const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
+  const [buttonToogle, setButtonToogle] = useState(AuditLogButtonStates.PROJECT);
   const { record, isLoading } = useShowContext();
   const basename = useBasename();
-  const [buttonToogle, setButtonToogle] = useState(AuditLogButtonStates.PROJECT);
 
   const {
     mutateEntity,
@@ -83,7 +83,7 @@ const AuditLogSiteTab: FC<IProps> = ({ label, entity, ...rest }) => {
               getValueForStatus={valuesForStatus}
               progressBarLabels={statusLabels}
               mutate={mutateEntity}
-              recordType={entityType as "Project" | "Site" | "Polygon"}
+              recordType={entityType}
               refresh={() => {
                 refetch();
                 loadEntityList();

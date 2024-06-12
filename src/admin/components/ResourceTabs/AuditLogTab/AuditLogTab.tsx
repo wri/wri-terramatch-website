@@ -89,8 +89,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
               mutate={mutateEntity}
               recordType={entityType}
               refresh={() => {
-                loadEntityList();
                 refetch();
+                loadEntityList();
               }}
               record={selected}
               polygonList={entityListItem}
