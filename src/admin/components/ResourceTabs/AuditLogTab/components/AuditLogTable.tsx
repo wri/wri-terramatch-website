@@ -20,25 +20,17 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
   }
 };
 
+const columnTitles = ["Date", "User", "Action", "Comments", "Attachments"];
+
 const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ auditLogData }) => {
   return (
-    <Fragment>
+    <>
       <div className="grid grid-cols-[14%_20%_15%_30%_21%]">
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Date
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          User
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Action
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Comments
-        </Text>
-        <Text variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-          Attachments
-        </Text>
+        {columnTitles.map(title => (
+          <Text key={title} variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+            {title}
+          </Text>
+        ))}
       </div>
       <div className="mr-[-7px] grid max-h-[50vh] min-h-[10vh] grid-cols-[14%_20%_15%_30%_21%] overflow-auto pr-[7px]">
         {auditLogData?.data?.map((item: AuditStatusResponse, index: number) => (
@@ -73,7 +65,7 @@ const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ 
           </Fragment>
         ))}
       </div>
-    </Fragment>
+    </>
   );
 };
 
