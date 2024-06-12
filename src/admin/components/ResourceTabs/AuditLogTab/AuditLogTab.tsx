@@ -13,17 +13,12 @@ import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
+import { AuditLogButtonStates } from "./constants/enum";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: Entity["entityName"];
 }
-
-export const ButtonStates = {
-  PROJECTS: 0,
-  SITE: 1,
-  POLYGON: 2
-};
 
 export interface EntityList {
   poly_name?: string | undefined;
@@ -35,7 +30,7 @@ export interface EntityList {
 }
 
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
-  const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
+  const [buttonToogle, setButtonToogle] = useState(AuditLogButtonStates.PROJECT);
   const { record, isLoading } = useShowContext();
   const basename = useBasename();
 
@@ -69,7 +64,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-              <When condition={buttonToogle === ButtonStates.PROJECTS && record?.project}>
+              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && record?.project}>
                 <Text variant="text-24-bold">Project Status</Text>
                 <Text variant="text-14-light" className="mb-4">
                   Update the site status, view updates, or add comments
@@ -82,16 +77,15 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   label="OPEN PROJECT AUDIT LOG"
                 />
               </When>
-              <When condition={buttonToogle === ButtonStates.PROJECTS && !record?.project}>
+              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && !record?.project}>
                 <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} refresh={refetch} />
               </When>
-              <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+              <When condition={buttonToogle !== AuditLogButtonStates.PROJECT}>
                 <SiteAuditLogEntityStatus
                   record={selected}
                   auditLogData={auditLogData}
                   refresh={refetch}
                   buttonToogle={buttonToogle}
-                  buttonStates={ButtonStates}
                   viewPD={false}
                 />
               </When>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
@@ -21,18 +22,6 @@ import useLoadEntityList from "./useLoadEntityList";
 
 const ESTIMATED_AREA_CRITERIA_ID = 12;
 
-export const ButtonStates = {
-  PROJECTS: 0,
-  SITE: 1,
-  POLYGON: 2
-};
-
-// const ReverseButtonStates: { [key: number]: string } = {
-//   0: PROJECT,
-//   1: SITE,
-//   2: SITE_POLYGON
-// };
-
 const ReverseButtonStates2: { [key: number]: string } = {
   0: "project",
   1: "site",
@@ -40,19 +29,19 @@ const ReverseButtonStates2: { [key: number]: string } = {
 };
 
 const statusActionsMap = {
-  [ButtonStates.PROJECTS]: {
+  [AuditLogButtonStates.PROJECT as number]: {
     mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusProject,
     statusLabels: projectStatusLabels,
     entityType: PROJECT
   },
-  [ButtonStates.SITE]: {
+  [AuditLogButtonStates.SITE as number]: {
     mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusSite,
     statusLabels: siteProgressBarStatusLabels,
     entityType: SITE
   },
-  [ButtonStates.POLYGON]: {
+  [AuditLogButtonStates.POLYGON as number]: {
     mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusPolygon,
     statusLabels: polygonProgressBarStatusLabels,
@@ -70,9 +59,9 @@ const useAuditLogActions = ({
   entityLevel: string;
 }) => {
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
-  const isProject = buttonToogle === ButtonStates.PROJECTS;
-  const isSite = buttonToogle === ButtonStates.SITE;
-  const isPolygon = buttonToogle === ButtonStates.POLYGON;
+  const isProject = buttonToogle === AuditLogButtonStates.PROJECT;
+  const isSite = buttonToogle === AuditLogButtonStates.SITE;
+  const isPolygon = buttonToogle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();

@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 
-import { ButtonStates } from "../AuditLogTab";
+import { AuditLogButtonStates } from "../constants/enum";
 
 interface AuditLogSiteTabSelectionProps {
   buttonToogle: number;
@@ -13,20 +13,20 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({ buttonToo
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
       <Button
-        variant={`${buttonToogle === ButtonStates.PROJECTS ? "white-toggle" : "transparent-toggle"}`}
-        onClick={() => setButtonToogle(ButtonStates.PROJECTS)}
+        variant={`${buttonToogle === AuditLogButtonStates.PROJECT ? "white-toggle" : "transparent-toggle"}`}
+        onClick={() => setButtonToogle(AuditLogButtonStates.PROJECT)}
       >
         Project Status
       </Button>
       <Button
-        variant={`${buttonToogle === ButtonStates.SITE ? "white-toggle" : "transparent-toggle"}`}
-        onClick={() => setButtonToogle(ButtonStates.SITE)}
+        variant={`${buttonToogle === AuditLogButtonStates.SITE ? "white-toggle" : "transparent-toggle"}`}
+        onClick={() => setButtonToogle(AuditLogButtonStates.SITE)}
       >
         Site Status
       </Button>
       <Button
-        variant={`${buttonToogle === ButtonStates.POLYGON ? "white-toggle" : "transparent-toggle"}`}
-        onClick={() => setButtonToogle(ButtonStates.POLYGON)}
+        variant={`${buttonToogle === AuditLogButtonStates.POLYGON ? "white-toggle" : "transparent-toggle"}`}
+        onClick={() => setButtonToogle(AuditLogButtonStates.POLYGON)}
       >
         Polygon Status
       </Button>

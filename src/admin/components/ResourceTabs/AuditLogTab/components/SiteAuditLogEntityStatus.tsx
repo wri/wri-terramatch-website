@@ -7,6 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
+import { AuditLogButtonStates } from "../constants/enum";
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogEntityStatusProps {
@@ -16,7 +17,6 @@ export interface SiteAuditLogEntityStatusProps {
   entityType?: number;
   entityName?: string;
   buttonToogle?: number;
-  buttonStates?: { PROJECTS: number; SITE: number; POLYGON: number };
   viewPD?: boolean;
 }
 
@@ -34,11 +34,10 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   auditLogData,
   refresh,
   buttonToogle,
-  buttonStates,
   viewPD = true
 }) => {
-  const entityType = buttonToogle === buttonStates?.POLYGON;
-  const isSite = buttonToogle === buttonStates?.SITE;
+  const entityType = buttonToogle === AuditLogButtonStates.POLYGON;
+  const isSite = buttonToogle === AuditLogButtonStates.SITE;
   const basename = useBasename();
   const title = () => {
     if (!record?.title) {
