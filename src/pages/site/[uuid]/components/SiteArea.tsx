@@ -5,8 +5,6 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
-import { useModalContext } from "@/context/modal.provider";
 import OverviewMapArea from "@/pages/project/[uuid]/components/OverviewMapArea";
 
 interface SiteAreaProps {
@@ -18,42 +16,10 @@ interface SiteAreaProps {
 const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   const t = useT();
   const [tabEditPolygon] = useState("Attributes");
-  const [_, setStateViewPanel] = useState(false);
   const [previewVersion, setPreviewVersion] = useState(false);
-  const { openModal, closeModal } = useModalContext();
-  console.log("_", _);
-  const openFormModalHandlerRequestPolygonSupport = () => {
-    openModal(
-      <ModalWithMap
-        title="Request Support"
-        onClose={closeModal}
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Submit"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
-    );
-  };
-
   return (
     <div className="flex h-[500px] rounded-lg  text-darkCustom">
       <div className="relative h-auto w-auto">
-        <div className="absolute left-[24vw] top-5 z-20 w-max rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
-          <Text variant="text-10-light">Your polygons have been updated</Text>
-          <Button
-            variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-            onClick={() => setStateViewPanel(true)}
-          >
-            Check Polygons
-          </Button>
-          <Button
-            variant="text"
-            className="text-10-bold mt-2 flex w-full justify-center rounded-lg border border-transparent p-2 hover:border-white"
-            onClick={() => openFormModalHandlerRequestPolygonSupport()}
-          >
-            Request Support
-          </Button>
-        </div>
         <When condition={tabEditPolygon === "Version" && !!editPolygon}>
           <div className="absolute top-5 left-[43vw] z-20 text-center">
             <Button variant="primary" className="" onClick={() => {}}>

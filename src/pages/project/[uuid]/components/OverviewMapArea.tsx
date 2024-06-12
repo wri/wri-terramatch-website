@@ -70,7 +70,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   return (
     <>
       <MapSidePanel
-        title={t("Polygons")}
+        title={t(type === "sites" ? "Site Polygons" : "Polygons")}
         items={
           (polygonsData?.map(item => ({
             ...item,
@@ -84,12 +84,13 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         checkedValues={checkedValues}
         onCheckboxChange={handleCheckboxChange}
         setSortOrder={setSortOrder}
+        type={type}
       />
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={entityBbox}
-        tooltipType="goTo"
+        tooltipType={type === "sites" ? "view" : "goTo"}
         showPopups
         showLegend
         siteData={true}
