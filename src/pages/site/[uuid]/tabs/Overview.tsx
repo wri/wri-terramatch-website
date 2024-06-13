@@ -8,6 +8,7 @@ import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -85,7 +86,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
                 </Text>
                 <div className="flex w-full gap-3">
-                  <Button variant="white-border" className="" onChange={() => {}}>
+                  <Button
+                    variant="white-border"
+                    className=""
+                    onClick={() => {
+                      downloadSiteGeoJsonPolygons(site?.uuid);
+                    }}
+                  >
                     <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
                     &nbsp; Download
                   </Button>

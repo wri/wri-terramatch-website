@@ -4,7 +4,7 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { layersList } from "@/constants/layers";
-import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundGeojsonSite, fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { BBox, FeatureCollection } from "./GeoJSON";
@@ -288,4 +288,17 @@ export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: s
   }).then(result => {
     cb(result);
   });
+}
+
+export async function downloadSiteGeoJsonPolygons(siteUuid: string): Promise<void> {
+  const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
+    queryParams: { uuid: siteUuid }
+  });
+  const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `SitePolygons.geojson`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
