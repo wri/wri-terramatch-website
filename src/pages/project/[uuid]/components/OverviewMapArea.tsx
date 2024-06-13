@@ -7,6 +7,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { getPolygonsData } from "@/components/elements/Map-mapbox/utils";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
@@ -30,7 +31,19 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
       setEntityBbox(result.bbox as BBox);
     }
   };
-
+  const callCountryBBox = async () => {
+    let currentCountry = entityModel?.country;
+    if (type === "sites") {
+      currentCountry = entityModel?.project?.country;
+    }
+    const countryBbox = await fetchGetV2DashboardCountryCountry({
+      pathParams: { country: currentCountry }
+    });
+    if (Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
+      const bboxFormat = countryBbox.bbox[1] as unknown as BBox;
+      setEntityBbox(bboxFormat);
+    }
+  };
   useEffect(() => {
     if (entityModel?.uuid) {
       const statusFilter = checkedValues.join(",");
@@ -55,6 +68,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         [NEEDS_MORE_INFORMATION]: [],
         [DRAFT]: []
       });
+      callCountryBBox();
     }
   }, [polygonsData]);
 
