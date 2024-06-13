@@ -108,6 +108,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         showLegend
         siteData={true}
         className="flex-1 rounded-r-lg"
+        polygonsExists={polygonsData.length > 0}
       />
     </>
   );
