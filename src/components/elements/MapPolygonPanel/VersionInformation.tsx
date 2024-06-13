@@ -17,8 +17,8 @@ const VersionInformation = ({ setPreviewVersion }: { setPreviewVersion: Dispatch
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
-        title={"Confirm Version Delete?"}
-        content="Do you want to delete this version?"
+        title={t("Confirm Version Delete?")}
+        content={t("Do you want to delete this version?")}
         onClose={closeModal}
         onConfirm={() => {}}
       />
@@ -71,8 +71,8 @@ const VersionInformation = ({ setPreviewVersion }: { setPreviewVersion: Dispatch
         <div className="flex justify-between">
           <button
             className={classNames("text-10-bold w-[64%] rounded-md border border-white", {
-              "bg-white text-[#797F62]": true, // Replace 'item.current === "Yes"' with 'true' or provide a valid variable
-              "bg-transparent text-white": false // Replace 'item.current === "No"' with 'false' or provide a valid variable
+              "bg-white text-[#797F62]": true,
+              "bg-transparent text-white": false
             })}
           >
             -

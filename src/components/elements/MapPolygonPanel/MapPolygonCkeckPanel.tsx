@@ -23,12 +23,12 @@ const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }
   return (
     <>
       <Text variant="text-14" className="mb-6 text-white">
-        Available polygons
+        {t("Available polygons")}
       </Text>
       <div className="h-[calc(100%-150px)] rounded-bl-lg">
         {PolygonAvailableData.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
-            {emptyText || t("No result")}
+            {t(emptyText) ?? t("No result")}
           </Text>
         )}
         <div
@@ -60,7 +60,7 @@ const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }
       </div>
       <Text variant="text-14-bold" className="mt-6 flex items-center uppercase text-white">
         <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-        &nbsp; Add Polygon
+        &nbsp; {t("Add Polygon")}
       </Text>
     </>
   );

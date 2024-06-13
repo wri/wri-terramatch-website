@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
 import { When } from "react-if";
@@ -37,13 +38,15 @@ const MapPolygonCheckPanelItem = ({
 }: MapPolygonCheckPanelItemProps) => {
   const { openModal, closeModal } = useModalContext();
   const [openCollapse, setOpenCollapse] = useState(true);
+  const t = useT();
+
   const openFormModalHandlerRequestPolygonSupport = () => {
     openModal(
       <ModalWithMap
-        title="Request Support"
+        title={t("Request Support")}
         onClose={closeModal}
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Submit"
+        content="-&nbsp;&nbsp;•&nbsp;&nbsp;-"
+        primaryButtonText={t("Submit")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       ></ModalWithMap>
     );
@@ -51,12 +54,12 @@ const MapPolygonCheckPanelItem = ({
   const openFormModalHandlerAddCommentary = () => {
     openModal(
       <ModalWithLogo
-        title="Blue Forest"
+        title={t("Blue Forest")}
         onClose={closeModal}
         status={StatusEnum.UNDER_REVIEW}
         toogleButton
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Close"
+        content="-&nbsp;&nbsp;•&nbsp;&nbsp;-"
+        primaryButtonText={t("Close")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       />
     );
@@ -64,8 +67,8 @@ const MapPolygonCheckPanelItem = ({
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
-        title={"Confirm Polygon Deletion"}
-        content="Do you want to delete this polygon?"
+        title={t("Confirm Polygon Deletion")}
+        content={t("Do you want to delete this polygon?")}
         onClose={closeModal}
         onConfirm={() => {}}
       />
@@ -78,7 +81,7 @@ const MapPolygonCheckPanelItem = ({
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; Edit Polygon
+          &nbsp; {t("Edit Polygon")}
         </Text>
       ),
       onClick: () => {
@@ -92,7 +95,7 @@ const MapPolygonCheckPanelItem = ({
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.SEARCH} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; Zoom to
+          &nbsp; {t("Zoom to")}
         </Text>
       )
     },
@@ -101,7 +104,7 @@ const MapPolygonCheckPanelItem = ({
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; Download
+          &nbsp; {t("Download")}
         </Text>
       )
     },
@@ -111,7 +114,7 @@ const MapPolygonCheckPanelItem = ({
         <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
           <Text variant="text-14-semibold" className="flex items-center">
             <Icon name={IconNames.COMMENT} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; Comment
+            &nbsp; {t("Comment")}
           </Text>
         </Button>
       )
@@ -122,7 +125,7 @@ const MapPolygonCheckPanelItem = ({
         <Button variant="text" onClick={openFormModalHandlerRequestPolygonSupport}>
           <Text variant="text-14-semibold" className="flex items-center">
             <Icon name={IconNames.REQUEST} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; Request Support
+            &nbsp; {t("Request Support")}
           </Text>
         </Button>
       )
@@ -133,7 +136,7 @@ const MapPolygonCheckPanelItem = ({
         <Button variant="text" onClick={openFormModalHandlerConfirm}>
           <Text variant="text-14-semibold" className="flex items-center ">
             <Icon name={IconNames.TRASH_PA} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; Delete Polygon
+            &nbsp; {t("Delete Polygon")}
           </Text>
         </Button>
       )
@@ -162,7 +165,7 @@ const MapPolygonCheckPanelItem = ({
           <div className={classNames("h-4 w-4 rounded-full", dynamicClasses(status))} />{" "}
           <div className="flex flex-1 flex-col">
             <Text variant="text-14-light" className="text-white">
-              {title}
+              {t(title)}
             </Text>
           </div>
           <div className="flex h-full items-start self-start">
@@ -196,7 +199,7 @@ const MapPolygonCheckPanelItem = ({
               <div key={index} className="flex items-center gap-2">
                 <Icon name={IconNames.ERROR_WHITE_BORDER_RED} className="h-4 w-4 rounded-lg text-white lg:h-5 lg:w-5" />
                 <Text variant="text-14-light" className="text-white">
-                  {item}
+                  {t(item)}
                 </Text>
               </div>
             ))}
