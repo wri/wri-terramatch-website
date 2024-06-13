@@ -109,7 +109,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
       <div className="mt-4 flex w-full gap-4">
         <Button variant="white-page-admin" className="w-full" onClick={onClose}>
           <Text variant="text-12-bold" className="capitalize">
-            Cancel
+            {t("Cancel")}
           </Text>
         </Button>
         <Button
@@ -125,7 +125,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
           }}
         >
           <Text variant="text-12-bold" className="capitalize">
-            Confirm
+            {t("Confirm")}
           </Text>
         </Button>
       </div>
