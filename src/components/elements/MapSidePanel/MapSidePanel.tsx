@@ -49,7 +49,7 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-
+  const isMonitoring = true;
   const { map } = mapFunctions;
 
   const flyToPolygonBounds = async (polygonUuid: string) => {
@@ -134,9 +134,16 @@ const MapSidePanel = ({
     <div {...props} className={classNames(className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
-        <Text variant="text-16-bold" className="text-white">
-          {t(title)}
-        </Text>
+        {isMonitoring ? (
+          <Text variant="text-14-bold" className="flex items-center uppercase text-white">
+            <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+            &nbsp; {t("new Polygon")}
+          </Text>
+        ) : (
+          <Text variant="text-16-bold" className="text-white">
+            {t(title)}
+          </Text>
+        )}
         <div className="flex items-center gap-2">
           <div className="relative" ref={menuCheckboxRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>

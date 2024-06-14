@@ -6,14 +6,14 @@ import List from "@/components/extensive/List/List";
 import { PolygonAvailableData } from "@/pages/site/[uuid]/components/MockedData";
 
 import Text from "../Text/Text";
+import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
 import MapPolygonCheckPanelItem from "./MapPolygonCheckPanelItem";
-import { MapPolygonPanelItemProps } from "./MapPolygonPanelItem";
 
 export interface MapPolygonCheckPanelProps {
   emptyText?: string;
   onLoadMore: () => void;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
-  selected: MapPolygonPanelItemProps | undefined;
+  selected: MapMenuPanelItemProps | undefined;
 }
 
 const MapPolygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }: MapPolygonCheckPanelProps) => {

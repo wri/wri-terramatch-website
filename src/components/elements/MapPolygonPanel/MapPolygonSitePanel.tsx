@@ -8,7 +8,6 @@ import { PolygonData } from "@/pages/site/[uuid]/components/MockedData";
 
 import Checkbox from "../Inputs/Checkbox/Checkbox";
 import { MenuItem } from "../MenuItem/MenuItem";
-import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
 import Text from "../Text/Text";
 import MapMenuPanelItem, { MapMenuPanelItemProps } from "./MapMenuPanelItem";
 
@@ -75,7 +74,6 @@ const MapPolygonSitePanel = ({
 
   return (
     <>
-      <FilterSearchBox placeholder={t("Search")} className="mb-4 w-full" onChange={() => {}} />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
         <Text variant="text-14-bold" className="flex items-center uppercase text-white">
           <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />

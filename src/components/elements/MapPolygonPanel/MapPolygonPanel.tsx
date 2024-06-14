@@ -3,17 +3,16 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
-import { MapPolygonPanelItemProps } from "@/components/elements/MapPolygonPanel/MapPolygonPanelItem";
-
 import Button from "../Button/Button";
+import MapSidePanel from "../MapSidePanel/MapSidePanel";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
+import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
 import MapPolygonCheckPanel from "./MapPolygonCheckPanel";
-import MapPolygonSitePanel from "./MapPolygonSitePanel";
 
 export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: MapPolygonPanelItemProps[];
-  onSelectItem: (item: MapPolygonPanelItemProps) => void;
+  items: MapMenuPanelItemProps[];
+  onSelectItem: (item: MapMenuPanelItemProps) => void;
   onLoadMore: () => void;
   emptyText?: string;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
@@ -48,7 +47,7 @@ const MapPolygonPanel = ({
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
-  const [selected, setSelected] = useState<MapPolygonPanelItemProps>();
+  const [selected] = useState<MapMenuPanelItemProps>();
   const [stateViewPanel, setStateViewPanel] = useState(false);
   return (
     <div {...props} className={classNames(className)}>
@@ -79,13 +78,16 @@ const MapPolygonPanel = ({
             </Button>
           </div>
           <When condition={!stateViewPanel}>
-            <MapPolygonSitePanel
+            <MapSidePanel
+              title=""
+              items={items}
               emptyText={emptyText}
               onLoadMore={onLoadMore}
-              onSelectItem={onSelectItem}
-              setEditPolygon={setEditPolygon}
-              selected={selected}
-              setSelected={setSelected}
+              mapFunctions={mapFunctions}
+              checkedValues={checkedValues}
+              onCheckboxChange={onCheckboxChange}
+              setSortOrder={setSortOrder}
+              type={type}
             />
           </When>
           <When condition={!!stateViewPanel}>
