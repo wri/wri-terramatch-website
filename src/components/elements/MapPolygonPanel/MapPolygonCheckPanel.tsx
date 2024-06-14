@@ -16,7 +16,7 @@ export interface MapPolygonCheckPanelProps {
   selected: MapPolygonPanelItemProps | undefined;
 }
 
-const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }: MapPolygonCheckPanelProps) => {
+const MapPolygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }: MapPolygonCheckPanelProps) => {
   const t = useT();
 
   const refContainer = useRef<HTMLDivElement>(null);
@@ -66,4 +66,4 @@ const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }
   );
 };
 
-export default MapPlygonCheckPanel;
+export default MapPolygonCheckPanel;

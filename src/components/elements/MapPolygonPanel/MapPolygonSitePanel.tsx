@@ -21,7 +21,7 @@ export interface MapPolygonSitePanelProps {
   setSelected: Dispatch<SetStateAction<MapPolygonPanelItemProps | undefined>>;
 }
 
-const MapPlygonSitePanel = ({
+const MapPolygonSitePanel = ({
   emptyText,
   onLoadMore,
   onSelectItem,
@@ -184,4 +184,4 @@ const MapPlygonSitePanel = ({
   );
 };
 
-export default MapPlygonSitePanel;
+export default MapPolygonSitePanel;

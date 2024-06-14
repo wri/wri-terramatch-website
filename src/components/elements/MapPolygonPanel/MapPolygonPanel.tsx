@@ -7,23 +7,25 @@ import { MapPolygonPanelItemProps } from "@/components/elements/MapPolygonPanel/
 
 import Button from "../Button/Button";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
-import MapPlygonCheckPanel from "./MapPolygonCkeckPanel";
-import MapPlygonSitePanel from "./MapPolygonSitePanel";
+import MapPolygonCheckPanel from "./MapPolygonCheckPanel";
+import MapPolygonSitePanel from "./MapPolygonSitePanel";
 
 export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
   items: MapPolygonPanelItemProps[];
   onSelectItem: (item: MapPolygonPanelItemProps) => void;
-  onSearch: (query: string) => void;
   onLoadMore: () => void;
   emptyText?: string;
-  setStateViewPanel: Dispatch<SetStateAction<boolean>>;
-  stateViewPanel: boolean;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
   editPolygon: boolean;
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   setPreviewVersion: Dispatch<SetStateAction<boolean>>;
+  mapFunctions: any;
+  checkedValues: string[];
+  onCheckboxChange: (value: string, checked: boolean) => void;
+  setSortOrder: React.Dispatch<React.SetStateAction<string>>;
+  type: string;
 }
 
 const MapPolygonPanel = ({
@@ -31,21 +33,23 @@ const MapPolygonPanel = ({
   items,
   className,
   onSelectItem,
-  onSearch,
   onLoadMore,
   emptyText,
-  setStateViewPanel,
-  stateViewPanel,
   setEditPolygon,
   editPolygon,
   tabEditPolygon,
   setTabEditPolygon,
   setPreviewVersion,
+  mapFunctions,
+  checkedValues,
+  onCheckboxChange,
+  setSortOrder,
+  type,
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
   const [selected, setSelected] = useState<MapPolygonPanelItemProps>();
-
+  const [stateViewPanel, setStateViewPanel] = useState(false);
   return (
     <div {...props} className={classNames(className)}>
       <If condition={!!editPolygon}>
@@ -75,7 +79,7 @@ const MapPolygonPanel = ({
             </Button>
           </div>
           <When condition={!stateViewPanel}>
-            <MapPlygonSitePanel
+            <MapPolygonSitePanel
               emptyText={emptyText}
               onLoadMore={onLoadMore}
               onSelectItem={onSelectItem}
@@ -85,7 +89,7 @@ const MapPolygonPanel = ({
             />
           </When>
           <When condition={!!stateViewPanel}>
-            <MapPlygonCheckPanel
+            <MapPolygonCheckPanel
               emptyText={emptyText}
               onLoadMore={onLoadMore}
               setEditPolygon={setEditPolygon}

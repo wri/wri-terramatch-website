@@ -11,6 +11,8 @@ import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
+import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
+
 interface EntityAreaProps {
   entityModel: any;
   type: string;
@@ -25,6 +27,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
+  const isMonitoring = false;
   const setResultValues = (result: any) => {
     if (result.polygonsData) {
       setPolygonsData(result.polygonsData);
@@ -82,23 +85,50 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
 
   return (
     <>
-      <MapSidePanel
-        title={t(type === "sites" ? "Site Polygons" : "Polygons")}
-        items={
-          (polygonsData?.map(item => ({
-            ...item,
-            title: item.poly_name ?? t("Unnamed Polygon"),
-            subtitle: t("Created {date}", { date: format(item.created_at) })
-          })) || []) as any[]
-        }
-        mapFunctions={mapFunctions}
-        className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
-        emptyText={t("No polygons are available.")}
-        checkedValues={checkedValues}
-        onCheckboxChange={handleCheckboxChange}
-        setSortOrder={setSortOrder}
-        type={type}
-      />
+      {isMonitoring ? (
+        <MapPolygonPanel
+          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          items={
+            (polygonsData?.map(item => ({
+              ...item,
+              title: item.poly_name ?? t("Unnamed Polygon"),
+              subtitle: t("Created {date}", { date: format(item.created_at) })
+            })) || []) as any[]
+          }
+          mapFunctions={mapFunctions}
+          className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
+          emptyText={t("No polygons are available.")}
+          checkedValues={checkedValues}
+          onCheckboxChange={handleCheckboxChange}
+          setSortOrder={setSortOrder}
+          type={type}
+          onSelectItem={() => {}}
+          onLoadMore={() => {}}
+          setEditPolygon={() => {}}
+          editPolygon={false}
+          tabEditPolygon=""
+          setTabEditPolygon={() => {}}
+          setPreviewVersion={() => {}}
+        />
+      ) : (
+        <MapSidePanel
+          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          items={
+            (polygonsData?.map(item => ({
+              ...item,
+              title: item.poly_name ?? t("Unnamed Polygon"),
+              subtitle: t("Created {date}", { date: format(item.created_at) })
+            })) || []) as any[]
+          }
+          mapFunctions={mapFunctions}
+          className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
+          emptyText={t("No polygons are available.")}
+          checkedValues={checkedValues}
+          onCheckboxChange={handleCheckboxChange}
+          setSortOrder={setSortOrder}
+          type={type}
+        />
+      )}
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}

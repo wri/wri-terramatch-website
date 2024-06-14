@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
-import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
+import { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -12,6 +12,7 @@ import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid 
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
+import MapMenuPanelItem from "../MapPolygonPanel/MapMenuPanelItem";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
@@ -185,7 +186,7 @@ const MapSidePanel = ({
             items={items}
             itemAs={Fragment}
             render={item => (
-              <MapSidePanelItem
+              <MapMenuPanelItem
                 uuid={item.uuid}
                 title={item.title}
                 subtitle={item.subtitle}

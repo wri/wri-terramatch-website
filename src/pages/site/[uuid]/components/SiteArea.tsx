@@ -3,9 +3,9 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import OverviewMapArea from "@/pages/project/[uuid]/components/OverviewMapArea";
 
 interface SiteAreaProps {
   sites: any;
