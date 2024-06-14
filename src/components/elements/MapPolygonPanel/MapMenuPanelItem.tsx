@@ -36,7 +36,7 @@ const MapMenuPanelItem = ({
   type,
   ...props
 }: MapMenuPanelItemProps) => {
-  const isMonitoring = false;
+  const isMonitoring = true;
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
   const t = useT();

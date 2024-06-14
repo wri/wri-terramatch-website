@@ -10,15 +10,15 @@ import Checkbox from "../Inputs/Checkbox/Checkbox";
 import { MenuItem } from "../MenuItem/MenuItem";
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
 import Text from "../Text/Text";
-import MapPolygonPanelItem, { MapPolygonPanelItemProps } from "./MapPolygonPanelItem";
+import MapMenuPanelItem, { MapMenuPanelItemProps } from "./MapMenuPanelItem";
 
 export interface MapPolygonSitePanelProps {
   emptyText?: string;
   onLoadMore: () => void;
-  onSelectItem: (item: MapPolygonPanelItemProps) => void;
+  onSelectItem: (item: MapMenuPanelItemProps) => void;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
-  selected: MapPolygonPanelItemProps | undefined;
-  setSelected: Dispatch<SetStateAction<MapPolygonPanelItemProps | undefined>>;
+  selected: MapMenuPanelItemProps | undefined;
+  setSelected: Dispatch<SetStateAction<MapMenuPanelItemProps | undefined>>;
 }
 
 const MapPolygonSitePanel = ({
@@ -164,7 +164,7 @@ const MapPolygonSitePanel = ({
             items={PolygonData}
             itemAs={Fragment}
             render={item => (
-              <MapPolygonPanelItem
+              <MapMenuPanelItem
                 uuid={item.uuid}
                 title={item.title}
                 subtitle={item.subtitle}
@@ -174,7 +174,9 @@ const MapPolygonSitePanel = ({
                 }}
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
-                setEditPolygon={setEditPolygon}
+                setClickedButton={() => {}}
+                type="sites"
+                status="draft"
               />
             )}
           />

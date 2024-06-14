@@ -27,7 +27,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const isMonitoring = false;
+  const isMonitoring = true;
   const setResultValues = (result: any) => {
     if (result.polygonsData) {
       setPolygonsData(result.polygonsData);

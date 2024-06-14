@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
-import { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -12,13 +11,13 @@ import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid 
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
-import MapMenuPanelItem from "../MapPolygonPanel/MapMenuPanelItem";
+import MapMenuPanelItem, { MapMenuPanelItemProps } from "../MapPolygonPanel/MapMenuPanelItem";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: MapSidePanelItemProps[];
+  items: MapMenuPanelItemProps[];
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
@@ -45,7 +44,7 @@ const MapSidePanel = ({
 }: MapSidePanelProps) => {
   const t = useT();
   const menuCheckboxRef = useRef<HTMLDivElement>(null);
-  const [selected, setSelected] = useState<MapSidePanelItemProps>();
+  const [selected, setSelected] = useState<MapMenuPanelItemProps>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
