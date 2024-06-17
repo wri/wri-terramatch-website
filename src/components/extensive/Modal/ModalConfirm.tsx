@@ -9,8 +9,7 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import { Option } from "@/types/common";
 
-import { ModalProps } from "./Modal";
-import { ModalBase } from "./ModalsBases";
+import { ModalBase, ModalProps } from "./Modal";
 
 export interface ModalConfirmProps extends ModalProps {
   onClose: () => void;
@@ -34,6 +33,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   checkPolygonsSite,
   ...rest
 }) => {
+  const t = useT();
   const [data, useData] = useState("");
   const [selectedOption, setSelectedOption] = useState<any>(null);
   const [showError, setShowError] = useState(false);
@@ -49,7 +49,6 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
       setWarning("");
     }
   };
-  const t = useT();
 
   return (
     <ModalBase {...rest} className={tw("max-w-xs p-5", className)}>

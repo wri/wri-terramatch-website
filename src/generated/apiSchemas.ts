@@ -23004,6 +23004,47 @@ export type GeometryPost = {
   };
 };
 
+export type AuditStatusCreateRequest = {
+  status?: string;
+  comment?: string;
+  type?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type AuditStatusResponse = {
+  id?: string;
+  uuid?: string;
+  entity_name?: string;
+  status?: string;
+  comment?: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
+  is_submitted?: boolean;
+  is_active?: boolean;
+  request_removed?: boolean;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  attachments?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    created_at?: string;
+  }[];
+};
+
 export type V2TerrafundCriteriaData = {
   /**
    * The ID of the polygon
@@ -23446,4 +23487,28 @@ export type EntityTypeResponse = {
    * Bounding box of the entity
    */
   bbox?: number[];
+};
+
+export type AuditStatusUpdateRequest = {
+  type?: string;
+  comment?: string;
+  status?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type SitePolygonResource = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date-time
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type SiteCheckApproveResponse = {
+  can_approve?: boolean;
 };
