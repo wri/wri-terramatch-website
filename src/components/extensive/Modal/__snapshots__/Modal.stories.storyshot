@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Modal Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white max-w-[800px] p-15 margin-4 z-50"
+    className="margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-15"
   >
     <div
       style={

@@ -5,16 +5,18 @@ import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
 import { useGetAuthMe } from "@/generated/apiComponents";
 
+import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
+
 const CommentarySection = ({
-  refresh,
   record,
   entity,
+  refresh,
   viewCommentsList = true,
   loading = false
 }: {
+  record: any;
+  entity: AuditLogEntity;
   refresh?: () => void;
-  record?: any;
-  entity?: "Project" | "SitePolygon" | "Site";
   viewCommentsList?: boolean;
   loading?: boolean;
 }) => {

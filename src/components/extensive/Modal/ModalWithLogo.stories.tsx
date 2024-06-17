@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { IconNames } from "../Icon/Icon";
 import Component, { ModalWithLogoProps as Props } from "./ModalWithLogo";
@@ -11,10 +12,14 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
+const client = new QueryClient();
+
 export const Default: Story = {
   render: (args: Props) => (
     <div className="flex items-center justify-center bg-primary-400 p-8">
-      <Component {...args} />
+      <QueryClientProvider client={client}>
+        <Component {...args} />
+      </QueryClientProvider>
     </div>
   ),
   args: {
