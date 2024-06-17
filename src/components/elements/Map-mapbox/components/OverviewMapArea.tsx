@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonsData } from "@/components/elements/Map-mapbox/utils";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
-import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
+import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
@@ -29,15 +28,25 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const { isMonitoring } = useMonitoringPartner();
-
+  const { data: entityData, refetch } = useGetV2TypeEntity({
+    queryParams: {
+      uuid: entityModel?.uuid,
+      type: type,
+      status: checkedValues.join(","),
+      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+    }
+  });
   const setResultValues = (result: any) => {
-    if (result.polygonsData) {
+    if (result?.polygonsData) {
       setPolygonsData(result.polygonsData);
       setEntityBbox(result.bbox as BBox);
       if (result.polygonsData?.length === 0) {
         callCountryBBox();
       }
     }
+  };
+  const recallEntityData = () => {
+    refetch();
   };
   const callCountryBBox = async () => {
     let currentCountry = entityModel?.country;
@@ -53,11 +62,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     }
   };
   useEffect(() => {
-    if (entityModel?.uuid) {
-      const statusFilter = checkedValues.join(",");
-      getPolygonsData(entityModel.uuid, statusFilter, sortOrder, type, setResultValues);
-    }
-  }, [entityModel, checkedValues, sortOrder]);
+    setResultValues(entityData);
+  }, [entityData]);
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
@@ -113,6 +119,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           tabEditPolygon=""
           setTabEditPolygon={() => {}}
           setPreviewVersion={() => {}}
+          recallEntityData={recallEntityData}
         />
       ) : (
         <MapSidePanel
@@ -131,6 +138,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           onCheckboxChange={handleCheckboxChange}
           setSortOrder={setSortOrder}
           type={type}
+          recallEntityData={recallEntityData}
         />
       )}
       <MapContainer

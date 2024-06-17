@@ -31,6 +31,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
   type: string;
+  recallEntityData?: any;
 }
 
 const MapSidePanel = ({
@@ -45,6 +46,7 @@ const MapSidePanel = ({
   onCheckboxChange,
   setSortOrder,
   type,
+  recallEntityData,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -85,8 +87,12 @@ const MapSidePanel = ({
 
   const deletePolygon = async (polygonUuid: string) => {
     await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
+    console.log("Should call refetch", recallEntityData);
+    recallEntityData?.();
   };
-
+  useEffect(() => {
+    console.trace("Should call", recallEntityData);
+  }, [recallEntityData]);
   useEffect(() => {
     if (clickedButton === "site") {
       const siteUrl = `/site/${selected?.site_id}`;
