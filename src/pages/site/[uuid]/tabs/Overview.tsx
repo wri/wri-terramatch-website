@@ -39,7 +39,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { openModal, closeModal } = useModalContext();
 
   useEffect(() => {
-    console.log("site.project?.uuid", site);
     if (site.project?.uuid) {
       checkIsMonitoringPartner(site.project?.uuid);
     }
@@ -92,7 +91,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         </Text>
       ),
       onClick: () => {
-        console.log("Create Polygons", editPolygon);
         setEditPolygon(true);
       }
     },
