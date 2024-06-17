@@ -47,7 +47,10 @@ const MapMenuPanelItem = ({
         title={t("Confirm Polygon Deletion")}
         content={t("Do you want to delete this polygon?")}
         onClose={closeModal}
-        onConfirm={() => {}}
+        onConfirm={() => {
+          setClickedButton("delete");
+          closeModal();
+        }}
       />
     );
   };

@@ -8,7 +8,11 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { STATUSES } from "@/constants/statuses";
 import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
-import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
+import {
+  fetchDeleteV2TerrafundPolygonUuid,
+  fetchGetV2TerrafundGeojsonComplete,
+  fetchGetV2TerrafundPolygonBboxUuid
+} from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -79,6 +83,10 @@ const MapSidePanel = ({
     URL.revokeObjectURL(url);
   };
 
+  const deletePolygon = async (polygonUuid: string) => {
+    await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
+  };
+
   useEffect(() => {
     if (clickedButton === "site") {
       const siteUrl = `/site/${selected?.site_id}`;
@@ -89,6 +97,9 @@ const MapSidePanel = ({
       setClickedButton("");
     } else if (clickedButton === "download") {
       downloadGeoJsonPolygon(selected?.poly_id ?? "");
+      setClickedButton("");
+    } else if (clickedButton === "delete") {
+      deletePolygon(selected?.poly_id ?? "");
       setClickedButton("");
     }
   }, [clickedButton, selected]);
