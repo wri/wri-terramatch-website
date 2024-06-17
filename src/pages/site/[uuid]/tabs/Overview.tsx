@@ -1,20 +1,26 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useModalContext } from "@/context/modal.provider";
+import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
 
@@ -29,6 +35,106 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const router = useRouter();
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
+  const { isMonitoring, checkIsMonitoringPartner } = useMonitoringPartner();
+  const { openModal, closeModal } = useModalContext();
+
+  useEffect(() => {
+    console.log("site.project?.uuid", site);
+    if (site.project?.uuid) {
+      checkIsMonitoringPartner(site.project?.uuid);
+    }
+  }, [site.project?.uuid]);
+
+  const openFormModalHandlerAddPolygon = () => {
+    openModal(
+      <ModalAdd
+        title="Add Polygons"
+        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${site?.name}.`}
+        descriptionList={
+          <div className="mt-9 flex">
+            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
+            <Text variant="text-12-light">50 MB per upload</Text>
+          </div>
+        }
+        onClose={closeModal}
+        content="Start by adding polygons to your site."
+        primaryButtonText="Close"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      ></ModalAdd>
+    );
+  };
+
+  const openFormModalHandlerUploadImages = () => {
+    openModal(
+      <ModalAdd
+        title="Upload Images"
+        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        descriptionList={
+          <Text variant="text-12-bold" className="mt-9 ">
+            Uploaded Files
+          </Text>
+        }
+        onClose={closeModal}
+        content="Start by adding images for processing."
+        primaryButtonText="Save"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      ></ModalAdd>
+    );
+  };
+
+  const itemsPrimaryMenu = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Create Polygons
+        </Text>
+      ),
+      onClick: () => {
+        console.log("Create Polygons", editPolygon);
+        setEditPolygon(true);
+      }
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Upload Data
+        </Text>
+      ),
+      onClick: () => openFormModalHandlerAddPolygon()
+    },
+    {
+      id: "3",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Upload Images
+        </Text>
+      ),
+      onClick: () => openFormModalHandlerUploadImages()
+    }
+  ];
+  const itemsSubmitPolygon = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Request Support
+        </Text>
+      ),
+      onClick: () => {}
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center ">
+          Submit for Review
+        </Text>
+      ),
+      onClick: () => {}
+    }
+  ];
 
   return (
     <PageBody>
@@ -86,6 +192,14 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
                 </Text>
                 <div className="flex w-full gap-3">
+                  {isMonitoring && (
+                    <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsPrimaryMenu}>
+                      <Button variant="white-border" className="" onChange={() => {}}>
+                        <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+                        &nbsp; Add Data
+                      </Button>
+                    </Menu>
+                  )}
                   <Button
                     variant="white-border"
                     className=""
@@ -96,6 +210,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                     <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
                     &nbsp; Download
                   </Button>
+                  {isMonitoring && (
+                    <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
+                      <Button variant="primary" className="" onChange={() => {}}>
+                        SUBMIT Polygons
+                      </Button>
+                    </Menu>
+                  )}
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
 
 import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
@@ -36,9 +37,9 @@ const MapMenuPanelItem = ({
   type,
   ...props
 }: MapMenuPanelItemProps) => {
-  const isMonitoring = true;
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
+  const { isMonitoring } = useMonitoringPartner();
   const t = useT();
   const openFormModalHandlerConfirm = () => {
     openModal(

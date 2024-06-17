@@ -7,6 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { STATUSES } from "@/constants/statuses";
+import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
 import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
@@ -49,7 +50,8 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-  const isMonitoring = true;
+  const { isMonitoring } = useMonitoringPartner();
+
   const { map } = mapFunctions;
 
   const flyToPolygonBounds = async (polygonUuid: string) => {
