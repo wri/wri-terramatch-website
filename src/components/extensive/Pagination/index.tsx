@@ -10,17 +10,12 @@ export interface PaginationProps extends PageSelectorProps {
   hasPageSizeSelector?: boolean;
   defaultPageSize?: number;
   setPageSize?: (count: number) => void;
-  treeSpeciesShow?: boolean;
   variant?: VariantPagination;
 }
 
 function Pagination(props: PaginationProps) {
   const t = useT();
-  return props.treeSpeciesShow ? (
-    <div className={classNames("flex items-center justify-between", props.containerClassName)}>
-      <PageSelector variantText={props.variant?.VariantPageText} {...props} />
-    </div>
-  ) : (
+  return (
     <div className={classNames("flex items-center justify-between", props.containerClassName)}>
       {props.hasPageSizeSelector ? (
         <PerPageSelector
