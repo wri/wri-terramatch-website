@@ -1,5 +1,4 @@
 import { MapPolygonCheckPanelItemProps } from "@/components/elements/MapPolygonPanel/MapPolygonCheckPanelItem";
-import { MapPolygonPanelItemProps } from "@/components/elements/MapPolygonPanel/MapPolygonPanelItem";
 
 export const uploadImageData = [
   { id: "1", name: "Images5.png", status: "We are processing your image", isVerified: true },
@@ -41,34 +40,6 @@ export const commentariesItems = [
     commentary: `The zoom to areas table sources the main mapvi
       ew drop down list which only has for example, "Adams County" and not "Unincorporated Adams County". Do we want both options? @ricardosaavedra2    what is the source table of the mask layers? and also what is the source layer for work request drop down? Earlier this week when I was trying to add highlands ranch geom you said 'jurisdictions'. I added it but still don't see the outline. All this should be aligned to one source with data restructure I added it but still don't see the outline. All this should be aligned to one source with data restructure I added it but still don't see the outline. All this should be aligned to one source with data restructure`,
     status: "Draft"
-  }
-];
-
-export const PolygonData: MapPolygonPanelItemProps[] = [
-  {
-    uuid: "1",
-    title: "Polygon 1",
-    subtitle: "Created 15/12/2023"
-  },
-  {
-    uuid: "2",
-    title: "Polygon 2",
-    subtitle: "Created 15/12/2023"
-  },
-  {
-    uuid: "3",
-    title: "Polygon 3",
-    subtitle: "Created 15/12/2023"
-  },
-  {
-    uuid: "4",
-    title: "Polygon 4",
-    subtitle: "Created 15/12/2023"
-  },
-  {
-    uuid: "5",
-    title: "Polygon 5",
-    subtitle: "Created 15/12/2023"
   }
 ];
 
