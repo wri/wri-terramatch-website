@@ -144,7 +144,7 @@ const MapSidePanel = ({
   ];
 
   return (
-    <div {...props} className={classNames(className)}>
+    <div {...props} className={classNames("h-[250px] flex-1", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
         {isMonitoring ? (

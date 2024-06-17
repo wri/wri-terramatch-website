@@ -18,7 +18,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
   const [tabEditPolygon] = useState("Attributes");
   const [previewVersion, setPreviewVersion] = useState(false);
   return (
-    <div className="flex h-[500px] rounded-lg  text-darkCustom">
+    <div className="flex h-[500px] rounded-lg text-darkCustom wide:h-[700px]">
       <div className="relative h-auto w-auto">
         <When condition={tabEditPolygon === "Version" && !!editPolygon}>
           <div className="absolute top-5 left-[43vw] z-20 text-center">

@@ -90,7 +90,7 @@ const MapSidePanelItem = ({
             </Text>
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
-          <div className="lex h-full self-start">
+          <div className="flex h-full self-start">
             <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}

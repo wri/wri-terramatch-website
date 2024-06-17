@@ -69,7 +69,7 @@ const MapMenuPanelItem = ({
       id: "2",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Download")}
         </Text>
       ),
@@ -140,7 +140,7 @@ const MapMenuPanelItem = ({
             </Text>
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
-          <div className="lex h-full self-start">
+          <div className="flex h-full self-start">
             <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
