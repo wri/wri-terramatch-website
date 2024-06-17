@@ -5,7 +5,7 @@ import { useShowContext } from "react-admin";
 
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
-import { addFilterOfPolygonsData, convertToGeoJSON, loadLayersInMap } from "../utils";
+import { addFilterOfPolygonsData, convertToGeoJSON, loadLayersInMap, stopDrawing } from "../utils";
 
 const MAP_STYLE = "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu";
 const INITIAL_ZOOM = 2.5;
@@ -81,7 +81,15 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     if (map?.current && draw?.current) {
       map.current.on("style.load", onLoad);
       addControlToMap();
-      map.current.on("draw.create", (feature: FeatureCollection) => handleCreateDraw(feature, record));
+      map.current.on("draw.modechange", (event: any) => {
+        if (event.mode === "simple_select") {
+          stopDrawing(draw.current as MapboxDraw, map.current as mapboxgl.Map);
+        }
+      });
+      map.current.on("draw.create", (feature: FeatureCollection) => {
+        console.log("draw.create");
+        handleCreateDraw(feature, record);
+      });
     }
   };
 
