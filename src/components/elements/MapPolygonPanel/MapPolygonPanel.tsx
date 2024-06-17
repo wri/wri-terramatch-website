@@ -25,6 +25,7 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
   type: string;
+  recallEntityData?: () => void;
 }
 
 const MapPolygonPanel = ({
@@ -44,6 +45,7 @@ const MapPolygonPanel = ({
   onCheckboxChange,
   setSortOrder,
   type,
+  recallEntityData,
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
@@ -88,6 +90,7 @@ const MapPolygonPanel = ({
               onCheckboxChange={onCheckboxChange}
               setSortOrder={setSortOrder}
               type={type}
+              recallEntityData={recallEntityData}
             />
           </When>
           <When condition={!!stateViewPanel}>

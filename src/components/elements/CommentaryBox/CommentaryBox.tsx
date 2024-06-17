@@ -2,10 +2,18 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 import { When } from "react-if";
 
+import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab/utils/util";
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import {
+  fetchPostV2FileUploadMODELCOLLECTIONUUID,
+  PostV2AuditStatusENTITYUUIDRequestBody,
+  usePostV2AuditStatusENTITYUUID
+} from "@/generated/apiComponents";
+import { AuditStatusResponse } from "@/generated/apiSchemas";
 
 import Notification from "../Notification/Notification";
 
@@ -16,19 +24,46 @@ export interface CommentaryBoxProps {
   mutate?: any;
   refresh?: () => void;
   record?: any;
-  entity?: string;
+  entity?: AuditLogEntity;
 }
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox, record, entity } = props;
+  const { name, lastName, buttonSendOnBox } = props;
+  const t = useT();
+
+  const { mutate: sendCommentary } = usePostV2AuditStatusENTITYUUID({
+    onSuccess: (res: AuditStatusResponse) => {
+      const resAuditlog = res as { data: { uuid: string } };
+      const bodyFiles = new FormData();
+      files.forEach(element => {
+        if (element instanceof File) {
+          bodyFiles.append("upload_file", element);
+          fetchPostV2FileUploadMODELCOLLECTIONUUID({
+            //@ts-ignore swagger issue
+            body: bodyFiles,
+            pathParams: { model: "audit-status", collection: "attachments", uuid: resAuditlog.data.uuid as any }
+          });
+        }
+      });
+      setShowNotification(true);
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+      setComment("");
+      setError("");
+      setFiles([]);
+      props.refresh?.();
+      setLoading(false);
+    }
+  });
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [charCount, setCharCount] = useState<number>(0);
-  const [showNotification] = useState<boolean>(false);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [warning, setWarning] = useState<string>("");
-  const t = useT();
+
   const validFileTypes = [
     "application/pdf",
     "application/vnd.ms-excel",
@@ -41,6 +76,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
   ];
   const maxFileSize = 10 * 1024 * 1024;
   const maxFiles = 5;
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
@@ -61,17 +97,23 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
     }
   };
   const submitComment = () => {
-    const body = new FormData();
-    body.append("entity_uuid", record?.uuid);
-    body.append("status", record?.status);
-    body.append("entity", entity as string);
-    body.append("comment", comment);
-    body.append("type", "comment");
-    files.forEach((element: File, index: number) => {
-      body.append(`file[${index}]`, element);
-    });
+    const body: PostV2AuditStatusENTITYUUIDRequestBody = {
+      status: props.record?.status,
+      comment: comment,
+      type: "comment"
+    };
+
     setLoading(true);
+    sendCommentary?.({
+      pathParams: {
+        entity: getRequestPathParam(props.entity!),
+        uuid: props.record?.uuid as string
+      },
+      //@ts-ignore swagger issue
+      body
+    });
   };
+
   const handleCommentChange = (e: any) => {
     setComment(e.target.value);
     setCharCount(e.target.value.length);
@@ -81,14 +123,13 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       setWarning("");
     }
   };
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3">
         <div className="flex min-h-[32px] min-w-[32px] items-center justify-center self-start rounded-full bg-primary-500">
           <Text variant="text-14-semibold" className="uppercase text-white">
-            {name?.[0]}
-            {lastName?.[0]}
+            {name?.[0] ?? ""}
+            {lastName?.[0] ?? ""}
           </Text>
         </div>
         <TextArea
@@ -140,6 +181,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
             ))}
           </When>
         </div>
+
         <div className="display-grid">
           {warning && charCount > 255 && <div className="text-right text-xs text-red">{warning}</div>}
           <div className={`text-nowrap text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
@@ -147,6 +189,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
           </div>
         </div>
       </div>
+
       {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
         <Button

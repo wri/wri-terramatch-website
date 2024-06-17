@@ -13,47 +13,37 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {
   render: args => {
-    const [query, setQuery] = useState<string>();
+    const [query] = useState<string>();
 
     return (
       <div className="bg-back-map bg-cover">
         <div className="bg-[#ffffff26] p-4">
-          <Component
-            {...args}
-            items={items.filter(item => (query ? item.title.includes(query) : item))}
-            onSearch={setQuery}
-          />
+          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
         </div>
       </div>
     );
   },
   args: {
     title: "Project Sites",
-    onSelectItem: console.log,
-    stateViewPanel: false
+    onSelectItem: console.log
   }
 };
 
 export const OpenPolygonCheck: Story = {
   render: args => {
-    const [query, setQuery] = useState<string>();
+    const [query] = useState<string>();
 
     return (
       <div className="bg-back-map bg-cover">
         <div className="bg-[#ffffff26] p-4">
-          <Component
-            {...args}
-            items={items.filter(item => (query ? item.title.includes(query) : item))}
-            onSearch={setQuery}
-          />
+          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
         </div>
       </div>
     );
   },
   args: {
     title: "Project Sites",
-    onSelectItem: console.log,
-    stateViewPanel: true
+    onSelectItem: console.log
   }
 };
 
@@ -62,37 +52,55 @@ const items = [
     uuid: "1",
     title: "Puerto Princesa Subterranean River National Park Forest Corridor",
     subtitle: "Created 03/12/21",
-    refContainer: null
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites"
   },
   {
     uuid: "2",
     title: "A medium sized project site to see how it looks with 2 lines",
     subtitle: "Created 03/12/21",
-    refContainer: null
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites"
   },
   {
     uuid: "3",
     title: "A shorter project site",
     subtitle: "Created 03/12/21",
-    refContainer: null
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites"
   },
   {
     uuid: "4",
     title:
       "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
     subtitle: "Created 03/12/21",
-    refContainer: null
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites"
   },
   {
     uuid: "5",
     title: "A shorter project site",
     subtitle: "Created 03/12/21",
-    refContainer: null
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites"
   },
   {
     uuid: "6",
     title: "A shorter project site",
     subtitle: "Created 03/12/21",
-    refContainer: null
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites"
   }
 ];
