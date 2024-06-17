@@ -34,6 +34,9 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     if (result.polygonsData) {
       setPolygonsData(result.polygonsData);
       setEntityBbox(result.bbox as BBox);
+      if (result.polygonsData?.length === 0) {
+        callCountryBBox();
+      }
     }
   };
   const callCountryBBox = async () => {
@@ -73,7 +76,6 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         [NEEDS_MORE_INFORMATION]: [],
         [DRAFT]: []
       });
-      callCountryBBox();
     }
   }, [polygonsData]);
 
