@@ -119,13 +119,6 @@ export const MapContainer = ({
     initMap();
   }, []);
 
-  // useEffect(() => {
-  //   if (isUserDrawing) {
-  //     toggleUserDrawing?.(isUserDrawing);
-  //     toggleAttribute?.(true);
-  //   }
-  // }, [isUserDrawing]);
-
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
