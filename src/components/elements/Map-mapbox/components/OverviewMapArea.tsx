@@ -106,7 +106,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
-          className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
+          className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -132,7 +132,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
-          className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
+          className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
