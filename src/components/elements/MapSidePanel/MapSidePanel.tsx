@@ -87,12 +87,8 @@ const MapSidePanel = ({
 
   const deletePolygon = async (polygonUuid: string) => {
     await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
-    console.log("Should call refetch", recallEntityData);
     recallEntityData?.();
   };
-  useEffect(() => {
-    console.trace("Should call", recallEntityData);
-  }, [recallEntityData]);
   useEffect(() => {
     if (clickedButton === "site") {
       const siteUrl = `/site/${selected?.site_id}`;

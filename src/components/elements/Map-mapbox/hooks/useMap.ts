@@ -87,7 +87,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
         }
       });
       map.current.on("draw.create", (feature: FeatureCollection) => {
-        console.log("draw.create");
         handleCreateDraw(feature, record);
       });
     }
