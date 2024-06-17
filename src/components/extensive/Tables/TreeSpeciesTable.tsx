@@ -16,9 +16,9 @@ export interface TreeSpeciesTableProps {
 const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch, variantTable }: TreeSpeciesTableProps) => {
   const t = useT();
 
-  const [queryParams, setQueryParams] = useState<any>();
+  const [queryParams, setQueryParams] = useState<any>({});
 
-  if (collection && queryParams) {
+  if (collection != null) {
     queryParams["filter[collection]"] = collection;
   }
 
@@ -39,13 +39,13 @@ const TreeSpeciesTable = ({ modelName, modelUUID, collection, onFetch, variantTa
       ? treeSpecies?.data?.reduce((total, item) => total + (typeof item.amount === "number" ? 1 : 0), 0) > 0
       : false;
 
+  const data = treeSpecies?.data?.map(item => ({ ...item, amount: item.amount ?? 0 })) ?? [];
   return (
     <div>
       <ServerSideTable
         meta={treeSpecies?.meta}
-        data={treeSpecies?.data?.map(item => ({ ...item, amount: item.amount ?? 0 })) ?? []}
+        data={data}
         isLoading={isLoading}
-        treeSpeciesShow={true}
         onQueryParamChange={setQueryParams}
         variant={variantTable}
         columns={[

@@ -195,7 +195,7 @@ const PolygonDrawer = ({
               tab="polygonReview"
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
-            <CommentarySection record={selectedPolygon} entity={"SitePolygon"}></CommentarySection>
+            <CommentarySection record={selectedPolygon} entity={"Polygon"}></CommentarySection>
           </div>
         </Then>
         <Else>

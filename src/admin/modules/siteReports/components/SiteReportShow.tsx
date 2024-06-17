@@ -20,7 +20,7 @@ const SiteReportShow: FC = () => {
         <GalleryTab label="Site Report Gallery" entity="site-reports" />
         <DocumentTab label="Site Report Documents" entity="site-reports" />
         <ChangeRequestsTab entity="site-reports" singularEntity="site-report" />
-        <AuditLogTab entity="site-report" />
+        <AuditLogTab />
       </TabbedShowLayout>
     </Show>
   );
