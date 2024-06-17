@@ -8,23 +8,17 @@ import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import Menu from "@/components/elements/Menu/Menu";
-import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
+import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalAdd from "@/components/extensive/Modal/ModalAdd";
-import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
-import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { useModalContext } from "@/context/modal.provider";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
+
+import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
   site: any;
@@ -35,156 +29,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const router = useRouter();
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
-  const { openModal, closeModal } = useModalContext();
-  const openFormModalHandlerAddPolygon = () => {
-    openModal(
-      <ModalAdd
-        title="Add Polygons"
-        descriptionInput="Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road."
-        descriptionList={
-          <div className="mt-9 flex">
-            <Text variant="text-12-bold">{t("TerraMatch upload limits:")}&nbsp;</Text>
-            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
-          </div>
-        }
-        onClose={closeModal}
-        content="Start by adding polygons to your site."
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalAdd>
-    );
-  };
-  const openFormModalHandlerUploadImages = () => {
-    openModal(
-      <ModalAdd
-        title="Upload Images"
-        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
-        descriptionList={
-          <Text variant="text-12-bold" className="mt-9 ">
-            Uploaded Files
-          </Text>
-        }
-        onClose={closeModal}
-        content="Start by adding images for processing."
-        primaryButtonText="Save"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalAdd>
-    );
-  };
-
-  const openFormModalHandlerSubmitReviewConfirm = () => {
-    openModal(
-      <ModalConfirm
-        commentArea
-        className="max-w-xs"
-        title={"Confirm Polygon Submission"}
-        content={
-          <Text variant="text-12-light" as="p" className="text-center">
-            Are your sure you want to submit your polygons for the site <b style={{ fontSize: "inherit" }}>Iseme.</b>?
-          </Text>
-        }
-        onClose={closeModal}
-        onConfirm={() => {
-          closeModal;
-        }}
-      />
-    );
-  };
-
-  const openFormModalHandlerRequestPolygonSupport = () => {
-    openModal(
-      <ModalWithMap
-        title="Request Support"
-        onClose={closeModal}
-        content="Faja Lobi Project&nbsp;&nbsp;•&nbsp;&nbsp;Priceless Planet Coalition"
-        primaryButtonText="Submit"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
-    );
-  };
-
-  const openFormModalHandlerSubmitPolygon = () => {
-    openModal(
-      <ModalSubmit
-        title="Submit Polygons"
-        onClose={closeModal}
-        content="Project Developers may submit one or all polygons for review."
-        primaryButtonText="Next"
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => {
-            closeModal();
-            openFormModalHandlerSubmitReviewConfirm();
-          }
-        }}
-        secondaryButtonText="Cancel"
-        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
-        site={site}
-      ></ModalSubmit>
-    );
-  };
-
-  const polygonStatusLabels = [
-    { id: "1", label: "Site Approved" },
-    { id: "2", label: "Polygons Submitted" },
-    { id: "3", label: "Polygons Approved" },
-    { id: "4", label: "Monitoring Begins" }
-  ];
-
-  const itemsPrimaryMenu = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Create Polygons
-        </Text>
-      ),
-      onClick: () => {
-        console.log("Create Polygons", editPolygon);
-        setEditPolygon(true);
-      }
-    },
-    {
-      id: "2",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Data
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerAddPolygon()
-    },
-    {
-      id: "3",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Images
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerUploadImages()
-    }
-  ];
-  const itemsSubmitPolygon = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Request Support
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerRequestPolygonSupport()
-    },
-    {
-      id: "2",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Submit for Review
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerSubmitPolygon()
-    }
-  ];
 
   return (
     <PageBody>
@@ -242,31 +86,20 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
                 </Text>
                 <div className="flex w-full gap-3">
-                  <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsPrimaryMenu}>
-                    <Button variant="white-border" className="" onChange={() => {}}>
-                      <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-                      &nbsp; Add Data
-                    </Button>
-                  </Menu>
-                  <Button variant="white-border" className="" onChange={() => {}}>
+                  <Button
+                    variant="white-border"
+                    className=""
+                    onClick={() => {
+                      downloadSiteGeoJsonPolygons(site?.uuid);
+                    }}
+                  >
                     <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
                     &nbsp; Download
                   </Button>
-                  <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
-                    <Button variant="primary" className="" onChange={() => {}}>
-                      SUBMIT Polygons
-                    </Button>
-                  </Menu>
                 </div>
               </div>
-
-              <div className="w-[46%] rounded-lg border border-neutral-200 p-4">
-                <Text variant="text-14" className="mb-2">
-                  Polygon Status
-                </Text>
-                <StepProgressbar color="primary" value={80} labels={polygonStatusLabels} classNameLabels="" />
-              </div>
             </div>
+            <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
           </PageCard>
         </PageColumn>
       </PageRow>

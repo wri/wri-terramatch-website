@@ -8,7 +8,11 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { addSourcesToLayers, mapPolygonData } from "@/components/elements/Map-mapbox/utils";
+import {
+  addSourcesToLayers,
+  downloadSiteGeoJsonPolygons,
+  mapPolygonData
+} from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -23,7 +27,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
-  fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
@@ -201,19 +204,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         }}
       />
     );
-  };
-
-  const downloadSiteGeoJsonPolygons = async (siteUuid: string) => {
-    const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
-      queryParams: { uuid: siteUuid }
-    });
-    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `SitePolygons.geojson`;
-    link.click();
-    URL.revokeObjectURL(url);
   };
 
   useEffect(() => {

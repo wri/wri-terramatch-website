@@ -232,7 +232,7 @@ export const MapContainer = ({
   };
 
   return (
-    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="mapContainer">
+    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen}>
           <ControlGroup position="top-center">

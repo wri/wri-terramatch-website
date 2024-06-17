@@ -4,48 +4,39 @@ import { useEffect, useState } from "react";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { getPolygonsData } from "@/components/elements/Map-mapbox/utils";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
-import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
-interface ProjectAreaProps {
-  project: any;
+interface EntityAreaProps {
+  entityModel: any;
+  type: string;
 }
 
-const ProjectArea = ({ project }: ProjectAreaProps) => {
+const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
-  const [projectBbox, setProjectBbox] = useState<BBox>();
+  const [entityBbox, setEntityBbox] = useState<BBox>();
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-
-  const getPolygonsData = (uuid: string, statusFilter: string, sortOrder: string) => {
-    fetchGetV2TypeEntity({
-      queryParams: {
-        uuid: uuid,
-        type: "projects",
-        status: statusFilter,
-        [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-      }
-    }).then(result => {
-      if (result.polygonsData) {
-        setPolygonsData(result.polygonsData);
-        setProjectBbox(result.bbox as BBox);
-      }
-    });
+  const setResultValues = (result: any) => {
+    if (result.polygonsData) {
+      setPolygonsData(result.polygonsData);
+      setEntityBbox(result.bbox as BBox);
+    }
   };
 
   useEffect(() => {
-    if (project?.uuid) {
+    if (entityModel?.uuid) {
       const statusFilter = checkedValues.join(",");
-      getPolygonsData(project.uuid, statusFilter, sortOrder);
+      getPolygonsData(entityModel.uuid, statusFilter, sortOrder, type, setResultValues);
     }
-  }, [project, checkedValues, sortOrder]);
+  }, [entityModel, checkedValues, sortOrder]);
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
@@ -76,9 +67,9 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
   };
 
   return (
-    <div className="flex h-[500px] rounded-lg  text-darkCustom">
+    <>
       <MapSidePanel
-        title={t("Polygons")}
+        title={t(type === "sites" ? "Site Polygons" : "Polygons")}
         items={
           (polygonsData?.map(item => ({
             ...item,
@@ -92,19 +83,20 @@ const ProjectArea = ({ project }: ProjectAreaProps) => {
         checkedValues={checkedValues}
         onCheckboxChange={handleCheckboxChange}
         setSortOrder={setSortOrder}
+        type={type}
       />
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
-        bbox={projectBbox}
-        tooltipType="goTo"
+        bbox={entityBbox}
+        tooltipType={type === "sites" ? "view" : "goTo"}
         showPopups
         showLegend
         siteData={true}
         className="flex-1 rounded-r-lg"
       />
-    </div>
+    </>
   );
 };
 
-export default ProjectArea;
+export default OverviewMapArea;
