@@ -2303,6 +2303,9 @@ export type PostUsersRequestBody = {
   phone_number?: string;
   whatsapp_phone?: string;
   callback_url?: string;
+  primary_role?: string;
+  country?: string;
+  program?: string;
 };
 
 export type PostUsersVariables = {
@@ -32021,6 +32024,172 @@ export const usePutV2GeometryUUID = (
   );
 };
 
+export type GetV2AuditStatusENTITYUUIDPathParams = {
+  /**
+   * allowed values project/site/site-polygon
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type GetV2AuditStatusENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AuditStatusENTITYUUIDResponse = {
+  id?: string;
+  uuid?: string;
+  entity_name?: string;
+  status?: string;
+  comment?: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
+  is_submitted?: boolean;
+  is_active?: boolean;
+  request_removed?: boolean;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  attachments?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    created_at?: string;
+  }[];
+}[];
+
+export type GetV2AuditStatusENTITYUUIDVariables = {
+  pathParams: GetV2AuditStatusENTITYUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AuditStatusENTITYUUID = (variables: GetV2AuditStatusENTITYUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2AuditStatusENTITYUUIDResponse,
+    GetV2AuditStatusENTITYUUIDError,
+    undefined,
+    {},
+    {},
+    GetV2AuditStatusENTITYUUIDPathParams
+  >({ url: "/v2/audit-status/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2AuditStatusENTITYUUID = <TData = GetV2AuditStatusENTITYUUIDResponse>(
+  variables: GetV2AuditStatusENTITYUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AuditStatusENTITYUUIDResponse, GetV2AuditStatusENTITYUUIDError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AuditStatusENTITYUUIDResponse, GetV2AuditStatusENTITYUUIDError, TData>(
+    queryKeyFn({ path: "/v2/audit-status/{ENTITY}/{UUID}", operationId: "getV2AuditStatusENTITYUUID", variables }),
+    ({ signal }) => fetchGetV2AuditStatusENTITYUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2AuditStatusENTITYUUIDPathParams = {
+  /**
+   * allowed values project/site/site-polygon
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type PostV2AuditStatusENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AuditStatusENTITYUUIDResponse = {
+  id?: string;
+  uuid?: string;
+  entity_name?: string;
+  status?: string;
+  comment?: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
+  is_submitted?: boolean;
+  is_active?: boolean;
+  request_removed?: boolean;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  attachments?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    created_at?: string;
+  }[];
+};
+
+export type PostV2AuditStatusENTITYUUIDRequestBody = {
+  status?: string;
+  comment?: string;
+  type?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type PostV2AuditStatusENTITYUUIDVariables = {
+  body?: PostV2AuditStatusENTITYUUIDRequestBody;
+  pathParams: PostV2AuditStatusENTITYUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AuditStatusENTITYUUID = (
+  variables: PostV2AuditStatusENTITYUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2AuditStatusENTITYUUIDResponse,
+    PostV2AuditStatusENTITYUUIDError,
+    PostV2AuditStatusENTITYUUIDRequestBody,
+    {},
+    {},
+    PostV2AuditStatusENTITYUUIDPathParams
+  >({ url: "/v2/audit-status/{entity}/{uuid}", method: "post", ...variables, signal });
+
+export const usePostV2AuditStatusENTITYUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2AuditStatusENTITYUUIDResponse,
+      PostV2AuditStatusENTITYUUIDError,
+      PostV2AuditStatusENTITYUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2AuditStatusENTITYUUIDResponse,
+    PostV2AuditStatusENTITYUUIDError,
+    PostV2AuditStatusENTITYUUIDVariables
+  >(
+    (variables: PostV2AuditStatusENTITYUUIDVariables) =>
+      fetchPostV2AuditStatusENTITYUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2SitesSitePolygonPathParams = {
   /**
    * The ID of the site
@@ -33576,6 +33745,56 @@ export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDa
   );
 };
 
+export type GetV2DashboardViewProjectUuidPathParams = {
+  /**
+   * UUID of the project
+   */
+  uuid: string;
+};
+
+export type GetV2DashboardViewProjectUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardViewProjectUuidResponse = {
+  data?: {
+    allowed?: boolean;
+  };
+};
+
+export type GetV2DashboardViewProjectUuidVariables = {
+  pathParams: GetV2DashboardViewProjectUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardViewProjectUuid = (
+  variables: GetV2DashboardViewProjectUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardViewProjectUuidResponse,
+    GetV2DashboardViewProjectUuidError,
+    undefined,
+    {},
+    {},
+    GetV2DashboardViewProjectUuidPathParams
+  >({ url: "/v2/dashboard/view-project/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProjectUuidResponse>(
+  variables: GetV2DashboardViewProjectUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/view-project/{uuid}", operationId: "getV2DashboardViewProjectUuid", variables }),
+    ({ signal }) => fetchGetV2DashboardViewProjectUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2TerrafundPolygonGeojsonUuidPathParams = {
   /**
    * The UUID of the polygon geometry to retrieve.
@@ -33763,6 +33982,142 @@ export const useGetV2TypeEntity = <TData = GetV2TypeEntityResponse>(
   return reactQuery.useQuery<GetV2TypeEntityResponse, GetV2TypeEntityError, TData>(
     queryKeyFn({ path: "/v2/type-entity", operationId: "getV2TypeEntity", variables }),
     ({ signal }) => fetchGetV2TypeEntity({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PutV2ENTITYUUIDStatusPathParams = {
+  /**
+   * allowed values project/site/site-polygons
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type PutV2ENTITYUUIDStatusError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2ENTITYUUIDStatusVariables = {
+  pathParams: PutV2ENTITYUUIDStatusPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2ENTITYUUIDStatus = (variables: PutV2ENTITYUUIDStatusVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, PutV2ENTITYUUIDStatusError, undefined, {}, {}, PutV2ENTITYUUIDStatusPathParams>({
+    url: "/v2/{entity}/{uuid}/status",
+    method: "put",
+    ...variables,
+    signal
+  });
+
+export const usePutV2ENTITYUUIDStatus = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, PutV2ENTITYUUIDStatusError, PutV2ENTITYUUIDStatusVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, PutV2ENTITYUUIDStatusError, PutV2ENTITYUUIDStatusVariables>(
+    (variables: PutV2ENTITYUUIDStatusVariables) => fetchPutV2ENTITYUUIDStatus({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2ProjectsUUIDSitePolygonsAllPathParams = {
+  uuid: string;
+};
+
+export type GetV2ProjectsUUIDSitePolygonsAllError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectsUUIDSitePolygonsAllResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date-time
+   */
+  date_created?: string;
+  created_by?: string;
+}[];
+
+export type GetV2ProjectsUUIDSitePolygonsAllVariables = {
+  pathParams: GetV2ProjectsUUIDSitePolygonsAllPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectsUUIDSitePolygonsAll = (
+  variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2ProjectsUUIDSitePolygonsAllResponse,
+    GetV2ProjectsUUIDSitePolygonsAllError,
+    undefined,
+    {},
+    {},
+    GetV2ProjectsUUIDSitePolygonsAllPathParams
+  >({ url: "/v2/projects/{uuid}/site-polygons/all", method: "get", ...variables, signal });
+
+export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSitePolygonsAllResponse>(
+  variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ProjectsUUIDSitePolygonsAllResponse, GetV2ProjectsUUIDSitePolygonsAllError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ProjectsUUIDSitePolygonsAllResponse, GetV2ProjectsUUIDSitePolygonsAllError, TData>(
+    queryKeyFn({
+      path: "/v2/projects/{UUID}/site-polygons/all",
+      operationId: "getV2ProjectsUUIDSitePolygonsAll",
+      variables
+    }),
+    ({ signal }) => fetchGetV2ProjectsUUIDSitePolygonsAll({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2SitesSiteCheckApprovePathParams = {
+  site: string;
+};
+
+export type GetV2SitesSiteCheckApproveError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitesSiteCheckApproveResponse = {
+  data?: {
+    can_approve?: boolean;
+  };
+};
+
+export type GetV2SitesSiteCheckApproveVariables = {
+  pathParams: GetV2SitesSiteCheckApprovePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitesSiteCheckApprove = (variables: GetV2SitesSiteCheckApproveVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2SitesSiteCheckApproveResponse,
+    GetV2SitesSiteCheckApproveError,
+    undefined,
+    {},
+    {},
+    GetV2SitesSiteCheckApprovePathParams
+  >({ url: "/v2/sites/{site}/check-approve", method: "get", ...variables, signal });
+
+export const useGetV2SitesSiteCheckApprove = <TData = GetV2SitesSiteCheckApproveResponse>(
+  variables: GetV2SitesSiteCheckApproveVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2SitesSiteCheckApproveResponse, GetV2SitesSiteCheckApproveError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2SitesSiteCheckApproveResponse, GetV2SitesSiteCheckApproveError, TData>(
+    queryKeyFn({ path: "/v2/sites/{site}/check-approve", operationId: "getV2SitesSiteCheckApprove", variables }),
+    ({ signal }) => fetchGetV2SitesSiteCheckApprove({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -34232,6 +34587,11 @@ export type QueryOperation =
       variables: GetV2TerrafundValidationSiteVariables;
     }
   | {
+      path: "/v2/audit-status/{ENTITY}/{UUID}";
+      operationId: "getV2AuditStatusENTITYUUID";
+      variables: GetV2AuditStatusENTITYUUIDVariables;
+    }
+  | {
       path: "/v2/sites/{site}/polygon";
       operationId: "getV2SitesSitePolygon";
       variables: GetV2SitesSitePolygonVariables;
@@ -34317,6 +34677,11 @@ export type QueryOperation =
       variables: GetV2DashboardProjectDataUuidVariables;
     }
   | {
+      path: "/v2/dashboard/view-project/{uuid}";
+      operationId: "getV2DashboardViewProjectUuid";
+      variables: GetV2DashboardViewProjectUuidVariables;
+    }
+  | {
       path: "/v2/terrafund/polygon/geojson/{uuid}";
       operationId: "getV2TerrafundPolygonGeojsonUuid";
       variables: GetV2TerrafundPolygonGeojsonUuidVariables;
@@ -34325,4 +34690,14 @@ export type QueryOperation =
       path: "/v2/type-entity";
       operationId: "getV2TypeEntity";
       variables: GetV2TypeEntityVariables;
+    }
+  | {
+      path: "/v2/projects/{UUID}/site-polygons/all";
+      operationId: "getV2ProjectsUUIDSitePolygonsAll";
+      variables: GetV2ProjectsUUIDSitePolygonsAllVariables;
+    }
+  | {
+      path: "/v2/sites/{site}/check-approve";
+      operationId: "getV2SitesSiteCheckApprove";
+      variables: GetV2SitesSiteCheckApproveVariables;
     };

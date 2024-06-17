@@ -4,17 +4,16 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { useAuthContext } from "@/context/auth.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 
+import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
 
 export const LoginFormDataSchema = yup.object({
   email: yup.string().email().required(),
-  password: yup.string().required()
+  password: yup.string().required("Password is required")
 });
 
 export type LoginFormData = yup.InferType<typeof LoginFormDataSchema>;
@@ -23,7 +22,7 @@ const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
   const router = useRouter();
-  const { login, loginLoading } = useAuthContext();
+  const { login, loginLoading, errorsRequest } = useAuthContext();
   const { openToast } = useToastContext();
   const form = useForm<LoginFormData>({
     resolver: yupResolver(LoginFormDataSchema),
@@ -41,7 +40,7 @@ const LoginPage = () => {
         email_address: data.email,
         password: data.password
       },
-      () => openToast(t("Incorrect email or password"), ToastType.ERROR)
+      () => openToast(t("Incorrect Email or Password"), ToastType.ERROR)
     )) as { success: boolean };
 
     if (!res?.success) return;
@@ -50,12 +49,9 @@ const LoginPage = () => {
   };
 
   return (
-    <BackgroundLayout>
-      <ContentLayout>
-        <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
-      </ContentLayout>
-    </BackgroundLayout>
+    <LoginLayout>
+      <LoginForm form={form} loading={loginLoading} handleSave={handleSave} errorsRequest={errorsRequest} />
+    </LoginLayout>
   );
 };
-
 export default LoginPage;

@@ -5,8 +5,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
-import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { usePostUsers } from "@/generated/apiComponents";
 
 import SignUpForm from "./components/SignupForm";
@@ -19,6 +17,9 @@ const SignUpFormDataSchema = (t: any) =>
     phone_number: yup.string().required(),
     job_role: yup.string().required(),
     password: yup.string().required(),
+    primary_role: yup.string().required(),
+    country: yup.string(),
+    program: yup.string(),
     confirm_password: yup.string().oneOf([yup.ref("password")], t("Passwords must match.")),
     terms: yup.boolean().isTrue(t("Please accept terms and conditions.")),
     consent: yup.boolean().isTrue(t("Please accept consent."))
@@ -26,7 +27,15 @@ const SignUpFormDataSchema = (t: any) =>
 
 export type SignUpFormData = yup.InferType<ReturnType<typeof SignUpFormDataSchema>>;
 
-const SignUpPage = () => {
+const SignUpPage = ({
+  primary_role,
+  selectedOption,
+  selectedTitleOption
+}: {
+  primary_role: string;
+  selectedOption: string;
+  selectedTitleOption: string;
+}) => {
   const t = useT();
   const router = useRouter();
 
@@ -81,18 +90,15 @@ const SignUpPage = () => {
         password: data.password,
         phone_number: data.phone_number,
         job_role: data.job_role,
-        callback_url: window.location.origin + "/auth/verify/email/"
+        callback_url: window.location.origin + "/auth/verify/email/",
+        primary_role: primary_role as string,
+        country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
+        program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
       }
     });
   };
 
-  return (
-    <BackgroundLayout>
-      <ContentLayout>
-        <SignUpForm form={form} handleSave={handleSave} loading={isLoading} />
-      </ContentLayout>
-    </BackgroundLayout>
-  );
+  return <SignUpForm form={form} handleSave={handleSave} loading={isLoading} primary_role={primary_role as string} />;
 };
 
 export default SignUpPage;
