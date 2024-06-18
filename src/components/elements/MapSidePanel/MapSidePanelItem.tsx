@@ -63,7 +63,7 @@ const MapSidePanelItem = ({
       id: "3",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("download")}>
-          <Icon name={IconNames.IC_DOWNLOAD_MENU} className="h-4 w-4 lg:h-5 lg:w-5" />
+          <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Download")}
         </Text>
       )
