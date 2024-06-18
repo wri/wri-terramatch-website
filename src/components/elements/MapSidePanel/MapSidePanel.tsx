@@ -56,7 +56,7 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring } = useMapAreaContext() || {};
 
   const { map } = mapFunctions;
 
