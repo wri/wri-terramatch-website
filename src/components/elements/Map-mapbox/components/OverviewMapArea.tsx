@@ -45,9 +45,6 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
       }
     }
   };
-  const recallEntityData = () => {
-    refetch();
-  };
   const callCountryBBox = async () => {
     let currentCountry = entityModel?.country;
     if (type === "sites") {
@@ -119,7 +116,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           tabEditPolygon=""
           setTabEditPolygon={() => {}}
           setPreviewVersion={() => {}}
-          recallEntityData={recallEntityData}
+          recallEntityData={refetch}
         />
       ) : (
         <MapSidePanel
@@ -138,7 +135,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           onCheckboxChange={handleCheckboxChange}
           setSortOrder={setSortOrder}
           type={type}
-          recallEntityData={recallEntityData}
+          recallEntityData={refetch}
         />
       )}
       <MapContainer
