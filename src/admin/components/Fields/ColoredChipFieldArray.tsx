@@ -23,7 +23,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   //fix: RA crashes when null or undefined passed to an arrayField
   if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
     return (
-      <Typography component="span" variant="body2">
+      <Typography component="span" variant="body2" className="rounded-[3px] bg-grey-200 px-2 font-medium">
         {props.emptyText || "Not Provided"}
       </Typography>
     );
