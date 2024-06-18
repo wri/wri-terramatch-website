@@ -25,6 +25,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
+  type: string;
 }
 
 const MapSidePanel = ({
@@ -38,6 +39,7 @@ const MapSidePanel = ({
   checkedValues,
   onCheckboxChange,
   setSortOrder,
+  type,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -194,6 +196,7 @@ const MapSidePanel = ({
                 setClickedButton={setClickedButton}
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
+                type={type}
               />
             )}
           />

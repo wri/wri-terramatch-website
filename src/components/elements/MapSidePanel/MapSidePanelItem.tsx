@@ -18,6 +18,7 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   site_id?: string;
   setClickedButton: React.Dispatch<React.SetStateAction<string>>;
   refContainer: React.RefObject<HTMLDivElement> | null;
+  type: string;
 }
 
 const MapSidePanelItem = ({
@@ -29,21 +30,26 @@ const MapSidePanelItem = ({
   setClickedButton,
   className,
   refContainer,
+  type,
   ...props
 }: MapSidePanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const t = useT();
 
   const itemsPrimaryMenu = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("site")}>
-          <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; {t("View Site")}
-        </Text>
-      )
-    },
+    ...(type !== "sites"
+      ? [
+          {
+            id: "1",
+            render: () => (
+              <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("site")}>
+                <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
+                &nbsp; {t("View Site")}
+              </Text>
+            )
+          }
+        ]
+      : []),
     {
       id: "2",
       render: () => (

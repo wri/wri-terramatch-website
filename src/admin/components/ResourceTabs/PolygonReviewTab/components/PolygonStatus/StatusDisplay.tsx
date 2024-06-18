@@ -8,30 +8,29 @@ import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
+import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
+import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
+
 const menuPolygonOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1,
-    viewPd: false
+    value: 1
   },
   {
     title: "Submitted",
     status: "submitted",
-    value: 2,
-    viewPd: true
+    value: 2
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3,
-    viewPd: false
+    value: 3
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4,
-    viewPd: false
+    value: 4
   }
 ];
 const menuSiteOptions = [
@@ -94,7 +93,7 @@ const menuProjectOptions = [
 ];
 
 export interface StatusProps {
-  titleStatus: "Site" | "Project" | "Polygon";
+  titleStatus: AuditLogEntity;
   mutate?: any;
   record?: any;
   refresh?: () => void;
@@ -102,7 +101,6 @@ export interface StatusProps {
   refetchPolygon?: () => void;
   tab?: string;
   checkPolygonsSite?: boolean | undefined;
-  viewPD?: boolean;
 }
 
 const menuOptionsMap = {
@@ -130,8 +128,7 @@ const StatusDisplay = ({
   name,
   record,
   checkPolygonsSite,
-  tab,
-  viewPD
+  tab
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -157,16 +154,20 @@ const StatusDisplay = ({
       {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
-  const filterViewPd = viewPD
-    ? menuOptionsMap[titleStatus].filter(option => option.viewPd === true)
-    : menuOptionsMap[titleStatus];
+
+  const onFinallyRequest = () => {
+    refresh?.();
+    reloadEntity();
+    closeModal();
+  };
+
   const openFormModalHandlerStatus = () => {
     openModal(
       <ModalConfirm
         title={`${titleStatus} Status Change`}
         commentArea
         menuLabel={""}
-        menu={filterViewPd}
+        menu={menuOptionsMap[titleStatus]}
         onClose={closeModal}
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}
@@ -174,7 +175,10 @@ const StatusDisplay = ({
           const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
           try {
             await mutate({
-              pathParams: { uuid: record?.uuid },
+              pathParams: {
+                uuid: record?.uuid,
+                entity: getRequestPathParam(titleStatus)
+              },
               body: {
                 status: option?.status,
                 comment: text,
@@ -212,9 +216,7 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh?.();
-            reloadEntity?.();
-            closeModal?.();
+            onFinallyRequest();
           }
         }}
       />
@@ -228,13 +230,12 @@ const StatusDisplay = ({
         content={contentRequest}
         commentArea
         onClose={closeModal}
-        onConfirm={async (text: any, opt) => {
-          const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
+        onConfirm={async (text: any) => {
           try {
             await mutate({
-              pathParams: { uuid: record?.uuid },
+              pathParams: { uuid: record?.uuid, entity: getRequestPathParam(titleStatus) },
               body: {
-                status: option?.status,
+                status: "",
                 comment: text,
                 type: "change-request",
                 is_active: true,
@@ -272,9 +273,7 @@ const StatusDisplay = ({
             }, 3000);
             console.error(e);
           } finally {
-            refresh?.();
-            reloadEntity?.();
-            closeModal?.();
+            onFinallyRequest();
           }
         }}
       />

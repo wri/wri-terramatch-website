@@ -21,6 +21,7 @@ import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
+import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
@@ -78,6 +79,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   mapFunctions?: any;
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonsDataResponse;
+  polygonsExists?: boolean;
 }
 
 export const MapContainer = ({
@@ -102,6 +104,7 @@ export const MapContainer = ({
   showLegend = false,
   mapFunctions,
   tooltipType = "view",
+  polygonsExists = true,
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
@@ -232,7 +235,7 @@ export const MapContainer = ({
   };
 
   return (
-    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="mapContainer">
+    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen}>
           <ControlGroup position="top-center">
@@ -290,6 +293,9 @@ export const MapContainer = ({
         <ControlGroup position="bottom-left" className="bottom-13">
           <PolygonCheck />
         </ControlGroup>
+      </When>
+      <When condition={!polygonsExists}>
+        <EmptyStateDisplay />
       </When>
     </div>
   );

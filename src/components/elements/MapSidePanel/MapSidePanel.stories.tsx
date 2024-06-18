@@ -36,7 +36,8 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
-    refContainer: null
+    refContainer: null,
+    type: "sites"
   },
   {
     uuid: "2",
@@ -44,7 +45,8 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
-    refContainer: null
+    refContainer: null,
+    type: "sites"
   },
   {
     uuid: "3",
@@ -52,7 +54,8 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
-    refContainer: null
+    refContainer: null,
+    type: "sites"
   },
   {
     uuid: "4",
@@ -61,7 +64,8 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
-    refContainer: null
+    refContainer: null,
+    type: "sites"
   },
   {
     uuid: "5",
@@ -69,7 +73,8 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
-    refContainer: null
+    refContainer: null,
+    type: "sites"
   },
   {
     uuid: "6",
@@ -77,6 +82,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
-    refContainer: null
+    refContainer: null,
+    type: "sites"
   }
 ];

@@ -46,6 +46,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
 
   const initMap = () => {
     if (map.current) return;
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
       style: MAP_STYLE,
