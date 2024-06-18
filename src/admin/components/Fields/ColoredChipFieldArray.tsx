@@ -29,32 +29,40 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
     );
   }
 
-  const statusCounts = getPolygonsToSite.reduce((acc: { [key: string]: number }, polygon: any) => {
-    const status = polygon.status;
-    acc[status] = (acc[status] || 0) + 1;
-    return acc;
-  }, {});
+  function groupPolygonsByStatus(polygons: any[]) {
+    const groupedPolygons = polygons.reduce((acc, polygon) => {
+      const status = polygon?.status;
+      if (acc?.[status]) {
+        acc[status].count++;
+      } else {
+        acc[status] = {
+          status: status,
+          count: 1
+        };
+      }
+      return acc;
+    }, {});
 
-  const statusList = Object.keys(statusCounts).map(status => ({
-    id: status,
-    status,
-    count: statusCounts[status]
-  }));
+    const result = Object.keys(groupedPolygons).map(key => groupedPolygons[key]);
 
-  console.log(statusList);
+    return result;
+  }
+
+  const groupedPolygons = groupPolygonsByStatus(getPolygonsToSite);
+
   return (
-    <ArrayField {...props} record={{ [props.source!]: getPolygonsToSite }}>
+    <ArrayField {...props} record={{ [props.source!]: groupedPolygons }}>
       <SingleFieldList linkType={false}>
         <FunctionField
-          render={(record: any) => {
+          render={(record: { status: string; count: number }) => {
             const status = record?.status;
-            const choice = props.choices.find(i => i.id === status)?.name;
-
+            const choice = props.choices.find(i => i.id === status);
+            const PolygonStatusLabel = record?.count + " " + choice?.name!;
             return choice ? (
               <ChipField
-                record={{ status: choice }}
+                record={{ status: PolygonStatusLabel }}
                 source="status"
-                className={classNames("!h-fit !rounded-[3px]", POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice])}
+                className={classNames("!h-fit !rounded-[3px]", POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice?.name!])}
               />
             ) : (
               <Typography component="span" variant="body2">
