@@ -21,7 +21,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
   const { data: getPolygonsToSite } = useGetV2SitesSitePolygon({ pathParams: { site: recordContext.uuid } });
   //fix: RA crashes when null or undefined passed to an arrayField
-  if (!getPolygonsToSite || !Array.isArray(getPolygonsToSite)) {
+  if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
     return (
       <Typography component="span" variant="body2">
         {props.emptyText || "Not Provided"}
@@ -58,16 +58,12 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
             const status = record?.status;
             const choice = props.choices.find(i => i.id === status);
             const PolygonStatusLabel = record?.count + " " + choice?.name!;
-            return choice ? (
+            return (
               <ChipField
                 record={{ status: PolygonStatusLabel }}
                 source="status"
                 className={classNames("!h-fit !rounded-[3px]", POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice?.name!])}
               />
-            ) : (
-              <Typography component="span" variant="body2">
-                Not Provided
-              </Typography>
             );
           }}
         />
