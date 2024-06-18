@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import classNames from "classnames";
 import { ArrayField, ArrayFieldProps, ChipField, FunctionField, SingleFieldList, useRecordContext } from "react-admin";
 
 import { Choice } from "@/admin/types/common";
@@ -9,14 +10,11 @@ interface ColoredChipFieldArrayProps extends Omit<ArrayFieldProps, "children"> {
 }
 
 const POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP: { [key: string]: string } = {
-  Approved: "bg-green-30 text-green-100",
-  Rejected: "bg-error-400 text-error-600",
-  "Under Review": "bg-yellow-300 text-yellow-700",
-  "Awaiting approval": "bg-yellow-300 text-yellow-700",
-  "Planting in progress": "bg-yellow-300 text-yellow-700",
-  Draft: "bg-yellow-300 text-yellow-700",
-  Unknown: "",
-  "Needs more information": "bg-yellow-300 text-yellow-700"
+  Approved: "!bg-green-30 tag-approved-color",
+  Submitted: "!bg-blue-200 tag-submitted-color",
+  Draft: "!bg-grey-200 tag-draft-color",
+  "Needs info": "!bg-tertiary-50 tag-need-info-color",
+  Unknown: ""
 };
 
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
@@ -56,7 +54,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
               <ChipField
                 record={{ status: choice }}
                 source="status"
-                className={POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice]}
+                className={classNames("!h-fit !rounded-[3px]", POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice])}
               />
             ) : (
               <Typography component="span" variant="body2">

@@ -144,7 +144,7 @@ export const SitesList: FC = () => {
     />,
     <SelectInput
       key="update_request_status"
-      label="Change Request Status"
+      label="Change Request"
       source="update_request_status"
       choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"

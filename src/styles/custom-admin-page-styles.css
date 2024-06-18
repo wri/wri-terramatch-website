@@ -270,6 +270,22 @@
     margin: 20px auto 20px 16px; 
 }
 
+.tag-approved-color span{
+  @apply !text-green-100 !font-medium
+}
+
+.tag-need-info-color span{
+  @apply !text-tertiary-600 !font-medium
+}
+
+.tag-submitted-color span{
+  @apply !text-blue !font-medium
+}
+
+.tag-draft-color span{
+  @apply !text-grey-500 !font-medium
+}
+
 @media (min-width: 1900px) {
   .RaSidebar-paperAnchorDockedLeft{
     width: 265px !important;
