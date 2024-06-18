@@ -2,7 +2,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 
 export const UserRoleInfo = [
   {
-    id: "project_developer",
+    id: "project-developer",
     title: "I’m a Project Developer",
     description: "Visualize and share the progress of your project and other restoration champions.",
     menu: [],

@@ -26,7 +26,7 @@ export const userPrimaryRoleChoices = [
     name: "Super Admin"
   },
   {
-    id: "project_developer",
+    id: "project-developer",
     name: "Project Developer"
   },
   {
