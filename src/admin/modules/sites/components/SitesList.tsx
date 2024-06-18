@@ -9,7 +9,6 @@ import {
   List,
   ReferenceInput,
   SearchInput,
-  SelectField,
   SelectInput,
   ShowButton,
   TextField,
@@ -29,6 +28,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
+import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { optionToChoices } from "@/utils/options";
 
@@ -70,12 +70,10 @@ const SiteDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
       <TextField source="name" label="Site Name" />
       <CustomChipField source="readable_status" label="Status" sortable={false} />
-      <ColoredChipFieldArray source="polygons" label="Polygon Status" choices={[]} />
-      <SelectField
-        source="update_request_status"
-        label="Change Request Status"
-        sortable={false}
-        choices={optionToChoices(getChangeRequestStatusOptions())}
+      <ColoredChipFieldArray
+        source="status"
+        label="Polygon Submitted"
+        choices={optionToChoices(getPolygonsSubmittedTypes())}
       />
       <TextField source="project.name" label="Project Name" />
       <DateField source="start_date" label="Date Created" locales="en-GB" />

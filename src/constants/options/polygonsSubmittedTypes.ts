@@ -4,22 +4,22 @@ import { Option } from "@/types/common";
 
 export const getPolygonsSubmittedTypes = (t: typeof useT = (t: string) => t): Option[] => [
   {
-    value: "Draft",
+    value: "draft",
     title: t("Draft"),
     meta: {}
   },
   {
-    value: "Submitted",
+    value: "submitted",
     title: t("Submitted"),
     meta: {}
   },
   {
-    value: "Needs more information",
+    value: "needs-more-information",
     title: t("Needs info"),
     meta: {}
   },
   {
-    value: "Approved",
+    value: "approved",
     title: t("Approved"),
     meta: {}
   }
