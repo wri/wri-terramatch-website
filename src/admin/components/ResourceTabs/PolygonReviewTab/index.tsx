@@ -180,7 +180,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
       .then((response: DeletePolygonProps | undefined) => {
         if (response && response?.uuid) {
-          reloadSiteData?.();
+          refetch?.();
           const { map } = mapFunctions;
           if (map?.current) {
             addSourcesToLayers(map.current, polygonDataMap);
@@ -273,9 +273,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         setFile={setFiles}
       />
     );
-  };
-  const reloadSiteData = () => {
-    refetch();
   };
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -371,7 +368,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   );
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={reloadSiteData}>
+    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>

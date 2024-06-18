@@ -14,7 +14,7 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
-import { MonitoringPartnerProvider } from "@/context/monitoringPartner.provider";
+import { MapAreaProvider } from "@/context/monitoringPartner.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2SitesUUID, useGetV2SitesUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -90,7 +90,7 @@ const SiteDetailPage = () => {
   }
 
   return (
-    <MonitoringPartnerProvider>
+    <MapAreaProvider>
       <LoadingContainer loading={isLoading}>
         <Head>
           <title>{`${t("Site")} ${site.name}`}</title>
@@ -155,7 +155,7 @@ const SiteDetailPage = () => {
         />
         <PageFooter />
       </LoadingContainer>
-    </MonitoringPartnerProvider>
+    </MapAreaProvider>
   );
 };
 

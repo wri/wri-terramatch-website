@@ -2,15 +2,15 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 
 import { fetchGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 
-type MonitoringContextType = {
+type MapAreaType = {
   isMonitoring: boolean;
   setIsMonitoring: (value: boolean) => void;
   checkIsMonitoringPartner: (projectUuid: string) => Promise<void>;
 };
 
-const MonitoringContext = createContext<MonitoringContextType | undefined>(undefined);
+const MapAreaContext = createContext<MapAreaType | undefined>(undefined);
 
-export const MonitoringPartnerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isMonitoring, setIsMonitoring] = useState<boolean>(false);
 
   const checkIsMonitoringPartner = async (projectUuid: string) => {
@@ -25,17 +25,17 @@ export const MonitoringPartnerProvider: React.FC<{ children: ReactNode }> = ({ c
     }
   };
 
-  const contextValue: MonitoringContextType = {
+  const contextValue: MapAreaType = {
     isMonitoring,
     setIsMonitoring,
     checkIsMonitoringPartner
   };
 
-  return <MonitoringContext.Provider value={contextValue}>{children}</MonitoringContext.Provider>;
+  return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;
 };
 
-export const useMonitoringPartner = () => {
-  const context = useContext(MonitoringContext);
+export const useMapAreaPartner = () => {
+  const context = useContext(MapAreaContext);
   if (context === undefined) {
     throw new Error("useMonitoring must be used within a MonitoringPartnerProvider");
   }

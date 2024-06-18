@@ -6,7 +6,7 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
-import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
+import { useMapAreaPartner } from "@/context/monitoringPartner.provider";
 import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -27,7 +27,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const { isMonitoring } = useMonitoringPartner();
+  const { isMonitoring } = useMapAreaPartner();
   const { data: entityData, refetch } = useGetV2TypeEntity({
     queryParams: {
       uuid: entityModel?.uuid,

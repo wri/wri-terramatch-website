@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { STATUSES } from "@/constants/statuses";
-import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
+import { useMapAreaPartner } from "@/context/monitoringPartner.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonComplete,
@@ -56,7 +56,7 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-  const { isMonitoring } = useMonitoringPartner();
+  const { isMonitoring } = useMapAreaPartner();
 
   const { map } = mapFunctions;
 
