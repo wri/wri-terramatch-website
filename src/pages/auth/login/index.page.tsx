@@ -11,12 +11,17 @@ import { useSetInviteToken } from "@/hooks/useInviteToken";
 import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
 
-export const LoginFormDataSchema = yup.object({
-  email: yup.string().email().required(),
-  password: yup.string().required("Password is required")
-});
+export type LoginFormDataType = {
+  email: string;
+  password: string;
+};
 
-export type LoginFormData = yup.InferType<typeof LoginFormDataSchema>;
+export const LoginFormDataSchema = (t: any) => {
+  return yup.object<LoginFormDataType>({
+    email: yup.string().email().required(),
+    password: yup.string().required(t("Password is required"))
+  });
+};
 
 const LoginPage = () => {
   useSetInviteToken();
@@ -24,8 +29,8 @@ const LoginPage = () => {
   const router = useRouter();
   const { login, loginLoading } = useAuthContext();
   const { openToast } = useToastContext();
-  const form = useForm<LoginFormData>({
-    resolver: yupResolver(LoginFormDataSchema),
+  const form = useForm<LoginFormDataType>({
+    resolver: yupResolver(LoginFormDataSchema(t)),
     mode: "onSubmit"
   });
 
@@ -34,7 +39,7 @@ const LoginPage = () => {
    * @param data LoginFormData
    * @returns Log in user and redirect to homepage
    */
-  const handleSave = async (data: LoginFormData) => {
+  const handleSave = async (data: LoginFormDataType) => {
     const res = (await login(
       {
         email_address: data.email,

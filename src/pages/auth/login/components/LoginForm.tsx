@@ -26,9 +26,9 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
           {t("Sign in")}
         </Text>
         <Text variant="text-12-light" className="flex text-blueCustom-700">
-          New to TerraMatch’s Dashboards?&nbsp;
+          {t("New to TerraMatch’s Dashboards?")}&nbsp;
           <Link href={"/auth/create-account"} className="text-12-bold text-primary underline underline-offset-4">
-            Sign Up for free
+            {t("Sign Up for free")}
           </Link>
         </Text>
         <div className="mb-5 mt-[6vh] flex flex-col gap-12">
@@ -73,7 +73,7 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
         </div>
         <Link href="/auth/reset-password" className="flex w-fit">
           <Text variant="text-12-bold" className="mb-6 w-fit decoration-slice text-primary">
-            Forgot Password?
+            {t("Forgot Password?")}
           </Text>
         </Link>
         <Form.Footer
