@@ -2,7 +2,6 @@ import { Stack } from "@mui/material";
 import { FC } from "react";
 import {
   AutocompleteInput,
-  BooleanField,
   Datagrid,
   DateField,
   EditButton,
@@ -22,6 +21,8 @@ import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAle
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import ColoredChipFieldArray from "@/admin/components/Fields/ColoredChipFieldArray";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -68,7 +69,8 @@ const SiteDataGrid: FC = () => {
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
       <TextField source="name" label="Site Name" />
-      <TextField source="readable_status" label="Status" sortable={false} />
+      <CustomChipField source="readable_status" label="Status" sortable={false} />
+      <ColoredChipFieldArray source="polygons" label="Polygon Status" choices={[]} />
       <SelectField
         source="update_request_status"
         label="Change Request Status"
@@ -76,7 +78,7 @@ const SiteDataGrid: FC = () => {
         choices={optionToChoices(getChangeRequestStatusOptions())}
       />
       <TextField source="project.name" label="Project Name" />
-      <DateField source="start_date" label="Establishment" locales="en-GB" />
+      <DateField source="start_date" label="Date Created" locales="en-GB" />
       <FunctionField
         source="framework_key"
         label="Framework"
@@ -86,7 +88,6 @@ const SiteDataGrid: FC = () => {
         }
         sortable={false}
       />
-      <BooleanField source="has_monitoring_data" label="Monitored Data" sortable={false} looseValue />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
