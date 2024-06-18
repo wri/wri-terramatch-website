@@ -1,6 +1,6 @@
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
-export const UserRolInfo = [
+export const UserRoleInfo = [
   {
     id: "project_developer",
     title: "I’m a Project Developer",

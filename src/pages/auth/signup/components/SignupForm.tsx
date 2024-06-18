@@ -47,7 +47,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
                 label={t("First Name")}
                 required
                 variant={"signup"}
-                placeholder="Add First Name"
+                placeholder={t("Add First Name")}
                 labelClassName={"text-14-light normal-case text-dark-500"}
               />
               <Input
@@ -58,7 +58,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
                 label={t("Last Name")}
                 required
                 variant={"signup"}
-                placeholder="Add Last Name"
+                placeholder={t("Add Last Name")}
                 labelClassName={"text-14-light normal-case text-dark-500"}
               />
             </div>
@@ -70,10 +70,10 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
               label={t("Job Title")}
               required
               variant={"signup"}
-              placeholder="Add Job Title"
+              placeholder={t("Add Job Title")}
               labelClassName={"text-14-light normal-case text-dark-500"}
               descriptionClassName={"opacity-60 text-12-light"}
-              descriptionFooter={"Please enter your job role or position within your organizations."}
+              descriptionFooter={t("Please enter your job role or position within your organizations.")}
             />
             <Input
               name="phone_number"
@@ -83,10 +83,10 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
               label={t("Professional phone number")}
               required
               variant={"signup"}
-              placeholder="Add Phone Number"
+              placeholder={t("Add Phone Number")}
               labelClassName={"text-14-light normal-case text-dark-500"}
               descriptionClassName={"opacity-60 text-12-light"}
-              descriptionFooter={"Please provide a professional phone number where you can be contacted"}
+              descriptionFooter={t("Please provide a professional phone number where you can be contacted")}
             />
             <Input
               name="email_address"
@@ -96,7 +96,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
               label={t("Professional Email Address")}
               required
               variant={"signup"}
-              placeholder="Add Email Address"
+              placeholder={t("Add Email Address")}
               labelClassName={"text-14-light normal-case text-dark-500"}
               descriptionClassName={"opacity-60 text-12-light"}
               descriptionFooter={t(
@@ -125,7 +125,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
               required
               variant={"signup"}
               labelClassName={"text-14-light normal-case text-dark-500"}
-              placeholder="Repeat Password"
+              placeholder={t("Repeat Password")}
             />
             <div className={`mt-7 flex flex-col ${errors.terms ? "gap-7" : "gap-1"}`}>
               <Checkbox
