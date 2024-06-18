@@ -14,6 +14,7 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
+import { MonitoringPartnerProvider } from "@/context/monitoringPartner.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2SitesUUID, useGetV2SitesUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -89,70 +90,72 @@ const SiteDetailPage = () => {
   }
 
   return (
-    <LoadingContainer loading={isLoading}>
-      <Head>
-        <title>{`${t("Site")} ${site.name}`}</title>
-      </Head>
-      <PageBreadcrumbs
-        links={[
-          { title: t("My Projects"), path: "/my-projects" },
-          { title: site.project?.name, path: `/project/${site.project?.uuid}` },
-          { title: site.name }
-        ]}
-      />
-      <PageHeader className="h-[203px]" title={site.name} subtitles={subtitles} hasBackButton={false}>
-        <div className="flex gap-4">
-          <When condition={site.site_reports_total === 0}>
-            <Button variant="secondary" onClick={onDeleteSite}>
-              {t("Delete")}
-            </Button>
-          </When>
-          <If condition={siteStatus === "edit"}>
-            <Then>
-              <Button as={Link} href={`/entity/sites/edit/${siteUUID}`}>
-                {t("Continue Site")}
+    <MonitoringPartnerProvider>
+      <LoadingContainer loading={isLoading}>
+        <Head>
+          <title>{`${t("Site")} ${site.name}`}</title>
+        </Head>
+        <PageBreadcrumbs
+          links={[
+            { title: t("My Projects"), path: "/my-projects" },
+            { title: site.project?.name, path: `/project/${site.project?.uuid}` },
+            { title: site.name }
+          ]}
+        />
+        <PageHeader className="h-[203px]" title={site.name} subtitles={subtitles} hasBackButton={false}>
+          <div className="flex gap-4">
+            <When condition={site.site_reports_total === 0}>
+              <Button variant="secondary" onClick={onDeleteSite}>
+                {t("Delete")}
               </Button>
-            </Then>
-            <Else>
-              <Button variant="secondary" onClick={handleExport}>
-                {t("Export")}
-              </Button>
-              <Button onClick={handleEdit}>{t("Edit")}</Button>
-            </Else>
-          </If>
-        </div>
-      </PageHeader>
-      <StatusBar entityName="sites" entity={site} />
-      <SecondaryTabs
-        tabItems={[
-          { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} /> },
-          { key: "details", title: t("Details"), body: <SiteDetailTab site={site} /> },
-          {
-            key: "gallery",
-            title: t("Gallery"),
-            body: (
-              <GalleryTab
-                modelName="sites"
-                modelUUID={site.uuid}
-                modelTitle={t("Site")}
-                boundaryGeojson={site.boundary_geojson}
-                emptyStateContent={t(
-                  "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
-                )}
-              />
-            )
-          },
-          { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site} /> },
-          {
-            key: "completed-tasks",
-            title: t("Completed Reports"),
-            body: <SiteCompletedReportsTab siteUUID={site.uuid} />
-          }
-        ]}
-        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
-      />
-      <PageFooter />
-    </LoadingContainer>
+            </When>
+            <If condition={siteStatus === "edit"}>
+              <Then>
+                <Button as={Link} href={`/entity/sites/edit/${siteUUID}`}>
+                  {t("Continue Site")}
+                </Button>
+              </Then>
+              <Else>
+                <Button variant="secondary" onClick={handleExport}>
+                  {t("Export")}
+                </Button>
+                <Button onClick={handleEdit}>{t("Edit")}</Button>
+              </Else>
+            </If>
+          </div>
+        </PageHeader>
+        <StatusBar entityName="sites" entity={site} />
+        <SecondaryTabs
+          tabItems={[
+            { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} /> },
+            { key: "details", title: t("Details"), body: <SiteDetailTab site={site} /> },
+            {
+              key: "gallery",
+              title: t("Gallery"),
+              body: (
+                <GalleryTab
+                  modelName="sites"
+                  modelUUID={site.uuid}
+                  modelTitle={t("Site")}
+                  boundaryGeojson={site.boundary_geojson}
+                  emptyStateContent={t(
+                    "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
+                  )}
+                />
+              )
+            },
+            { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site} /> },
+            {
+              key: "completed-tasks",
+              title: t("Completed Reports"),
+              body: <SiteCompletedReportsTab siteUUID={site.uuid} />
+            }
+          ]}
+          containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
+        />
+        <PageFooter />
+      </LoadingContainer>
+    </MonitoringPartnerProvider>
   );
 };
 

@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonsData } from "@/components/elements/Map-mapbox/utils";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
-import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
+import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
+import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
+
+import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -25,10 +27,22 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const mapFunctions = useMap();
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
+  const { isMonitoring } = useMonitoringPartner();
+  const { data: entityData, refetch } = useGetV2TypeEntity({
+    queryParams: {
+      uuid: entityModel?.uuid,
+      type: type,
+      status: checkedValues.join(","),
+      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+    }
+  });
   const setResultValues = (result: any) => {
-    if (result.polygonsData) {
+    if (result?.polygonsData) {
       setPolygonsData(result.polygonsData);
       setEntityBbox(result.bbox as BBox);
+      if (result.polygonsData?.length === 0) {
+        callCountryBBox();
+      }
     }
   };
   const callCountryBBox = async () => {
@@ -45,11 +59,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     }
   };
   useEffect(() => {
-    if (entityModel?.uuid) {
-      const statusFilter = checkedValues.join(",");
-      getPolygonsData(entityModel.uuid, statusFilter, sortOrder, type, setResultValues);
-    }
-  }, [entityModel, checkedValues, sortOrder]);
+    setResultValues(entityData);
+  }, [entityData]);
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
@@ -68,7 +79,6 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         [NEEDS_MORE_INFORMATION]: [],
         [DRAFT]: []
       });
-      callCountryBBox();
     }
   }, [polygonsData]);
 
@@ -82,23 +92,52 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
 
   return (
     <>
-      <MapSidePanel
-        title={t(type === "sites" ? "Site Polygons" : "Polygons")}
-        items={
-          (polygonsData?.map(item => ({
-            ...item,
-            title: item.poly_name ?? t("Unnamed Polygon"),
-            subtitle: t("Created {date}", { date: format(item.created_at) })
-          })) || []) as any[]
-        }
-        mapFunctions={mapFunctions}
-        className="absolute z-20 h-[500px] w-[23vw] bg-[#ffffff12] p-8"
-        emptyText={t("No polygons are available.")}
-        checkedValues={checkedValues}
-        onCheckboxChange={handleCheckboxChange}
-        setSortOrder={setSortOrder}
-        type={type}
-      />
+      {isMonitoring ? (
+        <MapPolygonPanel
+          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          items={
+            (polygonsData?.map(item => ({
+              ...item,
+              title: item.poly_name ?? t("Unnamed Polygon"),
+              subtitle: t("Created {date}", { date: format(item.created_at) })
+            })) || []) as any[]
+          }
+          mapFunctions={mapFunctions}
+          className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
+          emptyText={t("No polygons are available.")}
+          checkedValues={checkedValues}
+          onCheckboxChange={handleCheckboxChange}
+          setSortOrder={setSortOrder}
+          type={type}
+          onSelectItem={() => {}}
+          onLoadMore={() => {}}
+          setEditPolygon={() => {}}
+          editPolygon={false}
+          tabEditPolygon=""
+          setTabEditPolygon={() => {}}
+          setPreviewVersion={() => {}}
+          recallEntityData={refetch}
+        />
+      ) : (
+        <MapSidePanel
+          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          items={
+            (polygonsData?.map(item => ({
+              ...item,
+              title: item.poly_name ?? t("Unnamed Polygon"),
+              subtitle: t("Created {date}", { date: format(item.created_at) })
+            })) || []) as any[]
+          }
+          mapFunctions={mapFunctions}
+          className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
+          emptyText={t("No polygons are available.")}
+          checkedValues={checkedValues}
+          onCheckboxChange={handleCheckboxChange}
+          setSortOrder={setSortOrder}
+          type={type}
+          recallEntityData={refetch}
+        />
+      )}
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}

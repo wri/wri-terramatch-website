@@ -23512,3 +23512,9 @@ export type SitePolygonResource = {
 export type SiteCheckApproveResponse = {
   can_approve?: boolean;
 };
+
+export type DashboardProjectViewResponse = {
+  data?: {
+    allowed?: boolean;
+  };
+};
