@@ -185,7 +185,7 @@
 }
 
 .MuiTablePagination-displayedRows {
-  @apply hidden
+  @apply order-3 !ml-auto !text-grey-600 !text-base !font-bold
 }
 
 .MuiTablePagination-actions {
