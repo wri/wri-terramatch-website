@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
@@ -81,38 +82,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       ></ModalAdd>
     );
   };
-
-  const itemsPrimaryMenu = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Create Polygons
-        </Text>
-      ),
-      onClick: () => {
-        setEditPolygon(true);
-      }
-    },
-    {
-      id: "2",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Data
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerAddPolygon()
-    },
-    {
-      id: "3",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Images
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerUploadImages()
-    }
-  ];
   const itemsSubmitPolygon = [
     {
       id: "1",
@@ -191,12 +160,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 </Text>
                 <div className="flex w-full gap-3">
                   {isMonitoring && (
-                    <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsPrimaryMenu}>
-                      <Button variant="white-border" className="" onChange={() => {}}>
-                        <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-                        &nbsp; Add Data
-                      </Button>
-                    </Menu>
+                    <AddDataButton
+                      openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
+                      openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                    />
                   )}
                   <Button
                     variant="white-border"
