@@ -47,17 +47,17 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
-        title="Add Polygons"
-        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${site?.name}.`}
+        title={t("Add Polygons")}
+        descriptionInput={`${t("Drag and drop a GeoJSON, Shapefile, or KML for your site")} ${site?.name}.`}
         descriptionList={
           <div className="mt-9 flex">
-            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
-            <Text variant="text-12-light">50 MB per upload</Text>
+            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
+            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
           </div>
         }
         onClose={closeModal}
-        content="Start by adding polygons to your site."
-        primaryButtonText="Close"
+        content={t("Start by adding polygons to your site.")}
+        primaryButtonText={t("Close")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       ></ModalAdd>
     );
@@ -66,17 +66,19 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const openFormModalHandlerUploadImages = () => {
     openModal(
       <ModalAdd
-        title="Upload Images"
+        title={t("Upload Images")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        descriptionInput={t(
+          "Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        )}
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
-            Uploaded Files
+            {t("Uploaded Files")}
           </Text>
         }
         onClose={closeModal}
-        content="Start by adding images for processing."
-        primaryButtonText="Save"
+        content={t("Start by adding images for processing.")}
+        primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       ></ModalAdd>
     );
@@ -87,7 +89,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "1",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Create Polygons
+          {t("Create Polygons")}
         </Text>
       ),
       onClick: () => {
@@ -98,7 +100,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "2",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Data
+          {t("Upload Data")}
         </Text>
       ),
       onClick: () => openFormModalHandlerAddPolygon()
@@ -107,7 +109,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "3",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Upload Images
+          {t("Upload Images")}
         </Text>
       ),
       onClick: () => openFormModalHandlerUploadImages()
@@ -118,7 +120,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "1",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Request Support
+          {t("Request Support")}
         </Text>
       ),
       onClick: () => {}
@@ -127,7 +129,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "2",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Submit for Review
+          {t("Submit for Review")}
         </Text>
       ),
       onClick: () => {}
@@ -186,15 +188,15 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             <div className="flex gap-11 ">
               <div className="w-[54%]">
                 <Text variant="text-14-light" className="mb-6">
-                  Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported,
-                  modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
+                  {t(`Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported,
+                  modified in QGIS or ArcGIS and imported again; or fed through the mobile application.`)}
                 </Text>
                 <div className="flex w-full gap-3">
                   {isMonitoring && (
                     <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsPrimaryMenu}>
                       <Button variant="white-border" className="" onChange={() => {}}>
                         <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-                        &nbsp; Add Data
+                        &nbsp; {t("Add Data")}
                       </Button>
                     </Menu>
                   )}
@@ -206,12 +208,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                     }}
                   >
                     <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
-                    &nbsp; Download
+                    &nbsp; {t("Download")}
                   </Button>
                   {isMonitoring && (
                     <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
                       <Button variant="primary" className="" onChange={() => {}}>
-                        SUBMIT Polygons
+                        {t("SUBMIT Polygons")}
                       </Button>
                     </Menu>
                   )}
@@ -230,24 +232,24 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           >
             <div className="flex items-center justify-between text-darkCustom">
               <Text variant="text-14-light" className="w-[65%]">
-                Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
-                metrics useful for assessing the impact of the restoration effort.
+                {t(`Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
+                metrics useful for assessing the impact of the restoration effort.`)}
               </Text>
               <div className="relative w-[25%]">
                 <Dropdown
                   containerClassName="w-full"
-                  placeholder="All Polygons"
+                  placeholder={t("All Polygons")}
                   options={[
                     {
-                      title: "All Polygons",
+                      title: t("All Polygons"),
                       value: 1
                     },
                     {
-                      title: "All Polygons2",
+                      title: t("All Polygons2"),
                       value: 2
                     }
                   ]}
-                  value={["All Polygons"]}
+                  value={[t("All Polygons")]}
                   onChange={() => {}}
                 />
               </div>
