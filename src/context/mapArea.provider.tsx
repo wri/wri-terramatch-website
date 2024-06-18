@@ -51,8 +51,5 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
 
 export const useMapAreaContext = () => {
   const context = useContext(MapAreaContext);
-  if (context === undefined) {
-    throw new Error("useMonitoring must be used within a MonitoringPartnerProvider");
-  }
   return context;
 };

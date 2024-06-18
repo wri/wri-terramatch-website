@@ -31,5 +31,6 @@ export const SitePolygonDataProvider: React.FC<{
 };
 
 export const useSitePolygonData = () => {
-  return useContext(SitePolygonDataContext);
+  const context = useContext(SitePolygonDataContext);
+  return context;
 };

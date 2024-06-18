@@ -7,7 +7,12 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
+import {
+  fetchGetV2DashboardCountryCountry,
+  fetchPostV2TerrafundPolygon,
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
+  useGetV2TypeEntity
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
@@ -24,10 +29,28 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
-  const mapFunctions = useMap();
+  const mapFunctions = useMap(storePolygon);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring } = useMapAreaContext() || {};
+  async function storePolygon(geojson: any, record: any) {
+    if (geojson?.length) {
+      const response = await fetchPostV2TerrafundPolygon({
+        body: { geometry: JSON.stringify(geojson[0].geometry) }
+      });
+      const polygonUUID = response.uuid;
+      if (polygonUUID) {
+        const site_id = entityModel.uuid;
+        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
+          body: {},
+          pathParams: { uuid: polygonUUID, siteUuid: site_id }
+        }).then(() => {
+          refetch();
+          // setPolygonFromMap({ uuid: polygonUUID, isOpen: true });
+        });
+      }
+    }
+  }
   const { data: entityData, refetch } = useGetV2TypeEntity({
     queryParams: {
       uuid: entityModel?.uuid,

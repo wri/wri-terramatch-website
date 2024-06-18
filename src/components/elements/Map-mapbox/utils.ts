@@ -217,22 +217,24 @@ export const addPopupToLayer = (
 
 export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   const { name, styles } = layer;
-  if (map.getSource(name)) {
-    styles?.forEach((_: unknown, index: number) => {
-      map.removeLayer(`${name}-${index}`);
+  if (map) {
+    if (map.getSource(name)) {
+      styles?.forEach((_: unknown, index: number) => {
+        map.removeLayer(`${name}-${index}`);
+      });
+      map.removeSource(name);
+    }
+    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+      &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+    map.addSource(name, {
+      type: "vector",
+      tiles: [URL_GEOSERVER]
     });
-    map.removeSource(name);
+    styles?.forEach((style: LayerWithStyle, index: number) => {
+      addLayerStyle(map, name, style, index);
+    });
+    loadLayersInMap(map, polygonsData);
   }
-  const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
-  map.addSource(name, {
-    type: "vector",
-    tiles: [URL_GEOSERVER]
-  });
-  styles?.forEach((style: LayerWithStyle, index: number) => {
-    addLayerStyle(map, name, style, index);
-  });
-  loadLayersInMap(map, polygonsData);
 };
 
 export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
