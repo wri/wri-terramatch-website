@@ -12,6 +12,7 @@ import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGro
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -107,8 +108,9 @@ export const MapContainer = ({
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
-  const { isUserDrawingEnabled } = context ?? {};
+  const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
+  const { isUserDrawingEnabled } = contextMapArea ?? {};
   if (!mapFunctions) {
     return null;
   }

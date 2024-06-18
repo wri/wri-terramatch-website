@@ -7,6 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
@@ -66,8 +67,9 @@ const PolygonDrawer = ({
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
 
   const context = useSitePolygonData();
+  const contextMapArea = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
-  const openEditNewPolygon = context?.isUserDrawingEnabled;
+  const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {

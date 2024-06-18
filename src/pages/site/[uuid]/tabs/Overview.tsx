@@ -20,8 +20,8 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { useMapAreaPartner } from "@/context/monitoringPartner.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -39,7 +39,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const router = useRouter();
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
-  const { isMonitoring, checkIsMonitoringPartner } = useMapAreaPartner();
+  const { isMonitoring, checkIsMonitoringPartner } = useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {

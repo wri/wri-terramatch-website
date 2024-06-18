@@ -2,7 +2,7 @@ import Button from "@/components/elements/Button/Button";
 import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 
 export interface AddDataButtonProps {
   openFormModalHandlerAddPolygon: () => void;
@@ -10,7 +10,7 @@ export interface AddDataButtonProps {
 }
 const AddDataButton = (props: AddDataButtonProps) => {
   const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages } = props;
-  const context = useSitePolygonData();
+  const context = useMapAreaContext();
   const { toggleUserDrawing } = context ?? {};
   const addMenuItems = [
     {
