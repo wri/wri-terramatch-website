@@ -10,7 +10,8 @@ import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { BBox, FeatureCollection } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 
-const GEOSERVER = "https://geoserver-prod.wri-restoration-marketplace-api.com";
+const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
+const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
 
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] ?? properties[`user_${key}`];
@@ -224,7 +225,7 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
     map.removeSource(name);
   }
   const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-    &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+    &VERSION=1.0.0&LAYER=${WORKSPACE}:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
   map.addSource(name, {
     type: "vector",
     tiles: [URL_GEOSERVER]
