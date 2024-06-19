@@ -3,27 +3,29 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
-import { MapPolygonPanelItemProps } from "@/components/elements/MapPolygonPanel/MapPolygonPanelItem";
-
 import Button from "../Button/Button";
+import MapSidePanel from "../MapSidePanel/MapSidePanel";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
-import MapPlygonCheckPanel from "./MapPolygonCkeckPanel";
-import MapPlygonSitePanel from "./MapPolygonSitePanel";
+import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
+import MapPolygonCheckPanel from "./MapPolygonCheckPanel";
 
 export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: MapPolygonPanelItemProps[];
-  onSelectItem: (item: MapPolygonPanelItemProps) => void;
-  onSearch: (query: string) => void;
+  items: MapMenuPanelItemProps[];
+  onSelectItem: (item: MapMenuPanelItemProps) => void;
   onLoadMore: () => void;
   emptyText?: string;
-  setStateViewPanel: Dispatch<SetStateAction<boolean>>;
-  stateViewPanel: boolean;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
   editPolygon: boolean;
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   setPreviewVersion: Dispatch<SetStateAction<boolean>>;
+  mapFunctions: any;
+  checkedValues: string[];
+  onCheckboxChange: (value: string, checked: boolean) => void;
+  setSortOrder: React.Dispatch<React.SetStateAction<string>>;
+  type: string;
+  recallEntityData?: () => void;
 }
 
 const MapPolygonPanel = ({
@@ -31,21 +33,24 @@ const MapPolygonPanel = ({
   items,
   className,
   onSelectItem,
-  onSearch,
   onLoadMore,
   emptyText,
-  setStateViewPanel,
-  stateViewPanel,
   setEditPolygon,
   editPolygon,
   tabEditPolygon,
   setTabEditPolygon,
   setPreviewVersion,
+  mapFunctions,
+  checkedValues,
+  onCheckboxChange,
+  setSortOrder,
+  type,
+  recallEntityData,
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
-  const [selected, setSelected] = useState<MapPolygonPanelItemProps>();
-
+  const [selected] = useState<MapMenuPanelItemProps>();
+  const [stateViewPanel, setStateViewPanel] = useState(false);
   return (
     <div {...props} className={classNames(className)}>
       <If condition={!!editPolygon}>
@@ -75,17 +80,21 @@ const MapPolygonPanel = ({
             </Button>
           </div>
           <When condition={!stateViewPanel}>
-            <MapPlygonSitePanel
+            <MapSidePanel
+              title=""
+              items={items}
               emptyText={emptyText}
               onLoadMore={onLoadMore}
-              onSelectItem={onSelectItem}
-              setEditPolygon={setEditPolygon}
-              selected={selected}
-              setSelected={setSelected}
+              mapFunctions={mapFunctions}
+              checkedValues={checkedValues}
+              onCheckboxChange={onCheckboxChange}
+              setSortOrder={setSortOrder}
+              type={type}
+              recallEntityData={recallEntityData}
             />
           </When>
           <When condition={!!stateViewPanel}>
-            <MapPlygonCheckPanel
+            <MapPolygonCheckPanel
               emptyText={emptyText}
               onLoadMore={onLoadMore}
               setEditPolygon={setEditPolygon}

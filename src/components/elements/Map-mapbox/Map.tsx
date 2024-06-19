@@ -72,8 +72,6 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
-  isUserDrawing?: boolean;
-  setIsUserDrawing?: React.Dispatch<React.SetStateAction<boolean>>;
   showPopups?: boolean;
   showLegend?: boolean;
   mapFunctions?: any;
@@ -98,8 +96,6 @@ export const MapContainer = ({
   editPolygon = false,
   polygonChecks = false,
   record,
-  isUserDrawing = false,
-  setIsUserDrawing,
   showPopups = false,
   showLegend = false,
   mapFunctions,
@@ -111,10 +107,8 @@ export const MapContainer = ({
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
-  const { isUserDrawingEnabled } = isUserDrawing
-    ? { isUserDrawingEnabled: isUserDrawing }
-    : context ?? { isUserDrawingEnabled: false };
-  const { toggleUserDrawing, toggleAttribute, reloadSiteData } = context ?? {};
+  const { isUserDrawingEnabled } = context ?? {};
+  const { reloadSiteData } = context ?? {};
   if (!mapFunctions) {
     return null;
   }
@@ -124,13 +118,6 @@ export const MapContainer = ({
   useEffect(() => {
     initMap();
   }, []);
-
-  useEffect(() => {
-    if (isUserDrawing) {
-      toggleUserDrawing?.(isUserDrawing);
-      toggleAttribute?.(true);
-    }
-  }, [isUserDrawing]);
 
   useEffect(() => {
     if (map?.current && draw?.current) {

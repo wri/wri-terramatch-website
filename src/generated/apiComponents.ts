@@ -33745,6 +33745,56 @@ export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDa
   );
 };
 
+export type GetV2DashboardViewProjectUuidPathParams = {
+  /**
+   * UUID of the project
+   */
+  uuid: string;
+};
+
+export type GetV2DashboardViewProjectUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardViewProjectUuidResponse = {
+  data?: {
+    allowed?: boolean;
+  };
+};
+
+export type GetV2DashboardViewProjectUuidVariables = {
+  pathParams: GetV2DashboardViewProjectUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardViewProjectUuid = (
+  variables: GetV2DashboardViewProjectUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardViewProjectUuidResponse,
+    GetV2DashboardViewProjectUuidError,
+    undefined,
+    {},
+    {},
+    GetV2DashboardViewProjectUuidPathParams
+  >({ url: "/v2/dashboard/view-project/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProjectUuidResponse>(
+  variables: GetV2DashboardViewProjectUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/view-project/{uuid}", operationId: "getV2DashboardViewProjectUuid", variables }),
+    ({ signal }) => fetchGetV2DashboardViewProjectUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2TerrafundPolygonGeojsonUuidPathParams = {
   /**
    * The UUID of the polygon geometry to retrieve.
@@ -34625,6 +34675,11 @@ export type QueryOperation =
       path: "/v2/dashboard/project-data/{uuid}";
       operationId: "getV2DashboardProjectDataUuid";
       variables: GetV2DashboardProjectDataUuidVariables;
+    }
+  | {
+      path: "/v2/dashboard/view-project/{uuid}";
+      operationId: "getV2DashboardViewProjectUuid";
+      variables: GetV2DashboardViewProjectUuidVariables;
     }
   | {
       path: "/v2/terrafund/polygon/geojson/{uuid}";

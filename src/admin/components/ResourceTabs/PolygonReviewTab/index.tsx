@@ -39,6 +39,7 @@ import {
 import { PolygonBboxResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
+import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
 import SitePolygonStatus from "./components/SitePolygonStatus/SitePolygonStatus";
@@ -98,7 +99,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-  const [isUserDrawing, setIsUserDrawing] = useState<boolean>(false);
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
@@ -333,24 +333,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   if (isLoading) return null;
 
-  const addMenuItems = [
-    {
-      id: "1",
-      render: () => <Text variant="text-12-bold">Create Polygons</Text>,
-      onClick: () => setIsUserDrawing(true)
-    },
-    {
-      id: "2",
-      render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
-      onClick: openFormModalHandlerAddPolygon
-    },
-    {
-      id: "3",
-      render: () => <Text variant="text-12-bold">Upload Images</Text>,
-      onClick: openFormModalHandlerUploadImages
-    }
-  ];
-
   const tableItemMenu = (props: TableItemMenuProps) => [
     {
       id: "1",
@@ -407,18 +389,11 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Text>
                   </div>
                   <div className="flex gap-3">
-                    <Menu menu={addMenuItems} className="flex-1">
-                      <Button
-                        variant="sky-page-admin"
-                        className="h-fit w-full whitespace-nowrap"
-                        iconProps={{
-                          className: "w-4 h-4",
-                          name: IconNames.PLUS_PA
-                        }}
-                      >
-                        Add Data
-                      </Button>
-                    </Menu>
+                    <AddDataButton
+                      openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
+                      openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                    />
+
                     <Button
                       variant="white-page-admin"
                       className="flex-1"
@@ -456,8 +431,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                 status={true}
                 setPolygonFromMap={setPolygonFromMap}
                 polygonFromMap={polygonFromMap}
-                isUserDrawing={isUserDrawing}
-                setIsUserDrawing={setIsUserDrawing}
                 showPopups
                 showLegend
                 mapFunctions={mapFunctions}

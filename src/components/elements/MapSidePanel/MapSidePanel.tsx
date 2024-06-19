@@ -3,21 +3,26 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
-import MapSidePanelItem, { MapSidePanelItemProps } from "@/components/elements/MapSidePanel/MapSidePanelItem";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { STATUSES } from "@/constants/statuses";
-import { fetchGetV2TerrafundGeojsonComplete, fetchGetV2TerrafundPolygonBboxUuid } from "@/generated/apiComponents";
+import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
+import {
+  fetchDeleteV2TerrafundPolygonUuid,
+  fetchGetV2TerrafundGeojsonComplete,
+  fetchGetV2TerrafundPolygonBboxUuid
+} from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
+import MapMenuPanelItem, { MapMenuPanelItemProps } from "../MapPolygonPanel/MapMenuPanelItem";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: MapSidePanelItemProps[];
+  items: MapMenuPanelItemProps[];
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
@@ -26,6 +31,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
   type: string;
+  recallEntityData?: any;
 }
 
 const MapSidePanel = ({
@@ -40,15 +46,17 @@ const MapSidePanel = ({
   onCheckboxChange,
   setSortOrder,
   type,
+  recallEntityData,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
   const menuCheckboxRef = useRef<HTMLDivElement>(null);
-  const [selected, setSelected] = useState<MapSidePanelItemProps>();
+  const [selected, setSelected] = useState<MapMenuPanelItemProps>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
+  const { isMonitoring } = useMonitoringPartner();
 
   const { map } = mapFunctions;
 
@@ -77,6 +85,10 @@ const MapSidePanel = ({
     URL.revokeObjectURL(url);
   };
 
+  const deletePolygon = async (polygonUuid: string) => {
+    await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
+    recallEntityData?.();
+  };
   useEffect(() => {
     if (clickedButton === "site") {
       const siteUrl = `/site/${selected?.site_id}`;
@@ -87,6 +99,9 @@ const MapSidePanel = ({
       setClickedButton("");
     } else if (clickedButton === "download") {
       downloadGeoJsonPolygon(selected?.poly_id ?? "");
+      setClickedButton("");
+    } else if (clickedButton === "delete") {
+      deletePolygon(selected?.poly_id ?? "");
       setClickedButton("");
     }
   }, [clickedButton, selected]);
@@ -131,12 +146,19 @@ const MapSidePanel = ({
   ];
 
   return (
-    <div {...props} className={classNames(className)}>
+    <div {...props} className={classNames("h-[250px] flex-1", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
-        <Text variant="text-16-bold" className="text-white">
-          {t(title)}
-        </Text>
+        {isMonitoring ? (
+          <Text variant="text-14-bold" className="flex items-center uppercase text-white">
+            <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+            &nbsp; {t("new Polygon")}
+          </Text>
+        ) : (
+          <Text variant="text-16-bold" className="text-white">
+            {t(title)}
+          </Text>
+        )}
         <div className="flex items-center gap-2">
           <div className="relative" ref={menuCheckboxRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
@@ -185,7 +207,7 @@ const MapSidePanel = ({
             items={items}
             itemAs={Fragment}
             render={item => (
-              <MapSidePanelItem
+              <MapMenuPanelItem
                 uuid={item.uuid}
                 title={item.title}
                 subtitle={item.subtitle}

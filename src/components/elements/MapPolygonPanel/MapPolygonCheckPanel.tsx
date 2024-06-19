@@ -6,17 +6,17 @@ import List from "@/components/extensive/List/List";
 import { PolygonAvailableData } from "@/pages/site/[uuid]/components/MockedData";
 
 import Text from "../Text/Text";
+import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
 import MapPolygonCheckPanelItem from "./MapPolygonCheckPanelItem";
-import { MapPolygonPanelItemProps } from "./MapPolygonPanelItem";
 
 export interface MapPolygonCheckPanelProps {
   emptyText?: string;
   onLoadMore: () => void;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
-  selected: MapPolygonPanelItemProps | undefined;
+  selected: MapMenuPanelItemProps | undefined;
 }
 
-const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }: MapPolygonCheckPanelProps) => {
+const MapPolygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }: MapPolygonCheckPanelProps) => {
   const t = useT();
 
   const refContainer = useRef<HTMLDivElement>(null);
@@ -66,4 +66,4 @@ const MapPlygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }
   );
 };
 
-export default MapPlygonCheckPanel;
+export default MapPolygonCheckPanel;
