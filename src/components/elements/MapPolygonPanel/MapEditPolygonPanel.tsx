@@ -34,7 +34,7 @@ const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVers
 
         <Button
           variant="text"
-          onClick={() => setEditPolygon?.({ isEditClicked: false, uuid: "" })}
+          onClick={() => setEditPolygon?.({ isOpen: false, uuid: "" })}
           className="text-white hover:text-primary"
         >
           <Icon name={IconNames.CLEAR} className="h-4 w-4" />

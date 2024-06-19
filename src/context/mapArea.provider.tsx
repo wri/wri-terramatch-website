@@ -10,8 +10,8 @@ type MapAreaType = {
   setIsUserDrawingEnabled: (arg0: boolean) => void;
   toggleAttribute: (arg0: boolean) => void;
   openEditNewPolygon: boolean;
-  editPolygon: { isEditClicked: boolean; uuid: string };
-  setEditPolygon: (value: { isEditClicked: boolean; uuid: string }) => void;
+  editPolygon: { isOpen: boolean; uuid: string };
+  setEditPolygon: (value: { isOpen: boolean; uuid: string }) => void;
   siteData: any;
   setSiteData: (value: any) => void;
   shouldRefetchPolygonData: boolean;
@@ -26,7 +26,7 @@ const defaultValue: MapAreaType = {
   setIsUserDrawingEnabled: () => {},
   toggleAttribute: () => {},
   openEditNewPolygon: false,
-  editPolygon: { isEditClicked: false, uuid: "" },
+  editPolygon: { isOpen: false, uuid: "" },
   setEditPolygon: () => {},
   siteData: undefined,
   setSiteData: () => {},
@@ -42,8 +42,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
-  const [editPolygon, setEditPolygon] = useState<{ isEditClicked: boolean; uuid: string }>({
-    isEditClicked: false,
+  const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string }>({
+    isOpen: false,
     uuid: ""
   });
 

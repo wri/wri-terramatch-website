@@ -84,7 +84,7 @@ const MapPolygonCheckPanelItem = ({
           &nbsp; {t("Edit Polygon")}
         </Text>
       ),
-      onClick: () => setEditPolygon?.({ isEditClicked: true, uuid: "" })
+      onClick: () => setEditPolygon?.({ isOpen: true, uuid: "" })
     },
     {
       id: "2",

@@ -29,8 +29,9 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
-  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData } = useMapAreaContext();
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, refetch, () => {});
+  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
+    useMapAreaContext();
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, refetch, setEditPolygon);
 
   const mapFunctions = useMap(onSave);
 
@@ -69,7 +70,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   }, [entityData]);
 
   useEffect(() => {
-    setPolygonFromMap({ isOpen: editPolygon.isEditClicked, uuid: editPolygon.uuid });
+    setPolygonFromMap({ isOpen: editPolygon.isOpen, uuid: editPolygon.uuid });
   }, [editPolygon]);
 
   useEffect(() => {

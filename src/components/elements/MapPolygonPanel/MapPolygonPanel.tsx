@@ -52,7 +52,7 @@ const MapPolygonPanel = ({
   const { editPolygon } = useMapAreaContext();
   return (
     <div {...props} className={classNames(className)}>
-      <If condition={!!editPolygon.isEditClicked}>
+      <If condition={!!editPolygon.isOpen}>
         <Then>
           <MapEditPolygonPanel
             tabEditPolygon={tabEditPolygon}

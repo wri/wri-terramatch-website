@@ -252,11 +252,7 @@ const AttributeInformation = () => {
         readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
-        <Button
-          variant="semi-red"
-          className="w-full"
-          onClick={() => setEditPolygon({ isEditClicked: false, uuid: "" })}
-        >
+        <Button variant="semi-red" className="w-full" onClick={() => setEditPolygon({ isOpen: false, uuid: "" })}>
           {t("Close")}
         </Button>
         <Button

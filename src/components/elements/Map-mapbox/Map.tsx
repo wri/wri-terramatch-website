@@ -122,7 +122,6 @@ export const MapContainer = ({
   }, []);
 
   useEffect(() => {
-    console.log("Is User Drawing", isUserDrawingEnabled);
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
         startDrawing(draw.current, map.current);
