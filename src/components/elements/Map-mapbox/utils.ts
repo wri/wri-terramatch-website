@@ -4,7 +4,12 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { layersList } from "@/constants/layers";
-import { fetchGetV2TerrafundGeojsonSite, fetchGetV2TypeEntity } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundGeojsonSite,
+  fetchGetV2TypeEntity,
+  fetchPostV2TerrafundPolygon,
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid
+} from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { BBox, FeatureCollection } from "./GeoJSON";
@@ -225,7 +230,7 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       map.removeSource(name);
     }
     const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=wri:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+      &VERSION=1.0.0&LAYER=wri_staging:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
     map.addSource(name, {
       type: "vector",
       tiles: [URL_GEOSERVER]
@@ -303,4 +308,23 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string): Promise<voi
   link.download = `SitePolygons.geojson`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+export async function storePolygon(geojson: any, record: any, refetch: any, setPolygonFromMap?: any) {
+  if (geojson?.length) {
+    const response = await fetchPostV2TerrafundPolygon({
+      body: { geometry: JSON.stringify(geojson[0].geometry) }
+    });
+    const polygonUUID = response.uuid;
+    if (polygonUUID) {
+      const site_id = record.uuid;
+      await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
+        body: {},
+        pathParams: { uuid: polygonUUID, siteUuid: site_id }
+      }).then(() => {
+        refetch();
+        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
+      });
+    }
+  }
 }

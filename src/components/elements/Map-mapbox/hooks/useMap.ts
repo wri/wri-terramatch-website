@@ -3,9 +3,11 @@ import mapboxgl from "mapbox-gl";
 import { useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 
+import { useMapAreaContext } from "@/context/mapArea.provider";
+
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
-import { addFilterOfPolygonsData, convertToGeoJSON, loadLayersInMap, stopDrawing } from "../utils";
+import { addFilterOfPolygonsData, convertToGeoJSON, loadLayersInMap } from "../utils";
 
 const MAP_STYLE = "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu";
 const INITIAL_ZOOM = 2.5;
@@ -15,6 +17,7 @@ const MAPBOX_TOKEN =
 
 export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const { record } = useShowContext();
+  const { setIsUserDrawingEnabled } = useMapAreaContext();
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -83,7 +86,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       addControlToMap();
       map.current.on("draw.modechange", (event: any) => {
         if (event.mode === "simple_select") {
-          stopDrawing(draw.current as MapboxDraw, map.current as mapboxgl.Map);
+          setIsUserDrawingEnabled(false);
         }
       });
       map.current.on("draw.create", (feature: FeatureCollection) => {

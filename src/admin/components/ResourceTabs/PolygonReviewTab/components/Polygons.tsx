@@ -65,7 +65,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { toggleUserDrawing } = contextMapArea;
+  const { setIsUserDrawingEnabled } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -214,7 +214,7 @@ const Polygons = (props: IPolygonProps) => {
         <Text variant="text-16-bold" className="pl-2 text-darkCustom">
           Polygons
         </Text>
-        <Button variant="text" onClick={() => toggleUserDrawing?.(true)}>
+        <Button variant="text" onClick={() => setIsUserDrawingEnabled?.(true)}>
           <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
         </Button>
       </div>

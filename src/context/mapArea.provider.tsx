@@ -7,7 +7,7 @@ type MapAreaType = {
   setIsMonitoring: (value: boolean) => void;
   checkIsMonitoringPartner: (projectUuid: string) => Promise<void>;
   isUserDrawingEnabled: boolean;
-  toggleUserDrawing: (arg0: boolean) => void;
+  setIsUserDrawingEnabled: (arg0: boolean) => void;
   toggleAttribute: (arg0: boolean) => void;
   openEditNewPolygon: boolean;
   editPolygon: { isEditClicked: boolean; uuid: string };
@@ -23,7 +23,7 @@ const defaultValue: MapAreaType = {
   setIsMonitoring: () => {},
   checkIsMonitoringPartner: async () => {},
   isUserDrawingEnabled: false,
-  toggleUserDrawing: () => {},
+  setIsUserDrawingEnabled: () => {},
   toggleAttribute: () => {},
   openEditNewPolygon: false,
   editPolygon: { isEditClicked: false, uuid: "" },
@@ -47,10 +47,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     uuid: ""
   });
 
-  const toggleUserDrawing = (isDrawing: boolean) => {
-    setIsUserDrawingEnabled(isDrawing);
-  };
-
   const toggleAttribute = (isOpen: boolean) => {
     setOpenEditNewPolygon(isOpen);
   };
@@ -72,7 +68,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setIsMonitoring,
     checkIsMonitoringPartner,
     isUserDrawingEnabled,
-    toggleUserDrawing,
+    setIsUserDrawingEnabled,
     toggleAttribute,
     openEditNewPolygon,
     editPolygon,

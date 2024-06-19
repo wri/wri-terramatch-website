@@ -11,12 +11,12 @@ export interface AddDataButtonProps {
 const AddDataButton = (props: AddDataButtonProps) => {
   const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages } = props;
   const context = useMapAreaContext();
-  const { toggleUserDrawing } = context;
+  const { setIsUserDrawingEnabled } = context;
   const addMenuItems = [
     {
       id: "1",
       render: () => <Text variant="text-12-bold">Create Polygons</Text>,
-      onClick: () => toggleUserDrawing?.(true)
+      onClick: () => setIsUserDrawingEnabled(true)
     },
     {
       id: "2",

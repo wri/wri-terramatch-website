@@ -9,6 +9,7 @@ import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import PolygonReviewTab from "@/admin/components/ResourceTabs/PolygonReviewTab";
 import ShowTitle from "@/admin/components/ShowTitle";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 
 const SiteShow: FC = () => {
   return (
@@ -20,7 +21,9 @@ const SiteShow: FC = () => {
       <TabbedShowLayout>
         <InformationTab type="sites" />
         <TabbedShowLayout.Tab label="Polygon Review">
-          <PolygonReviewTab label="" type={"sites"} />
+          <MapAreaProvider>
+            <PolygonReviewTab label="" type={"sites"} />
+          </MapAreaProvider>
         </TabbedShowLayout.Tab>
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />
