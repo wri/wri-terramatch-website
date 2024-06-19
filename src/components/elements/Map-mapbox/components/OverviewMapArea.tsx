@@ -28,7 +28,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const { isMonitoring, shouldRefetchPolygonData, setShouldRefetchPolygonData } = useMapAreaContext();
+  const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData } = useMapAreaContext();
   const onSave = (geojson: any) => storePolygon(geojson, entityModel, refetch, () => {});
 
   const mapFunctions = useMap(onSave);
@@ -66,6 +67,10 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   useEffect(() => {
     setResultValues(entityData);
   }, [entityData]);
+
+  useEffect(() => {
+    setPolygonFromMap({ isOpen: editPolygon.isEditClicked, uuid: editPolygon.uuid });
+  }, [editPolygon]);
 
   useEffect(() => {
     if (shouldRefetchPolygonData) {
@@ -158,6 +163,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         siteData={true}
         className="flex-1 rounded-r-lg"
         polygonsExists={polygonsData.length > 0}
+        setPolygonFromMap={setPolygonFromMap}
+        polygonFromMap={polygonFromMap}
       />
     </>
   );
