@@ -33,7 +33,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const mapFunctions = useMap(storePolygon);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const { isMonitoring, editPolygon } = useMapAreaContext();
+  const { isMonitoring, shouldRefetchPolygonData, setShouldRefetchPolygonData } = useMapAreaContext();
   async function storePolygon(geojson: any, record: any) {
     if (geojson?.length) {
       const response = await fetchPostV2TerrafundPolygon({
@@ -87,10 +87,12 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   }, [entityData]);
 
   useEffect(() => {
-    if (!editPolygon?.isEditClicked) {
+    if (shouldRefetchPolygonData) {
       refetch();
+      setShouldRefetchPolygonData(false);
     }
-  }, [editPolygon]);
+  }, [shouldRefetchPolygonData]);
+
   useEffect(() => {
     if (polygonsData?.length > 0) {
       const dataMap = ((polygonsData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {

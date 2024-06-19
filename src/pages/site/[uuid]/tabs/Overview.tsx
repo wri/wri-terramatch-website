@@ -23,10 +23,16 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import {
+  fetchPostV2TerrafundUploadGeojson,
+  fetchPostV2TerrafundUploadKml,
+  fetchPostV2TerrafundUploadShapefile,
+  useGetV2SitesSitePolygon
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFramework } from "@/hooks/useFramework";
+import { FileType, UploadedFile } from "@/types/common";
 
 import SiteArea from "../components/SiteArea";
 
@@ -40,8 +46,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
-  const { isMonitoring, checkIsMonitoringPartner, setSiteData } = contextMapArea;
+  const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -53,6 +61,54 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       checkIsMonitoringPartner(site.project?.uuid);
     }
   }, [site]);
+
+  useEffect(() => {
+    if (files && files.length > 0 && saveFlags) {
+      uploadFiles();
+      setSaveFlags(false);
+    }
+  }, [files, saveFlags]);
+
+  const getFileType = (file: UploadedFile) => {
+    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    if (fileType === "geojson") return "geojson";
+    if (fileType === "zip") return "shapefile";
+    if (fileType === "kml") return "kml";
+    return null;
+  };
+
+  const uploadFiles = async () => {
+    const uploadPromises = [];
+
+    for (const file of files) {
+      const fileToUpload = file.rawFile as File;
+      const site_uuid = site.uuid;
+      const formData = new FormData();
+      const fileType = getFileType(file);
+      formData.append("file", fileToUpload);
+      formData.append("uuid", site_uuid);
+      let newRequest: any = formData;
+
+      switch (fileType) {
+        case "geojson":
+          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
+          break;
+        case "shapefile":
+          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
+          break;
+        case "kml":
+          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
+          break;
+        default:
+          break;
+      }
+    }
+
+    await Promise.all(uploadPromises);
+
+    setShouldRefetchPolygonData(true);
+    closeModal();
+  };
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
@@ -67,8 +123,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         }
         onClose={closeModal}
         content="Start by adding polygons to your site."
-        primaryButtonText="Close"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonText="Save"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
+        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        setFile={setFiles}
       ></ModalAdd>
     );
   };

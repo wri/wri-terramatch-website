@@ -14,6 +14,8 @@ type MapAreaType = {
   setEditPolygon: (value: { isEditClicked: boolean; uuid: string }) => void;
   siteData: any;
   setSiteData: (value: any) => void;
+  shouldRefetchPolygonData: boolean;
+  setShouldRefetchPolygonData: (value: boolean) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -27,7 +29,9 @@ const defaultValue: MapAreaType = {
   editPolygon: { isEditClicked: false, uuid: "" },
   setEditPolygon: () => {},
   siteData: undefined,
-  setSiteData: () => {}
+  setSiteData: () => {},
+  shouldRefetchPolygonData: false,
+  setShouldRefetchPolygonData: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -37,6 +41,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
   const [siteData, setSiteData] = useState<any>();
+  const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [editPolygon, setEditPolygon] = useState<{ isEditClicked: boolean; uuid: string }>({
     isEditClicked: false,
     uuid: ""
@@ -73,7 +78,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     editPolygon,
     setEditPolygon,
     siteData,
-    setSiteData
+    setSiteData,
+    shouldRefetchPolygonData,
+    setShouldRefetchPolygonData
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

@@ -76,7 +76,7 @@ const dropdownOptionsTree = [
 
 const AttributeInformation = () => {
   const t = useT();
-  const { editPolygon, setEditPolygon } = useMapAreaContext();
+  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -156,6 +156,7 @@ const AttributeInformation = () => {
           body: updatedPolygonData,
           pathParams: { uuid: polygonData.uuid }
         });
+        setShouldRefetchPolygonData(true);
       } catch (error) {
         console.error("Error updating polygon data:", error);
       }
