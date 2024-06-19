@@ -12,6 +12,8 @@ type MapAreaType = {
   openEditNewPolygon: boolean;
   editPolygon: { isEditClicked: boolean; uuid: string };
   setEditPolygon: (value: { isEditClicked: boolean; uuid: string }) => void;
+  siteData: any;
+  setSiteData: (value: any) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -23,7 +25,9 @@ const defaultValue: MapAreaType = {
   toggleAttribute: () => {},
   openEditNewPolygon: false,
   editPolygon: { isEditClicked: false, uuid: "" },
-  setEditPolygon: () => {}
+  setEditPolygon: () => {},
+  siteData: undefined,
+  setSiteData: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -32,6 +36,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isMonitoring, setIsMonitoring] = useState<boolean>(false);
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
+  const [siteData, setSiteData] = useState<any>();
   const [editPolygon, setEditPolygon] = useState<{ isEditClicked: boolean; uuid: string }>({
     isEditClicked: false,
     uuid: ""
@@ -66,7 +71,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     toggleAttribute,
     openEditNewPolygon,
     editPolygon,
-    setEditPolygon
+    setEditPolygon,
+    siteData,
+    setSiteData
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

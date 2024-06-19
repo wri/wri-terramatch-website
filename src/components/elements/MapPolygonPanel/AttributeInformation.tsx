@@ -76,7 +76,7 @@ const dropdownOptionsTree = [
 
 const AttributeInformation = () => {
   const t = useT();
-  const { editPolygon } = useMapAreaContext();
+  const { editPolygon, setEditPolygon } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -156,7 +156,6 @@ const AttributeInformation = () => {
           body: updatedPolygonData,
           pathParams: { uuid: polygonData.uuid }
         });
-        // reloadSiteData?.();
       } catch (error) {
         console.error("Error updating polygon data:", error);
       }
@@ -252,7 +251,11 @@ const AttributeInformation = () => {
         readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
-        <Button variant="semi-red" className="w-full">
+        <Button
+          variant="semi-red"
+          className="w-full"
+          onClick={() => setEditPolygon({ isEditClicked: false, uuid: "" })}
+        >
           {t("Close")}
         </Button>
         <Button

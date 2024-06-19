@@ -19,16 +19,16 @@ export interface MapEditPolygonPanelProps {
 }
 
 const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVersion }: MapEditPolygonPanelProps) => {
-  const { setEditPolygon } = useMapAreaContext();
+  const { setEditPolygon, siteData } = useMapAreaContext();
   return (
     <>
       <div className="flex items-start justify-between gap-4">
         <div>
           <Text variant="text-12-light" className="text-white ">
-            -
+            {siteData?.project?.name ?? "-"}
           </Text>
           <Text variant="text-20-bold" className="mb-4 text-white">
-            -
+            {siteData?.name ?? "-"}
           </Text>
         </div>
 
