@@ -4,13 +4,13 @@ import { FunctionField, FunctionFieldProps } from "react-admin";
 
 const STATUS_CLASSNAME_MAP: { [key: string]: string } = {
   Approved: "bg-green-30 text-green-100",
-  Rejected: "bg-error-400 text-error-600",
+  Rejected: "bg-yellow-300 text-yellow-700",
   "Under Review": "bg-yellow-300 text-yellow-700",
   "Awaiting approval": "bg-yellow-300 text-yellow-700",
   "Planting in progress": "bg-yellow-300 text-yellow-700",
-  Draft: "bg-yellow-300 text-yellow-700",
-  Started: "bg-gray-300", // Draft Color
-  Unknown: "",
+  Draft: "bg-grey-200 text-grey-500",
+  Started: "bg-gray-300 text-grey-500",
+  Unknown: "bg-grey-200 text-grey-500",
   "Needs more information": "bg-yellow-300 text-yellow-700"
 };
 
@@ -20,8 +20,8 @@ const CustomChipField: React.FC<Omit<FunctionFieldProps, "render">> = props => (
     render={(record: any) => (
       <div
         className={classNames(
-          "w-fit-content whitespace-nowrap rounded-[3px] px-2 font-medium",
-          STATUS_CLASSNAME_MAP[record.readable_status]
+          "text-14 w-fit-content whitespace-nowrap rounded-[3px] px-2 capitalize",
+          STATUS_CLASSNAME_MAP[record.readable_status] || "bg-grey-200 text-grey-500"
         )}
       >
         {record.readable_status == "Started" ? "Draft" : record.readable_status}

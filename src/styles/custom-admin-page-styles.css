@@ -271,19 +271,19 @@
 }
 
 .tag-approved-color span{
-  @apply !text-green-100 !font-medium
+  @apply !text-green-100 !font-medium !px-2
 }
 
 .tag-need-info-color span{
-  @apply !text-tertiary-600 !font-medium
+  @apply !text-tertiary-600 !font-medium !px-2
 }
 
 .tag-submitted-color span{
-  @apply !text-blue !font-medium
+  @apply !text-blue !font-medium !px-2
 }
 
 .tag-draft-color span{
-  @apply !text-grey-500 !font-medium
+  @apply !text-grey-500 !font-medium !px-2
 }
 
 @media (min-width: 1900px) {

@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import classNames from "classnames";
 import { ArrayField, ArrayFieldProps, ChipField, FunctionField, SingleFieldList, useRecordContext } from "react-admin";
 
@@ -23,9 +22,9 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   //fix: RA crashes when null or undefined passed to an arrayField
   if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
     return (
-      <Typography component="span" variant="body2" className="rounded-[3px] bg-grey-200 px-2 font-medium">
-        {props.emptyText || "Not Provided"}
-      </Typography>
+      <div className="text-14 w-fit-content whitespace-nowrap rounded-[3px] bg-grey-200 px-2 text-grey-500">
+        {props.emptyText || "No Polygons"}
+      </div>
     );
   }
 
@@ -62,7 +61,10 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
               <ChipField
                 record={{ status: PolygonStatusLabel }}
                 source="status"
-                className={classNames("!h-fit !rounded-[3px]", POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice?.name!])}
+                className={classNames(
+                  "!h-fit !rounded-[3px] capitalize",
+                  POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice?.name!]
+                )}
               />
             );
           }}
