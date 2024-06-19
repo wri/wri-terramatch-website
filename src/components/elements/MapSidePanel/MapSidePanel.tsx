@@ -56,7 +56,7 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-  const { isMonitoring, setEditPolygon } = useMapAreaContext();
+  const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
 
   const { map } = mapFunctions;
 
@@ -153,7 +153,11 @@ const MapSidePanel = ({
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-3 flex items-start justify-between rounded-tl-lg">
         {isMonitoring ? (
-          <Text variant="text-14-bold" className="flex items-center uppercase text-white">
+          <Text
+            variant="text-14-bold"
+            className="flex items-center uppercase text-white"
+            onClick={() => setIsUserDrawingEnabled(true)}
+          >
             <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
             &nbsp; {t("new Polygon")}
           </Text>
