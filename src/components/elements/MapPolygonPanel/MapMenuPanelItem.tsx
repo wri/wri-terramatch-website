@@ -39,7 +39,7 @@ const MapMenuPanelItem = ({
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext() || {};
+  const { isMonitoring } = useMapAreaContext();
   const t = useT();
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -86,7 +86,7 @@ const MapMenuPanelItem = ({
           &nbsp; {t("Edit Polygon")}
         </Text>
       ),
-      onClick: () => {}
+      onClick: () => setClickedButton("editPolygon")
     },
     ...commonItems,
     {

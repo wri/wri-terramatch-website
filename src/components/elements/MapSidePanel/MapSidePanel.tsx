@@ -56,7 +56,7 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-  const { isMonitoring } = useMapAreaContext() || {};
+  const { isMonitoring, setEditPolygon } = useMapAreaContext();
 
   const { map } = mapFunctions;
 
@@ -102,6 +102,9 @@ const MapSidePanel = ({
       setClickedButton("");
     } else if (clickedButton === "delete") {
       deletePolygon(selected?.poly_id ?? "");
+      setClickedButton("");
+    } else if (clickedButton === "editPolygon") {
+      setEditPolygon?.({ isEditClicked: true, uuid: selected?.poly_id ?? "" });
       setClickedButton("");
     }
   }, [clickedButton, selected]);

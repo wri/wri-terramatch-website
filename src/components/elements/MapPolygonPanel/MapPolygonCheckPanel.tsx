@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, Fragment, SetStateAction, useRef } from "react";
+import { Fragment, useRef } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -12,11 +12,10 @@ import MapPolygonCheckPanelItem from "./MapPolygonCheckPanelItem";
 export interface MapPolygonCheckPanelProps {
   emptyText?: string;
   onLoadMore: () => void;
-  setEditPolygon: Dispatch<SetStateAction<boolean>>;
   selected: MapMenuPanelItemProps | undefined;
 }
 
-const MapPolygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected }: MapPolygonCheckPanelProps) => {
+const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected }: MapPolygonCheckPanelProps) => {
   const t = useT();
 
   const refContainer = useRef<HTMLDivElement>(null);
@@ -50,7 +49,6 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, setEditPolygon, selected 
                 title={item.title}
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
-                setEditPolygon={setEditPolygon}
                 status={item.status}
                 polygon={item.polygon}
               />

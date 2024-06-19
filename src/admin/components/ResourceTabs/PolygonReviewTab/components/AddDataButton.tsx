@@ -11,7 +11,7 @@ export interface AddDataButtonProps {
 const AddDataButton = (props: AddDataButtonProps) => {
   const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages } = props;
   const context = useMapAreaContext();
-  const { toggleUserDrawing } = context ?? {};
+  const { toggleUserDrawing } = context;
   const addMenuItems = [
     {
       id: "1",

@@ -10,20 +10,41 @@ type MapAreaType = {
   toggleUserDrawing: (arg0: boolean) => void;
   toggleAttribute: (arg0: boolean) => void;
   openEditNewPolygon: boolean;
+  editPolygon: { isEditClicked: boolean; uuid: string };
+  setEditPolygon: (value: { isEditClicked: boolean; uuid: string }) => void;
 };
 
-const MapAreaContext = createContext<MapAreaType | undefined>(undefined);
+const defaultValue: MapAreaType = {
+  isMonitoring: false,
+  setIsMonitoring: () => {},
+  checkIsMonitoringPartner: async () => {},
+  isUserDrawingEnabled: false,
+  toggleUserDrawing: () => {},
+  toggleAttribute: () => {},
+  openEditNewPolygon: false,
+  editPolygon: { isEditClicked: false, uuid: "" },
+  setEditPolygon: () => {}
+};
+
+const MapAreaContext = createContext<MapAreaType>(defaultValue);
 
 export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isMonitoring, setIsMonitoring] = useState<boolean>(false);
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
+  const [editPolygon, setEditPolygon] = useState<{ isEditClicked: boolean; uuid: string }>({
+    isEditClicked: false,
+    uuid: ""
+  });
+
   const toggleUserDrawing = (isDrawing: boolean) => {
     setIsUserDrawingEnabled(isDrawing);
   };
+
   const toggleAttribute = (isOpen: boolean) => {
     setOpenEditNewPolygon(isOpen);
   };
+
   const checkIsMonitoringPartner = async (projectUuid: string) => {
     try {
       const isMonitoringPartner: any = await fetchGetV2DashboardViewProjectUuid({
@@ -43,7 +64,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     isUserDrawingEnabled,
     toggleUserDrawing,
     toggleAttribute,
-    openEditNewPolygon
+    openEditNewPolygon,
+    editPolygon,
+    setEditPolygon
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;
@@ -51,5 +74,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
 
 export const useMapAreaContext = () => {
   const context = useContext(MapAreaContext);
+  if (!context) {
+    throw new Error("useMapAreaContext must be used within a MapAreaProvider");
+  }
   return context;
 };

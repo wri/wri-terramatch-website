@@ -29,10 +29,11 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
+  const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const mapFunctions = useMap(storePolygon);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const { isMonitoring } = useMapAreaContext() || {};
+  const { isMonitoring } = useMapAreaContext();
   async function storePolygon(geojson: any, record: any) {
     if (geojson?.length) {
       const response = await fetchPostV2TerrafundPolygon({
@@ -134,10 +135,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           type={type}
           onSelectItem={() => {}}
           onLoadMore={() => {}}
-          setEditPolygon={() => {}}
-          editPolygon={false}
-          tabEditPolygon=""
-          setTabEditPolygon={() => {}}
+          tabEditPolygon={tabEditPolygon}
+          setTabEditPolygon={setTabEditPolygon}
           setPreviewVersion={() => {}}
           recallEntityData={refetch}
         />

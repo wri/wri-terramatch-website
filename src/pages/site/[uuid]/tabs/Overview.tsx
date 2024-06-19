@@ -40,7 +40,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
-  const { isMonitoring, checkIsMonitoringPartner } = contextMapArea || {};
+  const { isMonitoring, checkIsMonitoringPartner } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
@@ -49,7 +49,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   });
   useEffect(() => {
     if (site.project?.uuid) {
-      checkIsMonitoringPartner?.(site.project?.uuid);
+      checkIsMonitoringPartner(site.project?.uuid);
     }
   }, [site.project?.uuid]);
 

@@ -65,7 +65,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { toggleUserDrawing } = contextMapArea ?? {};
+  const { toggleUserDrawing } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);

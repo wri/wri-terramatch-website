@@ -110,7 +110,7 @@ export const MapContainer = ({
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
-  const { isUserDrawingEnabled } = contextMapArea ?? {};
+  const { isUserDrawingEnabled } = contextMapArea;
   if (!mapFunctions) {
     return null;
   }
