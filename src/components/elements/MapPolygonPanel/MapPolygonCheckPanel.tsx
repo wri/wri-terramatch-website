@@ -56,10 +56,12 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected }: MapPolygonChe
           />
         </div>
       </div>
-      <Text variant="text-14-bold" className="mt-6 flex items-center uppercase text-white">
-        <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-        &nbsp; {t("Add Polygon")}
-      </Text>
+      <button className="text-white hover:text-primary-300">
+        <Text variant="text-14-bold" className="mt-6 flex items-center uppercase ">
+          <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+          &nbsp; {t("Add Polygon")}
+        </Text>
+      </button>
     </>
   );
 };

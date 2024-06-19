@@ -369,6 +369,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   </div>
                   <div className="flex gap-3">
                     <AddDataButton
+                      classNameContent="flex-1"
                       openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
                       openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
                     />

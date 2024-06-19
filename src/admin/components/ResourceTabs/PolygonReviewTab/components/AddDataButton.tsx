@@ -7,9 +7,10 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 export interface AddDataButtonProps {
   openFormModalHandlerAddPolygon: () => void;
   openFormModalHandlerUploadImages: () => void;
+  classNameContent?: string;
 }
 const AddDataButton = (props: AddDataButtonProps) => {
-  const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages } = props;
+  const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages, classNameContent } = props;
   const context = useMapAreaContext();
   const { setIsUserDrawingEnabled } = context;
   const addMenuItems = [
@@ -30,7 +31,7 @@ const AddDataButton = (props: AddDataButtonProps) => {
     }
   ];
   return (
-    <Menu menu={addMenuItems} className="flex-1">
+    <Menu menu={addMenuItems} className={classNameContent}>
       <Button
         variant="sky-page-admin"
         className="h-fit w-full whitespace-nowrap"

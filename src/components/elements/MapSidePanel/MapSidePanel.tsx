@@ -151,16 +151,14 @@ const MapSidePanel = ({
   return (
     <div {...props} className={classNames("h-[250px] flex-1", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
-      <div className="mb-3 flex items-start justify-between rounded-tl-lg">
+      <div className="mb-3 flex items-center justify-between rounded-tl-lg">
         {isMonitoring ? (
-          <Text
-            variant="text-14-bold"
-            className="flex items-center uppercase text-white"
-            onClick={() => setIsUserDrawingEnabled(true)}
-          >
-            <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-            &nbsp; {t("new Polygon")}
-          </Text>
+          <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
+            <Text variant="text-14-bold" className="flex items-center uppercase ">
+              <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+              &nbsp; {t("new Polygon")}
+            </Text>
+          </button>
         ) : (
           <Text variant="text-16-bold" className="text-white">
             {t(title)}
