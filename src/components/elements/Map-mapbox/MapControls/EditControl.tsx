@@ -10,6 +10,10 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
       onCancel();
     };
   }, []);
+  const handleSaveButton = () => {
+    onSave();
+    setIsEditing(false);
+  };
   return (
     <div className="flex w-[160px] flex-col items-center gap-1">
       <Button
@@ -27,7 +31,7 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
       </Button>
       {isEditing && (
         <div className="flex w-full items-center gap-1">
-          <Button onClick={onSave} className="w-full">
+          <Button onClick={handleSaveButton} className="w-full">
             <Text variant="text-12-bold" className="leading-[normal]">
               Save
             </Text>
