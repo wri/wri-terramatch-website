@@ -72,7 +72,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     if (entityBbox !== null) {
       setShouldRefetchPolygonData(false);
     }
-  }, [entityBbox]);
+  }, [entityBbox, polygonsData]);
   useEffect(() => {
     setResultValues(entityData);
   }, [entityData]);
