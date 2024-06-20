@@ -9,6 +9,7 @@ import { fetchPutV2TerrafundSitePolygonUuid, useGetV2TerrafundPolygonUuid } from
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Text from "../Text/Text";
+import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 const dropdownOptionsRestoration = [
   {
@@ -94,6 +95,9 @@ const AttributeInformation = () => {
       uuid: editPolygon.uuid ?? ""
     }
   });
+  const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
+  const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
+  const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
 
   useEffect(() => {
     if (sitePolygonData) {
@@ -205,7 +209,7 @@ const AttributeInformation = () => {
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder={t("Select Restoration Practice")}
-        options={dropdownOptionsRestoration}
+        options={translatedRestorationOptions}
         value={restorationPractice}
         onChange={e => setRestorationPractice(e as string[])}
         className="bg-white"
@@ -215,7 +219,7 @@ const AttributeInformation = () => {
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder={t("Select Target Land Use System")}
-        options={dropdownOptionsTarget}
+        options={translatedTargetOptions}
         value={targetLandUseSystem}
         onChange={e => setTargetLandUseSystem(e as string[])}
         className="bg-white"
@@ -226,7 +230,7 @@ const AttributeInformation = () => {
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder={t("Select Tree Distribution")}
-        options={dropdownOptionsTree}
+        options={translatedTreeOptions}
         value={treeDistribution}
         onChange={e => setTreeDistribution(e as string[])}
         className="bg-white"

@@ -218,10 +218,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         </PageRow>
         <PageRow>
           <PageColumn>
-            <PageCard
-              title={t("Site Area")}
-              tooltip="Lorem ipsum dolor sit amet, urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero."
-            >
+            <PageCard title={t("Site Area")}>
               <div className="flex gap-11 ">
                 <div className="w-[54%]">
                   <Text variant="text-14-light" className="mb-6">
@@ -262,30 +259,19 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         </PageRow>
         <PageRow>
           <PageColumn>
-            <PageCard
-              title={t("Project Monitoring")}
-              tooltip="Lorem ipsum dolor sit amet, urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero."
-            >
+            <PageCard title={t("Project Monitoring")}>
               <div className="flex items-center justify-between text-darkCustom">
                 <Text variant="text-14-light" className="w-[65%]">
-                  Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other
-                  metrics useful for assessing the impact of the restoration effort.
+                  {t(
+                    "Select all or specific sites to view remote sensing analytics such as tree counts, NDVI, and other metrics useful for assessing the impact of the restoration effort."
+                  )}
                 </Text>
                 <div className="relative w-[25%]">
                   <Dropdown
                     containerClassName="w-full"
-                    placeholder="All Polygons"
-                    options={[
-                      {
-                        title: "All Polygons",
-                        value: 1
-                      },
-                      {
-                        title: "All Polygons2",
-                        value: 2
-                      }
-                    ]}
-                    value={["All Polygons"]}
+                    placeholder={t("All Polygons")}
+                    options={[]}
+                    value={[]}
                     onChange={() => {}}
                   />
                 </div>
