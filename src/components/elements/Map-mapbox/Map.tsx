@@ -79,6 +79,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
+  shouldBboxZoom?: boolean;
 }
 
 export const MapContainer = ({
@@ -102,6 +103,7 @@ export const MapContainer = ({
   mapFunctions,
   tooltipType = "view",
   polygonsExists = true,
+  shouldBboxZoom = true,
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
@@ -162,7 +164,8 @@ export const MapContainer = ({
   }, [changeStyle]);
 
   useEffect(() => {
-    if (bbox && map.current && map) {
+    console.log("Should Bbox Zoom", shouldBboxZoom);
+    if (bbox && map.current && map && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);

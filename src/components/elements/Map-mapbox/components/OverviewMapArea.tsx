@@ -31,7 +31,10 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
     useMapAreaContext();
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, refetch, setEditPolygon);
+  const handleRefetchPolygon = () => {
+    setShouldRefetchPolygonData(true);
+  };
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon);
 
   const mapFunctions = useMap(onSave);
 
@@ -66,6 +69,11 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     }
   };
   useEffect(() => {
+    if (entityBbox !== null) {
+      setShouldRefetchPolygonData(false);
+    }
+  }, [entityBbox]);
+  useEffect(() => {
     setResultValues(entityData);
   }, [entityData]);
 
@@ -76,7 +84,6 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   useEffect(() => {
     if (shouldRefetchPolygonData) {
       refetch();
-      setShouldRefetchPolygonData(false);
     }
   }, [shouldRefetchPolygonData]);
 
@@ -166,6 +173,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         polygonsExists={polygonsData.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
+        shouldBboxZoom={!shouldRefetchPolygonData}
       />
     </>
   );
