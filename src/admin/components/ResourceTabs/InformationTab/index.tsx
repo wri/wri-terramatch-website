@@ -83,9 +83,7 @@ const InformationTab: FC<IProps> = props => {
         return "Information";
     }
   })();
-  console.log("test551", formSteps);
-  console.log("test552", values);
-  console.log("test553", response);
+
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={tabTitle} {...props}>

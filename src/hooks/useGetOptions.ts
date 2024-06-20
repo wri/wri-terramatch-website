@@ -24,7 +24,6 @@ export const useGetOptions = (keys: string[]): Option[] => {
       enabled: _keys?.length > 0
     }
   );
-
   return (
     // @ts-ignore
     optionsData?.data?.map(
