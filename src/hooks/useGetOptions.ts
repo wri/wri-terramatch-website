@@ -12,7 +12,7 @@ import { toArray } from "@/utils/array";
 export const useGetOptions = (keys: string[]): Option[] => {
   const { locale } = useRouter();
   const _keys = toArray(keys);
-
+  console.log(_keys?.join(","));
   const { data: optionsData } = useGetV2FormsOptionLabels(
     {
       queryParams: {
@@ -24,6 +24,7 @@ export const useGetOptions = (keys: string[]): Option[] => {
       enabled: _keys?.length > 0
     }
   );
+
   return (
     // @ts-ignore
     optionsData?.data?.map(

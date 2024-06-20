@@ -10,6 +10,7 @@ export const FileUploadInput = (props: ImageInputProps) => {
   const [showModal, setShowModal] = useState<any>(false);
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({});
+  // const { mutate } = usePostV2Files({});
 
   return (
     <>

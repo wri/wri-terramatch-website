@@ -46,11 +46,12 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
         const payloadOption = payloadQuestion.form_question_options?.[optionIndex] || {};
 
         if (payloadOption.image?.rawFile) {
+          console.log("test", option);
           uploadPromises.push(
             upload(payloadOption.image.rawFile, {
               collection: "image",
               model: "form-question-option",
-              uuid: option.uuid
+              uuid: option.id
             })
           );
         }
