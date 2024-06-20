@@ -3,6 +3,8 @@ import classNames from "classnames";
 import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
+import { useMapAreaContext } from "@/context/mapArea.provider";
+
 import Button from "../Button/Button";
 import MapSidePanel from "../MapSidePanel/MapSidePanel";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
@@ -15,8 +17,6 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   onSelectItem: (item: MapMenuPanelItemProps) => void;
   onLoadMore: () => void;
   emptyText?: string;
-  setEditPolygon: Dispatch<SetStateAction<boolean>>;
-  editPolygon: boolean;
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   setPreviewVersion: Dispatch<SetStateAction<boolean>>;
@@ -35,8 +35,6 @@ const MapPolygonPanel = ({
   onSelectItem,
   onLoadMore,
   emptyText,
-  setEditPolygon,
-  editPolygon,
   tabEditPolygon,
   setTabEditPolygon,
   setPreviewVersion,
@@ -51,12 +49,14 @@ const MapPolygonPanel = ({
   const t = useT();
   const [selected] = useState<MapMenuPanelItemProps>();
   const [stateViewPanel, setStateViewPanel] = useState(false);
+  const { editPolygon } = useMapAreaContext();
   return (
     <div {...props} className={classNames(className)}>
-      <If condition={!!editPolygon}>
+      <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
+
+      <If condition={!!editPolygon.isOpen}>
         <Then>
           <MapEditPolygonPanel
-            setEditPolygon={setEditPolygon}
             tabEditPolygon={tabEditPolygon}
             setTabEditPolygon={setTabEditPolygon}
             setPreviewVersion={setPreviewVersion}
@@ -94,12 +94,7 @@ const MapPolygonPanel = ({
             />
           </When>
           <When condition={!!stateViewPanel}>
-            <MapPolygonCheckPanel
-              emptyText={emptyText}
-              onLoadMore={onLoadMore}
-              setEditPolygon={setEditPolygon}
-              selected={selected}
-            />
+            <MapPolygonCheckPanel emptyText={emptyText} onLoadMore={onLoadMore} selected={selected} />
           </When>
         </Else>
       </If>

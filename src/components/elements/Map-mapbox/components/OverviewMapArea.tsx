@@ -6,12 +6,13 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
-import { useMonitoringPartner } from "@/context/monitoringPartner.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
+import { storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -24,10 +25,19 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
-  const mapFunctions = useMap();
+  const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
-  const { isMonitoring } = useMonitoringPartner();
+  const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
+    useMapAreaContext();
+  const handleRefetchPolygon = () => {
+    setShouldRefetchPolygonData(true);
+  };
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon);
+
+  const mapFunctions = useMap(onSave);
+
   const { data: entityData, refetch } = useGetV2TypeEntity({
     queryParams: {
       uuid: entityModel?.uuid,
@@ -59,8 +69,24 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     }
   };
   useEffect(() => {
+    if (entityBbox !== null) {
+      setShouldRefetchPolygonData(false);
+    }
+  }, [entityBbox, polygonsData]);
+  useEffect(() => {
     setResultValues(entityData);
   }, [entityData]);
+
+  useEffect(() => {
+    const { isOpen, uuid } = editPolygon;
+    setPolygonFromMap({ isOpen, uuid });
+  }, [editPolygon]);
+
+  useEffect(() => {
+    if (shouldRefetchPolygonData) {
+      refetch();
+    }
+  }, [shouldRefetchPolygonData]);
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
@@ -111,10 +137,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           type={type}
           onSelectItem={() => {}}
           onLoadMore={() => {}}
-          setEditPolygon={() => {}}
-          editPolygon={false}
-          tabEditPolygon=""
-          setTabEditPolygon={() => {}}
+          tabEditPolygon={tabEditPolygon}
+          setTabEditPolygon={setTabEditPolygon}
           setPreviewVersion={() => {}}
           recallEntityData={refetch}
         />
@@ -148,6 +172,9 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         siteData={true}
         className="flex-1 rounded-r-lg"
         polygonsExists={polygonsData.length > 0}
+        setPolygonFromMap={setPolygonFromMap}
+        polygonFromMap={polygonFromMap}
+        shouldBboxZoom={!shouldRefetchPolygonData}
       />
     </>
   );

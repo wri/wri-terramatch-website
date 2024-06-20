@@ -2,21 +2,22 @@ import Button from "@/components/elements/Button/Button";
 import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 
 export interface AddDataButtonProps {
   openFormModalHandlerAddPolygon: () => void;
   openFormModalHandlerUploadImages: () => void;
+  classNameContent?: string;
 }
 const AddDataButton = (props: AddDataButtonProps) => {
-  const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages } = props;
-  const context = useSitePolygonData();
-  const { toggleUserDrawing } = context ?? {};
+  const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages, classNameContent } = props;
+  const context = useMapAreaContext();
+  const { setIsUserDrawingEnabled } = context;
   const addMenuItems = [
     {
       id: "1",
       render: () => <Text variant="text-12-bold">Create Polygons</Text>,
-      onClick: () => toggleUserDrawing?.(true)
+      onClick: () => setIsUserDrawingEnabled(true)
     },
     {
       id: "2",
@@ -30,7 +31,7 @@ const AddDataButton = (props: AddDataButtonProps) => {
     }
   ];
   return (
-    <Menu menu={addMenuItems} className="flex-1">
+    <Menu menu={addMenuItems} className={classNameContent}>
       <Button
         variant="sky-page-admin"
         className="h-fit w-full whitespace-nowrap"

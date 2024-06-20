@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -8,6 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 
 import Button from "../Button/Button";
@@ -21,7 +22,6 @@ export interface MapPolygonCheckPanelItemProps
   title: string;
   isSelected?: boolean;
   refContainer?: React.RefObject<HTMLDivElement> | null;
-  setEditPolygon?: Dispatch<SetStateAction<boolean>>;
   status: string;
   polygon?: string[];
 }
@@ -31,12 +31,12 @@ const MapPolygonCheckPanelItem = ({
   isSelected,
   className,
   refContainer,
-  setEditPolygon,
   polygon,
   status,
   ...props
 }: MapPolygonCheckPanelItemProps) => {
   const { openModal, closeModal } = useModalContext();
+  const { setEditPolygon } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(true);
   const t = useT();
 
@@ -84,11 +84,7 @@ const MapPolygonCheckPanelItem = ({
           &nbsp; {t("Edit Polygon")}
         </Text>
       ),
-      onClick: () => {
-        if (setEditPolygon) {
-          setEditPolygon(true);
-        }
-      }
+      onClick: () => setEditPolygon?.({ isOpen: true, uuid: "" })
     },
     {
       id: "2",

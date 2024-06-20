@@ -12,8 +12,8 @@ import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/Pag
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { MonitoringPartnerProvider } from "@/context/monitoringPartner.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import {
   GetV2ReportingFrameworksUUIDResponse,
@@ -98,7 +98,7 @@ const ProjectDetailPage = () => {
   };
 
   return (
-    <MonitoringPartnerProvider>
+    <MapAreaProvider>
       <LoadingContainer loading={isLoading}>
         <Head>
           <title>{t("Project")}</title>
@@ -183,7 +183,7 @@ const ProjectDetailPage = () => {
         />
         <PageFooter />
       </LoadingContainer>
-    </MonitoringPartnerProvider>
+    </MapAreaProvider>
   );
 };
 

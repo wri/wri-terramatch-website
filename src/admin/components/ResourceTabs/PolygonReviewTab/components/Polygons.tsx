@@ -9,6 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -62,8 +63,9 @@ const Polygons = (props: IPolygonProps) => {
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
   const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const context = useSitePolygonData();
+  const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { toggleUserDrawing } = context ?? {};
+  const { setIsUserDrawingEnabled } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -212,7 +214,7 @@ const Polygons = (props: IPolygonProps) => {
         <Text variant="text-16-bold" className="pl-2 text-darkCustom">
           Polygons
         </Text>
-        <Button variant="text" onClick={() => toggleUserDrawing?.(true)}>
+        <Button variant="text" onClick={() => setIsUserDrawingEnabled?.(true)}>
           <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
         </Button>
       </div>

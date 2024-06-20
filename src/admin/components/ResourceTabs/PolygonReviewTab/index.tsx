@@ -11,7 +11,8 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
   downloadSiteGeoJsonPolygons,
-  mapPolygonData
+  mapPolygonData,
+  storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
@@ -28,8 +29,6 @@ import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundPolygonBboxUuid,
-  fetchPostV2TerrafundPolygon,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
@@ -102,27 +101,10 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
 
-  async function storePolygon(geojson: any, record: any) {
-    if (geojson?.length) {
-      const response = await fetchPostV2TerrafundPolygon({
-        body: { geometry: JSON.stringify(geojson[0].geometry) }
-      });
-      const polygonUUID = response.uuid;
-      if (polygonUUID) {
-        const site_id = record.uuid;
-        await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
-          body: {},
-          pathParams: { uuid: polygonUUID, siteUuid: site_id }
-        }).then(() => {
-          refetch();
-          setPolygonFromMap({ uuid: polygonUUID, isOpen: true });
-        });
-      }
-    }
-  }
-
-  const mapFunctions = useMap(storePolygon);
-
+  const onSave = (geojson: any, record: any) => {
+    storePolygon(geojson, record, refetch, setPolygonFromMap);
+  };
+  const mapFunctions = useMap(onSave);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: record.uuid
@@ -180,7 +162,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
       .then((response: DeletePolygonProps | undefined) => {
         if (response && response?.uuid) {
-          reloadSiteData?.();
+          refetch?.();
           const { map } = mapFunctions;
           if (map?.current) {
             addSourcesToLayers(map.current, polygonDataMap);
@@ -273,9 +255,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         setFile={setFiles}
       />
     );
-  };
-  const reloadSiteData = () => {
-    refetch();
   };
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -371,7 +350,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   );
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={reloadSiteData}>
+    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>
@@ -390,6 +369,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   </div>
                   <div className="flex gap-3">
                     <AddDataButton
+                      classNameContent="flex-1"
                       openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
                       openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
                     />

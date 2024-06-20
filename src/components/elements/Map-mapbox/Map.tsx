@@ -12,6 +12,7 @@ import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGro
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -78,6 +79,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
+  shouldBboxZoom?: boolean;
 }
 
 export const MapContainer = ({
@@ -101,14 +103,16 @@ export const MapContainer = ({
   mapFunctions,
   tooltipType = "view",
   polygonsExists = true,
+  shouldBboxZoom = true,
   ...props
 }: MapProps) => {
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
-  const { isUserDrawingEnabled } = context ?? {};
+  const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
+  const { isUserDrawingEnabled } = contextMapArea;
   if (!mapFunctions) {
     return null;
   }
@@ -160,7 +164,7 @@ export const MapContainer = ({
   }, [changeStyle]);
 
   useEffect(() => {
-    if (bbox && map.current && map) {
+    if (bbox && map.current && map && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext } from "react";
 
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -9,10 +9,6 @@ export type SitePolygonData = {
 type SitePolygonContextType = {
   sitePolygonData: SitePolygonsDataResponse | undefined;
   reloadSiteData: () => void;
-  isUserDrawingEnabled: boolean;
-  toggleUserDrawing: (arg0: boolean) => void;
-  toggleAttribute: (arg0: boolean) => void;
-  openEditNewPolygon: boolean;
 };
 
 const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
@@ -22,35 +18,19 @@ export const SitePolygonDataProvider: React.FC<{
   reloadSiteData: () => void;
   children: ReactNode;
 }> = ({ sitePolygonData, reloadSiteData, children }) => {
-  const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
   type SitePolygonContextType = {
     sitePolygonData: SitePolygonsDataResponse | undefined;
     reloadSiteData: () => void;
-    isUserDrawingEnabled: boolean;
-    toggleUserDrawing: (arg0: boolean) => void;
-    toggleAttribute: (arg0: boolean) => void;
-    openEditNewPolygon: boolean;
-  };
-
-  const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
-  const toggleUserDrawing = (isDrawing: boolean) => {
-    setIsUserDrawingEnabled(isDrawing);
-  };
-  const toggleAttribute = (isOpen: boolean) => {
-    setOpenEditNewPolygon(isOpen);
   };
   const contextValue: SitePolygonContextType = {
     sitePolygonData,
-    reloadSiteData,
-    isUserDrawingEnabled,
-    toggleUserDrawing,
-    toggleAttribute,
-    openEditNewPolygon
+    reloadSiteData
   };
 
   return <SitePolygonDataContext.Provider value={contextValue}>{children}</SitePolygonDataContext.Provider>;
 };
 
 export const useSitePolygonData = () => {
-  return useContext(SitePolygonDataContext);
+  const context = useContext(SitePolygonDataContext);
+  return context;
 };
