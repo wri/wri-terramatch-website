@@ -21,7 +21,7 @@ const CustomChipField: React.FC<Omit<FunctionFieldProps, "render">> = props => (
       <div
         className={classNames(
           "text-14 w-fit-content whitespace-nowrap rounded-[3px] px-2 capitalize",
-          STATUS_CLASSNAME_MAP[record.readable_status] || "bg-grey-200 text-grey-500"
+          STATUS_CLASSNAME_MAP[record.readable_status] ?? "bg-grey-200 text-grey-500"
         )}
       >
         {record.readable_status == "Started" ? "Draft" : record.readable_status}
