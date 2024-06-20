@@ -7,11 +7,11 @@ import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
 
-import { LoginFormData } from "../index.page";
+import { LoginFormDataType } from "../index.page";
 
 type LoginFormProps = {
-  form: UseFormReturn<LoginFormData>;
-  handleSave: (data: LoginFormData) => Promise<any>;
+  form: UseFormReturn<LoginFormDataType>;
+  handleSave: (data: LoginFormDataType) => Promise<any>;
   loading?: boolean;
 };
 

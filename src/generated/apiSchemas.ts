@@ -23007,6 +23007,86 @@ export type GeometryPost = {
   };
 };
 
+export type DashboardVolunteersSurvivalRateResponse = {
+  data?: {
+    /**
+     * Total number of volunteers.
+     */
+    total_volunteers?: number;
+    /**
+     * Total number of male volunteers.
+     */
+    men_volunteers?: number;
+    /**
+     * Total number of female volunteers.
+     */
+    women_volunteers?: number;
+    /**
+     * Total number of youth volunteers.
+     */
+    youth_volunteers?: number;
+    /**
+     * Total number of non-youth volunteers.
+     */
+    non_youth_volunteers?: number;
+    /**
+     * Survival rate for non-profit entities.
+     */
+    non_profit_survival_rate?: number;
+    /**
+     * Survival rate for enterprise entities.
+     */
+    enterprise_survival_rate?: number;
+    /**
+     * number of sites.
+     */
+    number_of_sites?: number;
+    /**
+     * number of nurseries.
+     */
+    number_of_nurseries?: number;
+  };
+};
+
+export type DashboardVolundteersSurvivalRateData = {
+  /**
+   * Total number of volunteers.
+   */
+  total_volunteers?: number;
+  /**
+   * Total number of male volunteers.
+   */
+  men_volunteers?: number;
+  /**
+   * Total number of female volunteers.
+   */
+  women_volunteers?: number;
+  /**
+   * Total number of youth volunteers.
+   */
+  youth_volunteers?: number;
+  /**
+   * Total number of non-youth volunteers.
+   */
+  non_youth_volunteers?: number;
+  /**
+   * Survival rate for non-profit entities.
+   */
+  non_profit_survival_rate?: number;
+  /**
+   * Survival rate for enterprise entities.
+   */
+  enterprise_survival_rate?: number;
+  /**
+   * number of sites.
+   */
+  number_of_sites?: number;
+  /**
+   * number of nurseries.
+   */
+  number_of_nurseries?: number;
+};
+
 export type AuditStatusCreateRequest = {
   status?: string;
   comment?: string;
@@ -23423,6 +23503,202 @@ export type DashboardPolygonData = {
      */
     key?: string;
   }[];
+};
+
+export type DashboardActiveProjectsListViewResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    organisation?: string;
+    trees_under_restoration?: number;
+    jobs_created?: number;
+    volunteers?: number;
+    beneficiaries?: number;
+    survival_rate?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+    project_country?: string;
+    country_slug?: string;
+    number_of_trees_goal?: number;
+    date_added?: string;
+  }[];
+  current_page?: number;
+  per_page?: number;
+  total?: number;
+  last_page?: number;
+};
+
+export type DashboardTotalSectionHeaderResponse = {
+  data?: {
+    /**
+     * Total number of non profit projects.
+     */
+    total_non_profit_count?: number;
+    /**
+     * Total number of enterprise projects.
+     */
+    total_enterprise_count?: number;
+    /**
+     * Total number of jobs created.
+     */
+    total_entries?: number;
+    /**
+     * Total number of hectares restored.
+     */
+    total_hectares_restored?: number;
+    /**
+     * Total number of hectares restored goal.
+     */
+    total_hectares_restored_goal?: number;
+    /**
+     * Total number of trees restored.
+     */
+    total_trees_restored?: number;
+    /**
+     * Total number of trees restored goal.
+     */
+    total_trees_restored_goal?: number;
+  };
+};
+
+export type DashboardActiveCountriesResponse = {
+  data?: {
+    country_slug?: string;
+    country?: string;
+    number_of_projects?: number;
+    total_trees_planted?: number;
+    total_jobs_created?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+  }[];
+};
+
+export type DashboardCountriesResponse = {
+  data?: {
+    id?: number;
+    country_slug?: string;
+    data?: {
+      label?: string;
+      icon?: string;
+    };
+  }[];
+};
+
+export type DashboardCountryData = {
+  id?: number;
+  country_slug?: string;
+  data?: {
+    label?: string;
+    icon?: string;
+  };
+};
+
+export type DashboardCountryInfo = {
+  label?: string;
+  icon?: string;
+};
+
+export type DashboardProjectProfileResponse = {
+  data?: {
+    name?: string;
+    descriptionObjetive?: string;
+    country?: string;
+    organisation?: string;
+    survivalRate?: number;
+    countrySlug?: string;
+    restorationStrategy?: {
+      data?: string[];
+    };
+    targetLandUse?: {
+      data?: string[];
+    };
+    landTenure?: {
+      data?: string[];
+    };
+  };
+};
+
+export type DashboardProjectProfileData = {
+  name?: string;
+  descriptionObjetive?: string;
+  country?: string;
+  organisation?: string;
+  survivalRate?: number;
+  countrySlug?: string;
+  restorationStrategy?: {
+    data?: string[];
+  };
+  targetLandUse?: {
+    data?: string[];
+  };
+  landTenure?: {
+    data?: string[];
+  };
+};
+
+export type DashboardTopProjectsResponse = {
+  data?: {
+    top_projects_most_planted_trees?: {
+      project?: string;
+      uuid?: string;
+      trees_planted?: number;
+    }[];
+    top_tree_species_planted?: {
+      name?: string;
+      amount?: number;
+    }[];
+  };
+};
+
+export type DashboardTopPlantedTree = {
+  project?: string;
+  uuid?: string;
+  trees_planted?: number;
+};
+
+export type DashboardTopTreeSpecies = {
+  name?: string;
+  amount?: number;
+};
+
+export type ProjectPipeline = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    submitted_by?: string;
+    program?: string;
+    cohort?: string;
+    publish_for?: string;
+    url?: string;
+    /**
+     * @format date
+     */
+    created_at?: string;
+    /**
+     * @format date
+     */
+    updated_at?: string;
+  };
+};
+
+export type ProjectPipelinePost = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string;
+  publish_for?: string;
+  url?: string;
 };
 
 export type GeojsonData = {
