@@ -16,35 +16,33 @@ const POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP: { [key: string]: string } = {
   Unknown: ""
 };
 
+function groupPolygonsByStatus(polygons: any[]) {
+  const groupedPolygons = polygons.reduce((acc, polygon) => {
+    const status = polygon?.status;
+    if (acc?.[status]) {
+      acc[status].count++;
+    } else {
+      acc[status] = {
+        status: status,
+        count: 1
+      };
+    }
+    return acc;
+  }, {});
+
+  return Object.keys(groupedPolygons).map(key => groupedPolygons[key]);
+}
+
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
   const { data: getPolygonsToSite } = useGetV2SitesSitePolygon({ pathParams: { site: recordContext.uuid } });
-  //fix: RA crashes when null or undefined passed to an arrayField
+
   if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
     return (
       <div className="text-14 w-fit-content whitespace-nowrap rounded-[3px] bg-grey-200 px-2 text-grey-500">
-        {props.emptyText || "No Polygons"}
+        {props.emptyText ?? "Not Provided"}
       </div>
     );
-  }
-
-  function groupPolygonsByStatus(polygons: any[]) {
-    const groupedPolygons = polygons.reduce((acc, polygon) => {
-      const status = polygon?.status;
-      if (acc?.[status]) {
-        acc[status].count++;
-      } else {
-        acc[status] = {
-          status: status,
-          count: 1
-        };
-      }
-      return acc;
-    }, {});
-
-    const result = Object.keys(groupedPolygons).map(key => groupedPolygons[key]);
-
-    return result;
   }
 
   const groupedPolygons = groupPolygonsByStatus(getPolygonsToSite);
