@@ -113,17 +113,17 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
-        title="Add Polygons"
-        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${site?.name}.`}
+        title={t("Add Polygons")}
+        descriptionInput={`${t("Drag and drop a GeoJSON, Shapefile, or KML for your site")} ${site?.name}.`}
         descriptionList={
           <div className="mt-9 flex">
-            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
-            <Text variant="text-12-light">50 MB per upload</Text>
+            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
+            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
           </div>
         }
         onClose={closeModal}
-        content="Start by adding polygons to your site."
-        primaryButtonText="Save"
+        content={t("Start by adding polygons to your site.")}
+        primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={setFiles}
@@ -134,17 +134,19 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const openFormModalHandlerUploadImages = () => {
     openModal(
       <ModalAdd
-        title="Upload Images"
+        title={t("Upload Images")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput="Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        descriptionInput={t(
+          "Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
+        )}
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
-            Uploaded Files
+            {t("Uploaded Files")}
           </Text>
         }
         onClose={closeModal}
-        content="Start by adding images for processing."
-        primaryButtonText="Save"
+        content={t("Start by adding images for processing.")}
+        primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       ></ModalAdd>
     );
@@ -154,7 +156,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "1",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Request Support
+          {t("Request Support")}
         </Text>
       ),
       onClick: () => {}
@@ -163,7 +165,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       id: "2",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
-          Submit for Review
+          {t("Submit for Review")}
         </Text>
       ),
       onClick: () => {}
