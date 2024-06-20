@@ -78,7 +78,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   }, [entityData]);
 
   useEffect(() => {
-    setPolygonFromMap({ isOpen: editPolygon.isOpen, uuid: editPolygon.uuid });
+    const { isOpen, uuid } = editPolygon;
+    setPolygonFromMap({ isOpen, uuid });
   }, [editPolygon]);
 
   useEffect(() => {

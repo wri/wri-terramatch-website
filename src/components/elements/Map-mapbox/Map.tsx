@@ -164,7 +164,6 @@ export const MapContainer = ({
   }, [changeStyle]);
 
   useEffect(() => {
-    console.log("Should Bbox Zoom", shouldBboxZoom);
     if (bbox && map.current && map && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
