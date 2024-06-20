@@ -2303,6 +2303,9 @@ export type PostUsersRequestBody = {
   phone_number?: string;
   whatsapp_phone?: string;
   callback_url?: string;
+  primary_role?: string;
+  country?: string;
+  program?: string;
 };
 
 export type PostUsersVariables = {
@@ -33739,6 +33742,895 @@ export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDa
       ...options,
       ...queryOptions
     }
+  );
+};
+
+export type GetV2DashboardActiveProjectsQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+  /**
+   * Optional. per_page to projects.
+   */
+  per_page?: string;
+  /**
+   * Optional. page to projects.
+   */
+  page?: string;
+};
+
+export type GetV2DashboardActiveProjectsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardActiveProjectsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    organisation?: string;
+    trees_under_restoration?: number;
+    jobs_created?: number;
+    volunteers?: number;
+    beneficiaries?: number;
+    survival_rate?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+    project_country?: string;
+    country_slug?: string;
+    number_of_trees_goal?: number;
+    date_added?: string;
+  }[];
+  current_page?: number;
+  per_page?: number;
+  total?: number;
+  last_page?: number;
+};
+
+export type GetV2DashboardActiveProjectsVariables = {
+  queryParams?: GetV2DashboardActiveProjectsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
+ */
+export const fetchGetV2DashboardActiveProjects = (
+  variables: GetV2DashboardActiveProjectsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardActiveProjectsResponse,
+    GetV2DashboardActiveProjectsError,
+    undefined,
+    {},
+    GetV2DashboardActiveProjectsQueryParams,
+    {}
+  >({ url: "/v2/dashboard/active-projects", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
+ */
+export const useGetV2DashboardActiveProjects = <TData = GetV2DashboardActiveProjectsResponse>(
+  variables: GetV2DashboardActiveProjectsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/active-projects", operationId: "getV2DashboardActiveProjects", variables }),
+    ({ signal }) => fetchGetV2DashboardActiveProjects({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardVolunteersSurvivalRateQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+  /**
+   * Optional. Filter counts and metrics by UUID.
+   */
+  uuid?: string;
+};
+
+export type GetV2DashboardVolunteersSurvivalRateError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardVolunteersSurvivalRateResponse = {
+  data?: {
+    /**
+     * Total number of volunteers.
+     */
+    total_volunteers?: number;
+    /**
+     * Total number of male volunteers.
+     */
+    men_volunteers?: number;
+    /**
+     * Total number of female volunteers.
+     */
+    women_volunteers?: number;
+    /**
+     * Total number of youth volunteers.
+     */
+    youth_volunteers?: number;
+    /**
+     * Total number of non-youth volunteers.
+     */
+    non_youth_volunteers?: number;
+    /**
+     * Survival rate for non-profit entities.
+     */
+    non_profit_survival_rate?: number;
+    /**
+     * Survival rate for enterprise entities.
+     */
+    enterprise_survival_rate?: number;
+    /**
+     * number of sites.
+     */
+    number_of_sites?: number;
+    /**
+     * number of nurseries.
+     */
+    number_of_nurseries?: number;
+  };
+};
+
+export type GetV2DashboardVolunteersSurvivalRateVariables = {
+  queryParams?: GetV2DashboardVolunteersSurvivalRateQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
+ */
+export const fetchGetV2DashboardVolunteersSurvivalRate = (
+  variables: GetV2DashboardVolunteersSurvivalRateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardVolunteersSurvivalRateResponse,
+    GetV2DashboardVolunteersSurvivalRateError,
+    undefined,
+    {},
+    GetV2DashboardVolunteersSurvivalRateQueryParams,
+    {}
+  >({ url: "/v2/dashboard/volunteers-survival-rate", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
+ */
+export const useGetV2DashboardVolunteersSurvivalRate = <TData = GetV2DashboardVolunteersSurvivalRateResponse>(
+  variables: GetV2DashboardVolunteersSurvivalRateVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardVolunteersSurvivalRateResponse,
+      GetV2DashboardVolunteersSurvivalRateError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardVolunteersSurvivalRateResponse,
+    GetV2DashboardVolunteersSurvivalRateError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/volunteers-survival-rate",
+      operationId: "getV2DashboardVolunteersSurvivalRate",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardVolunteersSurvivalRate({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardTotalSectionHeaderQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2DashboardTotalSectionHeaderError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardTotalSectionHeaderResponse = {
+  data?: {
+    /**
+     * Total number of non profit projects.
+     */
+    total_non_profit_count?: number;
+    /**
+     * Total number of enterprise projects.
+     */
+    total_enterprise_count?: number;
+    /**
+     * Total number of jobs created.
+     */
+    total_entries?: number;
+    /**
+     * Total number of hectares restored.
+     */
+    total_hectares_restored?: number;
+    /**
+     * Total number of hectares restored goal.
+     */
+    total_hectares_restored_goal?: number;
+    /**
+     * Total number of trees restored.
+     */
+    total_trees_restored?: number;
+    /**
+     * Total number of trees restored goal.
+     */
+    total_trees_restored_goal?: number;
+  };
+};
+
+export type GetV2DashboardTotalSectionHeaderVariables = {
+  queryParams?: GetV2DashboardTotalSectionHeaderQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+ */
+export const fetchGetV2DashboardTotalSectionHeader = (
+  variables: GetV2DashboardTotalSectionHeaderVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardTotalSectionHeaderResponse,
+    GetV2DashboardTotalSectionHeaderError,
+    undefined,
+    {},
+    GetV2DashboardTotalSectionHeaderQueryParams,
+    {}
+  >({ url: "/v2/dashboard/total-section-header", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+ */
+export const useGetV2DashboardTotalSectionHeader = <TData = GetV2DashboardTotalSectionHeaderResponse>(
+  variables: GetV2DashboardTotalSectionHeaderVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardTotalSectionHeaderResponse, GetV2DashboardTotalSectionHeaderError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardTotalSectionHeaderResponse, GetV2DashboardTotalSectionHeaderError, TData>(
+    queryKeyFn({
+      path: "/v2/dashboard/total-section-header",
+      operationId: "getV2DashboardTotalSectionHeader",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardTotalSectionHeader({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardActiveCountriesQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+  /**
+   * Optional. Filter restoration strategy by UUID.
+   */
+  uuid?: string;
+};
+
+export type GetV2DashboardActiveCountriesError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardActiveCountriesResponse = {
+  data?: {
+    country_slug?: string;
+    country?: string;
+    number_of_projects?: number;
+    total_trees_planted?: number;
+    total_jobs_created?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+  }[];
+};
+
+export type GetV2DashboardActiveCountriesVariables = {
+  queryParams?: GetV2DashboardActiveCountriesQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+ */
+export const fetchGetV2DashboardActiveCountries = (
+  variables: GetV2DashboardActiveCountriesVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardActiveCountriesResponse,
+    GetV2DashboardActiveCountriesError,
+    undefined,
+    {},
+    GetV2DashboardActiveCountriesQueryParams,
+    {}
+  >({ url: "/v2/dashboard/active-countries", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
+ */
+export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCountriesResponse>(
+  variables: GetV2DashboardActiveCountriesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/active-countries", operationId: "getV2DashboardActiveCountries", variables }),
+    ({ signal }) => fetchGetV2DashboardActiveCountries({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardCountriesQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2DashboardCountriesError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardCountriesResponse = {
+  data?: {
+    id?: number;
+    country_slug?: string;
+    data?: {
+      label?: string;
+      icon?: string;
+    };
+  }[];
+};
+
+export type GetV2DashboardCountriesVariables = {
+  queryParams?: GetV2DashboardCountriesQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+ */
+export const fetchGetV2DashboardCountries = (variables: GetV2DashboardCountriesVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2DashboardCountriesResponse,
+    GetV2DashboardCountriesError,
+    undefined,
+    {},
+    GetV2DashboardCountriesQueryParams,
+    {}
+  >({ url: "/v2/dashboard/countries", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
+ */
+export const useGetV2DashboardCountries = <TData = GetV2DashboardCountriesResponse>(
+  variables: GetV2DashboardCountriesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardCountriesResponse, GetV2DashboardCountriesError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardCountriesResponse, GetV2DashboardCountriesError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/countries", operationId: "getV2DashboardCountries", variables }),
+    ({ signal }) => fetchGetV2DashboardCountries({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardGetProjectsQueryParams = {
+  /**
+   * Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2DashboardGetProjectsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardGetProjectsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    /**
+     * @format double
+     */
+    lat?: number;
+    /**
+     * @format double
+     */
+    long?: number;
+  }[];
+};
+
+export type GetV2DashboardGetProjectsVariables = {
+  queryParams?: GetV2DashboardGetProjectsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all project location.
+ */
+export const fetchGetV2DashboardGetProjects = (variables: GetV2DashboardGetProjectsVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2DashboardGetProjectsResponse,
+    GetV2DashboardGetProjectsError,
+    undefined,
+    {},
+    GetV2DashboardGetProjectsQueryParams,
+    {}
+  >({ url: "/v2/dashboard/get-projects", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all project location.
+ */
+export const useGetV2DashboardGetProjects = <TData = GetV2DashboardGetProjectsResponse>(
+  variables: GetV2DashboardGetProjectsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/get-projects", operationId: "getV2DashboardGetProjects", variables }),
+    ({ signal }) => fetchGetV2DashboardGetProjects({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardProjectDetailsProjectPathParams = {
+  /**
+   * Optional. Filter counts and metrics by UUID.
+   */
+  project: string;
+};
+
+export type GetV2DashboardProjectDetailsProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardProjectDetailsProjectResponse = {
+  data?: {
+    name?: string;
+    descriptionObjetive?: string;
+    country?: string;
+    organisation?: string;
+    survivalRate?: number;
+    countrySlug?: string;
+    restorationStrategy?: {
+      data?: string[];
+    };
+    targetLandUse?: {
+      data?: string[];
+    };
+    landTenure?: {
+      data?: string[];
+    };
+  };
+};
+
+export type GetV2DashboardProjectDetailsProjectVariables = {
+  pathParams: GetV2DashboardProjectDetailsProjectPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
+ */
+export const fetchGetV2DashboardProjectDetailsProject = (
+  variables: GetV2DashboardProjectDetailsProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardProjectDetailsProjectResponse,
+    GetV2DashboardProjectDetailsProjectError,
+    undefined,
+    {},
+    {},
+    GetV2DashboardProjectDetailsProjectPathParams
+  >({ url: "/v2/dashboard/project-details/{project}", method: "get", ...variables, signal });
+
+/**
+ * This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
+ */
+export const useGetV2DashboardProjectDetailsProject = <TData = GetV2DashboardProjectDetailsProjectResponse>(
+  variables: GetV2DashboardProjectDetailsProjectVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardProjectDetailsProjectResponse,
+      GetV2DashboardProjectDetailsProjectError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardProjectDetailsProjectResponse,
+    GetV2DashboardProjectDetailsProjectError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/project-details/{project}",
+      operationId: "getV2DashboardProjectDetailsProject",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardProjectDetailsProject({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardTopTreesPlantedQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardTopTreesPlantedResponse = {
+  data?: {
+    top_projects_most_planted_trees?: {
+      project?: string;
+      uuid?: string;
+      trees_planted?: number;
+    }[];
+    top_tree_species_planted?: {
+      name?: string;
+      amount?: number;
+    }[];
+  };
+};
+
+export type GetV2DashboardTopTreesPlantedVariables = {
+  queryParams?: GetV2DashboardTopTreesPlantedQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns Tops and metrics related to projects and tree species.
+ */
+export const fetchGetV2DashboardTopTreesPlanted = (
+  variables: GetV2DashboardTopTreesPlantedVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardTopTreesPlantedResponse,
+    GetV2DashboardTopTreesPlantedError,
+    undefined,
+    {},
+    GetV2DashboardTopTreesPlantedQueryParams,
+    {}
+  >({ url: "/v2/dashboard/top-trees-planted", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns Tops and metrics related to projects and tree species.
+ */
+export const useGetV2DashboardTopTreesPlanted = <TData = GetV2DashboardTopTreesPlantedResponse>(
+  variables: GetV2DashboardTopTreesPlantedVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/top-trees-planted", operationId: "getV2DashboardTopTreesPlanted", variables }),
+    ({ signal }) => fetchGetV2DashboardTopTreesPlanted({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2ProjectPipelineQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type GetV2ProjectPipelineError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectPipelineResponse = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    submitted_by?: string;
+    program?: string;
+    cohort?: string;
+    publish_for?: string;
+    url?: string;
+    /**
+     * @format date
+     */
+    created_at?: string;
+    /**
+     * @format date
+     */
+    updated_at?: string;
+  };
+}[];
+
+export type GetV2ProjectPipelineVariables = {
+  queryParams?: GetV2ProjectPipelineQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectPipeline = (variables: GetV2ProjectPipelineVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, undefined, {}, GetV2ProjectPipelineQueryParams, {}>(
+    { url: "/v2/project-pipeline", method: "get", ...variables, signal }
+  );
+
+export const useGetV2ProjectPipeline = <TData = GetV2ProjectPipelineResponse>(
+  variables: GetV2ProjectPipelineVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, TData>(
+    queryKeyFn({ path: "/v2/project-pipeline", operationId: "getV2ProjectPipeline", variables }),
+    ({ signal }) => fetchGetV2ProjectPipeline({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2ProjectPipelineQueryParams = {
+  /**
+   * Optional. Filter counts and metrics by country.
+   */
+  country?: string;
+};
+
+export type PostV2ProjectPipelineError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2ProjectPipelineResponse = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string;
+  publish_for?: string;
+  url?: string;
+};
+
+export type PostV2ProjectPipelineVariables = {
+  body?: RequestBodies.PostV2FprojectPipelineBody;
+  queryParams?: PostV2ProjectPipelineQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2ProjectPipeline = (variables: PostV2ProjectPipelineVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2ProjectPipelineResponse,
+    PostV2ProjectPipelineError,
+    RequestBodies.PostV2FprojectPipelineBody,
+    {},
+    PostV2ProjectPipelineQueryParams,
+    {}
+  >({ url: "/v2/project-pipeline", method: "post", ...variables, signal });
+
+export const usePostV2ProjectPipeline = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2ProjectPipelineResponse,
+      PostV2ProjectPipelineError,
+      PostV2ProjectPipelineVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2ProjectPipelineResponse,
+    PostV2ProjectPipelineError,
+    PostV2ProjectPipelineVariables
+  >(
+    (variables: PostV2ProjectPipelineVariables) => fetchPostV2ProjectPipeline({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2ProjectPipelineIdPathParams = {
+  /**
+   * show a specific project pipeline.
+   */
+  id: string;
+};
+
+export type GetV2ProjectPipelineIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectPipelineIdResponse = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    submitted_by?: string;
+    program?: string;
+    cohort?: string;
+    publish_for?: string;
+    url?: string;
+    /**
+     * @format date
+     */
+    created_at?: string;
+    /**
+     * @format date
+     */
+    updated_at?: string;
+  };
+};
+
+export type GetV2ProjectPipelineIdVariables = {
+  pathParams: GetV2ProjectPipelineIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectPipelineId = (variables: GetV2ProjectPipelineIdVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2ProjectPipelineIdResponse,
+    GetV2ProjectPipelineIdError,
+    undefined,
+    {},
+    {},
+    GetV2ProjectPipelineIdPathParams
+  >({ url: "/v2/project-pipeline/{id}", method: "get", ...variables, signal });
+
+export const useGetV2ProjectPipelineId = <TData = GetV2ProjectPipelineIdResponse>(
+  variables: GetV2ProjectPipelineIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ProjectPipelineIdResponse, GetV2ProjectPipelineIdError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ProjectPipelineIdResponse, GetV2ProjectPipelineIdError, TData>(
+    queryKeyFn({ path: "/v2/project-pipeline/{id}", operationId: "getV2ProjectPipelineId", variables }),
+    ({ signal }) => fetchGetV2ProjectPipelineId({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PutV2ProjectPipelineIdPathParams = {
+  /**
+   * edit a specific project pipeline.
+   */
+  id: string;
+};
+
+export type PutV2ProjectPipelineIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2ProjectPipelineIdResponse = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string;
+  publish_for?: string;
+  url?: string;
+};
+
+export type PutV2ProjectPipelineIdVariables = {
+  body?: RequestBodies.PostV2FprojectPipelineBody;
+  pathParams: PutV2ProjectPipelineIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2ProjectPipelineId = (variables: PutV2ProjectPipelineIdVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2ProjectPipelineIdResponse,
+    PutV2ProjectPipelineIdError,
+    RequestBodies.PostV2FprojectPipelineBody,
+    {},
+    {},
+    PutV2ProjectPipelineIdPathParams
+  >({ url: "/v2/project-pipeline/{id}", method: "put", ...variables, signal });
+
+export const usePutV2ProjectPipelineId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PutV2ProjectPipelineIdResponse,
+      PutV2ProjectPipelineIdError,
+      PutV2ProjectPipelineIdVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PutV2ProjectPipelineIdResponse,
+    PutV2ProjectPipelineIdError,
+    PutV2ProjectPipelineIdVariables
+  >(
+    (variables: PutV2ProjectPipelineIdVariables) => fetchPutV2ProjectPipelineId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2ProjectPipelineIdPathParams = {
+  /**
+   * delete a specific project pipeline.
+   */
+  id: string;
+};
+
+export type DeleteV2ProjectPipelineIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ProjectPipelineIdVariables = {
+  pathParams: DeleteV2ProjectPipelineIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ProjectPipelineId = (variables: DeleteV2ProjectPipelineIdVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2ProjectPipelineIdError, undefined, {}, {}, DeleteV2ProjectPipelineIdPathParams>({
+    url: "/v2/project-pipeline/{id}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2ProjectPipelineId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2ProjectPipelineIdError, DeleteV2ProjectPipelineIdVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2ProjectPipelineIdError, DeleteV2ProjectPipelineIdVariables>(
+    (variables: DeleteV2ProjectPipelineIdVariables) =>
+      fetchDeleteV2ProjectPipelineId({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 

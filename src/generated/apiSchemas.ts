@@ -22824,6 +22824,9 @@ export type UserCreate = {
   phone_number?: string;
   whatsapp_phone?: string;
   callback_url?: string;
+  primary_role?: string;
+  country?: string;
+  program?: string;
 };
 
 export type UpdateRequestsPaginated = {
