@@ -225,8 +225,9 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               <div className="flex gap-11 ">
                 <div className="w-[54%]">
                   <Text variant="text-14-light" className="mb-6">
-                    Add, remove or edit polygons associated to a site. Polygons may be edited in the map below;
-                    exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile application.
+                    {t(
+                      "Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile application."
+                    )}
                   </Text>
                   <div className="flex w-full gap-3">
                     {isMonitoring && (
@@ -243,12 +244,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
-                      &nbsp; Download
+                      &nbsp; {t("Download")}
                     </Button>
                     {isMonitoring && (
                       <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
                         <Button variant="primary" className="" onChange={() => {}}>
-                          SUBMIT Polygons
+                          {t("SUBMIT Polygons")}
                         </Button>
                       </Menu>
                     )}
