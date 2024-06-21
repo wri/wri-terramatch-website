@@ -118,11 +118,25 @@ const PolygonReviewTab: FC<IProps> = props => {
   });
 
   const siteBbox = sitePolygonBbox?.bbox as BBox;
+
+  const parseText = (text: string) => {
+    return text
+      .split(",")
+      .map(segment => {
+        return segment
+          .trim()
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      })
+      .join(", ");
+  };
+
   const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
     "polygon-name": data.poly_name ?? `Unnamed Polygon`,
-    "restoration-practice": data.practice,
-    "target-land-use-system": data.target_sys,
-    "tree-distribution": data.distr,
+    "restoration-practice": parseText(data.practice ?? ""),
+    "target-land-use-system": parseText(data.target_sys ?? ""),
+    "tree-distribution": parseText(data.distr ?? ""),
     "planting-start-date": data.plantstart,
     source: data.org_name,
     uuid: data.poly_id,

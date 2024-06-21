@@ -61,15 +61,15 @@ const dropdownOptionsTarget = [
 const dropdownOptionsTree = [
   {
     title: "Single Line",
-    value: "Single Line"
+    value: "single-line"
   },
   {
     title: "Partial",
-    value: "Partial"
+    value: "partial"
   },
   {
     title: "Full Coverage",
-    value: "Full Coverage"
+    value: "full"
   }
 ];
 const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygon }) => {
