@@ -11,6 +11,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
+  fetchPutV2ENTITYUUIDStatus,
   useGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -47,6 +48,7 @@ export interface ICriteriaCheckItem {
 }
 
 const ESTIMATED_AREA_CRITERIA_ID = 12;
+const COMPLETED_DATA_CRITERIA_ID = 14;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -71,6 +73,7 @@ const PolygonDrawer = ({
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
@@ -136,7 +139,10 @@ const PolygonDrawer = ({
       return true;
     }
     return criteriaData.criteria_list.some(
-      (criteria: any) => criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID && criteria.valid !== 1
+      (criteria: any) =>
+        criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
+        criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
+        criteria.valid !== 1
     );
   };
 
@@ -194,6 +200,7 @@ const PolygonDrawer = ({
               name={selectedPolygon?.poly_name}
               refresh={refresh}
               record={selectedPolygon}
+              mutate={mutateSitePolygons}
               tab="polygonReview"
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
