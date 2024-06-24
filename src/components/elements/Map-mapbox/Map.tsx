@@ -28,6 +28,7 @@ import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
+import ImageCheck from "./MapControls/ImageCheck";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { StyleControl } from "./MapControls/StyleControl";
@@ -280,8 +281,9 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
-        <ControlGroup position="bottom-right" className="bottom-8">
-          <ViewImageCarousel viewImages={viewImages} setViewImages={setViewImages} />
+        <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+          <ImageCheck />
+          <ViewImageCarousel />
         </ControlGroup>
       </When>
       <When condition={showLegend}>

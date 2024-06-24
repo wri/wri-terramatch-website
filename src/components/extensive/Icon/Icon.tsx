@@ -154,7 +154,8 @@ export enum IconNames {
   IC_DRAFT = "ic_draft",
   IC_NEEDS_MORE_INFORMATION = "ic_needs-more-information",
   IC_SUBMITTED = "ic_submitted",
-  IC_ARROW_COLLAPSE = "ic-arrow-collapse"
+  IC_ARROW_COLLAPSE = "ic-arrow-collapse",
+  IMAGE_ICON = "image-icon"
 }
 
 export interface IconProps {
