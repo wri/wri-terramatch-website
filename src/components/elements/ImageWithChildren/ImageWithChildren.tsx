@@ -1,6 +1,8 @@
 import classNames from "classnames";
-import Image, { StaticImageData } from "next/image";
+import { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
+
+import ImageWithPlaceholder from "../ImageWithPlaceholder/ImageWithPlaceholder";
 
 export interface ImageWithChildrenProps
   extends PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>> {
@@ -21,11 +23,11 @@ const ImageWithChildren = ({
 }: ImageWithChildrenProps) => {
   return (
     <div {...divProps} className={classNames(className, "relative")}>
-      <Image
-        src={imageSrc}
-        alt=""
+      <ImageWithPlaceholder
+        imageUrl={imageSrc}
+        placeholder="no image available"
+        alt="no image available"
         role="presentation"
-        loading="lazy"
         style={{ objectFit: "cover" }}
         className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
       />
