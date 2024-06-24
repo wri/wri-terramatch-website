@@ -170,6 +170,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         showPopups
         showLegend
         siteData={true}
+        status={true}
+        record={entityModel}
         className="flex-1 rounded-r-lg"
         polygonsExists={polygonsData.length > 0}
         setPolygonFromMap={setPolygonFromMap}
