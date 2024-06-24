@@ -42,9 +42,9 @@ const GalleryImageItem: FC<GalleryImageItemProps> = ({ data, className }) => {
           </Text>
         </Text>
         <Text variant="text-16-bold" className="flex items-center gap-1">
-          Created:{" "}
+          Date uploaded:{" "}
           <Text variant="text-16-light" className="capitalize">
-            {format(new Date(Date.parse(data.raw?.created_date)), "Y-MM-dd HH:mm:ss")}
+            {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")}
           </Text>
         </Text>
         <Text variant="text-16-bold" className="flex items-center gap-1">

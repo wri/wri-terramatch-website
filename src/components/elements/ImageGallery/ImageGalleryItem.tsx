@@ -74,11 +74,13 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
       </ImageWithChildren>
 
       <div className="px-2 py-4">
-        <Text variant="text-16-bold">{data.label}</Text>
+        <Text variant="text-16-bold" className="flex items-center gap-1">
+          {data.label.split(":")[0]}:<Text variant="text-16-light">{data.label.split(":")[1]}</Text>
+        </Text>
 
         {data.subtitle && (
-          <Text variant="text-16-light" className="mt-2">
-            {data.subtitle}
+          <Text variant="text-16-bold" className="flex items-center gap-1">
+            {data.subtitle.split(":")[0]}:<Text variant="text-16-light">{data.subtitle.split(":")[1]}</Text>
           </Text>
         )}
       </div>
