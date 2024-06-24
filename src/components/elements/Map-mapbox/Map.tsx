@@ -35,9 +35,9 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
-  addBasicSourceAndLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
+  addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
   removePopups,
@@ -177,7 +177,7 @@ export const MapContainer = ({
 
   useEffect(() => {
     if (props?.modelFilesData) {
-      addBasicSourceAndLayer(map.current, props?.modelFilesData);
+      addMediaSourceAndLayer(map.current, props?.modelFilesData);
     }
   }, [props?.modelFilesData]);
 

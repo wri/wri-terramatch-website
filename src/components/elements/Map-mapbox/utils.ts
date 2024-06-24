@@ -16,6 +16,7 @@ import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
+import { getPulsingDot } from "./pulsing.dot";
 
 const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
 const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
@@ -182,7 +183,7 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
   }
 };
 
-export const addBasicSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
+export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
   const layerName = "media-images";
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
@@ -208,6 +209,10 @@ export const addBasicSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
     }
   }));
 
+  const pulsingDot = getPulsingDot(map);
+
+  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 2 });
+
   map.addSource(layerName, {
     type: "geojson",
     data: {
@@ -218,24 +223,30 @@ export const addBasicSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
 
   map.addLayer({
     id: layerName,
-    type: "circle",
+    type: "symbol",
     source: layerName,
-    paint: {
-      "circle-radius": 10,
-      "circle-color": "#3887be"
+    layout: {
+      "icon-image": "pulsing-dot"
     }
   });
 
-  features.forEach((feature: any) => {
-    let popupContent = document.createElement("div");
-    popupContent.className = "popup-content-media";
-    const root = createRoot(popupContent);
-    root.render(createElement(MediaPopup, feature.properties));
-    popup = new mapboxgl.Popup({ className: "popup-media", closeButton: true })
-      .setLngLat(feature.geometry.coordinates)
-      .setDOMContent(popupContent)
-      .addTo(map);
-    popupAttachedMap["MEDIA"].push(popup);
+  map.on("mouseenter", layerName, e => {
+    e.preventDefault();
+    console.log("mouseenter", e.features);
+    e.features!.forEach((feature: any) => {
+      let popupContent = document.createElement("div");
+      popupContent.className = "popup-content-media";
+      const root = createRoot(popupContent);
+      root.render(createElement(MediaPopup, feature.properties));
+      popup = new mapboxgl.Popup({ className: "popup-media", closeButton: true })
+        .setLngLat(feature.geometry.coordinates)
+        .setDOMContent(popupContent)
+        .addTo(map);
+      popupAttachedMap["MEDIA"].push(popup);
+    });
+  });
+  map.on("mouseleave", layerName, e => {
+    removePopups("MEDIA");
   });
 };
 
