@@ -53,25 +53,6 @@ export const getSchemaFields = (fields: FormField[]) => {
   return schema;
 };
 
-export const getStepIndexByValues = (values: any, steps: FormStepSchema[], skipValueCheck?: boolean) => {
-  let currentStepIndex = -1;
-
-  for (const step of steps) {
-    currentStepIndex++;
-
-    if (!getSchema(step.fields).isValidSync(values)) {
-      return currentStepIndex;
-    } else if (!skipValueCheck) {
-      for (const field of step.fields) {
-        if (!values[field.name]) {
-          return currentStepIndex;
-        }
-      }
-    }
-  }
-  return currentStepIndex;
-};
-
 export const getAnswer = (
   field: FormField,
   values: any

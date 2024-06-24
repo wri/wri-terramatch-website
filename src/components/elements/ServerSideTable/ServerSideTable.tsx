@@ -7,6 +7,8 @@ import Pagination from "@/components/extensive/Pagination";
 import { getQueryParams } from "@/helpers/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
+import { VARIANT_TABLE_BORDER_ALL } from "../Table/TableVariants";
+
 export interface ServerSideTableState {
   page: number;
   pageSize: number;
@@ -18,12 +20,12 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
   meta: any;
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: any) => void;
-  treeSpeciesShow?: boolean;
 }
 
 export function ServerSideTable<TData extends RowData>({
   onTableStateChange,
   onQueryParamChange,
+  variant,
   children,
   ...props
 }: ServerSideTableProps<TData>) {
@@ -50,6 +52,7 @@ export function ServerSideTable<TData extends RowData>({
           setSorting(state.sorting);
           setFilter(state.filters);
         }}
+        variant={variant ? variant : VARIANT_TABLE_BORDER_ALL}
       >
         {children}
       </Table>
@@ -68,7 +71,6 @@ export function ServerSideTable<TData extends RowData>({
             setPage(1);
             setPageSize(size);
           }}
-          treeSpeciesShow={props.treeSpeciesShow}
         />
       )}
     </>

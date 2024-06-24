@@ -12,7 +12,7 @@ exports[`Storyshots Components/Elements/SelectImageList Condensed 1`] = `
         className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
           }
         }
       />
@@ -32,7 +32,7 @@ exports[`Storyshots Components/Elements/SelectImageList Condensed 1`] = `
         className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
           }
         }
       />
@@ -52,7 +52,7 @@ exports[`Storyshots Components/Elements/SelectImageList Condensed 1`] = `
         className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
           }
         }
       />
@@ -72,7 +72,7 @@ exports[`Storyshots Components/Elements/SelectImageList Condensed 1`] = `
         className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
           }
         }
       />
@@ -92,7 +92,7 @@ exports[`Storyshots Components/Elements/SelectImageList Condensed 1`] = `
         className="aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
           }
         }
       />
@@ -119,7 +119,7 @@ exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
         className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/no_poverty@2x.png')",
           }
         }
       />
@@ -139,7 +139,7 @@ exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
         className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/good-health-and-well-being@2x.png')",
           }
         }
       />
@@ -159,7 +159,7 @@ exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
         className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/quality-education@2x.png')",
           }
         }
       />
@@ -179,7 +179,7 @@ exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
         className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/affordable-and-clean-energy@2x.png')",
           }
         }
       />
@@ -199,7 +199,7 @@ exports[`Storyshots Components/Elements/SelectImageList Default 1`] = `
         className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
         style={
           Object {
-            "backgroundImage": "url('https://test.wrirestorationmarketplace.cubeapis.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
+            "backgroundImage": "url('https://new-wri-staging.wri-restoration-marketplace-api.com/images/V2/sustainable-development-goals/climate-action@2x.png')",
           }
         }
       />

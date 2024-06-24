@@ -12,18 +12,34 @@ exports[`Storyshots Components/Elements/Inputs/LanguagesDropdown Default 1`] = `
       aria-expanded={false}
       className="flex items-center justify-between p-2"
       data-headlessui-state=""
-      id="headlessui-popover-button-:r18:"
+      id="headlessui-popover-button-:r1c:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       type="button"
     >
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 16,
+          }
+        }
+      />
       <span
-        className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900"
+        className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
       >
         English
       </span>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 8,
+          }
+        }
+      />
     </button>
   </div>
 </div>

@@ -68,7 +68,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
       updatedDemographics.splice(index, 1);
       onChange(updatedDemographics);
     },
-    [demographics, onChange, type]
+    [demographics, onChange]
   );
 
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
@@ -89,7 +89,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
       </div>
 
       <div className={classNames("bg-white", variant.secondCol)}>
-        <Text variant="text-14-semibold" className={classNames("px-4 py-2 text-customBlue-50", variant.columTitle)}>
+        <Text variant="text-14-semibold" className={classNames("text-customBlue-50 px-4 py-2", variant.columTitle)}>
           Total Workdays
         </Text>
       </div>
@@ -103,7 +103,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
           as="span"
           variant="text-14-semibold"
           className={classNames(
-            "flex items-start justify-center gap-2 px-4 py-2 leading-normal text-customBlue-50",
+            "text-customBlue-50 flex items-start justify-center gap-2 px-4 py-2 leading-normal",
             variant.columTitle,
             { [`${variant.roundedTr}`]: position === "first" }
           )}
@@ -127,7 +127,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
         <div className={classNames("flex items-center bg-white", variant.secondCol)}>
           <div className="relative">
             <button
-              className={"text-14-semibold flex items-baseline gap-1 px-4 py-2 text-customBlue-100 hover:text-primary"}
+              className={"text-14-semibold text-customBlue-100 flex items-baseline gap-1 px-4 py-2 hover:text-primary"}
               onClick={() => setOpenMenu(!openMenu)}
             >
               {addSubtypeLabel && t(addSubtypeLabel)}
@@ -144,7 +144,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
                   Object.keys(subtypes).map(subtype => (
                     <button
                       key={subtype}
-                      className="w-full rounded-lg p-2 text-left hover:bg-customBlue-75 hover:text-primary"
+                      className="hover:bg-customBlue-75 w-full rounded-lg p-2 text-left hover:text-primary"
                       onClick={() => addRow(subtype)}
                     >
                       {t(subtypes[subtype])}

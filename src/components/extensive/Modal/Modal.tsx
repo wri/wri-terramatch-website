@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -12,24 +12,22 @@ export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, H
 export interface ModalProps extends ModalBaseProps {
   title: string;
   iconProps?: IconProps;
-  content?: string;
-  primaryButtonProps: IButtonProps;
+  content?: ReactNode;
+  primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
 }
 
-export const ModalBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => {
-  return (
-    <div
-      {...rest}
-      className={twMerge(
-        "margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-15",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+export const ModalBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => (
+  <div
+    {...rest}
+    className={twMerge(
+      "margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white p-15",
+      className
+    )}
+  >
+    {children}
+  </div>
+);
 
 const Modal: FC<ModalProps> = ({
   iconProps,

@@ -3,7 +3,7 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
 
-import LinerProgressbar from "../../ProgressBar/LinerProgressbar/LinerProgressbar";
+import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
 
 export interface SmallGoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   value: number;
@@ -25,7 +25,7 @@ const SmallGoalProgressCard: FC<SmallGoalProgressCardProps> = ({ value, limit, l
       {/* Right */}
       <div className="ml-4 flex min-w-[100px] flex-col items-end">
         <Text variant="text-light-subtitle-400">{valueText}</Text>
-        <LinerProgressbar color="primary" value={progressValue} className="bg-primary-200" />
+        <LinearProgressBar color="primary" value={progressValue} className="bg-primary-200" />
       </div>
     </div>
   );

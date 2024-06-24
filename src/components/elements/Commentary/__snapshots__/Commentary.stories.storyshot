@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Commentary Default 1`] = `
+<div
+  className="flex items-center justify-center p-8"
+>
+  <div
+    className="flex flex-col gap-2"
+  >
+    <div
+      className="flex justify-between"
+    >
+      <div
+        className="flex items-center gap-2"
+      >
+        <div
+          className="ml-3 flex h-fit min-h-[32px] min-w-[32px] items-center justify-center rounded-full bg-primary-500"
+        >
+          <p
+            className="uppercase text-white text-14-semibold"
+            data-testid="txt"
+          >
+            R
+            S
+          </p>
+        </div>
+        <div
+          className="flex w-full flex-col gap-1"
+        >
+          <p
+            className="text-blueCustom-250 text-12-semibold"
+            data-testid="txt"
+          >
+            Ricardo
+             
+            Saavedra
+          </p>
+          <p
+            className="text-blueCustom-250 opacity-50 text-10-light"
+            data-testid="txt"
+          >
+            Oct 6, 2022 at 1:12 AM
+          </p>
+        </div>
+      </div>
+      <div
+        className="flex h-fit w-[92px] items-center justify-center rounded-xl py-2 bg-primary-200"
+      >
+        <p
+          className="text-primary text-12-semibold"
+          data-testid="txt"
+        >
+          submitted
+        </p>
+      </div>
+    </div>
+    <p
+      className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-blueCustom-250 opacity-50 text-12-light"
+      data-testid="txt"
+    >
+      Don't see the outline. the source code also needs to be updated.re: aligned to one source. we need to make sure whether this is appropriate. consider that we have the organization in sign-up/profile, mask, and work request boards. On Thursday will provide the the source tables requested
+    </p>
+    <div
+      className="flex flex-wrap gap-2"
+    >
+      <div
+        className="rounded-xl bg-neutral-150 px-2 py-1"
+      >
+        <p
+          className="text-grey-700 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        className="rounded-xl bg-neutral-150 px-2 py-1"
+      >
+        <p
+          className="text-grey-700 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        className="rounded-xl bg-neutral-150 px-2 py-1"
+      >
+        <p
+          className="text-grey-700 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        className="rounded-xl bg-neutral-150 px-2 py-1"
+      >
+        <p
+          className="text-grey-700 text-14-light"
+          data-testid="txt"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

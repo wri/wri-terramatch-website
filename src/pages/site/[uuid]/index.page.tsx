@@ -10,8 +10,10 @@ import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2SitesUUID, useGetV2SitesUUID } from "@/generated/apiComponents";
@@ -46,7 +48,7 @@ const SiteDetailPage = () => {
   });
 
   const site = (data?.data || {}) as any;
-  const { isPPC } = useFramework(site);
+  const { isPPC, isHBF } = useFramework(site);
   const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
   const { handleExport } = useGetExportEntityHandler("sites", site.uuid, site.name);
   const { handleEdit } = useGetEditEntityHandler({
@@ -81,76 +83,79 @@ const SiteDetailPage = () => {
 
   const subtitles = [
     `${t("Organisation")}: ${site.organisation?.name}`,
-    isPPC ? t("Priceless Planet Coalition") : t("TerraFund")
+    isPPC ? t("Priceless Planet Coalition") : isHBF ? "Harit Bharat Fund" : t("TerraFund")
   ];
   if (isPPC) {
     subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));
   }
 
   return (
-    <LoadingContainer loading={isLoading}>
-      <Head>
-        <title>{`${t("Site")} ${site.name}`}</title>
-      </Head>
-      <PageBreadcrumbs
-        links={[
-          { title: t("My Projects"), path: "/my-projects" },
-          { title: site.project?.name, path: `/project/${site.project?.uuid}` },
-          { title: site.name }
-        ]}
-      />
-      <PageHeader className="h-[203px]" title={site.name} subtitles={subtitles} hasBackButton={false}>
-        <div className="flex gap-4">
-          <When condition={site.site_reports_total === 0}>
-            <Button variant="secondary" onClick={onDeleteSite}>
-              {t("Delete")}
-            </Button>
-          </When>
-          <If condition={siteStatus === "edit"}>
-            <Then>
-              <Button as={Link} href={`/entity/sites/edit/${siteUUID}`}>
-                {t("Continue Site")}
+    <MapAreaProvider>
+      <LoadingContainer loading={isLoading}>
+        <Head>
+          <title>{`${t("Site")} ${site.name}`}</title>
+        </Head>
+        <PageBreadcrumbs
+          links={[
+            { title: t("My Projects"), path: "/my-projects" },
+            { title: site.project?.name, path: `/project/${site.project?.uuid}` },
+            { title: site.name }
+          ]}
+        />
+        <PageHeader className="h-[203px]" title={site.name} subtitles={subtitles} hasBackButton={false}>
+          <div className="flex gap-4">
+            <When condition={site.site_reports_total === 0}>
+              <Button variant="secondary" onClick={onDeleteSite}>
+                {t("Delete")}
               </Button>
-            </Then>
-            <Else>
-              <Button variant="secondary" onClick={handleExport}>
-                {t("Export")}
-              </Button>
-              <Button onClick={handleEdit}>{t("Edit")}</Button>
-            </Else>
-          </If>
-        </div>
-      </PageHeader>
-      <StatusBar entityName="sites" entity={site} />
-      <SecondaryTabs
-        tabItems={[
-          { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} /> },
-          { key: "details", title: t("Details"), body: <SiteDetailTab site={site} /> },
-          {
-            key: "gallery",
-            title: t("Gallery"),
-            body: (
-              <GalleryTab
-                modelName="sites"
-                modelUUID={site.uuid}
-                modelTitle={t("Site")}
-                boundaryGeojson={site.boundary_geojson}
-                emptyStateContent={t(
-                  "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
-                )}
-              />
-            )
-          },
-          { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site} /> },
-          {
-            key: "completed-tasks",
-            title: t("Completed Reports"),
-            body: <SiteCompletedReportsTab siteUUID={site.uuid} />
-          }
-        ]}
-        containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
-      />
-    </LoadingContainer>
+            </When>
+            <If condition={siteStatus === "edit"}>
+              <Then>
+                <Button as={Link} href={`/entity/sites/edit/${siteUUID}`}>
+                  {t("Continue Site")}
+                </Button>
+              </Then>
+              <Else>
+                <Button variant="secondary" onClick={handleExport}>
+                  {t("Export")}
+                </Button>
+                <Button onClick={handleEdit}>{t("Edit")}</Button>
+              </Else>
+            </If>
+          </div>
+        </PageHeader>
+        <StatusBar entityName="sites" entity={site} />
+        <SecondaryTabs
+          tabItems={[
+            { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} /> },
+            { key: "details", title: t("Details"), body: <SiteDetailTab site={site} /> },
+            {
+              key: "gallery",
+              title: t("Gallery"),
+              body: (
+                <GalleryTab
+                  modelName="sites"
+                  modelUUID={site.uuid}
+                  modelTitle={t("Site")}
+                  boundaryGeojson={site.boundary_geojson}
+                  emptyStateContent={t(
+                    "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
+                  )}
+                />
+              )
+            },
+            { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site} /> },
+            {
+              key: "completed-tasks",
+              title: t("Completed Reports"),
+              body: <SiteCompletedReportsTab siteUUID={site.uuid} />
+            }
+          ]}
+          containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
+        />
+        <PageFooter />
+      </LoadingContainer>
+    </MapAreaProvider>
   );
 };
 

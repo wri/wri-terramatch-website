@@ -7,28 +7,29 @@ exports[`Storyshots Components/Elements/Inputs/Input Default 1`] = `
   <label
     className="mr-2 inline uppercase text-bold-body-300"
     data-testid="txt"
-    htmlFor=":r12:"
+    htmlFor=":r16:"
   >
     Input Label 
   </label>
   <p
-    className="text-light-body-300 with-inner-html"
+    className="text-body-400 with-inner-html"
     dangerouslySetInnerHTML={
       Object {
         "__html": "Input description",
       }
     }
     data-testid="txt"
-    id=":r12:-description"
+    id=":r16:-description"
   />
   <div
     className="relative"
   >
     <input
-      aria-describedby=":r12:-description"
+      aria-describedby=":r16:-description"
       aria-invalid={false}
-      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
-      id=":r12:"
+      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
+      id=":r16:"
+      onChange={[Function]}
       placeholder="Input placeholder"
       type="text"
     />
@@ -43,29 +44,30 @@ exports[`Storyshots Components/Elements/Inputs/Input Disabled 1`] = `
   <label
     className="mr-2 inline uppercase text-bold-body-300"
     data-testid="txt"
-    htmlFor=":r14:"
+    htmlFor=":r18:"
   >
     Input Label 
   </label>
   <p
-    className="text-light-body-300 with-inner-html"
+    className="text-body-400 with-inner-html"
     dangerouslySetInnerHTML={
       Object {
         "__html": "Input description",
       }
     }
     data-testid="txt"
-    id=":r14:-description"
+    id=":r18:-description"
   />
   <div
     className="relative"
   >
     <input
-      aria-describedby=":r14:-description"
+      aria-describedby=":r18:-description"
       aria-invalid={false}
-      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-400"
+      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
       disabled={true}
-      id=":r14:"
+      id=":r18:"
+      onChange={[Function]}
       placeholder="Input placeholder"
       type="text"
     />
@@ -80,29 +82,30 @@ exports[`Storyshots Components/Elements/Inputs/Input Error 1`] = `
   <label
     className="mr-2 inline uppercase text-bold-body-300"
     data-testid="txt"
-    htmlFor=":r13:"
+    htmlFor=":r17:"
   >
     Input Label 
   </label>
   <p
-    className="text-light-body-300 with-inner-html"
+    className="text-body-400 with-inner-html"
     dangerouslySetInnerHTML={
       Object {
         "__html": "Input description",
       }
     }
     data-testid="txt"
-    id=":r13:-description"
+    id=":r17:-description"
   />
   <div
     className="relative"
   >
     <input
-      aria-describedby=":r13:-description"
+      aria-describedby=":r17:-description"
       aria-errormessage="Field Required"
       aria-invalid={true}
       className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-error focus:border-error"
-      id=":r13:"
+      id=":r17:"
+      onChange={[Function]}
       placeholder="Input placeholder"
       type="text"
     />

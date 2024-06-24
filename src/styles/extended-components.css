@@ -13,3 +13,28 @@
   border-right-color: rgba(100, 100, 100, 0.75) !important;
   border-width: 6px;
 }
+
+.popup-content-map {
+  width: max-content;
+}
+
+.mapboxgl-popup-content{
+  width: 295px;
+}
+
+.popup-map {
+  max-width: 295px !important;
+  width: 295px;
+  padding: 0;
+}
+
+.popup-map .mapboxgl-popup-content {
+  padding: 0;
+}
+
+.popup-map .mapboxgl-popup-close-button {
+  font-size: 25px;
+  color: #718184;
+  top: 6px;
+  right: 10px;
+}

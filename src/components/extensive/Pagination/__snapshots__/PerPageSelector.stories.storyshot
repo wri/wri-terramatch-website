@@ -14,11 +14,11 @@ exports[`Storyshots Components/Elements/Table/PerPageSelector Default 1`] = `
       <div
         aria-expanded={false}
         aria-haspopup="listbox"
-        aria-labelledby="headlessui-listbox-label-:r2s: headlessui-listbox-button-:r2r:"
+        aria-labelledby="headlessui-listbox-label-:r3f: headlessui-listbox-button-:r3e:"
         className="flex h-10 w-20 items-center justify-center rounded-md shadow"
         data-headlessui-state=""
         disabled={false}
-        id="headlessui-listbox-button-:r2r:"
+        id="headlessui-listbox-button-:r3e:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
@@ -34,14 +34,23 @@ exports[`Storyshots Components/Elements/Table/PerPageSelector Default 1`] = `
           </p>
         </div>
         <div
-          className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
-        />
+          className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]"
+        >
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
+        </div>
       </div>
       <p
         className="text-bold-subtitle-500"
         data-headlessui-state=""
         data-testid="txt"
-        id="headlessui-listbox-label-:r2s:"
+        id="headlessui-listbox-label-:r3f:"
         onClick={[Function]}
       />
     </div>

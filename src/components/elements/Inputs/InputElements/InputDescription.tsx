@@ -11,7 +11,7 @@ export interface InputDescriptionProps extends HTMLAttributes<HTMLParagraphEleme
 const InputDescription: FC<InputDescriptionProps> = ({ children, className, ...rest }) => {
   return (
     <When condition={!!children}>
-      <Text as="p" variant="text-light-body-300" className={className} containHtml {...rest}>
+      <Text as="p" variant="text-body-400" className={className} containHtml {...rest}>
         {children}
       </Text>
     </When>

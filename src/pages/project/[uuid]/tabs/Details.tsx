@@ -215,6 +215,8 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           </PageCard>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

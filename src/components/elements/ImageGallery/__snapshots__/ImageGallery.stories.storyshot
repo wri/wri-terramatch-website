@@ -17,36 +17,44 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         <div
           aria-expanded={false}
           aria-haspopup="listbox"
-          className="flex h-8 items-center justify-center gap-1 rounded-md border bg-white px-10"
+          className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
           data-headlessui-state=""
           disabled={false}
-          id="headlessui-listbox-button-:r6:"
+          id="headlessui-listbox-button-:r7:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
         >
           <p
-            className="mt-1 w-full uppercase line-clamp-1 text-bold-caption-200"
+            className="w-full uppercase line-clamp-1 text-14-bold"
             data-testid="txt"
           >
             Show All
           </p>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
         </div>
       </div>
     </div>
   </div>
   <div
-    className="grid grid-cols-3 gap-8"
+    className="grid grid-cols-3 gap-4"
   >
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -70,6 +78,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -79,20 +95,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Quod distinctio reiciendis maxime enim et quidem.
@@ -104,14 +138,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -144,20 +178,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Blanditiis magnam quae labore vel dicta quasi qui.
@@ -169,14 +221,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -209,20 +261,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Aliquam quidem cupiditate reprehenderit incidunt.
@@ -234,14 +304,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -265,6 +335,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -274,20 +352,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Doloremque quisquam hic pariatur in dolores reprehenderit illo.
@@ -299,14 +395,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -339,20 +435,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Dignissimos unde tempore modi aut ut.
@@ -364,14 +478,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -395,6 +509,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -404,20 +526,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Fugit quod ullam cum natus expedita reprehenderit.
@@ -429,14 +569,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -469,20 +609,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Sit nobis unde numquam tenetur.
@@ -494,14 +652,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -534,20 +692,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Dolorum explicabo magnam ad qui ab reprehenderit dolor.
@@ -559,14 +735,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -590,6 +766,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -599,20 +783,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Rerum hic laboriosam similique quidem molestias.
@@ -624,14 +826,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
         <img
           alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+          className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
           data-nimg="1"
           decoding="async"
           height={211}
@@ -655,6 +857,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
               className="ml-auto flex items-center"
             >
               <a
@@ -664,20 +874,38 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 onMouseEnter={[Function]}
                 onTouchStart={[Function]}
                 target="_blank"
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  style={
+                    Object {
+                      "height": 32,
+                      "width": 32,
+                    }
+                  }
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="text-16-bold"
           data-testid="txt"
         >
           Odit quo ipsam cupiditate laborum qui.
@@ -702,11 +930,11 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         <div
           aria-expanded={false}
           aria-haspopup="listbox"
-          aria-labelledby="headlessui-listbox-label-:r8: headlessui-listbox-button-:r7:"
+          aria-labelledby="headlessui-listbox-label-:r9: headlessui-listbox-button-:r8:"
           className="flex h-10 w-20 items-center justify-center rounded-md shadow"
           data-headlessui-state=""
           disabled={false}
-          id="headlessui-listbox-button-:r7:"
+          id="headlessui-listbox-button-:r8:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -722,14 +950,23 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             </p>
           </div>
           <div
-            className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
-          />
+            className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 20,
+                }
+              }
+            />
+          </div>
         </div>
         <p
           className="text-bold-subtitle-500"
           data-headlessui-state=""
           data-testid="txt"
-          id="headlessui-listbox-label-:r8:"
+          id="headlessui-listbox-label-:r9:"
           onClick={[Function]}
         >
           Per page
@@ -746,7 +983,16 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
         disabled={true}
         onClick={[Function]}
-      />
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
+      </button>
       <p
         className="text-neutral-1000 underline text-bold-subtitle-500"
         data-testid="txt"
@@ -769,7 +1015,16 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
         disabled={false}
         onClick={[Function]}
-      />
+      >
+        <div
+          style={
+            Object {
+              "height": undefined,
+              "width": 20,
+            }
+          }
+        />
+      </button>
     </div>
   </div>
 </div>

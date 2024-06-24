@@ -33,14 +33,14 @@ exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Defaul
         Land Accelerator Africa 2022
       </p>
       <a
-        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
         onTouchStart={[Function]}
       >
         <span
-          className="text-bold-caption-200 pt-0.75 leading-3"
+          className="flex items-center text-bold-caption-200"
         >
           Find out more
         </span>
@@ -62,14 +62,14 @@ exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Defaul
         Terramatch RFP
       </p>
       <a
-        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
         onTouchStart={[Function]}
       >
         <span
-          className="text-bold-caption-200 pt-0.75 leading-3"
+          className="flex items-center text-bold-caption-200"
         >
           Find out more
         </span>
@@ -91,14 +91,14 @@ exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Defaul
         Land Accelerator fund
       </p>
       <a
-        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
         onTouchStart={[Function]}
       >
         <span
-          className="text-bold-caption-200 pt-0.75 leading-3"
+          className="flex items-center text-bold-caption-200"
         >
           Find out more
         </span>

@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 export interface ControlGroupProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
-  position: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  position: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "bottom-left-site" | "top-center";
 }
 
 const ControlGroup = ({ children, position, className, ...props }: ControlGroupProps) => {
@@ -13,11 +13,13 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
     <div
       {...props}
       className={twMerge(
-        classNames("absolute z-20 flex flex-col gap-8", {
+        classNames("absolute z-[18] flex flex-col gap-8", {
           "top-5": position.includes("top"),
           "left-5 items-start": position.includes("left"),
           "right-5 items-end": position.includes("right"),
-          "bottom-7": position.includes("bottom")
+          "bottom-8": position.includes("bottom"),
+          "left-[24vw] items-start": position.includes("site"),
+          "left-[45%]": position.includes("center")
         }),
         className
       )}

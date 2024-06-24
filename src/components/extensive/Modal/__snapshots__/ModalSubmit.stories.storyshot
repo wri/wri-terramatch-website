@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
+<div
+  className="flex items-center justify-center bg-primary-400 p-8"
+>
+  <div
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white w-[776px] margin-4 z-50"
+  >
+    <header
+      className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5"
+    >
+      <div
+        style={
+          Object {
+            "height": 30,
+            "width": 108,
+          }
+        }
+      />
+      <div
+        className="flex items-center"
+      >
+        <button
+          className="ml-2 rounded p-1 hover:bg-grey-800"
+        >
+          <div
+            style={
+              Object {
+                "height": 16,
+                "width": 16,
+              }
+            }
+          />
+        </button>
+      </div>
+    </header>
+    <div
+      className="max-h-[100%] w-full overflow-auto px-8 py-8"
+    >
+      <div
+        className="flex items-center justify-between"
+      >
+        <p
+          className="text-24-bold"
+          data-testid="txt"
+        >
+          Submit Polygons
+        </p>
+      </div>
+      <div
+        className="mt-1 mb-4 text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Project Developers may submit one or all polygons for review.",
+          }
+        }
+        data-testid="txt"
+      />
+      <div
+        className="mb-6 flex flex-col rounded-lg border border-grey-750"
+      >
+        <header
+          className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2"
+        >
+          <p
+            className="flex-[2] text-12"
+            data-testid="txt"
+          >
+            Name
+          </p>
+          <p
+            className="flex flex-1 items-center justify-center text-12"
+            data-testid="txt"
+          >
+            Status
+          </p>
+          <p
+            className="flex flex-1 items-center justify-center text-12"
+            data-testid="txt"
+          >
+            Submit
+          </p>
+        </header>
+      </div>
+    </div>
+    <div
+      className="flex w-full justify-end gap-3 px-8 py-4"
+    >
+      <button
+        className="bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-8 py-3"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+        >
+          <p
+            className="capitalize text-14-bold"
+            data-testid="txt"
+          >
+            Cancel
+          </p>
+        </span>
+      </button>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 !text-white rounded-md uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-8 py-3"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          <p
+            className="capitalize text-white text-14-bold"
+            data-testid="txt"
+          >
+            Next
+          </p>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

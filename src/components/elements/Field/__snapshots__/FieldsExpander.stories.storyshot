@@ -34,13 +34,13 @@ exports[`Storyshots Components/Elements/Fields/FieldsExpander Default 1`] = `
         className="flex items-center justify-between"
       >
         <p
-          className="text-bold-subtitle-500"
+          className="text-16-bold"
           data-testid="txt"
         >
           Metric
         </p>
         <p
-          className="text-light-subtitle-400"
+          className="text-16-light"
           data-testid="txt"
         >
           1,321
@@ -92,11 +92,11 @@ exports[`Storyshots Components/Elements/Fields/FieldsExpander Default 1`] = `
           </p>
         </div>
         <button
-          className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+          className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
           onClick={[Function]}
         >
           <span
-            className="text-bold-caption-200 pt-0.75 leading-3"
+            className="flex items-center text-bold-caption-200"
           >
             Download
           </span>
