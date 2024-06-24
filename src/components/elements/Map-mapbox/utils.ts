@@ -8,11 +8,13 @@ import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
+  GetV2MODELUUIDFilesResponse
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
-import { BBox, FeatureCollection } from "./GeoJSON";
+import { MediaPopup } from "./components/MediaPopup";
+import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 
 const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
@@ -174,6 +176,62 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
     };
     addToDrawAndFilter();
   }
+};
+
+export const addBasicSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
+  const layerName = "media-images";
+  map.getLayer(layerName) && map.removeLayer(layerName);
+  map.getSource(layerName) && map.removeSource(layerName);
+
+  const modelFilesGeolocalized = modelFilesData!.filter(
+    model => model.location && model.location.lat && model.location.lng
+  );
+  if (modelFilesGeolocalized.length === 0) {
+    return;
+  }
+
+  const features: Feature<Geometry, GeoJsonProperties>[] = modelFilesGeolocalized.map(modelFile => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [modelFile.location?.lng, modelFile.location?.lat]
+    },
+    properties: {
+      uuid: modelFile.uuid,
+      name: modelFile.file_name,
+      created_date: modelFile.created_date,
+      file_url: modelFile.file_url
+    }
+  }));
+
+  map.addSource(layerName, {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features
+    }
+  });
+
+  map.addLayer({
+    id: layerName,
+    type: "circle",
+    source: layerName,
+    paint: {
+      "circle-radius": 10,
+      "circle-color": "#3887be"
+    }
+  });
+
+  features.forEach((feature: any) => {
+    let popupContent = document.createElement("div");
+    popupContent.className = "popup-content-media";
+    const root = createRoot(popupContent);
+    root.render(createElement(MediaPopup, feature.properties));
+    popup = new mapboxgl.Popup({ className: "popup-media", closeButton: true })
+      .setLngLat(feature.geometry.coordinates)
+      .setDOMContent(popupContent)
+      .addTo(map);
+  });
 };
 
 export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {

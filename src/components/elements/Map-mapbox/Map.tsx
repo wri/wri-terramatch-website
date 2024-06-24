@@ -14,7 +14,11 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundPolygonGeojsonUuid,
+  fetchPutV2TerrafundPolygonUuid,
+  GetV2MODELUUIDFilesResponse
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { AdminPopup } from "./components/AdminPopup";
@@ -31,6 +35,7 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
+  addBasicSourceAndLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
   addPopupsToMap,
@@ -80,6 +85,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
 }
 
 export const MapContainer = ({
@@ -168,6 +174,12 @@ export const MapContainer = ({
       zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);
+
+  useEffect(() => {
+    if (props?.modelFilesData) {
+      addBasicSourceAndLayer(map.current, props?.modelFilesData);
+    }
+  }, [props?.modelFilesData]);
 
   function handleAddGeojsonToDraw(polygonuuid: string) {
     if (polygonsData && map.current && draw.current) {

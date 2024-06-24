@@ -32,6 +32,8 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
+  GetV2MODELUUIDFilesResponse,
+  useGetV2MODELUUIDFiles,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
@@ -109,6 +111,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     pathParams: {
       site: record.uuid
     }
+  });
+
+  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
+    pathParams: { model: "sites", uuid: record.uuid }
   });
 
   const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
@@ -430,6 +436,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
                 sitePolygonData={sitePolygonData}
+                modelFilesData={modelFilesData?.data}
               />
               <div className="mb-6">
                 <div className="mb-4">
