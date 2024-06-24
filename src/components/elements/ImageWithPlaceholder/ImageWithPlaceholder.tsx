@@ -26,6 +26,7 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
       )}
     >
       <Image
+        referrerPolicy="no-referrer"
         src={hasErrored || !imageUrl ? noImageAvailable : imageUrl}
         alt={alt}
         fill

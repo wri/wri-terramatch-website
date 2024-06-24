@@ -7,6 +7,7 @@ import Carousel from "@/components/extensive/Carousel/Carousel";
 import ImageWithPlaceholder from "../../ImageWithPlaceholder/ImageWithPlaceholder";
 
 export type ImageCarouselItem = {
+  id: string;
   title: string;
   date: string;
   url: string | undefined;
@@ -61,7 +62,7 @@ const ImageCarouselCard: FC<ImageCarouselCardProps> = ({ items, className, ...re
         <Carousel
           carouselItem={item => (
             <ImageWithPlaceholder
-              key={item.url}
+              key={item.id}
               imageUrl={item.url}
               alt={item.title}
               placeholderIconSize={24}

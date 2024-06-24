@@ -70,6 +70,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/ZIV07iZ/640/480"
             style={
               Object {
@@ -182,6 +183,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/b1VyWqu/640/480"
             style={
               Object {
@@ -286,6 +288,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/4HQi7vzT/640/480"
             style={
               Object {
@@ -390,6 +393,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/TxaYRIBHBd/640/480"
             style={
               Object {
@@ -502,6 +506,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/3RPcmU/640/480"
             style={
               Object {
@@ -606,6 +611,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/WkcO32m6ZA/640/480"
             style={
               Object {
@@ -718,6 +724,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/eMjrY/640/480"
             style={
               Object {
@@ -822,6 +829,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/0YeRnwOeq0/640/480"
             style={
               Object {
@@ -926,6 +934,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/mvuu0/640/480"
             style={
               Object {
@@ -1038,6 +1047,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             loading="lazy"
             onError={[Function]}
             onLoad={[Function]}
+            referrerPolicy="no-referrer"
             src="https://picsum.photos/seed/i1uDrKPuA/640/480"
             style={
               Object {

@@ -22,6 +22,7 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
       loading="lazy"
       onError={[Function]}
       onLoad={[Function]}
+      referrerPolicy="no-referrer"
       src="/img.jpg"
       style={
         Object {

@@ -15,6 +15,7 @@ exports[`Storyshots Components/Elements/ImageWithPlaceholder Default 1`] = `
       loading="lazy"
       onError={[Function]}
       onLoad={[Function]}
+      referrerPolicy="no-referrer"
       src="https://headshots-inc.com/wp-content/uploads/2020/11/Professional-Headshot-Poses-Blog-Post.jpg"
       style={
         Object {
@@ -50,6 +51,7 @@ exports[`Storyshots Components/Elements/ImageWithPlaceholder No Image 1`] = `
       loading="lazy"
       onError={[Function]}
       onLoad={[Function]}
+      referrerPolicy="no-referrer"
       src="/img.jpg"
       style={
         Object {

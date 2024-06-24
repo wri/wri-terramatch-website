@@ -28,6 +28,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] 
           loading="lazy"
           onError={[Function]}
           onLoad={[Function]}
+          referrerPolicy="no-referrer"
           src="https://picsum.photos/seed/1mPXM8RR/640/480"
           style={
             Object {
