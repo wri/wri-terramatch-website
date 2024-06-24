@@ -12,7 +12,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] 
     >
       <div
         className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
-        placeholder="no image available"
+        placeholder="No Image Available"
         role="presentation"
         style={
           Object {
@@ -21,7 +21,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] 
         }
       >
         <img
-          alt="no image available"
+          alt="No Image Available"
           className="object-cover"
           data-nimg="fill"
           decoding="async"

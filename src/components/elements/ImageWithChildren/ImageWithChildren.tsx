@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
@@ -21,12 +22,13 @@ const ImageWithChildren = ({
   childrenContainerClassName,
   ...divProps
 }: ImageWithChildrenProps) => {
+  const t = useT();
   return (
     <div {...divProps} className={classNames(className, "relative")}>
       <ImageWithPlaceholder
         imageUrl={imageSrc}
-        placeholder="no image available"
-        alt="no image available"
+        placeholder={t("No Image Available")}
+        alt={t("No Image Available")}
         role="presentation"
         style={{ objectFit: "cover" }}
         className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
