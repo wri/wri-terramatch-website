@@ -214,9 +214,9 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
     }
   }));
 
-  const pulsingDot = getPulsingDot(map);
+  const pulsingDot = getPulsingDot(map, 120);
 
-  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 2 });
+  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
 
   map.addSource(layerName, {
     type: "geojson",
@@ -243,16 +243,16 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       popupContent.className = "popup-content-media";
       const root = createRoot(popupContent);
       root.render(createElement(MediaPopup, feature.properties));
-      popup = new mapboxgl.Popup({ className: "popup-media", closeButton: true })
+      popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)
         .addTo(map);
       popupAttachedMap["MEDIA"].push(popup);
     });
   });
-  // map.on("mouseleave", layerName, e => {
-  //   removePopups("MEDIA");
-  // });
+  map.on("mouseleave", layerName, e => {
+    removePopups("MEDIA");
+  });
 };
 
 export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
