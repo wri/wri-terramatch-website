@@ -243,12 +243,12 @@ export const MapContainer = ({
           <ZoomControl map={map.current} />
         </ControlGroup>
         <When condition={!!status && !!record.uuid && validationType === "bulkValidation"}>
-          <ControlGroup position="top-left">
-            <CheckPolygonControl siteRecord={record} />
+          <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
           </ControlGroup>
         </When>
         <When condition={!!status && validationType === "individualValidation"}>
-          <ControlGroup position="top-left">
+          <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
             <CheckIndividualPolygonControl />
           </ControlGroup>
         </When>
