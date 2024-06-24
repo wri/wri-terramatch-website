@@ -3,20 +3,17 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Else, If, Then } from "react-if";
 
-import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { useFramework } from "@/hooks/useFramework";
 
 interface ProjectOverviewTabProps {
@@ -27,7 +24,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
   const { isPPC } = useFramework(project);
-  const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.SITE];
+
   return (
     <PageBody>
       <PageRow>
@@ -100,15 +97,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               </Button>
             }
           >
-            <div className="w-[46%] p-10">
-              <StepProgressbar
-                color="secondary"
-                value={valuesForStatus?.(project?.status) ?? 0}
-                labels={statusLabels}
-                classNameLabels="min-w-[99px]"
-                className={"w-[98%] pl-[1%]"}
-              />
-            </div>
             <OverviewMapArea entityModel={project} type="projects" />
           </PageCard>
         </PageColumn>
