@@ -19,6 +19,7 @@ export interface CarouselProps<T> extends SwiperProps {
   swiperButtonsClassName?: string;
   hidePaginationBullet?: boolean;
   breakpoints?: CarouselBreakPoints;
+  setSelectedImage?: (index: number) => void;
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
 }
@@ -37,6 +38,7 @@ const Carousel = <T extends Record<any, any>>({
   swiperSlideClassName,
   swiperButtonsClassName,
   hidePaginationBullet,
+  setSelectedImage,
   buttonsOutside = false,
   smallSwiperButtons,
   ...swiperProps
@@ -45,9 +47,15 @@ const Carousel = <T extends Record<any, any>>({
 
   const swiperButtonSize = smallSwiperButtons ? 12 : 24;
 
+  const handleSlideChange = (swiper: { activeIndex: any }) => {
+    if (setSelectedImage) {
+      setSelectedImage(swiper.activeIndex);
+    }
+  };
+
   return (
     <div className={classNames("relative mx-auto", className)}>
-      <div className={classNames("flex items-center justify-center", smallSwiperButtons ? "gap-1.5" : "gap-4")}>
+      <div className={classNames("flex h-full items-center justify-center", smallSwiperButtons ? "gap-1.5" : "gap-4")}>
         <button
           className={classNames(
             "swiper-button-prev",
@@ -59,12 +67,13 @@ const Carousel = <T extends Record<any, any>>({
         >
           <Icon
             name={IconNames.CHEVRON_LEFT}
-            className={classNames("fill-primary-400", smallSwiperButtons ? "mr-0.5" : "mr-1")}
+            className={classNames("fill-white", smallSwiperButtons ? "mr-0.5" : "mr-1")}
             height={swiperButtonSize}
             width={swiperButtonSize}
           />
         </button>
         <Swiper
+          onSlideChange={handleSlideChange}
           className={classNames(swiperClassName, "flex-1")}
           modules={[Navigation, Pagination]}
           spaceBetween={smallSwiperButtons ? 8 : 25}
@@ -96,7 +105,7 @@ const Carousel = <T extends Record<any, any>>({
         >
           <Icon
             name={IconNames.CHEVRON_RIGHT}
-            className={classNames("fill-primary-400", smallSwiperButtons ? "ml-0.5" : "ml-1")}
+            className={classNames("fill-white", smallSwiperButtons ? "ml-0.5" : "ml-1")}
             height={swiperButtonSize}
             width={swiperButtonSize}
           />

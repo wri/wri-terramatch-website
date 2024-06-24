@@ -10,6 +10,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
 
   const { record } = useShowContext();
+  const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.update_request_status);
 
   return (
     <>
@@ -33,15 +34,21 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           </Labeled>
 
           <Grid spacing={2} marginBottom={2} container>
-            <Grid xs={6} item>
+            <Grid xs={4} item>
               <Labeled label="Framework">
                 <FrameworkField />
               </Labeled>
             </Grid>
 
-            <Grid xs={6} item>
+            <Grid xs={4} item>
               <Labeled label="Status">
                 <TextField source="readable_status" />
+              </Labeled>
+            </Grid>
+
+            <Grid xs={4} item>
+              <Labeled label="Change Request Status">
+                <TextField source="readable_update_request_status" />
               </Labeled>
             </Grid>
           </Grid>
@@ -49,7 +56,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={record?.status === "needs-more-information"}
+              disabled={reportActionDisabled || record?.status === "needs-more-information"}
               onClick={() => setStatusModal("moreinfo")}
             >
               Request More Info
@@ -57,7 +64,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={record?.status === "approved"}
+              disabled={reportActionDisabled || record?.status === "approved"}
               onClick={() => setStatusModal("approve")}
             >
               Approve

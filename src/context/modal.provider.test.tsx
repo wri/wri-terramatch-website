@@ -1,4 +1,5 @@
 import { renderHook } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
 
 import { wait } from "@/utils/test-utils";
 
@@ -12,7 +13,7 @@ describe("Modal context provider", () => {
       wrapper: props => <ModalProvider>{props.children}</ModalProvider>
     });
 
-    result.current.openModal(Modal);
+    act(() => result.current.openModal(Modal));
     await wait(200);
 
     expect(result.current.modalOpen).toEqual(true);
@@ -24,10 +25,10 @@ describe("Modal context provider", () => {
       wrapper: props => <ModalProvider>{props.children}</ModalProvider>
     });
 
-    result.current.openModal(Modal);
+    act(() => result.current.openModal(Modal));
     await wait(200);
 
-    result.current.closeModal();
+    act(() => result.current.closeModal());
     await wait(200);
 
     expect(result.current.modalOpen).toEqual(false);
@@ -38,7 +39,7 @@ describe("Modal context provider", () => {
       wrapper: props => <ModalProvider>{props.children}</ModalProvider>
     });
 
-    result.current.setModalContent(Modal);
+    act(() => result.current.setModalContent(Modal));
     await wait(200);
 
     expect(result.current.modalContent).toEqual(Modal);

@@ -1,9 +1,10 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
 import { useMemo } from "react";
+import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
+import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
@@ -12,57 +13,104 @@ import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTabl
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
-import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
+import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
+import { useGetV2SitesSiteBbox, useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
 import { getAnswer, getFormattedAnswer } from "./utils";
 
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
-
 export interface FormSummaryRowProps extends FormSummaryProps {
+  type?: EntityName;
   step: FormStepSchema;
   index: number;
   nullText?: string;
 }
 
-export const useGetFormEntries = (props: Omit<FormSummaryRowProps, "index">) => {
+export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
+
+export interface FormEntry {
+  title?: string;
+  type: FieldType;
+  value: any;
+}
+
+export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
-  return useMemo<any[]>(() => getFormEntries(props, t), [props, t]);
+  const { record } = useShowContext();
+  const siteGeojson = getSitePolygonData(record);
+  const bbox = getSiteBbox(record);
+  const mapFunctions = useMap();
+
+  return useMemo<any[]>(() => getFormEntries(props, t, siteGeojson, bbox, mapFunctions), [props, t, siteGeojson, bbox]);
 };
 
-export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typeof useT) => {
-  const { step } = props;
-
-  const outputArr: any[] = [];
+export const getFormEntries = (
+  { step, values, nullText }: GetFormEntriesProps,
+  t: typeof useT,
+  siteGeojson?: any,
+  bbox?: any,
+  mapFunctions?: any
+) => {
+  const outputArr: FormEntry[] = [];
 
   step.fields.forEach(f => {
     switch (f.type) {
       case FieldType.TreeSpecies:
       case FieldType.SeedingsTableInput: {
         //If it was tree species
-        const value = getAnswer(f, props.values) as TreeSpeciesValue[] | null;
+        const value = getAnswer(f, values) as TreeSpeciesValue[] | null;
         outputArr.push({
           title: t("Total {label}", { label: f.label ?? "" }),
-          value: value?.length ?? props.nullText ?? t("Answer Not Provided")
+          type: f.type,
+          value: value?.length ?? nullText ?? t("Answer Not Provided")
         });
         if (f.fieldProps.withNumbers) {
           //If tree species included numbers
           outputArr.push({
             title: t("Total {label} Count", { label: f.label ?? "" }),
-            value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? props.nullText ?? t("Answer Not Provided")
+            type: f.type,
+            value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? nullText ?? t("Answer Not Provided")
           });
         }
+        break;
+      }
+
+      case FieldType.WorkdaysTable: {
+        const workday = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: <WorkdayCollapseGrid demographics={workday?.demographics ?? []} variant={GRID_VARIANT_NARROW} />
+        });
         break;
       }
 
       case FieldType.Map: {
         outputArr.push({
           title: f.label,
-          value: <Map geojson={props.values[f.name]} className="h-[240px] flex-1" hasControls={false} />
+          type: f.type,
+          value: siteGeojson ? (
+            <MapContainer
+              polygonsData={siteGeojson}
+              bbox={bbox}
+              className="h-[240px] flex-1"
+              hasControls={false}
+              showPopups
+              showLegend
+              mapFunctions={mapFunctions}
+            />
+          ) : (
+            <></>
+          )
         });
         break;
       }
@@ -70,8 +118,9 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.InputTable: {
         outputArr.push({
           title: f.label,
+          type: f.type,
           value: f.fieldProps.rows
-            .map(row => `${row.label}: ${props.values[f.name]?.[row.name] ?? t("Answer Not Provided")}`)
+            .map(row => `${row.label}: ${values[f.name]?.[row.name] ?? t("Answer Not Provided")}`)
             .join("<br/>")
         });
         break;
@@ -83,7 +132,6 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.StrataDataTable:
       case FieldType.DisturbanceDataTable:
       case FieldType.InvasiveDataTable:
-      case FieldType.WorkdaysTable:
       case FieldType.SeedingsDataTable: {
         let headers: AccessorKeyColumnDef<any>[] = [];
 
@@ -93,12 +141,10 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
         else if (f.type === FieldType.StrataDataTable) headers = getStrataTableColumns(t);
         else if (f.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(f.fieldProps, t);
         else if (f.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns(t);
-        else if (f.type === FieldType.WorkdaysTable)
-          headers = getWorkdaysTableColumns(t, f.fieldProps.ethnicityOptions);
         else if (f.type === FieldType.SeedingsDataTable) headers = getSeedingTableColumns(t, f.fieldProps.captureCount);
 
-        const values: string[] = [];
-        props.values?.[f.name]?.forEach((entry: any) => {
+        const stringValues: string[] = [];
+        values?.[f.name]?.forEach((entry: any) => {
           const row: (string | undefined)[] = [];
 
           Object.values(headers).forEach(h => {
@@ -106,12 +152,13 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
             //@ts-ignore
             row.push(h.cell?.({ getValue: () => value }) || value);
           });
-          values.push(row.join(", "));
+          stringValues.push(row.join(", "));
         });
 
         outputArr.push({
           title: f.label,
-          value: values.join("<br/>")
+          type: f.type,
+          value: stringValues.join("<br/>")
         });
         break;
       }
@@ -119,14 +166,16 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       case FieldType.Conditional: {
         outputArr.push({
           title: f.label ?? "",
-          value: getFormattedAnswer(f, props.values) ?? props.nullText ?? t("Answer Not Provided")
+          type: f.type,
+          value: getFormattedAnswer(f, values) ?? nullText ?? t("Answer Not Provided")
         });
         const children = getFormEntries(
           {
-            ...props,
+            values,
+            nullText,
             step: {
-              ...props.step,
-              fields: f.fieldProps.fields.filter(child => child.condition === props.values[f.name])
+              ...step,
+              fields: f.fieldProps.fields.filter(child => child.condition === values[f.name])
             }
           },
           t
@@ -138,13 +187,38 @@ export const getFormEntries = (props: Omit<FormSummaryRowProps, "index">, t: typ
       default: {
         outputArr.push({
           title: f.label ?? "",
-          value: getFormattedAnswer(f, props.values) ?? props.nullText ?? t("Answer Not Provided")
+          type: f.type,
+          value: getFormattedAnswer(f, values) ?? nullText ?? t("Answer Not Provided")
         });
       }
     }
   });
 
   return outputArr;
+};
+
+const getSitePolygonData = (record: any) => {
+  let result = null;
+  if (record) {
+    const { data: sitePolygonData } = useGetV2SitesSitePolygon({
+      pathParams: {
+        site: record.uuid
+      }
+    });
+    if (sitePolygonData) {
+      result = mapPolygonData(sitePolygonData);
+    }
+  }
+  return result;
+};
+
+const getSiteBbox = (record: any) => {
+  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
+    pathParams: {
+      site: record.uuid
+    }
+  });
+  return sitePolygonBbox?.bbox;
 };
 
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
@@ -175,10 +249,10 @@ const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
             <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
               <Then>
                 <Text variant="text-body-300" className="flex-1" containHtml>
-                  {entry.value}
+                  {formatEntryValue(entry.value)}
                 </Text>
               </Then>
-              <Else>{entry.value}</Else>
+              <Else>{formatEntryValue(entry.value)}</Else>
             </If>
           </div>
         )}

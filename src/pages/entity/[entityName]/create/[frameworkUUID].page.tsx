@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
@@ -111,6 +112,7 @@ const EntityIntroPage = () => {
           />
         </LoadingContainer>
       </ContentLayout>
+      <PageFooter />
     </BackgroundLayout>
   );
 };

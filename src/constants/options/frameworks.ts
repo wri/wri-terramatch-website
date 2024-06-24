@@ -1,8 +1,9 @@
+import { useEffect, useState } from "react";
 import { GetListParams } from "react-admin";
 
 import { reportingFrameworkDataProvider } from "@/admin/apiProvider/dataProviders/reportingFrameworkDataProvider";
 
-export const useFrameworkChoices = async () => {
+async function getFrameworkChoices() {
   const params: GetListParams = {
     pagination: {
       page: 0,
@@ -16,9 +17,25 @@ export const useFrameworkChoices = async () => {
   };
   const data = await reportingFrameworkDataProvider.getList("", params);
 
-  const frameworkChoices: any = (data as any)?.data.map((framework: any) => ({
+  return (data as any)?.data.map((framework: any) => ({
     id: framework.slug,
     name: framework.name
   }));
+}
+
+export function useFrameworkChoices() {
+  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
+  const fetchFrameworkChoices = async function () {
+    try {
+      setFrameworkChoices(await getFrameworkChoices());
+    } catch (error) {
+      console.error("Error fetching framework choices", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFrameworkChoices();
+  }, []);
+
   return frameworkChoices;
-};
+}

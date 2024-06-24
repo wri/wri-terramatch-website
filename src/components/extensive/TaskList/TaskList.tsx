@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -8,13 +8,13 @@ import Icon, { IconProps } from "../Icon/Icon";
 import List from "../List/List";
 
 export interface TaskListProps {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   items: TaskListItem[];
 }
 
 export interface TaskListItem {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   iconProps: IconProps;
   actionText: string;
@@ -24,22 +24,24 @@ export interface TaskListItem {
 
 const TaskList = (props: TaskListProps) => {
   return (
-    <div className="w-full overflow-hidden rounded-xl shadow">
+    <div className="w-[82vw] max-w-[82vw] overflow-hidden">
       <div className="bg-white p-8">
-        <Text variant="text-bold-headline-800" className="mb-2">
+        <Text variant="text-36-bold" className="text-center" containHtml={true}>
           {props.title}
         </Text>
-        <Text variant="text-light-subtitle-400">{props.subtitle}</Text>
+        <Text variant="text-16" className="mt-2 text-center">
+          {props.subtitle}
+        </Text>
       </div>
       <List
         as="div"
-        className="flex flex-col gap-8 bg-taskList bg-cover bg-no-repeat p-8 pb-10"
+        className="flex flex-col gap-8 bg-no-repeat pt-8 pb-10"
         items={props.items}
         itemAs={Fragment}
         render={item => {
           return (
             <div
-              className={classNames("flex items-center justify-between gap-6 rounded-xl border py-6 px-5 shadow ", {
+              className={classNames("flex items-center justify-between gap-6 rounded-xl border py-6 px-12 ", {
                 "border-neutral-200 bg-white": !item.done,
                 "border-secondary-500 bg-success-100": item.done
               })}
@@ -49,20 +51,22 @@ const TaskList = (props: TaskListProps) => {
                   {...item.iconProps}
                   width={60}
                   height={60}
-                  className={classNames(item.iconProps.className, "min-w-[60px]")}
+                  className={classNames(item.iconProps.className, "min-w-[60px] wide:min-h-[100px] wide:min-w-[100px]")}
                 />
                 <div>
                   <Text variant="text-bold-subtitle-500" className="mb-1">
                     {item.title}
                   </Text>
-                  <Text variant="text-light-body-300" containHtml>
+                  <Text variant="text-body-400" containHtml>
                     {item.subtitle}
                   </Text>
                 </div>
               </div>
-              <Button as="a" variant="secondary" href={item.actionUrl}>
-                {item.actionText}
-              </Button>
+              <div className="w-[148px]">
+                <Button as="a" variant="sky" className="w-full flex-1" href={item.actionUrl}>
+                  {item.actionText}
+                </Button>
+              </div>
             </div>
           );
         }}

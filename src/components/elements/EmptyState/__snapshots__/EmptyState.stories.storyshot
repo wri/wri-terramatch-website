@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/EmptyState Default 1`] = `
 <div
-  className="w-full rounded-xl bg-white shadow p-15"
+  className="w-full rounded-xl border border-neutral-200 bg-white p-15"
 >
   <p
     className="mb-5 text-center text-bold-headline-1000"

@@ -17,9 +17,9 @@ const Breadcrumbs = ({ className, links, ...props }: BreadcrumbsProps) => {
         <Fragment key={`${item.path} + ${index}`}>
           <LinkWrapper href={item.path}>
             <Text
-              variant="text-bold-body-300"
+              variant="text-14-bold"
               className={classNames(
-                { "text-neutral-800 hover:underline": !!item.path, "text-black": !item.path },
+                { "text-darkCustom opacity-60 hover:underline": !!item.path, "text-darkCustom": !item.path },
                 "line-clamp-1"
               )}
               title={item.title}
@@ -27,7 +27,7 @@ const Breadcrumbs = ({ className, links, ...props }: BreadcrumbsProps) => {
               {item.title}
             </Text>
           </LinkWrapper>
-          {index < links.length - 1 && <Icon name={IconNames.CHEVRON_RIGHT} width={12} />}
+          {index < links.length - 1 && <Icon name={IconNames.CHEVRON_RIGHT} width={12} className="text-darkCustom" />}
         </Fragment>
       ))}
     </div>

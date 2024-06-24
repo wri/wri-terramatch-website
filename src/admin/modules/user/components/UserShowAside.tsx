@@ -55,7 +55,7 @@ export const UserShowAside = () => {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6">Type</Typography>
-            <SelectField source="primary_role" choices={userPrimaryRoleChoices} emptyText="Not Provided" />
+            <SelectField source="user_type" choices={userPrimaryRoleChoices} emptyText="Not Provided" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6">Verified</Typography>

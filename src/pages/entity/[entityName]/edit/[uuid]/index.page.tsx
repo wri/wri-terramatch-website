@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -10,7 +11,6 @@ import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2ENTITYUUID,
   useGetV2FormsENTITYUUID,
-  useGetV2UpdateRequestsENTITYUUID,
   usePutV2FormsENTITYUUID,
   usePutV2FormsENTITYUUIDSubmit
 } from "@/generated/apiComponents";
@@ -33,7 +33,7 @@ const EditEntityPage = () => {
   const { getReportingWindow } = useGetReportingWindow();
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
-  const mode = router.query.mode as string; //edit, provide-feedback-entity, provide-feedback-change-request
+  const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
 
   const isReport = isEntityReport(entityName);
   const { data: entityData } = useGetV2ENTITYUUID({
@@ -41,19 +41,6 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data: updateRequestData } = useGetV2UpdateRequestsENTITYUUID(
-    {
-      pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
-        uuid: entityUUID
-      }
-    },
-    {
-      enabled: mode === "provide-feedback-change-request"
-    }
-  );
-  //@ts-ignore
-  const updateRequest = updateRequestData?.data;
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
@@ -64,13 +51,20 @@ const EditEntityPage = () => {
       }
     }
   });
-  const feedbackFields = updateRequest?.feedback_fields || entity?.feedback_fields || [];
 
-  const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
+  const {
+    data,
+    isLoading: isLoading,
+    isError
+  } = useGetV2FormsENTITYUUID({
+    pathParams: { entity: entityName, uuid: entityUUID },
+    queryParams: { lang: router.locale }
   });
   //@ts-ignore
   const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+
+  // @ts-ignore
+  const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
 
   const formSteps = useGetCustomFormSteps(
     formData.form,
@@ -81,8 +75,13 @@ const EditEntityPage = () => {
     //@ts-ignore
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData.answers, formSteps, entity.migrated);
+
+  const defaultValues = useNormalizedFormDefaultValue(
+    // @ts-ignore
+    formData?.update_request?.content ?? formData?.answers,
+    formSteps,
+    entity.migrated
+  );
 
   const formTitle = useMemo(() => {
     const reportingWindow = getReportingWindow(
@@ -108,6 +107,18 @@ const EditEntityPage = () => {
       "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the nurseries section under your project page. Would you like to close this form and continue later?"
     )
   };
+
+  const initialStepProps = useMemo(() => {
+    if (isLoading) return {};
+
+    const stepIndex =
+      mode == null ? 0 : formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
+
+    return {
+      initialStepIndex: stepIndex < 0 ? undefined : stepIndex,
+      disableInitialAutoProgress: stepIndex >= 0
+    };
+  }, [isLoading]);
 
   return (
     <BackgroundLayout>
@@ -154,8 +165,11 @@ const EditEntityPage = () => {
               router.push(getEntityDetailPageLink(entityName, entityUUID));
             }
           }}
+          {...initialStepProps}
         />
       </LoadingContainer>
+      <br />
+      <PageFooter />
     </BackgroundLayout>
   );
 };

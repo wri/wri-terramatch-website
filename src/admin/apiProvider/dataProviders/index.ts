@@ -1,6 +1,7 @@
 import { combineDataProviders } from "react-admin";
 
 import { reportingFrameworkDataProvider } from "@/admin/apiProvider/dataProviders/reportingFrameworkDataProvider";
+import { taskDataProvider } from "@/admin/apiProvider/dataProviders/taskDataProvider";
 import modules from "@/admin/modules";
 
 import { applicationDataProvider } from "./applicationDataProvider";
@@ -53,6 +54,9 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.nursery.ResourceName:
       return nurseryDataProvider;
+
+    case modules.task.ResourceName:
+      return taskDataProvider;
 
     case modules.projectReport.ResourceName:
       return projectReportDataProvider;

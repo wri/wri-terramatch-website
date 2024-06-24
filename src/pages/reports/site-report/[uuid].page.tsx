@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Fragment } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -11,6 +12,7 @@ import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
+import Text from "@/components/elements/Text/Text";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -22,14 +24,15 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbancesTable from "@/components/extensive/Tables/DisturbancesTable";
 import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
-import WorkdaysTable from "@/components/extensive/Tables/WorkdaysTable";
+import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { getReadableWorkdayCollectionName, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
-import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
+import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports, useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
+import useWorkdayData from "@/hooks/useWorkdayData";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import { getFullName } from "@/utils/user";
 
@@ -65,6 +68,17 @@ const SiteReportDetailPage = () => {
   const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] || {};
   const reportTitle = siteReport.report_title || siteReport.title || t("Site Report");
 
+  const { data: workdayResponse } = useGetV2WorkdaysENTITYUUID(
+    { pathParams: { entity: "site-report", uuid: siteReportUUID } },
+    { keepPreviousData: true }
+  );
+
+  const { grids: workdayGrids, title: workdaysTitle } = useWorkdayData(
+    workdayResponse,
+    SITE_WORKDAY_COLLECTIONS,
+    "Site Workdays"
+  );
+
   return (
     <LoadingContainer loading={isLoading}>
       <Head>
@@ -83,7 +97,7 @@ const SiteReportDetailPage = () => {
         title={reportTitle}
         subtitles={[
           `${t("Organisation")}: ${siteReport.organisation?.name}`,
-          isPPC ? t("Priceless Planet Coalition") : t("Terrafund")
+          isPPC ? t("Priceless Planet Coalition") : t("TerraFund")
         ]}
         hasBackButton={false}
       >
@@ -147,9 +161,19 @@ const SiteReportDetailPage = () => {
                     <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                   </When>
                   <GenericField label={t("Trees Planted")}>
-                    <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} />
+                    <TextField
+                      className="mt-2"
+                      label={t("Total Trees Planted")}
+                      value={siteReport.total_trees_planted_count}
+                    />
+                    <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="tree-planted" />
                   </GenericField>
                   <GenericField label={t("Direct Seeding")}>
+                    <TextField
+                      className="mt-2"
+                      label={t("Total Direct Seedings")}
+                      value={siteReport.total_seeds_planted_count}
+                    />
                     <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
                   </GenericField>
                   <GenericField label={t("Disturbances")}>
@@ -169,7 +193,7 @@ const SiteReportDetailPage = () => {
                   <TextField label={t("Created by")} value={getFullName(siteReport.created_by)} />
                   <TextField label={t("Updated")} value={format(siteReport.updated_at)} />
                   <TextField label={t("Due date")} value={format(siteReport.due_at)} />
-                  <TextField label={t("Submitted date")} value={format(siteReport.due_at)} />
+                  <TextField label={t("Submitted date")} value={format(siteReport.submitted_at)} />
                 </PageCard>
               </PageColumn>
               <When condition={isPPC}>
@@ -196,11 +220,29 @@ const SiteReportDetailPage = () => {
               <Then>
                 <PageRow>
                   <PageColumn>
-                    {SITE_WORKDAY_COLLECTIONS.map(collection => (
-                      <PageCard title={getReadableWorkdayCollectionName(collection, t)} gap={4} key={collection}>
-                        <WorkdaysTable modelName="site-report" modelUUID={siteReport.uuid} collection={collection} />
-                      </PageCard>
-                    ))}
+                    <PageCard>
+                      {workdayGrids.length == 0 ? (
+                        <Loader />
+                      ) : (
+                        <Fragment>
+                          <Text variant="text-bold-headline-800">{workdaysTitle}</Text>
+                          {workdayGrids.map(({ collection, grid }) => (
+                            <If key={collection} condition={collection === COLLECTION_SITE_PAID_OTHER}>
+                              <Then>
+                                <TextField
+                                  label={t("Other Activities Description")}
+                                  value={siteReport.paid_other_activity_description}
+                                />
+                                {grid}
+                              </Then>
+                              <Else>
+                                <Then key={collection}>{grid}</Then>
+                              </Else>
+                            </If>
+                          ))}
+                        </Fragment>
+                      )}
+                    </PageCard>
                   </PageColumn>
                 </PageRow>
               </Then>

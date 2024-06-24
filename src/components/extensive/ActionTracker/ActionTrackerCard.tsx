@@ -16,17 +16,9 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     status: "edit",
     statusText: t("Draft")
   },
-  rejected: {
-    status: "error",
-    statusText: t("Rejected")
-  },
   approved: {
     status: "success",
     statusText: t("Approved")
-  },
-  "awaiting-approval": {
-    statusText: t("Awaiting Review"),
-    status: "awaiting"
   },
   awaiting: {
     statusText: t("Awaiting Review"),
@@ -47,6 +39,10 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
   "requires-more-information": {
     status: "warning",
     statusText: t("More info requested")
+  },
+  "awaiting-approval": {
+    statusText: t("Awaiting Approval"),
+    status: "awaiting"
   },
   ...SubmissionStatusMapping(t)
 });
@@ -76,7 +72,10 @@ const ActionTrackerCard = (props: ActionTrackerCardProps) => {
 
   return (
     <div className="flex h-full max-h-[567px] min-h-[492px] flex-col items-center rounded-xl border border-neutral border-opacity-30 bg-white px-4 py-6">
-      <Icon name={props.icon} className="mb-3 min-h-[36px] fill-success" width={36} height={36} />
+      <Icon
+        name={props.icon}
+        className="mb-3 min-h-[50px] min-w-[50px] fill-success wide:min-h-[70px] wide:min-w-[70px]"
+      />
       <Text variant="text-heading-500" className="mb-2">
         {props.title}
       </Text>
@@ -86,7 +85,7 @@ const ActionTrackerCard = (props: ActionTrackerCardProps) => {
       <If condition={!!items.length}>
         <Then>
           <List
-            className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4"
+            className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4 wide:p-6"
             items={items}
             render={row => <ActionTrackerCardRow {...row} />}
           />

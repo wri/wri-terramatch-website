@@ -20,7 +20,7 @@ const ProjectReportShow: FC = () => {
         <GalleryTab label="Project Report Gallery" entity="project-reports" />
         <DocumentTab label="Project Report Documents" entity="project-reports" />
         <ChangeRequestsTab entity="project-reports" singularEntity="project-report" />
-        <AuditLogTab entity="project-report" />
+        <AuditLogTab />
       </TabbedShowLayout>
     </Show>
   );

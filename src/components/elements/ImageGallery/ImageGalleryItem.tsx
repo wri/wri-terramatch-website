@@ -35,14 +35,14 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
   };
 
   return (
-    <div {...rest} className={classNames("relative overflow-hidden rounded-lg shadow", className)}>
+    <div {...rest} className={classNames("relative overflow-hidden rounded-lg border border-neutral-200", className)}>
       <ImageWithChildren
         imageSrc={{
           src: data.thumbnailImageUrl,
           height: 211,
           width: 1440
         }}
-        className="h-[211px] w-full"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg"
       >
         <div className="flex justify-between p-3">
           {/* Left */}
@@ -51,7 +51,12 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           {/* Right */}
           <div className="ml-auto flex items-center">
             <Link href={data.downloadUrl ?? data.fullImageUrl} target="_blank" className="z-10 mr-2.5">
-              <Icon name={IconNames.DOWNLOAD_CIRCLE} height={32} width={32} className="fill-primary-500" />
+              <Icon
+                name={IconNames.DOWNLOAD_CIRCLE}
+                height={32}
+                width={32}
+                className="fill-primary-500 hover:opacity-60"
+              />
             </Link>
 
             <IconButton
@@ -62,17 +67,17 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
                 className: "fill-error"
               }}
               onClick={handleDelete}
-              className="z-10"
+              className="z-10 hover:opacity-60"
             />
           </div>
         </div>
       </ImageWithChildren>
 
-      <div className="px-8 py-4">
-        <Text variant="text-bold-body-300">{data.label}</Text>
+      <div className="px-2 py-4">
+        <Text variant="text-16-bold">{data.label}</Text>
 
         {data.subtitle && (
-          <Text variant="text-light-body-300" className="mt-2">
+          <Text variant="text-16-light" className="mt-2">
             {data.subtitle}
           </Text>
         )}

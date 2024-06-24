@@ -22,6 +22,7 @@ const RHFSelectImage = ({ onChangeCapture, ...props }: PropsWithChildren<RHFSele
     else onChange(value?.[0]);
 
     onChangeCapture?.();
+    props.formHook.trigger();
   };
 
   return <SelectImage {...props} value={value} onChange={_onChange} />;

@@ -11,7 +11,7 @@ describe("Test useGetReportingWindow hook", () => {
       const { getReportingWindow } = useGetReportingWindow();
       return getReportingWindow(due_date, "bi-annually");
     });
-    expect(result.current).toBe("November - April 2023");
+    expect(result.current).toBe("October - March 2023");
   });
 
   test("Test `quarterly` window", () => {
@@ -20,6 +20,6 @@ describe("Test useGetReportingWindow hook", () => {
       const { getReportingWindow } = useGetReportingWindow();
       return getReportingWindow(due_date, "quarterly");
     });
-    expect(result.current).toBe("February - April 2023");
+    expect(result.current).toBe("January - March 2023");
   });
 });

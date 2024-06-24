@@ -76,6 +76,21 @@ export type EntityFormRead = {
   status?: string;
   form?: Record<string, any>;
   answers?: Record<string, any>;
+  form_title?: string;
+  feedback?: string;
+  feedback_fields?: string[];
+  update_request?: {
+    uuid?: string;
+    framework_key?: string;
+    status?: string;
+    readable_status?: string;
+    content?: string;
+    feedback?: string;
+    feedback_fields?: string[];
+    project?: Record<string, any>;
+    organisation?: Record<string, any>;
+    created_by?: Record<string, any>;
+  };
 };
 
 export type UserRead = {
@@ -1417,9 +1432,9 @@ export type FundingProgramme = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
-  framework_key?: string;
   stages?: {
     id?: number;
     uuid?: string;
@@ -1437,6 +1452,7 @@ export type FundingProgramme = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -1595,7 +1611,6 @@ export type FormCreate = {
   type?: string;
   title?: string;
   subtitle?: string;
-  framework_key?: string;
   description?: string;
   deadline_at?: string;
   documentation?: string;
@@ -1717,9 +1732,9 @@ export type FormRead = {
   type?: string;
   version?: number;
   title?: string;
-  framework_key?: string;
   subtitle?: string;
   description?: string;
+  framework_key?: string;
   duration?: string;
   deadline_at?: string;
   documentation?: string;
@@ -2139,6 +2154,17 @@ export type ReportingFrameworkRead = {
 };
 
 export type ReportingFrameworkUpdate = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type ReportingFrameworkCreate = {
   name?: string;
   access_code?: string;
   project_form_uuid?: string;
@@ -3809,24 +3835,8 @@ export type V2FileGalleryLite = {
   };
 };
 
-export type V2TreeSpeciesCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
 export type V2TreeSpeciesRead = {
   uuid?: string;
-  name?: string;
-  amount?: number;
-  type?: string;
-  collection?: string;
-};
-
-export type V2TreeSpeciesUpdate = {
   name?: string;
   amount?: number;
   type?: string;
@@ -3886,23 +3896,26 @@ export type V2LeadershipTeamUpdate = {
 
 export type V2OwnershipStakeCreate = {
   organisation_id?: string;
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
+  percent_ownership?: number;
 };
 
 export type V2OwnershipStakeRead = {
   uuid?: string;
   organisation_id?: string;
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
+  percent_ownership?: number;
 };
 
 export type V2OwnershipStakeUpdate = {
-  title?: string;
+  position?: string;
   gender?: string;
-  year_of_birth?: number;
+  age?: number;
+  percent_ownership?: number;
 };
 
 export type V2FundingTypeCreate = {
@@ -4920,53 +4933,14 @@ export type V2SeedingPaginated = {
 
 export type V2WorkdayRead = {
   uuid?: string;
-  amount?: number;
   collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-};
-
-export type V2WorkdayCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-};
-
-export type V2WorkdayUpdate = {
-  amount?: number;
-  collection?: string;
-  gender?: string;
-  age?: string;
-  ethnicity?: string;
-};
-
-export type V2WorkdaysPaginated = {
-  data?: {
-    uuid?: string;
+  readable_collection?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity";
+    subtype?: string;
+    name?: string;
     amount?: number;
-    collection?: string;
-    gender?: string;
-    age?: string;
-    ethnicity?: string;
   }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
 };
 
 export type V2DisturbanceRead = {
@@ -6003,6 +5977,7 @@ export type ProjectFullRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -6116,6 +6091,7 @@ export type ProjectFullRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -6224,6 +6200,7 @@ export type ProjectFullRead = {
       description?: string;
       location?: string;
       read_more_url?: string;
+      framework_key?: string;
       status?: string;
       organisation_types?: string[];
       stages?: {
@@ -6233,7 +6210,6 @@ export type ProjectFullRead = {
         deadline_at?: string;
         readable_status?: string;
         funding_programme_id?: number;
-        framework_key?: string;
         name?: string;
         order?: number;
         forms?: {
@@ -6244,6 +6220,7 @@ export type ProjectFullRead = {
           title?: string;
           subtitle?: string;
           description?: string;
+          framework_key?: string;
           duration?: string;
           deadline_at?: string;
           documentation?: string;
@@ -6815,6 +6792,7 @@ export type ProjectWithSchemaRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7376,6 +7354,7 @@ export type SiteWithSchemaRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7715,6 +7694,7 @@ export type FormSubmissionRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7826,6 +7806,7 @@ export type FormPaginated = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -7921,7 +7902,6 @@ export type StagePaginated = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -7932,6 +7912,7 @@ export type StagePaginated = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8037,7 +8018,6 @@ export type StageRead = {
   deadline_at?: string;
   readable_status?: string;
   funding_programme_id?: number;
-  framework_key?: string;
   name?: string;
   order?: number;
   forms?: {
@@ -8048,6 +8028,7 @@ export type StageRead = {
     title?: string;
     subtitle?: string;
     description?: string;
+    framework_key?: string;
     duration?: string;
     deadline_at?: string;
     documentation?: string;
@@ -8184,6 +8165,7 @@ export type ApplicationLiteRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8297,6 +8279,7 @@ export type ApplicationLiteRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8427,6 +8410,7 @@ export type ApplicationRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8540,6 +8524,7 @@ export type ApplicationRead = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -8648,6 +8633,7 @@ export type ApplicationRead = {
     description?: string;
     location?: string;
     read_more_url?: string;
+    framework_key?: string;
     status?: string;
     organisation_types?: string[];
     stages?: {
@@ -8657,7 +8643,6 @@ export type ApplicationRead = {
       deadline_at?: string;
       readable_status?: string;
       funding_programme_id?: number;
-      framework_key?: string;
       name?: string;
       order?: number;
       forms?: {
@@ -8668,6 +8653,7 @@ export type ApplicationRead = {
         title?: string;
         subtitle?: string;
         description?: string;
+        framework_key?: string;
         duration?: string;
         deadline_at?: string;
         documentation?: string;
@@ -9237,6 +9223,28 @@ export type ProjectReportPaginated = {
     status?: number;
     readable_status?: string;
     title?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+  };
+};
+
+export type TaskPaginated = {
+  data?: {
+    uuid?: string;
+    project?: Record<string, any>;
+    period_key?: string;
+    status?: string;
+    readable_status?: string;
   }[];
   links?: {
     first?: string;
@@ -22816,6 +22824,9 @@ export type UserCreate = {
   phone_number?: string;
   whatsapp_phone?: string;
   callback_url?: string;
+  primary_role?: string;
+  country?: string;
+  program?: string;
 };
 
 export type UpdateRequestsPaginated = {
@@ -22845,7 +22856,8 @@ export type UpdateRequestRead = {
   status?: string;
   readable_status?: string;
   content?: string;
-  comments?: string;
+  feedback?: string;
+  feedback_fields?: string[];
   project?: Record<string, any>;
   organisation?: Record<string, any>;
   created_by?: Record<string, any>;
@@ -22883,11 +22895,11 @@ export type ActionRead = {
 };
 
 export type V2TaskRead = {
-  uuid?: number;
+  uuid?: string;
   project?: Record<string, any>;
   period_key?: string;
   status?: string;
-  status_readable?: string;
+  readable_status?: string;
 };
 
 export type V2TaskActionRead = {
@@ -22899,6 +22911,13 @@ export type V2TaskActionRead = {
    */
   due_at?: string;
   title?: string;
+  report_title?: string;
+  update_request_status?: string;
+  /**
+   * @format date-time
+   */
+  submitted_at?: string;
+  parent_name?: string;
 };
 
 export type StatusUpdate = {
@@ -22923,4 +22942,858 @@ export type V2ProjectInviteRead = {
 
 export type V2ProjectInviteCreate = {
   email_address?: string;
+};
+
+export type WorkdayDemographic = {
+  type?: "gender" | "age" | "ethnicity";
+  subtype?: string;
+  name?: string;
+  amount?: number;
+};
+
+export type GeoJSON = {
+  type?: "FeatureCollection";
+  features?: {
+    type?: "Feature";
+    properties?: {
+      poly_name?: string;
+      /**
+       * @format date
+       */
+      plantstart?: string;
+      /**
+       * @format date
+       */
+      plantend?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+      site_id?: string;
+    };
+    geometry?: {
+      type?: "Polygon" | "Point";
+      coordinates?: any[];
+    };
+  }[];
+};
+
+export type GeometryPost = {
+  /**
+   * The UUIDs generated by the system for the uploaded polygons. They are in the same order as the polygons in the request payload.
+   */
+  polygon_uuids?: string[];
+  /**
+   * Mapping of geometry UUID to the errors associated with the geometry. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+   */
+  errors?: {
+    [key: string]: {
+      key?:
+        | "OVERLAPPING_POLYGON"
+        | "SELF_INTERSECTION"
+        | "COORDINATE_SYSTEM"
+        | "SIZE_LIMIT"
+        | "WITHIN_COUNTRY"
+        | "SPIKE"
+        | "GEOMETRY_TYPE"
+        | "TOTAL_AREA_EXPECTED"
+        | "TABLE_SCHEMA"
+        | "DATA_COMPLETED";
+      /**
+       * Human readable string in English to describe the error.
+       */
+      message?: string;
+    }[];
+  };
+};
+
+export type DashboardVolunteersSurvivalRateResponse = {
+  data?: {
+    /**
+     * Total number of volunteers.
+     */
+    total_volunteers?: number;
+    /**
+     * Total number of male volunteers.
+     */
+    men_volunteers?: number;
+    /**
+     * Total number of female volunteers.
+     */
+    women_volunteers?: number;
+    /**
+     * Total number of youth volunteers.
+     */
+    youth_volunteers?: number;
+    /**
+     * Total number of non-youth volunteers.
+     */
+    non_youth_volunteers?: number;
+    /**
+     * Survival rate for non-profit entities.
+     */
+    non_profit_survival_rate?: number;
+    /**
+     * Survival rate for enterprise entities.
+     */
+    enterprise_survival_rate?: number;
+    /**
+     * number of sites.
+     */
+    number_of_sites?: number;
+    /**
+     * number of nurseries.
+     */
+    number_of_nurseries?: number;
+  };
+};
+
+export type DashboardVolundteersSurvivalRateData = {
+  /**
+   * Total number of volunteers.
+   */
+  total_volunteers?: number;
+  /**
+   * Total number of male volunteers.
+   */
+  men_volunteers?: number;
+  /**
+   * Total number of female volunteers.
+   */
+  women_volunteers?: number;
+  /**
+   * Total number of youth volunteers.
+   */
+  youth_volunteers?: number;
+  /**
+   * Total number of non-youth volunteers.
+   */
+  non_youth_volunteers?: number;
+  /**
+   * Survival rate for non-profit entities.
+   */
+  non_profit_survival_rate?: number;
+  /**
+   * Survival rate for enterprise entities.
+   */
+  enterprise_survival_rate?: number;
+  /**
+   * number of sites.
+   */
+  number_of_sites?: number;
+  /**
+   * number of nurseries.
+   */
+  number_of_nurseries?: number;
+};
+
+export type AuditStatusCreateRequest = {
+  status?: string;
+  comment?: string;
+  type?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type AuditStatusResponse = {
+  id?: string;
+  uuid?: string;
+  entity_name?: string;
+  status?: string;
+  comment?: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
+  is_submitted?: boolean;
+  is_active?: boolean;
+  request_removed?: boolean;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  attachments?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    created_at?: string;
+  }[];
+};
+
+export type V2TerrafundCriteriaData = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+  }[];
+};
+
+export type V2TerrafundCriteriaSite = {
+  /**
+   * The UUID of the polygon.
+   */
+  uuid?: string;
+  /**
+   * Indicates if the polygon is valid or not.
+   */
+  valid?: boolean;
+  /**
+   * Indicates if the polygon has been checked before or not.
+   */
+  checked?: boolean;
+}[];
+
+export type SitePolygon = {
+  id?: number;
+  uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  country?: string;
+};
+
+export type GeometryString = {
+  geometry?: string;
+};
+
+export type SitePolygonsDataResponse = {
+  id?: number;
+  uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  country?: string;
+}[];
+
+export type SitePolygonsBboxResponse = {
+  bbox?: number[];
+};
+
+export type SitePolygonResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type SitePolygonCreateResponse = {
+  /**
+   * @example Site polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created site polygon
+   */
+  uuid?: string;
+  /**
+   * Calculated area in hectares
+   *
+   * @format double
+   */
+  area?: number;
+};
+
+export type GeoJSONResponse = {
+  type?: string;
+  features?: {
+    type?: string;
+    geometry?: {
+      type?: string;
+      coordinates?: any[];
+    };
+    properties?: {
+      poly_name?: string;
+      plantstart?: string;
+      plantend?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+    };
+  }[];
+};
+
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type PolygonBboxResponse = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonResponse = {
+  uuid?: string;
+};
+
+export type DashboardJobsCreatedResponse = {
+  data?: {
+    totalJobsCreated?: number;
+    forProfitJobsCreated?: number;
+    nonProfitJobsCreated?: number;
+    total_ft?: number;
+    total_pt?: number;
+    total_men?: number;
+    total_pt_men?: number;
+    total_ft_men?: number;
+    total_women?: number;
+    total_pt_women?: number;
+    total_ft_women?: number;
+    total_youth?: number;
+    total_pt_youth?: number;
+    total_ft_youth?: number;
+    total_non_youth?: number;
+    total_pt_non_youth?: number;
+    total_ft_non_youth?: number;
+  };
+};
+
+export type DashboardJobsCreatedData = {
+  totalJobsCreated?: number;
+  forProfitJobsCreated?: number;
+  nonProfitJobsCreated?: number;
+  total_ft?: number;
+  total_pt?: number;
+  total_men?: number;
+  total_pt_men?: number;
+  total_ft_men?: number;
+  total_women?: number;
+  total_pt_women?: number;
+  total_ft_women?: number;
+  total_youth?: number;
+  total_pt_youth?: number;
+  total_ft_youth?: number;
+  total_non_youth?: number;
+  total_pt_non_youth?: number;
+  total_ft_non_youth?: number;
+};
+
+export type DashboardRestorationStrategyResponse = {
+  restorationStrategies?: {
+    ["direct-seeding"]?: number;
+    ["tree-planting"]?: number;
+    ["assisted-natural-regeneration"]?: number;
+  };
+  landUseTypes?: {
+    agroforest?: number;
+    ["open-natural-ecosystem"]?: number;
+    mangrove?: number;
+    ["natural-forest"]?: number;
+    peatland?: number;
+    ["riparian-area-or-wetland"]?: number;
+    silvopasture?: number;
+    ["urban-forest"]?: number;
+    ["woodlot-or-plantation"]?: number;
+  };
+  landTenures?: {
+    communal?: number;
+    indigenous?: number;
+    national_protected_area?: number;
+    other?: number;
+    private?: number;
+    public?: number;
+  };
+};
+
+export type DashboardTreeRestorationGoalResponse = {
+  forProfitTreeCount?: number;
+  nonProfitTreeCount?: number;
+  totalTreesGrownGoal?: number;
+  treesUnderRestorationActualTotal?: {
+    /**
+     * @format date
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+    treeSpeciesPercentage?: number;
+  }[];
+  treesUnderRestorationActualForProfit?: {
+    /**
+     * @format date
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+    treeSpeciesPercentage?: number;
+  }[];
+  treesUnderRestorationActualNonProfit?: {
+    /**
+     * @format date
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+    treeSpeciesPercentage?: number;
+  }[];
+  averageSurvivalRateTotal?: number;
+  averageSurvivalRateForProfit?: number;
+  averageSurvivalRateNonProfit?: number;
+};
+
+export type DashboardTreesUnderRestorationActual = {
+  /**
+   * @format date
+   */
+  dueDate?: string;
+  treeSpeciesAmount?: number;
+  treeSpeciesPercentage?: number;
+};
+
+export type DashboardGetProjectsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    /**
+     * @format double
+     */
+    lat?: number;
+    /**
+     * @format double
+     */
+    long?: number;
+  }[];
+};
+
+export type DashboardGetProjectsData = {
+  uuid?: string;
+  name?: string;
+  /**
+   * @format double
+   */
+  lat?: number;
+  /**
+   * @format double
+   */
+  long?: number;
+};
+
+export type DashboardGetPolygonStatusResponse = {
+  data?: any[];
+};
+
+export type DashboardBBOXProject = {
+  bbox?: number[];
+};
+
+export type DashboardBBOXCountry = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonData = {
+  data?: {
+    /**
+     * Title of the data field
+     */
+    title?: string;
+    /**
+     * Value of the data field
+     */
+    value?: string;
+    /**
+     * Key of the data field
+     */
+    key?: string;
+  }[];
+};
+
+export type DashboardActiveProjectsListViewResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    organisation?: string;
+    trees_under_restoration?: number;
+    jobs_created?: number;
+    volunteers?: number;
+    beneficiaries?: number;
+    survival_rate?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+    project_country?: string;
+    country_slug?: string;
+    number_of_trees_goal?: number;
+    date_added?: string;
+  }[];
+  current_page?: number;
+  per_page?: number;
+  total?: number;
+  last_page?: number;
+};
+
+export type DashboardTotalSectionHeaderResponse = {
+  data?: {
+    /**
+     * Total number of non profit projects.
+     */
+    total_non_profit_count?: number;
+    /**
+     * Total number of enterprise projects.
+     */
+    total_enterprise_count?: number;
+    /**
+     * Total number of jobs created.
+     */
+    total_entries?: number;
+    /**
+     * Total number of hectares restored.
+     */
+    total_hectares_restored?: number;
+    /**
+     * Total number of hectares restored goal.
+     */
+    total_hectares_restored_goal?: number;
+    /**
+     * Total number of trees restored.
+     */
+    total_trees_restored?: number;
+    /**
+     * Total number of trees restored goal.
+     */
+    total_trees_restored_goal?: number;
+  };
+};
+
+export type DashboardActiveCountriesResponse = {
+  data?: {
+    country_slug?: string;
+    country?: string;
+    number_of_projects?: number;
+    total_trees_planted?: number;
+    total_jobs_created?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+  }[];
+};
+
+export type DashboardCountriesResponse = {
+  data?: {
+    id?: number;
+    country_slug?: string;
+    data?: {
+      label?: string;
+      icon?: string;
+    };
+  }[];
+};
+
+export type DashboardCountryData = {
+  id?: number;
+  country_slug?: string;
+  data?: {
+    label?: string;
+    icon?: string;
+  };
+};
+
+export type DashboardCountryInfo = {
+  label?: string;
+  icon?: string;
+};
+
+export type DashboardProjectProfileResponse = {
+  data?: {
+    name?: string;
+    descriptionObjetive?: string;
+    country?: string;
+    organisation?: string;
+    survivalRate?: number;
+    countrySlug?: string;
+    restorationStrategy?: {
+      data?: string[];
+    };
+    targetLandUse?: {
+      data?: string[];
+    };
+    landTenure?: {
+      data?: string[];
+    };
+  };
+};
+
+export type DashboardProjectProfileData = {
+  name?: string;
+  descriptionObjetive?: string;
+  country?: string;
+  organisation?: string;
+  survivalRate?: number;
+  countrySlug?: string;
+  restorationStrategy?: {
+    data?: string[];
+  };
+  targetLandUse?: {
+    data?: string[];
+  };
+  landTenure?: {
+    data?: string[];
+  };
+};
+
+export type DashboardTopProjectsResponse = {
+  data?: {
+    top_projects_most_planted_trees?: {
+      project?: string;
+      uuid?: string;
+      trees_planted?: number;
+    }[];
+    top_tree_species_planted?: {
+      name?: string;
+      amount?: number;
+    }[];
+  };
+};
+
+export type DashboardTopPlantedTree = {
+  project?: string;
+  uuid?: string;
+  trees_planted?: number;
+};
+
+export type DashboardTopTreeSpecies = {
+  name?: string;
+  amount?: number;
+};
+
+export type ProjectPipeline = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    submitted_by?: string;
+    program?: string;
+    cohort?: string;
+    publish_for?: string;
+    url?: string;
+    /**
+     * @format date
+     */
+    created_at?: string;
+    /**
+     * @format date
+     */
+    updated_at?: string;
+  };
+};
+
+export type ProjectPipelinePost = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string;
+  publish_for?: string;
+  url?: string;
+};
+
+export type GeojsonData = {
+  /**
+   * The GeoJSON representation of the polygon geometry.
+   */
+  geojson?: Record<string, any>;
+};
+
+export type EntityTypeResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    country?: string;
+  }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: number[];
+};
+
+export type AuditStatusUpdateRequest = {
+  type?: string;
+  comment?: string;
+  status?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type SitePolygonResource = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date-time
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type SiteCheckApproveResponse = {
+  can_approve?: boolean;
+};
+
+export type DashboardProjectViewResponse = {
+  data?: {
+    allowed?: boolean;
+  };
 };

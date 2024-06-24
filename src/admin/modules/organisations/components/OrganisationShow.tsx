@@ -64,7 +64,12 @@ export const OrganisationShow = () => (
             emptyText="Not Provided"
           />
           <TextField source="phone" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
-          <DateField source="founding_date" label="Date organization founded" emptyText="Not Provided" />
+          <DateField
+            source="founding_date"
+            label="Date organization founded"
+            emptyText="Not Provided"
+            locales="en-GB"
+          />
           <TextField source="description" label="Organization Details" emptyText="Not Provided" />
           <ImageField source="logo.url" label="Logo" title="logo.file_name" emptyText="Not Provided" />
           <ImageField source="cover.url" label="Cover" title="cover.file_name" emptyText="Not Provided" />

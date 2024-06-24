@@ -21,11 +21,10 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const { field } = useController(props);
 
   useEffect(() => {
-    fields
-      .filter(field => field.condition !== formHook.watch(props.name))
-      .forEach(field => {
-        formHook.unregister(field.name);
-      });
+    fields.forEach(field => {
+      if (field.condition == formHook.watch(props.name)) formHook.register(field.name);
+    });
+    formHook.clearErrors(props.name);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields, formHook.watch(props.name)]);
 
@@ -34,6 +33,11 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     onChangeCapture();
     formHook.trigger();
   };
+
+  useEffect(() => {
+    onChangeCapture();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.value, formHook]);
 
   return (
     <>

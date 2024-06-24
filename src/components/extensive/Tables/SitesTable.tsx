@@ -2,8 +2,8 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useState } from "react";
 
-import Button from "@/components/elements/Button/Button";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -81,6 +81,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
       data={sites?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {
           accessorKey: "name",
@@ -159,18 +160,17 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           accessorKey: "update_request_status",
           label: t("Change Request"),
           options: getChangeRequestStatusOptions(t)
+        },
+        {
+          type: "button",
+          accessorKey: "add_site",
+          name: t("Add Site"),
+          hide: !hasAddButton,
+          as: Link,
+          href: `/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`
         }
       ]}
-    >
-      {hasAddButton && (
-        <Button
-          as={Link}
-          href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
-        >
-          {t("Add Site")}
-        </Button>
-      )}
-    </ServerSideTable>
+    ></ServerSideTable>
   );
 };
 

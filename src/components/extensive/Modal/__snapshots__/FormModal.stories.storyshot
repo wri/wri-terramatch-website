@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Modal/FormModal Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="margin-4 z-50 m-auto flex max-h-full max-w-[800px] flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white w-[800px] p-0"
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white max-w-[800px] margin-4 z-50 w-[800px] p-0"
   >
     <div
       className="flex w-full items-center justify-between gap-4 border-b border-neutral-300 bg-neutral-50 p-8"
@@ -35,11 +35,11 @@ exports[`Storyshots Components/Extensive/Modal/FormModal Default 1`] = `
       onSubmit={[Function]}
     >
       <button
-        className="m-auto mt-15 bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content m-auto mt-15"
         type="submit"
       >
         <span
-          className="text-bold-caption-200 pt-0.75 leading-3"
+          className="flex items-center text-bold-caption-200"
         >
           Save
         </span>

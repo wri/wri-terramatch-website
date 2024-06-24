@@ -39,7 +39,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         const type = action.targetable_type;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
-        let canClearActionClientSide = status === "approved" || status === "rejected";
+        let canClearActionClientSide = status === "approved";
 
         let dueText = t("<strong>Due:</strong> {date}", { date: format(target?.due_at) });
         let subtitle;
@@ -114,7 +114,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
                 (projects?.data.length ?? 0) > 1
                   ? "/my-projects"
                   : `project/${projects?.data?.[0]?.uuid}?tab=reporting-tasks`,
-              children: t("View all reporting tasks")
+              children: t("Reports")
             }
           : undefined
       }

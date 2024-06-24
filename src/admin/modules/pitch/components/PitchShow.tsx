@@ -76,8 +76,18 @@ export const PitchShow = () => {
         <Typography variant="h6" component="h3">
           Timeline
         </Typography>
-        <DateField source="expected_active_restoration_start_date" label="Start Date" emptyText="Not Provided" />
-        <DateField source="expected_active_restoration_end_date" label="End Date" emptyText="Not Provided" />
+        <DateField
+          source="expected_active_restoration_start_date"
+          label="Start Date"
+          emptyText="Not Provided"
+          locales="en-GB"
+        />
+        <DateField
+          source="expected_active_restoration_end_date"
+          label="End Date"
+          emptyText="Not Provided"
+          locales="en-GB"
+        />
         <TextField
           source="description_of_project_timeline"
           label="Key stages of this project’s implementation"

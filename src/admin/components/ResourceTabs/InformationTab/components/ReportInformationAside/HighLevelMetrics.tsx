@@ -4,7 +4,7 @@ import { Labeled, NumberField, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 const HighLevelMetics: FC = () => {
-  const { record } = useShowContext();
+  const { record, resource } = useShowContext();
 
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
@@ -12,6 +12,8 @@ const HighLevelMetics: FC = () => {
   };
 
   const isTerraFund = record.framework_key === "terrafund";
+  const isPPC = record.framework_key === "ppc";
+  const workdaysType = resource === "projectReport" ? "Project" : resource === "siteReport" ? "Site" : null;
 
   return (
     <Card>
@@ -25,8 +27,16 @@ const HighLevelMetics: FC = () => {
         <Stack gap={3}>
           <When condition={!isTerraFund}>
             <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
-              <NumberField source="workdays_total" emptyText="0" />
+              <NumberField source={record.workdays_total ? "workdays_total" : "total_workdays_count"} emptyText="0" />
             </Labeled>
+            <When condition={workdaysType != null}>
+              <Labeled label={`Total Number Of Paid ${workdaysType} Workdays Created`} sx={inlineLabelSx}>
+                <NumberField source="workdays_paid" emptyText="0" />
+              </Labeled>
+              <Labeled label={`Total Number Of Volunteer ${workdaysType} Workdays Created`} sx={inlineLabelSx}>
+                <NumberField source="workdays_volunteer" emptyText="0" />
+              </Labeled>
+            </When>
           </When>
           <When condition={isTerraFund}>
             <Labeled label="Total Number Of Jobs Created" sx={inlineLabelSx}>
@@ -34,8 +44,19 @@ const HighLevelMetics: FC = () => {
             </Labeled>
           </When>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
-            <NumberField source="trees_planted_count" emptyText="0" />
+            <NumberField
+              source={record.trees_planted_count ? "trees_planted_count" : "total_trees_planted_count"}
+              emptyText="0"
+            />
           </Labeled>
+          <When condition={isPPC && (resource === "projectReport" || resource === "siteReport")}>
+            <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
+              <NumberField
+                source={record.seeds_planted_count ? "trees_planted_count" : "total_seeds_planted_count"}
+                emptyText="0"
+              />
+            </Labeled>
+          </When>
           <When condition={isTerraFund}>
             <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
               <NumberField source="seedlings_grown" emptyText="0" />

@@ -6,17 +6,17 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
 >
   <div
     aria-orientation="horizontal"
-    className="h-12 w-full border-b border-neutral-400 bg-white"
+    className="h-max w-full border-b-2 border-neutral-200 bg-white"
     role="tablist"
   >
     <div
-      className="justify-between lg:justify-center lg:gap-30 m-auto flex h-full items-center"
+      className="justify-between lg:justify-start lg:gap-30 m-auto flex h-full items-center"
     >
       <button
         aria-selected={true}
-        className="h-full border-b-[3px] px-4 pt-[3px] outline-none border-primary"
+        className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-primary"
         data-headlessui-state="selected"
-        id="headlessui-tabs-tab-:r2l:"
+        id="headlessui-tabs-tab-:r35:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -24,7 +24,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={0}
       >
         <p
-          className="whitespace-nowrap text-black text-heading-200"
+          className="whitespace-nowrap text-black text-16-bold"
           data-testid="txt"
         >
           Overview
@@ -32,9 +32,9 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </button>
       <button
         aria-selected={false}
-        className="h-full border-b-[3px] px-4 pt-[3px] outline-none border-transparent"
+        className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-transparent"
         data-headlessui-state=""
-        id="headlessui-tabs-tab-:r2m:"
+        id="headlessui-tabs-tab-:r36:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -42,7 +42,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={-1}
       >
         <p
-          className="whitespace-nowrap text-neutral-700 text-heading-200"
+          className="whitespace-nowrap text-black text-16-light"
           data-testid="txt"
         >
           Environmental Impact
@@ -50,9 +50,9 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </button>
       <button
         aria-selected={false}
-        className="h-full border-b-[3px] px-4 pt-[3px] outline-none border-transparent"
+        className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-transparent"
         data-headlessui-state=""
-        id="headlessui-tabs-tab-:r2n:"
+        id="headlessui-tabs-tab-:r37:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -60,7 +60,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={-1}
       >
         <p
-          className="whitespace-nowrap text-neutral-700 text-heading-200"
+          className="whitespace-nowrap text-black text-16-light"
           data-testid="txt"
         >
           Social Impact
@@ -71,7 +71,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
   <div>
     <div
       data-headlessui-state="selected"
-      id="headlessui-tabs-panel-:r2o:"
+      id="headlessui-tabs-panel-:r38:"
       role="tabpanel"
       tabIndex={0}
     >
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </div>
     </div>
     <span
-      id="headlessui-tabs-panel-:r2p:"
+      id="headlessui-tabs-panel-:r39:"
       role="tabpanel"
       style={
         Object {
@@ -100,7 +100,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       tabIndex={-1}
     />
     <span
-      id="headlessui-tabs-panel-:r2q:"
+      id="headlessui-tabs-panel-:r3a:"
       role="tabpanel"
       style={
         Object {

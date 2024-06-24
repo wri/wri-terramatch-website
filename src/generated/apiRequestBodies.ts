@@ -17,6 +17,29 @@ export type PatchV2AuthVerifyBody = {
   token?: string;
 };
 
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
 export type PostV2FundingProgrammeBody = {
   name?: string;
   description?: string;
@@ -206,6 +229,7 @@ export type GetV2FundingProgrammeIDBody = {
   description?: string;
   location?: string;
   read_more_url?: string;
+  framework_key?: string;
   status?: string;
   organisation_types?: string[];
   stages?: {
@@ -215,7 +239,6 @@ export type GetV2FundingProgrammeIDBody = {
     deadline_at?: string;
     readable_status?: string;
     funding_programme_id?: number;
-    framework_key?: string;
     name?: string;
     order?: number;
     forms?: {
@@ -226,6 +249,7 @@ export type GetV2FundingProgrammeIDBody = {
       title?: string;
       subtitle?: string;
       description?: string;
+      framework_key?: string;
       duration?: string;
       deadline_at?: string;
       documentation?: string;
@@ -324,4 +348,46 @@ export type GetV2FundingProgrammeIDBody = {
   deleted_at?: string;
   created_at?: string;
   updated_at?: string;
+};
+
+export type PostV2SitesUuidGeometryBody = {
+  geometries?: {
+    type?: "FeatureCollection";
+    features?: {
+      type?: "Feature";
+      properties?: {
+        poly_name?: string;
+        /**
+         * @format date
+         */
+        plantstart?: string;
+        /**
+         * @format date
+         */
+        plantend?: string;
+        practice?: string;
+        target_sys?: string;
+        distr?: string;
+        num_trees?: number;
+        site_id?: string;
+      };
+      geometry?: {
+        type?: "Polygon" | "Point";
+        coordinates?: any[];
+      };
+    }[];
+  }[];
+};
+
+export type PostV2FprojectPipelineBody = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string;
+  publish_for?: string;
+  url?: string;
 };

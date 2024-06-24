@@ -88,7 +88,7 @@ const ProjectReportDetailPage = () => {
       <PageHeader
         className="h-[203px]"
         title={reportTitle}
-        subtitles={[report.project?.name, isPPC ? t("Priceless Planet Coalition") : t("Terrafund")]}
+        subtitles={[report.project?.name, isPPC ? t("Priceless Planet Coalition") : t("TerraFund")]}
         hasBackButton={false}
       >
         <If condition={report?.status === "started"}>

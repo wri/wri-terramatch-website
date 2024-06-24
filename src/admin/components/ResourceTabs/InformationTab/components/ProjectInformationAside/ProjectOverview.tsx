@@ -19,27 +19,33 @@ const ProjectOverview: FC = () => {
         </Typography>
 
         <Grid spacing={2} marginBottom={2} container>
-          <Grid item xs={6}>
+          <Grid item xs={8}>
             <Labeled label="Organisation">
               <TextField source="organisation.name" />
             </Labeled>
           </Grid>
 
-          <Grid xs={6} item>
+          <Grid xs={4} item>
             <Labeled label="Status">
               <TextField source="readable_status" />
             </Labeled>
           </Grid>
 
-          <Grid xs={6} item>
+          <Grid xs={4} item>
             <Labeled label="Monitored Data">
               <BooleanField source="has_monitoring_data" looseValue />
             </Labeled>
           </Grid>
 
-          <Grid xs={6} item>
+          <Grid xs={4} item>
             <Labeled label="Funding Programme">
               <FrameworkField />
+            </Labeled>
+          </Grid>
+
+          <Grid xs={4} item>
+            <Labeled label="Change Request Status">
+              <TextField source="readable_update_request_status" />
             </Labeled>
           </Grid>
         </Grid>

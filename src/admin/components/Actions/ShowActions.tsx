@@ -10,6 +10,8 @@ import {
 } from "react-admin";
 import { When } from "react-if";
 
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+
 import ShowTitle from "../ShowTitle";
 
 interface IProps {
@@ -49,10 +51,18 @@ const ShowActions = ({
       </When>
       <TopToolbar sx={{ marginBottom: 2, marginLeft: "auto" }}>
         <When condition={record && hasDelete}>
-          <DeleteWithConfirmButton {...deleteProps} mutationMode="undoable" />
+          <DeleteWithConfirmButton
+            {...deleteProps}
+            mutationMode="undoable"
+            className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
+            icon={<Icon className="h-6 w-6" name={IconNames.TRASH_PA} />}
+          />
         </When>
         <When condition={record && hasEdit}>
-          <EditButton />
+          <EditButton
+            className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
+            icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
+          />
         </When>
       </TopToolbar>
     </Box>

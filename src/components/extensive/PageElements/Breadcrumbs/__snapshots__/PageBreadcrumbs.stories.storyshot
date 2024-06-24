@@ -8,7 +8,7 @@ exports[`Storyshots Components/Extensive/Page/Breadcrumbs Default 1`] = `
     className="flex h-12 items-center bg-primary-100 p-4 px-10 xl:px-0"
   >
     <div
-      className="mx-auto w-full max-w-7xl flex items-center gap-3"
+      className="mx-auto w-full max-w-[82vw] flex items-center gap-3"
     >
       <a
         href="#"
@@ -17,7 +17,7 @@ exports[`Storyshots Components/Extensive/Page/Breadcrumbs Default 1`] = `
         onTouchStart={[Function]}
       >
         <p
-          className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+          className="text-darkCustom opacity-60 hover:underline line-clamp-1 text-14-bold"
           data-testid="txt"
           title="My Projects"
         >
@@ -39,7 +39,7 @@ exports[`Storyshots Components/Extensive/Page/Breadcrumbs Default 1`] = `
         onTouchStart={[Function]}
       >
         <p
-          className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+          className="text-darkCustom opacity-60 hover:underline line-clamp-1 text-14-bold"
           data-testid="txt"
           title="India Tree restoration project"
         >
@@ -61,7 +61,7 @@ exports[`Storyshots Components/Extensive/Page/Breadcrumbs Default 1`] = `
         onTouchStart={[Function]}
       >
         <p
-          className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+          className="text-darkCustom opacity-60 hover:underline line-clamp-1 text-14-bold"
           data-testid="txt"
           title="Taj Mahal"
         >

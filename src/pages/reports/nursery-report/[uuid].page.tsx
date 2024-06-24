@@ -76,7 +76,7 @@ const NurseryReportDetailPage = () => {
         title={reportTitle}
         subtitles={[
           `${t("Organisation")}: ${nurseryReport.organisation?.name}`,
-          nurseryReport.framework_key === "ppc" ? t("Priceless Planet Coalition") : t("Terrafund")
+          nurseryReport.framework_key === "ppc" ? t("Priceless Planet Coalition") : t("TerraFund")
         ]}
         hasBackButton={false}
       >
@@ -146,6 +146,7 @@ const NurseryReportDetailPage = () => {
                   <TextField label={t("Created by")} value={getFullName(nurseryReport.created_by)} />
                   <TextField label={t("Updated")} value={format(nurseryReport.updated_at)} />
                   <TextField label={t("Due date")} value={format(nurseryReport.due_at)} />
+                  <TextField label={t("Submitted date")} value={format(nurseryReport.submitted_at)} />
                 </PageCard>
                 <PageCard title={t("Overview")}>
                   <TextField label={t("Seedling or Young Trees")} value={nurseryReport.seedlings_young_trees} />

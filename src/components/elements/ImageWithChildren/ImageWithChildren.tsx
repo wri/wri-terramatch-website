@@ -27,7 +27,7 @@ const ImageWithChildren = ({
         role="presentation"
         loading="lazy"
         style={{ objectFit: "cover" }}
-        className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+        className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
       />
       <div className={classNames("absolute top-0 right-0 left-0 bottom-0", childrenContainerClassName)}>{children}</div>
     </div>

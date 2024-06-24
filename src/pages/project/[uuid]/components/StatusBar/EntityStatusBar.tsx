@@ -17,7 +17,6 @@ interface EntityStatusBarProps {
 const StatusMapping: { [index: string]: Status } = {
   started: "edit",
   due: "edit",
-  rejected: "error",
   approved: "success",
   "awaiting-approval": "awaiting",
   awaiting: "awaiting",
@@ -33,18 +32,13 @@ const EntityStatusBar = ({ entityName, entity }: EntityStatusBarProps) => {
   const feedback = entity.feedback;
   const entityStatus = entity.status;
   const needMoreInformation = entityStatus === "needs-more-information";
-  const hasFeedback = needMoreInformation || entityStatus === "rejected" || entityStatus === "approved";
+  const hasFeedback = needMoreInformation || entityStatus === "approved";
   const projectedEntityStatus = StatusMapping?.[entityStatus];
 
   if (!projectedEntityStatus) return null;
 
   const viewFeedback = () => {
     const statusPropsMapping: any = {
-      rejected: {
-        title: t("Status: Rejected"),
-        icon: IconNames.CROSS_CIRCLE,
-        className: "fill-error"
-      },
       approved: {
         title: t("Status: Approved"),
         icon: IconNames.CHECK_CIRCLE_FILL,

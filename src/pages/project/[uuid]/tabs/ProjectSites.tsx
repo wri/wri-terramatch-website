@@ -54,12 +54,7 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
                 />
               </Then>
               <Else>
-                <PageCard
-                  title={t("Project Sites")}
-                  subtitle={t(
-                    "This table displays all the sites associated with this project. You can use it to keep track of your site approvals."
-                  )}
-                >
+                <PageCard title={t("Project Sites")}>
                   <SitesTable project={project} />
                 </PageCard>
               </Else>
@@ -67,6 +62,8 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
           </LoadingContainer>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

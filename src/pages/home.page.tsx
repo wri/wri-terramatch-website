@@ -8,6 +8,7 @@ import ActionTracker from "@/components/extensive/ActionTracker/ActionTracker";
 import FundingCarouselList from "@/components/extensive/FundingsCarouselList/FundingsCarouselList";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import TaskList from "@/components/extensive/TaskList/TaskList";
 import { useGetHomeTourItems } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
@@ -39,7 +40,7 @@ const HomePage = () => {
         <title>{t("Home")}</title>
       </Head>
       <PageSection>
-        <Text variant="text-heading-700" className="text-center">
+        <Text variant="text-36-bold" className="text-center">
           {t("What would you like to do?")}
         </Text>
       </PageSection>
@@ -65,9 +66,9 @@ const HomePage = () => {
         </LoadingContainer>
       </When>
       <When condition={!!myOrg}>
-        <PageSection>
+        <PageSection className="flex justify-center bg-white pb-10" hasFull>
           <TaskList
-            title={t("Get Ready for Funding Opportunities")}
+            title={t(`Get Ready for <br> Funding Opportunities`)}
             subtitle={t("Keep your information updated to have more chances of having a successful application.")}
             items={[
               {
@@ -96,6 +97,7 @@ const HomePage = () => {
           />
         </PageSection>
       </When>
+      <PageFooter />
     </PageBody>
   );
 };

@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] = `
 <div
-  className="flex items-center justify-between"
+  className="flex w-full items-center"
 >
   <div
     style={
@@ -13,16 +13,16 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] 
     }
   />
   <p
-    className="mr-auto whitespace-nowrap text-bold-caption-200"
+    className="w-[13vw] whitespace-nowrap text-16-light"
     data-testid="txt"
   >
     Trash Removed 
   </p>
   <p
-    className="ml-4 text-bold-subtitle-500"
+    className="text-14-bold"
     data-testid="txt"
   >
-    530000
+    530,000
   </p>
 </div>
 `;

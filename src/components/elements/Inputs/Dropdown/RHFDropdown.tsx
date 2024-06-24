@@ -35,6 +35,7 @@ const RHFDropdown = ({
   const _onChange = (value: OptionValue[]) => {
     onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
     props.onChangeCapture?.();
+    props.formHook?.trigger();
   };
 
   const additionalOptionValue = useMemo(

@@ -8,9 +8,9 @@ interface ListActionsProps {
 
 const ListActions = (props: ListActionsProps) => (
   <TopToolbar>
-    <FilterButton />
+    <FilterButton className="filter-button-page-admin" />
     <When condition={!!props.onExport}>
-      <Button label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
+      <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
     </When>
   </TopToolbar>
 );

@@ -28,14 +28,14 @@ const Navbar = (props: NavbarProps): JSX.Element => {
   return (
     <header
       className={classNames(
-        "sticky top-0 z-50 flex w-full flex-col justify-center border-b-4 border-primary bg-white px-4 lg:flex-row",
+        "sticky top-0 z-50 flex w-full flex-col justify-center bg-white px-4 sm:flex-row",
         isOpen && "border-none"
       )}
     >
       <Container className="flex h-[70px] items-center justify-between">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <When condition={!isOpen}>
-          <NavbarContent className="hidden items-center gap-8 lg:flex" isLoggedIn={props.isLoggedIn} />
+          <NavbarContent className="hidden items-center gap-8 sm:flex" isLoggedIn={props.isLoggedIn} />
         </When>
         <If condition={isOpen}>
           <Then>
@@ -44,7 +44,7 @@ const Navbar = (props: NavbarProps): JSX.Element => {
                 name: IconNames.X_CIRCLE,
                 width: 30,
                 height: 30,
-                className: "block lg:hidden fill-black"
+                className: "block sm:hidden fill-black"
               }}
               disabled={linksDisabled}
               onClick={() => setIsOpen?.(e => !e)}
@@ -52,7 +52,7 @@ const Navbar = (props: NavbarProps): JSX.Element => {
           </Then>
           <Else>
             <IconButton
-              className="tour-menu-button block lg:hidden"
+              className="tour-menu-button block sm:hidden"
               iconProps={{ name: IconNames.MENU, width: 28, height: 16, className: "fill-black" }}
               disabled={linksDisabled}
               onClick={() => setIsOpen?.(e => !e)}
@@ -63,7 +63,7 @@ const Navbar = (props: NavbarProps): JSX.Element => {
       <When condition={isOpen}>
         <NavbarContent
           className={classNames(
-            "relative flex flex-col items-center justify-center gap-4 lg:hidden",
+            "relative flex flex-col items-center justify-center gap-4 sm:hidden",
             isOpen && "h-[calc(100vh-70px)]"
           )}
           isLoggedIn={props.isLoggedIn}

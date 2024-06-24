@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { Case, Default, Switch } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
@@ -34,7 +35,14 @@ import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useGetReportingWindow } from "@/hooks/useGetReportingWindow";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
-import { ReportsModelNames } from "@/types/common";
+import { ReportsModelNames, Status } from "@/types/common";
+
+const StatusMapping: { [index: string]: Status } = {
+  due: "edit",
+  "awaiting-approval": "awaiting",
+  approved: "success",
+  "needs-more-information": "warning"
+};
 
 const ReportingTaskPage = () => {
   const t = useT();
@@ -99,14 +107,23 @@ const ReportingTaskPage = () => {
   const reports = useMemo(() => {
     const reports =
       reportsData?.data?.map((report: any) => {
-        let completion_status = "completed";
+        let completion_status = "started";
+        const { status: reportStatus, update_request_status: urStatus } = report;
+        // If there is no submitted update request in play, then the report status is the source of
+        // truth, otherwise update the UI in accordance with the active update request's status.
+        const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(urStatus);
+        const status = hasSubmittedUpdateRequest ? urStatus : reportStatus;
 
-        if (report.nothing_to_report) {
+        if (status === "needs-more-information") {
+          completion_status = "needs-more-information";
+        } else if (report.nothing_to_report) {
           completion_status = "nothing-to-report";
-        } else if (report.completion === 0) {
+        } else if (status === "awaiting-approval") {
+          completion_status = "awaiting-approval";
+        } else if (status === "approved") {
+          completion_status = "approved";
+        } else if (status === "due") {
           completion_status = "not-started";
-        } else if (report.completion < 100) {
-          completion_status = "started";
         }
 
         return {
@@ -233,7 +250,7 @@ const ReportingTaskPage = () => {
       accessorKey: "completion_status",
       header: t("Status"),
       cell: props => {
-        const value = props.getValue() as number;
+        const value = props.getValue() as string;
         const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
         if (!status) return null;
 
@@ -256,7 +273,8 @@ const ReportingTaskPage = () => {
       header: t("Last Update")
     },
     {
-      accessorKey: "uuid",
+      accessorKey: "completion",
+      id: "uuid",
       header: "",
       enableSorting: false,
       cell: props => {
@@ -285,9 +303,14 @@ const ReportingTaskPage = () => {
                   {t("Write report")}
                 </Button>
               </Case>
-              <Case condition={record.completion_status === "completed"}>
+              <Case condition={["approved", "awaiting-approval"].includes(record.completion_status)}>
                 <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
                   {t("View Completed Report")}
+                </Button>
+              </Case>
+              <Case condition={record.completion_status === "needs-more-information"}>
+                <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
+                  {t("View Feedback")}
                 </Button>
               </Case>
               <Default>
@@ -326,6 +349,7 @@ const ReportingTaskPage = () => {
           {t("Submit Report")}
         </Button>
       </PageHeader>
+      <StatusBar status={StatusMapping?.[reportingTask?.status]} />
       <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
         <PageSection>
           <PageCard title={t("Mandatory Project Report")}>

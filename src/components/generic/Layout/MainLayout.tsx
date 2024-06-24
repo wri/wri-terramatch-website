@@ -10,7 +10,7 @@ const MainLayout = (props: PropsWithChildren<MainLayoutProps>) => {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Navbar isLoggedIn={props.isLoggedIn} />
-      <main className={`flex min-h-[calc(100vh-74px)] flex-1 flex-col ${props.className}`}>{props.children}</main>
+      <main className={`flex flex-[1_1_0] flex-col ${props.className}`}>{props.children}</main>
     </div>
   );
 };

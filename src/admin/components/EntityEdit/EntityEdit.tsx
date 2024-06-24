@@ -5,7 +5,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ENTITYUUID, useGetV2FormsENTITYUUID, usePutV2FormsENTITYUUID } from "@/generated/apiComponents";
+import {
+  GetV2FormsENTITYUUIDResponse,
+  useGetV2FormsENTITYUUID,
+  usePutV2FormsENTITYUUID
+} from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import {
@@ -35,27 +39,30 @@ export const EntityEdit = () => {
 
   const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
 
-  const { data: entityData } = useGetV2ENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  const entity = entityData?.data || {}; //Do not abuse this since forms should stay entity agnostic!
+  const {
+    data: formResponse,
+    isLoading,
+    isError: loadError
+  } = useGetV2FormsENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
-  const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  //@ts-ignore
-
-  const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+  // @ts-ignore
+  const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
   const formSteps = useGetCustomFormSteps(formData.form, {
     entityName: pluralEntityNameToSingular(entityName),
     entityUUID
   });
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData.answers, formSteps);
-  const formTitle = entity.report_title || entity.title || entity.name;
 
-  if (isError) {
+  const defaultValues = useNormalizedFormDefaultValue(
+    // @ts-ignore
+    formData?.update_request?.content ?? formData?.answers,
+    formSteps
+  );
+
+  // @ts-ignore
+  const { form_title: title } = formData;
+
+  if (loadError) {
     return notFound();
   }
 
@@ -75,7 +82,7 @@ export const EntityEdit = () => {
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}
-          title={formTitle}
+          title={title}
           tabOptions={{
             markDone: true,
             disableFutureTabs: true

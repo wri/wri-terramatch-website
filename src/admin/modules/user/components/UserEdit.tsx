@@ -2,7 +2,7 @@ import { AutocompleteInput, Edit, ReferenceInput, SelectInput, SimpleForm, TextI
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
-import { userPrimaryRoleChoices } from "@/admin/modules/user/const";
+import { countriesChoices, frameworkChoices, userPrimaryRoleChoices } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
 
 import modules from "../..";
@@ -39,6 +39,8 @@ const UserEdit = () => {
         </ReferenceInput>
 
         {isSuperAdmin && <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
+        <SelectInput source="country" label="Country" choices={countriesChoices} fullWidth />
       </SimpleForm>
     </Edit>
   );

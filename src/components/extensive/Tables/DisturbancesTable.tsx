@@ -40,7 +40,7 @@ const DisturbancesTable = ({ modelName, modelUUID, collection, onFetch }: Distur
     <div>
       <ServerSideTable
         meta={disturbances?.meta}
-        data={disturbances?.data || []}
+        data={disturbances?.data ?? []}
         isLoading={isLoading}
         onQueryParamChange={setQueryParams}
         columns={getDisturbanceTableColumns({ hasExtent: hasAllHeaders, hasIntensity: hasAllHeaders }, t)}

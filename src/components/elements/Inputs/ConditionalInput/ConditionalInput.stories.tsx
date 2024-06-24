@@ -16,7 +16,8 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   render: args => {
     const formHook = useForm();
-    return <Component {...args} control={formHook.control} formHook={formHook} />;
+    const onChangeCapture = () => {};
+    return <Component {...args} control={formHook.control} formHook={formHook} onChangeCapture={onChangeCapture} />;
   },
   args: {
     name: "conditional-field",

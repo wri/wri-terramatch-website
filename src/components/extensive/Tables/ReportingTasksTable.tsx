@@ -3,19 +3,19 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { GetV2ProjectsUUIDSitesResponse, useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
+import { useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import { useGetReportingWindow } from "@/hooks/useGetReportingWindow";
 
 interface ReportingTasksTableProps {
   projectUUID: string;
   reportingPeriod: "quarterly" | "bi-annually";
-  onFetch?: (data: GetV2ProjectsUUIDSitesResponse) => void;
 }
 
-const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: ReportingTasksTableProps) => {
+const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTableProps) => {
   const t = useT();
   const { format } = useDate();
   const [queryParams, setQueryParams] = useState();
@@ -28,7 +28,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
     },
     {
       keepPreviousData: true,
-      onSuccess: onFetch
+      enabled: queryParams != null
     }
   );
 
@@ -38,6 +38,8 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
       data={reportingTasks?.data || []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
+      variant={VARIANT_TABLE_BORDER_ALL}
+      initialTableState={{ sorting: [{ id: "due_at", desc: true }] }}
       columns={[
         {
           accessorKey: "due_at",
@@ -53,13 +55,14 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod, onFetch }: Reportin
           }
         },
         {
+          id: "title",
           accessorKey: "due_at",
           header: t("Title"),
           enableSorting: false,
           cell: props => {
             const value = props.getValue() as string;
             return (
-              <p className="whitespace-nowrap">
+              <p className="text-14-light whitespace-nowrap">
                 {t("Project Report") + ` ${getReportingWindow(value, reportingPeriod)}`}
               </p>
             );
@@ -97,6 +100,10 @@ export default ReportingTasksTable;
 
 export const CompletionStatusMapping = (t: typeof useT): any => {
   return {
+    "needs-more-information": {
+      status: "warning",
+      statusText: t("Needs More Information")
+    },
     "not-started": {
       status: "error",
       statusText: t("Not started")
@@ -105,13 +112,17 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
       status: "edit",
       statusText: t("Started")
     },
-    completed: {
+    approved: {
       status: "success",
-      statusText: t("Completed")
+      statusText: t("Approved")
     },
     "nothing-to-report": {
       status: "warning",
       statusText: t("Nothing Reported")
+    },
+    "awaiting-approval": {
+      status: "success",
+      statusText: t("Submitted for approval")
     }
   };
 };
@@ -122,13 +133,17 @@ export const SubmissionStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Due")
     },
-    overdue: {
-      status: "error",
-      statusText: t("Overdue")
+    "awaiting-approval": {
+      status: "awaiting",
+      statusText: t("Awaiting approval")
     },
-    complete: {
+    "needs-more-information": {
+      status: "warning",
+      statusText: t("Needs more information")
+    },
+    approved: {
       status: "success",
-      statusText: t("Completed")
+      statusText: t("Approved")
     }
   };
 };

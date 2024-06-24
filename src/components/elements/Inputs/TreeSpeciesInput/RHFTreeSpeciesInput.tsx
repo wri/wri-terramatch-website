@@ -1,12 +1,11 @@
 import { useT } from "@transifex/react";
 import _ from "lodash";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useCallback } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { useDeleteV2TreeSpeciesUUID, usePatchV2TreeSpeciesUUID, usePostV2TreeSpecies } from "@/generated/apiComponents";
 import { updateArrayState } from "@/utils/array";
 
-import TreeSpeciesInput, { TreeSpeciesInputProps } from "./TreeSpeciesInput";
+import TreeSpeciesInput, { TreeSpeciesInputProps, TreeSpeciesValue } from "./TreeSpeciesInput";
 
 export interface RHFTreeSpeciesInputProps
   extends Omit<TreeSpeciesInputProps, "value" | "onChanges">,
@@ -14,7 +13,7 @@ export interface RHFTreeSpeciesInputProps
   model: string;
   uuid: string;
   collection?: string;
-  onChangeCapture?: () => void;
+  onChangeCapture: () => void;
   formHook?: UseFormReturn;
 }
 
@@ -24,47 +23,38 @@ export interface RHFTreeSpeciesInputProps
  */
 const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>) => {
   const t = useT();
+
   const {
     field: { value, onChange }
   } = useController(props);
+  const { formHook, collection } = props;
 
-  const { mutate: createTreeSpecies } = usePostV2TreeSpecies({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      onChange(_tmp);
-      props.formHook?.clearErrors(props.name);
-    }
-  });
-  const { mutate: updateTreeSpecies } = usePatchV2TreeSpeciesUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      onChange(updateArrayState(value, data.data, "uuid"));
-      props.formHook?.clearErrors(props.name);
-    }
-  });
-  const { mutate: deleteTreeSpecies } = useDeleteV2TreeSpeciesUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      onChange(value);
-      props.formHook?.clearErrors(props.name);
-    }
-  });
+  const createTreeSpecies = useCallback(
+    (treeValue: TreeSpeciesValue) => {
+      onChange([...(value ?? []), { ...treeValue, collection }]);
+      formHook?.clearErrors(props.name);
+    },
+    [value, onChange, formHook, props.name, collection]
+  );
 
-  const handleUpdate = (value: any) => {
-    if (value.uuid) {
-      const body: any = {};
-      if (value.name) body.name = value.name;
-      if (value.amount) body.amount = value.amount;
+  const updateTreeSpecies = useCallback(
+    (treeValue: TreeSpeciesValue) => {
+      onChange(updateArrayState(value, treeValue, "uuid"));
+      formHook?.clearErrors(props.name);
+    },
+    [value, onChange, formHook, props.name]
+  );
 
-      updateTreeSpecies({
-        pathParams: { uuid: value.uuid },
-        body
-      });
-    }
-  };
+  const deleteTreeSpecies = useCallback(
+    (uuid: string | undefined) => {
+      if (uuid != null) {
+        _.remove(value, (v: TreeSpeciesValue) => v.uuid == uuid);
+        onChange(value);
+        formHook?.clearErrors(props.name);
+      }
+    },
+    [value, onChange, formHook, props.name]
+  );
 
   return (
     <TreeSpeciesInput
@@ -72,26 +62,10 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
       title={t("Tree Species")}
       buttonCaptionSuffix={t("Species")}
       value={value || []}
-      handleCreate={value => {
-        createTreeSpecies({
-          //@ts-ignore
-          body: {
-            name: value.name || "",
-            amount: value.amount,
-            //@ts-ignore
-            model_uuid: props.uuid,
-            model_type: props.model,
-            collection: props.collection
-          }
-        });
-      }}
-      handleNameUpdate={handleUpdate}
-      handleAmountUpdate={handleUpdate}
-      handleDelete={uuid => {
-        if (uuid) {
-          deleteTreeSpecies({ pathParams: { uuid } });
-        }
-      }}
+      handleCreate={createTreeSpecies}
+      handleNameUpdate={updateTreeSpecies}
+      handleAmountUpdate={updateTreeSpecies}
+      handleDelete={deleteTreeSpecies}
       onError={() =>
         props.formHook?.setError(props.name, { message: t("One or more values are missing"), type: "required" })
       }

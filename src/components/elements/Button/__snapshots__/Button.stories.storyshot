@@ -2,12 +2,12 @@
 
 exports[`Storyshots Components/Elements/Buttons Disabled Link 1`] = `
 <button
-  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   disabled={true}
   href="/"
 >
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Disabled Link
   </span>
@@ -16,10 +16,10 @@ exports[`Storyshots Components/Elements/Buttons Disabled Link 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Primary 1`] = `
 <button
-  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
 >
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Primary
   </span>
@@ -28,11 +28,11 @@ exports[`Storyshots Components/Elements/Buttons Primary 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Primary Disabled 1`] = `
 <button
-  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   disabled={true}
 >
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Primary
   </span>
@@ -41,7 +41,7 @@ exports[`Storyshots Components/Elements/Buttons Primary Disabled 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Primary Icon 1`] = `
 <button
-  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
 >
   <div
     style={
@@ -52,7 +52,7 @@ exports[`Storyshots Components/Elements/Buttons Primary Icon 1`] = `
     }
   />
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Primary
   </span>
@@ -61,11 +61,11 @@ exports[`Storyshots Components/Elements/Buttons Primary Icon 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Primary Link 1`] = `
 <a
-  className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   href="/"
 >
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Primary Link
   </span>
@@ -74,10 +74,10 @@ exports[`Storyshots Components/Elements/Buttons Primary Link 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Secondary 1`] = `
 <button
-  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
 >
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Secondary
   </span>
@@ -86,11 +86,11 @@ exports[`Storyshots Components/Elements/Buttons Secondary 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Secondary Disabled 1`] = `
 <button
-  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   disabled={true}
 >
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Secondary
   </span>
@@ -99,7 +99,7 @@ exports[`Storyshots Components/Elements/Buttons Secondary Disabled 1`] = `
 
 exports[`Storyshots Components/Elements/Buttons Secondary Icon 1`] = `
 <button
-  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-1.75 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+  className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
 >
   <div
     style={
@@ -110,7 +110,7 @@ exports[`Storyshots Components/Elements/Buttons Secondary Icon 1`] = `
     }
   />
   <span
-    className="text-bold-caption-200 pt-0.75 leading-3"
+    className="flex items-center text-bold-caption-200"
   >
     Secondary
   </span>
@@ -122,7 +122,7 @@ exports[`Storyshots Components/Elements/Buttons Text 1`] = `
   className="flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
 >
   <span
-    className="text-bold-body-300"
+    className="text-12-bold"
   >
     Text
   </span>

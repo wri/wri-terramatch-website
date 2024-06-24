@@ -1,17 +1,16 @@
 //@ts-nocheck Swagger type def is quite wrong!
 import { useT } from "@transifex/react";
-import { format } from "date-fns";
 import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
-import { getWorkdaysTableColumns } from "@/components/elements/Inputs/DataTable/RHFWorkdaysTable";
+import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hooks";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { Option } from "@/types/common";
-import { objectArrayHasDuplication } from "@/utils/array";
 import { urlValidation } from "@/utils/yup";
 
 export function normalizedFormData<T = any>(values: T, steps: FormStepSchema[]): T {
@@ -70,9 +69,7 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      if (field.fieldProps.type !== "date") {
-        normalizedFieldDefaultValue(values, field, isMigrated);
-      }
+      normalizedFieldDefaultValue(values, field, isMigrated);
     }
   }
 
@@ -82,8 +79,11 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
   switch (field.type) {
     case FieldType.Input: {
-      if (field.fieldProps.type === "date" && !!values[field.name]) {
-        values[field.name] = format(new Date(values[field.name]), "yyyy-MM-dd");
+      if (field.fieldProps.type === "date") {
+        const parsedValue = parseDateValues(values[field.name]);
+        if (parsedValue) {
+          values[field.name] = parsedValue;
+        }
       }
       break;
     }
@@ -153,7 +153,6 @@ export const apiQuestionsToFormFields = (questions: any, t: typeof useT, entity?
     })
     .filter(field => !!field) as FormField[];
 
-//TODO: add tree species input_type when endpoint is updated
 export const apiFormQuestionToFormField = (
   question: FormQuestionRead,
   t: typeof useT,
@@ -450,9 +449,7 @@ export const apiFormQuestionToFormField = (
         fieldProps: {
           required,
           entity,
-          addButtonCaption: question.add_button_text,
-          collection: question.collection,
-          ethnicityOptions: getOptions(question, t)
+          collection: question.collection
         }
       };
     }
@@ -516,13 +513,13 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   let options: Option[] = [];
 
   if (question.options?.length > 0) {
-    return (options = question.options
+    return question.options
       ? (sortBy(question.options, "order").map(option => ({
           title: option.label,
           value: option.slug,
           meta: omit(option, ["label", "slug"])
         })) as Option[])
-      : []);
+      : [];
   }
 
   switch (question.options_list) {
@@ -617,31 +614,38 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
     }
 
     case "workdays": {
-      validation = yup.array();
-      validation = validation.test({
-        name: "duplicated",
-        exclusive: false,
-        message: t("You've already added an item that matches this selection. Please try a different one."),
-        test: function (values) {
-          return !objectArrayHasDuplication(
-            values || [],
-            getWorkdaysTableColumns(t => t, [])
-              .filter(header => header.accessorKey !== "amount")
-              .map(header => header.accessorKey)
-          );
-        }
-      });
+      validation = yup
+        .array()
+        .min(0)
+        .max(1)
+        .of(
+          yup.object({
+            collection: yup.string().required(),
+            demographics: yup
+              .array()
+              .of(
+                yup.object({
+                  type: yup.string(),
+                  subtype: yup.string().nullable(),
+                  name: yup.string().nullable(),
+                  amount: yup.number()
+                })
+              )
+              .required()
+          })
+        )
+        .test(
+          "totals-match",
+          () => "The totals for each demographic type do not match",
+          value => {
+            const { demographics } = value.length > 0 ? value[0] : {};
+            if (demographics == null) return true;
 
-      if (max) validation = validation.max(max);
-      if (isNumber(min)) validation = validation.min(min);
+            return calculateTotals(demographics).countsMatch;
+          }
+        );
 
-      if (required) {
-        if (isNumber(min)) {
-          validation = validation.required();
-        } else {
-          validation = validation.min(1).required();
-        }
-      }
+      if (required) validation = validation.required();
 
       return validation;
     }
