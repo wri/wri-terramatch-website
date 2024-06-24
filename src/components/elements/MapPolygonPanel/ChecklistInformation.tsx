@@ -30,10 +30,9 @@ const ChecklistInformation = () => {
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
   const t = useT();
 
-  const { editPolygon } = useMapAreaContext();
+  const { editPolygon, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
 
-  // add refetch: reloadCriteriaValidation to the useGetV2TerrafundValidationCriteriaData
-  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
+  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
         uuid: editPolygon?.uuid
@@ -45,6 +44,13 @@ const ChecklistInformation = () => {
   );
 
   useEffect(() => {
+    if (shouldRefetchValidation) {
+      reloadCriteriaValidation();
+      setShouldRefetchValidation(false);
+    }
+  }, [shouldRefetchValidation]);
+
+  useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
         id: criteria.criteria_id,
@@ -53,16 +59,11 @@ const ChecklistInformation = () => {
         label: validationLabels[criteria.criteria_id]
       }));
       setPolygonValidationData(transformedData);
-      console.log("transformedData", transformedData);
       setValidationStatus(true);
     } else {
       setValidationStatus(false);
     }
   }, [criteriaData]);
-
-  useEffect(() => {
-    console.log("polygonValidationData", polygonValidationData);
-  }, [polygonValidationData]);
 
   useEffect(() => {
     if (polygonValidationData) {

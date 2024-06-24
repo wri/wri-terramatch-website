@@ -26,6 +26,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
+  const [stateViewPanel, setStateViewPanel] = useState(false);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
@@ -137,6 +138,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           type={type}
           onSelectItem={() => {}}
           onLoadMore={() => {}}
+          stateViewPanel={stateViewPanel}
+          setStateViewPanel={setStateViewPanel}
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
           setPreviewVersion={() => {}}
@@ -170,7 +173,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         showPopups
         showLegend
         siteData={true}
-        status={true}
+        status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
+        validationType={stateViewPanel ? "bulkValidation" : "individualValidation"}
         record={entityModel}
         className="flex-1 rounded-r-lg"
         polygonsExists={polygonsData.length > 0}
