@@ -201,7 +201,7 @@ export const MapContainer = ({
   }
 
   const handleEditPolygon = async () => {
-    removePopups();
+    removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap.uuid;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({

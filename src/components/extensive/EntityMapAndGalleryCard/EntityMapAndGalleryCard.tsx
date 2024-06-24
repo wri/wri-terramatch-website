@@ -13,6 +13,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import {
+  GetV2MODELUUIDFilesResponse,
   GetV2TypeEntityResponse,
   useDeleteV2FilesUUID,
   useGetV2MODELUUIDFiles,
@@ -67,7 +68,7 @@ const EntityMapAndGalleryCard = ({
 
   const polygonDataMap = mapPolygonData(sitePolygonData?.polygonsData);
 
-  const { data, refetch } = useGetV2MODELUUIDFiles({
+  const { data, refetch } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
     pathParams: { model: modelName, uuid: modelUUID },
     queryParams
@@ -125,6 +126,7 @@ const EntityMapAndGalleryCard = ({
           showLegend
           hasControls
           showPopups
+          modelFilesData={data?.data}
         />
       </PageCard>
       <If
