@@ -93,7 +93,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 variant="secondary"
                 href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
               >
-                {t("expand view")}
+                {t("Add New Site")}
               </Button>
             }
           >
