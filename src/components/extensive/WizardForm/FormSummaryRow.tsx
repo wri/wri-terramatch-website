@@ -213,11 +213,16 @@ const getSitePolygonData = (record: any) => {
 };
 
 const getSiteBbox = (record: any) => {
-  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
-    pathParams: {
-      site: record?.uuid
+  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
+    {
+      pathParams: {
+        site: record?.uuid
+      }
+    },
+    {
+      enabled: record?.uuid != null
     }
-  });
+  );
   return sitePolygonBbox?.bbox;
 };
 
