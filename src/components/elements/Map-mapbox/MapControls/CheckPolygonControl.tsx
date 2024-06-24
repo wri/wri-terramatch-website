@@ -16,13 +16,13 @@ export interface CheckSitePolygonProps {
   };
 }
 
-export interface CheckedPolygon {
+interface CheckedPolygon {
   uuid: string;
   valid: boolean;
   checked: boolean;
 }
 
-export interface TransformedData {
+interface TransformedData {
   id: number;
   valid: boolean;
   checked: boolean;
