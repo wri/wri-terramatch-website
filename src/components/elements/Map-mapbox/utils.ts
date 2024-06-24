@@ -152,6 +152,12 @@ export const removePopups = (key: "POLYGON" | "MEDIA") => {
   popupAttachedMap[key] = [];
 };
 
+export const removeMediaLayer = (map: mapboxgl.Map) => {
+  const layerName = "media-images";
+  map.getLayer(layerName) && map.removeLayer(layerName);
+  map.getSource(layerName) && map.removeSource(layerName);
+};
+
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   if (map && polygonsData) {
     if (map.isStyleLoaded() || map.loaded()) {
@@ -185,8 +191,7 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
 
 export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
   const layerName = "media-images";
-  map.getLayer(layerName) && map.removeLayer(layerName);
-  map.getSource(layerName) && map.removeSource(layerName);
+  removeMediaLayer(map);
   removePopups("MEDIA");
   const modelFilesGeolocalized = modelFilesData!.filter(
     model => model.location && model.location.lat && model.location.lng

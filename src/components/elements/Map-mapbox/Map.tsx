@@ -41,6 +41,7 @@ import {
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  removeMediaLayer,
   removePopups,
   startDrawing,
   stopDrawing,
@@ -113,6 +114,7 @@ export const MapContainer = ({
   shouldBboxZoom = true,
   ...props
 }: MapProps) => {
+  const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
@@ -178,9 +180,20 @@ export const MapContainer = ({
 
   useEffect(() => {
     if (props?.modelFilesData) {
-      addMediaSourceAndLayer(map.current, props?.modelFilesData);
+      if (showMediaPopups) {
+        addMediaSourceAndLayer(map.current, props?.modelFilesData);
+      } else {
+        removePopups("MEDIA");
+        removeMediaLayer(map.current);
+      }
     }
-  }, [props?.modelFilesData]);
+  }, [props?.modelFilesData, showMediaPopups]);
+
+  useEffect(() => {
+    if (geojson && map.current && draw.current) {
+      addGeojsonToDraw(geojson, "", () => {}, draw.current);
+    }
+  }, [showMediaPopups]);
 
   function handleAddGeojsonToDraw(polygonuuid: string) {
     if (polygonsData && map.current && draw.current) {
@@ -282,7 +295,7 @@ export const MapContainer = ({
           </button>
         </ControlGroup>
         <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
-          <ImageCheck />
+          <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
           <ViewImageCarousel />
         </ControlGroup>
       </When>
