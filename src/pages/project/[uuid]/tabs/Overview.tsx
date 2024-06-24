@@ -14,14 +14,6 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { getCountriesOptions } from "@/constants/options/countries";
-import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
-import { useDate } from "@/hooks/useDate";
-import { useFramework } from "@/hooks/useFramework";
-import { useGetOptions } from "@/hooks/useGetOptions";
-import ProjectArea from "@/pages/project/[uuid]/components/ProjectArea";
-import { filterRestorationStrategiesOptions } from "@/utils/filterRestorationStrategies";
-import { formatOptionsList } from "@/utils/options";
 import { useFramework } from "@/hooks/useFramework";
 
 interface ProjectOverviewTabProps {
@@ -32,12 +24,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
   const { isPPC } = useFramework(project);
-  const { format } = useDate();
-
-  const restorationOptions = getRestorationStrategyOptions(t);
-
-  const landUseTypesOptions = useGetOptions(project.land_use_types);
-  const restorationStrategyOptions = useGetOptions(filterRestorationStrategiesOptions(restorationOptions, project));
 
   return (
     <PageBody>
