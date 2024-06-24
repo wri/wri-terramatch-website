@@ -1,11 +1,11 @@
 import classNames from "classnames";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 export interface ImageWithPlaceholderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  imageUrl?: string;
+  imageUrl?: string | StaticImageData;
   alt: string;
   placeholderIconSize?: number;
 }
@@ -26,7 +26,7 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
       )}
     >
       {imageUrl ? (
-        <Image src={imageUrl} alt={alt} fill className="object-cover" />
+        <Image src={imageUrl} alt={alt} fill className="object-cover" onError={() => console.log("fallo iumagen")} />
       ) : (
         <Icon
           name={IconNames.IMAGE_PLACEHOLDER}

@@ -11,6 +11,7 @@ export interface PaginationProps extends PageSelectorProps {
   defaultPageSize?: number;
   setPageSize?: (count: number) => void;
   variant?: VariantPagination;
+  invertSelect?: boolean;
 }
 
 function Pagination(props: PaginationProps) {
@@ -24,6 +25,7 @@ function Pagination(props: PaginationProps) {
           variantText={props.variant?.VariantPrePageText}
           defaultValue={props.defaultPageSize}
           onChange={props.setPageSize!}
+          invertSelect={props.invertSelect}
         />
       ) : (
         <div />

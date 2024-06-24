@@ -1,6 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import classNames from "classnames";
 import { PropsWithChildren, useState } from "react";
+import { twMerge as tw } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -12,7 +13,7 @@ export interface PerPageSelectorProps {
   defaultValue?: number;
   options: number[];
   variantText?: TextVariants;
-
+  invertSelect?: boolean;
   className?: string;
   onChange: (value: number) => void;
 }
@@ -60,7 +61,10 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
           >
             <Listbox.Options
               as="div"
-              className="absolute mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
+              className={classNames(
+                "absolute mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow",
+                { "bottom-[50px]": props.invertSelect }
+              )}
             >
               {props.options.map(option => {
                 let isSelected = value === option;
@@ -70,8 +74,9 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                     as={Text}
                     key={option}
                     value={option}
+                    reversed={props.invertSelect}
                     variant={props.variantText ?? "text-14"}
-                    className={classNames(
+                    className={tw(
                       "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
                       isSelected ? "!font-bold" : "!font-light"
                     )}
