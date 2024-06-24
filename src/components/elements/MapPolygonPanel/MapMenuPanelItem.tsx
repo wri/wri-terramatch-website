@@ -5,12 +5,14 @@ import { DetailedHTMLProps, HTMLAttributes } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 
 import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
+import { StatusEnum } from "../Status/constants/statusMap";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -38,6 +40,9 @@ const MapMenuPanelItem = ({
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
+  // const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
+  // const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
+  // const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const { isMonitoring } = useMapAreaContext();
   const t = useT();
@@ -54,6 +59,20 @@ const MapMenuPanelItem = ({
       />
     );
   };
+
+  const openFormModalHandlerAddCommentary = () => {
+    openModal(
+      <ModalWithLogo
+        title={t("Blue Forest")}
+        onClose={closeModal}
+        status={status as StatusEnum}
+        toogleButton
+        primaryButtonText={t("Close")}
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      />
+    );
+  };
+
   const commonItems = [
     {
       id: "1",
@@ -89,6 +108,22 @@ const MapMenuPanelItem = ({
       onClick: () => setClickedButton("editPolygon")
     },
     ...commonItems,
+    {
+      id: "4",
+      is_airtable: true,
+      render: () => (
+        <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
+          <Icon name={IconNames.COMMENT} className="h-6 w-6" />
+          <Text variant="text-12-bold">{t("Comment")}</Text>
+        </Button>
+      ),
+      onClick: (uuid: any) => {
+        console.log("uuid", uuid);
+        // setSelectedPolygon(uuid);
+        // setIsOpenPolygonDrawer(true);
+        // setIsPolygonStatusOpen(true);
+      }
+    },
     {
       id: "5",
       render: () => (
@@ -141,7 +176,17 @@ const MapMenuPanelItem = ({
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
           <div className="flex h-full self-start">
-            <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
+            <Menu
+              container={refContainer?.current}
+              placement={MENU_PLACEMENT_RIGHT_BOTTOM}
+              menu={itemsPrimaryMenu}
+              extraData={{
+                uuid,
+                title,
+                subtitle,
+                status
+              }}
+            >
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
                 className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
