@@ -29,7 +29,7 @@ const ReverseButtonStates2: { [key: number]: string } = {
   2: "site-polygon"
 };
 
-const statusActionsMap = {
+export const statusActionsMap = {
   [AuditLogButtonStates.PROJECT as number]: {
     mutateEntity: fetchPutV2ENTITYUUIDStatus,
     valuesForStatus: getValueForStatusProject,

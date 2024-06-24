@@ -11,5 +11,9 @@ export const getRestorationStrategyOptions = (t: typeof useT = (t: string) => t)
     value: "direct-seeding",
     title: t("Direct Seeding")
   },
-  { value: "tree-planting", title: t("Tree Planting") }
+  { value: "tree-planting", title: t("Tree Planting") },
+  {
+    value: "non-tree-based-intervention",
+    title: t("Non-Tree based Intervention")
+  }
 ];

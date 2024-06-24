@@ -145,29 +145,6 @@ const Input = forwardRef(
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
 
-    const formatNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const input = event.target as HTMLInputElement;
-      const value = input.value.replace(/[^\d.]/g, "");
-
-      const [integerPart, decimalPart] = value.split(".");
-
-      const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-      let formattedValue = formattedIntegerPart;
-      if (decimalPart !== undefined) {
-        formattedValue += "." + decimalPart.slice(0, 2);
-      }
-      input.value = formattedValue;
-    };
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (format === "number") {
-        formatNumber(event);
-      } else if (inputProps.type === "password") {
-        registeredFormProps?.onChange(event);
-      }
-    };
-
     return (
       <InputWrapper
         inputId={id}
@@ -189,7 +166,6 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
-            onChange={handleChange}
             ref={registeredFormProps?.ref || ref}
             id={id}
             className={inputClasses}

@@ -14,5 +14,9 @@ exports[`snapShot test getRestorationStrategy 1`] = `
     "title": "Tree Planting",
     "value": "tree-planting",
   },
+  {
+    "title": "Non-Tree based Intervention",
+    "value": "non-tree-based-intervention",
+  },
 ]
 `;
