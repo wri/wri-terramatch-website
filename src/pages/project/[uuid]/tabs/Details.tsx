@@ -21,7 +21,6 @@ import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from 
 import { useFramework } from "@/hooks/useFramework";
 import { useGetOptions } from "@/hooks/useGetOptions";
 import InviteMonitoringPartnerModal from "@/pages/project/[uuid]/components/InviteMonitoringPartnerModal";
-import { filterRestorationStrategiesOptions } from "@/utils/filterRestorationStrategies";
 
 interface ProjectDetailsTabProps {
   project: any;
@@ -34,9 +33,13 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
 
   const restorationOptions = getRestorationStrategyOptions(t);
 
+  const filterRestorationStrategyOptions = restorationOptions
+    .filter(option => project.restoration_strategy.includes(option.value))
+    .map(option => option.value.toString());
+
   const landUseTypesOptions = useGetOptions(project.land_use_types);
   const sdgsImpactedOptions = useGetOptions(project.sdgs_impacted);
-  const restorationStrategyOptions = useGetOptions(filterRestorationStrategiesOptions(restorationOptions, project));
+  const restorationStrategyOptions = useGetOptions(filterRestorationStrategyOptions);
 
   const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
     pathParams: { uuid: project.uuid }
