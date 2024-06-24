@@ -296,7 +296,7 @@ export const MapContainer = ({
         </ControlGroup>
         <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
           <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-          <ViewImageCarousel />
+          <ViewImageCarousel modelFilesData={props?.modelFilesData} />
         </ControlGroup>
       </When>
       <When condition={showLegend}>

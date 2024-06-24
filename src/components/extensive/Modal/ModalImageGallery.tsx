@@ -122,7 +122,10 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                 />
                 <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
                   <Text variant="text-13" className="text-white">
-                    {selectedImage + 1} of {tabItems.find(tab => tab.id === selectedTab)?.images.length}
+                    {t("{selected} of {total}", {
+                      selected: selectedImage + 1,
+                      total: tabItems.find(tab => tab.id === selectedTab)?.images.length
+                    })}
                   </Text>
                 </div>
               </div>

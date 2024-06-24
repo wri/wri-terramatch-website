@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import Image, { StaticImageData } from "next/image";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
-
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import noImageAvailable from "public/images/no-image-available.png";
+import { DetailedHTMLProps, FC, HTMLAttributes, useState } from "react";
 
 export interface ImageWithPlaceholderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   imageUrl?: string | StaticImageData;
@@ -17,6 +16,7 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
   className,
   ...rest
 }) => {
+  const [hasErrored, setHasErrored] = useState(false);
   return (
     <div
       {...rest}
@@ -25,16 +25,13 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
         className
       )}
     >
-      {imageUrl ? (
-        <Image src={imageUrl} alt={alt} fill className="object-cover" onError={() => console.log("fallo iumagen")} />
-      ) : (
-        <Icon
-          name={IconNames.IMAGE_PLACEHOLDER}
-          className="text-primary-200"
-          width={placeholderIconSize}
-          height={placeholderIconSize}
-        />
-      )}
+      <Image
+        src={hasErrored || !imageUrl ? noImageAvailable : imageUrl}
+        alt={alt}
+        fill
+        className="object-cover"
+        onError={() => setHasErrored(true)}
+      />
     </div>
   );
 };

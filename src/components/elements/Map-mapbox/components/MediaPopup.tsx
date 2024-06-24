@@ -13,10 +13,12 @@ import ImageWithPlaceholder from "../../ImageWithPlaceholder/ImageWithPlaceholde
 const client = new QueryClient();
 
 export const MediaPopup = ({
+  uuid,
   name,
   created_date,
   file_url
 }: {
+  uuid: string;
   name: string;
   created_date: string;
   file_url: string;
@@ -37,11 +39,10 @@ export const MediaPopup = ({
             swiperSlideClassName="h-full"
             items={[
               {
-                id: "1",
+                id: uuid,
                 src: file_url,
-                title: "TerraMatch Sample",
-                dateCreated: "December 29, 2024",
-                geoTag: "Not Geo-Referenced"
+                title: name,
+                dateCreated: created_date
               }
             ]}
             carouselItem={item => (

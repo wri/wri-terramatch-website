@@ -194,7 +194,7 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
   removeMediaLayer(map);
   removePopups("MEDIA");
   const modelFilesGeolocalized = modelFilesData!.filter(
-    model => model.location && model.location.lat && model.location.lng
+    modelFile => modelFile.location?.lat && modelFile.location?.lng
   );
   if (modelFilesGeolocalized.length === 0) {
     return;
@@ -204,7 +204,7 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: [modelFile.location?.lng, modelFile.location?.lat]
+      coordinates: [modelFile.location!.lng, modelFile.location!.lat]
     },
     properties: {
       uuid: modelFile.uuid,
@@ -237,7 +237,6 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
 
   map.on("mouseenter", layerName, e => {
     e.preventDefault();
-    console.log("mouseenter", e.features);
     e.features!.forEach((feature: any) => {
       let popupContent = document.createElement("div");
       popupContent.className = "popup-content-media";
