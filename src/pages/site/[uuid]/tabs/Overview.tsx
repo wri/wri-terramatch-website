@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -13,6 +14,7 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
@@ -31,6 +33,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
+import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { useFramework } from "@/hooks/useFramework";
 import { FileType, UploadedFile } from "@/types/common";
 
@@ -172,6 +175,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     }
   ];
 
+  const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.SITE];
+
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <PageBody>
@@ -251,6 +256,15 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       </Menu>
                     )}
                   </div>
+                </div>
+                <div className="w-[46%]">
+                  <StepProgressbar
+                    color="secondary"
+                    value={valuesForStatus?.(site?.status) ?? 0}
+                    labels={statusLabels}
+                    classNameLabels="min-w-[99px]"
+                    className={"w-[98%] pl-[1%]"}
+                  />
                 </div>
               </div>
               <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
