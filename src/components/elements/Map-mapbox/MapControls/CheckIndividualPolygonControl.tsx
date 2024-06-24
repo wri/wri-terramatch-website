@@ -1,12 +1,13 @@
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
+import { When } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchPostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
 
-const CheckIndividualPolygonControl = () => {
+const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSuport: boolean }) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const { editPolygon, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
@@ -24,10 +25,19 @@ const CheckIndividualPolygonControl = () => {
   }, [clickedValidation]);
 
   return (
-    <div className="grid gap-2">
+    <div className="flex gap-2">
+      <When condition={viewRequestSuport}>
+        <Button
+          variant="text"
+          className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-black hover:border-black"
+          onClick={() => setClickedValidation(true)}
+        >
+          {t("Request Support")}
+        </Button>
+      </When>
       <Button
         variant="text"
-        className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 text-white hover:border-white"
         onClick={() => setClickedValidation(true)}
       >
         {t("Check Polygons")}
