@@ -19,6 +19,7 @@ import { useDate } from "@/hooks/useDate";
 import { useFramework } from "@/hooks/useFramework";
 import { useGetOptions } from "@/hooks/useGetOptions";
 import ProjectArea from "@/pages/project/[uuid]/components/ProjectArea";
+import { filterRestorationStrategiesOptions } from "@/utils/filterRestorationStrategies";
 import { formatOptionsList } from "@/utils/options";
 
 interface ProjectOverviewTabProps {
@@ -33,12 +34,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
 
   const restorationOptions = getRestorationStrategyOptions(t);
 
-  const filterRestorationStrategyOptions = restorationOptions
-    .filter(option => project.restoration_strategy.includes(option.value))
-    .map(option => option.value.toString());
-
   const landUseTypesOptions = useGetOptions(project.land_use_types);
-  const restorationStrategyOptions = useGetOptions(filterRestorationStrategyOptions);
+  const restorationStrategyOptions = useGetOptions(filterRestorationStrategiesOptions(restorationOptions, project));
 
   return (
     <PageBody>
