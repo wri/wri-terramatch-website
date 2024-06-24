@@ -29,8 +29,8 @@ const PolygonReviewButtons = ({
   ];
 
   return (
-    <div className="flex items-start gap-3">
-      <div className="w-full">
+    <div className="flex flex-wrap items-start gap-3">
+      <div className="min-w-[450px] flex-[18]">
         <div className="mb-2">
           <Text variant="text-16-bold" className="mb-2 text-darkCustom">
             Polygon Review
@@ -66,7 +66,7 @@ const PolygonReviewButtons = ({
           </Button>
         </div>
       </div>
-      <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
+      <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
         <Text variant="text-14" className="mb-3 text-blueCustom-250">
           Site Status
         </Text>
