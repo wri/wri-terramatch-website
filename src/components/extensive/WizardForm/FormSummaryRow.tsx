@@ -215,7 +215,7 @@ const getSitePolygonData = (record: any) => {
 const getSiteBbox = (record: any) => {
   const { data: sitePolygonBbox } = useGetV2SitesSiteBbox({
     pathParams: {
-      site: record.uuid
+      site: record?.uuid
     }
   });
   return sitePolygonBbox?.bbox;
