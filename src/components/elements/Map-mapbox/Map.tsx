@@ -249,7 +249,7 @@ export const MapContainer = ({
         </When>
         <When condition={!!status && validationType === "individualValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-            <CheckIndividualPolygonControl />
+            <CheckIndividualPolygonControl viewRequestSuport={!siteData} />
           </ControlGroup>
         </When>
         <When condition={!!viewImages}>
