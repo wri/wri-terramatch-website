@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -40,6 +40,13 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
 }) => {
   const t = useT();
   const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
+  const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    if (polygonList) {
+      setPolygonsSelected(polygonList.map(_ => false));
+    }
+  }, [polygonList]);
 
   return (
     <ModalBaseSubmit {...rest}>
@@ -83,7 +90,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               {t("Submit")}
             </Text>
           </header>
-          {polygonList?.map(polygon => (
+          {polygonList?.map((polygon, index: number) => (
             <div key={polygon.uuid} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
                 {polygon.poly_name}
@@ -92,7 +99,17 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
                 <Status status={polygon.status as StatusEnum} />
               </div>
               <div className="flex flex-1 items-center justify-center">
-                <Checkbox name={""} />
+                <Checkbox
+                  name=""
+                  checked={polygonsSelected?.[index]}
+                  onClick={() => {
+                    setPolygonsSelected(prev => {
+                      const newSelected = [...prev];
+                      newSelected[index] = !prev[index];
+                      return newSelected;
+                    });
+                  }}
+                />
               </div>
             </div>
           ))}
