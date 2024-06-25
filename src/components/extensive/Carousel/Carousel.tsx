@@ -88,7 +88,7 @@ const Carousel = <T extends Record<any, any>>({
           {...swiperProps}
         >
           {items.map((item, i) => (
-            <SwiperSlide key={i} className={swiperSlideClassName}>
+            <SwiperSlide key={item.id} className={swiperSlideClassName}>
               {carouselItem(item, i)}
             </SwiperSlide>
           ))}

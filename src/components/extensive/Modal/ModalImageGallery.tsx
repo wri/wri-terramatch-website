@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { Navigation } from "swiper";
 
 import Button from "@/components/elements/Button/Button";
@@ -14,6 +14,9 @@ import { ModalBaseImageGallery } from "./ModalsBases";
 export interface ImageItem {
   id: string;
   src: string;
+  title: string;
+  dateCreated: string;
+  geoTag: string;
 }
 
 export interface TabImagesItem {
@@ -38,6 +41,11 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
   const [selectedTab, setSelectedTab] = useState(tabItems[0].id);
   const [selectedImage, setSelectedImage] = useState(0);
   const t = useT();
+  const [currentTab, currentImage] = useMemo(() => {
+    const _currentTab = tabItems.find(tab => tab.id === selectedTab)!;
+    const _currentImage = _currentTab.images[selectedImage];
+    return [_currentTab, _currentImage];
+  }, [tabItems, selectedTab, selectedImage]);
 
   return (
     <ModalBaseImageGallery {...rest}>
@@ -63,19 +71,17 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
       <div className="flex h-full max-h-[calc(100%_-_62px)] w-full gap-6">
         <div className="flex-[2] overflow-auto">
           <div className="grid-col-2 grid grid-flow-row auto-rows-[100px] gap-4 overflow-auto">
-            {tabItems
-              .find(tab => tab.id === selectedTab)
-              ?.images.map((image: ImageItem, index: number) => (
-                <ImageWithPlaceholder
-                  key={image.id}
-                  className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200", {
-                    "col-span-2 row-span-2": (index + 1) % 3 === 0,
-                    "!border-black": selectedImage === index
-                  })}
-                  alt={t("Image not available")}
-                  imageUrl={image.src}
-                ></ImageWithPlaceholder>
-              ))}
+            {currentTab.images.map((image: ImageItem, index: number) => (
+              <ImageWithPlaceholder
+                key={image.id}
+                className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200", {
+                  "col-span-2 row-span-2": (index + 1) % 3 === 0,
+                  "!border-black": selectedImage === index
+                })}
+                alt={t("Image not available")}
+                imageUrl={image.src}
+              ></ImageWithPlaceholder>
+            ))}
           </div>
         </div>
 
@@ -87,19 +93,35 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             setSelectedImage={setSelectedImage}
             carouselItem={item => (
               <div className="relative h-full px-24">
-                <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
-                  <Text variant="text-13" className="text-white">
-                    {selectedImage + 1} {t("of")} {tabItems.find(tab => tab.id === selectedTab)?.images.length}
+                <div className="absolute left-[24px] top-[24px] z-10 flex translate-x-[75%] flex-col items-center justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3">
+                  <Text variant="text-12-bold" className="text-black">
+                    {currentImage?.title}
+                  </Text>
+                  <Text variant="text-12-light" className="text-black">
+                    {currentImage?.dateCreated}
+                  </Text>
+                </div>
+                <div className="absolute right-[24px] top-[24px] z-10 flex translate-x-[-75%] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3">
+                  <Text variant="text-12-semibold" className="text-red-200">
+                    {currentImage?.geoTag}
                   </Text>
                 </div>
                 <ImageWithPlaceholder
                   className="h-full rounded-xl bg-primary-200"
                   alt={t("Image not available")}
                   imageUrl={item.src}
-                ></ImageWithPlaceholder>
+                />
+                <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
+                  <Text variant="text-13" className="text-white">
+                    {t("{selected} of {total}", {
+                      selected: selectedImage + 1,
+                      total: currentTab.images.length
+                    })}
+                  </Text>
+                </div>
               </div>
             )}
-            items={tabItems.find(tab => tab.id === selectedTab)?.images ?? []}
+            items={currentTab.images ?? []}
             modules={[Navigation]}
             slidesPerView={1}
             spaceBetween={10}

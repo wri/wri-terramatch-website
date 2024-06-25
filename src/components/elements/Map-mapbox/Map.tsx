@@ -14,7 +14,11 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundPolygonGeojsonUuid,
+  fetchPutV2TerrafundPolygonUuid,
+  GetV2MODELUUIDFilesResponse
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { AdminPopup } from "./components/AdminPopup";
@@ -24,6 +28,7 @@ import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
+import ImageCheck from "./MapControls/ImageCheck";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { StyleControl } from "./MapControls/StyleControl";
@@ -33,8 +38,10 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addFilterOnLayer,
   addGeojsonToDraw,
+  addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  removeMediaLayer,
   removePopups,
   startDrawing,
   stopDrawing,
@@ -80,6 +87,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
 }
 
 export const MapContainer = ({
@@ -106,6 +114,7 @@ export const MapContainer = ({
   shouldBboxZoom = true,
   ...props
 }: MapProps) => {
+  const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
@@ -169,6 +178,23 @@ export const MapContainer = ({
     }
   }, [bbox]);
 
+  useEffect(() => {
+    if (props?.modelFilesData) {
+      if (showMediaPopups) {
+        addMediaSourceAndLayer(map.current, props?.modelFilesData);
+      } else {
+        removePopups("MEDIA");
+        removeMediaLayer(map.current);
+      }
+    }
+  }, [props?.modelFilesData, showMediaPopups]);
+
+  useEffect(() => {
+    if (geojson && map.current && draw.current) {
+      addGeojsonToDraw(geojson, "", () => {}, draw.current);
+    }
+  }, [showMediaPopups]);
+
   function handleAddGeojsonToDraw(polygonuuid: string) {
     if (polygonsData && map.current && draw.current) {
       const currentMap = map.current;
@@ -189,7 +215,7 @@ export const MapContainer = ({
   }
 
   const handleEditPolygon = async () => {
-    removePopups();
+    removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap.uuid;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
@@ -268,8 +294,9 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
-        <ControlGroup position="bottom-right" className="bottom-8">
-          <ViewImageCarousel viewImages={viewImages} setViewImages={setViewImages} />
+        <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+          <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+          <ViewImageCarousel modelFilesData={props?.modelFilesData} />
         </ControlGroup>
       </When>
       <When condition={showLegend}>

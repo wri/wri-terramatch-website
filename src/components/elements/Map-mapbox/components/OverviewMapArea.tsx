@@ -7,7 +7,12 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
+import {
+  fetchGetV2DashboardCountryCountry,
+  GetV2MODELUUIDFilesResponse,
+  useGetV2MODELUUIDFiles,
+  useGetV2TypeEntity
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
@@ -46,6 +51,11 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
       [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
     }
   });
+
+  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
+    pathParams: { model: type, uuid: entityModel?.uuid }
+  });
+
   const setResultValues = (result: any) => {
     if (result?.polygonsData) {
       setPolygonsData(result.polygonsData);
@@ -175,6 +185,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
+        modelFilesData={modelFilesData?.data}
       />
     </>
   );

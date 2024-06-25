@@ -15,7 +15,7 @@ export interface GalleryImageItemProps extends DetailedHTMLProps<HTMLAttributes<
 
 const GalleryImageItem: FC<GalleryImageItemProps> = ({ data, className }) => {
   return (
-    <Card variant="outlined" className={classNames("relative overflow-hidden", className)}>
+    <Card variant="outlined" className={classNames("relative overflow-hidden !rounded-lg p-2", className)}>
       <ImageWithChildren
         imageSrc={{
           src: data.thumbnailImageUrl,
@@ -34,16 +34,24 @@ const GalleryImageItem: FC<GalleryImageItemProps> = ({ data, className }) => {
         </div>
       </ImageWithChildren>
 
-      <div className="px-8 py-4">
-        <Text variant="text-bold-body-300">
-          Uploaded via: <span className="capitalize">{data.raw?.model_name?.replaceAll("-", " ")}</span>
+      <div className="py-4">
+        <Text variant="text-16-bold" className="flex items-center gap-1">
+          Uploaded via:{" "}
+          <Text variant="text-16-light" className="capitalize">
+            {data.raw?.model_name?.replaceAll("-", " ")}
+          </Text>
         </Text>
-        <Text variant="text-bold-body-300">
-          Created:{" "}
-          <span className="capitalize">{format(new Date(Date.parse(data.raw?.created_date)), "Y-MM-dd HH:mm:ss")}</span>
+        <Text variant="text-16-bold" className="flex items-center gap-1">
+          Date uploaded:{" "}
+          <Text variant="text-16-light" className="capitalize">
+            {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")}
+          </Text>
         </Text>
-        <Text variant="text-bold-body-300">
-          Visibility: <span className="capitalize">{data.isPublic ? "Public" : "Private"}</span>
+        <Text variant="text-16-bold" className="flex items-center gap-1">
+          Visibility:{" "}
+          <Text variant="text-16-light" className="capitalize">
+            {data.isPublic ? "Public" : "Private"}
+          </Text>
         </Text>
       </div>
     </Card>

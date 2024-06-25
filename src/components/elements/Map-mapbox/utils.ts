@@ -8,12 +8,15 @@ import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
+  GetV2MODELUUIDFilesResponse
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
-import { BBox, FeatureCollection } from "./GeoJSON";
+import { MediaPopup } from "./components/MediaPopup";
+import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
+import { getPulsingDot } from "./pulsing.dot";
 
 const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
 const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
@@ -107,7 +110,10 @@ const showPolygons = (
 };
 
 let popup: mapboxgl.Popup | null = null;
-let arrayPopups: mapboxgl.Popup[] = [];
+let popupAttachedMap: Record<string, mapboxgl.Popup[]> = {
+  POLYGON: [],
+  MEDIA: []
+};
 
 export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   layersList.forEach((layer: any) => {
@@ -125,7 +131,7 @@ const handleLayerClick = (
   sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType
 ) => {
-  removePopups();
+  removePopups("POLYGON");
   const { lng, lat } = e.lngLat;
   const feature = e.features[0];
 
@@ -136,13 +142,20 @@ const handleLayerClick = (
 
   popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
 
-  arrayPopups.push(popup);
+  popupAttachedMap["POLYGON"].push(popup);
 };
 
-export const removePopups = () => {
-  arrayPopups.forEach(popup => {
+export const removePopups = (key: "POLYGON" | "MEDIA") => {
+  popupAttachedMap[key].forEach(popup => {
     popup.remove();
   });
+  popupAttachedMap[key] = [];
+};
+
+export const removeMediaLayer = (map: mapboxgl.Map) => {
+  const layerName = "media-images";
+  map.getLayer(layerName) && map.removeLayer(layerName);
+  map.getSource(layerName) && map.removeSource(layerName);
 };
 
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
@@ -174,6 +187,71 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
     };
     addToDrawAndFilter();
   }
+};
+
+export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
+  const layerName = "media-images";
+  removeMediaLayer(map);
+  removePopups("MEDIA");
+  const modelFilesGeolocalized = modelFilesData!.filter(
+    modelFile => modelFile.location?.lat && modelFile.location?.lng
+  );
+  if (modelFilesGeolocalized.length === 0) {
+    return;
+  }
+
+  const features: Feature<Geometry, GeoJsonProperties>[] = modelFilesGeolocalized.map(modelFile => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [modelFile.location!.lng, modelFile.location!.lat]
+    },
+    properties: {
+      uuid: modelFile.uuid,
+      name: modelFile.file_name,
+      created_date: modelFile.created_date,
+      file_url: modelFile.file_url
+    }
+  }));
+
+  const pulsingDot = getPulsingDot(map, 120);
+
+  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+
+  map.addSource(layerName, {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features
+    }
+  });
+
+  map.addLayer({
+    id: layerName,
+    type: "symbol",
+    source: layerName,
+    layout: {
+      "icon-image": "pulsing-dot"
+    }
+  });
+
+  map.on("mouseenter", layerName, e => {
+    e.preventDefault();
+    e.features!.forEach((feature: any) => {
+      let popupContent = document.createElement("div");
+      popupContent.className = "popup-content-media";
+      const root = createRoot(popupContent);
+      root.render(createElement(MediaPopup, feature.properties));
+      popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
+        .setLngLat(feature.geometry.coordinates)
+        .setDOMContent(popupContent)
+        .addTo(map);
+      popupAttachedMap["MEDIA"].push(popup);
+    });
+  });
+  map.on("mouseleave", layerName, e => {
+    removePopups("MEDIA");
+  });
 };
 
 export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
