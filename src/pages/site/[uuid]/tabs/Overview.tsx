@@ -165,11 +165,19 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         title={t("Confirm Polygon Submission")}
         content={
           <>
-            <Text variant="text-12-light" as="p" className="text-center">
-              {t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
-                siteName: site?.name
-              })}
-            </Text>
+            <Text
+              variant="text-12-light"
+              as="p"
+              className="text-center"
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  `Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`,
+                  {
+                    siteName: site?.name
+                  }
+                )
+              }}
+            />
             <div className="ml-6">
               <ul style={{ listStyleType: "circle" }}>
                 {(polygons as SitePolygonsDataResponse)?.map(polygon => (
@@ -196,7 +204,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <ModalSubmit
         title={t("Submit Polygons")}
         onClose={closeModal}
-        content={t("Project Developers may submit one or all polygons for review.")}
+        content={t("Project Developers may submit one, many, or all polygons for review.")}
         primaryButtonText={t("Next")}
         primaryButtonProps={{
           className: "px-8 py-3",
