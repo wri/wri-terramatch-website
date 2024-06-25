@@ -451,7 +451,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 <Table
                   variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
                   hasPagination={false}
-                  classNameWrapper="max-h-[176px]"
+                  classNameWrapper="max-h-[560px]"
                   columns={[
                     { header: "Polygon Name", accessorKey: "polygon-name" },
                     {
