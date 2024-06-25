@@ -1,7 +1,6 @@
 import { Grid, Stack } from "@mui/material";
-import { t } from "@transifex/native";
 import { LngLatBoundsLike } from "mapbox-gl";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
@@ -25,7 +24,6 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalApprove from "@/components/extensive/Modal/ModalApprove";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalImageGallery, { TabImagesItem } from "@/components/extensive/Modal/ModalImageGallery";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -371,42 +369,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     </Text>
   );
 
-  const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
-    const modelFilesGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
-    const modelFilesNonGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
-    modelFilesData?.data?.forEach(modelFile => {
-      if (modelFile.location?.lat && modelFile.location?.lng) {
-        modelFilesGeolocalized.push(modelFile);
-      } else {
-        modelFilesNonGeolocalized.push(modelFile);
-      }
-    });
-    return [
-      {
-        id: "1",
-        title: t("Non-Geotagged Images"),
-        images: modelFilesNonGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.file_url!,
-          title: modelFile.file_name!,
-          dateCreated: modelFile.created_date!,
-          geoTag: t("Not Geo-Referenced")
-        }))
-      },
-      {
-        id: "2",
-        title: t("GeoTagged Images"),
-        images: modelFilesGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.file_url!,
-          title: modelFile.file_name!,
-          dateCreated: modelFile.created_date!,
-          geoTag: t("Geo-Referenced")
-        }))
-      }
-    ];
-  }, [modelFilesData]);
-
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
@@ -476,13 +438,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                 sitePolygonData={sitePolygonData}
                 modelFilesData={modelFilesData?.data}
               />
-              <ModalImageGallery
-                tabItems={modelFilesTabItems}
-                onClose={function (): void {
-                  throw new Error("Function not implemented.");
-                }}
-                title={"asda"}
-              ></ModalImageGallery>
               <div className="mb-6">
                 <div className="mb-4">
                   <Text variant="text-16-bold" className="mb-2 text-darkCustom">

@@ -23,7 +23,9 @@ export const ModalAddBase = createModalComponent(commonBaseClasses + " h-[80%] w
 
 export const ModalBaseSubmit = createModalComponent(commonBaseClasses + " w-[776px]", "margin-4 z-50");
 
-export const ModalBaseImageGallery = createModalComponent(commonBaseClasses + " h-[80%] w-[80vw] p-8", "margin-4 z-50");
+export const ModalBaseImageGallery = createModalComponent(
+  "m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white h-[80%] w-[80vw] p-8 margin-4"
+);
 
 export const ModalBaseWithClose = createModalComponent(commonBaseClasses + " max-w-[800px] p-8", "margin-4 z-50");
 
