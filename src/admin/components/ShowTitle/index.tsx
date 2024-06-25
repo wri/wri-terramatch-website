@@ -24,7 +24,7 @@ const ShowTitle = (props: IProps) => {
           {title && ": "}
         </When>
         <When condition={!!title}>
-          <If condition={resource === "site"}>
+          <If condition={resource === "site" || resource === "project"}>
             <Then>
               <Text variant="text-36-bold" className="flex items-center">
                 <Link to={"/site"}>
