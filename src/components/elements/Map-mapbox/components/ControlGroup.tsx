@@ -12,7 +12,8 @@ export interface ControlGroupProps
     | "bottom-left"
     | "bottom-left-site"
     | "top-center"
-    | "top-left-site";
+    | "top-left-site"
+    | "top-centerSite";
 }
 
 const ControlGroup = ({ children, position, className, ...props }: ControlGroupProps) => {
@@ -26,7 +27,8 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
           "right-5 items-end": position.includes("right"),
           "bottom-8": position.includes("bottom"),
           "!left-[24vw] items-start": position.includes("site"),
-          "left-[45%]": position.includes("center")
+          "left-[45%]": position.includes("center"),
+          "sm:left-[95vh] lg:left-[calc(24vw+28.8%)]": position.includes("centerSite")
         }),
         className
       )}
