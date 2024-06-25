@@ -22,8 +22,8 @@ export interface MapPolygonCheckPanelItemProps
   title: string;
   isSelected?: boolean;
   refContainer?: React.RefObject<HTMLDivElement> | null;
-  status: string;
-  polygon?: string[];
+  valid: boolean;
+  polygonValidation?: string[];
 }
 
 const MapPolygonCheckPanelItem = ({
@@ -31,8 +31,8 @@ const MapPolygonCheckPanelItem = ({
   isSelected,
   className,
   refContainer,
-  polygon,
-  status,
+  polygonValidation,
+  valid,
   ...props
 }: MapPolygonCheckPanelItemProps) => {
   const { openModal, closeModal } = useModalContext();
@@ -139,33 +139,18 @@ const MapPolygonCheckPanelItem = ({
     }
   ];
 
-  const dynamicClasses = (status: string) => {
-    switch (status) {
-      case "Submitted":
-        return "bg-blue";
-      case "Approved":
-        return "bg-green";
-      case "Needs More Info":
-        return "bg-tertiary-600";
-      case "Draft":
-        return "bg-pinkCustom";
-      default:
-        return "bg-blue ";
-    }
-  };
-
   return (
     <div>
       <div {...props} className={className}>
         <div className="flex items-center gap-2">
-          <div className={classNames("h-4 w-4 rounded-full", dynamicClasses(status))} />{" "}
+          <Icon name={valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS} className="h-4 w-4" />
           <div className="flex flex-1 flex-col">
             <Text variant="text-14-light" className="text-white">
               {t(title)}
             </Text>
           </div>
           <div className="flex h-full items-start self-start">
-            <When condition={!!polygon}>
+            <When condition={!!polygonValidation}>
               <button
                 onClick={() => {
                   setOpenCollapse(!openCollapse);
@@ -189,9 +174,9 @@ const MapPolygonCheckPanelItem = ({
             </Menu>
           </div>
         </div>
-        <When condition={!!polygon && !!openCollapse}>
+        <When condition={!!polygonValidation && !!openCollapse}>
           <div className="my-3 grid gap-3 px-4">
-            {polygon?.map((item, index) => (
+            {polygonValidation?.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Icon name={IconNames.ERROR_WHITE_BORDER_RED} className="h-4 w-4 rounded-lg text-white lg:h-5 lg:w-5" />
                 <Text variant="text-14-light" className="text-white">
