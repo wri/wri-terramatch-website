@@ -157,18 +157,31 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     );
   };
 
-  const openFormModalHandlerSubmitReviewConfirm = () => {
+  const openFormModalHandlerSubmitReviewConfirm = (polygons: unknown) => {
     openModal(
       <ModalConfirm
         commentArea
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
         content={
-          <Text variant="text-12-light" as="p" className="text-center">
-            {t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
-              siteName: site?.name
-            })}
-          </Text>
+          <>
+            <Text variant="text-12-light" as="p" className="text-center">
+              {t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
+                siteName: site?.name
+              })}
+            </Text>
+            <div className="ml-6">
+              <ul style={{ listStyleType: "circle" }}>
+                {(polygons as SitePolygonsDataResponse)?.map(polygon => (
+                  <li key={polygon.id}>
+                    <Text variant="text-12-light" as="p">
+                      {polygon?.poly_name}
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
         }
         onClose={closeModal}
         onConfirm={() => {
@@ -188,9 +201,9 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
-          onClick: () => {
+          onClick: polygons => {
             closeModal();
-            openFormModalHandlerSubmitReviewConfirm();
+            openFormModalHandlerSubmitReviewConfirm(polygons);
           }
         }}
         secondaryButtonText={t("Cancel")}

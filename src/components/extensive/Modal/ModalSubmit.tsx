@@ -123,7 +123,20 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps}>
+        <Button
+          {...primaryButtonProps}
+          onClick={() => {
+            const polygons: any = polygonsSelected
+              .map((polygonSelected, index: number) => {
+                if (polygonSelected) {
+                  return polygonList?.[index];
+                }
+                return null;
+              })
+              .filter((polygon: any) => polygon !== null);
+            primaryButtonProps?.onClick?.(polygons);
+          }}
+        >
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
