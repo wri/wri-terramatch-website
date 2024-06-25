@@ -201,7 +201,7 @@ const PolygonDrawer = ({
               refresh={refresh}
               record={selectedPolygon}
               mutate={mutateSitePolygons}
-              tab="polygonReview"
+              showChangeRequest={true}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
             <CommentarySection record={selectedPolygon} entity={"Polygon"}></CommentarySection>

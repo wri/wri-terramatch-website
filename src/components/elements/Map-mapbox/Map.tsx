@@ -24,6 +24,7 @@ import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
+import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
@@ -71,6 +72,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   hasControls?: boolean;
   siteData?: boolean;
   status?: boolean;
+  validationType?: string;
   editPolygon?: boolean;
   polygonChecks?: boolean;
   legend?: LegendItem[];
@@ -103,6 +105,7 @@ export const MapContainer = ({
   captureAdditionalPolygonProperties,
   siteData = false,
   status = false,
+  validationType = "bulkValidation",
   editPolygon = false,
   polygonChecks = false,
   record,
@@ -265,9 +268,14 @@ export const MapContainer = ({
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
-        <When condition={!!status && !!record.uuid}>
-          <ControlGroup position="top-left">
-            <CheckPolygonControl siteRecord={record} />
+        <When condition={!!status && !!record.uuid && validationType === "bulkValidation"}>
+          <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
+          </ControlGroup>
+        </When>
+        <When condition={!!status && validationType === "individualValidation"}>
+          <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <CheckIndividualPolygonControl viewRequestSuport={!siteData} />
           </ControlGroup>
         </When>
         <When condition={!!viewImages}>
