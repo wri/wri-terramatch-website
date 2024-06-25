@@ -18,6 +18,8 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -154,6 +156,50 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       ></ModalAdd>
     );
   };
+
+  const openFormModalHandlerSubmitReviewConfirm = () => {
+    openModal(
+      <ModalConfirm
+        commentArea
+        className="max-w-xs"
+        title={t("Confirm Polygon Submission")}
+        content={
+          <Text variant="text-12-light" as="p" className="text-center">
+            {t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
+              siteName: site?.name
+            })}
+          </Text>
+        }
+        onClose={closeModal}
+        onConfirm={() => {
+          closeModal;
+        }}
+      />
+    );
+  };
+
+  const openFormModalHandlerSubmitPolygon = () => {
+    openModal(
+      <ModalSubmit
+        title={t("Submit Polygons")}
+        onClose={closeModal}
+        content={t("Project Developers may submit one or all polygons for review.")}
+        primaryButtonText={t("Next")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            closeModal();
+            openFormModalHandlerSubmitReviewConfirm();
+          }
+        }}
+        secondaryButtonText={t("Cancel")}
+        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+        site={site}
+      />
+    );
+  };
+
   const itemsSubmitPolygon = [
     {
       id: "1",
@@ -171,7 +217,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           {t("Submit for Review")}
         </Text>
       ),
-      onClick: () => {}
+      onClick: () => openFormModalHandlerSubmitPolygon()
     }
   ];
 
