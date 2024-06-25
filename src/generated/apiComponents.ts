@@ -31730,6 +31730,10 @@ export type GetV2TerrafundValidationSiteResponse = {
    * Indicates if the polygon has been checked before or not.
    */
   checked?: boolean;
+  /**
+   * List of criteria that are not valid.
+   */
+  nonValidCriteria?: Record<string, any>[];
 }[];
 
 export type GetV2TerrafundValidationSiteVariables = {
@@ -32563,6 +32567,7 @@ export type GetV2TerrafundPolygonUuidResponse = {
     poly_name?: string;
     practice?: string | null;
     site_id?: string | null;
+    site_name?: string;
     status?: string;
     target_sys?: string | null;
     /**
@@ -35011,6 +35016,51 @@ export const useGetV2SitesSiteCheckApprove = <TData = GetV2SitesSiteCheckApprove
       ...options,
       ...queryOptions
     }
+  );
+};
+
+export type PutV2PolygonsStatusError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2PolygonsStatusResponse = {
+  data?: {
+    comment?: string;
+    updatePolygons?: {
+      uuid?: string;
+      status?: string;
+    }[];
+  };
+};
+
+export type PutV2PolygonsStatusRequestBody = {
+  comment?: string;
+  updatePolygons?: {
+    uuid?: string;
+    status?: string;
+  }[];
+};
+
+export type PutV2PolygonsStatusVariables = {
+  body?: PutV2PolygonsStatusRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2PolygonsStatus = (variables: PutV2PolygonsStatusVariables, signal?: AbortSignal) =>
+  apiFetch<PutV2PolygonsStatusResponse, PutV2PolygonsStatusError, PutV2PolygonsStatusRequestBody, {}, {}, {}>({
+    url: "/v2/polygons-status",
+    method: "put",
+    ...variables,
+    signal
+  });
+
+export const usePutV2PolygonsStatus = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PutV2PolygonsStatusResponse, PutV2PolygonsStatusError, PutV2PolygonsStatusVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PutV2PolygonsStatusResponse, PutV2PolygonsStatusError, PutV2PolygonsStatusVariables>(
+    (variables: PutV2PolygonsStatusVariables) => fetchPutV2PolygonsStatus({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 
