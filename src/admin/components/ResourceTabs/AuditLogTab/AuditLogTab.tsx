@@ -98,6 +98,7 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
               setSelectedPolygon={setSelected}
               auditLogData={auditLogData?.data}
               checkPolygonsSite={checkPolygonsSite}
+              showChangeRequest={true}
             />
           </Grid>
         </Grid>

@@ -99,7 +99,7 @@ export interface StatusProps {
   refresh?: () => void;
   name: any;
   refetchPolygon?: () => void;
-  tab?: string;
+  showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
 }
 
@@ -128,7 +128,7 @@ const StatusDisplay = ({
   name,
   record,
   checkPolygonsSite,
-  tab
+  showChangeRequest = false
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -287,9 +287,9 @@ const StatusDisplay = ({
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
-            disabled={tab == "polygonReview"}
+            disabled={showChangeRequest}
             variant="semi-black"
-            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": tab === "polygonReview" })}
+            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": showChangeRequest })}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">Change Request</Text>

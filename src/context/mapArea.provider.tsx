@@ -16,6 +16,8 @@ type MapAreaType = {
   setSiteData: (value: any) => void;
   shouldRefetchPolygonData: boolean;
   setShouldRefetchPolygonData: (value: boolean) => void;
+  shouldRefetchValidation: boolean;
+  setShouldRefetchValidation: (value: boolean) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -31,7 +33,9 @@ const defaultValue: MapAreaType = {
   siteData: undefined,
   setSiteData: () => {},
   shouldRefetchPolygonData: false,
-  setShouldRefetchPolygonData: () => {}
+  setShouldRefetchPolygonData: () => {},
+  shouldRefetchValidation: false,
+  setShouldRefetchValidation: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -42,6 +46,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
+  const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string }>({
     isOpen: false,
     uuid: ""
@@ -76,7 +81,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     siteData,
     setSiteData,
     shouldRefetchPolygonData,
-    setShouldRefetchPolygonData
+    setShouldRefetchPolygonData,
+    shouldRefetchValidation,
+    setShouldRefetchValidation
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;
