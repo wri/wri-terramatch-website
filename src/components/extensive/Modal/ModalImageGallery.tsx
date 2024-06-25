@@ -93,15 +93,15 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             setSelectedImage={setSelectedImage}
             carouselItem={item => (
               <div className="relative h-full px-24">
-                <div className="absolute left-[24px] top-[24px] z-10 flex translate-x-[75%] flex-col items-center justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3">
-                  <Text variant="text-12-bold" className="text-black">
+                <div className="absolute left-[120px] top-[24px] z-10 flex max-w-[250px] flex-col items-start justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3 lg:max-w-[350px] wide:max-w-[500px]">
+                  <Text variant="text-12-bold" className="max-w-full break-words text-black">
                     {currentImage?.title}
                   </Text>
                   <Text variant="text-12-light" className="text-black">
                     {currentImage?.dateCreated}
                   </Text>
                 </div>
-                <div className="absolute right-[24px] top-[24px] z-10 flex translate-x-[-75%] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3">
+                <div className="absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3 lg:max-w-[350px] wide:max-w-[500px]">
                   <Text variant="text-12-semibold" className="text-red-200">
                     {currentImage?.geoTag}
                   </Text>
@@ -125,6 +125,9 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             modules={[Navigation]}
             slidesPerView={1}
             spaceBetween={10}
+            observer
+            observeParents
+            parallax
           />
         </div>
       </div>
