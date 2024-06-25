@@ -26,7 +26,7 @@ const ImageWithChildren = ({
   return (
     <div {...divProps} className={classNames(className, "relative")}>
       <ImageWithPlaceholder
-        imageUrl={imageSrc}
+        imageUrl={imageSrc as string}
         placeholder={t("No Image Available")}
         alt={t("No Image Available")}
         role="presentation"
