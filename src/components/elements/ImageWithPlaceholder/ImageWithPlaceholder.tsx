@@ -1,9 +1,9 @@
 import classNames from "classnames";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 export interface ImageWithPlaceholderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  imageUrl: string | StaticImageData;
+  imageUrl?: string;
   alt: string;
   placeholderIconSize?: number;
 }
@@ -23,7 +23,7 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
         className
       )}
     >
-      <Image referrerPolicy="no-referrer" src={imageUrl} alt={alt} fill className="object-cover" />
+      <Image referrerPolicy="no-referrer" src={imageUrl as string} alt={alt} fill className="object-cover" />
     </div>
   );
 };
