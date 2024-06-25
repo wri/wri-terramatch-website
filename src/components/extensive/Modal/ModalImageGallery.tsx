@@ -10,7 +10,6 @@ import Text from "@/components/elements/Text/Text";
 import Carousel from "../Carousel/Carousel";
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { dataImageGallery } from "./ModalContent/MockedData";
 import { ModalBaseImageGallery } from "./ModalsBases";
 export interface ImageItem {
   id: string;
@@ -43,7 +42,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
   const [selectedImage, setSelectedImage] = useState(0);
   const t = useT();
   const [currentTab, currentImage] = useMemo(() => {
-    const _currentTab = dataImageGallery.find(tab => tab.id === selectedTab)!;
+    const _currentTab = tabItems.find(tab => tab.id === selectedTab)!;
     const _currentImage = _currentTab.images[selectedImage];
     return [_currentTab, _currentImage];
   }, [tabItems, selectedTab, selectedImage]);
