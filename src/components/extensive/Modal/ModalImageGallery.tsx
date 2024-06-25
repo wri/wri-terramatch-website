@@ -82,50 +82,75 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                 imageUrl={image.src}
               ></ImageWithPlaceholder>
             ))}
+            {currentTab.images.length === 0 && (
+              <>
+                <div
+                  className={classNames("h-full rounded-xl border-2 border-transparent !border-black bg-primary-200")}
+                />
+                <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
+                <div
+                  className={classNames(
+                    "col-span-2 row-span-2 h-full rounded-xl border-2 border-transparent  bg-primary-200"
+                  )}
+                />
+                <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
+                <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
+                <div
+                  className={classNames(
+                    "col-span-2 row-span-2 h-full rounded-xl border-2 border-transparent  bg-primary-200"
+                  )}
+                />
+              </>
+            )}
           </div>
         </div>
 
         <div className="flex-[5] overflow-hidden rounded-xl ">
-          <Carousel
-            className="h-full"
-            swiperClassName="h-full"
-            swiperSlideClassName="h-full"
-            setSelectedImage={setSelectedImage}
-            carouselItem={item => (
-              <div className="relative h-full px-24">
-                <div className="absolute left-[120px] top-[24px] z-10 flex max-w-[250px] flex-col items-start justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3 lg:max-w-[350px] wide:max-w-[500px]">
-                  <Text variant="text-12-bold" className="max-w-full break-words text-black">
-                    {currentImage?.title}
-                  </Text>
-                  <Text variant="text-12-light" className="text-black">
-                    {currentImage?.dateCreated}
-                  </Text>
+          {currentTab.images.length > 0 && (
+            <Carousel
+              className="h-full"
+              swiperClassName="h-full"
+              swiperSlideClassName="h-full"
+              setSelectedImage={setSelectedImage}
+              carouselItem={item => (
+                <div className="relative h-full px-24">
+                  <div className="absolute left-[120px] top-[24px] z-10 flex max-w-[250px] flex-col items-start justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3 lg:max-w-[350px] wide:max-w-[500px]">
+                    <Text variant="text-12-bold" className="max-w-full break-words text-black">
+                      {currentImage?.title}
+                    </Text>
+                    <Text variant="text-12-light" className="text-black">
+                      {currentImage?.dateCreated}
+                    </Text>
+                  </div>
+                  <div className="absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3 lg:max-w-[350px] wide:max-w-[500px]">
+                    <Text variant="text-12-semibold" className="text-red-200">
+                      {currentImage?.geoTag}
+                    </Text>
+                  </div>
+                  <ImageWithPlaceholder
+                    className="h-full rounded-xl bg-primary-200"
+                    alt={t("Image not available")}
+                    imageUrl={item.src}
+                  />
+                  <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
+                    <Text variant="text-13" className="text-white">
+                      {t("{selected} of {total}", {
+                        selected: selectedImage + 1,
+                        total: currentTab.images.length
+                      })}
+                    </Text>
+                  </div>
                 </div>
-                <div className="absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3 lg:max-w-[350px] wide:max-w-[500px]">
-                  <Text variant="text-12-semibold" className="text-red-200">
-                    {currentImage?.geoTag}
-                  </Text>
-                </div>
-                <ImageWithPlaceholder
-                  className="h-full rounded-xl bg-primary-200"
-                  alt={t("Image not available")}
-                  imageUrl={item.src}
-                />
-                <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
-                  <Text variant="text-13" className="text-white">
-                    {t("{selected} of {total}", {
-                      selected: selectedImage + 1,
-                      total: currentTab.images.length
-                    })}
-                  </Text>
-                </div>
-              </div>
-            )}
-            items={currentTab.images ?? []}
-            modules={[Navigation]}
-            slidesPerView={1}
-            spaceBetween={10}
-          />
+              )}
+              items={currentTab.images ?? []}
+              modules={[Navigation]}
+              slidesPerView={1}
+              spaceBetween={10}
+            />
+          )}
+          {currentTab.images.length === 0 && (
+            <div className="flex h-full w-full items-center justify-center bg-primary-200"></div>
+          )}
         </div>
       </div>
     </ModalBaseImageGallery>
