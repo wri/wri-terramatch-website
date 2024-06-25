@@ -61,7 +61,8 @@ const TooltipMap = (props: TooltipMapProps) => {
 
       <div className="text-10 flex items-center justify-center gap-1">
         <Text variant="text-10" className="mb-1 uppercase leading-[normal]">
-          {polygonData?.site_name} {t("SITE")}
+          {t("SITE : ")}
+          {polygonData?.site_name}
         </Text>
       </div>
       <Text variant="text-10-bold" className="text-center leading-[normal] text-black">
