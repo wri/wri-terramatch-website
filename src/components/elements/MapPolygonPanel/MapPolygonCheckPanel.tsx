@@ -16,6 +16,7 @@ export interface MapPolygonCheckPanelProps {
   emptyText?: string;
   onLoadMore: () => void;
   selected: MapMenuPanelItemProps | undefined;
+  mapFunctions: any;
 }
 
 interface CheckedPolygon {
@@ -36,7 +37,7 @@ const validationLabels: any = {
   14: "No Data Completed"
 };
 
-const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected }: MapPolygonCheckPanelProps) => {
+const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }: MapPolygonCheckPanelProps) => {
   const t = useT();
 
   const refContainer = useRef<HTMLDivElement>(null);
@@ -72,7 +73,7 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected }: MapPolygonChe
       const polygonValidation =
         validation?.nonValidCriteria.map((criteria: any) => validationLabels[criteria.criteria_id]) || [];
       return {
-        uuid: site.uuid,
+        uuid: site.poly_id,
         title: site.poly_name ?? "Unnamed Polygon",
         valid: validation ? validation.valid : false,
         isChecked: validation ? validation.checked : false,
@@ -86,7 +87,7 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected }: MapPolygonChe
       const data = parseData(sitePolygonData, currentValidationSite, validationLabels);
       setPolygonsValidationData(data);
     }
-  }, [currentValidationSite]);
+  }, [currentValidationSite, sitePolygonData]);
 
   return (
     <>
@@ -120,6 +121,7 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected }: MapPolygonChe
                 refContainer={refContainer}
                 valid={item.valid}
                 polygonValidation={item.polygonValidation}
+                mapFunctions={mapFunctions}
               />
             )}
           />

@@ -97,7 +97,12 @@ const MapPolygonPanel = ({
             />
           </When>
           <When condition={!!stateViewPanel}>
-            <MapPolygonCheckPanel emptyText={emptyText} onLoadMore={onLoadMore} selected={selected} />
+            <MapPolygonCheckPanel
+              emptyText={emptyText}
+              onLoadMore={onLoadMore}
+              selected={selected}
+              mapFunctions={mapFunctions}
+            />
           </When>
         </Else>
       </If>
