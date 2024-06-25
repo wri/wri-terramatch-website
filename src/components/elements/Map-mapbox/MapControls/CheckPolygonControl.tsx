@@ -132,7 +132,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
                   className="h-4 w-4"
                 />
                 <Text variant="text-10-light" className="text-white">
-                  {`${polygon.label ?? "Unnamed Polygon"} ${polygon.checked ? "" : "(not checked yet)"}`}
+                  {`${polygon.label ?? t("Unnamed Polygon")} ${polygon.checked ? "" : t("(not checked yet)")}`}
                 </Text>
               </div>
             ))}
