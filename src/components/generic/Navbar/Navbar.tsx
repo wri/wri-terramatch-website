@@ -35,7 +35,7 @@ const Navbar = (props: NavbarProps): JSX.Element => {
       <Container className="flex h-[70px] items-center justify-between">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <When condition={!isOpen}>
-          <NavbarContent className="hidden items-center gap-8 sm:flex" isLoggedIn={props.isLoggedIn} />
+          <NavbarContent className="hidden items-center sm:flex sm:gap-4 lg:gap-8" isLoggedIn={props.isLoggedIn} />
         </When>
         <If condition={isOpen}>
           <Then>

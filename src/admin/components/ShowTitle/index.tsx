@@ -24,10 +24,14 @@ const ShowTitle = (props: IProps) => {
           {title && ": "}
         </When>
         <When condition={!!title}>
-          <If condition={resource === "site" || resource === "project"}>
+          <If
+            condition={
+              resource === "site" || resource === "project" || resource === "projectReport" || resource === "nursery"
+            }
+          >
             <Then>
               <Text variant="text-36-bold" className="flex items-center">
-                <Link to={"/site"}>
+                <Link to={`/${resource}`}>
                   <Icon name={IconNames.CHEVRON_LEFT_PA} className="mr-2 h-10 w-9" />
                 </Link>
                 {title}
