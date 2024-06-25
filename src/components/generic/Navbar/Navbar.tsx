@@ -1,6 +1,5 @@
 import { useMediaQuery } from "@mui/material";
 import classNames from "classnames";
-import Link from "next/link";
 import { useEffect } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -34,9 +33,9 @@ const Navbar = (props: NavbarProps): JSX.Element => {
       )}
     >
       <Container className="flex h-[70px] items-center justify-between">
-        <Link href={"/home"}>
+        <a href={"/home"} title="Homepage" aria-label="Homepage">
           <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
-        </Link>
+        </a>
         <When condition={!isOpen}>
           <NavbarContent className="hidden items-center sm:flex sm:gap-4 lg:gap-8" isLoggedIn={props.isLoggedIn} />
         </When>
