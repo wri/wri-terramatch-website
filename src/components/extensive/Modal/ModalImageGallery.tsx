@@ -125,9 +125,6 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
             modules={[Navigation]}
             slidesPerView={1}
             spaceBetween={10}
-            observer
-            observeParents
-            parallax
           />
         </div>
       </div>
