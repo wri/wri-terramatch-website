@@ -13,16 +13,22 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
       <section
         className="mx-auto w-full max-w-[82vw] flex h-[70px] items-center justify-between"
       >
-        <div
-          style={
-            Object {
-              "height": 30,
-              "width": 108,
+        <a
+          aria-label="Homepage"
+          href="/home"
+          title="Homepage"
+        >
+          <div
+            style={
+              Object {
+                "height": 30,
+                "width": 108,
+              }
             }
-          }
-        />
+          />
+        </a>
         <div
-          className="hidden items-center gap-8 sm:flex"
+          className="hidden items-center sm:flex sm:gap-4 lg:gap-8"
         >
           <div
             className="absolute top-4 left-[50%] translate-x-[-50%]"
