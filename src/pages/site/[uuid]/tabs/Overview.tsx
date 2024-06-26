@@ -164,32 +164,17 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
         content={
-          <>
-            <Text
-              variant="text-12-light"
-              as="p"
-              className="text-center"
-              dangerouslySetInnerHTML={{
-                __html: t(
-                  `Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`,
-                  {
-                    siteName: site?.name
-                  }
-                )
-              }}
-            />
-            <div className="ml-6">
-              <ul style={{ listStyleType: "circle" }}>
-                {(polygons as SitePolygonsDataResponse)?.map(polygon => (
-                  <li key={polygon.id}>
-                    <Text variant="text-12-light" as="p">
-                      {polygon?.poly_name}
-                    </Text>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
+          <div className="ml-6">
+            <ul style={{ listStyleType: "circle" }}>
+              {(polygons as SitePolygonsDataResponse)?.map(polygon => (
+                <li key={polygon.id}>
+                  <Text variant="text-12-light" as="p">
+                    {polygon?.poly_name}
+                  </Text>
+                </li>
+              ))}
+            </ul>
+          </div>
         }
         onClose={closeModal}
         onConfirm={() => {
