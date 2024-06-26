@@ -14,6 +14,7 @@ const ProjectReportShow: FC = () => {
     <Show
       title={<ShowTitle moduleName="Project Report" getTitle={record => record?.title} />}
       actions={<ShowActions titleSource="title" resourceName="project report" />}
+      className="-mt-[50px] bg-neutral-100"
     >
       <TabbedShowLayout>
         <InformationTab type="project-reports" />

@@ -68,7 +68,7 @@ const SiteReportDataGrid: FC = () => {
       <DateField source="due_at" label="Due Date" locales="en-GB" />
       <DateField source="updated_at" label="Last Updated" locales="en-GB" />
       <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
-      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
     </Datagrid>

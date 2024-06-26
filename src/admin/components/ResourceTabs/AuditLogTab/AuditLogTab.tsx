@@ -54,10 +54,12 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
             <Stack gap={4} className="pl-8 pt-9">
               <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
               <When condition={buttonToogle === AuditLogButtonStates.PROJECT && record?.project}>
-                <Text variant="text-24-bold">Project Status</Text>
-                <Text variant="text-14-light" className="mb-4">
-                  Update the site status, view updates, or add comments
-                </Text>
+                <div>
+                  <Text variant="text-24-bold">Project Status</Text>
+                  <Text variant="text-14-light" className="mb-4">
+                    Update the project status, view updates, or add comments
+                  </Text>
+                </div>
                 <Button
                   className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                   component={Link}

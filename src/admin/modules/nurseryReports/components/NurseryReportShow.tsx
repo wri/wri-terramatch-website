@@ -14,6 +14,7 @@ const NurseryReportShow: FC = () => {
     <Show
       title={<ShowTitle moduleName="Nursery Report" getTitle={record => record?.title} />}
       actions={<ShowActions titleSource="title" resourceName="nursery report" />}
+      className="-mt-[50px] bg-neutral-100"
     >
       <TabbedShowLayout>
         <InformationTab type="nursery-reports" />

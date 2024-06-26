@@ -4,6 +4,7 @@ import "swiper/css/pagination";
 
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useEffect, useRef } from "react";
 import { When } from "react-if";
 import { Navigation, Pagination, SwiperOptions } from "swiper";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
@@ -19,6 +20,7 @@ export interface CarouselProps<T> extends SwiperProps {
   swiperButtonsClassName?: string;
   hidePaginationBullet?: boolean;
   breakpoints?: CarouselBreakPoints;
+  selectedImage?: number;
   setSelectedImage?: (index: number) => void;
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
@@ -38,6 +40,7 @@ const Carousel = <T extends Record<any, any>>({
   swiperSlideClassName,
   swiperButtonsClassName,
   hidePaginationBullet,
+  selectedImage,
   setSelectedImage,
   buttonsOutside = false,
   smallSwiperButtons,
@@ -46,12 +49,18 @@ const Carousel = <T extends Record<any, any>>({
   const t = useT();
 
   const swiperButtonSize = smallSwiperButtons ? 12 : 24;
-
-  const handleSlideChange = (swiper: { activeIndex: any }) => {
+  const swiperRef = useRef<any | null>(null);
+  const handleSlideChange = (swiper: { activeIndex: any; slideTo: any }) => {
     if (setSelectedImage) {
       setSelectedImage(swiper.activeIndex);
     }
   };
+
+  useEffect(() => {
+    if (selectedImage !== undefined && swiperRef.current) {
+      swiperRef.current.slideTo(selectedImage);
+    }
+  }, [selectedImage]);
 
   return (
     <div className={classNames("relative mx-auto", className)}>
@@ -73,6 +82,7 @@ const Carousel = <T extends Record<any, any>>({
           />
         </button>
         <Swiper
+          onSwiper={swiper => (swiperRef.current = swiper)}
           onSlideChange={handleSlideChange}
           className={classNames(swiperClassName, "flex-1")}
           modules={[Navigation, Pagination]}

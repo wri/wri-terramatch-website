@@ -258,7 +258,7 @@ export const MapContainer = ({
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen}>
-          <ControlGroup position="top-center">
+          <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
             <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
           </ControlGroup>
         </When>
