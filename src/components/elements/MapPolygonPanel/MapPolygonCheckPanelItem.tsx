@@ -10,6 +10,12 @@ import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import {
+  fetchDeleteV2TerrafundPolygonUuid,
+  fetchGetV2TerrafundGeojsonComplete,
+  fetchGetV2TerrafundPolygonBboxUuid
+} from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
@@ -22,23 +28,60 @@ export interface MapPolygonCheckPanelItemProps
   title: string;
   isSelected?: boolean;
   refContainer?: React.RefObject<HTMLDivElement> | null;
-  status: string;
-  polygon?: string[];
+  valid: boolean;
+  polygonValidation?: string[];
+  mapFunctions: any;
 }
 
 const MapPolygonCheckPanelItem = ({
+  uuid,
   title,
   isSelected,
   className,
   refContainer,
-  polygon,
-  status,
+  polygonValidation,
+  valid,
+  mapFunctions,
   ...props
 }: MapPolygonCheckPanelItemProps) => {
   const { openModal, closeModal } = useModalContext();
   const { setEditPolygon } = useMapAreaContext();
+  const contextSite = useSitePolygonData();
+  const reloadSiteData = contextSite?.reloadSiteData;
   const [openCollapse, setOpenCollapse] = useState(true);
   const t = useT();
+
+  const { map } = mapFunctions;
+
+  const flyToPolygonBounds = async (polygonUuid: string) => {
+    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonUuid } });
+    const bounds: any = bbox.bbox;
+    if (!map.current) {
+      return;
+    }
+    map.current.fitBounds(bounds, {
+      padding: 100,
+      linear: false
+    });
+  };
+
+  const downloadGeoJsonPolygon = async (polygonUuid: string) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygonUuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `polygon.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const deletePolygon = async (polygonUuid: string) => {
+    await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
+    reloadSiteData?.();
+  };
 
   const openFormModalHandlerRequestPolygonSupport = () => {
     openModal(
@@ -70,12 +113,12 @@ const MapPolygonCheckPanelItem = ({
         title={t("Confirm Polygon Deletion")}
         content={t("Do you want to delete this polygon?")}
         onClose={closeModal}
-        onConfirm={() => {}}
+        onConfirm={() => deletePolygon(uuid)}
       />
     );
   };
 
-  const itemsPrimaryMenu = [
+  const itemsPrimaryMenu = (uuid: string) => [
     {
       id: "1",
       render: () => (
@@ -84,7 +127,7 @@ const MapPolygonCheckPanelItem = ({
           &nbsp; {t("Edit Polygon")}
         </Text>
       ),
-      onClick: () => setEditPolygon?.({ isOpen: true, uuid: "" })
+      onClick: () => setEditPolygon?.({ isOpen: true, uuid })
     },
     {
       id: "2",
@@ -93,7 +136,8 @@ const MapPolygonCheckPanelItem = ({
           <Icon name={IconNames.SEARCH} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Zoom to")}
         </Text>
-      )
+      ),
+      onClick: () => flyToPolygonBounds(uuid)
     },
     {
       id: "3",
@@ -102,7 +146,8 @@ const MapPolygonCheckPanelItem = ({
           <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Download")}
         </Text>
-      )
+      ),
+      onClick: () => downloadGeoJsonPolygon(uuid)
     },
     {
       id: "4",
@@ -139,33 +184,18 @@ const MapPolygonCheckPanelItem = ({
     }
   ];
 
-  const dynamicClasses = (status: string) => {
-    switch (status) {
-      case "Submitted":
-        return "bg-blue";
-      case "Approved":
-        return "bg-green";
-      case "Needs More Info":
-        return "bg-tertiary-600";
-      case "Draft":
-        return "bg-pinkCustom";
-      default:
-        return "bg-blue ";
-    }
-  };
-
   return (
     <div>
       <div {...props} className={className}>
         <div className="flex items-center gap-2">
-          <div className={classNames("h-4 w-4 rounded-full", dynamicClasses(status))} />{" "}
+          <Icon name={valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS} className="h-4 w-4" />
           <div className="flex flex-1 flex-col">
             <Text variant="text-14-light" className="text-white">
               {t(title)}
             </Text>
           </div>
           <div className="flex h-full items-start self-start">
-            <When condition={!!polygon}>
+            <When condition={!!polygonValidation}>
               <button
                 onClick={() => {
                   setOpenCollapse(!openCollapse);
@@ -181,7 +211,11 @@ const MapPolygonCheckPanelItem = ({
               </button>
             </When>
 
-            <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
+            <Menu
+              container={refContainer?.current}
+              placement={MENU_PLACEMENT_RIGHT_BOTTOM}
+              menu={itemsPrimaryMenu(uuid)}
+            >
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
                 className="h-4 w-4 rounded-lg text-white hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
@@ -189,9 +223,9 @@ const MapPolygonCheckPanelItem = ({
             </Menu>
           </div>
         </div>
-        <When condition={!!polygon && !!openCollapse}>
+        <When condition={!!polygonValidation && !!openCollapse}>
           <div className="my-3 grid gap-3 px-4">
-            {polygon?.map((item, index) => (
+            {polygonValidation?.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Icon name={IconNames.ERROR_WHITE_BORDER_RED} className="h-4 w-4 rounded-lg text-white lg:h-5 lg:w-5" />
                 <Text variant="text-14-light" className="text-white">
