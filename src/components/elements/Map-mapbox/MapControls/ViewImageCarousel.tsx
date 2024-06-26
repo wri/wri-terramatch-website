@@ -56,7 +56,7 @@ const ViewImageCarousel = ({ modelFilesData }: { modelFilesData: GetV2MODELUUIDF
         onClose={() => setOpenModal(false)}
         tabItems={modelFilesTabItems}
         title={""}
-        WrapperClassName={openModal ? "hidden" : ""}
+        WrapperClassName={openModal ? "" : "hidden"}
       />
     </div>
   );
