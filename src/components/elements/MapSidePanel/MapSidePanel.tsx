@@ -72,7 +72,7 @@ const MapSidePanel = ({
     });
   };
 
-  const downloadGeoJsonPolygon = async (polygonUuid: string) => {
+  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
     const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
       queryParams: { uuid: polygonUuid }
     });
@@ -80,7 +80,7 @@ const MapSidePanel = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `polygon.geojson`;
+    link.download = `${polygon_name}.geojson`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -88,6 +88,9 @@ const MapSidePanel = ({
   const deletePolygon = async (polygonUuid: string) => {
     await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
     recallEntityData?.();
+  };
+  const formatStringName = (name: string) => {
+    return name.replace(/ /g, "_");
   };
   useEffect(() => {
     if (clickedButton === "site") {
@@ -98,7 +101,10 @@ const MapSidePanel = ({
       flyToPolygonBounds(selected?.poly_id ?? "");
       setClickedButton("");
     } else if (clickedButton === "download") {
-      downloadGeoJsonPolygon(selected?.poly_id ?? "");
+      downloadGeoJsonPolygon(
+        selected?.poly_id ?? "",
+        selected?.poly_name ? formatStringName(selected.poly_name) : "polygon"
+      );
       setClickedButton("");
     } else if (clickedButton === "delete") {
       deletePolygon(selected?.poly_id ?? "");

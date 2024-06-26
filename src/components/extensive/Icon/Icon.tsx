@@ -98,6 +98,7 @@ export enum IconNames {
   NO_SUCCESS = "no-success",
   CLEAR = "clear",
   IC_ERROR = "ic-error",
+  IC_ERROR_PANEL = "ic-error-panel",
   IC_WARNING = "ic-warning",
   IC_SUCCESS = "ic-success",
   FILTER = "filter",
