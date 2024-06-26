@@ -4,6 +4,7 @@ import { Navigation } from "swiper";
 
 import Text from "@/components/elements/Text/Text";
 import Carousel from "@/components/extensive/Carousel/Carousel";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/MockedData";
 import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 import { useModalContext } from "@/context/modal.provider";
@@ -55,9 +56,16 @@ export const MediaPopup = ({
             smallSwiperButtons
           />
         </div>
+        <button className="absolute top-3 right-3 z-10 rounded bg-grey-200 p-1 leading-normal">
+          <Icon name={IconNames.CLEAR} className="h-3 w-3" />
+        </button>
 
         <button onClick={() => openFormModalHandlerImageGallery()}>
-          <Text variant="text-12-bold" className="text-start">
+          <Text
+            variant="text-12-bold"
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-start"
+            title={name}
+          >
             {name}
           </Text>
           <Text variant="text-12-light" className="text-start">
