@@ -241,7 +241,14 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       let popupContent = document.createElement("div");
       popupContent.className = "popup-content-media";
       const root = createRoot(popupContent);
-      root.render(createElement(MediaPopup, feature.properties));
+      root.render(
+        createElement(MediaPopup, {
+          ...feature.properties,
+          onClose: () => {
+            removePopups("MEDIA");
+          }
+        })
+      );
       popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)

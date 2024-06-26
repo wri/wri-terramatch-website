@@ -17,12 +17,14 @@ export const MediaPopup = ({
   uuid,
   name,
   created_date,
-  file_url
+  file_url,
+  onClose
 }: {
   uuid: string;
   name: string;
   created_date: string;
   file_url: string;
+  onClose: () => void;
 }) => {
   const { openModal, closeModal } = useModalContext();
 
@@ -56,7 +58,7 @@ export const MediaPopup = ({
             smallSwiperButtons
           />
         </div>
-        <button className="absolute top-3 right-3 z-10 rounded bg-grey-200 p-1 leading-normal">
+        <button className="absolute top-3 right-3 z-10 rounded bg-grey-200 p-1 leading-normal" onClick={onClose}>
           <Icon name={IconNames.CLEAR} className="h-3 w-3" />
         </button>
 
