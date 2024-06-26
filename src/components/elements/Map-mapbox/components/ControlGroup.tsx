@@ -28,7 +28,7 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
           "bottom-8": position.includes("bottom"),
           "!left-[24vw] items-start": position.includes("site"),
           "left-[45%]": position.includes("center"),
-          "sm:left-[95vh] lg:left-[calc(24vw+28.8%)]": position.includes("centerSite")
+          "left-[calc(50%+11.5vw)] -translate-x-1/2": position.includes("centerSite")
         }),
         className
       )}
