@@ -100,7 +100,7 @@ const ChecklistInformation = () => {
             {polygonValidationData.map((item, index) => (
               <Text variant="text-14-light" key={index} className="flex items-center gap-2">
                 <Icon
-                  name={item.status ? IconNames.CHECK_PROGRESSBAR : IconNames.IC_ERROR}
+                  name={item.status ? IconNames.CHECK_PROGRESSBAR : IconNames.IC_ERROR_PANEL}
                   className={`h-4 w-4 lg:h-5 lg:w-5 ${item.status ? "text-green-400" : ""}`}
                 />
                 {t(item.label)}
