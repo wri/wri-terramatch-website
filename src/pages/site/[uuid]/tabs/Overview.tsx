@@ -14,6 +14,7 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -31,6 +32,7 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
+  fetchPutV2SitePolygonStatusBulk,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -55,6 +57,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
+  const [polygonsForSubmissions, setPolygonsForSubmissions] = useState<SitePolygonsDataResponse>([]);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -177,8 +181,24 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </div>
         }
         onClose={closeModal}
-        onConfirm={() => {
-          closeModal;
+        onConfirm={async data => {
+          closeModal();
+          try {
+            await fetchPutV2SitePolygonStatusBulk({
+              body: {
+                comment: data,
+                updatePolygons: polygonsForSubmissions.map(polygon => {
+                  return { uuid: polygon.uuid, status: polygon.status };
+                })
+              }
+            });
+            setShowSubmissionSuccess(true);
+            setTimeout(() => {
+              setShowSubmissionSuccess(false);
+            }, 3000);
+          } catch (error) {
+            console.log(error);
+          }
         }}
       />
     );
@@ -194,7 +214,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
-          onClick: polygons => {
+          onClick: (polygons: unknown) => {
+            setPolygonsForSubmissions(polygons as SitePolygonsDataResponse);
             closeModal();
             openFormModalHandlerSubmitReviewConfirm(polygons);
           }
@@ -231,6 +252,14 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+      <Notification
+        open={showSubmissionSuccess}
+        title={t("Success, Your Polygons were submitted!")}
+        message={t(
+          "Admins have been notified and a confirmation email has been sent. Follow-up through the Audit Log."
+        )}
+        type="success"
+      />
       <PageBody>
         <PageRow>
           <PageCard
