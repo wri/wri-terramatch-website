@@ -4,9 +4,8 @@ import { useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { dataImageGallery } from "@/components/extensive/Modal/ModalContent/MockedData";
-import ModalImageGallery from "@/components/extensive/Modal/ModalImageGallery";
 
+import ImagePreview from "../../ImageGallery/ImagePreview";
 import ImageWithPlaceholder from "../../ImageWithPlaceholder/ImageWithPlaceholder";
 
 const client = new QueryClient();
@@ -62,10 +61,13 @@ export const MediaPopup = ({
           </div>
         </div>
       </QueryClientProvider>
-      <ModalImageGallery
-        onClose={() => setOpenModal(false)}
-        tabItems={dataImageGallery}
-        title={""}
+
+      <ImagePreview
+        data={{
+          uuid: uuid,
+          fullImageUrl: file_url
+        }}
+        onCLose={() => setOpenModal(false)}
         WrapperClassName={openModal ? "" : "hidden"}
       />
     </>
