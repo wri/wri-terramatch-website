@@ -235,7 +235,7 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
     }
   });
 
-  map.on("mouseenter", layerName, e => {
+  map.on("click", layerName, e => {
     e.preventDefault();
     e.features!.forEach((feature: any) => {
       let popupContent = document.createElement("div");
@@ -249,7 +249,7 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       popupAttachedMap["MEDIA"].push(popup);
     });
   });
-  map.on("mouseleave", layerName, e => {
+  map.on("dblclick", layerName, e => {
     removePopups("MEDIA");
   });
 };
