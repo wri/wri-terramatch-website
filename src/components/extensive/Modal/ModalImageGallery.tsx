@@ -77,15 +77,19 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
           <div className="flex-[2] overflow-auto">
             <div className="grid-col-2 grid grid-flow-row auto-rows-[100px] gap-4 overflow-auto">
               {currentTab.images.map((image: ImageItem, index: number) => (
-                <ImageWithPlaceholder
+                <button
                   key={image.id}
-                  className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200", {
-                    "col-span-2 row-span-2": (index + 1) % 3 === 0,
-                    "!border-black": selectedImage === index
-                  })}
-                  alt={t("Image not available")}
-                  imageUrl={image.src}
-                ></ImageWithPlaceholder>
+                  onClick={() => setSelectedImage(index)}
+                  className={classNames(
+                    "h-full overflow-hidden rounded-xl border-2 border-transparent bg-primary-200",
+                    {
+                      "col-span-2 row-span-2": (index + 1) % 3 === 0,
+                      "!border-black": selectedImage === index
+                    }
+                  )}
+                >
+                  <ImageWithPlaceholder alt={t("Image not available")} imageUrl={image.src} />
+                </button>
               ))}
               {currentTab.images.length === 0 && (
                 <>
@@ -117,6 +121,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                 swiperClassName="h-full"
                 swiperSlideClassName="h-full"
                 setSelectedImage={setSelectedImage}
+                selectedImage={selectedImage}
                 carouselItem={item => (
                   <div className="relative h-full px-24">
                     <div className="absolute left-[120px] top-[24px] z-10 flex max-w-[250px] flex-col items-start justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3 lg:max-w-[350px] wide:max-w-[500px]">
