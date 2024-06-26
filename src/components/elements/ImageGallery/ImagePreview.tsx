@@ -23,8 +23,8 @@ const ImageGalleryPreviewer: FC<ImageGalleryPreviewerProps> = ({
   WrapperClassName,
   backdropClassName,
   ...rest
-}) => {
-  return ReactDOM.createPortal(
+}) =>
+  ReactDOM.createPortal(
     <div className={tw("fixed top-0 left-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
       <div {...rest} className={tw("m-auto h-[80vh] w-[80vw] overflow-hidden rounded-lg", className)}>
         {/* Controls */}
@@ -49,11 +49,10 @@ const ImageGalleryPreviewer: FC<ImageGalleryPreviewerProps> = ({
         </div>
 
         {/* Preview */}
-        <ImageWithPlaceholder imageUrl={data.fullImageUrl} alt={data.label || ""} />
+        <ImageWithPlaceholder imageUrl={data.fullImageUrl} alt={data.label ?? ""} />
       </div>
     </div>,
     document.body
   );
-};
 
 export default ImageGalleryPreviewer;
