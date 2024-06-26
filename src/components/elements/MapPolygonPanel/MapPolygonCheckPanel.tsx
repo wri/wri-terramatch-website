@@ -37,6 +37,30 @@ const validationLabels: any = {
   14: "No Data Completed"
 };
 
+const parseData = (
+  sitePolygonData: SitePolygonsDataResponse,
+  currentValidationSite: CheckedPolygon[],
+  validationLabels: any
+) => {
+  const validationMap = new Map();
+  currentValidationSite.forEach(validation => {
+    validationMap.set(validation.uuid, validation);
+  });
+
+  return sitePolygonData.map(site => {
+    const validation = validationMap.get(site.poly_id);
+    const polygonValidation =
+      validation?.nonValidCriteria.map((criteria: any) => validationLabels[criteria.criteria_id]) ?? [];
+    return {
+      uuid: site.poly_id,
+      title: site.poly_name ?? "Unnamed Polygon",
+      valid: validation ? validation.valid : false,
+      isChecked: validation ? validation.checked : false,
+      ...(polygonValidation.length > 0 && { polygonValidation })
+    };
+  });
+};
+
 const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }: MapPolygonCheckPanelProps) => {
   const t = useT();
 
@@ -57,30 +81,6 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }:
       enabled: !!siteData?.uuid
     }
   );
-
-  const parseData = (
-    sitePolygonData: SitePolygonsDataResponse,
-    currentValidationSite: CheckedPolygon[],
-    validationLabels: any
-  ) => {
-    const validationMap = new Map();
-    currentValidationSite.forEach(validation => {
-      validationMap.set(validation.uuid, validation);
-    });
-
-    return sitePolygonData.map(site => {
-      const validation = validationMap.get(site.poly_id);
-      const polygonValidation =
-        validation?.nonValidCriteria.map((criteria: any) => validationLabels[criteria.criteria_id]) || [];
-      return {
-        uuid: site.poly_id,
-        title: site.poly_name ?? "Unnamed Polygon",
-        valid: validation ? validation.valid : false,
-        isChecked: validation ? validation.checked : false,
-        ...(polygonValidation.length > 0 && { polygonValidation })
-      };
-    });
-  };
 
   useEffect(() => {
     if (currentValidationSite) {
