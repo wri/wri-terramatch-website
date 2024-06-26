@@ -256,9 +256,6 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       popupAttachedMap["MEDIA"].push(popup);
     });
   });
-  map.on("dblclick", layerName, e => {
-    removePopups("MEDIA");
-  });
 };
 
 export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
