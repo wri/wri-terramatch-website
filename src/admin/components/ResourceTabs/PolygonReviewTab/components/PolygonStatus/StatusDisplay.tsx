@@ -157,7 +157,7 @@ const StatusDisplay = ({
 
   const onFinallyRequest = () => {
     refresh?.();
-    reloadEntity();
+    reloadEntity?.();
     closeModal();
   };
 

@@ -8,6 +8,7 @@ import AuditLogTable from "./AuditLogTable";
 export interface SiteAuditLogProjectStatusProps {
   record?: ProjectLiteRead | null;
   auditLogData?: { data: AuditStatusResponse[] };
+  refresh: () => void;
 }
 
 const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record, auditLogData }) => (

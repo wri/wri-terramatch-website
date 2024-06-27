@@ -42,7 +42,7 @@ const ProjectDetailPage = () => {
   const { openToast } = useToastContext();
   const projectUUID = router.query.uuid as string;
 
-  const { data, isLoading } = useGetV2ProjectsUUID({
+  const { data, isLoading, refetch } = useGetV2ProjectsUUID({
     pathParams: { uuid: projectUUID }
   });
 
@@ -183,7 +183,7 @@ const ProjectDetailPage = () => {
             {
               key: "audit-log",
               title: t("Audit Log"),
-              body: <AuditLog project={project} />
+              body: <AuditLog project={project} refresh={refetch} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
