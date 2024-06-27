@@ -92,7 +92,7 @@ const AuditLog = ({
                     refresh={() => {
                       loadEntityList();
                       refetch();
-                      refreshProject && refreshProject();
+                      refreshProject?.();
                     }}
                     record={selected}
                     polygonList={entityListItem}
