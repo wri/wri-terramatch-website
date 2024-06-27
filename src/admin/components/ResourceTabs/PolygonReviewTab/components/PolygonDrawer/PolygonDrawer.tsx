@@ -47,8 +47,8 @@ export interface ICriteriaCheckItem {
   date?: string;
 }
 
-const ESTIMATED_AREA_CRITERIA_ID = 12;
-const COMPLETED_DATA_CRITERIA_ID = 14;
+export const ESTIMATED_AREA_CRITERIA_ID = 12;
+export const COMPLETED_DATA_CRITERIA_ID = 14;
 
 const PolygonDrawer = ({
   polygonSelected,

@@ -16,6 +16,7 @@ import {
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import Notification from "@/components/elements/Notification/Notification";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -32,6 +33,7 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
+  fetchPutV2SitePolygonStatusBulk,
   GetV2MODELUUIDFilesResponse,
   useGetV2MODELUUIDFiles,
   useGetV2SitesSiteBbox,
@@ -102,6 +104,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+  const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
+  const [polygonsForApprovals, setPolygonsForApprovals] = useState<SitePolygonsDataResponse>([]);
 
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap);
@@ -283,7 +287,25 @@ const PolygonReviewTab: FC<IProps> = props => {
         content={contentForApproval}
         commentArea
         onClose={closeModal}
-        onConfirm={() => {}}
+        onConfirm={async data => {
+          closeModal();
+          try {
+            await fetchPutV2SitePolygonStatusBulk({
+              body: {
+                comment: data,
+                updatePolygons: polygonsForApprovals.map(polygon => {
+                  return { uuid: polygon.uuid, status: "Approved" };
+                })
+              }
+            });
+            setShowApprovalSuccess(true);
+            setTimeout(() => {
+              setShowApprovalSuccess(false);
+            }, 3000);
+          } catch (error) {
+            console.log(error);
+          }
+        }}
       />
     );
   };
@@ -311,13 +333,15 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       <ModalApprove
         title="Approve Polygons"
+        site={record}
         onClose={closeModal}
         content="Administrators may approve polygons only if all checks pass."
         primaryButtonText="Next"
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
-          onClick: () => {
+          onClick: (polygons: unknown) => {
+            setPolygonsForApprovals(polygons as SitePolygonsDataResponse);
             closeModal();
             openFormModalHandlerConfirm();
           }
@@ -372,6 +396,12 @@ const PolygonReviewTab: FC<IProps> = props => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
+        <Notification
+          open={showApprovalSuccess}
+          title={"Success, Your Polygons were approved!"}
+          message={""}
+          type="success"
+        />
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
