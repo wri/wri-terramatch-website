@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
-import { layersList } from "@/constants/layers";
+import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
@@ -153,7 +153,7 @@ export const removePopups = (key: "POLYGON" | "MEDIA") => {
 };
 
 export const removeMediaLayer = (map: mapboxgl.Map) => {
-  const layerName = "media-images";
+  const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
 };
@@ -190,7 +190,7 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
 };
 
 export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
-  const layerName = "media-images";
+  const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
   removePopups("MEDIA");
   const modelFilesGeolocalized = modelFilesData!.filter(
@@ -234,10 +234,8 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       "icon-image": "pulsing-dot"
     }
   });
-  const array = [1, 2, 3, 4, 5, 6, 7];
-  array.forEach(i => {
-    map.moveLayer(`polygon_geometry-${i}`, layerName);
-  });
+
+  map.moveLayer(layerName);
 
   map.on("click", layerName, e => {
     e.preventDefault();
@@ -331,14 +329,16 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
 };
 
 export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
-  console.log("sourceName", sourceName);
-  console.log("index", index);
-  map.addLayer({
-    ...style,
-    id: `${sourceName}-${index}`,
-    source: sourceName,
-    "source-layer": sourceName
-  } as mapboxgl.AnyLayer);
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+  map.addLayer(
+    {
+      ...style,
+      id: `${sourceName}-${index}`,
+      source: sourceName,
+      "source-layer": sourceName
+    } as mapboxgl.AnyLayer,
+    beforeLayer
+  );
 };
 
 export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
