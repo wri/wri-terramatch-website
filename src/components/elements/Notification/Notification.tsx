@@ -13,10 +13,11 @@ export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> 
   message: string;
   title: string;
   open: boolean;
+  disableMessage?: boolean;
 }
 
 const Notification: FC<NotificationProps> = props => {
-  const { type = "default", message, className, title, open, ...rest } = props;
+  const { type = "default", message, className, title, open, disableMessage, ...rest } = props;
   const t = useT();
   const [openNotification, setOpenNotification] = useState(open);
 
@@ -81,7 +82,7 @@ const Notification: FC<NotificationProps> = props => {
                   {t(title)}
                 </Text>
               </div>
-              <When condition={!!message}>
+              <When condition={!!message && !disableMessage}>
                 <Text variant="text-body-200" className="mt-2 !font-primary">
                   {t(message)}
                 </Text>

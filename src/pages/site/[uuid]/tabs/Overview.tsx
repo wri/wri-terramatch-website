@@ -269,11 +269,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <Notification
         open={showSubmissionSuccess}
-        title={t("Success, Your Polygons were submitted!")}
+        title={t("Success! Your polygons were submitted.")}
         message={t(
           "Admins have been notified and a confirmation email has been sent. Follow-up through the Audit Log."
         )}
         type="success"
+        disableMessage={true}
       />
       <PageBody>
         <PageRow>
