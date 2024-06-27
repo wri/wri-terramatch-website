@@ -96,7 +96,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     <div className="grid gap-2">
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <When condition={polygonCheck}>
-          <Text variant="text-10-light">{t("Your polygons have been updated")}</Text>
+          {/* Hiding the text for now*/}
+          {/* <Text variant="text-10-light">{t("Your polygons have been updated")}</Text> */}
         </When>
         <Button
           variant="text"
