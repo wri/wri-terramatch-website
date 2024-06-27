@@ -20,9 +20,10 @@ interface ReportingTasksProps {
   label?: string;
   entity?: Entity["entityName"];
   refresh?: () => void;
+  ennableChangeStatus?: number;
 }
 
-const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: ReportingTasksProps) => {
+const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStatus, ...rest }: ReportingTasksProps) => {
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
@@ -90,6 +91,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
                     mutate={mutateEntity}
+                    entityType={entityType}
                     refresh={() => {
                       loadEntityList();
                       refetch();
@@ -100,9 +102,9 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ...rest }: Report
                     selectedPolygon={selected}
                     setSelectedPolygon={setSelected}
                     auditLogData={auditLogData?.data}
-                    tab="polygonReview"
+                    showChangeRequest={true}
                     checkPolygonsSite={checkPolygonsSite}
-                    viewPD={true}
+                    ennableChangeStatus={ennableChangeStatus}
                   />
                 </div>
               </div>

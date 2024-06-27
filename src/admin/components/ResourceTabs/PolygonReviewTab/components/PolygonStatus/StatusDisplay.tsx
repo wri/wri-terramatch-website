@@ -15,22 +15,26 @@ const menuPolygonOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1
+    value: 1,
+    viewPd: true
   },
   {
     title: "Submitted",
     status: "submitted",
-    value: 2
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3
+    value: 3,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4
+    value: 4,
+    viewPd: false
   }
 ];
 const menuSiteOptions = [
@@ -101,6 +105,9 @@ export interface StatusProps {
   refetchPolygon?: () => void;
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
+  viewPD?: boolean;
+  ennableChangeStatus?: number;
+  buttonToogle?: number;
 }
 
 const menuOptionsMap = {
@@ -128,7 +135,10 @@ const StatusDisplay = ({
   name,
   record,
   checkPolygonsSite,
-  showChangeRequest = false
+  showChangeRequest = false,
+  viewPD,
+  ennableChangeStatus,
+  buttonToogle
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -155,6 +165,10 @@ const StatusDisplay = ({
     </Text>
   );
 
+  const filterViewPd = viewPD
+    ? menuOptionsMap[titleStatus].filter(option => option.viewPd === true)
+    : menuOptionsMap[titleStatus];
+
   const onFinallyRequest = () => {
     refresh?.();
     reloadEntity?.();
@@ -167,7 +181,7 @@ const StatusDisplay = ({
         title={`${titleStatus} Status Change`}
         commentArea
         menuLabel={""}
-        menu={menuOptionsMap[titleStatus]}
+        menu={filterViewPd}
         onClose={closeModal}
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}
@@ -279,11 +293,18 @@ const StatusDisplay = ({
       />
     );
   };
+
   return (
     <>
       <div className="flex flex-col items-center gap-4">
         <div className="flex w-full items-center gap-4">
-          <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
+          <Button
+            className={classNames("w-full flex-1 border-[3px] border-primary", {
+              "opacity-0": ennableChangeStatus !== buttonToogle
+            })}
+            onClick={openFormModalHandlerStatus}
+            disabled={ennableChangeStatus !== buttonToogle}
+          >
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button

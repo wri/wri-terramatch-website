@@ -19,9 +19,17 @@ interface ReportingTasksProps {
   label?: string;
   entity?: Entity["entityName"];
   refresh?: () => void;
+  ennableChangeStatus?: number;
 }
 
-const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: ReportingTasksProps) => {
+const AuditLog = ({
+  label,
+  entity,
+  project,
+  refresh: refreshProject,
+  ennableChangeStatus,
+  ...rest
+}: ReportingTasksProps) => {
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
@@ -92,6 +100,10 @@ const AuditLog = ({ label, entity, project, refresh: refreshProject, ...rest }: 
                     auditLogData={auditLogData?.data}
                     checkPolygonsSite={checkPolygonsSite}
                     entityType={entityType}
+                    showChangeRequest={true}
+                    viewPD={true}
+                    buttonToogle={buttonToogle}
+                    ennableChangeStatus={ennableChangeStatus}
                   />
                 </div>
               </div>

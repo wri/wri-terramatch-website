@@ -35,6 +35,12 @@ import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
 
 import AuditLog from "./tabs/AuditLog";
 
+const ButtonStates = {
+  PROJECTS: 0,
+  SITE: 1,
+  POLYGON: 2
+};
+
 const ProjectDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -183,7 +189,7 @@ const ProjectDetailPage = () => {
             {
               key: "audit-log",
               title: t("Audit Log"),
-              body: <AuditLog project={project} refresh={refetch} />
+              body: <AuditLog project={project} refresh={refetch} ennableChangeStatus={ButtonStates.POLYGON} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
