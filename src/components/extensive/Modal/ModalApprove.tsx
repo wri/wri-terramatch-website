@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
@@ -9,6 +8,7 @@ import {
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
+import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
@@ -29,6 +29,7 @@ interface DisplayedPolygonType {
   id: string | undefined;
   name: string | undefined;
   canBeApproved: boolean | undefined;
+  failingCriterias: string[] | undefined;
 }
 
 const ModalApprove: FC<ModalApproveProps> = ({
@@ -46,7 +47,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
   onClose,
   ...rest
 }) => {
-  const t = useT();
   const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
 
   const { data: polygonsCriteriaData } = useGetV2TerrafundValidationSite({
@@ -62,16 +62,16 @@ const ModalApprove: FC<ModalApproveProps> = ({
     setPolygonsSelected(polygonList.map(_ => false));
     setDisplayedPolygons(
       polygonList.map(polygon => {
-        const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.uuid);
-        const excludedFromValidationCriterias = [ESTIMATED_AREA_CRITERIA_ID, COMPLETED_DATA_CRITERIA_ID];
-        const canBeApproved =
-          criteria?.nonValidCriteria?.length === 0 ||
-          criteria?.nonValidCriteria?.map(r => r.criteria_id).every(r => excludedFromValidationCriterias.includes(r));
-
+        const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id);
+        const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+        const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
+        const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r)) ?? [];
+        const canBeApproved = criteria?.nonValidCriteria?.length === 0 && failingCriterias.length > 0;
         return {
           id: polygon.uuid,
-          name: polygon.poly_name ?? t("Unnamed Polygon"),
-          canBeApproved
+          name: polygon.poly_name ?? "Unnamed Polygon",
+          canBeApproved,
+          failingCriterias
         };
       })
     );
@@ -102,13 +102,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
-              {t("Name")}
+              {"Name"}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-start">
-              {t("Polygon Check")}
+              {"Polygon Check"}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              {t("Approve")}
+              {"Approve"}
             </Text>
           </header>
           {displayedPolygons?.map((item, index) => (
@@ -120,10 +120,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
                 <div className="flex w-full items-center justify-start gap-2">
                   <When condition={item.canBeApproved}>
                     <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
-                    <Text variant="text-10-light">{t("Verified")}</Text>
+                    <Text variant="text-10-light">{"Verified"}</Text>
                   </When>
                   <When condition={!item.canBeApproved}>
                     <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
+                    <Text variant="text-10-light">
+                      {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
+                    </Text>
                   </When>
                 </div>
               </div>
@@ -131,6 +134,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
                 <Checkbox
                   name=""
                   checked={polygonsSelected?.[index]}
+                  disabled={!item.canBeApproved}
                   onClick={() => {
                     setPolygonsSelected(prev => {
                       const newSelected = [...prev];

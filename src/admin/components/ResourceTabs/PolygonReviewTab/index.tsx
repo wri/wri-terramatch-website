@@ -387,10 +387,23 @@ const PolygonReviewTab: FC<IProps> = props => {
   ];
 
   const contentForApproval = (
-    <Text variant="text-12-light" as="p" className="text-center">
-      Are you sure you want to approve the polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>{record.name}</b>?
-    </Text>
+    <>
+      <Text variant="text-12-light" as="p" className="text-center">
+        Are you sure you want to approve the following polygons for&nbsp;
+        <b style={{ fontSize: "inherit" }}>{record.name}</b>?
+      </Text>
+      <div className="ml-6">
+        <ul style={{ listStyleType: "circle" }}>
+          {polygonsForApprovals?.map(polygon => (
+            <li key={polygon.id}>
+              <Text variant="text-12-light" as="p">
+                {polygon?.poly_name ?? "Unnamed Polygon"}
+              </Text>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 
   return (
