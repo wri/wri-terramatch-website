@@ -294,7 +294,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               body: {
                 comment: data,
                 updatePolygons: polygonsForApprovals.map(polygon => {
-                  return { uuid: polygon.uuid, status: "Approved" };
+                  return { uuid: polygon.uuid, status: "approved" };
                 })
               }
             });
