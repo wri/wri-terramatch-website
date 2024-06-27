@@ -29,7 +29,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
     SITE: 1,
     POLYGON: 2
   };
-  const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
+  const [buttonToggle, setButtonToggle] = useState(ButtonStates.PROJECTS);
 
   const {
     mutateEntity,
@@ -46,14 +46,14 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
     checkPolygonsSite
   } = useAuditLogActions({
     record: site,
-    buttonToogle,
+    buttonToggle,
     entityLevel: SITE
   });
 
   useEffect(() => {
     refetch();
     loadEntityList();
-  }, [buttonToogle]);
+  }, [buttonToggle]);
 
   return (
     <PageBody>
@@ -63,8 +63,8 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-[64%] gap-6">
-                  <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-                  <When condition={buttonToogle === ButtonStates.PROJECTS}>
+                  <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+                  <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
                     <Text variant="text-14-light" className="mb-4">
                       Update the site status, view updates, or add comments
@@ -76,13 +76,14 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
                       OPEN PROJECT AUDIT LOG
                     </Link>
                   </When>
-                  <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+                  <When condition={buttonToggle !== ButtonStates.PROJECTS}>
                     <SiteAuditLogEntityStatus
                       record={selected}
                       auditLogData={auditLogData}
                       refresh={refetch}
-                      buttonToogle={buttonToogle}
+                      buttonToggle={buttonToggle}
                       entityType={entityType}
+                      viewPD={true}
                     />
                   </When>
                 </div>
@@ -95,15 +96,17 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
                     refresh={() => {
                       loadEntityList();
                       refetch();
-                      refreshSite && refreshSite();
+                      refreshSite?.();
                     }}
                     record={selected}
                     polygonList={entityListItem}
                     selectedPolygon={selected}
                     setSelectedPolygon={setSelected}
                     auditLogData={auditLogData?.data}
-                    showChangeRequest={true}
                     checkPolygonsSite={checkPolygonsSite}
+                    showChangeRequest={true}
+                    viewPD={true}
+                    buttonToggle={buttonToggle}
                     ennableChangeStatus={ennableChangeStatus}
                   />
                 </div>

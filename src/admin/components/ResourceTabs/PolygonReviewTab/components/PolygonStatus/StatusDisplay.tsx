@@ -107,7 +107,7 @@ export interface StatusProps {
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
   ennableChangeStatus?: number;
-  buttonToogle?: number;
+  buttonToggle?: number;
 }
 
 const menuOptionsMap = {
@@ -138,7 +138,7 @@ const StatusDisplay = ({
   showChangeRequest = false,
   viewPD,
   ennableChangeStatus,
-  buttonToogle
+  buttonToggle
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -300,10 +300,10 @@ const StatusDisplay = ({
         <div className="flex w-full items-center gap-4">
           <Button
             className={classNames("w-full flex-1 border-[3px] border-primary", {
-              "opacity-0": ennableChangeStatus !== buttonToogle
+              "opacity-0": ennableChangeStatus !== buttonToggle
             })}
             onClick={openFormModalHandlerStatus}
-            disabled={ennableChangeStatus !== buttonToogle}
+            disabled={ennableChangeStatus !== buttonToggle}
           >
             <Text variant="text-12-bold">change status</Text>
           </Button>

@@ -20,7 +20,7 @@ export interface SelectedItem {
 interface UseLoadEntityListParams {
   entityUuid: string;
   entityType: AuditLogEntity;
-  buttonToogle?: number;
+  buttonToggle?: number;
   entityLevel?: string;
 }
 
@@ -34,7 +34,7 @@ export interface EntityListItem {
   poly_id?: string | undefined;
 }
 
-const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }: UseLoadEntityListParams) => {
+const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }: UseLoadEntityListParams) => {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
   const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
   const isFirstLoad = useRef(true);
@@ -107,7 +107,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
     setSelected(null);
     setEntityListItem([]);
     isFirstLoad.current = true;
-  }, [entityType, buttonToogle]);
+  }, [entityType, buttonToggle]);
 
   return { entityListItem, selected, setSelected, loadEntityList };
 };

@@ -35,7 +35,7 @@ const AuditLog = ({
     SITE: 1,
     POLYGON: 2
   };
-  const [buttonToogle, setButtonToogle] = useState(ButtonStates.PROJECTS);
+  const [buttonToggle, setButtonToggle] = useState(ButtonStates.PROJECTS);
 
   const {
     mutateEntity,
@@ -52,14 +52,14 @@ const AuditLog = ({
     checkPolygonsSite
   } = useAuditLogActions({
     record: project,
-    buttonToogle,
+    buttonToggle,
     entityLevel: PROJECT
   });
 
   useEffect(() => {
     refetch();
     loadEntityList();
-  }, [buttonToogle]);
+  }, [buttonToggle]);
 
   return (
     <PageBody>
@@ -69,17 +69,18 @@ const AuditLog = ({
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-[64%] gap-6">
-                  <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-                  <When condition={buttonToogle === ButtonStates.PROJECTS}>
+                  <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+                  <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
                   </When>
-                  <When condition={buttonToogle !== ButtonStates.PROJECTS}>
+                  <When condition={buttonToggle !== ButtonStates.PROJECTS}>
                     <SiteAuditLogEntityStatus
                       record={selected}
                       auditLogData={auditLogData}
                       refresh={refetch}
-                      buttonToogle={buttonToogle}
+                      buttonToggle={buttonToggle}
                       entityType={entityType}
+                      viewPD={true}
                     />
                   </When>
                 </div>
@@ -102,7 +103,7 @@ const AuditLog = ({
                     entityType={entityType}
                     showChangeRequest={true}
                     viewPD={true}
-                    buttonToogle={buttonToogle}
+                    buttonToggle={buttonToggle}
                     ennableChangeStatus={ennableChangeStatus}
                   />
                 </div>
