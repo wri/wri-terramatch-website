@@ -24,12 +24,6 @@ const AddDataButton = (props: AddDataButtonProps) => {
       render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
       onClick: openFormModalHandlerAddPolygon
     }
-    // Hiding the upload images button for now
-    // {
-    //   id: "3",
-    //   render: () => <Text variant="text-12-bold">Upload Images</Text>,
-    //   onClick: openFormModalHandlerUploadImages
-    // }
   ];
   return (
     <Menu menu={addMenuItems} className={classNameContent}>
