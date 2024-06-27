@@ -34,7 +34,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const restorationOptions = getRestorationStrategyOptions(t);
 
   const filterRestorationStrategyOptions = restorationOptions
-    .filter(option => project.restoration_strategy.includes(option.value))
+    .filter(option => project.restoration_strategy?.includes(option.value))
     .map(option => option.value.toString());
 
   const landUseTypesOptions = useGetOptions(project.land_use_types);
