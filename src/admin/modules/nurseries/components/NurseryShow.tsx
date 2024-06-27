@@ -21,7 +21,7 @@ const NurseryShow: FC = () => {
         <GalleryTab label="Nursery Gallery" entity="nurseries" />
         <DocumentTab label="Nursery Documents" entity="nurseries" />
         <ChangeRequestsTab entity="nurseries" singularEntity="nursery" />
-        <AuditLogTab />
+        <AuditLogTab isReport={true} reportEntityType="Nursery" />
       </TabbedShowLayout>
     </Show>
   );

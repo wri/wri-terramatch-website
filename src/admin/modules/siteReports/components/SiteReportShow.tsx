@@ -8,6 +8,7 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import ShowTitle from "@/admin/components/ShowTitle";
+import { SITE_REPORT } from "@/constants/entities";
 
 const SiteReportShow: FC = () => {
   return (
@@ -21,7 +22,7 @@ const SiteReportShow: FC = () => {
         <GalleryTab label="Site Report Gallery" entity="site-reports" />
         <DocumentTab label="Site Report Documents" entity="site-reports" />
         <ChangeRequestsTab entity="site-reports" singularEntity="site-report" />
-        <AuditLogTab />
+        <AuditLogTab isReport={true} reportEntityType={SITE_REPORT} />
       </TabbedShowLayout>
     </Show>
   );

@@ -13,12 +13,15 @@ import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
 import { AuditLogButtonStates } from "./constants/enum";
+import { AuditLogEntity } from "./constants/types";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
+  isReport?: boolean;
+  reportEntityType?: AuditLogEntity;
 }
 
-const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
+const AuditLogTab: FC<IProps> = ({ label, isReport = false, reportEntityType, ...rest }) => {
   const { record, isLoading } = useShowContext();
   const [buttonToogle, setButtonToogle] = useState(() => {
     return record?.project ? AuditLogButtonStates.SITE : AuditLogButtonStates.PROJECT;
@@ -41,7 +44,8 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
   } = useAuditLogActions({
     record,
     buttonToogle,
-    entityLevel: record?.project ? SITE : PROJECT
+    entityLevel: record?.project ? SITE : PROJECT,
+    reportEntityType: reportEntityType
   });
 
   useEffect(() => {
@@ -55,14 +59,12 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
-              <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && record?.project}>
-                <div>
-                  <Text variant="text-24-bold">Project Status</Text>
-                  <Text variant="text-14-light" className="mb-4">
-                    Update the project status, view updates, or add comments
-                  </Text>
-                </div>
+              {!isReport && <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />}
+              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && record?.project && !isReport}>
+                <Text variant="text-24-bold">Project Status</Text>
+                <Text variant="text-14-light" className="mb-4">
+                  Update the site status, view updates, or add comments
+                </Text>
                 <Button
                   className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                   component={Link}
@@ -74,13 +76,14 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
               <When condition={buttonToogle === AuditLogButtonStates.PROJECT && !record?.project}>
                 <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} />
               </When>
-              <When condition={buttonToogle !== AuditLogButtonStates.PROJECT}>
+              <When condition={buttonToogle !== AuditLogButtonStates.PROJECT || isReport}>
                 <SiteAuditLogEntityStatus
-                  entityType={entityType}
+                  entityType={reportEntityType ?? entityType}
                   record={selected}
                   auditLogData={auditLogData}
                   refresh={refetch}
                   buttonToogle={buttonToogle}
+                  reportEntityType={reportEntityType}
                 />
               </When>
             </Stack>
@@ -90,7 +93,7 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
               getValueForStatus={valuesForStatus}
               progressBarLabels={statusLabels}
               mutate={mutateEntity}
-              entityType={entityType}
+              entityType={reportEntityType ?? entityType}
               refresh={() => {
                 refetch();
                 loadEntityList();

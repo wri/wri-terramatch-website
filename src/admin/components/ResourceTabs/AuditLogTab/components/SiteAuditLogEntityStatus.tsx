@@ -17,6 +17,7 @@ export interface SiteAuditLogEntityStatusProps {
   auditLogData?: { data: AuditStatusResponse[] };
   refresh: () => void;
   buttonToogle: number;
+  reportEntityType?: AuditLogEntity;
 }
 
 interface SelectedItem {
@@ -33,27 +34,35 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   record,
   auditLogData,
   refresh,
-  buttonToogle
+  buttonToogle,
+  reportEntityType
 }) => {
   const isSite = buttonToogle === AuditLogButtonStates.SITE;
   const basename = useBasename();
 
   const getTitle = () => record?.title ?? record?.name;
 
+  const removeUnderscore = (title: string) => {
+    if (title.includes("_")) {
+      return title.replace("_", " ");
+    }
+    return title;
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div>
         <Text variant="text-24-bold" className="mb-1">
-          {entityType} Status and Comments
+          {removeUnderscore(entityType)} Status and Comments
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          Update the {entityType?.toLowerCase()} status, view updates, or add comments
+          Update the {removeUnderscore(entityType)?.toLowerCase()} status, view updates, or add comments
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
       <div>
-        {!isSite && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
-        {isSite && (
+        {!isSite && !reportEntityType && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
+        {(isSite || reportEntityType) && (
           <Text variant="text-16-bold">
             <RaLink
               className="text-16-bold !text-[#000000DD]"

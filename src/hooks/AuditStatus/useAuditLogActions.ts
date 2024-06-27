@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab/utils/util";
 import { POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
@@ -11,9 +12,13 @@ import {
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
 import {
+  entityReportStatusLabels,
+  getValueForStatusEntityReport,
+  getValueForStatusNursery,
   getValueForStatusPolygon,
   getValueForStatusProject,
   getValueForStatusSite,
+  nurseryStatusLabels,
   polygonProgressBarStatusLabels,
   projectStatusLabels,
   siteProgressBarStatusLabels
@@ -68,11 +73,13 @@ interface AuditLogActionsResponse {
 const useAuditLogActions = ({
   record,
   buttonToogle,
-  entityLevel
+  entityLevel,
+  reportEntityType
 }: {
   record: any;
   buttonToogle: number;
   entityLevel: string;
+  reportEntityType?: AuditLogEntity;
 }): AuditLogActionsResponse => {
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
   const isProject = buttonToogle === AuditLogButtonStates.PROJECT;
@@ -108,9 +115,10 @@ const useAuditLogActions = ({
         setCriteriaValidation(criteriaData);
       }
     };
-
-    fetchCheckPolygons();
-    fetchCriteriaValidation();
+    if (!reportEntityType) {
+      fetchCriteriaValidation();
+      fetchCheckPolygons();
+    }
   }, [entityType, record, selected]);
 
   const isValidCriteriaData = (criteriaData: any) => {
@@ -131,6 +139,14 @@ const useAuditLogActions = ({
         setSelectedToEntity: !isProject ? setSelected : null,
         checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
       };
+    } else if (reportEntityType) {
+      return {
+        selectedEntityItem: record,
+        loadToEntity: () => {},
+        ListItemToEntity: [],
+        setSelectedToEntity: null,
+        checkPolygons: false
+      };
     } else {
       return {
         selectedEntityItem: isProject ? record.project : isSite ? record : selected,
@@ -148,7 +164,7 @@ const useAuditLogActions = ({
     isLoading
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
-      entity: ReverseButtonStates2[buttonToogle],
+      entity: reportEntityType ? getRequestPathParam(reportEntityType) : ReverseButtonStates2[buttonToogle],
       uuid: entityHandlers.selectedEntityItem?.uuid
     }
   });
@@ -157,10 +173,29 @@ const useAuditLogActions = ({
     refetch();
   }, [buttonToogle, record, entityListItem, selected]);
 
+  const getValuesStatusEntity = (() => {
+    if (reportEntityType?.includes("Report")) {
+      return {
+        getValueForStatus: getValueForStatusEntityReport,
+        statusLabels: entityReportStatusLabels
+      };
+    } else if (reportEntityType == "Nursery") {
+      return {
+        getValueForStatus: getValueForStatusNursery,
+        statusLabels: nurseryStatusLabels
+      };
+    } else {
+      return {
+        getValueForStatus: valuesForStatus,
+        statusLabels: statusLabels
+      };
+    }
+  })();
+
   return {
     mutateEntity,
-    valuesForStatus,
-    statusLabels,
+    valuesForStatus: getValuesStatusEntity.getValueForStatus,
+    statusLabels: getValuesStatusEntity.statusLabels,
     entityType: entityType as AuditLogEntity,
     loadEntityList: entityHandlers.loadToEntity,
     entityListItem: entityHandlers.ListItemToEntity,
