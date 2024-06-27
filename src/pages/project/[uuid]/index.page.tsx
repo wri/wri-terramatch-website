@@ -33,6 +33,8 @@ import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
 
+import AuditLog from "./tabs/AuditLog";
+
 const ProjectDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -177,6 +179,11 @@ const ProjectDetailPage = () => {
                   reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
                 />
               )
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog project={project} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
