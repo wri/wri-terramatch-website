@@ -23167,6 +23167,10 @@ export type V2TerrafundCriteriaSite = {
    * Indicates if the polygon has been checked before or not.
    */
   checked?: boolean;
+  /**
+   * List of criteria that are not valid.
+   */
+  nonValidCriteria?: Record<string, any>[];
 }[];
 
 export type SitePolygon = {
@@ -23796,4 +23800,20 @@ export type DashboardProjectViewResponse = {
   data?: {
     allowed?: boolean;
   };
+};
+
+export type PolygonChangeStatus = {
+  comment?: string;
+  updatePolygons?: {
+    uuid?: string;
+    status?: string;
+  }[];
+};
+
+export type PolygonChangeStatusUpdate = {
+  comment?: string;
+  updatePolygons?: {
+    uuid?: string;
+    status?: string;
+  }[];
 };

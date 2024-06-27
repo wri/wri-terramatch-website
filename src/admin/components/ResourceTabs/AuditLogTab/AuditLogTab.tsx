@@ -19,8 +19,11 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 
 const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
-  const [buttonToggle, setButtonToggle] = useState(AuditLogButtonStates.PROJECT);
   const { record, isLoading } = useShowContext();
+  const [buttonToogle, setButtonToogle] = useState(() => {
+    return record?.project ? AuditLogButtonStates.SITE : AuditLogButtonStates.PROJECT;
+  });
+
   const basename = useBasename();
 
   const {

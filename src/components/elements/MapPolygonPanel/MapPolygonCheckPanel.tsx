@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -127,12 +126,6 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }:
           />
         </div>
       </div>
-      <button className="text-white hover:text-primary-300">
-        <Text variant="text-14-bold" className="mt-6 flex items-center uppercase ">
-          <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-          &nbsp; {t("Add Polygon")}
-        </Text>
-      </button>
     </>
   );
 };

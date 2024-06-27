@@ -75,7 +75,7 @@ const ImageGallery = ({
   };
 
   const onClickGalleryItem = (previewData: ImageGalleryItemData) => {
-    openModal(<ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />);
+    openModal(<ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />, true);
   };
 
   const handleDelete = (id: string) => {

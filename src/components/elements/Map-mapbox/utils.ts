@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
-import { layersList } from "@/constants/layers";
+import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
@@ -153,7 +153,7 @@ export const removePopups = (key: "POLYGON" | "MEDIA") => {
 };
 
 export const removeMediaLayer = (map: mapboxgl.Map) => {
-  const layerName = "media-images";
+  const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
 };
@@ -190,7 +190,7 @@ export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, curre
 };
 
 export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
-  const layerName = "media-images";
+  const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
   removePopups("MEDIA");
   const modelFilesGeolocalized = modelFilesData!.filter(
@@ -235,22 +235,28 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
     }
   });
 
-  map.on("mouseenter", layerName, e => {
+  map.moveLayer(layerName);
+
+  map.on("click", layerName, e => {
     e.preventDefault();
     e.features!.forEach((feature: any) => {
       let popupContent = document.createElement("div");
       popupContent.className = "popup-content-media";
       const root = createRoot(popupContent);
-      root.render(createElement(MediaPopup, feature.properties));
+      root.render(
+        createElement(MediaPopup, {
+          ...feature.properties,
+          onClose: () => {
+            removePopups("MEDIA");
+          }
+        })
+      );
       popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)
         .addTo(map);
       popupAttachedMap["MEDIA"].push(popup);
     });
-  });
-  map.on("mouseleave", layerName, e => {
-    removePopups("MEDIA");
   });
 };
 
@@ -322,12 +328,16 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
 };
 
 export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
-  map.addLayer({
-    ...style,
-    id: `${sourceName}-${index}`,
-    source: sourceName,
-    "source-layer": sourceName
-  } as mapboxgl.AnyLayer);
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+  map.addLayer(
+    {
+      ...style,
+      id: `${sourceName}-${index}`,
+      source: sourceName,
+      "source-layer": sourceName
+    } as mapboxgl.AnyLayer,
+    beforeLayer
+  );
 };
 
 export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
