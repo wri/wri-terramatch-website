@@ -213,12 +213,7 @@ const StatusDisplay = ({
   });
 
   const { openModal, closeModal } = useModalContext();
-  const removeUnderscore = (title: string) => {
-    if (title.includes("_")) {
-      return title.replace("_", " ");
-    }
-    return title;
-  };
+  const removeUnderscore = (title: string) => title.replace("_", " ");
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
       {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{removeUnderscore(name)}</b>?

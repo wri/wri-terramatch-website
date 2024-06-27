@@ -5,7 +5,7 @@ import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { PROJECT, SITE } from "@/constants/entities";
+import { NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
@@ -13,20 +13,25 @@ import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
 import { AuditLogButtonStates } from "./constants/enum";
-import { AuditLogEntity } from "./constants/types";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
-  isReport?: boolean;
-  reportEntityType?: AuditLogEntity;
+  entity?: number;
 }
 
-const AuditLogTab: FC<IProps> = ({ label, isReport = false, reportEntityType, ...rest }) => {
-  const { record, isLoading } = useShowContext();
-  const [buttonToogle, setButtonToogle] = useState(() => {
-    return record?.project ? AuditLogButtonStates.SITE : AuditLogButtonStates.PROJECT;
-  });
+const ReverseButtonStates2: { [key: number]: string } = {
+  0: "project",
+  1: "site",
+  2: "site-polygon",
+  3: "nursery",
+  4: "project-reports",
+  5: "site-reports",
+  6: "nursery-reports"
+};
 
+const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
+  const { record, isLoading } = useShowContext();
+  const [buttonToggle, setButtonToggle] = useState(entity);
   const basename = useBasename();
 
   const {
@@ -43,24 +48,39 @@ const AuditLogTab: FC<IProps> = ({ label, isReport = false, reportEntityType, ..
     checkPolygonsSite
   } = useAuditLogActions({
     record,
-    buttonToogle,
-    entityLevel: record?.project ? SITE : PROJECT,
-    reportEntityType: reportEntityType
+    buttonToggle,
+    entityLevel: entity
   });
 
   useEffect(() => {
     refetch();
     loadEntityList();
-  }, [buttonToogle]);
+  }, [buttonToggle]);
 
+  const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
+
+  const verifyEntityReport = () => {
+    switch (ReverseButtonStates2[entity!]) {
+      case "project-reports":
+        return PROJECT_REPORT;
+      case "site-reports":
+        return SITE_REPORT;
+      case "nursery-reports":
+        return NURSERY_REPORT;
+      default:
+        return entityType;
+    }
+  };
   return (
     <When condition={!isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
-              {!isReport && <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />}
-              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && record?.project && !isReport}>
+              {!verifyEntity && (
+                <AuditLogSiteTabSelection buttonToggle={buttonToggle!} setButtonToggle={setButtonToggle} />
+              )}
+              <When condition={buttonToggle === AuditLogButtonStates.PROJECT && record?.project && !verifyEntity}>
                 <Text variant="text-24-bold">Project Status</Text>
                 <Text variant="text-14-light" className="mb-4">
                   Update the site status, view updates, or add comments
@@ -73,17 +93,17 @@ const AuditLogTab: FC<IProps> = ({ label, isReport = false, reportEntityType, ..
                   label="OPEN PROJECT AUDIT LOG"
                 />
               </When>
-              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && !record?.project}>
+              <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
                 <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} />
               </When>
-              <When condition={buttonToogle !== AuditLogButtonStates.PROJECT || isReport}>
+              <When condition={buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity}>
                 <SiteAuditLogEntityStatus
-                  entityType={reportEntityType ?? entityType}
+                  entityType={verifyEntityReport()}
                   record={selected}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  buttonToogle={buttonToogle}
-                  reportEntityType={reportEntityType}
+                  buttonToggle={buttonToggle!}
+                  verifyEntity={verifyEntity}
                 />
               </When>
             </Stack>
@@ -93,7 +113,7 @@ const AuditLogTab: FC<IProps> = ({ label, isReport = false, reportEntityType, ..
               getValueForStatus={valuesForStatus}
               progressBarLabels={statusLabels}
               mutate={mutateEntity}
-              entityType={reportEntityType ?? entityType}
+              entityType={verifyEntityReport()}
               refresh={() => {
                 refetch();
                 loadEntityList();

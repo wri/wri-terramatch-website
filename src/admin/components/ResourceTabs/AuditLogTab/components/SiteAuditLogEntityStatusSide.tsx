@@ -74,12 +74,7 @@ const SiteAuditLogEntityStatusSide = ({
     });
   };
 
-  const removeUnderscore = (title: string) => {
-    if (title.includes("_")) {
-      return title.replace("_", " ");
-    }
-    return title;
-  };
+  const removeUnderscore = (title: string) => title.replace("_", " ");
 
   return (
     <div className="flex flex-col gap-6 overflow-visible">

@@ -16,8 +16,8 @@ export interface SiteAuditLogEntityStatusProps {
   record: SelectedItem | null;
   auditLogData?: { data: AuditStatusResponse[] };
   refresh: () => void;
-  buttonToogle: number;
-  reportEntityType?: AuditLogEntity;
+  buttonToggle: number;
+  verifyEntity?: boolean;
 }
 
 interface SelectedItem {
@@ -34,20 +34,15 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   record,
   auditLogData,
   refresh,
-  buttonToogle,
-  reportEntityType
+  buttonToggle,
+  verifyEntity
 }) => {
-  const isSite = buttonToogle === AuditLogButtonStates.SITE;
+  const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const basename = useBasename();
 
   const getTitle = () => record?.title ?? record?.name;
 
-  const removeUnderscore = (title: string) => {
-    if (title.includes("_")) {
-      return title.replace("_", " ");
-    }
-    return title;
-  };
+  const removeUnderscore = (title: string) => title.replace("_", " ");
 
   return (
     <div className="flex flex-col gap-6">
@@ -61,8 +56,8 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
       <div>
-        {!isSite && !reportEntityType && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
-        {(isSite || reportEntityType) && (
+        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
+        {(isSite || verifyEntity) && (
           <Text variant="text-16-bold">
             <RaLink
               className="text-16-bold !text-[#000000DD]"
