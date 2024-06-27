@@ -234,6 +234,10 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       "icon-image": "pulsing-dot"
     }
   });
+  const array = [1, 2, 3, 4, 5, 6, 7];
+  array.forEach(i => {
+    map.moveLayer(`polygon_geometry-${i}`, layerName);
+  });
 
   map.on("click", layerName, e => {
     e.preventDefault();
@@ -294,6 +298,7 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
+    console.log("targetLayers", targetLayers);
 
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) =>
@@ -326,6 +331,8 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
 };
 
 export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
+  console.log("sourceName", sourceName);
+  console.log("index", index);
   map.addLayer({
     ...style,
     id: `${sourceName}-${index}`,

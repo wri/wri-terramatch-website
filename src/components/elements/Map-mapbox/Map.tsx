@@ -182,7 +182,7 @@ export const MapContainer = ({
   }, [bbox]);
 
   useEffect(() => {
-    if (props?.modelFilesData) {
+    if (map?.current && styleLoaded && props?.modelFilesData) {
       if (showMediaPopups) {
         addMediaSourceAndLayer(map.current, props?.modelFilesData);
       } else {
@@ -190,7 +190,7 @@ export const MapContainer = ({
         removeMediaLayer(map.current);
       }
     }
-  }, [props?.modelFilesData, showMediaPopups]);
+  }, [props?.modelFilesData, showMediaPopups, styleLoaded]);
 
   useEffect(() => {
     if (geojson && map.current && draw.current) {
