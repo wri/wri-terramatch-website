@@ -19,7 +19,7 @@ interface ReportingTasksProps {
   label?: string;
   entity?: Entity["entityName"];
   refresh?: () => void;
-  ennableChangeStatus?: number;
+  enableChangeStatus?: number;
 }
 
 const AuditLog = ({
@@ -27,7 +27,7 @@ const AuditLog = ({
   entity,
   project,
   refresh: refreshProject,
-  ennableChangeStatus,
+  enableChangeStatus,
   ...rest
 }: ReportingTasksProps) => {
   const ButtonStates = {
@@ -71,7 +71,7 @@ const AuditLog = ({
                 <div className="grid w-[64%] gap-6">
                   <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
-                    <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} refresh={refetch} />
+                    <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} />
                   </When>
                   <When condition={buttonToggle !== ButtonStates.PROJECTS}>
                     <SiteAuditLogEntityStatus
@@ -104,7 +104,7 @@ const AuditLog = ({
                     showChangeRequest={true}
                     viewPD={true}
                     buttonToggle={buttonToggle}
-                    ennableChangeStatus={ennableChangeStatus}
+                    enableChangeStatus={enableChangeStatus}
                   />
                 </div>
               </div>

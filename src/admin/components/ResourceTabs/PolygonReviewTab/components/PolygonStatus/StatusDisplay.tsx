@@ -106,7 +106,7 @@ export interface StatusProps {
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
-  ennableChangeStatus?: number;
+  enableChangeStatus?: number;
   buttonToggle?: number;
 }
 
@@ -137,7 +137,7 @@ const StatusDisplay = ({
   checkPolygonsSite,
   showChangeRequest = false,
   viewPD,
-  ennableChangeStatus,
+  enableChangeStatus,
   buttonToggle
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
@@ -300,10 +300,10 @@ const StatusDisplay = ({
         <div className="flex w-full items-center gap-4">
           <Button
             className={classNames("w-full flex-1 border-[3px] border-primary", {
-              "opacity-0": ennableChangeStatus !== buttonToggle
+              "opacity-0": enableChangeStatus !== buttonToggle
             })}
             onClick={openFormModalHandlerStatus}
-            disabled={ennableChangeStatus !== buttonToggle}
+            disabled={enableChangeStatus !== buttonToggle}
           >
             <Text variant="text-12-bold">change status</Text>
           </Button>

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -21,10 +22,11 @@ interface ReportingTasksProps {
   label?: string;
   entity?: Entity["entityName"];
   refresh?: () => void;
-  ennableChangeStatus?: number;
+  enableChangeStatus?: number;
 }
 
-const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStatus, ...rest }: ReportingTasksProps) => {
+const AuditLog = ({ label, entity, site, refresh: refreshSite, enableChangeStatus, ...rest }: ReportingTasksProps) => {
+  const t = useT();
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
@@ -68,13 +70,13 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
                     <Text variant="text-14-light" className="mb-4">
-                      Update the site status, view updates, or add comments
+                      {t("Update the site status, view updates, or add comments")}
                     </Text>
                     <Link
                       className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                       href={`/project/${site?.project?.uuid}?tab=audit-log`}
                     >
-                      OPEN PROJECT AUDIT LOG
+                      {t("OPEN PROJECT AUDIT LOG")}
                     </Link>
                   </When>
                   <When condition={buttonToggle !== ButtonStates.PROJECTS}>
@@ -108,7 +110,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, ennableChangeStat
                     showChangeRequest={true}
                     viewPD={true}
                     buttonToggle={buttonToggle}
-                    ennableChangeStatus={ennableChangeStatus}
+                    enableChangeStatus={enableChangeStatus}
                   />
                 </div>
               </div>

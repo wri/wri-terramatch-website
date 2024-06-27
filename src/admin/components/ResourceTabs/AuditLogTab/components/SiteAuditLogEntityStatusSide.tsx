@@ -29,7 +29,7 @@ const SiteAuditLogEntityStatusSide = ({
   showChangeRequest = false,
   checkPolygonsSite,
   viewPD = false,
-  ennableChangeStatus,
+  enableChangeStatus,
   buttonToggle
 }: {
   entityType: AuditLogEntity;
@@ -45,7 +45,7 @@ const SiteAuditLogEntityStatusSide = ({
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
-  ennableChangeStatus?: number;
+  enableChangeStatus?: number;
   buttonToggle?: number;
 }) => {
   const [open, setOpen] = useState(false);
@@ -127,7 +127,7 @@ const SiteAuditLogEntityStatusSide = ({
         showChangeRequest={showChangeRequest}
         checkPolygonsSite={checkPolygonsSite}
         viewPD={viewPD}
-        ennableChangeStatus={ennableChangeStatus}
+        enableChangeStatus={enableChangeStatus}
         buttonToggle={buttonToggle}
       />
       <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />

@@ -161,7 +161,7 @@ const SiteDetailPage = () => {
             {
               key: "audit-log",
               title: t("Audit Log"),
-              body: <AuditLog site={site} refresh={refetch} ennableChangeStatus={ButtonStates.POLYGON} />
+              body: <AuditLog site={site} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
