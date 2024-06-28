@@ -12,7 +12,7 @@ import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponen
 import Button from "../Button/Button";
 import Text from "../Text/Text";
 
-const validationLabels: any = {
+export const validationLabels: any = {
   3: "No Overlapping Polygon",
   4: "No Self-Intersection",
   6: "Inside Size Limit",
