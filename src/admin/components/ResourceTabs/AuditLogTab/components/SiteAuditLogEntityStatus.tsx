@@ -37,7 +37,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   auditLogData,
   refresh,
   buttonToggle,
-  verifyEntity
+  verifyEntity,
   viewPD = false
 }) => {
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
@@ -62,7 +62,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
       <div>
-        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
+        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
         {(isSite || verifyEntity) && (
           <Text variant="text-16-bold">
             History and Discussion for{" "}
