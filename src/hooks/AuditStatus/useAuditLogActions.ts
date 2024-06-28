@@ -94,8 +94,6 @@ const useAuditLogActions = ({
   buttonToggle?: number;
   entityLevel?: number;
 }): AuditLogActionsResponse => {
-  console.log(buttonToggle);
-  console.log(ReverseButtonStates2[buttonToggle!]);
   const reportEntityTypes = ReverseButtonStates2[buttonToggle!].includes("reports")
     ? AuditLogButtonStates.REPORT
     : buttonToggle;

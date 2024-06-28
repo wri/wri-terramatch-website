@@ -56,7 +56,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     refetch();
     loadEntityList();
   }, [buttonToggle]);
-
+  
   const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
   const verifyEntityReport = () => {
@@ -86,7 +86,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   Update the site status, view updates, or add comments
                 </Text>
                 <Button
-                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
+                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                   component={Link}
                   to={`${basename}/${modules.project.ResourceName}/${record?.project?.uuid}/show/5`}
                   fullWidth
