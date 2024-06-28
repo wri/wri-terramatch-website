@@ -178,7 +178,7 @@ const menuOptionsMap = {
 };
 
 const DescriptionStatusMap = {
-  Polygon: "Are you sure you want to change the polygon status to",
+  Polygon: "Select new polygon status for",
   Site: "Are you sure you want to change the site status to",
   Project: "Are you sure you want to change the project status to",
   Nursery: "Are you sure you want to change the nursery status to",
@@ -225,9 +225,15 @@ const StatusDisplay = ({
   const { openModal, closeModal } = useModalContext();
   const removeUnderscore = (title: string) => title.replace("_", " ");
   const contentStatus = (
-    <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{removeUnderscore(name)}</b>?
-    </Text>
+    <div className="text-center">
+      <Text variant="text-12-light" as="span" className="text-center">
+        {DescriptionStatusMap[titleStatus]}
+      </Text>
+      <Text variant="text-12-bold" as="span">
+        {" "}
+        {titleStatus == "Polygon" ? record?.title : removeUnderscore(name)}?
+      </Text>
+    </div>
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
