@@ -323,6 +323,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               }
             });
             setShowApprovalSuccess(true);
+            refetch();
             setTimeout(() => {
               setShowApprovalSuccess(false);
             }, 3000);
