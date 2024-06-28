@@ -27,7 +27,10 @@ const SiteAuditLogEntityStatusSide = ({
   getValueForStatus,
   progressBarLabels,
   showChangeRequest = false,
-  checkPolygonsSite
+  checkPolygonsSite,
+  viewPD = false,
+  enableChangeStatus,
+  buttonToggle
 }: {
   entityType: AuditLogEntity;
   refresh?: () => void;
@@ -41,6 +44,9 @@ const SiteAuditLogEntityStatusSide = ({
   progressBarLabels?: Array<{ id: string; label: string }>;
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
+  viewPD?: boolean;
+  enableChangeStatus?: number;
+  buttonToggle?: number;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -74,6 +80,8 @@ const SiteAuditLogEntityStatusSide = ({
     });
   };
 
+  const removeUnderscore = (title: string) => title.replace("_", " ");
+
   return (
     <div className="flex flex-col gap-6 overflow-visible">
       <When condition={polygonList?.length}>
@@ -90,7 +98,7 @@ const SiteAuditLogEntityStatusSide = ({
           }}
         />
       </When>
-      <Text variant="text-16-bold">{`${entityType} Status`}</Text>
+      <Text variant="text-16-bold">{`${removeUnderscore(entityType)} Status`}</Text>
       <StepProgressbar
         color="secondary"
         value={getValueForStatus?.(record?.status) ?? 0}
@@ -120,6 +128,9 @@ const SiteAuditLogEntityStatusSide = ({
         record={record}
         showChangeRequest={showChangeRequest}
         checkPolygonsSite={checkPolygonsSite}
+        viewPD={viewPD}
+        enableChangeStatus={enableChangeStatus}
+        buttonToggle={buttonToggle}
       />
       <Notification open={open} type="success" title="Success!" message="Your Change Request was just removed!" />
     </div>
