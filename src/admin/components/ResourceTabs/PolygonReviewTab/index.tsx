@@ -98,14 +98,38 @@ const PolygonReviewAside: FC<{
   }
 };
 
+const ContentForApproval = ({
+  polygonsForApprovals,
+  recordName
+}: {
+  polygonsForApprovals: SitePolygonsDataResponse;
+  recordName: string;
+}) => (
+  <>
+    <Text variant="text-12-light" as="p" className="text-center">
+      Are you sure you want to approve the following polygons for&nbsp;
+      <b style={{ fontSize: "inherit" }}>{recordName}</b>?
+    </Text>
+    <div className="ml-6">
+      <ul style={{ listStyleType: "circle" }}>
+        {polygonsForApprovals?.map(polygon => (
+          <li key={polygon.id}>
+            <Text variant="text-12-light" as="p">
+              {polygon?.poly_name ?? "Unnamed Polygon"}
+            </Text>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </>
+);
+
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
-  const [polygonsForApprovals, setPolygonsForApprovals] = useState<SitePolygonsDataResponse>([]);
 
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap);
@@ -280,11 +304,11 @@ const PolygonReviewTab: FC<IProps> = props => {
       />
     );
   };
-  const openFormModalHandlerConfirm = () => {
+  const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonsDataResponse, recordName: string) => {
     openModal(
       <ModalConfirm
         title={"Confirm Polygon Approval"}
-        content={contentForApproval}
+        content={<ContentForApproval polygonsForApprovals={polygonsForApprovals} recordName={recordName} />}
         commentArea
         onClose={closeModal}
         onConfirm={async data => {
@@ -341,9 +365,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: (polygons: unknown) => {
-            setPolygonsForApprovals(polygons as SitePolygonsDataResponse);
             closeModal();
-            openFormModalHandlerConfirm();
+            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record.name);
           }
         }}
         secondaryButtonText="Cancel"
@@ -385,26 +408,6 @@ const PolygonReviewTab: FC<IProps> = props => {
       )
     }
   ];
-
-  const contentForApproval = (
-    <>
-      <Text variant="text-12-light" as="p" className="text-center">
-        Are you sure you want to approve the following polygons for&nbsp;
-        <b style={{ fontSize: "inherit" }}>{record.name}</b>?
-      </Text>
-      <div className="ml-6">
-        <ul style={{ listStyleType: "circle" }}>
-          {polygonsForApprovals?.map(polygon => (
-            <li key={polygon.id}>
-              <Text variant="text-12-light" as="p">
-                {polygon?.poly_name ?? "Unnamed Polygon"}
-              </Text>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
