@@ -27,6 +27,14 @@ import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
 
+import AuditLog from "./tabs/AuditLog";
+
+const ButtonStates = {
+  PROJECTS: 0,
+  SITE: 1,
+  POLYGON: 2
+};
+
 const SiteDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -34,7 +42,7 @@ const SiteDetailPage = () => {
   const siteUUID = router.query.uuid as string;
   const { openToast } = useToastContext();
 
-  const { data, isLoading } = useGetV2SitesUUID({
+  const { data, isLoading, refetch } = useGetV2SitesUUID({
     pathParams: { uuid: siteUUID }
   });
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
@@ -149,6 +157,11 @@ const SiteDetailPage = () => {
               key: "completed-tasks",
               title: t("Completed Reports"),
               body: <SiteCompletedReportsTab siteUUID={site.uuid} />
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog site={site} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"

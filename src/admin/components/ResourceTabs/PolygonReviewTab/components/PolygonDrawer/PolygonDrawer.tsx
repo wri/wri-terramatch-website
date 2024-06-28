@@ -20,7 +20,6 @@ import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
-import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
@@ -47,8 +46,8 @@ export interface ICriteriaCheckItem {
   date?: string;
 }
 
-const ESTIMATED_AREA_CRITERIA_ID = 12;
-const COMPLETED_DATA_CRITERIA_ID = 14;
+export const ESTIMATED_AREA_CRITERIA_ID = 12;
+export const COMPLETED_DATA_CRITERIA_ID = 14;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -219,10 +218,6 @@ const PolygonDrawer = ({
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
-            </Accordion>
-            <Divider />
-            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
-              <VersionHistory />
             </Accordion>
             <Divider />
           </div>

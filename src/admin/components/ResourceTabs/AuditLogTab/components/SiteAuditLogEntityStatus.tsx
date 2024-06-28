@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FC } from "react";
 import { Link as RaLink, useBasename } from "react-admin";
 import { When } from "react-if";
@@ -16,7 +17,9 @@ export interface SiteAuditLogEntityStatusProps {
   record: SelectedItem | null;
   auditLogData?: { data: AuditStatusResponse[] };
   refresh: () => void;
-  buttonToogle: number;
+  buttonToggle: number;
+  verifyEntity?: boolean;
+  viewPD?: boolean;
 }
 
 interface SelectedItem {
@@ -33,34 +36,45 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   record,
   auditLogData,
   refresh,
-  buttonToogle
+  buttonToggle,
+  verifyEntity,
+  viewPD = false
 }) => {
-  const isSite = buttonToogle === AuditLogButtonStates.SITE;
+  const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const basename = useBasename();
 
-  const getTitle = () => record?.title ?? record?.name;
+  const title = () => record?.title ?? record?.name;
+  const redirectTo = viewPD
+    ? `/site/${record?.uuid}?tab=audit-log`
+    : `${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`;
+
+  const removeUnderscore = (title: string) => title.replace("_", " ");
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <Text variant="text-24-bold" className="mb-1">
-          {entityType} Status and Comments
+          {removeUnderscore(entityType)} Status and Comments
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          Update the {entityType?.toLowerCase()} status, view updates, or add comments
+          Update the {removeUnderscore(entityType)?.toLowerCase()} status, view updates, or add comments
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
       <div>
-        {!isSite && <Text variant="text-16-bold">History and Discussion for {getTitle()}</Text>}
-        {isSite && (
+        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
+        {(isSite || verifyEntity) && (
           <Text variant="text-16-bold">
-            <RaLink
-              className="text-16-bold !text-[#000000DD]"
-              to={`${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`}
-            >
-              {getTitle()}
-            </RaLink>
+            History and Discussion for{" "}
+            {viewPD ? (
+              <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
+                {title()}
+              </Link>
+            ) : (
+              <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                {title()}
+              </RaLink>
+            )}
           </Text>
         )}
       </div>

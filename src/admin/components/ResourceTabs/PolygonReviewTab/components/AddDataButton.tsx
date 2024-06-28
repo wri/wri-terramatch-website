@@ -10,7 +10,7 @@ export interface AddDataButtonProps {
   classNameContent?: string;
 }
 const AddDataButton = (props: AddDataButtonProps) => {
-  const { openFormModalHandlerAddPolygon, openFormModalHandlerUploadImages, classNameContent } = props;
+  const { openFormModalHandlerAddPolygon, classNameContent } = props;
   const context = useMapAreaContext();
   const { setIsUserDrawingEnabled } = context;
   const addMenuItems = [
@@ -23,11 +23,6 @@ const AddDataButton = (props: AddDataButtonProps) => {
       id: "2",
       render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
       onClick: openFormModalHandlerAddPolygon
-    },
-    {
-      id: "3",
-      render: () => <Text variant="text-12-bold">Upload Images</Text>,
-      onClick: openFormModalHandlerUploadImages
     }
   ];
   return (

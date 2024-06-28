@@ -3,6 +3,7 @@ import { Show, TabbedShowLayout, TabbedShowLayoutTabs } from "react-admin";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import AuditLogTab from "@/admin/components/ResourceTabs/AuditLogTab/AuditLogTab";
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRequestsTab";
 import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab";
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
@@ -22,7 +23,7 @@ const ProjectShow: FC = () => {
         <DocumentTab label="Project Documents" entity="projects" />
         <ChangeRequestsTab entity="projects" singularEntity="project" />
         <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab>
-        <AuditLogTab />
+        <AuditLogTab entity={AuditLogButtonStates.PROJECT} />
       </TabbedShowLayout>
     </Show>
   );

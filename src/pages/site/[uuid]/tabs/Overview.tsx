@@ -47,6 +47,35 @@ interface SiteOverviewTabProps {
   site: any;
 }
 
+const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonsDataResponse }) => {
+  const t = useT();
+  return (
+    <>
+      <Text
+        variant="text-12-light"
+        as="p"
+        className="text-center"
+        dangerouslySetInnerHTML={{
+          __html: t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
+            siteName: siteName
+          })
+        }}
+      />
+      <div className="ml-6">
+        <ul style={{ listStyleType: "circle" }}>
+          {(polygons as SitePolygonsDataResponse)?.map(polygon => (
+            <li key={polygon.id}>
+              <Text variant="text-12-light" as="p">
+                {polygon?.poly_name ?? t("Unnamed Polygon")}
+              </Text>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
+
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
@@ -58,7 +87,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
-  const [polygonsForSubmissions, setPolygonsForSubmissions] = useState<SitePolygonsDataResponse>([]);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -167,34 +195,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         commentArea
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
-        content={
-          <>
-            <Text
-              variant="text-12-light"
-              as="p"
-              className="text-center"
-              dangerouslySetInnerHTML={{
-                __html: t(
-                  `Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`,
-                  {
-                    siteName: site?.name
-                  }
-                )
-              }}
-            />
-            <div className="ml-6">
-              <ul style={{ listStyleType: "circle" }}>
-                {(polygons as SitePolygonsDataResponse)?.map(polygon => (
-                  <li key={polygon.id}>
-                    <Text variant="text-12-light" as="p">
-                      {polygon?.poly_name}
-                    </Text>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        }
+        content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name} />}
         onClose={closeModal}
         onConfirm={async data => {
           closeModal();
@@ -202,7 +203,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             await fetchPutV2SitePolygonStatusBulk({
               body: {
                 comment: data,
-                updatePolygons: polygonsForSubmissions.map(polygon => {
+                updatePolygons: (polygons as SitePolygonsDataResponse).map(polygon => {
                   return { uuid: polygon.uuid, status: polygon.status };
                 })
               }
@@ -230,7 +231,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: (polygons: unknown) => {
-            setPolygonsForSubmissions(polygons as SitePolygonsDataResponse);
             closeModal();
             openFormModalHandlerSubmitReviewConfirm(polygons);
           }
@@ -267,14 +267,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
-      <Notification
-        open={showSubmissionSuccess}
-        title={t("Success, Your Polygons were submitted!")}
-        message={t(
-          "Admins have been notified and a confirmation email has been sent. Follow-up through the Audit Log."
-        )}
-        type="success"
-      />
+      <Notification open={showSubmissionSuccess} title={t("Success! Your polygons were submitted.")} type="success" />
       <PageBody>
         <PageRow>
           <PageCard
@@ -338,7 +331,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       variant="white-border"
                       className=""
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(site?.uuid);
+                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
@@ -368,7 +361,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </PageColumn>
         </PageRow>
         <PageRow>
-          <PageColumn>
+          <PageColumn className="relative rounded-xl border border-neutral-200">
+            <div className="absolute z-10 h-full w-full rounded-xl bg-white/30 backdrop-blur-sm" />
             <PageCard title={t("Project Monitoring")}>
               <div className="flex items-center justify-between text-darkCustom">
                 <Text variant="text-14-light" className="w-[65%]">

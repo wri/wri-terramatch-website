@@ -40,7 +40,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 text-white hover:border-white"
         onClick={() => setClickedValidation(true)}
       >
-        {t("Check Polygons")}
+        {t("Check Polygon")}
       </Button>
     </div>
   );

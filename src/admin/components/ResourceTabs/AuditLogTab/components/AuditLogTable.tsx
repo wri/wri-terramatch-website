@@ -5,7 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponse, V2FileRead } from "@/generated/apiSchemas";
 
 const formattedTextStatus = (text: string) => {
-  return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
 };
 
 const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {

@@ -8,7 +8,7 @@ exports[`Storyshots Components/Elements/Drawer Primary 1`] = `
     className="relative h-full"
   >
     <div
-      className="fixed left-full top-0 z-50 ml-2 flex h-[-webkit-fill-available] w-[25rem] flex-col overflow-clip bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem] translate-x-[-25.5rem] lg:translate-x-[-27rem]  mt-[70px]"
+      className="fixed left-full top-0 z-50 ml-2 flex h-[-webkit-fill-available] w-[25rem] flex-col overflow-visible bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem] translate-x-[-25.5rem] lg:translate-x-[-27rem]  mt-[70px]"
     >
       <div
         className="flex w-full items-center"

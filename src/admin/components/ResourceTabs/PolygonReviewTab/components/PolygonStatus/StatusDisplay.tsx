@@ -15,22 +15,26 @@ const menuPolygonOptions = [
   {
     title: "Draft",
     status: "draft",
-    value: 1
+    value: 1,
+    viewPd: true
   },
   {
     title: "Submitted",
     status: "submitted",
-    value: 2
+    value: 2,
+    viewPd: true
   },
   {
     title: "Needs More Information",
     status: "needs-more-information",
-    value: 3
+    value: 3,
+    viewPd: false
   },
   {
     title: "Approved",
     status: "approved",
-    value: 4
+    value: 4,
+    viewPd: false
   }
 ];
 const menuSiteOptions = [
@@ -91,7 +95,64 @@ const menuProjectOptions = [
     viewPd: false
   }
 ];
-
+const menuEntityReportOptions = [
+  {
+    title: "Due",
+    status: "due",
+    value: 1,
+    viewPd: true
+  },
+  {
+    title: "Draft",
+    status: "started",
+    value: 2,
+    viewPd: true
+  },
+  {
+    title: "Needs More Information",
+    status: "needs-more-information",
+    value: 3,
+    viewPd: false
+  },
+  {
+    title: "Awaiting Approval",
+    status: "awaiting-approval",
+    value: 4,
+    viewPd: false
+  },
+  {
+    title: "Approved",
+    status: "approved",
+    value: 5,
+    viewPd: false
+  }
+];
+const menuNurseryOptions = [
+  {
+    title: "Draft",
+    status: "draft",
+    value: 1,
+    viewPd: true
+  },
+  {
+    title: "Awaiting Approval",
+    status: "awaiting-approval",
+    value: 2,
+    viewPd: true
+  },
+  {
+    title: "Needs More Information",
+    status: "needs-more-information",
+    value: 3,
+    viewPd: false
+  },
+  {
+    title: "Approved",
+    status: "approved",
+    value: 4,
+    viewPd: false
+  }
+];
 export interface StatusProps {
   titleStatus: AuditLogEntity;
   mutate?: any;
@@ -101,24 +162,39 @@ export interface StatusProps {
   refetchPolygon?: () => void;
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
+  viewPD?: boolean;
+  enableChangeStatus?: number;
+  buttonToggle?: number;
 }
 
 const menuOptionsMap = {
   Polygon: menuPolygonOptions,
   Site: menuSiteOptions,
-  Project: menuProjectOptions
+  Project: menuProjectOptions,
+  Nursery: menuNurseryOptions,
+  Nursery_Report: menuEntityReportOptions,
+  Site_Report: menuEntityReportOptions,
+  Project_Report: menuEntityReportOptions
 };
 
 const DescriptionStatusMap = {
   Polygon: "Are you sure you want to change the polygon status to",
   Site: "Are you sure you want to change the site status to",
-  Project: "Are you sure you want to change the project status to"
+  Project: "Are you sure you want to change the project status to",
+  Nursery: "Are you sure you want to change the nursery status to",
+  Nursery_Report: "Are you sure you want to change the nursery report status to",
+  Site_Report: "Are you sure you want to change the site report status to",
+  Project_Report: "Are you sure you want to change the project report status to"
 };
 
 const DescriptionRequestMap = {
   Polygon: "Provide an explanation for your change request for the polygon",
   Site: "Provide an explanation for your change request for the site",
-  Project: "Provide an explanation for your change request for the project"
+  Project: "Provide an explanation for your change request for the project",
+  Nursery: "Provide an explanation for your change request for the nursery",
+  Nursery_Report: "Provide an explanation for your change request for the nursery report",
+  Site_Report: "Provide an explanation for your change request for the site report",
+  Project_Report: "Provide an explanation for your change request for the project report"
 };
 
 const StatusDisplay = ({
@@ -128,7 +204,10 @@ const StatusDisplay = ({
   name,
   record,
   checkPolygonsSite,
-  showChangeRequest = false
+  showChangeRequest = false,
+  viewPD,
+  enableChangeStatus,
+  buttonToggle
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -144,9 +223,10 @@ const StatusDisplay = ({
   });
 
   const { openModal, closeModal } = useModalContext();
+  const removeUnderscore = (title: string) => title.replace("_", " ");
   const contentStatus = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
+      {DescriptionStatusMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{removeUnderscore(name)}</b>?
     </Text>
   );
   const contentRequest = (
@@ -155,19 +235,23 @@ const StatusDisplay = ({
     </Text>
   );
 
+  const filterViewPd = viewPD
+    ? menuOptionsMap[titleStatus].filter(option => option.viewPd === true)
+    : menuOptionsMap[titleStatus];
+
   const onFinallyRequest = () => {
     refresh?.();
-    reloadEntity();
+    reloadEntity?.();
     closeModal();
   };
 
   const openFormModalHandlerStatus = () => {
     openModal(
       <ModalConfirm
-        title={`${titleStatus} Status Change`}
+        title={`${removeUnderscore(titleStatus)} Status Change`}
         commentArea
         menuLabel={""}
-        menu={menuOptionsMap[titleStatus]}
+        menu={filterViewPd}
         onClose={closeModal}
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}
@@ -279,11 +363,18 @@ const StatusDisplay = ({
       />
     );
   };
+
   return (
     <>
       <div className="flex flex-col items-center gap-4">
         <div className="flex w-full items-center gap-4">
-          <Button className="w-full flex-1 border-[3px] border-primary" onClick={openFormModalHandlerStatus}>
+          <Button
+            className={classNames("w-full flex-1 border-[3px] border-primary", {
+              "opacity-0": enableChangeStatus !== buttonToggle
+            })}
+            onClick={openFormModalHandlerStatus}
+            disabled={enableChangeStatus !== buttonToggle}
+          >
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
