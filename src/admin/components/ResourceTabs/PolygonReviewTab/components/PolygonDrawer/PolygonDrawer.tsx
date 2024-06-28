@@ -102,7 +102,7 @@ const PolygonDrawer = ({
   }, [isPolygonStatusOpen]);
 
   useEffect(() => {
-    if (criteriaData?.criteria_list) {
+    if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
       const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
         id: criteria.criteria_id,
         date: criteria.latest_created_at,
