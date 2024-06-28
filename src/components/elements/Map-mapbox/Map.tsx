@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect } from "react";
@@ -124,16 +125,17 @@ export const MapContainer = ({
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
-  const { isUserDrawingEnabled, setProjectNotificationStatus } = contextMapArea;
+  const t = useT();
+  const { isUserDrawingEnabled, setpolygonNotificationStatus } = contextMapArea;
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setProjectNotificationStatus({
+    setpolygonNotificationStatus({
       open: true,
       message,
       type,
       title
     });
     setTimeout(() => {
-      setProjectNotificationStatus({
+      setpolygonNotificationStatus({
         open: false,
         message: "",
         type: "success",
@@ -260,9 +262,9 @@ export const MapContainer = ({
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
-            displayNotification("Geometry updated successfully.", "success", "Success");
+            displayNotification(t("Geometry updated successfully."), "success", t("Success"));
           } else {
-            displayNotification("Please try again later.", "error", "Error");
+            displayNotification(t("Please try again later."), "error", t("Error"));
           }
         }
       }

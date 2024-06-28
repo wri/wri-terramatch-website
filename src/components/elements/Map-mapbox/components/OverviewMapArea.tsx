@@ -42,7 +42,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
     shouldRefetchPolygonData,
     setShouldRefetchPolygonData,
     setEditPolygon,
-    projectNotificationStatus
+    polygonNotificationStatus
   } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
@@ -200,7 +200,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData?.data}
       />
-      <Notification {...projectNotificationStatus} />
+      <Notification {...polygonNotificationStatus} />
     </>
   );
 };

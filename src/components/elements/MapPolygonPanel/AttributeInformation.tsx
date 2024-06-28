@@ -77,7 +77,7 @@ const dropdownOptionsTree = [
 
 const AttributeInformation = () => {
   const t = useT();
-  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData, setProjectNotificationStatus } =
+  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData, setpolygonNotificationStatus } =
     useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
@@ -143,14 +143,14 @@ const AttributeInformation = () => {
   }, [calculatedArea]);
 
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setProjectNotificationStatus({
+    setpolygonNotificationStatus({
       open: true,
       message,
       type,
       title
     });
     setTimeout(() => {
-      setProjectNotificationStatus({
+      setpolygonNotificationStatus({
         open: false,
         message: "",
         type: "success",

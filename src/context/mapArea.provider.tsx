@@ -18,13 +18,13 @@ type MapAreaType = {
   setShouldRefetchPolygonData: (value: boolean) => void;
   shouldRefetchValidation: boolean;
   setShouldRefetchValidation: (value: boolean) => void;
-  projectNotificationStatus: {
+  polygonNotificationStatus: {
     open: boolean;
     message: string;
     type: "success" | "error" | "warning";
     title: string;
   };
-  setProjectNotificationStatus: (value: {
+  setpolygonNotificationStatus: (value: {
     open: boolean;
     message: string;
     type: "success" | "error" | "warning";
@@ -48,13 +48,13 @@ const defaultValue: MapAreaType = {
   setShouldRefetchPolygonData: () => {},
   shouldRefetchValidation: false,
   setShouldRefetchValidation: () => {},
-  projectNotificationStatus: {
+  polygonNotificationStatus: {
     open: false,
     message: "",
     type: "success",
     title: "Success!"
   },
-  setProjectNotificationStatus: () => {}
+  setpolygonNotificationStatus: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -70,7 +70,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     isOpen: false,
     uuid: ""
   });
-  const [projectNotificationStatus, setProjectNotificationStatus] = useState<{
+  const [polygonNotificationStatus, setpolygonNotificationStatus] = useState<{
     open: boolean;
     message: string;
     type: "success" | "error" | "warning";
@@ -113,8 +113,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setShouldRefetchPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
-    projectNotificationStatus,
-    setProjectNotificationStatus
+    polygonNotificationStatus,
+    setpolygonNotificationStatus
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

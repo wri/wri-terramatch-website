@@ -87,7 +87,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const reloadSiteData = contextSite?.reloadSiteData;
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   const contextMapArea = useMapAreaContext();
-  const { setProjectNotificationStatus } = contextMapArea;
+  const { setpolygonNotificationStatus } = contextMapArea;
   const t = useT();
 
   useEffect(() => {
@@ -125,14 +125,14 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   }, [calculatedArea]);
 
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setProjectNotificationStatus({
+    setpolygonNotificationStatus({
       open: true,
       message,
       type,
       title
     });
     setTimeout(() => {
-      setProjectNotificationStatus({
+      setpolygonNotificationStatus({
         open: false,
         message: "",
         type: "success",
@@ -164,10 +164,10 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
           {
             onSuccess: () => {
               reloadSiteData?.();
-              displayNotification(t("Polygon data updated successfully"), "success", "Success!");
+              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", "Error!");
+              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
             }
           }
         );

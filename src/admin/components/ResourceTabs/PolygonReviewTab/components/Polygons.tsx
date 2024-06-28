@@ -67,7 +67,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled, projectNotificationStatus } = contextMapArea;
+  const { setIsUserDrawingEnabled, polygonNotificationStatus } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -191,7 +191,7 @@ const Polygons = (props: IPolygonProps) => {
 
   return (
     <div>
-      <Notification {...projectNotificationStatus} />
+      <Notification {...polygonNotificationStatus} />
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer
           polygonSelected={selectedPolygon?.uuid ?? ""}
