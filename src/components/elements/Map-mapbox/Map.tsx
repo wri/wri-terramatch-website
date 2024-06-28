@@ -202,7 +202,7 @@ export const MapContainer = ({
     if (polygonsData && map.current && draw.current) {
       const currentMap = map.current;
       const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-      const statuses = ["submitted", "approved", "need-more-info"];
+      const statuses = ["submitted", "approved", "need-more-info", "draft"];
       statuses.forEach(status => {
         if (newPolygonData[status]) {
           newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
