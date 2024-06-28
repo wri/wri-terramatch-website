@@ -100,7 +100,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
           onClick={() => setClickedValidation(true)}
         >
-          {t("Check Polygons")}
+          {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
       </div>
       <When condition={polygonCheck}>
