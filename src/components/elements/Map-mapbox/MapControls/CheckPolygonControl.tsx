@@ -3,6 +3,10 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchPostV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
@@ -22,6 +26,7 @@ interface CheckedPolygon {
   uuid: string;
   valid: boolean;
   checked: boolean;
+  nonValidCriteria: Record<string, any>[];
 }
 
 interface TransformedData {
@@ -64,9 +69,18 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       const matchingPolygon = Array.isArray(sitePolygonData)
         ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
         : null;
+      const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+      const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
+      const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+      let isValid = false;
+      if (checkedPolygon?.nonValidCriteria?.length === 0) {
+        isValid = true;
+      } else if (failingCriterias?.length === 0) {
+        isValid = true;
+      }
       return {
         id: index + 1,
-        valid: checkedPolygon.valid,
+        valid: isValid,
         checked: checkedPolygon.checked,
         label: matchingPolygon?.poly_name ?? null
       };
