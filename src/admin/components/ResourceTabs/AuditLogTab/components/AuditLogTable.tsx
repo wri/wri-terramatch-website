@@ -23,7 +23,7 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
 const columnTitles = ["Date", "User", "Action", "Comments", "Attachments"];
 
 const generateUserName = (first_name?: string, last_name?: string): string =>
-  first_name || last_name ? `${first_name || ""} ${last_name || ""}`.trim() : "Unknown User";
+  `${first_name ?? ""} ${last_name ?? ""}`.trim() || "Unknown User";
 
 const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ auditLogData }) => (
   <>
