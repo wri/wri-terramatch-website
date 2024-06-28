@@ -386,7 +386,11 @@ export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: s
   });
 }
 
-export async function downloadSiteGeoJsonPolygons(siteUuid: string): Promise<void> {
+export const formatFileName = (inputString: string) => {
+  return inputString.toLowerCase().replace(/\s+/g, "_");
+};
+
+export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: string): Promise<void> {
   const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
     queryParams: { uuid: siteUuid }
   });
@@ -394,7 +398,7 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string): Promise<voi
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `SitePolygons.geojson`;
+  link.download = `${formatFileName(siteName)}.geojson`;
   link.click();
   URL.revokeObjectURL(url);
 }

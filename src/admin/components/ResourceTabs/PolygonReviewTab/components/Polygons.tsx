@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
+import { formatFileName } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
@@ -90,7 +91,7 @@ const Polygons = (props: IPolygonProps) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `polygon.geojson`;
+    link.download = `${formatFileName(polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label)}.geojson`;
     link.click();
     URL.revokeObjectURL(url);
   };
