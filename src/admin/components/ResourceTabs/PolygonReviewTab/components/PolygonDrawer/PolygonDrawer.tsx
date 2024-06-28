@@ -1,4 +1,5 @@
 import { Divider } from "@mui/material";
+import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -12,7 +13,8 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
-  useGetV2TerrafundValidationCriteriaData
+  useGetV2TerrafundValidationCriteriaData,
+  usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -66,12 +68,44 @@ const PolygonDrawer = ({
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
-
+  const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
+  const { setpolygonNotificationStatus } = contextMapArea;
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
+    setpolygonNotificationStatus({
+      open: true,
+      message,
+      type,
+      title
+    });
+    setTimeout(() => {
+      setpolygonNotificationStatus({
+        open: false,
+        message: "",
+        type: "success",
+        title: ""
+      });
+    }, 3000);
+  };
+  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
+    onSuccess: () => {
+      reloadCriteriaValidation();
+      setCheckPolygonValidation(false);
+      displayNotification(
+        t("Please update and re-run if validations fail."),
+        "success",
+        t("Success! TerraMatch reviewed the polygon")
+      );
+    },
+    onError: () => {
+      setCheckPolygonValidation(false);
+      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+    }
+  });
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
@@ -84,15 +118,9 @@ const PolygonDrawer = ({
     }
   );
 
-  const validatePolygon = async () => {
-    await fetchPostV2TerrafundValidationPolygon({ queryParams: { uuid: polygonSelected } });
-    reloadCriteriaValidation();
-    setCheckPolygonValidation(false);
-  };
-
   useEffect(() => {
     if (checkPolygonValidation) {
-      validatePolygon();
+      getValidations({ queryParams: { uuid: polygonSelected } });
       reloadCriteriaValidation();
     }
   }, [checkPolygonValidation]);
