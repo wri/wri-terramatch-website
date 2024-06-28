@@ -22,6 +22,9 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
 
 const columnTitles = ["Date", "User", "Action", "Comments", "Attachments"];
 
+const generateUserName = (first_name?: string, last_name?: string): string =>
+  first_name || last_name ? `${first_name || ""} ${last_name || ""}`.trim() : "Unknown User";
+
 const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ auditLogData }) => (
   <>
     <div className="grid grid-cols-[14%_20%_15%_30%_21%]">
@@ -38,7 +41,7 @@ const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ 
             {convertDateFormat(item?.date_created)}
           </Text>
           <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-            {`${item.first_name} ${item.last_name}`}
+            {generateUserName(item.first_name, item.last_name)}
           </Text>
           <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
             {getTextForActionTable(item as { type: string; status: string; request_removed: boolean })}
