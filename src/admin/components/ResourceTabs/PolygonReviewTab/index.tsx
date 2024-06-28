@@ -448,7 +448,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                         name: IconNames.DOWNLOAD_PA
                       }}
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(record.uuid);
+                        downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
                       }}
                     >
                       Download

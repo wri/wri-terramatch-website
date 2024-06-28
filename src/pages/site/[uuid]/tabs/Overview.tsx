@@ -267,14 +267,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
-      <Notification
-        open={showSubmissionSuccess}
-        title={t("Success, Your Polygons were submitted!")}
-        message={t(
-          "Admins have been notified and a confirmation email has been sent. Follow-up through the Audit Log."
-        )}
-        type="success"
-      />
+      <Notification open={showSubmissionSuccess} title={t("Success! Your polygons were submitted.")} type="success" />
       <PageBody>
         <PageRow>
           <PageCard
@@ -338,7 +331,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       variant="white-border"
                       className=""
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(site?.uuid);
+                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
@@ -368,7 +361,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </PageColumn>
         </PageRow>
         <PageRow>
-          <PageColumn>
+          <PageColumn className="relative rounded-xl border border-neutral-200">
+            <div className="absolute z-10 h-full w-full rounded-xl bg-white/30 backdrop-blur-sm" />
             <PageCard title={t("Project Monitoring")}>
               <div className="flex items-center justify-between text-darkCustom">
                 <Text variant="text-14-light" className="w-[65%]">

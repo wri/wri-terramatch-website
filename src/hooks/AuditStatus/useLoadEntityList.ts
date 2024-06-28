@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { POLYGON, PROJECT, SITE } from "@/constants/entities";
+import { POLYGON, SITE } from "@/constants/entities";
 import {
   fetchGetV2ProjectsUUIDSitePolygonsAll,
   fetchGetV2ProjectsUUIDSites,
@@ -20,8 +21,8 @@ export interface SelectedItem {
 interface UseLoadEntityListParams {
   entityUuid: string;
   entityType: AuditLogEntity;
-  buttonToogle?: number;
-  entityLevel?: string;
+  buttonToggle?: number;
+  entityLevel?: number;
 }
 
 export interface EntityListItem {
@@ -34,7 +35,7 @@ export interface EntityListItem {
   poly_id?: string | undefined;
 }
 
-const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }: UseLoadEntityListParams) => {
+const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }: UseLoadEntityListParams) => {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
   const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
   const isFirstLoad = useRef(true);
@@ -69,7 +70,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
   };
 
   const loadEntityList = async () => {
-    const isSiteProjectLevel = entityLevel === PROJECT;
+    const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
     const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2ProjectsUUIDSitePolygonsAll;
     const fetchAction = isSiteProjectLevel ? fetchToProject : fetchGetV2SitesSitePolygon;
     const params = isSiteProjectLevel ? { uuid: entityUuid } : { site: entityUuid };
@@ -107,7 +108,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToogle, entityLevel }
     setSelected(null);
     setEntityListItem([]);
     isFirstLoad.current = true;
-  }, [entityType, buttonToogle]);
+  }, [entityType, buttonToggle]);
 
   return { entityListItem, selected, setSelected, loadEntityList };
 };
