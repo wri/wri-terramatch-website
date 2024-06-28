@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
+import { usePostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
 import Notification from "../../Notification/Notification";
@@ -39,7 +39,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       });
     }, 3000);
   };
-  const { mutate: getValidations } = usePostV2TerrafundValidationSitePolygons({
+  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
       setShouldRefetchValidation(true);
       setClickedValidation(false);
