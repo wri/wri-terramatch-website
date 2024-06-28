@@ -125,11 +125,15 @@ const ModalApprove: FC<ModalApproveProps> = ({
               <div className="flex flex-1 items-center justify-center">
                 <div className="flex w-full items-center justify-start gap-2">
                   <When condition={item.canBeApproved}>
-                    <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
+                    <div className="h-4 w-4">
+                      <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
+                    </div>
                     <Text variant="text-10-light">{"Verified"}</Text>
                   </When>
                   <When condition={!item.canBeApproved}>
-                    <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
+                    <div className="h-4 w-4">
+                      <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
+                    </div>
                     <Text variant="text-10-light">
                       {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
                     </Text>
