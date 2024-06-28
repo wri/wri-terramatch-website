@@ -13,9 +13,9 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
 
-import Icon, { IconNames } from "../Icon/Icon";
-import { ModalProps } from "./Modal";
-import { ModalBaseSubmit } from "./ModalsBases";
+import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
+import { ModalProps } from "../../../../components/extensive/Modal/Modal";
+import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;

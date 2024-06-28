@@ -370,6 +370,7 @@ export type PostV2GeometryValidateBody = {
         distr?: string;
         num_trees?: number;
         site_id?: string;
+        est_area?: number;
       };
       geometry?: {
         type?: "Polygon" | "Point";
