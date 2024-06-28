@@ -67,24 +67,24 @@ interface AuditLogActionsResponse {
 
 const useAuditLogActions = ({
   record,
-  buttonToogle,
+  buttonToggle,
   entityLevel
 }: {
   record: any;
-  buttonToogle: number;
+  buttonToggle: number;
   entityLevel: string;
 }): AuditLogActionsResponse => {
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToogle];
-  const isProject = buttonToogle === AuditLogButtonStates.PROJECT;
-  const isSite = buttonToogle === AuditLogButtonStates.SITE;
-  const isPolygon = buttonToogle === AuditLogButtonStates.POLYGON;
+  const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToggle];
+  const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
+  const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entityUuid: record?.uuid,
     entityType: entityType as AuditLogEntity,
-    buttonToogle,
+    buttonToggle,
     entityLevel
   });
 
@@ -148,14 +148,14 @@ const useAuditLogActions = ({
     isLoading
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
-      entity: ReverseButtonStates2[buttonToogle],
+      entity: ReverseButtonStates2[buttonToggle],
       uuid: entityHandlers.selectedEntityItem?.uuid
     }
   });
 
   useEffect(() => {
     refetch();
-  }, [buttonToogle, record, entityListItem, selected]);
+  }, [buttonToggle, record, entityListItem, selected]);
 
   return {
     mutateEntity,

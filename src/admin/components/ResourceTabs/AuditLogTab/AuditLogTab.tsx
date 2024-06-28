@@ -20,7 +20,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 
 const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
   const { record, isLoading } = useShowContext();
-  const [buttonToogle, setButtonToogle] = useState(() => {
+  const [buttonToggle, setButtonToggle] = useState(() => {
     return record?.project ? AuditLogButtonStates.SITE : AuditLogButtonStates.PROJECT;
   });
 
@@ -40,14 +40,14 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
     checkPolygonsSite
   } = useAuditLogActions({
     record,
-    buttonToogle,
+    buttonToggle,
     entityLevel: record?.project ? SITE : PROJECT
   });
 
   useEffect(() => {
     refetch();
     loadEntityList();
-  }, [buttonToogle]);
+  }, [buttonToggle]);
 
   return (
     <When condition={!isLoading}>
@@ -55,8 +55,8 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
-              <AuditLogSiteTabSelection buttonToogle={buttonToogle} setButtonToogle={setButtonToogle} />
-              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && record?.project}>
+              <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+              <When condition={buttonToggle === AuditLogButtonStates.PROJECT && record?.project}>
                 <div>
                   <Text variant="text-24-bold">Project Status</Text>
                   <Text variant="text-14-light" className="mb-4">
@@ -64,23 +64,23 @@ const AuditLogTab: FC<IProps> = ({ label, ...rest }) => {
                   </Text>
                 </div>
                 <Button
-                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
+                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                   component={Link}
                   to={`${basename}/${modules.project.ResourceName}/${record?.project?.uuid}/show/5`}
                   fullWidth
                   label="OPEN PROJECT AUDIT LOG"
                 />
               </When>
-              <When condition={buttonToogle === AuditLogButtonStates.PROJECT && !record?.project}>
+              <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
                 <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} />
               </When>
-              <When condition={buttonToogle !== AuditLogButtonStates.PROJECT}>
+              <When condition={buttonToggle !== AuditLogButtonStates.PROJECT}>
                 <SiteAuditLogEntityStatus
                   entityType={entityType}
                   record={selected}
                   auditLogData={auditLogData}
                   refresh={refetch}
-                  buttonToogle={buttonToogle}
+                  buttonToggle={buttonToggle}
                 />
               </When>
             </Stack>

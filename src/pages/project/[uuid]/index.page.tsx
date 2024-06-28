@@ -33,6 +33,14 @@ import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
 
+import AuditLog from "./tabs/AuditLog";
+
+const ButtonStates = {
+  PROJECTS: 0,
+  SITE: 1,
+  POLYGON: 2
+};
+
 const ProjectDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -40,7 +48,7 @@ const ProjectDetailPage = () => {
   const { openToast } = useToastContext();
   const projectUUID = router.query.uuid as string;
 
-  const { data, isLoading } = useGetV2ProjectsUUID({
+  const { data, isLoading, refetch } = useGetV2ProjectsUUID({
     pathParams: { uuid: projectUUID }
   });
 
@@ -177,6 +185,11 @@ const ProjectDetailPage = () => {
                   reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
                 />
               )
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog project={project} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
