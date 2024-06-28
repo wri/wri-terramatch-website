@@ -187,7 +187,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 {(polygons as SitePolygonsDataResponse)?.map(polygon => (
                   <li key={polygon.id}>
                     <Text variant="text-12-light" as="p">
-                      {polygon?.poly_name}
+                      {polygon?.poly_name ?? t("Unnamed Polygon")}
                     </Text>
                   </li>
                 ))}

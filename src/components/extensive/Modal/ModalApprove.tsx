@@ -65,8 +65,14 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id);
         const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
-        const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r)) ?? [];
-        const canBeApproved = criteria?.nonValidCriteria?.length === 0 && failingCriterias.length > 0;
+        const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+        let canBeApproved = false;
+        if (criteria?.nonValidCriteria?.length === 0) {
+          canBeApproved = true;
+        } else if (failingCriterias?.length === 0) {
+          canBeApproved = true;
+        }
+
         return {
           id: polygon.uuid,
           name: polygon.poly_name ?? "Unnamed Polygon",
