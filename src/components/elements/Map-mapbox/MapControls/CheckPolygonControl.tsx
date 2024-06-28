@@ -5,10 +5,11 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchPostV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
+import { useGetV2TerrafundValidationSite, usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
+import Notification from "../../Notification/Notification";
 import Text from "../../Text/Text";
 
 export interface CheckSitePolygonProps {
@@ -40,6 +41,17 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const t = useT();
+  const [notificationStatus, setNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: "Success!"
+  });
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
     CheckedPolygon[]
   >(
@@ -52,12 +64,38 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       enabled: !!siteUuid
     }
   );
-
-  const validatePolygons = async () => {
-    await fetchPostV2TerrafundValidationSitePolygons({ queryParams: { uuid: siteUuid ?? "" } });
-    reloadSitePolygonValidation();
-    setClickedValidation(false);
+  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
+    setNotificationStatus({
+      open: true,
+      message,
+      type,
+      title
+    });
+    setTimeout(() => {
+      setNotificationStatus({
+        open: false,
+        message: "",
+        type: "success",
+        title: ""
+      });
+    }, 3000);
   };
+
+  const { mutate: getValidations } = usePostV2TerrafundValidationSitePolygons({
+    onSuccess: () => {
+      reloadSitePolygonValidation();
+      setClickedValidation(false);
+      displayNotification(
+        t("Please update and re-run if any polygons fail."),
+        "success",
+        "Success! TerraMatch reviewed all polygons"
+      );
+    },
+    onError: () => {
+      setClickedValidation(false);
+      displayNotification(t("Please try again later."), "error", "Error! TerraMatch could not review polygons");
+    }
+  });
 
   const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
     return currentValidationSite.map((checkedPolygon, index) => {
@@ -88,17 +126,21 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     if (clickedValidation) {
-      validatePolygons();
+      getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
 
   return (
     <div className="grid gap-2">
+      <Notification {...notificationStatus} />
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-          onClick={() => setClickedValidation(true)}
+          onClick={() => {
+            console.log("Clcededede ", true);
+            setClickedValidation(true);
+          }}
         >
           {t("Check Polygons")}
         </Button>
