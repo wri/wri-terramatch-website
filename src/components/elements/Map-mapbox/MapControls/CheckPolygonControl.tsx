@@ -50,7 +50,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     open: false,
     message: "",
     type: "success",
-    title: "Success!"
+    title: t("Success!")
   });
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
     CheckedPolygon[]
@@ -88,12 +88,12 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       displayNotification(
         t("Please update and re-run if any polygons fail."),
         "success",
-        "Success! TerraMatch reviewed all polygons"
+        t("Success! TerraMatch reviewed all polygons")
       );
     },
     onError: () => {
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", "Error! TerraMatch could not review polygons");
+      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
 
@@ -137,10 +137,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
-          onClick={() => {
-            console.log("Clcededede ", true);
-            setClickedValidation(true);
-          }}
+          onClick={() => setClickedValidation(true)}
         >
           {t("Check Polygons")}
         </Button>

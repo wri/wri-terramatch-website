@@ -46,12 +46,12 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       displayNotification(
         t("Please update and re-run if validations fail."),
         "success",
-        "Success! TerraMatch reviewed the polygon"
+        t("Success! TerraMatch reviewed the polygon")
       );
     },
     onError: () => {
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", "Error! TerraMatch could not review polygons");
+      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
   useEffect(() => {
