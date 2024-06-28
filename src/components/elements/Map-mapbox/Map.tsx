@@ -124,7 +124,23 @@ export const MapContainer = ({
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
-  const { isUserDrawingEnabled } = contextMapArea;
+  const { isUserDrawingEnabled, setProjectNotificationStatus } = contextMapArea;
+  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
+    setProjectNotificationStatus({
+      open: true,
+      message,
+      type,
+      title
+    });
+    setTimeout(() => {
+      setProjectNotificationStatus({
+        open: false,
+        message: "",
+        type: "success",
+        title: ""
+      });
+    }, 3000);
+  };
   if (!mapFunctions) {
     return null;
   }
@@ -244,6 +260,9 @@ export const MapContainer = ({
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
+            displayNotification("Geometry updated successfully.", "success", "Success");
+          } else {
+            displayNotification("Please try again later.", "error", "Error");
           }
         }
       }

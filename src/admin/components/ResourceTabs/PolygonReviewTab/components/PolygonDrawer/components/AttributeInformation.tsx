@@ -5,8 +5,9 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchPutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
+import { usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 const dropdownOptionsRestoration = [
@@ -84,7 +85,9 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [formattedArea, setFormattedArea] = useState<string>();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
-
+  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const contextMapArea = useMapAreaContext();
+  const { setProjectNotificationStatus } = contextMapArea;
   const t = useT();
 
   useEffect(() => {
@@ -121,6 +124,23 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
     setFormattedArea(format ?? "");
   }, [calculatedArea]);
 
+  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
+    setProjectNotificationStatus({
+      open: true,
+      message,
+      type,
+      title
+    });
+    setTimeout(() => {
+      setProjectNotificationStatus({
+        open: false,
+        message: "",
+        type: "success",
+        title: ""
+      });
+    }, 3000);
+  };
+
   const savePolygonData = async () => {
     if (selectedPolygon?.uuid) {
       const restorationPracticeToSend = restorationPractice.join(", ");
@@ -136,11 +156,21 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         num_trees: treesPlanted
       };
       try {
-        await fetchPutV2TerrafundSitePolygonUuid({
-          body: updatedPolygonData,
-          pathParams: { uuid: selectedPolygon.uuid }
-        });
-        reloadSiteData?.();
+        sendSiteData(
+          {
+            body: updatedPolygonData,
+            pathParams: { uuid: selectedPolygon.uuid }
+          },
+          {
+            onSuccess: () => {
+              reloadSiteData?.();
+              displayNotification(t("Polygon data updated successfully"), "success", "Success!");
+            },
+            onError: error => {
+              displayNotification(t("Error updating polygon data"), "error", "Error!");
+            }
+          }
+        );
       } catch (error) {
         console.error("Error updating polygon data:", error);
       }

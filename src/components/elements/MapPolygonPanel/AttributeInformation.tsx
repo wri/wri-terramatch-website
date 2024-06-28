@@ -5,7 +5,7 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchPutV2TerrafundSitePolygonUuid, useGetV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Text from "../Text/Text";
@@ -77,7 +77,8 @@ const dropdownOptionsTree = [
 
 const AttributeInformation = () => {
   const t = useT();
-  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
+  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData, setProjectNotificationStatus } =
+    useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -98,7 +99,7 @@ const AttributeInformation = () => {
   const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
-
+  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   useEffect(() => {
     if (sitePolygonData) {
       setPolygonData(sitePolygonData?.site_polygon);
@@ -141,6 +142,23 @@ const AttributeInformation = () => {
     setFormattedArea(format ?? "");
   }, [calculatedArea]);
 
+  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
+    setProjectNotificationStatus({
+      open: true,
+      message,
+      type,
+      title
+    });
+    setTimeout(() => {
+      setProjectNotificationStatus({
+        open: false,
+        message: "",
+        type: "success",
+        title: ""
+      });
+    }, 3000);
+  };
+
   const savePolygonData = async () => {
     if (polygonData?.uuid) {
       const restorationPracticeToSend = restorationPractice.join(", ");
@@ -156,11 +174,22 @@ const AttributeInformation = () => {
         num_trees: treesPlanted
       };
       try {
-        await fetchPutV2TerrafundSitePolygonUuid({
-          body: updatedPolygonData,
-          pathParams: { uuid: polygonData.uuid }
-        });
-        setShouldRefetchPolygonData(true);
+        sendSiteData(
+          {
+            body: updatedPolygonData,
+            pathParams: { uuid: polygonData.uuid }
+          },
+          {
+            onSuccess: () => {
+              setShouldRefetchPolygonData(true);
+              setEditPolygon({ isOpen: false, uuid: "" });
+              displayNotification(t("Polygon data updated successfully"), "success", "Success!");
+            },
+            onError: error => {
+              displayNotification(t("Error updating polygon data"), "error", "Error!");
+            }
+          }
+        );
       } catch (error) {
         console.error("Error updating polygon data:", error);
       }

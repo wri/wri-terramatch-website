@@ -18,6 +18,18 @@ type MapAreaType = {
   setShouldRefetchPolygonData: (value: boolean) => void;
   shouldRefetchValidation: boolean;
   setShouldRefetchValidation: (value: boolean) => void;
+  projectNotificationStatus: {
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  };
+  setProjectNotificationStatus: (value: {
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -35,7 +47,14 @@ const defaultValue: MapAreaType = {
   shouldRefetchPolygonData: false,
   setShouldRefetchPolygonData: () => {},
   shouldRefetchValidation: false,
-  setShouldRefetchValidation: () => {}
+  setShouldRefetchValidation: () => {},
+  projectNotificationStatus: {
+    open: false,
+    message: "",
+    type: "success",
+    title: "Success!"
+  },
+  setProjectNotificationStatus: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -51,7 +70,17 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     isOpen: false,
     uuid: ""
   });
-
+  const [projectNotificationStatus, setProjectNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: "Success!"
+  });
   const toggleAttribute = (isOpen: boolean) => {
     setOpenEditNewPolygon(isOpen);
   };
@@ -83,7 +112,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     shouldRefetchPolygonData,
     setShouldRefetchPolygonData,
     shouldRefetchValidation,
-    setShouldRefetchValidation
+    setShouldRefetchValidation,
+    projectNotificationStatus,
+    setProjectNotificationStatus
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;
