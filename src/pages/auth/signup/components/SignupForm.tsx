@@ -24,7 +24,7 @@ const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps
   const errors = form.formState.errors;
 
   useEffect(() => {
-    form.setValue("primary_role", primary_role);
+    form.setValue("primary_role", "project-developer");
   }, [primary_role]);
 
   return (
