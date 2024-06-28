@@ -9,6 +9,7 @@ import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Text from "../Text/Text";
+import useAlertHook from "./hooks/useAlertHook";
 import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 const dropdownOptionsRestoration = [
@@ -77,8 +78,7 @@ const dropdownOptionsTree = [
 
 const AttributeInformation = () => {
   const t = useT();
-  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData, setpolygonNotificationStatus } =
-    useMapAreaContext();
+  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -100,6 +100,7 @@ const AttributeInformation = () => {
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const { displayNotification } = useAlertHook();
   useEffect(() => {
     if (sitePolygonData) {
       setPolygonData(sitePolygonData?.site_polygon);
@@ -141,23 +142,6 @@ const AttributeInformation = () => {
       calculatedArea?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "";
     setFormattedArea(format ?? "");
   }, [calculatedArea]);
-
-  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setpolygonNotificationStatus({
-      open: true,
-      message,
-      type,
-      title
-    });
-    setTimeout(() => {
-      setpolygonNotificationStatus({
-        open: false,
-        message: "",
-        type: "success",
-        title: ""
-      });
-    }, 3000);
-  };
 
   const savePolygonData = async () => {
     if (polygonData?.uuid) {

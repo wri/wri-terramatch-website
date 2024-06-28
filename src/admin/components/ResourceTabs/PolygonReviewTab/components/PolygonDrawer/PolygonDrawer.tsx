@@ -5,6 +5,7 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -71,26 +72,11 @@ const PolygonDrawer = ({
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
-  const { setpolygonNotificationStatus } = contextMapArea;
+  const { displayNotification } = useAlertHook();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setpolygonNotificationStatus({
-      open: true,
-      message,
-      type,
-      title
-    });
-    setTimeout(() => {
-      setpolygonNotificationStatus({
-        open: false,
-        message: "",
-        type: "success",
-        title: ""
-      });
-    }, 3000);
-  };
+
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
       reloadCriteriaValidation();

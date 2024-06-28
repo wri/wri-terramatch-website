@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -86,8 +86,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
-  const contextMapArea = useMapAreaContext();
-  const { setpolygonNotificationStatus } = contextMapArea;
+  const { displayNotification } = useAlertHook();
   const t = useT();
 
   useEffect(() => {
@@ -123,23 +122,6 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
       calculatedArea?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "";
     setFormattedArea(format ?? "");
   }, [calculatedArea]);
-
-  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setpolygonNotificationStatus({
-      open: true,
-      message,
-      type,
-      title
-    });
-    setTimeout(() => {
-      setpolygonNotificationStatus({
-        open: false,
-        message: "",
-        type: "success",
-        title: ""
-      });
-    }, 3000);
-  };
 
   const savePolygonData = async () => {
     if (selectedPolygon?.uuid) {

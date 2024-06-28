@@ -22,6 +22,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import useAlertHook from "../MapPolygonPanel/hooks/useAlertHook";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
@@ -126,23 +127,9 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { isUserDrawingEnabled, setpolygonNotificationStatus } = contextMapArea;
-  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setpolygonNotificationStatus({
-      open: true,
-      message,
-      type,
-      title
-    });
-    setTimeout(() => {
-      setpolygonNotificationStatus({
-        open: false,
-        message: "",
-        type: "success",
-        title: ""
-      });
-    }, 3000);
-  };
+  const { isUserDrawingEnabled } = contextMapArea;
+  const { displayNotification } = useAlertHook();
+
   if (!mapFunctions) {
     return null;
   }
