@@ -5,31 +5,22 @@ import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTa
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatus";
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { PROJECT } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
-import { Entity } from "@/types/common";
 
 interface ReportingTasksProps {
   project: any;
   label?: string;
-  entity?: Entity["entityName"];
   refresh?: () => void;
   enableChangeStatus?: number;
 }
 
-const AuditLog = ({
-  label,
-  entity,
-  project,
-  refresh: refreshProject,
-  enableChangeStatus,
-  ...rest
-}: ReportingTasksProps) => {
+const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus, ...rest }: ReportingTasksProps) => {
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,
@@ -53,7 +44,7 @@ const AuditLog = ({
   } = useAuditLogActions({
     record: project,
     buttonToggle,
-    entityLevel: PROJECT
+    entityLevel: AuditLogButtonStates.PROJECT
   });
 
   useEffect(() => {

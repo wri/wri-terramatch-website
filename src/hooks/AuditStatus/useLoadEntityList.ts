@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { POLYGON, PROJECT, SITE } from "@/constants/entities";
+import { POLYGON, SITE } from "@/constants/entities";
 import {
   fetchGetV2ProjectsUUIDSitePolygonsAll,
   fetchGetV2ProjectsUUIDSites,
@@ -21,7 +22,7 @@ interface UseLoadEntityListParams {
   entityUuid: string;
   entityType: AuditLogEntity;
   buttonToggle?: number;
-  entityLevel?: string;
+  entityLevel?: number;
 }
 
 export interface EntityListItem {
@@ -69,7 +70,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
   };
 
   const loadEntityList = async () => {
-    const isSiteProjectLevel = entityLevel === PROJECT;
+    const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
     const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2ProjectsUUIDSitePolygonsAll;
     const fetchAction = isSiteProjectLevel ? fetchToProject : fetchGetV2SitesSitePolygon;
     const params = isSiteProjectLevel ? { uuid: entityUuid } : { site: entityUuid };

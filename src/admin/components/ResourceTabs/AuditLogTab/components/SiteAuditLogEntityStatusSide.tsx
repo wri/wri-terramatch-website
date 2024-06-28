@@ -80,6 +80,8 @@ const SiteAuditLogEntityStatusSide = ({
     });
   };
 
+  const removeUnderscore = (title: string) => title.replace("_", " ");
+
   return (
     <div className="flex flex-col gap-6 overflow-visible">
       <When condition={polygonList?.length}>
@@ -96,7 +98,7 @@ const SiteAuditLogEntityStatusSide = ({
           }}
         />
       </When>
-      <Text variant="text-16-bold">{`${entityType} Status`}</Text>
+      <Text variant="text-16-bold">{`${removeUnderscore(entityType)} Status`}</Text>
       <StepProgressbar
         color="secondary"
         value={getValueForStatus?.(record?.status) ?? 0}

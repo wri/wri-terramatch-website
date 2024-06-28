@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { POLYGON, PROJECT, SITE } from "@/constants/entities";
+import { ENTITY_REPORT, NURSERY, POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
   fetchPostV2TerrafundValidationPolygon,
@@ -11,9 +11,13 @@ import {
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
 import {
+  entityReportStatusLabels,
+  getValueForStatusEntityReport,
+  getValueForStatusNursery,
   getValueForStatusPolygon,
   getValueForStatusProject,
   getValueForStatusSite,
+  nurseryStatusLabels,
   polygonProgressBarStatusLabels,
   projectStatusLabels,
   siteProgressBarStatusLabels
@@ -26,7 +30,11 @@ const ESTIMATED_AREA_CRITERIA_ID = 12;
 const ReverseButtonStates2: { [key: number]: string } = {
   0: "project",
   1: "site",
-  2: "site-polygon"
+  2: "site-polygon",
+  3: "nursery",
+  4: "project-reports",
+  5: "site-reports",
+  6: "nursery-reports"
 };
 
 export const statusActionsMap = {
@@ -47,6 +55,18 @@ export const statusActionsMap = {
     valuesForStatus: getValueForStatusPolygon,
     statusLabels: polygonProgressBarStatusLabels,
     entityType: POLYGON
+  },
+  [AuditLogButtonStates.NURSERY as number]: {
+    mutateEntity: fetchPutV2ENTITYUUIDStatus,
+    valuesForStatus: getValueForStatusNursery,
+    statusLabels: nurseryStatusLabels,
+    entityType: NURSERY
+  },
+  [AuditLogButtonStates.REPORT as number]: {
+    mutateEntity: fetchPutV2ENTITYUUIDStatus,
+    valuesForStatus: getValueForStatusEntityReport,
+    statusLabels: entityReportStatusLabels,
+    entityType: ENTITY_REPORT
   }
 };
 
@@ -71,14 +91,17 @@ const useAuditLogActions = ({
   entityLevel
 }: {
   record: any;
-  buttonToggle: number;
-  entityLevel: string;
+  buttonToggle?: number;
+  entityLevel?: number;
 }): AuditLogActionsResponse => {
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[buttonToggle];
+  const reportEntityTypes = ReverseButtonStates2[buttonToggle!].includes("reports")
+    ? AuditLogButtonStates.REPORT
+    : buttonToggle;
+  const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[reportEntityTypes!];
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
-  const isSiteProject = entityLevel === PROJECT;
+  const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
@@ -87,6 +110,8 @@ const useAuditLogActions = ({
     buttonToggle,
     entityLevel
   });
+
+  const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   useEffect(() => {
     const fetchCheckPolygons = async () => {
@@ -108,9 +133,10 @@ const useAuditLogActions = ({
         setCriteriaValidation(criteriaData);
       }
     };
-
-    fetchCheckPolygons();
-    fetchCriteriaValidation();
+    if (!verifyEntity) {
+      fetchCriteriaValidation();
+      fetchCheckPolygons();
+    }
   }, [entityType, record, selected]);
 
   const isValidCriteriaData = (criteriaData: any) => {
@@ -131,6 +157,14 @@ const useAuditLogActions = ({
         setSelectedToEntity: !isProject ? setSelected : null,
         checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
       };
+    } else if (verifyEntity) {
+      return {
+        selectedEntityItem: record,
+        loadToEntity: () => {},
+        ListItemToEntity: [],
+        setSelectedToEntity: null,
+        checkPolygons: false
+      };
     } else {
       return {
         selectedEntityItem: isProject ? record.project : isSite ? record : selected,
@@ -148,7 +182,7 @@ const useAuditLogActions = ({
     isLoading
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
-      entity: ReverseButtonStates2[buttonToggle],
+      entity: ReverseButtonStates2[buttonToggle!],
       uuid: entityHandlers.selectedEntityItem?.uuid
     }
   });
@@ -157,10 +191,29 @@ const useAuditLogActions = ({
     refetch();
   }, [buttonToggle, record, entityListItem, selected]);
 
+  const getValuesStatusEntity = (() => {
+    if (ReverseButtonStates2[entityLevel!]?.includes("Report")) {
+      return {
+        getValueForStatus: getValueForStatusEntityReport,
+        statusLabels: entityReportStatusLabels
+      };
+    } else if (ReverseButtonStates2[entityLevel!] == "Nursery") {
+      return {
+        getValueForStatus: getValueForStatusNursery,
+        statusLabels: nurseryStatusLabels
+      };
+    } else {
+      return {
+        getValueForStatus: valuesForStatus,
+        statusLabels: statusLabels
+      };
+    }
+  })();
+
   return {
     mutateEntity,
-    valuesForStatus,
-    statusLabels,
+    valuesForStatus: getValuesStatusEntity.getValueForStatus,
+    statusLabels: getValuesStatusEntity.statusLabels,
     entityType: entityType as AuditLogEntity,
     loadEntityList: entityHandlers.loadToEntity,
     entityListItem: entityHandlers.ListItemToEntity,

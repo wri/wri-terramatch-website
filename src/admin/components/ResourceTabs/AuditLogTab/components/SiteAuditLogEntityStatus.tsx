@@ -18,6 +18,7 @@ export interface SiteAuditLogEntityStatusProps {
   auditLogData?: { data: AuditStatusResponse[] };
   refresh: () => void;
   buttonToggle: number;
+  verifyEntity?: boolean;
   viewPD?: boolean;
 }
 
@@ -36,6 +37,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   auditLogData,
   refresh,
   buttonToggle,
+  verifyEntity,
   viewPD = false
 }) => {
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
@@ -46,20 +48,22 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
     ? `/site/${record?.uuid}?tab=audit-log`
     : `${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`;
 
+  const removeUnderscore = (title: string) => title.replace("_", " ");
+
   return (
     <div className="flex flex-col gap-6">
       <div>
         <Text variant="text-24-bold" className="mb-1">
-          {entityType} Status and Comments
+          {removeUnderscore(entityType)} Status and Comments
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          Update the {entityType?.toLowerCase()} status, view updates, or add comments
+          Update the {removeUnderscore(entityType)?.toLowerCase()} status, view updates, or add comments
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
       <div>
-        {!isSite && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
-        {isSite && (
+        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
+        {(isSite || verifyEntity) && (
           <Text variant="text-16-bold">
             History and Discussion for{" "}
             {viewPD ? (
