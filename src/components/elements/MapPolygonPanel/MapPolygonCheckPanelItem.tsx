@@ -18,6 +18,7 @@ import {
 } from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
+import { formatFileName } from "../Map-mapbox/utils";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import { StatusEnum } from "../Status/constants/statusMap";
@@ -48,6 +49,7 @@ const MapPolygonCheckPanelItem = ({
   const { setEditPolygon } = useMapAreaContext();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
+  const siteData = contextSite?.sitePolygonData;
   const [openCollapse, setOpenCollapse] = useState(true);
   const t = useT();
 
@@ -73,7 +75,8 @@ const MapPolygonCheckPanelItem = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `polygon.geojson`;
+    const polygonName = siteData?.find(polygon => polygon.poly_id === uuid)?.poly_name ?? "polygon";
+    link.download = `${formatFileName(polygonName)}.geojson`;
     link.click();
     URL.revokeObjectURL(url);
   };

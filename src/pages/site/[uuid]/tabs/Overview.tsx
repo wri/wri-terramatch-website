@@ -331,7 +331,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       variant="white-border"
                       className=""
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(site?.uuid);
+                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
