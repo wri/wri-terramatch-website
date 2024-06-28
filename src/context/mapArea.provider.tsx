@@ -79,7 +79,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     open: false,
     message: "",
     type: "success",
-    title: "Success!"
+    title: ""
   });
   const toggleAttribute = (isOpen: boolean) => {
     setOpenEditNewPolygon(isOpen);
