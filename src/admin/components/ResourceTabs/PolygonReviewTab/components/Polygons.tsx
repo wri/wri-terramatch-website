@@ -169,20 +169,6 @@ const Polygons = (props: IPolygonProps) => {
       }
     },
     {
-      id: "4",
-      render: () => (
-        <div className="flex items-center gap-2">
-          <Icon name={IconNames.COMMENT} className="h-6 w-6" />
-          <Text variant="text-12-bold">Comment</Text>
-        </div>
-      ),
-      onClick: () => {
-        setSelectedPolygon(item);
-        setIsOpenPolygonDrawer(true);
-        setIsPolygonStatusOpen(true);
-      }
-    },
-    {
       id: "5",
       render: () => <div className="h-[1px] w-full bg-grey-750" />,
       MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER

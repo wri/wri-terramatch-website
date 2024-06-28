@@ -6,8 +6,6 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
-import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -20,7 +18,6 @@ import {
 import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
-import { StatusEnum } from "../Status/constants/statusMap";
 
 export interface MapPolygonCheckPanelItemProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -83,30 +80,6 @@ const MapPolygonCheckPanelItem = ({
     reloadSiteData?.();
   };
 
-  const openFormModalHandlerRequestPolygonSupport = () => {
-    openModal(
-      <ModalWithMap
-        title={t("Request Support")}
-        onClose={closeModal}
-        content="-&nbsp;&nbsp;•&nbsp;&nbsp;-"
-        primaryButtonText={t("Submit")}
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
-    );
-  };
-  const openFormModalHandlerAddCommentary = () => {
-    openModal(
-      <ModalWithLogo
-        title={t("Blue Forest")}
-        onClose={closeModal}
-        status={StatusEnum.UNDER_REVIEW}
-        toogleButton
-        content="-&nbsp;&nbsp;•&nbsp;&nbsp;-"
-        primaryButtonText={t("Close")}
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      />
-    );
-  };
   const openFormModalHandlerConfirm = () => {
     openModal(
       <ModalConfirm
@@ -148,28 +121,6 @@ const MapPolygonCheckPanelItem = ({
         </Text>
       ),
       onClick: () => downloadGeoJsonPolygon(uuid)
-    },
-    {
-      id: "4",
-      render: () => (
-        <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
-          <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.COMMENT} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; {t("Comment")}
-          </Text>
-        </Button>
-      )
-    },
-    {
-      id: "5",
-      render: () => (
-        <Button variant="text" onClick={openFormModalHandlerRequestPolygonSupport}>
-          <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.REQUEST} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; {t("Request Support")}
-          </Text>
-        </Button>
-      )
     },
     {
       id: "6",
