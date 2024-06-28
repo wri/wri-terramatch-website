@@ -183,10 +183,10 @@ const AttributeInformation = () => {
             onSuccess: () => {
               setShouldRefetchPolygonData(true);
               setEditPolygon({ isOpen: false, uuid: "" });
-              displayNotification(t("Polygon data updated successfully"), "success", "Success!");
+              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", "Error!");
+              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
             }
           }
         );

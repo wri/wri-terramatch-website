@@ -52,7 +52,7 @@ const defaultValue: MapAreaType = {
     open: false,
     message: "",
     type: "success",
-    title: "Success!"
+    title: ""
   },
   setpolygonNotificationStatus: () => {}
 };
