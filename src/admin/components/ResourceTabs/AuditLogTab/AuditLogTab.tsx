@@ -56,7 +56,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     refetch();
     loadEntityList();
   }, [buttonToggle]);
-  
+
   const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
   const verifyEntityReport = () => {

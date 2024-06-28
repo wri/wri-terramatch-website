@@ -13,19 +13,16 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { SITE } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
-import { Entity } from "@/types/common";
 
 interface ReportingTasksProps {
   site: any;
   label?: string;
-  entity?: Entity["entityName"];
   refresh?: () => void;
   enableChangeStatus?: number;
 }
 
-const AuditLog = ({ label, entity, site, refresh: refreshSite, enableChangeStatus, ...rest }: ReportingTasksProps) => {
+const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...rest }: ReportingTasksProps) => {
   const t = useT();
   const ButtonStates = {
     PROJECTS: 0,
@@ -50,7 +47,7 @@ const AuditLog = ({ label, entity, site, refresh: refreshSite, enableChangeStatu
   } = useAuditLogActions({
     record: site,
     buttonToggle,
-    entityLevel: SITE
+    entityLevel: AuditLogButtonStates.SITE
   });
 
   useEffect(() => {
