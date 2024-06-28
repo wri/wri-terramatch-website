@@ -204,7 +204,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               body: {
                 comment: data,
                 updatePolygons: (polygons as SitePolygonsDataResponse).map(polygon => {
-                  return { uuid: polygon.uuid, status: polygon.status };
+                  return { uuid: polygon.uuid, status: "submitted" };
                 })
               }
             });
