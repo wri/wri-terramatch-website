@@ -268,7 +268,7 @@ export const MapContainer = ({
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
-        <When condition={!!status && !!record.uuid && validationType === "bulkValidation"}>
+        <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
             <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
           </ControlGroup>
