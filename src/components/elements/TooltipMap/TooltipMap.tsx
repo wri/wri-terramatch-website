@@ -44,7 +44,7 @@ const TooltipMap = (props: TooltipMapProps) => {
     return formattedPlantStartDate;
   };
 
-  const polygonDataStatus = polygonData?.status ? polygonData.status : "submitted";
+  const polygonDataStatus = polygonData?.status ? polygonData.status : "draft";
 
   const goToRelatedSiteProfile = () => {
     const siteUrl = `/site/${polygonData?.site_id}`;

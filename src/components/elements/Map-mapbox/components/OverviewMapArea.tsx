@@ -184,7 +184,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         showLegend
         siteData={true}
         status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
-        validationType={stateViewPanel ? "bulkValidation" : "individualValidation"}
+        validationType={editPolygon.isOpen ? "individualValidation" : "bulkValidation"}
         record={entityModel}
         className="flex-1 rounded-r-lg"
         polygonsExists={polygonsData.length > 0}
