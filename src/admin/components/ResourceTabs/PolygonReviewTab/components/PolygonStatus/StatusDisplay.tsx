@@ -231,7 +231,7 @@ const StatusDisplay = ({
       </Text>
       <Text variant="text-12-bold" as="span">
         {" "}
-        {titleStatus == "Polygon" ? record?.title : removeUnderscore(name)}?
+        {titleStatus == "Polygon" ? record?.title : removeUnderscore(name)}.
       </Text>
     </div>
   );
