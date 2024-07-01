@@ -27,35 +27,38 @@ export interface CommentaryBoxProps {
   entity?: AuditLogEntity;
 }
 
+const processUploadFile = (file: File, auditStatusUUID: string) => {
+  const bodyFiles = new FormData();
+  bodyFiles.append("upload_file", file);
+  return fetchPostV2FileUploadMODELCOLLECTIONUUID({
+    //@ts-ignore swagger issue
+    body: bodyFiles,
+    pathParams: { model: "audit-status", collection: "attachments", uuid: auditStatusUUID }
+  });
+};
+
 const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
   const t = useT();
 
+  const onSuccess = async (res: AuditStatusResponse) => {
+    const resAuditlog = res as { data: { uuid: string } };
+    await Promise.all(files.map(f => processUploadFile(f, resAuditlog.data.uuid)));
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+    setComment("");
+    setError("");
+    setFiles([]);
+    props.refresh?.();
+    setLoading(false);
+  };
+
   const { mutate: sendCommentary } = usePostV2AuditStatusENTITYUUID({
-    onSuccess: (res: AuditStatusResponse) => {
-      const resAuditlog = res as { data: { uuid: string } };
-      const bodyFiles = new FormData();
-      files.forEach(element => {
-        if (element instanceof File) {
-          bodyFiles.append("upload_file", element);
-          fetchPostV2FileUploadMODELCOLLECTIONUUID({
-            //@ts-ignore swagger issue
-            body: bodyFiles,
-            pathParams: { model: "audit-status", collection: "attachments", uuid: resAuditlog.data.uuid as any }
-          });
-        }
-      });
-      setShowNotification(true);
-      setTimeout(() => {
-        setShowNotification(false);
-      }, 3000);
-      setComment("");
-      setError("");
-      setFiles([]);
-      props.refresh?.();
-      setLoading(false);
-    }
+    onSuccess
   });
+
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
