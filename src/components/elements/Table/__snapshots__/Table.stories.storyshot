@@ -930,11 +930,11 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
           className="bg-blueCustom-100"
         >
           <tr
-            className="bg-white shadow"
+            className="bg-primary-200"
           >
             <th
               align="left"
-              className="text-bold-subtitle-500 whitespace-nowrap px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg"
+              className="whitespace-nowrap px-6 py-4 first:rounded-tl-lg text-16-bold first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg"
               colSpan={1}
               onClick={[Function]}
             >
@@ -954,7 +954,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </th>
             <th
               align="left"
-              className="text-bold-subtitle-500 whitespace-nowrap px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg cursor-pointer"
+              className="whitespace-nowrap px-6 py-4 first:rounded-tl-lg text-16-bold first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg cursor-pointer"
               colSpan={1}
               onClick={[Function]}
             >
@@ -982,7 +982,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </th>
             <th
               align="left"
-              className="text-bold-subtitle-500 whitespace-nowrap px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg cursor-pointer"
+              className="whitespace-nowrap px-6 py-4 first:rounded-tl-lg text-16-bold first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg cursor-pointer"
               colSpan={1}
               onClick={[Function]}
             >
@@ -1010,7 +1010,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </th>
             <th
               align="left"
-              className="text-bold-subtitle-500 whitespace-nowrap px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg"
+              className="whitespace-nowrap px-6 py-4 first:rounded-tl-lg text-16-bold first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg"
               colSpan={1}
               onClick={[Function]}
             >
@@ -1030,7 +1030,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </th>
             <th
               align="left"
-              className="text-bold-subtitle-500 whitespace-nowrap px-6 py-4 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg"
+              className="whitespace-nowrap px-6 py-4 first:rounded-tl-lg text-16-bold first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg"
               colSpan={1}
               onClick={[Function]}
             >
@@ -1052,29 +1052,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
           className="space-y-4"
         >
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               2000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
@@ -1097,7 +1097,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1111,29 +1111,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Master Card
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               1000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
@@ -1156,7 +1156,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1170,29 +1170,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               American Express
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               1500
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
@@ -1215,7 +1215,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1229,29 +1229,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               7500
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
@@ -1274,7 +1274,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1288,29 +1288,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               American Express
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               1900
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
@@ -1333,7 +1333,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1347,29 +1347,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Master Card
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               5000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
@@ -1392,7 +1392,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1406,29 +1406,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               100000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
@@ -1451,7 +1451,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1465,29 +1465,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               60000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
@@ -1510,7 +1510,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1524,29 +1524,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Master Card
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               15000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
@@ -1569,7 +1569,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -1583,29 +1583,29 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
           </tr>
           <tr
-            className="rounded-lg border-2 border-neutral-200 rounded-lg"
+            className="rounded-lg rounded-lg bg-white"
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               1510000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
@@ -1628,7 +1628,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
+              className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"

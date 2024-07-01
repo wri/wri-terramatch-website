@@ -16,11 +16,11 @@ export interface TableVariant {
 export const VARIANT_TABLE_PRIMARY = {
   table: "border-spacing-y-4 border-separate",
   name: "primary",
-  trHeader: "bg-white shadow",
-  thHeader: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
+  trHeader: "bg-primary-200",
+  thHeader: "first:rounded-tl-lg text-16-bold first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg",
   tBody: "space-y-4",
-  trBody: "border-2 border-neutral-200 rounded-lg",
-  tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
+  trBody: "rounded-lg bg-white",
+  tdBody: "first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
   thead: "bg-blueCustom-100"
 };
 
