@@ -1,9 +1,7 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { remove } from "lodash";
-import { PropsWithChildren, useCallback } from "react";
+import { PropsWithChildren } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
@@ -122,29 +120,12 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
     field: { value, onChange }
   } = useController(props);
 
-  const createDisturbance = useCallback(
-    (data: any) => {
-      onChange([...(value ?? []), { ...data, uuid: uuidv4() }]);
-    },
-    [value, onChange]
-  );
-
-  const deleteDisturbance = useCallback(
-    (uuid: string | undefined) => {
-      if (uuid != null) {
-        remove(value, (v: any) => v.uuid === uuid);
-        onChange(value);
-      }
-    },
-    [value, onChange]
-  );
-
   return (
     <DataTable
       {...props}
       value={value ?? []}
-      handleCreate={createDisturbance}
-      handleDelete={deleteDisturbance}
+      generateUuids={true}
+      onChange={onChange}
       addButtonCaption={t("Add Disturbance")}
       tableColumns={getDisturbanceTableColumns(props, t)}
       fields={getDisturbanceTableFields(props, t)}

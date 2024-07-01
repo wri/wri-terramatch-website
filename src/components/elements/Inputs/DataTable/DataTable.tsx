@@ -1,7 +1,8 @@
 import { AccessorKeyColumnDef, ColumnDef, RowData } from "@tanstack/react-table";
 import _ from "lodash";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { When } from "react-if";
+import { v4 as uuidv4 } from "uuid";
 
 import Button from "@/components/elements/Button/Button";
 import IconButton from "@/components/elements/IconButton/IconButton";
@@ -19,6 +20,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];
   onChange?: (values: any) => void;
+  generateUuids?: boolean;
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
@@ -26,8 +28,17 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
   const { openModal, closeModal } = useModalContext();
-  const { fields, addButtonCaption, tableColumns, value, onChange, handleCreate, handleDelete, ...inputWrapperProps } =
-    props;
+  const {
+    fields,
+    addButtonCaption,
+    tableColumns,
+    value,
+    onChange,
+    handleCreate,
+    handleDelete,
+    generateUuids = false,
+    ...inputWrapperProps
+  } = props;
 
   const openFormModalHandler = () => {
     openModal(
@@ -35,19 +46,28 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     );
   };
 
-  const onAddNewEntry = (fieldValues: any) => {
-    onChange?.([...value, fieldValues]);
-    handleCreate?.(fieldValues);
-    closeModal();
-  };
+  const onAddNewEntry = useCallback(
+    (fieldValues: any) => {
+      if (generateUuids) {
+        fieldValues = { ...fieldValues, uuid: uuidv4() };
+      }
+      onChange?.([...value, fieldValues]);
+      handleCreate?.(fieldValues);
+      closeModal();
+    },
+    [generateUuids, value, onChange, handleCreate, closeModal]
+  );
 
-  const onDeleteEntry = (uuid: string) => {
-    const _tmp = [...value];
-    _.remove(_tmp, item => item.uuid === uuid);
-    //@ts-ignore
-    handleDelete?.(uuid);
-    onChange?.(_tmp);
-  };
+  const onDeleteEntry = useCallback(
+    (uuid: string) => {
+      const _tmp = [...value];
+      _.remove(_tmp, item => item.uuid === uuid);
+      //@ts-ignore
+      handleDelete?.(uuid);
+      onChange?.(_tmp);
+    },
+    [value, handleDelete, onChange]
+  );
 
   const headers = useMemo<ColumnDef<TData>[]>(() => {
     return [
