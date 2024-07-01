@@ -32166,6 +32166,7 @@ export type GetV2SitesSitePolygonResponse = {
    */
   updated_at?: string;
   status?: string;
+  source?: string;
   country?: string;
 }[];
 
@@ -34761,6 +34762,7 @@ export type GetV2TypeEntityResponse = {
      */
     updated_at?: string;
     status?: string;
+    source?: string;
     country?: string;
   }[];
   /**
@@ -34985,6 +34987,7 @@ export type PutV2SitePolygonStatusBulkResponse = {
      */
     updated_at?: string;
     status?: string;
+    source?: string;
     country?: string;
   }[];
 };

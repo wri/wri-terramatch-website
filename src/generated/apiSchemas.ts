@@ -23217,6 +23217,7 @@ export type SitePolygon = {
    */
   updated_at?: string;
   status?: string;
+  source?: string;
   country?: string;
 };
 
@@ -23265,6 +23266,7 @@ export type SitePolygonsDataResponse = {
    */
   updated_at?: string;
   status?: string;
+  source?: string;
   country?: string;
 }[];
 
@@ -23767,6 +23769,7 @@ export type EntityTypeResponse = {
      */
     updated_at?: string;
     status?: string;
+    source?: string;
     country?: string;
   }[];
   /**
@@ -23846,6 +23849,7 @@ export type PolygonChangeStatus = {
    */
   updated_at?: string;
   status?: string;
+  source?: string;
   country?: string;
 }[];
 
