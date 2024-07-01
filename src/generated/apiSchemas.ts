@@ -4851,18 +4851,6 @@ export type V2StrataRead = {
   extent?: number;
 };
 
-export type V2StrataCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  description?: string;
-  extent?: number;
-};
-
-export type V2StrataUpdate = {
-  description?: string;
-  extent?: number;
-};
-
 export type V2StrataPaginated = {
   data?: {
     uuid?: string;
@@ -4976,20 +4964,6 @@ export type V2InvasiveRead = {
   uuid?: string;
   name?: string;
   type?: number;
-};
-
-export type V2InvasiveCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  type?: string;
-  collection?: string;
-};
-
-export type V2InvasiveUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
 };
 
 export type V2InvasivePaginated = {
