@@ -8,6 +8,7 @@ import {
   ESTIMATED_AREA_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import Loader from "@/components/generic/Loading/Loader";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundValidationSite, usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -44,6 +45,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
   const [clickedValidation, setClickedValidation] = useState(false);
   const context = useSitePolygonData();
+  const [isLoading, setIsLoading] = useState(false);
   const sitePolygonData = context?.sitePolygonData;
   const t = useT();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -90,6 +92,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     onSuccess: () => {
       reloadSitePolygonValidation();
       setClickedValidation(false);
+      setIsLoading(false);
       displayNotification(
         t("Please update and re-run if any polygons fail."),
         "success",
@@ -97,6 +100,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       );
     },
     onError: () => {
+      setIsLoading(false);
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
@@ -140,12 +144,18 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     if (clickedValidation) {
+      setIsLoading(true);
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
 
   return (
     <div className="grid gap-2">
+      <When condition={isLoading}>
+        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">
+          <Loader />
+        </div>
+      </When>
       <Notification {...notificationStatus} />
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <Button

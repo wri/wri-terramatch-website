@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import Loader from "@/components/generic/Loading/Loader";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 
@@ -12,6 +13,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const [clickedValidation, setClickedValidation] = useState(false);
   const { editPolygon, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
+  const [isLoading, setIsLoading] = useState(false);
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
     message: string;
@@ -43,6 +45,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     onSuccess: () => {
       setShouldRefetchValidation(true);
       setClickedValidation(false);
+      setIsLoading(false);
       displayNotification(
         t("Please update and re-run if validations fail."),
         "success",
@@ -50,18 +53,25 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       );
     },
     onError: () => {
+      setIsLoading(false);
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
   useEffect(() => {
     if (clickedValidation) {
+      setIsLoading(true);
       getValidations({ queryParams: { uuid: editPolygon.uuid } });
     }
   }, [clickedValidation]);
 
   return (
     <div className="flex gap-2">
+      <When condition={isLoading}>
+        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]" id="loaderscheck">
+          <Loader />
+        </div>
+      </When>
       <Notification {...notificationStatus} />
       <When condition={viewRequestSuport}>
         <Button
