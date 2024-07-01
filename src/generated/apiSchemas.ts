@@ -4950,21 +4950,6 @@ export type V2DisturbanceRead = {
   extent?: string;
 };
 
-export type V2DisturbanceCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  description?: string;
-  intensity?: string;
-  extent?: string;
-  collection?: string;
-};
-
-export type V2DisturbanceUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
-};
-
 export type V2DisturbancePaginated = {
   data?: {
     uuid?: string;
@@ -23803,12 +23788,48 @@ export type DashboardProjectViewResponse = {
 };
 
 export type PolygonChangeStatus = {
-  comment?: string;
-  updatePolygons?: {
-    uuid?: string;
-    status?: string;
-  }[];
-};
+  id?: number;
+  uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  country?: string;
+}[];
 
 export type PolygonChangeStatusUpdate = {
   comment?: string;

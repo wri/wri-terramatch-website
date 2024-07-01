@@ -8558,144 +8558,6 @@ export const useGetV2SeedingsENTITYUUID = <TData = GetV2SeedingsENTITYUUIDRespon
   );
 };
 
-export type PostV2DisturbancesError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2DisturbancesResponse = {
-  uuid?: string;
-  description?: string;
-  intensity?: string;
-  extent?: string;
-};
-
-export type PostV2DisturbancesRequestBody = {
-  model_type?: string;
-  model_uuid?: number;
-  description?: string;
-  intensity?: string;
-  extent?: string;
-  collection?: string;
-};
-
-export type PostV2DisturbancesVariables = {
-  body?: PostV2DisturbancesRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2Disturbances = (variables: PostV2DisturbancesVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2DisturbancesResponse, PostV2DisturbancesError, PostV2DisturbancesRequestBody, {}, {}, {}>({
-    url: "/v2/disturbances",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2Disturbances = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PostV2DisturbancesResponse, PostV2DisturbancesError, PostV2DisturbancesVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2DisturbancesResponse, PostV2DisturbancesError, PostV2DisturbancesVariables>(
-    (variables: PostV2DisturbancesVariables) => fetchPostV2Disturbances({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2DisturbancesUUIDPathParams = {
-  uuid: string;
-};
-
-export type PatchV2DisturbancesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2DisturbancesUUIDResponse = {
-  data?: {
-    uuid?: string;
-    description?: string;
-    intensity?: string;
-    extent?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type PatchV2DisturbancesUUIDVariables = {
-  pathParams: PatchV2DisturbancesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2DisturbancesUUID = (variables: PatchV2DisturbancesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PatchV2DisturbancesUUIDResponse,
-    PatchV2DisturbancesUUIDError,
-    undefined,
-    {},
-    {},
-    PatchV2DisturbancesUUIDPathParams
-  >({ url: "/v2/disturbances/{uuid}", method: "patch", ...variables, signal });
-
-export const usePatchV2DisturbancesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2DisturbancesUUIDResponse,
-      PatchV2DisturbancesUUIDError,
-      PatchV2DisturbancesUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2DisturbancesUUIDResponse,
-    PatchV2DisturbancesUUIDError,
-    PatchV2DisturbancesUUIDVariables
-  >(
-    (variables: PatchV2DisturbancesUUIDVariables) => fetchPatchV2DisturbancesUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2DisturbancesUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2DisturbancesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2DisturbancesUUIDVariables = {
-  pathParams: DeleteV2DisturbancesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2DisturbancesUUID = (variables: DeleteV2DisturbancesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2DisturbancesUUIDError, undefined, {}, {}, DeleteV2DisturbancesUUIDPathParams>({
-    url: "/v2/disturbances/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2DisturbancesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2DisturbancesUUIDError, DeleteV2DisturbancesUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2DisturbancesUUIDError, DeleteV2DisturbancesUUIDVariables>(
-    (variables: DeleteV2DisturbancesUUIDVariables) =>
-      fetchDeleteV2DisturbancesUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2DisturbancesENTITYUUIDPathParams = {
   /**
    * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
@@ -34946,12 +34808,48 @@ export type PutV2SitePolygonStatusBulkError = Fetcher.ErrorWrapper<undefined>;
 
 export type PutV2SitePolygonStatusBulkResponse = {
   data?: {
-    comment?: string;
-    updatePolygons?: {
-      uuid?: string;
-      status?: string;
-    }[];
-  };
+    id?: number;
+    uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    country?: string;
+  }[];
 };
 
 export type PutV2SitePolygonStatusBulkRequestBody = {
