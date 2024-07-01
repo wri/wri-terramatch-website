@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect } from "react";
@@ -21,6 +22,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import useAlertHook from "../MapPolygonPanel/hooks/useAlertHook";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
@@ -124,7 +126,10 @@ export const MapContainer = ({
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
+  const t = useT();
   const { isUserDrawingEnabled } = contextMapArea;
+  const { displayNotification } = useAlertHook();
+
   if (!mapFunctions) {
     return null;
   }
@@ -244,6 +249,9 @@ export const MapContainer = ({
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
+            displayNotification(t("Geometry updated successfully."), "success", t("Success"));
+          } else {
+            displayNotification(t("Please try again later."), "error", t("Error"));
           }
         }
       }

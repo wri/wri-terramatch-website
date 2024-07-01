@@ -17,6 +17,7 @@ import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
+import Notification from "../../Notification/Notification";
 import { storePolygon } from "../utils";
 
 interface EntityAreaProps {
@@ -35,8 +36,14 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
-  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
-    useMapAreaContext();
+  const {
+    isMonitoring,
+    editPolygon,
+    shouldRefetchPolygonData,
+    setShouldRefetchPolygonData,
+    setEditPolygon,
+    polygonNotificationStatus
+  } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
   };
@@ -193,6 +200,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData?.data}
       />
+      <Notification {...polygonNotificationStatus} />
     </>
   );
 };

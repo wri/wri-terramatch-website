@@ -5,10 +5,11 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchPutV2TerrafundSitePolygonUuid, useGetV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Text from "../Text/Text";
+import useAlertHook from "./hooks/useAlertHook";
 import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 const dropdownOptionsRestoration = [
@@ -98,7 +99,8 @@ const AttributeInformation = () => {
   const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
-
+  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const { displayNotification } = useAlertHook();
   useEffect(() => {
     if (sitePolygonData) {
       setPolygonData(sitePolygonData?.site_polygon);
@@ -156,11 +158,22 @@ const AttributeInformation = () => {
         num_trees: treesPlanted
       };
       try {
-        await fetchPutV2TerrafundSitePolygonUuid({
-          body: updatedPolygonData,
-          pathParams: { uuid: polygonData.uuid }
-        });
-        setShouldRefetchPolygonData(true);
+        sendSiteData(
+          {
+            body: updatedPolygonData,
+            pathParams: { uuid: polygonData.uuid }
+          },
+          {
+            onSuccess: () => {
+              setShouldRefetchPolygonData(true);
+              setEditPolygon({ isOpen: false, uuid: "" });
+              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+            },
+            onError: error => {
+              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+            }
+          }
+        );
       } catch (error) {
         console.error("Error updating polygon data:", error);
       }

@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchPutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
+import { usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 const dropdownOptionsRestoration = [
@@ -84,7 +85,8 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [formattedArea, setFormattedArea] = useState<string>();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
-
+  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const { displayNotification } = useAlertHook();
   const t = useT();
 
   useEffect(() => {
@@ -136,11 +138,21 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         num_trees: treesPlanted
       };
       try {
-        await fetchPutV2TerrafundSitePolygonUuid({
-          body: updatedPolygonData,
-          pathParams: { uuid: selectedPolygon.uuid }
-        });
-        reloadSiteData?.();
+        sendSiteData(
+          {
+            body: updatedPolygonData,
+            pathParams: { uuid: selectedPolygon.uuid }
+          },
+          {
+            onSuccess: () => {
+              reloadSiteData?.();
+              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+            },
+            onError: error => {
+              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+            }
+          }
+        );
       } catch (error) {
         console.error("Error updating polygon data:", error);
       }
