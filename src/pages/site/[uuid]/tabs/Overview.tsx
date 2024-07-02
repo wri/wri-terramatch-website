@@ -208,6 +208,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 })
               }
             });
+            setShouldRefetchPolygonData(true);
             setShowSubmissionSuccess(true);
             setTimeout(() => {
               setShowSubmissionSuccess(false);

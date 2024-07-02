@@ -118,7 +118,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       }
       return {
         id: index + 1,
-        valid: isValid,
+        valid: checkedPolygon.checked && isValid,
         checked: checkedPolygon.checked,
         label: matchingPolygon?.poly_name ?? null
       };
