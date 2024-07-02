@@ -1,6 +1,3 @@
-import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
-
 export function getValueForStatusPolygon(status: string): number {
   switch (status) {
     case "draft":
@@ -116,9 +113,3 @@ export const nurseryStatusLabels = [
   { id: "3", label: "Needs More Information" },
   { id: "4", label: "Approved" }
 ];
-
-export const recentRequestData = (recentRequest: AuditStatusResponse | undefined) => {
-  if (!recentRequest) return "";
-  return `From ${recentRequest.first_name ?? ""} ${recentRequest.last_name ?? ""} on
-  ${convertDateFormat(recentRequest.date_created) ?? ""}`;
-};
