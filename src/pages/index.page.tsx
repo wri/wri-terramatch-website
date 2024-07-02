@@ -72,14 +72,14 @@ const LandingPage = () => {
               description: t(
                 "TerraMatch is committed to support the growth of locally led restoration project developers. We  host the application process for cohort-based accelerator programs for champions who are looking to level up their operations. We also offer guidance and support for those who do not match with our existing programs."
               ),
-              iconName: IconNames.DOCUMENT_CIRCLE
+              iconName: IconNames.DOCUMENT_CIRCLE_HOMEPAGE
             },
             {
               title: t("3. Report + Monitor"),
               description: t(
                 "Funders who are looking to invest in growing trees the right way rely on TerraMatch’s monitoring and reporting capabilities. The platform combines the best in field-collected data with cutting-edge satellite insights to track how investment in restoration impacts communities and ecosystems."
               ),
-              iconName: IconNames.TREE_CIRCLE
+              iconName: IconNames.TREE_CIRCLE_HOMEPAGE
             }
           ]}
         />

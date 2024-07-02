@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
   className="w-[200px]"
 >
   <div
-    className="rounded-xl pb-4 shadow"
+    className="rounded-xl border border-neutral-200 pb-4"
   >
     <div
       className="relative flex aspect-square w-full items-center justify-center"
@@ -50,26 +50,26 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
           }
         />
         <p
-          className="pt-0.5 text-bold-caption-100"
+          className="text-12-semibold"
           data-testid="txt"
         >
           Invite Sent
         </p>
       </div>
       <p
-        className="text-bold-body-300"
+        className="text-14-bold"
         data-testid="txt"
       >
         johndoe
       </p>
       <p
-        className="text-light-body-300"
+        className="text-14-light"
         data-testid="txt"
       >
         SaveTheTrees
       </p>
       <p
-        className="text-ellipsis line-clamp-1 text-light-body-300"
+        className="one-line-text text-14-light"
         data-testid="txt"
         title="johndoe@mail.com"
       >
@@ -85,7 +85,7 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard No Image 1`] = `
   className="w-[200px]"
 >
   <div
-    className="rounded-xl pb-4 shadow"
+    className="rounded-xl border border-neutral-200 pb-4"
   >
     <div
       className="relative flex aspect-square w-full items-center justify-center"
@@ -119,19 +119,19 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard No Image 1`] = `
       className="mt-4 space-y-2 px-3"
     >
       <p
-        className="text-bold-body-300"
+        className="text-14-bold"
         data-testid="txt"
       >
         janedoe
       </p>
       <p
-        className="text-light-body-300"
+        className="text-14-light"
         data-testid="txt"
       >
         WeLoveTrees
       </p>
       <p
-        className="text-ellipsis line-clamp-1 text-light-body-300"
+        className="one-line-text text-14-light"
         data-testid="txt"
         title="jane@mail.com"
       >

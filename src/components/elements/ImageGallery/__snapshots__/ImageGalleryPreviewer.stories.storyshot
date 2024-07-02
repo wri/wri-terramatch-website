@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Previewer Default
   className="relative h-[600px] w-full"
 >
   <div
-    className="h-[640px] w-full max-w-7xl overflow-hidden rounded-lg !absolute"
+    className="h-[80vh] w-[80vw] overflow-hidden rounded-lg !absolute"
   >
     <div
       className="flex items-center justify-between bg-white px-8 py-3.5"
@@ -56,6 +56,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Previewer Default
         loading="lazy"
         onError={[Function]}
         onLoad={[Function]}
+        referrerPolicy="no-referrer"
         src="https://picsum.photos/seed/1mPXM8RR/640/480"
         style={
           Object {

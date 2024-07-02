@@ -39,12 +39,12 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
 
   return (
     <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
-      <HTab.List {...divProps} className={classNames(className, "h-12 w-full border-b border-neutral-400 bg-white")}>
+      <HTab.List {...divProps} className={classNames(className, "h-max w-full border-b-2 border-neutral-200 bg-white")}>
         <List
           as="div"
           className={classNames(
             containerClassName,
-            tabItems.length <= 5 ? "justify-between lg:justify-center lg:gap-30" : "justify-between",
+            tabItems.length <= 5 ? "justify-between lg:justify-start lg:gap-30" : "justify-between",
             "m-auto flex h-full items-center"
           )}
           itemAs={Fragment}
@@ -53,15 +53,15 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
             <HTab as={Fragment}>
               {({ selected }) => (
                 <button
-                  className={classNames("h-full border-b-[3px] px-4 pt-[3px] outline-none", {
+                  className={classNames("mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none", {
                     "border-primary": selected,
                     "border-transparent": !selected
                   })}
                   disabled={item.disabled}
                 >
                   <Text
-                    variant="text-heading-200"
-                    className={classNames("whitespace-nowrap", selected ? "text-black" : "text-neutral-700")}
+                    variant={selected ? "text-16-bold" : "text-16-light"}
+                    className={classNames("whitespace-nowrap", "text-black")}
                   >
                     {item.title}
                   </Text>

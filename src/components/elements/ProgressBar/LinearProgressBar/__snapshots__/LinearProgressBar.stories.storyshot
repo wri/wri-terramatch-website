@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/ProgressBar Default 1`] = `
+<div
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
+  role="progressbar"
+>
+  <div
+    className="h-full bg-primary rounded-full transition-all duration-300"
+    style={
+      Object {
+        "width": "50%",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Storyshots Components/Elements/ProgressBar Error 1`] = `
+<div
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
+  role="progressbar"
+>
+  <div
+    className="h-full bg-error rounded-full transition-all duration-300"
+    style={
+      Object {
+        "width": "50%",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Storyshots Components/Elements/ProgressBar Secondary 1`] = `
+<div
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
+  role="progressbar"
+>
+  <div
+    className="h-full bg-secondary rounded-full transition-all duration-300"
+    style={
+      Object {
+        "width": "50%",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Storyshots Components/Elements/ProgressBar Success 1`] = `
+<div
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
+  role="progressbar"
+>
+  <div
+    className="h-full bg-success rounded-full transition-all duration-300"
+    style={
+      Object {
+        "width": "50%",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Storyshots Components/Elements/ProgressBar Tertiary 1`] = `
+<div
+  className="h-[9px] w-full rounded-full bg-neutral-200 "
+  role="progressbar"
+>
+  <div
+    className="h-full bg-tertiary rounded-full transition-all duration-300"
+    style={
+      Object {
+        "width": "50%",
+      }
+    }
+  />
+</div>
+`;

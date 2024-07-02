@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/MenuItem Primary 1`] = `
+<button
+  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+  onClick={[Function]}
+>
+  &lt;div&gt;Test1&lt;/div&gt;
+</button>
+`;

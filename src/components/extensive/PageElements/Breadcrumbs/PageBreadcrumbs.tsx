@@ -15,7 +15,7 @@ const PageBreadcrumbs = ({ links, children, className, ...props }: PageHeaderPro
 
   return (
     <div {...props} className={twMerge("flex h-12 items-center bg-primary-100 p-4 px-10 xl:px-0", className)}>
-      <Breadcrumbs links={links || history} className="mx-auto w-full max-w-7xl" />
+      <Breadcrumbs links={links || history} className="mx-auto w-full max-w-[82vw]" />
     </div>
   );
 };

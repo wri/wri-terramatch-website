@@ -15,6 +15,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
+import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { useFramework } from "@/hooks/useFramework";
@@ -30,9 +31,15 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const { openModal } = useModalContext();
   const { isTerrafund } = useFramework(project);
 
+  const restorationOptions = getRestorationStrategyOptions(t);
+
+  const filterRestorationStrategyOptions = restorationOptions
+    .filter(option => project.restoration_strategy?.includes(option.value))
+    .map(option => option.value.toString());
+
   const landUseTypesOptions = useGetOptions(project.land_use_types);
   const sdgsImpactedOptions = useGetOptions(project.sdgs_impacted);
-  const restorationStrategyOptions = useGetOptions(project.restoration_strategy);
+  const restorationStrategyOptions = useGetOptions(filterRestorationStrategyOptions);
 
   const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
     pathParams: { uuid: project.uuid }
@@ -211,6 +218,8 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           </PageCard>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

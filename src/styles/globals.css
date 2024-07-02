@@ -1,5 +1,5 @@
 * {
-  @apply font-primary text-base font-light;
+  @apply text-base font-light font-primary;
 }
 
 input[type="radio"] {
@@ -8,7 +8,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked {
-  @apply border-primary-500 bg-white;
+  @apply bg-white border-primary-500;
 }
 
 input[type="radio"]:before {
@@ -26,6 +26,36 @@ input[type="radio"]:focus {
   box-shadow: none;
 }
 
+.content-login:focus-within .label-login,
+.input-login:not(:placeholder-shown) + .label-login {
+  transform: translate(0, -108%) scale(1);
+}
+
+.input-content-login .label-login {
+  transform: translate(0, -108%) scale(1) !important;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.lastRow:last-child>:last-child{
+  @apply rounded-br-lg
+}
+
+.lastRow:last-child>:first-child{
+  @apply rounded-bl-lg
+}
+
+strong {
+  font-size: inherit
+}
+
+
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
 @import url("./extended-components.css");
+@import url("./custom-admin-page-styles.css");

@@ -4,6 +4,7 @@ import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
 import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_SECONDARY } from "@/components/elements/Table/TableVariants";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -20,7 +21,7 @@ const BreakdownTable = ({ data }: { data: { name: string; value?: number }[] }) 
 
   return (
     <Table
-      variant="secondary"
+      variant={VARIANT_TABLE_SECONDARY}
       columns={[
         { header: t("Breakdown"), accessorKey: "name", enableSorting: false },
         {

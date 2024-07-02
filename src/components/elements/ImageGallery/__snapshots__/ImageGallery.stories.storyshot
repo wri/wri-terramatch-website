@@ -17,16 +17,16 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         <div
           aria-expanded={false}
           aria-haspopup="listbox"
-          className="flex h-8 items-center justify-center gap-1 rounded-md border bg-white px-10"
+          className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
           data-headlessui-state=""
           disabled={false}
-          id="headlessui-listbox-button-:r6:"
+          id="headlessui-listbox-button-:r7:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
         >
           <p
-            className="mt-1 w-full uppercase line-clamp-1 text-bold-caption-200"
+            className="w-full uppercase line-clamp-1 text-14-bold"
             data-testid="txt"
           >
             Show All
@@ -44,33 +44,50 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
     </div>
   </div>
   <div
-    className="grid grid-cols-3 gap-8"
+    className="grid grid-cols-3 gap-4"
   >
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/ZIV07iZ/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/ZIV07iZ/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -106,7 +123,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -123,13 +140,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Quod distinctio reiciendis maxime enim et quidem.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -138,30 +160,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/b1VyWqu/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/b1VyWqu/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -189,7 +228,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -206,13 +245,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Blanditiis magnam quae labore vel dicta quasi qui.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -221,30 +265,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/4HQi7vzT/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/4HQi7vzT/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -272,7 +333,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -289,13 +350,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Aliquam quidem cupiditate reprehenderit incidunt.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -304,30 +370,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/TxaYRIBHBd/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/TxaYRIBHBd/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -363,7 +446,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -380,13 +463,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Doloremque quisquam hic pariatur in dolores reprehenderit illo.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -395,30 +483,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/3RPcmU/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/3RPcmU/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -446,7 +551,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -463,13 +568,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Dignissimos unde tempore modi aut ut.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -478,30 +588,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/WkcO32m6ZA/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/WkcO32m6ZA/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -537,7 +664,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -554,13 +681,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Fugit quod ullam cum natus expedita reprehenderit.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -569,30 +701,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/eMjrY/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/eMjrY/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -620,7 +769,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -637,13 +786,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Sit nobis unde numquam tenetur.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -652,30 +806,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/0YeRnwOeq0/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/0YeRnwOeq0/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -703,7 +874,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -720,13 +891,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Dolorum explicabo magnam ad qui ab reprehenderit dolor.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -735,30 +911,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/mvuu0/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/mvuu0/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -794,7 +987,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -811,13 +1004,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Rerum hic laboriosam similique quidem molestias.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -826,30 +1024,47 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       />
     </div>
     <div
-      className="relative overflow-hidden rounded-lg shadow"
+      className="relative overflow-hidden rounded-lg border border-neutral-200"
     >
       <div
-        className="h-[211px] w-full relative"
+        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
       >
-        <img
-          alt=""
-          className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
-          data-nimg="1"
-          decoding="async"
-          height={211}
-          loading="lazy"
-          onError={[Function]}
-          onLoad={[Function]}
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          placeholder="No Image Available"
           role="presentation"
-          src="https://picsum.photos/seed/i1uDrKPuA/640/480"
           style={
             Object {
-              "color": "transparent",
               "objectFit": "cover",
             }
           }
-          width={1440}
-        />
+        >
+          <img
+            alt="No Image Available"
+            className="object-cover"
+            data-nimg="fill"
+            decoding="async"
+            loading="lazy"
+            onError={[Function]}
+            onLoad={[Function]}
+            referrerPolicy="no-referrer"
+            src="https://picsum.photos/seed/i1uDrKPuA/640/480"
+            style={
+              Object {
+                "bottom": 0,
+                "color": "transparent",
+                "height": "100%",
+                "left": 0,
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </div>
         <div
           className="absolute top-0 right-0 left-0 bottom-0"
         >
@@ -885,7 +1100,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 />
               </a>
               <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10"
+                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
                 onClick={[Function]}
               >
                 <div
@@ -902,13 +1117,18 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </div>
       </div>
       <div
-        className="px-8 py-4"
+        className="px-2 py-4"
       >
         <p
-          className="text-bold-body-300"
+          className="flex items-center gap-1 text-16-bold"
           data-testid="txt"
         >
           Odit quo ipsam cupiditate laborum qui.
+          :
+          <p
+            className="text-16-light"
+            data-testid="txt"
+          />
         </p>
       </div>
       <div
@@ -930,11 +1150,11 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         <div
           aria-expanded={false}
           aria-haspopup="listbox"
-          aria-labelledby="headlessui-listbox-label-:r8: headlessui-listbox-button-:r7:"
+          aria-labelledby="headlessui-listbox-label-:r9: headlessui-listbox-button-:r8:"
           className="flex h-10 w-20 items-center justify-center rounded-md shadow"
           data-headlessui-state=""
           disabled={false}
-          id="headlessui-listbox-button-:r7:"
+          id="headlessui-listbox-button-:r8:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -943,14 +1163,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex h-full flex-1 items-center justify-center"
           >
             <p
-              className="w-fit uppercase line-clamp-1 text-bold-subtitle-500"
+              className="w-fit uppercase line-clamp-1 text-16-bold"
               data-testid="txt"
             >
               10
             </p>
           </div>
           <div
-            className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-primary-200"
+            className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]"
           >
             <div
               style={
@@ -963,10 +1183,10 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           </div>
         </div>
         <p
-          className="text-bold-subtitle-500"
+          className="text-16-bold"
           data-headlessui-state=""
           data-testid="txt"
-          id="headlessui-listbox-label-:r8:"
+          id="headlessui-listbox-label-:r9:"
           onClick={[Function]}
         >
           Per page
@@ -977,7 +1197,14 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       className="flex items-center justify-center gap-5"
       defaultPageSize={10}
       hasPageSizeSelector={true}
+      invertSelect={true}
       setPageSize={[Function]}
+      variant={
+        Object {
+          "VariantPageText": "text-16-bold",
+          "VariantPrePageText": "text-16-bold",
+        }
+      }
     >
       <button
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"
@@ -994,7 +1221,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         />
       </button>
       <p
-        className="text-neutral-1000 underline text-bold-subtitle-500"
+        className="text-neutral-1000 underline text-16-bold"
         data-testid="txt"
         disabled={false}
         onClick={[Function]}
@@ -1003,7 +1230,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         1
       </p>
       <p
-        className="text-neutral-600 text-bold-subtitle-500"
+        className="text-neutral-600 text-16-bold"
         data-testid="txt"
         disabled={false}
         onClick={[Function]}

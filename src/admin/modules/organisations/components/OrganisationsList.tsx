@@ -1,4 +1,4 @@
-import { Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Divider, Stack, Tab, Tabs } from "@mui/material";
 import { Fragment, useCallback, useState } from "react";
 import {
   Datagrid,
@@ -18,6 +18,10 @@ import { OrganisationDataProvider } from "@/admin/apiProvider/dataProviders/orga
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import FundingProgrammesArrayField from "@/admin/components/Fields/FundingProgrammesArrayField";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
+import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { optionToChoices } from "@/utils/options";
 
@@ -32,11 +36,12 @@ const tabs = [
 ];
 
 const filters = [
-  <SearchInput key="s" source="search" alwaysOn />,
+  <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
   <SelectInput
     key="c"
     label="Organisation Type"
     source="type"
+    className="select-page-admin"
     choices={optionToChoices(getOrganisationTypeOptions())}
   />
 ];
@@ -58,6 +63,17 @@ const ApplicationDataGrid = () => {
     },
     [displayedFilters, filterValues, setFilters]
   );
+
+  const tableMenu = [
+    {
+      id: "1",
+      render: () => <EditButton />
+    },
+    {
+      id: "2",
+      render: () => <ShowButton />
+    }
+  ];
 
   return (
     <Fragment>
@@ -83,8 +99,9 @@ const ApplicationDataGrid = () => {
         <SelectField label="Organisation Type" source="type" choices={optionToChoices(getOrganisationTypeOptions())} />
         <TextField source="readable_status" label="Organisation Status" />
         <FundingProgrammesArrayField label="Funding Programmes" />
-        <ShowButton />
-        <EditButton />
+        <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+          <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+        </Menu>
       </Datagrid>
     </Fragment>
   );
@@ -103,12 +120,11 @@ export const OrganisationsList = () => {
 
   return (
     <>
-      <Stack gap={1} py={2}>
-        <Typography variant="h5">Organisations</Typography>
-
-        <Divider />
+      <Stack gap={1} className="pb-6">
+        <Text variant="text-36-bold" className="leading-none">
+          Organisations
+        </Text>
       </Stack>
-
       <List
         actions={<ListActions onExport={handleExport} />}
         filters={filters}

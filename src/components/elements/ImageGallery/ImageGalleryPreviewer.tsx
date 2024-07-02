@@ -25,7 +25,7 @@ const ImageGalleryPreviewer: FC<ImageGalleryPreviewerProps> = ({
   const { closeModal } = useModalContext();
 
   return (
-    <div {...rest} className={twMerge("h-[640px] w-full max-w-7xl overflow-hidden rounded-lg", className)}>
+    <div {...rest} className={twMerge("h-[80vh] w-[80vw] overflow-hidden rounded-lg", className)}>
       {/* Controls */}
       <div className="flex items-center justify-between bg-white px-8 py-3.5">
         {/* Left */}

@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Extensive/Confirmation Default 1`] = `
 <section
-  className="min-h-[calc(100vh-74px)] w-full bg-primary-50"
+  className="min-h-[calc(100vh-74px)] w-full bg-neutral-150"
 >
   <div
     className="mx-auto my-10 w-full max-w-[800px]"

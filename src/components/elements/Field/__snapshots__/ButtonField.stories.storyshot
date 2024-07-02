@@ -18,10 +18,10 @@ exports[`Storyshots Components/Elements/Fields/ButtonField Default 1`] = `
       </p>
     </div>
     <button
-      className="bg-primary-500 hover:bg-primary-400 py-2 rounded-md px-10 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black h-8 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
     >
       <span
-        className="text-bold-caption-200 pt-0.75 leading-3"
+        className="flex items-center text-bold-caption-200"
       >
         View
       </span>

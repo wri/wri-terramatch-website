@@ -8,18 +8,18 @@ import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { LoginFormData, LoginFormDataSchema } from "@/pages/auth/login/index.page";
+import { LoginFormDataSchema, LoginFormDataType } from "@/pages/auth/login/index.page";
 
 const AdminLoginPage = () => {
   const login = useLogin();
   const notify = useNotify();
 
-  const form = useForm<LoginFormData>({
+  const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema),
     mode: "all"
   });
 
-  const handleSave = async ({ email, password }: LoginFormData) => {
+  const handleSave = async ({ email, password }: LoginFormDataType) => {
     try {
       await login({ username: email, password });
     } catch (err) {

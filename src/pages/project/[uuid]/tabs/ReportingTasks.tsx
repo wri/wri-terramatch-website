@@ -54,6 +54,8 @@ const ReportingTasksTab = (props: ReportingTasksProps) => {
           </LoadingContainer>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

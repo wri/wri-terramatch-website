@@ -2,19 +2,19 @@
 
 exports[`Storyshots Components/Extensive/Page/Body Default 1`] = `
 <div
-  className="min-h-[calc(100vh-70px)] w-full space-y-15 bg-neutral-50 p-10 pb-30 xl:p-15"
+  className="min-h-[calc(100vh-70px)] w-full space-y-15 bg-neutral-50 pt-10"
 >
   <div
     className="min-w-[500px] flex-1 space-y-8"
   >
     <div
-      className="w-full rounded-xl bg-white p-8 shadow"
+      className="w-full rounded-xl border border-neutral-200 bg-white p-8"
     >
       <div
         className="flex flex-wrap justify-between"
       >
         <p
-          className="flex-1 text-bold-headline-1000"
+          className="flex flex-1 items-baseline text-darkCustom text-24-bold"
           data-testid="txt"
         >
           card title
@@ -26,13 +26,13 @@ exports[`Storyshots Components/Extensive/Page/Body Default 1`] = `
     className="min-w-[500px] flex-1 space-y-8"
   >
     <div
-      className="w-full rounded-xl bg-white p-8 shadow"
+      className="w-full rounded-xl border border-neutral-200 bg-white p-8"
     >
       <div
         className="flex flex-wrap justify-between"
       >
         <p
-          className="flex-1 text-bold-headline-1000"
+          className="flex flex-1 items-baseline text-darkCustom text-24-bold"
           data-testid="txt"
         >
           card title

@@ -10,7 +10,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
   title="TerraFund for AFR100: Landscapes - Non Profits"
 >
   <div
-    className="mx-3 mb-2 mt-3"
+    className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
   >
     <div
       className="mb-1 flex items-start gap-3"
@@ -33,7 +33,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
           }
         />
         <p
-          className="pt-0.5 text-bold-caption-100"
+          className="text-bold-caption-100"
           data-testid="txt"
         >
           Draft
@@ -51,10 +51,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
     />
   </div>
   <div
-    className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+    className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
   >
     <p
-      className="text-body-500"
+      className="group-hover:text-white text-button-700"
       data-testid="txt"
     >
       Continue Draft

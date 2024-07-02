@@ -28,8 +28,7 @@ export const TabButton = forwardRef(
         aria-checked={item.done ? "true" : "false"}
         className={classNames(
           className,
-          `w-full items-center focus:outline-none disabled:text-neutral-900`,
-          "border",
+          "w-full items-center focus:outline-none disabled:text-neutral-900",
           item.done && "peer",
           lastItem || selected ? "border-b" : "border-b-0",
           selected
@@ -43,7 +42,7 @@ export const TabButton = forwardRef(
           {item.title}
         </Text>
         <When condition={item.done}>
-          <Icon className="fill-primary-500" name={IconNames.TICK_RECT} width={20} />
+          <Icon className="text-green-100 " name={IconNames.APPROVED_COLORLESS} width={20} />
         </When>
       </button>
     );

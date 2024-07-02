@@ -4,20 +4,24 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { useAuthContext } from "@/context/auth.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 
+import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
 
-export const LoginFormDataSchema = yup.object({
-  email: yup.string().email().required(),
-  password: yup.string().required()
-});
+export type LoginFormDataType = {
+  email: string;
+  password: string;
+};
 
-export type LoginFormData = yup.InferType<typeof LoginFormDataSchema>;
+export const LoginFormDataSchema = (t: any) => {
+  return yup.object<LoginFormDataType>({
+    email: yup.string().email().required(),
+    password: yup.string().required(t("Password is required"))
+  });
+};
 
 const LoginPage = () => {
   useSetInviteToken();
@@ -25,9 +29,9 @@ const LoginPage = () => {
   const router = useRouter();
   const { login, loginLoading } = useAuthContext();
   const { openToast } = useToastContext();
-  const form = useForm<LoginFormData>({
-    resolver: yupResolver(LoginFormDataSchema),
-    mode: "all"
+  const form = useForm<LoginFormDataType>({
+    resolver: yupResolver(LoginFormDataSchema(t)),
+    mode: "onSubmit"
   });
 
   /**
@@ -35,13 +39,13 @@ const LoginPage = () => {
    * @param data LoginFormData
    * @returns Log in user and redirect to homepage
    */
-  const handleSave = async (data: LoginFormData) => {
+  const handleSave = async (data: LoginFormDataType) => {
     const res = (await login(
       {
         email_address: data.email,
         password: data.password
       },
-      () => openToast(t("Incorrect email or password"), ToastType.ERROR)
+      () => openToast(t("Incorrect Email or Password"), ToastType.ERROR)
     )) as { success: boolean };
 
     if (!res?.success) return;
@@ -50,12 +54,9 @@ const LoginPage = () => {
   };
 
   return (
-    <BackgroundLayout>
-      <ContentLayout>
-        <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
-      </ContentLayout>
-    </BackgroundLayout>
+    <LoginLayout>
+      <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
+    </LoginLayout>
   );
 };
-
 export default LoginPage;

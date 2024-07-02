@@ -1,0 +1,168 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
+<div
+  className="flex items-center justify-center bg-primary-400 p-8"
+>
+  <div
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white h-[80%] w-[776px] margin-4 z-50"
+  >
+    <header
+      className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5"
+    >
+      <div
+        style={
+          Object {
+            "height": 30,
+            "width": 108,
+          }
+        }
+      />
+      <div
+        className="flex items-center"
+      >
+        <button
+          className="ml-2 rounded p-1 hover:bg-grey-800"
+          onClick={[Function]}
+        >
+          <div
+            style={
+              Object {
+                "height": 16,
+                "width": 16,
+              }
+            }
+          />
+        </button>
+      </div>
+    </header>
+    <div
+      className="max-h-[100%] w-full overflow-auto px-8 py-8"
+    >
+      <div
+        className="flex items-center justify-between"
+      >
+        <p
+          className="text-24-bold"
+          data-testid="txt"
+        >
+          Add Polygons
+        </p>
+      </div>
+      <p
+        className="mt-1 mb-4 text-12-light"
+        data-testid="txt"
+      >
+        Start by adding polygons to your site.
+      </p>
+      <div
+        className="relative space-y-2"
+      >
+        <div
+          className="bg-white flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragEnter={[Function]}
+          onDragLeave={[Function]}
+          onDragOver={[Function]}
+          onDrop={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          role="presentation"
+          tabIndex={0}
+        >
+          <input
+            hidden={true}
+            id=":r3b:"
+            onChange={[Function]}
+            onClick={[Function]}
+            style={
+              Object {
+                "display": "none",
+              }
+            }
+            tabIndex={-1}
+            type="file"
+          />
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+          <div
+            className="flex flex-col"
+          >
+            <p
+              className="text-center text-primary text-12-bold"
+              data-testid="txt"
+            >
+              Click to upload
+            </p>
+            <p
+              className="text-center text-12-light"
+              data-testid="txt"
+            >
+              or
+            </p>
+            <p
+              className="max-w-[210px] text-center text-12-light"
+              data-testid="txt"
+            >
+              Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="flex items-center justify-between"
+      >
+        <div
+          className="mt-9 flex"
+        >
+          <p
+            className="text-12-bold"
+            data-testid="txt"
+          >
+            TerraMatch upload limits: 
+          </p>
+          <p
+            className="text-12-light"
+            data-testid="txt"
+          >
+            50 MB per upload
+          </p>
+        </div>
+        <p
+          className="mt-9 pr-5 text-primary text-12-bold"
+          data-testid="txt"
+        />
+      </div>
+      <div
+        className="flex flex-col gap-4 w-full mt-2 mb-4"
+      />
+    </div>
+    <div
+      className="flex w-full justify-end gap-3 px-8 py-4"
+    >
+      <button
+        className="bg-primary-500 hover:bg-primary-400 !text-white rounded-md uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-8 py-3"
+        onClick={[Function]}
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          <p
+            className="capitalize text-white text-14-bold"
+            data-testid="txt"
+          >
+            Close
+          </p>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

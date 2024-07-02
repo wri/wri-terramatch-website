@@ -7,8 +7,8 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
   <div
     style={
       Object {
-        "height": 36,
-        "width": 36,
+        "height": undefined,
+        "width": 24,
       }
     }
   />
@@ -25,7 +25,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
     You have 6 updates
   </p>
   <ul
-    className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4"
+    className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4 wide:p-6"
   >
     <li>
       <a
@@ -37,7 +37,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -60,7 +60,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Approved
@@ -78,10 +78,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -107,7 +107,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -130,7 +130,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Draft
@@ -148,10 +148,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -177,7 +177,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -200,7 +200,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Draft
@@ -218,10 +218,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -247,7 +247,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -270,10 +270,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -299,7 +299,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -322,7 +322,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 More info requested
@@ -340,10 +340,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -369,7 +369,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-3 mb-2 mt-3"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -392,7 +392,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
                 }
               />
               <p
-                className="pt-0.5 text-bold-caption-100"
+                className="text-bold-caption-100"
                 data-testid="txt"
               >
                 Awaiting approval
@@ -410,10 +410,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
           />
         </div>
         <div
-          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 "
+          className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-body-500"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application

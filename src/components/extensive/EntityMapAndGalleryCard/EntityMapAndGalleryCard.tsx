@@ -1,14 +1,24 @@
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
-import Map from "@/components/elements/Map-mapbox/Map";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
-import { useDeleteV2FilesUUID, useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
+import {
+  GetV2MODELUUIDFilesResponse,
+  GetV2TypeEntityResponse,
+  useDeleteV2FilesUUID,
+  useGetV2MODELUUIDFiles,
+  useGetV2TypeEntity
+} from "@/generated/apiComponents";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
@@ -34,7 +44,10 @@ const EntityMapAndGalleryCard = ({
   const { format } = useDate();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<{ key: string; value: string }>();
+  const mapFunctions = useMap();
   const { getReadableEntityName } = useGetReadableEntityName();
+  const router = useRouter();
+  const projectUUID = router.query.uuid as string;
   const queryParams: any = {
     page: pagination.page,
     per_page: pagination.pageSize,
@@ -44,7 +57,18 @@ const EntityMapAndGalleryCard = ({
     queryParams[filter?.key] = filter?.value;
   }
 
-  const { data, refetch } = useGetV2MODELUUIDFiles({
+  const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
+    queryParams: {
+      uuid: projectUUID,
+      type: modelName
+    }
+  });
+
+  const mapBbox = sitePolygonData?.bbox as BBox;
+
+  const polygonDataMap = mapPolygonData(sitePolygonData?.polygonsData);
+
+  const { data, refetch } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
     pathParams: { model: modelName, uuid: modelUUID },
     queryParams
@@ -90,11 +114,19 @@ const EntityMapAndGalleryCard = ({
   return (
     <>
       <PageCard title={`${modelTitle} ${t("Area")}`}>
-        <Map
+        <MapContainer
+          polygonsData={polygonDataMap}
+          sitePolygonData={sitePolygonData?.polygonsData}
+          bbox={mapBbox}
           className="rounded-lg"
           geojson={geoJSON}
           imageLayerGeojson={imagesGeoJson}
           onDeleteImage={uuid => deleteFile({ pathParams: { uuid } })}
+          mapFunctions={mapFunctions}
+          showLegend
+          hasControls
+          showPopups
+          modelFilesData={data?.data}
         />
       </PageCard>
       <If

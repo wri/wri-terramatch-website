@@ -13,7 +13,7 @@ import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { getFeatureProperties } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
-import { ModalBase } from "@/components/extensive/Modal/Modal";
+import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { getDistributionOptions } from "@/constants/options/distribution";
 import { getLandUseTypeOptions } from "@/constants/options/landUseType";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";

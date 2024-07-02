@@ -1,13 +1,14 @@
 import { Typography } from "@mui/material";
-import { AppBar as RaAppBar, AppBarProps, defaultTheme, RaThemeOptions, ToggleThemeButton } from "react-admin";
-
-const darkTheme: RaThemeOptions = {
-  palette: { mode: "dark" }
-};
+import { AppBar as RaAppBar, AppBarProps, Link } from "react-admin";
 
 export const AppBar = (props: AppBarProps) => (
   <RaAppBar {...props}>
+    <div className="logo-header">
+      <Link to="/" title="Homepage" aria-label="Homepage">
+        <div className="ic-header" />
+      </Link>
+    </div>
+
     <Typography flex="1" variant="h6" id="react-admin-title"></Typography>
-    <ToggleThemeButton lightTheme={defaultTheme} darkTheme={darkTheme} />
   </RaAppBar>
 );

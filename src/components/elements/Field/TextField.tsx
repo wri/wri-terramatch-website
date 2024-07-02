@@ -13,8 +13,8 @@ const TextField: FC<TextFieldProps> = ({ label, value, className, ...rest }) => 
   return (
     <BaseField {...rest} className={className}>
       <div className="flex items-center justify-between">
-        <Text variant="text-bold-subtitle-500">{label}</Text>
-        <Text variant="text-light-subtitle-400">{value || "N/A"}</Text>
+        <Text variant="text-16-bold">{label}</Text>
+        <Text variant="text-16-light">{value || "N/A"}</Text>
       </div>
     </BaseField>
   );

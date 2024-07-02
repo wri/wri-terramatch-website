@@ -11,6 +11,7 @@ import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -88,6 +89,9 @@ const MyProjectsPage = () => {
             </Else>
           </If>
         </LoadingContainer>
+        <br />
+        <br />
+        <PageFooter />
       </PageBody>
     </>
   );
