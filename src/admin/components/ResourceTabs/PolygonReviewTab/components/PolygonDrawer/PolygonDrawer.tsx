@@ -9,7 +9,7 @@ import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHo
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import Loader from "@/components/generic/Loading/Loader";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -77,7 +77,7 @@ const PolygonDrawer = ({
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const [isLoading, setIsLoading] = useState(false);
+  const { showLoader, hideLoader } = useLoading();
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
@@ -88,11 +88,11 @@ const PolygonDrawer = ({
         "success",
         t("Success! TerraMatch reviewed the polygon")
       );
-      setIsLoading(false);
+      hideLoader();
     },
     onError: () => {
       setCheckPolygonValidation(false);
-      setIsLoading(false);
+      hideLoader();
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
@@ -110,7 +110,7 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (checkPolygonValidation) {
-      setIsLoading(true);
+      showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
       reloadCriteriaValidation();
     }
@@ -181,11 +181,6 @@ const PolygonDrawer = ({
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
-      <When condition={isLoading}>
-        <div className="max-h-[60vh] min-h-[10vh] grid-cols-[14%_20%_18%_15%_33%]">
-          <Loader />
-        </div>
-      </When>
       <div>
         <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
         <Text variant={"text-20-bold"} className="flex items-center gap-1">
