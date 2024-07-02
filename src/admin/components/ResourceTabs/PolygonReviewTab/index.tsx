@@ -172,7 +172,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     "target-land-use-system": parseText(data.target_sys ?? ""),
     "tree-distribution": parseText(data.distr ?? ""),
     "planting-start-date": data.plantstart,
-    source: data.org_name,
+    source: parseText(data.source ?? ""),
     uuid: data.poly_id,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
   }));
@@ -323,6 +323,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               }
             });
             setShowApprovalSuccess(true);
+            refetch();
             setTimeout(() => {
               setShowApprovalSuccess(false);
             }, 3000);
