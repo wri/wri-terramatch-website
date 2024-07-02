@@ -5,10 +5,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import TreeSpeciesInput, { TreeSpeciesInputProps } from "./TreeSpeciesInput";
 
 export interface RHFTreeSpeciesInputProps
-  extends Omit<TreeSpeciesInputProps, "value" | "onChanges">,
+  extends Omit<TreeSpeciesInputProps, "value" | "onChange" | "clearErrors">,
     UseControllerProps {
-  collection?: string;
-  onChangeCapture: () => void;
   formHook?: UseFormReturn;
 }
 
