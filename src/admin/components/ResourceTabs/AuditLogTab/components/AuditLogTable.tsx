@@ -13,10 +13,12 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
     return "New Comment";
   } else if (item.type === "status") {
     return `New Status: ${formattedTextStatus(item.status)}`;
+  } else if (item.type === "change-request-updated") {
+    return "Change Request Updated";
   } else if (item.request_removed) {
     return "Change Request Removed";
   } else {
-    return "Change Requested Added";
+    return "Change Requested Add";
   }
 };
 
