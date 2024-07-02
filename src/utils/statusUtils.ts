@@ -24,7 +24,7 @@ export function getValueForStatusSite(status: string): number {
       return 25;
     case "needs-more-information":
       return 50;
-    case "planting-in-progress":
+    case "restoration-in-progress":
       return 75;
     case "approved":
       return 100;
@@ -91,7 +91,7 @@ export const siteProgressBarStatusLabels = [
   { id: "1", label: "Draft" },
   { id: "2", label: "Awaiting Approval" },
   { id: "3", label: "Needs More Information" },
-  { id: "4", label: "Planting in Progress" },
+  { id: "4", label: "Restoration in Progress" },
   { id: "5", label: "Approved" }
 ];
 

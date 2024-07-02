@@ -20,7 +20,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
         className="text-center text-14-light"
         data-testid="txt"
       >
-        Are you sure you want to change the site status to Planting In Progress?
+        Are you sure you want to change the site status to Restoration In Progress?
       </p>
       <div
         className="w-full relative space-y-2"

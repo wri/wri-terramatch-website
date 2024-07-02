@@ -5,5 +5,5 @@ export const COLOR_BG_MAP: { [key: string]: string } = {
   "under-review": "bg-tertiary-50",
   "awaiting-approval": "bg-tertiary-50",
   "needs-more-information": "bg-tertiary-50",
-  "planting-in-progress": "bg-blue-200"
+  "restoration-in-progress": "bg-blue-200"
 };
