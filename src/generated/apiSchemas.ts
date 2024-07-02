@@ -4880,22 +4880,6 @@ export type V2SeedingRead = {
   amount?: number;
 };
 
-export type V2SeedingCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingUpdate = {
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
 export type V2SeedingPaginated = {
   data?: {
     uuid?: string;

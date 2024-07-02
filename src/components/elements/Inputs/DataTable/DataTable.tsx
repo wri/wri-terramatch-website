@@ -21,6 +21,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   value: TData[];
   onChange?: (values: any) => void;
   generateUuids?: boolean;
+  additionalValues?: any;
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
@@ -37,6 +38,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     handleCreate,
     handleDelete,
     generateUuids = false,
+    additionalValues = {},
     ...inputWrapperProps
   } = props;
 
@@ -49,7 +51,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   const onAddNewEntry = useCallback(
     (fieldValues: any) => {
       if (generateUuids) {
-        fieldValues = { ...fieldValues, uuid: uuidv4() };
+        fieldValues = { ...fieldValues, ...additionalValues, uuid: uuidv4() };
       }
       onChange?.([...value, fieldValues]);
       handleCreate?.(fieldValues);

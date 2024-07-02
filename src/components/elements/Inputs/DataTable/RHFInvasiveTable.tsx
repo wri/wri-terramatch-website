@@ -1,23 +1,18 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren } from "react";
-import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { useController, UseControllerProps } from "react-hook-form";
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { getInvasiveTypeOptions } from "@/constants/options/invasives";
-import { Entity } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFInvasiveTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
-    UseControllerProps {
-  onChangeCapture?: () => void;
-  formHook?: UseFormReturn;
-  entity: Entity;
-}
+    UseControllerProps {}
 
 export const getInvasiveTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
   {
@@ -31,7 +26,7 @@ export const getInvasiveTableColumns = (t: typeof useT | Function = (t: string) 
   }
 ];
 
-const RHFInvasiveTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFInvasiveTableProps>) => {
+const RHFInvasiveTable = (props: PropsWithChildren<RHFInvasiveTableProps>) => {
   const t = useT();
   const {
     field: { value, onChange }
