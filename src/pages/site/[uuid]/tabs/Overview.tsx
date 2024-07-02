@@ -317,9 +317,15 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               <div className="flex gap-11 ">
                 <div className="w-[54%]">
                   <Text variant="text-14-light" className="mb-6">
-                    {t(
-                      "Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile application."
-                    )}
+                    {t("Use the map below to view, add, remove or edit polygons associated to a site. ")}
+                    <a
+                      className="text-14-light text-primary-500 hover:underline"
+                      href={
+                        "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                      }
+                    >
+                      {t("Access our guide for adding polygons to a site on TerraMatch here.")}
+                    </a>
                   </Text>
                   <div className="flex w-full gap-3">
                     {isMonitoring && (
