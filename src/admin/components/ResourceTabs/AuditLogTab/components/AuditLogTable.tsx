@@ -18,7 +18,7 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
   } else if (item.request_removed) {
     return "Change Request Removed";
   } else {
-    return "Change Requested Add";
+    return "Change Requested";
   }
 };
 
