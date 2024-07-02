@@ -24,7 +24,7 @@ export const Default: Story = {
     commentArea: true,
     content: (
       <Text variant="text-14-light" className="text-center">
-        Are you sure you want to change the site status to Planting In Progress?
+        Are you sure you want to change the site status to Restoration In Progress?
       </Text>
     ),
     onClose: () => {},

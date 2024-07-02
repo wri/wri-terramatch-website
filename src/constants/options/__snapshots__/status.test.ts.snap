@@ -15,6 +15,10 @@ exports[`snapShot getStatusOptions 1`] = `
     "value": "awaiting-approval",
   },
   {
+    "title": "Restoration in progress",
+    "value": "restoration-in-progress",
+  },
+  {
     "title": "More info requested",
     "value": "needs-more-information",
   },

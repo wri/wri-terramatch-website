@@ -46,6 +46,10 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
       title: t("Awaiting Review")
     },
     {
+      value: "restoration-in-progress",
+      title: t("Restoration in progress")
+    },
+    {
       value: "needs-more-information",
       title: t("More info requested")
     }
