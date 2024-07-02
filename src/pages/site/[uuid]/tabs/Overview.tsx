@@ -245,15 +245,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const itemsSubmitPolygon = [
     {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          {t("Request Support")}
-        </Text>
-      ),
-      onClick: () => {}
-    },
-    {
       id: "2",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center ">
