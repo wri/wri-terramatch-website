@@ -8,6 +8,7 @@ import {
   ESTIMATED_AREA_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundValidationSite, usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -45,6 +46,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
+  const { showLoader, hideLoader } = useLoading();
   const t = useT();
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
@@ -90,6 +92,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     onSuccess: () => {
       reloadSitePolygonValidation();
       setClickedValidation(false);
+      hideLoader();
       displayNotification(
         t("Please update and re-run if any polygons fail."),
         "success",
@@ -97,6 +100,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       );
     },
     onError: () => {
+      hideLoader();
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
@@ -140,6 +144,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     if (clickedValidation) {
+      showLoader();
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);

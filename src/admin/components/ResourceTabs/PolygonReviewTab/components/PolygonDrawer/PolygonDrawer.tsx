@@ -9,6 +9,7 @@ import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHo
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -76,6 +77,7 @@ const PolygonDrawer = ({
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const { showLoader, hideLoader } = useLoading();
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
@@ -86,9 +88,11 @@ const PolygonDrawer = ({
         "success",
         t("Success! TerraMatch reviewed the polygon")
       );
+      hideLoader();
     },
     onError: () => {
       setCheckPolygonValidation(false);
+      hideLoader();
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
@@ -106,6 +110,7 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (checkPolygonValidation) {
+      showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
       reloadCriteriaValidation();
     }

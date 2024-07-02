@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 
@@ -12,6 +13,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const [clickedValidation, setClickedValidation] = useState(false);
   const { editPolygon, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
+  const { showLoader, hideLoader } = useLoading();
   const [notificationStatus, setNotificationStatus] = useState<{
     open: boolean;
     message: string;
@@ -43,6 +45,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     onSuccess: () => {
       setShouldRefetchValidation(true);
       setClickedValidation(false);
+      hideLoader();
       displayNotification(
         t("Please update and re-run if validations fail."),
         "success",
@@ -50,12 +53,14 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       );
     },
     onError: () => {
+      hideLoader();
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
   useEffect(() => {
     if (clickedValidation) {
+      showLoader();
       getValidations({ queryParams: { uuid: editPolygon.uuid } });
     }
   }, [clickedValidation]);
