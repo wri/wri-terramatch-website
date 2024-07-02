@@ -320,9 +320,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                     {t("Use the map below to view, add, remove or edit polygons associated to a site. ")}
                     <a
                       className="text-14-light text-primary-500 hover:underline"
+                      target="_blank"
                       href={
                         "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
                       }
+                      rel="noreferrer"
                     >
                       {t("Access our guide for adding polygons to a site on TerraMatch here.")}
                     </a>
