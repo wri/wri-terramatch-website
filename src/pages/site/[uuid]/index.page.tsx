@@ -12,7 +12,9 @@ import Modal from "@/components/extensive/Modal/Modal";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -56,6 +58,7 @@ const SiteDetailPage = () => {
   });
 
   const site = (data?.data || {}) as any;
+  const { loading } = useLoading();
   const { isPPC, isHBF } = useFramework(site);
   const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
   const { handleExport } = useGetExportEntityHandler("sites", site.uuid, site.name);
@@ -99,6 +102,11 @@ const SiteDetailPage = () => {
 
   return (
     <MapAreaProvider>
+      {loading && (
+        <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
+          <Loader />
+        </div>
+      )}
       <LoadingContainer loading={isLoading}>
         <Head>
           <title>{`${t("Site")} ${site.name}`}</title>
