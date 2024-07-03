@@ -1,7 +1,7 @@
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 
 const polygonStatusLabels = [
-  { id: "1", label: "Draft" },
+  { id: "1", label: "Started" },
   { id: "2", label: "Awaiting approval" },
   { id: "3", label: "Needs more information" },
   { id: "4", label: "Restoration in progress" },

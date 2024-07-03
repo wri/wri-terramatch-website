@@ -15,7 +15,7 @@ export function getValueForStatusPolygon(status: string): number {
 
 export function getValueForStatusSite(status: string): number {
   switch (status) {
-    case "draft":
+    case "started":
       return 0;
     case "awaiting-approval":
       return 25;
@@ -85,7 +85,7 @@ export const polygonProgressBarStatusLabels = [
 ];
 
 export const siteProgressBarStatusLabels = [
-  { id: "1", label: "Draft" },
+  { id: "1", label: "Started" },
   { id: "2", label: "Awaiting Approval" },
   { id: "3", label: "Needs More Information" },
   { id: "4", label: "Restoration in Progress" },
@@ -93,7 +93,7 @@ export const siteProgressBarStatusLabels = [
 ];
 
 export const projectStatusLabels = [
-  { id: "1", label: "Draft" },
+  { id: "1", label: "Started" },
   { id: "2", label: "Awaiting Approval" },
   { id: "3", label: "Needs More Information" },
   { id: "4", label: "Approved" }
@@ -101,14 +101,14 @@ export const projectStatusLabels = [
 
 export const entityReportStatusLabels = [
   { id: "1", label: "Due" },
-  { id: "2", label: "Draft" },
+  { id: "2", label: "Started" },
   { id: "3", label: "Needs More Information" },
   { id: "4", label: "Awaiting Approval" },
   { id: "5", label: "Approved" }
 ];
 
 export const nurseryStatusLabels = [
-  { id: "1", label: "Draft" },
+  { id: "1", label: "Started" },
   { id: "2", label: "Awaiting Approval" },
   { id: "3", label: "Needs More Information" },
   { id: "4", label: "Approved" }

@@ -2,6 +2,7 @@ export const STATUS_MAP: { [key: string]: string } = {
   approved: "Approved",
   submitted: "Submitted",
   draft: "Draft",
+  started: "Draft",
   "under-review": "Under Review",
   "needs-more-information": "Needs More Information",
   "restoration-in-progress": "Restoration in Progress",
@@ -11,6 +12,8 @@ export const STATUS_MAP: { [key: string]: string } = {
 export enum StatusEnum {
   // eslint-disable-next-line no-unused-vars
   DRAFT = "draft",
+  // eslint-disable-next-line no-unused-vars
+  STARTED = "started",
   // eslint-disable-next-line no-unused-vars
   SUBMITTED = "submitted",
   // eslint-disable-next-line no-unused-vars

@@ -39,8 +39,8 @@ const menuPolygonOptions = [
 ];
 const menuSiteOptions = [
   {
-    title: "Draft",
-    status: "draft",
+    title: "Started",
+    status: "started",
     value: 1,
     viewPd: true
   },
@@ -71,8 +71,8 @@ const menuSiteOptions = [
 ];
 const menuProjectOptions = [
   {
-    title: "Draft",
-    status: "draft",
+    title: "Started",
+    status: "started",
     value: 1,
     viewPd: true
   },
@@ -103,7 +103,7 @@ const menuEntityReportOptions = [
     viewPd: true
   },
   {
-    title: "Draft",
+    title: "Started",
     status: "started",
     value: 2,
     viewPd: true
@@ -129,8 +129,8 @@ const menuEntityReportOptions = [
 ];
 const menuNurseryOptions = [
   {
-    title: "Draft",
-    status: "draft",
+    title: "Started",
+    status: "started",
     value: 1,
     viewPd: true
   },

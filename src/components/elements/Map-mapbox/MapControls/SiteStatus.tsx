@@ -9,9 +9,9 @@ import Text from "../../Text/Text";
 
 const dropdownOptions = [
   {
-    title: "Draft",
+    title: "Started",
     value: 1,
-    status: "draft"
+    status: "started"
   },
   {
     title: "Awaiting Approval",
