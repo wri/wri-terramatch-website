@@ -8,7 +8,7 @@ import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 
-import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
+import { AuditLogEntity, AuditLogEntityEnum } from "../../../AuditLogTab/constants/types";
 import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
 
 const menuPolygonOptions = [
@@ -163,8 +163,6 @@ export interface StatusProps {
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
-  enableChangeStatus?: number;
-  buttonToggle?: number;
 }
 
 const menuOptionsMap = {
@@ -198,16 +196,14 @@ const DescriptionRequestMap = {
 };
 
 const StatusDisplay = ({
-  titleStatus = "Polygon",
+  titleStatus = AuditLogEntityEnum.Polygon,
   mutate,
   refresh,
   name,
   record,
   checkPolygonsSite,
   showChangeRequest = false,
-  viewPD,
-  enableChangeStatus,
-  buttonToggle
+  viewPD
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const [notificationStatus, setNotificationStatus] = useState<{
@@ -231,7 +227,7 @@ const StatusDisplay = ({
       </Text>
       <Text variant="text-12-bold" as="span">
         {" "}
-        {titleStatus == "Polygon" ? record?.title : removeUnderscore(name)}.
+        {titleStatus == AuditLogEntityEnum.Polygon ? record?.title : removeUnderscore(name)}.
       </Text>
     </div>
   );
@@ -376,17 +372,17 @@ const StatusDisplay = ({
         <div className="flex w-full items-center gap-4">
           <Button
             className={classNames("w-full flex-1 border-[3px] border-primary", {
-              "opacity-0": enableChangeStatus !== buttonToggle
+              "opacity-0": titleStatus !== AuditLogEntityEnum.Polygon
             })}
             onClick={openFormModalHandlerStatus}
-            disabled={enableChangeStatus !== buttonToggle}
+            disabled={titleStatus !== AuditLogEntityEnum.Polygon}
           >
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
-            disabled={showChangeRequest}
+            disabled={!showChangeRequest}
             variant="semi-black"
-            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": showChangeRequest })}
+            className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": !showChangeRequest })}
             onClick={openFormModalHandlerRequest}
           >
             <Text variant="text-12-bold">Change Request</Text>

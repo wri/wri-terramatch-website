@@ -89,13 +89,10 @@ const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus,
                     polygonList={entityListItem}
                     selectedPolygon={selected}
                     setSelectedPolygon={setSelected}
-                    auditLogData={auditLogData?.data}
                     checkPolygonsSite={checkPolygonsSite}
                     entityType={entityType}
-                    showChangeRequest={true}
+                    showChangeRequest={false}
                     viewPD={true}
-                    buttonToggle={buttonToggle}
-                    enableChangeStatus={enableChangeStatus}
                   />
                 </div>
               </div>
