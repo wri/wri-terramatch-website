@@ -35,7 +35,7 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
   [
     {
       value: "started",
-      title: t("Draft")
+      title: t("Started")
     },
     {
       value: "approved",

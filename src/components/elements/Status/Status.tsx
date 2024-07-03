@@ -23,6 +23,7 @@ const Status = (props: StatusProps) => {
       approved: "Approved",
       submitted: "Submitted",
       draft: "Draft",
+      started: "Started",
       "under-review": "Under Review",
       "needs-more-information": "Needs More Information",
       "planting-in-progress": "Planting in Progress",
