@@ -5,7 +5,6 @@ import { When } from "react-if";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
 import { SelectedItem } from "@/hooks/AuditStatus/useLoadEntityList";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay";
@@ -17,16 +16,13 @@ const SiteAuditLogEntityStatusSide = ({
   polygonList,
   selectedPolygon,
   setSelectedPolygon,
-  auditLogData,
   entityType = "Polygon",
   mutate,
   getValueForStatus,
   progressBarLabels,
   showChangeRequest = false,
   checkPolygonsSite,
-  viewPD = false,
-  enableChangeStatus,
-  buttonToggle
+  viewPD = false
 }: {
   entityType: AuditLogEntity;
   refresh?: () => void;
@@ -34,15 +30,12 @@ const SiteAuditLogEntityStatusSide = ({
   polygonList?: any[];
   selectedPolygon?: SelectedItem | null;
   setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>> | null;
-  auditLogData?: AuditStatusResponse[];
   mutate?: any;
   getValueForStatus?: (status: string) => number;
   progressBarLabels?: Array<{ id: string; label: string }>;
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
-  enableChangeStatus?: number;
-  buttonToggle?: number;
 }) => {
   const removeUnderscore = (title: string) => title.replace("_", " ");
 
@@ -79,8 +72,6 @@ const SiteAuditLogEntityStatusSide = ({
         showChangeRequest={showChangeRequest}
         checkPolygonsSite={checkPolygonsSite}
         viewPD={viewPD}
-        enableChangeStatus={enableChangeStatus}
-        buttonToggle={buttonToggle}
       />
     </div>
   );
