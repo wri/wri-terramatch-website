@@ -24,9 +24,9 @@ const dropdownOptions = [
     status: "needs-more-information"
   },
   {
-    title: "Planting In Progress",
+    title: "Restoration In Progress",
     value: 4,
-    status: "planting-in-progress"
+    status: "restoration-in-progress"
   },
   {
     title: "Approved",
