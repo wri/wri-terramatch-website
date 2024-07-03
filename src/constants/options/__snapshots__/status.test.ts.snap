@@ -3,7 +3,7 @@
 exports[`snapShot getStatusOptions 1`] = `
 [
   {
-    "title": "Draft",
+    "title": "Started",
     "value": "started",
   },
   {
