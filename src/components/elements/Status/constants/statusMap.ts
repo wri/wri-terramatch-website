@@ -5,7 +5,7 @@ export const STATUS_MAP: { [key: string]: string } = {
   started: "Draft",
   "under-review": "Under Review",
   "needs-more-information": "Needs More Information",
-  "planting-in-progress": "Planting in Progress",
+  "restoration-in-progress": "Restoration in Progress",
   "awaiting-approval": "Awaiting Approval"
 };
 

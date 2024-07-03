@@ -26,7 +26,7 @@ const Status = (props: StatusProps) => {
       started: "Started",
       "under-review": "Under Review",
       "needs-more-information": "Needs More Information",
-      "planting-in-progress": "Planting in Progress",
+      "restoration-in-progress": "Restoration in Progress",
       "awaiting-approval": "Awaiting Approval"
     };
 
