@@ -69,7 +69,12 @@ const SiteDataGrid: FC = () => {
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
       <TextField source="name" label="Site Name" />
-      <CustomChipField source="readable_status" label="Status" sortable={false} />
+      <FunctionField
+        source="readable_status"
+        label="Status"
+        sortable={false}
+        render={(record: any) => <CustomChipField label={record.readable_status} />}
+      />
       <ColoredChipFieldArray
         source="status"
         label="Polygon Submitted"
