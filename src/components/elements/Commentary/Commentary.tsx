@@ -2,8 +2,18 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 export interface CommentaryFilesProps {
-  id: string;
-  file: string;
+  uuid?: string;
+  url?: string;
+  thumb_url?: string;
+  collection_name?: string;
+  title?: string;
+  file_name?: string;
+  mime_type?: string;
+  size?: number;
+  lat?: number;
+  lng?: number;
+  is_public?: boolean;
+  created_at?: string;
 }
 export interface CommentaryProps {
   name: string;
@@ -15,8 +25,10 @@ export interface CommentaryProps {
 }
 
 const statusStyle = {
+  draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" },
   submitted: { container: "bg-primary-200", textColor: "text-primary" },
-  draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" }
+  needs_more_information: { container: "bg-yellowCustom-200", textColor: "text-yellowCustom" },
+  approved: { container: "bg-greenCustom-200", textColor: "text-greenCustom" }
 };
 
 const Commentary = (props: CommentaryProps) => {
@@ -61,9 +73,9 @@ const Commentary = (props: CommentaryProps) => {
       </Text>
       <div className="flex flex-wrap gap-2">
         {files?.map((file: any) => (
-          <div key={file.id} className="rounded-xl bg-neutral-150 px-2 py-1">
+          <div key={file.uuid} className="rounded-xl bg-neutral-150 px-2 py-1">
             <Text variant="text-14-light" className="text-grey-700">
-              {file?.attachment}
+              {file?.file_name}
             </Text>
           </div>
         ))}

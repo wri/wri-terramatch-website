@@ -1,23 +1,32 @@
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
+import AuditLogTable from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogTable";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
+import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab/utils/util";
 import Button from "@/components/elements/Button/Button";
 import Commentary from "@/components/elements/Commentary/Commentary";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import {
+  GetAuthMeResponse,
+  GetV2AuditStatusENTITYUUIDResponse,
+  useGetAuthMe,
+  useGetV2AuditStatusENTITYUUID
+} from "@/generated/apiComponents";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { commentariesItems } from "./ModalContent/MockedData";
 import { ModalBaseWithLogo } from "./ModalsBases";
 
 export interface ModalWithLogoProps extends ModalProps {
+  uuid: string;
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
@@ -26,6 +35,7 @@ export interface ModalWithLogoProps extends ModalProps {
 }
 
 const ModalWithLogo: FC<ModalWithLogoProps> = ({
+  uuid,
   iconProps,
   title,
   primaryButtonProps,
@@ -41,6 +51,28 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   const t = useT();
   const [buttonToogle, setButtonToogle] = useState(true);
   const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.POLYGON];
+
+  const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
+    pathParams: {
+      entity: getRequestPathParam(AuditLogEntityEnum.Polygon),
+      uuid
+    }
+  });
+
+  const { data: authMe } = useGetAuthMe<{ data: GetAuthMeResponse }>({});
+
+  const [commentsAuditLogData, restAuditLogData] = useMemo(() => {
+    const commentsAuditLog: GetV2AuditStatusENTITYUUIDResponse = [];
+    const restAuditLog: GetV2AuditStatusENTITYUUIDResponse = [];
+    auditLogData?.data?.forEach(auditLog => {
+      if (auditLog.type === "comment") {
+        commentsAuditLog.push(auditLog);
+      } else {
+        restAuditLog.push(auditLog);
+      }
+    });
+    return [commentsAuditLog, restAuditLog];
+  }, [auditLogData]);
 
   return (
     <ModalBaseWithLogo {...rest}>
@@ -60,7 +92,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           />
         </When>
         <div className="flex items-center justify-between">
-          <Text variant="text-24-bold">{title}</Text>
+          <Text variant="text-24-bold">{title + "XD"}</Text>
           <When condition={toogleButton}>
             <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
               <Button
@@ -90,21 +122,29 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           </div>
           <When condition={buttonToogle}>
             <div className="flex flex-col gap-4">
-              <CommentaryBox name={"Ricardo"} lastName={"Saavedra"} />
-              {commentariesItems.map(item => (
+              <CommentaryBox
+                name={authMe?.data?.first_name!}
+                lastName={authMe?.data?.last_name!}
+                entity={AuditLogEntityEnum.Polygon}
+                record={{ uuid, status }}
+                refresh={refetch}
+              />
+              {commentsAuditLogData.map(item => (
                 <Commentary
                   key={item.id}
-                  name={item.name}
-                  lastName={item.lastName}
-                  date={item.date}
-                  commentary={item.commentary}
-                  files={item.files}
-                  status={item.status as "draft" | "submitted" | undefined}
+                  name={item.first_name!}
+                  lastName={item.last_name!}
+                  date={item.date_created!}
+                  commentary={item.comment!}
+                  files={item.attachments}
+                  status={item.status}
                 />
               ))}
             </div>
           </When>
-          <When condition={!buttonToogle}></When>
+          <When condition={!buttonToogle}>
+            <AuditLogTable auditLogData={{ data: restAuditLogData }} />
+          </When>
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
