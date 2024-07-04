@@ -64,6 +64,7 @@ const MapMenuPanelItem = ({
   const openFormModalHandlerAddCommentary = () => {
     openModal(
       <ModalWithLogo
+        uuid={uuid}
         title={t("Blue Forest")}
         onClose={closeModal}
         status={status as StatusEnum}
