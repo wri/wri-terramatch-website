@@ -1,5 +1,3 @@
-import { When } from "react-if";
-
 import Text from "@/components/elements/Text/Text";
 export interface CommentaryFilesProps {
   uuid?: string;
@@ -24,16 +22,9 @@ export interface CommentaryProps {
   files?: CommentaryFilesProps[];
 }
 
-const statusStyle = {
-  draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" },
-  submitted: { container: "bg-primary-200", textColor: "text-primary" },
-  needs_more_information: { container: "bg-yellowCustom-200", textColor: "text-yellowCustom" },
-  approved: { container: "bg-greenCustom-200", textColor: "text-greenCustom" }
-};
-
 const Commentary = (props: CommentaryProps) => {
-  const { name, lastName, date, commentary, files = [], status } = props;
-  const statusKey = status as keyof typeof statusStyle;
+  const { name, lastName, date, commentary, files = [] } = props;
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between">
@@ -53,17 +44,6 @@ const Commentary = (props: CommentaryProps) => {
             </Text>
           </div>
         </div>
-        <When condition={status}>
-          <div
-            className={`flex h-fit w-[92px] items-center justify-center rounded-xl py-2 ${
-              status ? statusStyle[statusKey].container : ""
-            }`}
-          >
-            <Text variant="text-12-semibold" className={`${status ? statusStyle[statusKey].textColor : ""}`}>
-              {status}
-            </Text>
-          </div>
-        </When>
       </div>
       <Text
         variant="text-12-light"
