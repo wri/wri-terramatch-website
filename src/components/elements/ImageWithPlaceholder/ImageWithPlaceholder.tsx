@@ -1,11 +1,10 @@
 import classNames from "classnames";
-import Image from "next/image";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
-
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import Image, { StaticImageData } from "next/image";
+import noImageAvailable from "public/images/no-image-available.png";
+import { DetailedHTMLProps, FC, HTMLAttributes, useState } from "react";
 
 export interface ImageWithPlaceholderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  imageUrl?: string;
+  imageUrl?: string | StaticImageData;
   alt: string;
   placeholderIconSize?: number;
 }
@@ -17,6 +16,7 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
   className,
   ...rest
 }) => {
+  const [hasErrored, setHasErrored] = useState(false);
   return (
     <div
       {...rest}
@@ -25,16 +25,14 @@ const ImageWithPlaceholder: FC<ImageWithPlaceholderProps> = ({
         className
       )}
     >
-      {imageUrl ? (
-        <Image src={imageUrl} alt={alt} fill className="object-cover" />
-      ) : (
-        <Icon
-          name={IconNames.IMAGE_PLACEHOLDER}
-          className="text-primary-200"
-          width={placeholderIconSize}
-          height={placeholderIconSize}
-        />
-      )}
+      <Image
+        referrerPolicy="no-referrer"
+        src={hasErrored || !imageUrl ? noImageAvailable : imageUrl}
+        alt={alt}
+        fill
+        className="object-cover"
+        onError={() => setHasErrored(true)}
+      />
     </div>
   );
 };

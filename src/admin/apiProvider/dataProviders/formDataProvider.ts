@@ -50,7 +50,7 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
             upload(payloadOption.image.rawFile, {
               collection: "image",
               model: "form-question-option",
-              uuid: option.uuid
+              uuid: option.id
             })
           );
         }

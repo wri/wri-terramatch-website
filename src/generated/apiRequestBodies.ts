@@ -350,7 +350,7 @@ export type GetV2FundingProgrammeIDBody = {
   updated_at?: string;
 };
 
-export type PostV2SitesUuidGeometryBody = {
+export type PostV2GeometryValidateBody = {
   geometries?: {
     type?: "FeatureCollection";
     features?: {
@@ -370,6 +370,7 @@ export type PostV2SitesUuidGeometryBody = {
         distr?: string;
         num_trees?: number;
         site_id?: string;
+        est_area?: number;
       };
       geometry?: {
         type?: "Polygon" | "Point";

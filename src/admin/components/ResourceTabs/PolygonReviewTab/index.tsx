@@ -3,6 +3,7 @@ import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
+import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -16,13 +17,13 @@ import {
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import Notification from "@/components/elements/Notification/Notification";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
-import ModalApprove from "@/components/extensive/Modal/ModalApprove";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -32,6 +33,9 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
+  fetchPutV2SitePolygonStatusBulk,
+  GetV2MODELUUIDFilesResponse,
+  useGetV2MODELUUIDFiles,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
@@ -94,12 +98,38 @@ const PolygonReviewAside: FC<{
   }
 };
 
+const ContentForApproval = ({
+  polygonsForApprovals,
+  recordName
+}: {
+  polygonsForApprovals: SitePolygonsDataResponse;
+  recordName: string;
+}) => (
+  <>
+    <Text variant="text-12-light" as="p" className="text-center">
+      Are you sure you want to approve the following polygons for&nbsp;
+      <b style={{ fontSize: "inherit" }}>{recordName}</b>?
+    </Text>
+    <div className="ml-6">
+      <ul style={{ listStyleType: "circle" }}>
+        {polygonsForApprovals?.map(polygon => (
+          <li key={polygon.id}>
+            <Text variant="text-12-light" as="p">
+              {polygon?.poly_name ?? "Unnamed Polygon"}
+            </Text>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </>
+);
+
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+  const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
 
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap);
@@ -109,6 +139,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     pathParams: {
       site: record.uuid
     }
+  });
+
+  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
+    pathParams: { model: "sites", uuid: record.uuid }
   });
 
   const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
@@ -138,7 +172,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     "target-land-use-system": parseText(data.target_sys ?? ""),
     "tree-distribution": parseText(data.distr ?? ""),
     "planting-start-date": data.plantstart,
-    source: data.org_name,
+    source: parseText(data.source ?? ""),
     uuid: data.poly_id,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
   }));
@@ -270,14 +304,33 @@ const PolygonReviewTab: FC<IProps> = props => {
       />
     );
   };
-  const openFormModalHandlerConfirm = () => {
+  const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonsDataResponse, recordName: string) => {
     openModal(
       <ModalConfirm
         title={"Confirm Polygon Approval"}
-        content={contentForApproval}
+        content={<ContentForApproval polygonsForApprovals={polygonsForApprovals} recordName={recordName} />}
         commentArea
         onClose={closeModal}
-        onConfirm={() => {}}
+        onConfirm={async data => {
+          closeModal();
+          try {
+            await fetchPutV2SitePolygonStatusBulk({
+              body: {
+                comment: data,
+                updatePolygons: polygonsForApprovals.map(polygon => {
+                  return { uuid: polygon.uuid, status: "approved" };
+                })
+              }
+            });
+            setShowApprovalSuccess(true);
+            refetch();
+            setTimeout(() => {
+              setShowApprovalSuccess(false);
+            }, 3000);
+          } catch (error) {
+            console.log(error);
+          }
+        }}
       />
     );
   };
@@ -305,15 +358,16 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       <ModalApprove
         title="Approve Polygons"
+        site={record}
         onClose={closeModal}
         content="Administrators may approve polygons only if all checks pass."
         primaryButtonText="Next"
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
-          onClick: () => {
+          onClick: (polygons: unknown) => {
             closeModal();
-            openFormModalHandlerConfirm();
+            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record.name);
           }
         }}
         secondaryButtonText="Cancel"
@@ -356,21 +410,20 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   ];
 
-  const contentForApproval = (
-    <Text variant="text-12-light" as="p" className="text-center">
-      Are you sure you want to approve the polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>{record.name}</b>?
-    </Text>
-  );
-
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
+        <Notification
+          open={showApprovalSuccess}
+          title={"Success, Your Polygons were approved!"}
+          message={""}
+          type="success"
+        />
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
-              <div className="flex items-start gap-3">
-                <div className="w-full">
+              <div className="flex flex-wrap items-start gap-3">
+                <div className="min-w-[450px] flex-[18]">
                   <div className="mb-2">
                     <Text variant="text-16-bold" className="mb-2 text-darkCustom">
                       Polygon Review
@@ -396,7 +449,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                         name: IconNames.DOWNLOAD_PA
                       }}
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(record.uuid);
+                        downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
                       }}
                     >
                       Download
@@ -408,7 +461,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Button>
                   </div>
                 </div>
-                <div className="mt-4 w-full rounded-lg border border-grey-750 p-4">
+                <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
                   <Text variant="text-14" className="mb-3 text-blueCustom-250">
                     Site Status
                   </Text>
@@ -430,6 +483,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
                 sitePolygonData={sitePolygonData}
+                modelFilesData={modelFilesData?.data}
               />
               <div className="mb-6">
                 <div className="mb-4">
@@ -444,7 +498,10 @@ const PolygonReviewTab: FC<IProps> = props => {
                 <Table
                   variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
                   hasPagination={false}
-                  classNameWrapper="max-h-[176px]"
+                  classNameWrapper="max-h-[560px]"
+                  initialTableState={{
+                    pagination: { pageSize: 10000000 }
+                  }}
                   columns={[
                     { header: "Polygon Name", accessorKey: "polygon-name" },
                     {

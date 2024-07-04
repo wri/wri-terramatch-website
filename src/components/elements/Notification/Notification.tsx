@@ -10,7 +10,7 @@ import Text from "../Text/Text";
 
 export interface NotificationProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "success" | "error" | "warning";
-  message: string;
+  message?: string;
   title: string;
   open: boolean;
 }

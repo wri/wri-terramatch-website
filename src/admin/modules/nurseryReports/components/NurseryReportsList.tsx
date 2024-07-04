@@ -68,7 +68,7 @@ const NurseryReportDataGrid: FC = () => {
         }
         sortable={false}
       />
-      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
     </Datagrid>

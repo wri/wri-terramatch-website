@@ -44,7 +44,7 @@ const TooltipMap = (props: TooltipMapProps) => {
     return formattedPlantStartDate;
   };
 
-  const polygonDataStatus = polygonData?.status ? polygonData.status : "submitted";
+  const polygonDataStatus = polygonData?.status ? polygonData.status : "draft";
 
   const goToRelatedSiteProfile = () => {
     const siteUrl = `/site/${polygonData?.site_id}`;
@@ -60,8 +60,9 @@ const TooltipMap = (props: TooltipMapProps) => {
       </button>
 
       <div className="text-10 flex items-center justify-center gap-1">
-        <Text variant="text-10" className="mb-1 uppercase leading-[normal]">
-          {polygonData?.site_name} {t("SITE")}
+        <Text variant="text-10" className="mb-1 px-3 text-center uppercase leading-[normal]">
+          {t("SITE : ")}
+          {polygonData?.site_name}
         </Text>
       </div>
       <Text variant="text-10-bold" className="text-center leading-[normal] text-black">

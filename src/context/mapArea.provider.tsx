@@ -16,6 +16,20 @@ type MapAreaType = {
   setSiteData: (value: any) => void;
   shouldRefetchPolygonData: boolean;
   setShouldRefetchPolygonData: (value: boolean) => void;
+  shouldRefetchValidation: boolean;
+  setShouldRefetchValidation: (value: boolean) => void;
+  polygonNotificationStatus: {
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  };
+  setpolygonNotificationStatus: (value: {
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -31,7 +45,16 @@ const defaultValue: MapAreaType = {
   siteData: undefined,
   setSiteData: () => {},
   shouldRefetchPolygonData: false,
-  setShouldRefetchPolygonData: () => {}
+  setShouldRefetchPolygonData: () => {},
+  shouldRefetchValidation: false,
+  setShouldRefetchValidation: () => {},
+  polygonNotificationStatus: {
+    open: false,
+    message: "",
+    type: "success",
+    title: ""
+  },
+  setpolygonNotificationStatus: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -42,11 +65,22 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
+  const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string }>({
     isOpen: false,
     uuid: ""
   });
-
+  const [polygonNotificationStatus, setpolygonNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: ""
+  });
   const toggleAttribute = (isOpen: boolean) => {
     setOpenEditNewPolygon(isOpen);
   };
@@ -76,7 +110,11 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     siteData,
     setSiteData,
     shouldRefetchPolygonData,
-    setShouldRefetchPolygonData
+    setShouldRefetchPolygonData,
+    shouldRefetchValidation,
+    setShouldRefetchValidation,
+    polygonNotificationStatus,
+    setpolygonNotificationStatus
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

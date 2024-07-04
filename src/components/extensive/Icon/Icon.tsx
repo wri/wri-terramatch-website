@@ -98,6 +98,7 @@ export enum IconNames {
   NO_SUCCESS = "no-success",
   CLEAR = "clear",
   IC_ERROR = "ic-error",
+  IC_ERROR_PANEL = "ic-error-panel",
   IC_WARNING = "ic-warning",
   IC_SUCCESS = "ic-success",
   FILTER = "filter",
@@ -154,7 +155,10 @@ export enum IconNames {
   IC_DRAFT = "ic_draft",
   IC_NEEDS_MORE_INFORMATION = "ic_needs-more-information",
   IC_SUBMITTED = "ic_submitted",
-  IC_ARROW_COLLAPSE = "ic-arrow-collapse"
+  IC_ARROW_COLLAPSE = "ic-arrow-collapse",
+  IMAGE_ICON = "image-icon",
+  DOCUMENT_CIRCLE_HOMEPAGE = "document-circle-home",
+  TREE_CIRCLE_HOMEPAGE = "tree-circle-home"
 }
 
 export interface IconProps {

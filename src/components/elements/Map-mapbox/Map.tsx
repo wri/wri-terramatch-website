@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect } from "react";
@@ -14,16 +15,23 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid, fetchPutV2TerrafundPolygonUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundPolygonGeojsonUuid,
+  fetchPutV2TerrafundPolygonUuid,
+  GetV2MODELUUIDFilesResponse
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import useAlertHook from "../MapPolygonPanel/hooks/useAlertHook";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
+import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
+import ImageCheck from "./MapControls/ImageCheck";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { StyleControl } from "./MapControls/StyleControl";
@@ -33,8 +41,10 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addFilterOnLayer,
   addGeojsonToDraw,
+  addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  removeMediaLayer,
   removePopups,
   startDrawing,
   stopDrawing,
@@ -64,6 +74,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   hasControls?: boolean;
   siteData?: boolean;
   status?: boolean;
+  validationType?: string;
   editPolygon?: boolean;
   polygonChecks?: boolean;
   legend?: LegendItem[];
@@ -80,6 +91,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
 }
 
 export const MapContainer = ({
@@ -95,6 +107,7 @@ export const MapContainer = ({
   captureAdditionalPolygonProperties,
   siteData = false,
   status = false,
+  validationType = "bulkValidation",
   editPolygon = false,
   polygonChecks = false,
   record,
@@ -106,13 +119,17 @@ export const MapContainer = ({
   shouldBboxZoom = true,
   ...props
 }: MapProps) => {
+  const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
+  const t = useT();
   const { isUserDrawingEnabled } = contextMapArea;
+  const { displayNotification } = useAlertHook();
+
   if (!mapFunctions) {
     return null;
   }
@@ -169,11 +186,28 @@ export const MapContainer = ({
     }
   }, [bbox]);
 
+  useEffect(() => {
+    if (map?.current && styleLoaded && props?.modelFilesData) {
+      if (showMediaPopups) {
+        addMediaSourceAndLayer(map.current, props?.modelFilesData);
+      } else {
+        removePopups("MEDIA");
+        removeMediaLayer(map.current);
+      }
+    }
+  }, [props?.modelFilesData, showMediaPopups, styleLoaded]);
+
+  useEffect(() => {
+    if (geojson && map.current && draw.current) {
+      addGeojsonToDraw(geojson, "", () => {}, draw.current);
+    }
+  }, [showMediaPopups]);
+
   function handleAddGeojsonToDraw(polygonuuid: string) {
     if (polygonsData && map.current && draw.current) {
       const currentMap = map.current;
       const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-      const statuses = ["submitted", "approved", "need-more-info"];
+      const statuses = ["submitted", "approved", "need-more-info", "draft"];
       statuses.forEach(status => {
         if (newPolygonData[status]) {
           newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
@@ -189,7 +223,7 @@ export const MapContainer = ({
   }
 
   const handleEditPolygon = async () => {
-    removePopups();
+    removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap.uuid;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
@@ -215,6 +249,9 @@ export const MapContainer = ({
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
+            displayNotification(t("Geometry updated successfully."), "success", t("Success"));
+          } else {
+            displayNotification(t("Please try again later."), "error", t("Error"));
           }
         }
       }
@@ -229,7 +266,7 @@ export const MapContainer = ({
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen}>
-          <ControlGroup position="top-center">
+          <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
             <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
           </ControlGroup>
         </When>
@@ -239,9 +276,14 @@ export const MapContainer = ({
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
-        <When condition={!!status && !!record.uuid}>
-          <ControlGroup position="top-left">
-            <CheckPolygonControl siteRecord={record} />
+        <When condition={!!record?.uuid && validationType === "bulkValidation"}>
+          <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
+          </ControlGroup>
+        </When>
+        <When condition={!!status && validationType === "individualValidation"}>
+          <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <CheckIndividualPolygonControl viewRequestSuport={!siteData} />
           </ControlGroup>
         </When>
         <When condition={!!viewImages}>
@@ -268,8 +310,9 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
-        <ControlGroup position="bottom-right" className="bottom-8">
-          <ViewImageCarousel viewImages={viewImages} setViewImages={setViewImages} />
+        <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+          <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+          <ViewImageCarousel modelFilesData={props?.modelFilesData} />
         </ControlGroup>
       </When>
       <When condition={showLegend}>

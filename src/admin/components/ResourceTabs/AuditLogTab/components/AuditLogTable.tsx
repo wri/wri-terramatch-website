@@ -5,7 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponse, V2FileRead } from "@/generated/apiSchemas";
 
 const formattedTextStatus = (text: string) => {
-  return text.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
 };
 
 const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
@@ -13,14 +13,19 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
     return "New Comment";
   } else if (item.type === "status") {
     return `New Status: ${formattedTextStatus(item.status)}`;
+  } else if (item.type === "change-request-updated") {
+    return "Change Request Updated";
   } else if (item.request_removed) {
     return "Change Request Removed";
   } else {
-    return "Change Requested Added";
+    return "Change Requested";
   }
 };
 
 const columnTitles = ["Date", "User", "Action", "Comments", "Attachments"];
+
+const generateUserName = (first_name?: string, last_name?: string): string =>
+  `${first_name ?? ""} ${last_name ?? ""}`.trim() || "Unknown User";
 
 const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ auditLogData }) => (
   <>
@@ -38,7 +43,7 @@ const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ 
             {convertDateFormat(item?.date_created)}
           </Text>
           <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-            {`${item.first_name} ${item.last_name}`}
+            {generateUserName(item.first_name, item.last_name)}
           </Text>
           <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
             {getTextForActionTable(item as { type: string; status: string; request_removed: boolean })}

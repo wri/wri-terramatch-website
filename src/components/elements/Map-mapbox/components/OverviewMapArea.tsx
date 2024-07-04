@@ -7,11 +7,17 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchGetV2DashboardCountryCountry, useGetV2TypeEntity } from "@/generated/apiComponents";
+import {
+  fetchGetV2DashboardCountryCountry,
+  GetV2MODELUUIDFilesResponse,
+  useGetV2MODELUUIDFiles,
+  useGetV2TypeEntity
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
+import Notification from "../../Notification/Notification";
 import { storePolygon } from "../utils";
 
 interface EntityAreaProps {
@@ -26,11 +32,18 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
+  const [stateViewPanel, setStateViewPanel] = useState(false);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
-  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
-    useMapAreaContext();
+  const {
+    isMonitoring,
+    editPolygon,
+    shouldRefetchPolygonData,
+    setShouldRefetchPolygonData,
+    setEditPolygon,
+    polygonNotificationStatus
+  } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
   };
@@ -46,6 +59,11 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
       [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
     }
   });
+
+  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
+    pathParams: { model: type, uuid: entityModel?.uuid }
+  });
+
   const setResultValues = (result: any) => {
     if (result?.polygonsData) {
       setPolygonsData(result.polygonsData);
@@ -137,6 +155,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           type={type}
           onSelectItem={() => {}}
           onLoadMore={() => {}}
+          stateViewPanel={stateViewPanel}
+          setStateViewPanel={setStateViewPanel}
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
           setPreviewVersion={() => {}}
@@ -170,12 +190,17 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
         showPopups
         showLegend
         siteData={true}
+        status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
+        validationType={type === "sites" ? (editPolygon.isOpen ? "individualValidation" : "bulkValidation") : ""}
+        record={entityModel}
         className="flex-1 rounded-r-lg"
         polygonsExists={polygonsData.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
+        modelFilesData={modelFilesData?.data}
       />
+      <Notification {...polygonNotificationStatus} />
     </>
   );
 };

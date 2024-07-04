@@ -7,7 +7,7 @@ const STATUS_CLASSNAME_MAP: { [key: string]: string } = {
   Rejected: "bg-yellow-300 text-yellow-700",
   "Under Review": "bg-yellow-300 text-yellow-700",
   "Awaiting approval": "bg-yellow-300 text-yellow-700",
-  "Planting in progress": "bg-yellow-300 text-yellow-700",
+  "Restoration in progress": "bg-yellow-300 text-yellow-700",
   Draft: "bg-grey-200 text-grey-500",
   Started: "bg-gray-300 text-grey-500",
   Unknown: "bg-grey-200 text-grey-500",
@@ -24,7 +24,7 @@ const CustomChipField: React.FC<Omit<FunctionFieldProps, "render">> = props => (
           STATUS_CLASSNAME_MAP[record.readable_status] ?? "bg-grey-200 text-grey-500"
         )}
       >
-        {record.readable_status == "Started" ? "Draft" : record.readable_status}
+        {record.readable_status == "Unknown" ? "Started" : record.readable_status}
       </div>
     )}
   />

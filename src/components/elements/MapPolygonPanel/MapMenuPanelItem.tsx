@@ -25,6 +25,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   setClickedButton: React.Dispatch<React.SetStateAction<string>>;
   refContainer: React.RefObject<HTMLDivElement> | null;
   type: string;
+  poly_name?: string;
 }
 
 const MapMenuPanelItem = ({

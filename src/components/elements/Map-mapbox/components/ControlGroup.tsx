@@ -5,7 +5,15 @@ import { twMerge } from "tailwind-merge";
 export interface ControlGroupProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
-  position: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "bottom-left-site" | "top-center";
+  position:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "bottom-left-site"
+    | "top-center"
+    | "top-left-site"
+    | "top-centerSite";
 }
 
 const ControlGroup = ({ children, position, className, ...props }: ControlGroupProps) => {
@@ -18,8 +26,9 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
           "left-5 items-start": position.includes("left"),
           "right-5 items-end": position.includes("right"),
           "bottom-8": position.includes("bottom"),
-          "left-[24vw] items-start": position.includes("site"),
-          "left-[45%]": position.includes("center")
+          "!left-[24vw] items-start": position.includes("site"),
+          "left-[45%]": position.includes("center"),
+          "left-[calc(50%+11.5vw)] -translate-x-1/2": position.includes("centerSite")
         }),
         className
       )}

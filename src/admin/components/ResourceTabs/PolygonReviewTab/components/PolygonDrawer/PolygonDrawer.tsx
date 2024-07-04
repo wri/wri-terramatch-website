@@ -1,18 +1,22 @@
 import { Divider } from "@mui/material";
+import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
-  useGetV2TerrafundValidationCriteriaData
+  useGetV2TerrafundValidationCriteriaData,
+  usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -20,7 +24,6 @@ import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
-import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
@@ -47,8 +50,8 @@ export interface ICriteriaCheckItem {
   date?: string;
 }
 
-const ESTIMATED_AREA_CRITERIA_ID = 12;
-const COMPLETED_DATA_CRITERIA_ID = 14;
+export const ESTIMATED_AREA_CRITERIA_ID = 12;
+export const COMPLETED_DATA_CRITERIA_ID = 14;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -67,12 +70,32 @@ const PolygonDrawer = ({
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
-
+  const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
+  const { displayNotification } = useAlertHook();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const { showLoader, hideLoader } = useLoading();
+
+  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
+    onSuccess: () => {
+      reloadCriteriaValidation();
+      setCheckPolygonValidation(false);
+      displayNotification(
+        t("Please update and re-run if validations fail."),
+        "success",
+        t("Success! TerraMatch reviewed the polygon")
+      );
+      hideLoader();
+    },
+    onError: () => {
+      setCheckPolygonValidation(false);
+      hideLoader();
+      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+    }
+  });
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
@@ -85,15 +108,10 @@ const PolygonDrawer = ({
     }
   );
 
-  const validatePolygon = async () => {
-    await fetchPostV2TerrafundValidationPolygon({ queryParams: { uuid: polygonSelected } });
-    reloadCriteriaValidation();
-    setCheckPolygonValidation(false);
-  };
-
   useEffect(() => {
     if (checkPolygonValidation) {
-      validatePolygon();
+      showLoader();
+      getValidations({ queryParams: { uuid: polygonSelected } });
       reloadCriteriaValidation();
     }
   }, [checkPolygonValidation]);
@@ -103,7 +121,7 @@ const PolygonDrawer = ({
   }, [isPolygonStatusOpen]);
 
   useEffect(() => {
-    if (criteriaData?.criteria_list) {
+    if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
       const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
         id: criteria.criteria_id,
         date: criteria.latest_created_at,
@@ -201,7 +219,7 @@ const PolygonDrawer = ({
               refresh={refresh}
               record={selectedPolygon}
               mutate={mutateSitePolygons}
-              tab="polygonReview"
+              showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
             <CommentarySection record={selectedPolygon} entity={"Polygon"}></CommentarySection>
@@ -219,10 +237,6 @@ const PolygonDrawer = ({
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
-            </Accordion>
-            <Divider />
-            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
-              <VersionHistory />
             </Accordion>
             <Divider />
           </div>

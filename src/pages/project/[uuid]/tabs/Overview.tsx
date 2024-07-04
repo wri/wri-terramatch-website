@@ -93,7 +93,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 variant="secondary"
                 href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
               >
-                {t("expand view")}
+                {t("Add New Site")}
               </Button>
             }
           >
@@ -103,7 +103,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
       </PageRow>
 
       <PageRow>
-        <PageColumn>
+        <PageColumn className="relative rounded-xl border border-neutral-200">
+          <div className="absolute z-10 h-full w-full rounded-xl bg-white/30 backdrop-blur-sm" />
           <PageCard title={t("Project Monitoring")} tooltip={t("Project Monitoring")}>
             <div className="flex items-center justify-between text-darkCustom">
               <Text variant="text-14-light" className="w-[65%]">

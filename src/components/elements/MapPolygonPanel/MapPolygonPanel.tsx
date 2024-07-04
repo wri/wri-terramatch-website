@@ -19,6 +19,8 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   emptyText?: string;
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
+  stateViewPanel: boolean;
+  setStateViewPanel: Dispatch<SetStateAction<boolean>>;
   setPreviewVersion: Dispatch<SetStateAction<boolean>>;
   mapFunctions: any;
   checkedValues: string[];
@@ -37,6 +39,8 @@ const MapPolygonPanel = ({
   emptyText,
   tabEditPolygon,
   setTabEditPolygon,
+  stateViewPanel,
+  setStateViewPanel,
   setPreviewVersion,
   mapFunctions,
   checkedValues,
@@ -48,7 +52,6 @@ const MapPolygonPanel = ({
 }: MapPolygonPanelProps) => {
   const t = useT();
   const [selected] = useState<MapMenuPanelItemProps>();
-  const [stateViewPanel, setStateViewPanel] = useState(false);
   const { editPolygon } = useMapAreaContext();
   return (
     <div {...props} className={classNames(className)}>
@@ -94,7 +97,12 @@ const MapPolygonPanel = ({
             />
           </When>
           <When condition={!!stateViewPanel}>
-            <MapPolygonCheckPanel emptyText={emptyText} onLoadMore={onLoadMore} selected={selected} />
+            <MapPolygonCheckPanel
+              emptyText={emptyText}
+              onLoadMore={onLoadMore}
+              selected={selected}
+              mapFunctions={mapFunctions}
+            />
           </When>
         </Else>
       </If>

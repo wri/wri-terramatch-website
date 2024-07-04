@@ -54,7 +54,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
       pathParams: { uuid: projectUUID },
       queryParams: {
         email_address: data.email,
-        callback_url: window.location.origin + `/auth/signup`
+        callback_url: `${window.location.origin}/auth/reset-password`
       }
     });
   };

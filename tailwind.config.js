@@ -131,6 +131,7 @@ module.exports = {
         700: "#092C3C",
         600: "#33525c",
         250: "#11093C",
+        200: "#E6E9EC",
         100: "#cfe6f4",
         50: "#f1fafd",
         10: "#eaf7fc"
@@ -176,7 +177,11 @@ module.exports = {
         500: "#F3EFB0",
         300: "#FEF8EF"
       },
-      red: "#FF6464"
+      red: {
+        DEFAULT: "#FF6464",
+        100: "#CBC8D2",
+        200: "#E42222"
+      }
     },
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",

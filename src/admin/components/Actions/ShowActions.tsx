@@ -4,9 +4,11 @@ import {
   DeleteWithConfirmButton,
   DeleteWithConfirmButtonProps,
   EditButton,
+  Link,
   RaRecord,
   TopToolbar,
-  useRecordContext
+  useRecordContext,
+  useResourceContext
 } from "react-admin";
 import { When } from "react-if";
 
@@ -34,6 +36,7 @@ const ShowActions = ({
   deleteProps = {}
 }: IProps) => {
   const record = useRecordContext<any>();
+  const resource = useResourceContext();
 
   const title = titleSource ? get(record, titleSource) : "";
 
@@ -44,6 +47,11 @@ const ShowActions = ({
 
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
+      <When condition={resource === "siteReport" || resource === "nurseryReport"}>
+        <Link to={`/${resource}`}>
+          <Icon name={IconNames.CHEVRON_LEFT_PA} className="mr-2 h-10 w-9" />
+        </Link>
+      </When>
       <When condition={!!(title || getTitle)}>
         <Typography variant="h4" component="h2" sx={{ flexGrow: 1 }}>
           <ShowTitle moduleName={moduleName} getTitle={getTitle ? getTitle : () => title} />

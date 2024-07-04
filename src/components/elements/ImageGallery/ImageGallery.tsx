@@ -8,6 +8,7 @@ import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import Pagination from "@/components/extensive/Pagination";
+import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/PaginationVariant";
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
 
@@ -74,7 +75,7 @@ const ImageGallery = ({
   };
 
   const onClickGalleryItem = (previewData: ImageGalleryItemData) => {
-    openModal(<ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />);
+    openModal(<ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />, true);
   };
 
   const handleDelete = (id: string) => {
@@ -146,6 +147,7 @@ const ImageGallery = ({
           </div>
         )}
         <Pagination
+          variant={VARIANT_PAGINATION_TEXT_16}
           getCanNextPage={getCanNextPage}
           getCanPreviousPage={getCanPreviousPage}
           getPageCount={getPageCount}
@@ -156,6 +158,7 @@ const ImageGallery = ({
           setPageSize={handlePageSizeChange}
           defaultPageSize={defaultPageSize}
           hasPageSizeSelector
+          invertSelect
         />
       </div>
     </>

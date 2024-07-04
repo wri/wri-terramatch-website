@@ -91,7 +91,7 @@ const SignUpPage = ({
         phone_number: data.phone_number,
         job_role: data.job_role,
         callback_url: window.location.origin + "/auth/verify/email/",
-        primary_role: primary_role as string,
+        primary_role: "project-developer",
         country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
         program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
       }

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -13,9 +14,13 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import Notification from "@/components/elements/Notification/Notification";
+import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -27,10 +32,12 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
+  fetchPutV2SitePolygonStatusBulk,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
+import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { useFramework } from "@/hooks/useFramework";
 import { FileType, UploadedFile } from "@/types/common";
 
@@ -39,6 +46,35 @@ import SiteArea from "../components/SiteArea";
 interface SiteOverviewTabProps {
   site: any;
 }
+
+const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonsDataResponse }) => {
+  const t = useT();
+  return (
+    <>
+      <Text
+        variant="text-12-light"
+        as="p"
+        className="text-center"
+        dangerouslySetInnerHTML={{
+          __html: t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
+            siteName: siteName
+          })
+        }}
+      />
+      <div className="ml-6">
+        <ul style={{ listStyleType: "circle" }}>
+          {(polygons as SitePolygonsDataResponse)?.map(polygon => (
+            <li key={polygon.id}>
+              <Text variant="text-12-light" as="p">
+                {polygon?.poly_name ?? t("Unnamed Polygon")}
+              </Text>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
 
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
@@ -50,6 +86,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -151,16 +188,62 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       ></ModalAdd>
     );
   };
+
+  const openFormModalHandlerSubmitReviewConfirm = (polygons: unknown) => {
+    openModal(
+      <ModalConfirm
+        commentArea
+        className="max-w-xs"
+        title={t("Confirm Polygon Submission")}
+        content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name} />}
+        onClose={closeModal}
+        onConfirm={async data => {
+          closeModal();
+          try {
+            await fetchPutV2SitePolygonStatusBulk({
+              body: {
+                comment: data,
+                updatePolygons: (polygons as SitePolygonsDataResponse).map(polygon => {
+                  return { uuid: polygon.uuid, status: "submitted" };
+                })
+              }
+            });
+            setShouldRefetchPolygonData(true);
+            setShowSubmissionSuccess(true);
+            setTimeout(() => {
+              setShowSubmissionSuccess(false);
+            }, 3000);
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+      />
+    );
+  };
+
+  const openFormModalHandlerSubmitPolygon = () => {
+    openModal(
+      <ModalSubmit
+        title={t("Submit Polygons")}
+        onClose={closeModal}
+        content={t("Project Developers may submit one, many, or all polygons for review.")}
+        primaryButtonText={t("Next")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: (polygons: unknown) => {
+            closeModal();
+            openFormModalHandlerSubmitReviewConfirm(polygons);
+          }
+        }}
+        secondaryButtonText={t("Cancel")}
+        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+        site={site}
+      />
+    );
+  };
+
   const itemsSubmitPolygon = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          {t("Request Support")}
-        </Text>
-      ),
-      onClick: () => {}
-    },
     {
       id: "2",
       render: () => (
@@ -168,12 +251,15 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           {t("Submit for Review")}
         </Text>
       ),
-      onClick: () => {}
+      onClick: () => openFormModalHandlerSubmitPolygon()
     }
   ];
 
+  const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.SITE];
+
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+      <Notification open={showSubmissionSuccess} title={t("Success! Your polygons were submitted.")} type="success" />
       <PageBody>
         <PageRow>
           <PageCard
@@ -222,9 +308,17 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               <div className="flex gap-11 ">
                 <div className="w-[54%]">
                   <Text variant="text-14-light" className="mb-6">
-                    {t(
-                      "Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile application."
-                    )}
+                    {t("Use the map below to view, add, remove or edit polygons associated to a site. ")}
+                    <a
+                      className="text-14-light text-primary-500 hover:underline"
+                      target="_blank"
+                      href={
+                        "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                      }
+                      rel="noreferrer"
+                    >
+                      {t("Access our guide for adding polygons to a site on TerraMatch here.")}
+                    </a>
                   </Text>
                   <div className="flex w-full gap-3">
                     {isMonitoring && (
@@ -237,7 +331,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       variant="white-border"
                       className=""
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(site?.uuid);
+                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
@@ -252,13 +346,23 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                     )}
                   </div>
                 </div>
+                <div className="w-[46%]">
+                  <StepProgressbar
+                    color="secondary"
+                    value={valuesForStatus?.(site?.status) ?? 0}
+                    labels={statusLabels}
+                    classNameLabels="min-w-[99px]"
+                    className={"w-[98%] pl-[1%]"}
+                  />
+                </div>
               </div>
               <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
             </PageCard>
           </PageColumn>
         </PageRow>
         <PageRow>
-          <PageColumn>
+          <PageColumn className="relative rounded-xl border border-neutral-200">
+            <div className="absolute z-10 h-full w-full rounded-xl bg-white/30 backdrop-blur-sm" />
             <PageCard title={t("Project Monitoring")}>
               <div className="flex items-center justify-between text-darkCustom">
                 <Text variant="text-14-light" className="w-[65%]">

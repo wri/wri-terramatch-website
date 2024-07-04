@@ -26,8 +26,8 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
           {t("Sign in")}
         </Text>
         <Text variant="text-12-light" className="flex text-blueCustom-700">
-          {t("New to TerraMatch’s Dashboards?")}&nbsp;
-          <Link href={"/auth/create-account"} className="text-12-bold text-primary underline underline-offset-4">
+          {t("New to TerraMatch?")}&nbsp;
+          <Link href={"/auth/signup"} className="text-12-bold text-primary underline underline-offset-4">
             {t("Sign Up for free")}
           </Link>
         </Text>
