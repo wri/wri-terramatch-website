@@ -91,7 +91,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
             style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
           />
         </When>
-        <div className="flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between">
           <Text variant="text-24-bold">{title + "XD"}</Text>
           <When condition={toogleButton}>
             <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">

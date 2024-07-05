@@ -9,7 +9,6 @@ import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 
-import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import { StatusEnum } from "../Status/constants/statusMap";
@@ -68,10 +67,10 @@ const MapMenuPanelItem = ({
         title={t("Blue Forest")}
         onClose={closeModal}
         status={status as StatusEnum}
-        toogleButton
         primaryButtonText={t("Close")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      />
+      />,
+      true
     );
   };
 
@@ -114,13 +113,14 @@ const MapMenuPanelItem = ({
       id: "4",
       is_airtable: true,
       render: () => (
-        <Button variant="text" onClick={openFormModalHandlerAddCommentary}>
-          <Icon name={IconNames.COMMENT} className="h-6 w-6" />
-          <Text variant="text-12-bold">{t("Comment")}</Text>
-        </Button>
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.COMMENT} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Comment")}
+        </Text>
       ),
       onClick: (uuid: any) => {
         console.log("uuid", uuid);
+        openFormModalHandlerAddCommentary();
         // setSelectedPolygon(uuid);
         // setIsOpenPolygonDrawer(true);
         // setIsPolygonStatusOpen(true);
@@ -129,13 +129,12 @@ const MapMenuPanelItem = ({
     {
       id: "5",
       render: () => (
-        <Button variant="text" onClick={openFormModalHandlerConfirm}>
-          <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.TRASH_PA} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; {t("Delete Polygon")}
-          </Text>
-        </Button>
-      )
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.TRASH_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Delete Polygon")}
+        </Text>
+      ),
+      onClick: () => openFormModalHandlerConfirm()
     }
   ];
 
