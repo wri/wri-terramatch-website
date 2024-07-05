@@ -5,12 +5,13 @@ import { DetailedHTMLProps, HTMLAttributes } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 
-import Button from "../Button/Button";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
+import { StatusEnum } from "../Status/constants/statusMap";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -55,6 +56,21 @@ const MapMenuPanelItem = ({
       />
     );
   };
+
+  const openFormModalHandlerAddCommentary = () => {
+    openModal(
+      <ModalWithLogo
+        uuid={uuid}
+        title={t("Blue Forest")}
+        onClose={closeModal}
+        status={status as StatusEnum}
+        primaryButtonText={t("Close")}
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      />,
+      true
+    );
+  };
+
   const commonItems = [
     {
       id: "1",
@@ -91,15 +107,28 @@ const MapMenuPanelItem = ({
     },
     ...commonItems,
     {
+      id: "4",
+      is_airtable: true,
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.COMMENT} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Comment")}
+        </Text>
+      ),
+      onClick: (uuid: any) => {
+        console.log("uuid", uuid);
+        openFormModalHandlerAddCommentary();
+      }
+    },
+    {
       id: "5",
       render: () => (
-        <Button variant="text" onClick={openFormModalHandlerConfirm}>
-          <Text variant="text-14-semibold" className="flex items-center">
-            <Icon name={IconNames.TRASH_PA} className="h-5 w-5 lg:h-6 lg:w-6" />
-            &nbsp; {t("Delete Polygon")}
-          </Text>
-        </Button>
-      )
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.TRASH_PA} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Delete Polygon")}
+        </Text>
+      ),
+      onClick: () => openFormModalHandlerConfirm()
     }
   ];
 
@@ -142,7 +171,17 @@ const MapMenuPanelItem = ({
             <Text variant="text-14-light">{subtitle}</Text>
           </div>
           <div className="flex h-full self-start">
-            <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
+            <Menu
+              container={refContainer?.current}
+              placement={MENU_PLACEMENT_RIGHT_BOTTOM}
+              menu={itemsPrimaryMenu}
+              extraData={{
+                uuid,
+                title,
+                subtitle,
+                status
+              }}
+            >
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
                 className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"

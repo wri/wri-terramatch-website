@@ -5,7 +5,8 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white h-[80%] w-[776px] margin-4 z-50"
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white h-[95%] w-[776px] margin-4 z-50"
+    content="You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Applications' section.Would you like to close this form and continue later?"
   >
     <header
       className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5"
@@ -18,22 +19,18 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
           }
         }
       />
-      <div
-        className="flex items-center"
+      <button
+        className="ml-2 rounded p-1 hover:bg-grey-800"
       >
-        <button
-          className="ml-2 rounded p-1 hover:bg-grey-800"
-        >
-          <div
-            style={
-              Object {
-                "height": 16,
-                "width": 16,
-              }
+        <div
+          style={
+            Object {
+              "height": 16,
+              "width": 16,
             }
-          />
-        </button>
-      </div>
+          }
+        />
+      </button>
     </header>
     <div
       className="max-h-[100%] w-full overflow-auto px-8 py-8"
@@ -48,7 +45,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
         }
       />
       <div
-        className="flex items-center justify-between"
+        className="mb-8 flex items-center justify-between"
       >
         <p
           className="text-24-bold"
@@ -57,360 +54,216 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
           Are you sure?
         </p>
       </div>
-      <div
-        className="mt-1 mb-8 text-12-bold with-inner-html"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Applications' section.Would you like to close this form and continue later?",
-          }
-        }
-        data-testid="txt"
-      />
-      <div
-        className="mb-[72px] px-20"
-      >
+      <div>
         <div
-          className="px-4"
+          className="mb-[72px] px-20"
         >
           <div
-            className="relative w-full"
+            className="px-4"
           >
             <div
-              className="w-full mb-12 lg:mb-16 wide:mb-20"
+              className="relative w-full"
             >
               <div
-                className="flex w-full justify-between"
+                className="w-full mb-12 lg:mb-16 wide:mb-20"
               >
-                <div>
-                  <div
-                    className="relative flex flex-col items-center"
-                  >
+                <div
+                  className="flex w-full justify-between"
+                >
+                  <div>
                     <div
-                      style={
-                        Object {
-                          "height": undefined,
-                          "width": 24,
-                        }
-                      }
-                    />
-                    <p
-                      className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
-                      data-testid="txt"
+                      className="relative flex flex-col items-center"
                     >
-                      Submitted
-                    </p>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 24,
+                          }
+                        }
+                      />
+                      <p
+                        className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
+                        data-testid="txt"
+                      >
+                        Draft
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div
-                    className="relative flex flex-col items-center"
-                  >
+                  <div>
                     <div
-                      style={
-                        Object {
-                          "height": undefined,
-                          "width": 24,
-                        }
-                      }
-                    />
-                    <p
-                      className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
-                      data-testid="txt"
+                      className="relative flex flex-col items-center"
                     >
-                      Needs More Information
-                    </p>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 24,
+                          }
+                        }
+                      />
+                      <p
+                        className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
+                        data-testid="txt"
+                      >
+                        Submitted
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div
-                    className="relative flex flex-col items-center"
-                  >
+                  <div>
                     <div
-                      style={
-                        Object {
-                          "height": undefined,
-                          "width": 24,
-                        }
-                      }
-                    />
-                    <p
-                      className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
-                      data-testid="txt"
+                      className="relative flex flex-col items-center"
                     >
-                      Approved
-                    </p>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 24,
+                          }
+                        }
+                      />
+                      <p
+                        className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
+                        data-testid="txt"
+                      >
+                        Needs More Information
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      className="relative flex flex-col items-center"
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 24,
+                          }
+                        }
+                      />
+                      <p
+                        className="opacity-50 wide:text-12 absolute text-center min-w-[111px] top-[calc(100%_+_16px)] text-12"
+                        data-testid="txt"
+                      >
+                        Approved
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              className="absolute top-[5px] left-[10px] h-[9px] w-[calc(100%_-_20px)] rounded-full bg-neutral-200 lg:top-2 lg:left-[12px] lg:w-[calc(100%_-_24px)] wide:top-[10px] wide:left-[14px] wide:w-[calc(100%_-_28px)]"
-              role="progressbar"
-            >
               <div
-                className="h-full bg-primary rounded-full transition-all duration-300"
-                style={
-                  Object {
-                    "width": "80%",
+                className="absolute top-[5px] left-[10px] h-[9px] w-[calc(100%_-_20px)] rounded-full bg-neutral-200 lg:top-2 lg:left-[12px] lg:w-[calc(100%_-_24px)] wide:top-[10px] wide:left-[14px] wide:w-[calc(100%_-_28px)]"
+                role="progressbar"
+              >
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-300"
+                  style={
+                    Object {
+                      "width": "0%",
+                    }
                   }
-                }
-              />
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div
-        className="flex flex-col gap-4"
-      >
         <div
           className="flex flex-col gap-4"
         >
           <div
-            className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3"
+            className="flex flex-col gap-4"
           >
             <div
-              className="flex min-h-[32px] min-w-[32px] items-center justify-center self-start rounded-full bg-primary-500"
+              className="flex items-center gap-2 rounded-3xl border border-grey-750 p-3"
             >
-              <p
-                className="uppercase text-white text-14-semibold"
-                data-testid="txt"
+              <div
+                className="flex min-h-[32px] min-w-[32px] items-center justify-center self-start rounded-full bg-primary-500"
               >
-                R
-                S
-              </p>
+                <p
+                  className="uppercase text-white text-14-semibold"
+                  data-testid="txt"
+                />
+              </div>
+              <div
+                className="w-full relative space-y-2"
+              >
+                <textarea
+                  className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent max-h-72 !min-h-0 resize-none border-none !p-0 text-xs border-light "
+                  id=":r3d:"
+                  name=""
+                  onChange={[Function]}
+                  placeholder="Add a comment"
+                  rows={1}
+                  value=""
+                />
+              </div>
+              <label
+                className="cursor-pointer"
+                htmlFor="input-files"
+              >
+                <input
+                  className="absolute z-[-1] h-[0.1px] w-[0.1px] overflow-hidden opacity-0"
+                  id="input-files"
+                  onChange={[Function]}
+                  type="file"
+                />
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+              </label>
             </div>
             <div
-              className="w-full relative space-y-2"
+              className="flex flex-1 justify-between gap-4"
             >
-              <textarea
-                className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent max-h-72 !min-h-0 resize-none border-none !p-0 text-xs border-light "
-                id=":r3d:"
-                name=""
-                onChange={[Function]}
-                placeholder="Add a comment"
-                rows={1}
-                value=""
+              <div
+                className="flex flex-wrap gap-2"
               />
+              <div
+                className="display-grid"
+              >
+                <div
+                  className="text-nowrap text-right text-xs text-grey-500"
+                >
+                  0
+                  /255 
+                  characters
+                </div>
+              </div>
             </div>
-            <label
-              className="cursor-pointer"
-              htmlFor="input-files"
+            <button
+              className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content self-end"
+              disabled={false}
+              onClick={[Function]}
             >
-              <input
-                className="absolute z-[-1] h-[0.1px] w-[0.1px] overflow-hidden opacity-0"
-                id="input-files"
-                onChange={[Function]}
-                type="file"
-              />
               <div
                 style={
                   Object {
                     "height": undefined,
-                    "width": 24,
+                    "width": 14,
                   }
                 }
               />
-            </label>
-          </div>
-          <div
-            className="flex flex-1 justify-between gap-4"
-          >
+              <span
+                className="flex items-center text-bold-caption-200"
+              >
+                <p
+                  className="text-white text-12-bold"
+                  data-testid="txt"
+                >
+                  SEND
+                </p>
+              </span>
+            </button>
             <div
-              className="flex flex-wrap gap-2"
+              className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
             />
-            <div
-              className="display-grid"
-            >
-              <div
-                className="text-nowrap text-right text-xs text-grey-500"
-              >
-                0
-                /255 
-                characters
-              </div>
-            </div>
           </div>
-          <button
-            className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content self-end"
-            disabled={false}
-            onClick={[Function]}
-          >
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 14,
-                }
-              }
-            />
-            <span
-              className="flex items-center text-bold-caption-200"
-            >
-              <p
-                className="text-white text-12-bold"
-                data-testid="txt"
-              >
-                SEND
-              </p>
-            </span>
-          </button>
-          <div
-            className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
-          />
-        </div>
-        <div
-          className="flex flex-col gap-2"
-        >
-          <div
-            className="flex justify-between"
-          >
-            <div
-              className="flex items-center gap-2"
-            >
-              <div
-                className="ml-3 flex h-fit min-h-[32px] min-w-[32px] items-center justify-center rounded-full bg-primary-500"
-              >
-                <p
-                  className="uppercase text-white text-14-semibold"
-                  data-testid="txt"
-                >
-                  R
-                  S
-                </p>
-              </div>
-              <div
-                className="flex w-full flex-col gap-1"
-              >
-                <p
-                  className="text-blueCustom-250 text-12-semibold"
-                  data-testid="txt"
-                >
-                  Ricardo
-                   
-                  Saavedra
-                </p>
-                <p
-                  className="text-blueCustom-250 opacity-50 text-10-light"
-                  data-testid="txt"
-                >
-                  Oct 6, 2022 at 1:12 AM
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex h-fit w-[92px] items-center justify-center rounded-xl py-2 bg-primary-200"
-            >
-              <p
-                className="text-primary text-12-semibold"
-                data-testid="txt"
-              >
-                submitted
-              </p>
-            </div>
-          </div>
-          <p
-            className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-blueCustom-250 opacity-50 text-12-light"
-            data-testid="txt"
-          >
-            Don't see the outline. the source code also needs to be updated.re: aligned to one source. we need to make sure whether this is appropriate. consider that we have the organization in sign-up/profile, mask, and work request boards. On Thursday will provide the the source tables requested
-          </p>
-          <div
-            className="flex flex-wrap gap-2"
-          >
-            <div
-              className="rounded-xl bg-neutral-150 px-2 py-1"
-            >
-              <p
-                className="text-grey-700 text-14-light"
-                data-testid="txt"
-              />
-            </div>
-            <div
-              className="rounded-xl bg-neutral-150 px-2 py-1"
-            >
-              <p
-                className="text-grey-700 text-14-light"
-                data-testid="txt"
-              />
-            </div>
-            <div
-              className="rounded-xl bg-neutral-150 px-2 py-1"
-            >
-              <p
-                className="text-grey-700 text-14-light"
-                data-testid="txt"
-              />
-            </div>
-            <div
-              className="rounded-xl bg-neutral-150 px-2 py-1"
-            >
-              <p
-                className="text-grey-700 text-14-light"
-                data-testid="txt"
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex flex-col gap-2"
-        >
-          <div
-            className="flex justify-between"
-          >
-            <div
-              className="flex items-center gap-2"
-            >
-              <div
-                className="ml-3 flex h-fit min-h-[32px] min-w-[32px] items-center justify-center rounded-full bg-primary-500"
-              >
-                <p
-                  className="uppercase text-white text-14-semibold"
-                  data-testid="txt"
-                >
-                  K
-                  E
-                </p>
-              </div>
-              <div
-                className="flex w-full flex-col gap-1"
-              >
-                <p
-                  className="text-blueCustom-250 text-12-semibold"
-                  data-testid="txt"
-                >
-                  Katie
-                   
-                  Evers
-                </p>
-                <p
-                  className="text-blueCustom-250 opacity-50 text-10-light"
-                  data-testid="txt"
-                >
-                  Oct 5, 2022 at 11:51 PM
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex h-fit w-[92px] items-center justify-center rounded-xl py-2 bg-pinkCustom-200"
-            >
-              <p
-                className="text-pinkCustom text-12-semibold"
-                data-testid="txt"
-              >
-                draft
-              </p>
-            </div>
-          </div>
-          <p
-            className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-blueCustom-250 opacity-50 text-12-light"
-            data-testid="txt"
-          >
-            The zoom to areas table sources the main mapvi
-        ew drop down list which only has for example, "Adams County" and not "Unincorporated Adams County". Do we want both options? @ricardosaavedra2    what is the source table of the mask layers? and also what is the source layer for work request drop down? Earlier this week when I was trying to add highlands ranch geom you said 'jurisdictions'. I added it but still don't see the outline. All this should be aligned to one source with data restructure I added it but still don't see the outline. All this should be aligned to one source with data restructure I added it but still don't see the outline. All this should be aligned to one source with data restructure
-          </p>
-          <div
-            className="flex flex-wrap gap-2"
-          />
         </div>
       </div>
     </div>

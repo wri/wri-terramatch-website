@@ -403,7 +403,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       id: "3",
       render: () => (
         <div className="flex items-center gap-2" onClick={() => openFormModalHandlerConfirmDeletion(props.uuid)}>
-          <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
+          <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
           <Text variant="text-12-bold">Delete Polygon</Text>
         </div>
       )
