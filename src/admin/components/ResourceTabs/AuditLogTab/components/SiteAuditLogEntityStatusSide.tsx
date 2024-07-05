@@ -60,7 +60,7 @@ const SiteAuditLogEntityStatusSide = ({
         color="secondary"
         value={getValueForStatus?.(record?.status) ?? 0}
         labels={progressBarLabels}
-        classNameLabels="min-w-[99px] "
+        classNameLabels="min-w-[52px] lg:min-w-[99px] !text-[9.5px] lg:!text-[12px] wide:!text-[14px]"
         className={classNames("w-[98%] pl-[1%]", entityType === "Polygon" && "pl-[6%]")}
       />
       <StatusDisplay
