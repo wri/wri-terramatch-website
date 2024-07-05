@@ -4,12 +4,9 @@ import { Else, If, Then } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 
-import Button from "../Button/Button";
 import Text from "../Text/Text";
 
 export const validationLabels: any = {
@@ -24,7 +21,6 @@ export const validationLabels: any = {
 };
 
 const ChecklistInformation = () => {
-  const { openModal, closeModal } = useModalContext();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
@@ -74,26 +70,12 @@ const ChecklistInformation = () => {
     }
   }, [polygonValidationData]);
 
-  const openFormModalHandlerRequestPolygonSupport = () => {
-    openModal(
-      <ModalWithMap
-        title={t("Request Support")}
-        onClose={closeModal}
-        primaryButtonText={t("Submit")}
-        content="-&nbsp;&nbsp;•&nbsp;&nbsp;-"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
-      ></ModalWithMap>
-    );
-  };
   return (
     <div className="text-white">
       <Text variant="text-14-bold">
         {failedValidationCounter} {t("out")} {polygonValidationData.length}
       </Text>
       <Text variant="text-14-light">{t("Validation criteria are not met")}</Text>
-      <Button variant="primary" className="mt-4" onClick={openFormModalHandlerRequestPolygonSupport}>
-        {t("request support")}
-      </Button>
       <div className="mt-3 grid gap-3">
         <If condition={validationStatus}>
           <Then>
