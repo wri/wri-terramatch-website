@@ -92,7 +92,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           />
         </When>
         <div className="mb-8 flex items-center justify-between">
-          <Text variant="text-24-bold">{title + "XD"}</Text>
+          <Text variant="text-24-bold">{title}</Text>
           <When condition={toogleButton}>
             <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
               <Button

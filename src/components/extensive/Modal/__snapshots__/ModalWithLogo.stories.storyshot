@@ -51,7 +51,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
           className="text-24-bold"
           data-testid="txt"
         >
-          Are you sure?XD
+          Are you sure?
         </p>
       </div>
       <div>
