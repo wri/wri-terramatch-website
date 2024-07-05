@@ -106,6 +106,7 @@ module.exports = {
       },
       tertiary: {
         DEFAULT: "#F0AB00",
+        650: "#FF8838",
         600: "#FF8938",
         550: "#FFA160",
         500: "#F0AB00",
