@@ -23179,6 +23179,7 @@ export type V2TerrafundCriteriaSite = {
 export type SitePolygon = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -23219,6 +23220,8 @@ export type SitePolygon = {
   status?: string;
   source?: string;
   country?: string;
+  version_name?: string;
+  is_active?: number;
 };
 
 export type GeometryString = {
@@ -23228,6 +23231,7 @@ export type GeometryString = {
 export type SitePolygonsDataResponse = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -23268,6 +23272,8 @@ export type SitePolygonsDataResponse = {
   status?: string;
   source?: string;
   country?: string;
+  version_name?: string;
+  is_active?: number;
 }[];
 
 export type SitePolygonsBboxResponse = {
@@ -23731,6 +23737,7 @@ export type EntityTypeResponse = {
   polygonsData?: {
     id?: number;
     uuid?: string;
+    primary_uuid?: string;
     project_id?: string;
     proj_name?: string;
     org_name?: string;
@@ -23771,6 +23778,8 @@ export type EntityTypeResponse = {
     status?: string;
     source?: string;
     country?: string;
+    version_name?: string;
+    is_active?: number;
   }[];
   /**
    * Bounding box of the entity
@@ -23811,6 +23820,7 @@ export type DashboardProjectViewResponse = {
 export type PolygonChangeStatus = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -23851,6 +23861,8 @@ export type PolygonChangeStatus = {
   status?: string;
   source?: string;
   country?: string;
+  version_name?: string;
+  is_active?: number;
 }[];
 
 export type PolygonChangeStatusUpdate = {

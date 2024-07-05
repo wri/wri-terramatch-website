@@ -32128,6 +32128,7 @@ export type GetV2SitesSitePolygonError = Fetcher.ErrorWrapper<undefined>;
 export type GetV2SitesSitePolygonResponse = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -32168,6 +32169,8 @@ export type GetV2SitesSitePolygonResponse = {
   status?: string;
   source?: string;
   country?: string;
+  version_name?: string;
+  is_active?: number;
 }[];
 
 export type GetV2SitesSitePolygonVariables = {
@@ -34724,6 +34727,7 @@ export type GetV2TypeEntityResponse = {
   polygonsData?: {
     id?: number;
     uuid?: string;
+    primary_uuid?: string;
     project_id?: string;
     proj_name?: string;
     org_name?: string;
@@ -34764,6 +34768,8 @@ export type GetV2TypeEntityResponse = {
     status?: string;
     source?: string;
     country?: string;
+    version_name?: string;
+    is_active?: number;
   }[];
   /**
    * Bounding box of the entity
@@ -34949,6 +34955,7 @@ export type PutV2SitePolygonStatusBulkResponse = {
   data?: {
     id?: number;
     uuid?: string;
+    primary_uuid?: string;
     project_id?: string;
     proj_name?: string;
     org_name?: string;
@@ -34989,6 +34996,8 @@ export type PutV2SitePolygonStatusBulkResponse = {
     status?: string;
     source?: string;
     country?: string;
+    version_name?: string;
+    is_active?: number;
   }[];
 };
 
@@ -35032,6 +35041,390 @@ export const usePutV2SitePolygonStatusBulk = (
   >(
     (variables: PutV2SitePolygonStatusBulkVariables) =>
       fetchPutV2SitePolygonStatusBulk({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2SitePolygonUuidPathParams = {
+  /**
+   * The UUID of the site polygon
+   *
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type GetV2SitePolygonUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitePolygonUuidResponse = {
+  data?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    version_name?: string;
+    is_active?: number;
+  };
+};
+
+export type GetV2SitePolygonUuidVariables = {
+  pathParams: GetV2SitePolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitePolygonUuid = (variables: GetV2SitePolygonUuidVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2SitePolygonUuidResponse, GetV2SitePolygonUuidError, undefined, {}, {}, GetV2SitePolygonUuidPathParams>({
+    url: "/v2/site-polygon/{uuid}",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2SitePolygonUuid = <TData = GetV2SitePolygonUuidResponse>(
+  variables: GetV2SitePolygonUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2SitePolygonUuidResponse, GetV2SitePolygonUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2SitePolygonUuidResponse, GetV2SitePolygonUuidError, TData>(
+    queryKeyFn({ path: "/v2/site-polygon/{uuid}", operationId: "getV2SitePolygonUuid", variables }),
+    ({ signal }) => fetchGetV2SitePolygonUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2SitePolygonUuidVersionsPathParams = {
+  /**
+   * The UUID of the site polygon
+   *
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type GetV2SitePolygonUuidVersionsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitePolygonUuidVersionsResponse = {
+  data?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    version_name?: string;
+    is_active?: number;
+  }[];
+};
+
+export type GetV2SitePolygonUuidVersionsVariables = {
+  pathParams: GetV2SitePolygonUuidVersionsPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitePolygonUuidVersions = (
+  variables: GetV2SitePolygonUuidVersionsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2SitePolygonUuidVersionsResponse,
+    GetV2SitePolygonUuidVersionsError,
+    undefined,
+    {},
+    {},
+    GetV2SitePolygonUuidVersionsPathParams
+  >({ url: "/v2/site-polygon/{uuid}/versions", method: "get", ...variables, signal });
+
+export const useGetV2SitePolygonUuidVersions = <TData = GetV2SitePolygonUuidVersionsResponse>(
+  variables: GetV2SitePolygonUuidVersionsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2SitePolygonUuidVersionsResponse, GetV2SitePolygonUuidVersionsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2SitePolygonUuidVersionsResponse, GetV2SitePolygonUuidVersionsError, TData>(
+    queryKeyFn({ path: "/v2/site-polygon/{uuid}/versions", operationId: "getV2SitePolygonUuidVersions", variables }),
+    ({ signal }) => fetchGetV2SitePolygonUuidVersions({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2SitePolygonNewVersionPathParams = {
+  /**
+   * The UUID of the site polygon
+   *
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type PostV2SitePolygonNewVersionError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2SitePolygonNewVersionResponse = {
+  data?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    version_name?: string;
+    is_active?: number;
+  };
+};
+
+export type PostV2SitePolygonNewVersionVariables = {
+  pathParams: PostV2SitePolygonNewVersionPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2SitePolygonNewVersion = (
+  variables: PostV2SitePolygonNewVersionVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2SitePolygonNewVersionResponse,
+    PostV2SitePolygonNewVersionError,
+    undefined,
+    {},
+    {},
+    PostV2SitePolygonNewVersionPathParams
+  >({ url: "/v2/site-polygon/new-version", method: "post", ...variables, signal });
+
+export const usePostV2SitePolygonNewVersion = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2SitePolygonNewVersionResponse,
+      PostV2SitePolygonNewVersionError,
+      PostV2SitePolygonNewVersionVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2SitePolygonNewVersionResponse,
+    PostV2SitePolygonNewVersionError,
+    PostV2SitePolygonNewVersionVariables
+  >(
+    (variables: PostV2SitePolygonNewVersionVariables) =>
+      fetchPostV2SitePolygonNewVersion({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PutV2SitePolygonMakeActivePathParams = {
+  /**
+   * The UUID of the site polygon
+   *
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type PutV2SitePolygonMakeActiveError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2SitePolygonMakeActiveResponse = {
+  data?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    version_name?: string;
+    is_active?: number;
+  };
+};
+
+export type PutV2SitePolygonMakeActiveVariables = {
+  pathParams: PutV2SitePolygonMakeActivePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2SitePolygonMakeActive = (variables: PutV2SitePolygonMakeActiveVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2SitePolygonMakeActiveResponse,
+    PutV2SitePolygonMakeActiveError,
+    undefined,
+    {},
+    {},
+    PutV2SitePolygonMakeActivePathParams
+  >({ url: "/v2/site-polygon/make-active", method: "put", ...variables, signal });
+
+export const usePutV2SitePolygonMakeActive = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PutV2SitePolygonMakeActiveResponse,
+      PutV2SitePolygonMakeActiveError,
+      PutV2SitePolygonMakeActiveVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PutV2SitePolygonMakeActiveResponse,
+    PutV2SitePolygonMakeActiveError,
+    PutV2SitePolygonMakeActiveVariables
+  >(
+    (variables: PutV2SitePolygonMakeActiveVariables) =>
+      fetchPutV2SitePolygonMakeActive({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -35661,4 +36054,14 @@ export type QueryOperation =
       path: "/v2/sites/{site}/check-approve";
       operationId: "getV2SitesSiteCheckApprove";
       variables: GetV2SitesSiteCheckApproveVariables;
+    }
+  | {
+      path: "/v2/site-polygon/{uuid}";
+      operationId: "getV2SitePolygonUuid";
+      variables: GetV2SitePolygonUuidVariables;
+    }
+  | {
+      path: "/v2/site-polygon/{uuid}/versions";
+      operationId: "getV2SitePolygonUuidVersions";
+      variables: GetV2SitePolygonUuidVersionsVariables;
     };
