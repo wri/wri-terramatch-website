@@ -40,9 +40,6 @@ const MapMenuPanelItem = ({
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
-  // const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
-  // const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
-  // const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const { isMonitoring } = useMapAreaContext();
   const t = useT();
@@ -121,9 +118,6 @@ const MapMenuPanelItem = ({
       onClick: (uuid: any) => {
         console.log("uuid", uuid);
         openFormModalHandlerAddCommentary();
-        // setSelectedPolygon(uuid);
-        // setIsOpenPolygonDrawer(true);
-        // setIsPolygonStatusOpen(true);
       }
     },
     {
