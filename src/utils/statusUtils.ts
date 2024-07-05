@@ -87,7 +87,7 @@ export const polygonProgressBarStatusLabels = [
 export const siteProgressBarStatusLabels = [
   { id: "1", label: "Started" },
   { id: "2", label: "Awaiting Approval" },
-  { id: "3", label: "Needs More Information" },
+  { id: "3", label: "Needs More Info" },
   { id: "4", label: "Restoration in Progress" },
   { id: "5", label: "Approved" }
 ];
