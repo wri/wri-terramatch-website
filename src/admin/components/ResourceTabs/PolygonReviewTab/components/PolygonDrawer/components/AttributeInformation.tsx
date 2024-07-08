@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
+import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -88,6 +89,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   const { displayNotification } = useAlertHook();
   const t = useT();
+  const { refetch } = useShowContext();
 
   useEffect(() => {
     setPolygonName(selectedPolygon?.poly_name ?? "");
@@ -157,6 +159,7 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
         console.error("Error updating polygon data:", error);
       }
     }
+    refetch();
   };
 
   return (

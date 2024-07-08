@@ -403,7 +403,13 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: st
   URL.revokeObjectURL(url);
 }
 
-export async function storePolygon(geojson: any, record: any, refetch: any, setPolygonFromMap?: any) {
+export async function storePolygon(
+  geojson: any,
+  record: any,
+  refetch: any,
+  setPolygonFromMap?: any,
+  refreshEntity?: any
+) {
   if (geojson?.length) {
     const response = await fetchPostV2TerrafundPolygon({
       body: { geometry: JSON.stringify(geojson[0].geometry) }
@@ -415,6 +421,7 @@ export async function storePolygon(geojson: any, record: any, refetch: any, setP
         body: {},
         pathParams: { uuid: polygonUUID, siteUuid: site_id }
       }).then(() => {
+        refreshEntity?.();
         refetch();
         setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
       });
