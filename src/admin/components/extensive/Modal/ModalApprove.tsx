@@ -48,10 +48,7 @@ const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
   const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
   const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
   const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-  if (failingCriterias?.length === 0) {
-    return true;
-  }
-  return false;
+  return failingCriterias?.length === 0;
 };
 
 const ModalApprove: FC<ModalApproveProps> = ({
@@ -88,7 +85,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-        let approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
+        const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
 
         return {
           id: polygon.uuid,
