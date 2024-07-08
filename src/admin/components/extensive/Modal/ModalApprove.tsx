@@ -11,7 +11,11 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2SitesSitePolygon, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
+import {
+  GetV2TerrafundValidationSiteResponse,
+  useGetV2SitesSitePolygon,
+  useGetV2TerrafundValidationSite
+} from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
@@ -31,6 +35,23 @@ interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
 }
+type ValidationCriteria = GetV2TerrafundValidationSiteResponse[number];
+
+const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
+  if (!criteria.checked) {
+    return false;
+  }
+  if (criteria?.nonValidCriteria?.length === 0) {
+    return true;
+  }
+  const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+  const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
+  const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+  if (failingCriterias?.length === 0) {
+    return true;
+  }
+  return false;
+};
 
 const ModalApprove: FC<ModalApproveProps> = ({
   iconProps,
@@ -66,17 +87,12 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-        let canBeApproved = false;
-        if (criteria?.nonValidCriteria?.length === 0) {
-          canBeApproved = true;
-        } else if (failingCriterias?.length === 0) {
-          canBeApproved = true;
-        }
+        let approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
 
         return {
           id: polygon.uuid,
           name: polygon.poly_name ?? "Unnamed Polygon",
-          canBeApproved,
+          canBeApproved: approved,
           failingCriterias
         };
       })
