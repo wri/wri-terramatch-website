@@ -2381,6 +2381,52 @@ export const useGetV2ProjectsUUIDPartners = <TData = GetV2ProjectsUUIDPartnersRe
   );
 };
 
+export type DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams = {
+  uuid: string;
+  email: string;
+};
+
+export type DeleteV2ProjectsUUIDEMAILRemovePartnerError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ProjectsUUIDEMAILRemovePartnerVariables = {
+  pathParams: DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ProjectsUUIDEMAILRemovePartner = (
+  variables: DeleteV2ProjectsUUIDEMAILRemovePartnerVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2ProjectsUUIDEMAILRemovePartnerError,
+    undefined,
+    {},
+    {},
+    DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams
+  >({ url: "/v2/projects/{uuid}/{email}/remove-partner", method: "delete", ...variables, signal });
+
+export const useDeleteV2ProjectsUUIDEMAILRemovePartner = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2ProjectsUUIDEMAILRemovePartnerError,
+      DeleteV2ProjectsUUIDEMAILRemovePartnerVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2ProjectsUUIDEMAILRemovePartnerError,
+    DeleteV2ProjectsUUIDEMAILRemovePartnerVariables
+  >(
+    (variables: DeleteV2ProjectsUUIDEMAILRemovePartnerVariables) =>
+      fetchDeleteV2ProjectsUUIDEMAILRemovePartner({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2MyProjectsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2MyProjectsResponse = {

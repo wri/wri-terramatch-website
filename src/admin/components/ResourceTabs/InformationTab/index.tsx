@@ -162,7 +162,7 @@ const InformationTab: FC<IProps> = props => {
                   </When>
 
                   <When condition={props.type === "projects"}>
-                    <MonitoringPartnersTable projectUUID={record?.uuid} />
+                    <MonitoringPartnersTable projectUUID={record?.uuid} projectName={record?.name} />
                   </When>
                 </Stack>
               </Else>
