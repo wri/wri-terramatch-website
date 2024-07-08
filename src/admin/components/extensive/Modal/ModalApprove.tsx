@@ -32,6 +32,7 @@ export interface ModalApproveProps extends ModalProps {
 interface DisplayedPolygonType {
   id: string | undefined;
   name: string | undefined;
+  checked: boolean | undefined;
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
 }
@@ -91,6 +92,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
 
         return {
           id: polygon.uuid,
+          checked: criteria?.checked,
           name: polygon.poly_name ?? "Unnamed Polygon",
           canBeApproved: approved,
           failingCriterias
@@ -151,7 +153,10 @@ const ModalApprove: FC<ModalApproveProps> = ({
                       <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
                     </div>
                     <Text variant="text-10-light">
-                      {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
+                      <When condition={!item.checked}>{"Run Polygon Check"}</When>
+                      <When condition={!item.canBeApproved}>
+                        {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
+                      </When>
                     </Text>
                   </When>
                 </div>
