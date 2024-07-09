@@ -4,11 +4,15 @@ import {
   DeleteWithConfirmButton,
   DeleteWithConfirmButtonProps,
   EditButton,
+  Link,
   RaRecord,
   TopToolbar,
-  useRecordContext
+  useRecordContext,
+  useResourceContext
 } from "react-admin";
 import { When } from "react-if";
+
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import ShowTitle from "../ShowTitle";
 
@@ -32,6 +36,7 @@ const ShowActions = ({
   deleteProps = {}
 }: IProps) => {
   const record = useRecordContext<any>();
+  const resource = useResourceContext();
 
   const title = titleSource ? get(record, titleSource) : "";
 
@@ -42,6 +47,11 @@ const ShowActions = ({
 
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
+      <When condition={resource === "siteReport" || resource === "nurseryReport"}>
+        <Link to={`/${resource}`}>
+          <Icon name={IconNames.CHEVRON_LEFT_PA} className="mr-2 h-10 w-9" />
+        </Link>
+      </When>
       <When condition={!!(title || getTitle)}>
         <Typography variant="h4" component="h2" sx={{ flexGrow: 1 }}>
           <ShowTitle moduleName={moduleName} getTitle={getTitle ? getTitle : () => title} />
@@ -49,10 +59,18 @@ const ShowActions = ({
       </When>
       <TopToolbar sx={{ marginBottom: 2, marginLeft: "auto" }}>
         <When condition={record && hasDelete}>
-          <DeleteWithConfirmButton {...deleteProps} mutationMode="undoable" />
+          <DeleteWithConfirmButton
+            {...deleteProps}
+            mutationMode="undoable"
+            className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
+            icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
+          />
         </When>
         <When condition={record && hasEdit}>
-          <EditButton />
+          <EditButton
+            className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
+            icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
+          />
         </When>
       </TopToolbar>
     </Box>

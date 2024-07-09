@@ -61,7 +61,7 @@ export const InviteMonitoringPartnerDialog = ({ handleClose, ...props }: InviteM
       pathParams: { uuid: record.id as string },
       queryParams: {
         email_address: data.email,
-        callback_url: window.location.origin + `/auth/signup`
+        callback_url: `${window.location.origin}/auth/reset-password`
       }
     });
   };

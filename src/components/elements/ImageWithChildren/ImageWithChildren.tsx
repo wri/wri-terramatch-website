@@ -1,6 +1,9 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
-import Image, { StaticImageData } from "next/image";
+import { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
+
+import ImageWithPlaceholder from "../ImageWithPlaceholder/ImageWithPlaceholder";
 
 export interface ImageWithChildrenProps
   extends PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>> {
@@ -19,15 +22,16 @@ const ImageWithChildren = ({
   childrenContainerClassName,
   ...divProps
 }: ImageWithChildrenProps) => {
+  const t = useT();
   return (
     <div {...divProps} className={classNames(className, "relative")}>
-      <Image
-        src={imageSrc}
-        alt=""
+      <ImageWithPlaceholder
+        imageUrl={imageSrc as string}
+        placeholder={t("No Image Available")}
+        alt={t("No Image Available")}
         role="presentation"
-        loading="lazy"
         style={{ objectFit: "cover" }}
-        className="absolute top-0 right-0 left-0 bottom-0 h-full w-full"
+        className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
       />
       <div className={classNames("absolute top-0 right-0 left-0 bottom-0", childrenContainerClassName)}>{children}</div>
     </div>

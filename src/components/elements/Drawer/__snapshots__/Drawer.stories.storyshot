@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Drawer Primary 1`] = `
+<div
+  className="h-60 overflow-hidden border p-1"
+>
+  <div
+    className="relative h-full"
+  >
+    <div
+      className="fixed left-full top-0 z-50 ml-2 flex h-full h-[-webkit-fill-available] w-[25rem] flex-col overflow-visible bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem] translate-x-[-25.5rem] lg:translate-x-[-27rem] mt-[70px] h-[calc(100%_-_70px)]"
+    >
+      <div
+        className="flex w-full items-center"
+      >
+        Drawer Title
+        <button
+          className="flex items-center justify-center gap-1.5 tracking-wide w-fit-content ml-auto rounded p-1 hover:bg-grey-800"
+          onClick={[Function]}
+        >
+          <span
+            className="text-12-bold"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+          </span>
+        </button>
+      </div>
+      Primary Content
+    </div>
+    <button
+      className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      onClick={[Function]}
+    >
+      <span
+        className="flex items-center text-bold-caption-200"
+      >
+        Open
+      </span>
+    </button>
+  </div>
+</div>
+`;

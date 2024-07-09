@@ -14,7 +14,7 @@ exports[`Storyshots Components/Elements/Breadcrumbs Default 1`] = `
       onTouchStart={[Function]}
     >
       <p
-        className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+        className="text-darkCustom opacity-60 hover:underline line-clamp-1 text-14-bold"
         data-testid="txt"
         title="My Projects"
       >
@@ -36,7 +36,7 @@ exports[`Storyshots Components/Elements/Breadcrumbs Default 1`] = `
       onTouchStart={[Function]}
     >
       <p
-        className="text-neutral-800 hover:underline line-clamp-1 text-bold-body-300"
+        className="text-darkCustom opacity-60 hover:underline line-clamp-1 text-14-bold"
         data-testid="txt"
         title="India Tree restoration project"
       >
@@ -52,7 +52,7 @@ exports[`Storyshots Components/Elements/Breadcrumbs Default 1`] = `
       }
     />
     <p
-      className="text-black line-clamp-1 text-bold-body-300"
+      className="text-darkCustom line-clamp-1 text-14-bold"
       data-testid="txt"
       title="Taj Mahal"
     >

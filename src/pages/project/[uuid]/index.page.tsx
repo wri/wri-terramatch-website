@@ -9,8 +9,10 @@ import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import {
@@ -31,6 +33,14 @@ import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
 
+import AuditLog from "./tabs/AuditLog";
+
+const ButtonStates = {
+  PROJECTS: 0,
+  SITE: 1,
+  POLYGON: 2
+};
+
 const ProjectDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -38,7 +48,7 @@ const ProjectDetailPage = () => {
   const { openToast } = useToastContext();
   const projectUUID = router.query.uuid as string;
 
-  const { data, isLoading } = useGetV2ProjectsUUID({
+  const { data, isLoading, refetch } = useGetV2ProjectsUUID({
     pathParams: { uuid: projectUUID }
   });
 
@@ -96,89 +106,97 @@ const ProjectDetailPage = () => {
   };
 
   return (
-    <LoadingContainer loading={isLoading}>
-      <Head>
-        <title>{t("Project")}</title>
-      </Head>
-      <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project.name }]} />
-      <PageHeader
-        className="h-[203px]"
-        title={project.name}
-        subtitles={[
-          `${t("Organisation")}: ${project.organisation?.name}`,
-          isPPC
-            ? t("Priceless Planet Coalition")
-            : isHBF
-            ? "Harit Bharat Fund"
-            : isTerrafund
-            ? t("TerraFund")
-            : reportingFramework.name
-        ]}
-        hasBackButton={false}
-      >
-        <If condition={project.status === "started"}>
-          <Then>
-            <div className="flex gap-4">
-              <Button variant="secondary" onClick={() => onDeleteProject()}>
-                {t("Delete")}
-              </Button>
-              <Button as={Link} href={`/entity/projects/edit/${projectUUID}`}>
-                {t("Continue Project")}
-              </Button>
-            </div>
-          </Then>
-          <Else>
-            <div className="flex gap-4">
-              <Button variant="secondary" onClick={handleExport}>
-                {t("Export")}
-              </Button>
-              <Button onClick={handleEdit}>{t("Edit")}</Button>
-            </div>
-          </Else>
-        </If>
-      </PageHeader>
-      <StatusBar entityName="projects" entity={project} />
-      <SecondaryTabs
-        tabItems={[
-          { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
-          { key: "details", title: t("Details"), body: <ProjectDetailTab project={project} /> },
-          {
-            key: "gallery",
-            title: t("Gallery"),
-            body: (
-              <GalleryTab
-                modelName="projects"
-                modelUUID={project.uuid}
-                modelTitle={t("Project")}
-                boundaryGeojson={project.boundary_geojson}
-                emptyStateContent={t(
-                  "Your gallery is currently empty. Add images by using the 'Edit' button on this project, or images added to your sites and reports will also automatically populate this gallery."
-                )}
-              />
-            )
-          },
-          { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
-          { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
-          {
-            key: "nurseries",
-            title: t("Nurseries"),
-            body: <ProjectNurseriesTab project={project} />,
-            hidden: isPPC
-          },
-          {
-            key: "reporting-tasks",
-            title: t("Reporting Tasks"),
-            body: (
-              <ReportingTasksTab
-                projectUUID={project.uuid}
-                reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
-              />
-            )
-          }
-        ]}
-        containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
-      />
-    </LoadingContainer>
+    <MapAreaProvider>
+      <LoadingContainer loading={isLoading}>
+        <Head>
+          <title>{t("Project")}</title>
+        </Head>
+        <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project.name }]} />
+        <PageHeader
+          className="h-[203px]"
+          title={project.name}
+          subtitles={[
+            `${t("Organisation")}: ${project.organisation?.name}`,
+            isPPC
+              ? t("Priceless Planet Coalition")
+              : isHBF
+              ? "Harit Bharat Fund"
+              : isTerrafund
+              ? t("TerraFund")
+              : reportingFramework.name
+          ]}
+          hasBackButton={false}
+        >
+          <If condition={project.status === "started"}>
+            <Then>
+              <div className="flex gap-4">
+                <Button variant="secondary" onClick={() => onDeleteProject()}>
+                  {t("Delete")}
+                </Button>
+                <Button as={Link} href={`/entity/projects/edit/${projectUUID}`}>
+                  {t("Continue Project")}
+                </Button>
+              </div>
+            </Then>
+            <Else>
+              <div className="flex gap-4">
+                <Button variant="secondary" onClick={handleExport}>
+                  {t("Export")}
+                </Button>
+                <Button onClick={handleEdit}>{t("Edit")}</Button>
+              </div>
+            </Else>
+          </If>
+        </PageHeader>
+        <StatusBar entityName="projects" entity={project} />
+        <SecondaryTabs
+          tabItems={[
+            { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
+            { key: "details", title: t("Details"), body: <ProjectDetailTab project={project} /> },
+            {
+              key: "gallery",
+              title: t("Gallery"),
+              body: (
+                <GalleryTab
+                  modelName="projects"
+                  modelUUID={project.uuid}
+                  modelTitle={t("Project")}
+                  boundaryGeojson={project.boundary_geojson}
+                  emptyStateContent={t(
+                    "Your gallery is currently empty. Add images by using the 'Edit' button on this project, or images added to your sites and reports will also automatically populate this gallery."
+                  )}
+                />
+              )
+            },
+            { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
+            { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
+            {
+              key: "nurseries",
+              title: t("Nurseries"),
+              body: <ProjectNurseriesTab project={project} />,
+              hidden: isPPC
+            },
+            {
+              key: "reporting-tasks",
+              title: t("Reporting Tasks"),
+              body: (
+                <ReportingTasksTab
+                  projectUUID={project.uuid}
+                  reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
+                />
+              )
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog project={project} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
+            }
+          ]}
+          containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
+        />
+        <PageFooter />
+      </LoadingContainer>
+    </MapAreaProvider>
   );
 };
 

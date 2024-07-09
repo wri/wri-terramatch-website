@@ -4,6 +4,7 @@ import "swiper/css/pagination";
 
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useEffect, useRef } from "react";
 import { When } from "react-if";
 import { Navigation, Pagination, SwiperOptions } from "swiper";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
@@ -19,6 +20,8 @@ export interface CarouselProps<T> extends SwiperProps {
   swiperButtonsClassName?: string;
   hidePaginationBullet?: boolean;
   breakpoints?: CarouselBreakPoints;
+  selectedImage?: number;
+  setSelectedImage?: (index: number) => void;
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
 }
@@ -37,6 +40,8 @@ const Carousel = <T extends Record<any, any>>({
   swiperSlideClassName,
   swiperButtonsClassName,
   hidePaginationBullet,
+  selectedImage,
+  setSelectedImage,
   buttonsOutside = false,
   smallSwiperButtons,
   ...swiperProps
@@ -44,10 +49,22 @@ const Carousel = <T extends Record<any, any>>({
   const t = useT();
 
   const swiperButtonSize = smallSwiperButtons ? 12 : 24;
+  const swiperRef = useRef<any | null>(null);
+  const handleSlideChange = (swiper: { activeIndex: any; slideTo: any }) => {
+    if (setSelectedImage) {
+      setSelectedImage(swiper.activeIndex);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedImage !== undefined && swiperRef.current) {
+      swiperRef.current.slideTo(selectedImage);
+    }
+  }, [selectedImage]);
 
   return (
     <div className={classNames("relative mx-auto", className)}>
-      <div className={classNames("flex items-center justify-center", smallSwiperButtons ? "gap-1.5" : "gap-4")}>
+      <div className={classNames("flex h-full items-center justify-center", smallSwiperButtons ? "gap-1.5" : "gap-4")}>
         <button
           className={classNames(
             "swiper-button-prev",
@@ -59,12 +76,14 @@ const Carousel = <T extends Record<any, any>>({
         >
           <Icon
             name={IconNames.CHEVRON_LEFT}
-            className={classNames("fill-primary-400", smallSwiperButtons ? "mr-0.5" : "mr-1")}
+            className={classNames("fill-white", smallSwiperButtons ? "mr-0.5" : "mr-1")}
             height={swiperButtonSize}
             width={swiperButtonSize}
           />
         </button>
         <Swiper
+          onSwiper={swiper => (swiperRef.current = swiper)}
+          onSlideChange={handleSlideChange}
           className={classNames(swiperClassName, "flex-1")}
           modules={[Navigation, Pagination]}
           spaceBetween={smallSwiperButtons ? 8 : 25}
@@ -79,7 +98,7 @@ const Carousel = <T extends Record<any, any>>({
           {...swiperProps}
         >
           {items.map((item, i) => (
-            <SwiperSlide key={i} className={swiperSlideClassName}>
+            <SwiperSlide key={item.id} className={swiperSlideClassName}>
               {carouselItem(item, i)}
             </SwiperSlide>
           ))}
@@ -96,7 +115,7 @@ const Carousel = <T extends Record<any, any>>({
         >
           <Icon
             name={IconNames.CHEVRON_RIGHT}
-            className={classNames("fill-primary-400", smallSwiperButtons ? "ml-0.5" : "ml-1")}
+            className={classNames("fill-white", smallSwiperButtons ? "ml-0.5" : "ml-1")}
             height={swiperButtonSize}
             width={swiperButtonSize}
           />

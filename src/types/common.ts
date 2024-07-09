@@ -13,8 +13,6 @@ export type TextVariants =
 
 export type Color = PrimaryColor | SecondaryColor | SuccessColor | NeutralColor | TertiaryColor | ErrorColor;
 
-export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
-
 export type TextVariantNew =
   | "text-8-light"
   | "text-8"
@@ -69,6 +67,8 @@ export type TextVariantNew =
   | "text-40-semibold"
   | "text-40-bold";
 
+export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
+
 export type SecondaryColor =
   | "secondary"
   | "secondary-100"
@@ -115,6 +115,7 @@ export type HeadingTextVariants =
   | "text-bold-subtitle-600"
   | "text-bold-subtitle-500"
   | "text-light-subtitle-400"
+  | "text-normal-subtitle-400"
   | "text-bold-subtitle-400";
 
 export type BodyTextVariants =
@@ -131,11 +132,22 @@ export type BodyTextVariants =
   | "text-body-200"
   | "text-body-100"
   | "text-light-body-300"
-  | "text-bold-body-300";
+  | "text-bold-body-300"
+  | "text-14-light"
+  | "text-14-bold"
+  | "text-dark-500"
+  | "text-32-bold"
+  | "text-12-light"
+  | "text-12-bold";
 
 export type CaptionTextVariants = "text-bold-caption-200" | "text-light-caption-200" | "text-bold-caption-100";
 
-export type ButtonTextVariants = "text-button-400" | "text-button-300" | "text-button-200" | "text-button-100";
+export type ButtonTextVariants =
+  | "text-button-400"
+  | "text-button-300"
+  | "text-button-200"
+  | "text-button-100"
+  | "text-button-700";
 
 export type Option = {
   title: string;
@@ -177,6 +189,7 @@ export type UploadedFile = {
   created_at: string;
   collection_name: string;
   is_public?: boolean;
+  status?: boolean;
 
   //Client side data
   rawFile?: File;

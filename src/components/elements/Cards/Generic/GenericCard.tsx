@@ -36,7 +36,7 @@ const Image = ({ imageUrl, children, className, ...rest }: ImageProps) => {
       {...rest}
       className={classNames(
         className,
-        "relative flex aspect-[5/3] min-h-[180px] items-start justify-between bg-cover bg-center bg-no-repeat p-4"
+        "relative flex aspect-[5/3] min-h-[180px] items-start justify-between bg-cover bg-center bg-no-repeat p-4 wide:p-6"
       )}
       style={{ backgroundImage: `url(${imageUrl})` }}
     >

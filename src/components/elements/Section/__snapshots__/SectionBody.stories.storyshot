@@ -83,7 +83,7 @@ exports[`Storyshots Components/Elements/Section/Body Default 1`] = `
           className="flex flex-1 items-center justify-center gap-2"
         >
           <div
-            className="flex h-16 w-16 items-center justify-center rounded-lg border border-neutral-400 border-opacity-20 bg-cover bg-no-repeat"
+            className="flex items-center justify-center rounded-lg bg-cover bg-no-repeat"
             style={
               Object {
                 "backgroundImage": "url()",
@@ -93,8 +93,8 @@ exports[`Storyshots Components/Elements/Section/Body Default 1`] = `
             <div
               style={
                 Object {
-                  "height": 30,
-                  "width": 22.5,
+                  "height": undefined,
+                  "width": 24,
                 }
               }
             />
@@ -103,7 +103,7 @@ exports[`Storyshots Components/Elements/Section/Body Default 1`] = `
             className="flex flex-1 flex-col items-start gap-1"
           >
             <p
-              className=" capitalize line-clamp-1 text-heading-200"
+              className=" capitalize line-clamp-1 text-body-900"
               data-testid="txt"
             >
               Project Budget
