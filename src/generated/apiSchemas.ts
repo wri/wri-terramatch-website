@@ -4851,18 +4851,6 @@ export type V2StrataRead = {
   extent?: number;
 };
 
-export type V2StrataCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  description?: string;
-  extent?: number;
-};
-
-export type V2StrataUpdate = {
-  description?: string;
-  extent?: number;
-};
-
 export type V2StrataPaginated = {
   data?: {
     uuid?: string;
@@ -4886,22 +4874,6 @@ export type V2StrataPaginated = {
 
 export type V2SeedingRead = {
   uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingUpdate = {
   name?: string;
   weight_of_sample?: number;
   seeds_in_sample?: number;
@@ -4950,21 +4922,6 @@ export type V2DisturbanceRead = {
   extent?: string;
 };
 
-export type V2DisturbanceCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  description?: string;
-  intensity?: string;
-  extent?: string;
-  collection?: string;
-};
-
-export type V2DisturbanceUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
-};
-
 export type V2DisturbancePaginated = {
   data?: {
     uuid?: string;
@@ -4991,20 +4948,6 @@ export type V2InvasiveRead = {
   uuid?: string;
   name?: string;
   type?: number;
-};
-
-export type V2InvasiveCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  type?: string;
-  collection?: string;
-};
-
-export type V2InvasiveUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
 };
 
 export type V2InvasivePaginated = {
@@ -23803,12 +23746,48 @@ export type DashboardProjectViewResponse = {
 };
 
 export type PolygonChangeStatus = {
-  comment?: string;
-  updatePolygons?: {
-    uuid?: string;
-    status?: string;
-  }[];
-};
+  id?: number;
+  uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  country?: string;
+}[];
 
 export type PolygonChangeStatusUpdate = {
   comment?: string;

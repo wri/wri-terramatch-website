@@ -5,18 +5,13 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import * as yup from "yup";
 
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
-import { useDeleteV2SeedingsUUID, usePostV2Seedings } from "@/generated/apiComponents";
-import { Entity, Option } from "@/types/common";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFSeedingProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
-  onChangeCapture?: () => void;
   formHook?: UseFormReturn;
-  entity: Entity;
-  ethnicityOptions: Option[];
   collection: string;
   captureCount: boolean;
 }
@@ -115,55 +110,19 @@ export const getSeedingFields = (t: typeof useT | Function = (t: string) => t, c
         }
       ];
 
-const RHFSeedingTable = ({
-  onChangeCapture,
-  entity,
-  ethnicityOptions,
-  collection,
-  captureCount,
-  ...props
-}: PropsWithChildren<RHFSeedingProps>) => {
+const RHFSeedingTable = ({ collection, captureCount, ...props }: PropsWithChildren<RHFSeedingProps>) => {
   const t = useT();
-  const { field } = useController(props);
-  const value = field?.value || [];
-
-  const { mutate: createStrata } = usePostV2Seedings({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-    }
-  });
-
-  const { mutate: removeStrata } = useDeleteV2SeedingsUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
+  const {
+    field: { value, onChange }
+  } = useController(props);
 
   return (
     <DataTable
       {...props}
-      value={value}
-      handleCreate={data => {
-        createStrata({
-          body: {
-            ...data,
-            collection,
-            model_type: entity?.entityName,
-            //@ts-ignore
-            model_uuid: entity?.entityUUID
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeStrata({ pathParams: { uuid } });
-        }
-      }}
+      value={value ?? []}
+      onChange={onChange}
+      generateUuids={true}
+      additionalValues={{ collection }}
       addButtonCaption={t("Add Species or mix")}
       tableColumns={getSeedingTableColumns(t, captureCount)}
       fields={getSeedingFields(t, captureCount)}
