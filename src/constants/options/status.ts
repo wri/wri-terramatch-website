@@ -59,7 +59,7 @@ export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: st
   [
     {
       value: "draft",
-      title: t("Draft")
+      title: t("Started")
     },
     ...getStatusOptions(t).filter(option => option.value !== "started"),
     {
