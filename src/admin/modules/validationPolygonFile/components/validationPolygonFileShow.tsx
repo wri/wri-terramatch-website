@@ -6,20 +6,20 @@ import Text from "@/components/elements/Text/Text";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import { useModalContext } from "@/context/modal.provider";
 import {
-  fetchPostV2TerrafundUploadGeojson,
-  fetchPostV2TerrafundUploadKml,
-  fetchPostV2TerrafundUploadShapefile
+  fetchPostV2TerrafundUploadGeojsonValidate,
+  fetchPostV2TerrafundUploadKmlValidate,
+  fetchPostV2TerrafundUploadShapefileValidate
 } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 
 const validatePolygonFileShow: FC = () => {
   const { openModal, closeModal } = useModalContext();
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
   useEffect(() => {
-    if (files && files.length > 0 && saveFlags) {
-      uploadFiles();
+    if (file && saveFlags) {
+      uploadFile();
       setSaveFlags(false);
     }
   }, [saveFlags]);
@@ -32,32 +32,41 @@ const validatePolygonFileShow: FC = () => {
     return null;
   };
 
-  const uploadFiles = async () => {
-    const uploadPromises = [];
+  const uploadFile = async () => {
+    const fileToUpload = file?.rawFile as File;
+    const formData = new FormData();
+    const fileType = getFileType(file!);
+    formData.append("file", fileToUpload);
+    let newRequest: any = formData;
 
-    for (const file of files) {
-      const fileToUpload = file.rawFile as File;
-      const formData = new FormData();
-      const fileType = getFileType(file);
-      formData.append("file", fileToUpload);
-      let newRequest: any = formData;
+    let uploadPromise;
 
-      switch (fileType) {
-        case "geojson":
-          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
-          break;
-        case "shapefile":
-          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
-          break;
-        case "kml":
-          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
-          break;
-        default:
-          break;
-      }
+    switch (fileType) {
+      case "geojson":
+        uploadPromise = fetchPostV2TerrafundUploadGeojsonValidate({ body: newRequest });
+        break;
+      case "shapefile":
+        uploadPromise = fetchPostV2TerrafundUploadShapefileValidate({ body: newRequest });
+        break;
+      case "kml":
+        uploadPromise = fetchPostV2TerrafundUploadKmlValidate({ body: newRequest });
+        break;
+      default:
+        break;
     }
 
-    await Promise.all(uploadPromises);
+    if (uploadPromise) {
+      const response = await uploadPromise;
+      if (response instanceof Blob) {
+        const blob = response;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "validation_result.csv";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    }
 
     closeModal();
   };
@@ -65,28 +74,29 @@ const validatePolygonFileShow: FC = () => {
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
-        title="Add Polygons"
+        title="Add Polygon"
         descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML.`}
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload file:&nbsp;</Text>
-            <Text variant="text-12-light">Test polygons</Text>
+            <Text variant="text-12-light">Test polygon</Text>
           </div>
         }
         onClose={closeModal}
-        content="Add polygons to test validation."
+        content="Add a polygon to test validation."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
-        setFile={setFiles}
+        setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
       />
     );
   };
+
   return (
     <>
       <Stack gap={1} className="pb-6">
         <Text variant="text-36-bold" className="leading-none">
-          Test Polygons
+          Test Polygon
         </Text>
       </Stack>
       upload polygon file
