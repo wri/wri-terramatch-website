@@ -11,6 +11,7 @@ import { StageEdit } from "@/admin/modules/stages/StageEdit";
 import { StageShow } from "@/admin/modules/stages/StageShow";
 import TaskShow from "@/admin/modules/tasks/components/TaskShow";
 import { TasksList } from "@/admin/modules/tasks/components/TasksList";
+import validatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/validationPolygonFileShow";
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
@@ -149,6 +150,11 @@ const audit = {
   ResourceName: "audit"
 };
 
+const validatePolygonFile = {
+  ResourceName: "validatePolygonFile",
+  List: validatePolygonFileShow
+};
+
 const modules = {
   user,
   organisation,
@@ -165,7 +171,8 @@ const modules = {
   projectReport,
   siteReport,
   nurseryReport,
-  audit
+  audit,
+  validatePolygonFile
 };
 
 export default modules;
