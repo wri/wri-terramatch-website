@@ -4,7 +4,6 @@ import Image from "next/image";
 import AvatarPlaceholder from "public/images/avatar-placeholder.svg";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
-import { useDeletePartner } from "@/admin/hooks/usePartnerDeletion";
 import Menu from "@/components/elements/Menu/Menu";
 import Notification from "@/components/elements/Notification/Notification";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
@@ -12,6 +11,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
+import { useDeletePartner } from "@/hooks/usePartnerDeletion";
 
 import { MENU_PLACEMENT_RIGHT_TOP } from "../../Menu/MenuVariant";
 

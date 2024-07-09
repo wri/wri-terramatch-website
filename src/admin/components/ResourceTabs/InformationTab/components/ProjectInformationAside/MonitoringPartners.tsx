@@ -4,12 +4,12 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useT } from "@transifex/react";
 import { Else, If, Then } from "react-if";
 
-import { useDeletePartner } from "@/admin/hooks/usePartnerDeletion";
 import Notification from "@/components/elements/Notification/Notification";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
+import { useDeletePartner } from "@/hooks/usePartnerDeletion";
 
 export const MonitoringPartnersTable = ({ project }: { project: any }) => {
   const t = useT();
