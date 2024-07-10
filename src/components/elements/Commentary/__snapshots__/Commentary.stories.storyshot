@@ -43,16 +43,6 @@ exports[`Storyshots Components/Elements/Commentary Default 1`] = `
           </p>
         </div>
       </div>
-      <div
-        className="flex h-fit w-[92px] items-center justify-center rounded-xl py-2 bg-primary-200"
-      >
-        <p
-          className="text-primary text-12-semibold"
-          data-testid="txt"
-        >
-          submitted
-        </p>
-      </div>
     </div>
     <p
       className="max-h-72 overflow-auto rounded-2xl border border-grey-750 p-3 leading-[175%] text-blueCustom-250 opacity-50 text-12-light"
@@ -69,7 +59,9 @@ exports[`Storyshots Components/Elements/Commentary Default 1`] = `
         <p
           className="text-grey-700 text-14-light"
           data-testid="txt"
-        />
+        >
+          img-attachment.jpeg
+        </p>
       </div>
       <div
         className="rounded-xl bg-neutral-150 px-2 py-1"
@@ -77,7 +69,9 @@ exports[`Storyshots Components/Elements/Commentary Default 1`] = `
         <p
           className="text-grey-700 text-14-light"
           data-testid="txt"
-        />
+        >
+          img-attachment-with-large-name.jpeg
+        </p>
       </div>
       <div
         className="rounded-xl bg-neutral-150 px-2 py-1"
@@ -85,7 +79,9 @@ exports[`Storyshots Components/Elements/Commentary Default 1`] = `
         <p
           className="text-grey-700 text-14-light"
           data-testid="txt"
-        />
+        >
+          img-attachment.jpeg
+        </p>
       </div>
       <div
         className="rounded-xl bg-neutral-150 px-2 py-1"
@@ -93,7 +89,9 @@ exports[`Storyshots Components/Elements/Commentary Default 1`] = `
         <p
           className="text-grey-700 text-14-light"
           data-testid="txt"
-        />
+        >
+          img-attachment.jpeg
+        </p>
       </div>
     </div>
   </div>

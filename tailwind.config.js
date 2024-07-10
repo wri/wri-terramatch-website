@@ -7,6 +7,7 @@ module.exports = {
       screens: {
         sx: "460px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
+        md: "1400px",
         wide: "2500px",
         lg: "1900px",
         sm: "1200px"
@@ -106,6 +107,7 @@ module.exports = {
       },
       tertiary: {
         DEFAULT: "#F0AB00",
+        650: "#FF8838",
         600: "#FF8938",
         550: "#FFA160",
         500: "#F0AB00",

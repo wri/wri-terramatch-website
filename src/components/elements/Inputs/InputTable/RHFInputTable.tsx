@@ -17,10 +17,11 @@ const RHFInputTable = ({ onChangeCapture, formHook, ...props }: PropsWithChildre
     field: { value, onChange }
   } = useController(props);
 
-  const _onChange = (value: any) => {
+  const _onChange = async (value: any) => {
     onChange(value);
+    const isValid = await formHook?.trigger(props.name);
 
-    onChangeCapture?.();
+    if (isValid) onChangeCapture?.();
   };
 
   const rowsValues: { [index: string]: any } = formHook?.watch(props.name);

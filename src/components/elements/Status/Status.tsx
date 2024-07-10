@@ -23,9 +23,10 @@ const Status = (props: StatusProps) => {
       approved: "Approved",
       submitted: "Submitted",
       draft: "Draft",
+      started: "Started",
       "under-review": "Under Review",
       "needs-more-information": "Needs More Information",
-      "planting-in-progress": "Planting in Progress",
+      "restoration-in-progress": "Restoration in Progress",
       "awaiting-approval": "Awaiting Approval"
     };
 
@@ -39,7 +40,9 @@ const Status = (props: StatusProps) => {
         className={`flex w-fit items-center justify-center gap-[6px] text-center ${COLOR_TEXT_MAP[status]}`}
       >
         <When condition={status === "approved"}>
-          <Icon name={IconNames.CHECK_CIRCLE_FILL} className="h-4 w-4 text-secondary" />
+          <div className="h-4 w-4">
+            <Icon name={IconNames.CHECK_CIRCLE_FILL} className="h-4 w-4 text-secondary" />
+          </div>
         </When>
         {convertStatusToReadableStatus(status)}
       </Text>

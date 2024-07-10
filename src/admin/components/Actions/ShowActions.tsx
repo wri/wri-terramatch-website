@@ -63,7 +63,7 @@ const ShowActions = ({
             {...deleteProps}
             mutationMode="undoable"
             className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
-            icon={<Icon className="h-6 w-6" name={IconNames.TRASH_PA} />}
+            icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
           />
         </When>
         <When condition={record && hasEdit}>

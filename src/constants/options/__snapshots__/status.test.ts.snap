@@ -3,7 +3,7 @@
 exports[`snapShot getStatusOptions 1`] = `
 [
   {
-    "title": "Draft",
+    "title": "Started",
     "value": "started",
   },
   {
@@ -13,6 +13,10 @@ exports[`snapShot getStatusOptions 1`] = `
   {
     "title": "Awaiting Review",
     "value": "awaiting-approval",
+  },
+  {
+    "title": "Restoration in progress",
+    "value": "restoration-in-progress",
   },
   {
     "title": "More info requested",

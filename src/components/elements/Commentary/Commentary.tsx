@@ -1,9 +1,17 @@
-import { When } from "react-if";
-
 import Text from "@/components/elements/Text/Text";
 export interface CommentaryFilesProps {
-  id: string;
-  file: string;
+  uuid?: string;
+  url?: string;
+  thumb_url?: string;
+  collection_name?: string;
+  title?: string;
+  file_name?: string;
+  mime_type?: string;
+  size?: number;
+  lat?: number;
+  lng?: number;
+  is_public?: boolean;
+  created_at?: string;
 }
 export interface CommentaryProps {
   name: string;
@@ -14,14 +22,9 @@ export interface CommentaryProps {
   files?: CommentaryFilesProps[];
 }
 
-const statusStyle = {
-  submitted: { container: "bg-primary-200", textColor: "text-primary" },
-  draft: { container: "bg-pinkCustom-200", textColor: "text-pinkCustom" }
-};
-
 const Commentary = (props: CommentaryProps) => {
-  const { name, lastName, date, commentary, files = [], status } = props;
-  const statusKey = status as keyof typeof statusStyle;
+  const { name, lastName, date, commentary, files = [] } = props;
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between">
@@ -41,17 +44,6 @@ const Commentary = (props: CommentaryProps) => {
             </Text>
           </div>
         </div>
-        <When condition={status}>
-          <div
-            className={`flex h-fit w-[92px] items-center justify-center rounded-xl py-2 ${
-              status ? statusStyle[statusKey].container : ""
-            }`}
-          >
-            <Text variant="text-12-semibold" className={`${status ? statusStyle[statusKey].textColor : ""}`}>
-              {status}
-            </Text>
-          </div>
-        </When>
       </div>
       <Text
         variant="text-12-light"
@@ -61,9 +53,9 @@ const Commentary = (props: CommentaryProps) => {
       </Text>
       <div className="flex flex-wrap gap-2">
         {files?.map((file: any) => (
-          <div key={file.id} className="rounded-xl bg-neutral-150 px-2 py-1">
+          <div key={file.uuid} className="rounded-xl bg-neutral-150 px-2 py-1">
             <Text variant="text-14-light" className="text-grey-700">
-              {file?.attachment}
+              {file?.file_name}
             </Text>
           </div>
         ))}

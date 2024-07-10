@@ -3,7 +3,6 @@ import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
-  DateField,
   EditButton,
   FunctionField,
   List,
@@ -69,14 +68,29 @@ const SiteDataGrid: FC = () => {
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
       <TextField source="name" label="Site Name" />
-      <CustomChipField source="readable_status" label="Status" sortable={false} />
+      <FunctionField
+        source="readable_status"
+        label="Status"
+        sortable={false}
+        render={(record: any) => <CustomChipField label={record.readable_status} />}
+      />
+      <FunctionField
+        source="update_request_status"
+        label="Change Request"
+        sortable={false}
+        render={(record: any) => {
+          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+            (option: any) => option.value === record.update_request_status
+          );
+          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+        }}
+      />
       <ColoredChipFieldArray
         source="status"
         label="Polygon Submitted"
         choices={optionToChoices(getPolygonsSubmittedTypes())}
       />
       <TextField source="project.name" label="Project Name" />
-      <DateField source="start_date" label="Date Created" locales="en-GB" />
       <FunctionField
         source="framework_key"
         label="Framework"

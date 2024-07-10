@@ -24,7 +24,7 @@ const PolygonReviewButtons = ({
     { id: "1", label: "Draft" },
     { id: "2", label: "Awaiting Approval" },
     { id: "3", label: "Needs More Information" },
-    { id: "4", label: "Planting In Progress" },
+    { id: "4", label: "Restoration In Progress" },
     { id: "5", label: "Approved" }
   ];
 
