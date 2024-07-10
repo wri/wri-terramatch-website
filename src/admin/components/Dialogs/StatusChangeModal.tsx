@@ -24,7 +24,7 @@ import { optionToChoices } from "@/utils/options";
 
 interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
-  status: "approve" | "moreinfo" | undefined;
+  status: "approve" | "moreinfo" | "restoration-in-progress" | undefined;
 }
 
 const moreInfoValidationSchema = yup.object({
