@@ -22,7 +22,6 @@ import {
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-import { useJSONParser } from "@/hooks/useJSONParser";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 export interface EntityMapAndGalleryCardProps {
@@ -81,7 +80,6 @@ const EntityMapAndGalleryCard = ({
   });
 
   const imagesGeoJson = useGetImagesGeoJSON(modelName, modelUUID);
-  const geoJSON = useJSONParser(boundaryGeojson);
 
   const filterOptions = useMemo(() => {
     const mapping: any = {
@@ -119,7 +117,6 @@ const EntityMapAndGalleryCard = ({
           sitePolygonData={sitePolygonData?.polygonsData}
           bbox={mapBbox}
           className="rounded-lg"
-          geojson={geoJSON}
           imageLayerGeojson={imagesGeoJson}
           onDeleteImage={uuid => deleteFile({ pathParams: { uuid } })}
           mapFunctions={mapFunctions}
