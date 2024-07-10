@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
 import { SitePolygonResponse } from "@/generated/apiSchemas";
 
@@ -24,6 +25,12 @@ const VersionHistory = ({ polygonUUID }: { polygonUUID: string }) => {
     <div className="flex flex-col gap-4">
       <Dropdown
         label="Polygon Version"
+        suffixLabel={
+          <button className="flex items-center justify-center rounded border-2 border-grey-500 bg-grey-500 text-white hover:border-primary hover:bg-white hover:text-primary">
+            <Icon name={IconNames.PLUS_PA} className=" h-3 w-3 lg:h-3.5 lg:w-3.5" />
+          </button>
+        }
+        suffixLabelView={true}
         labelClassName="capitalize"
         labelVariant="text-14-light"
         options={versionsOptions ?? []}
