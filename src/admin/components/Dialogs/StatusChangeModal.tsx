@@ -59,20 +59,6 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   })();
 
   const dialogTitle = (() => {
-    let title = "";
-
-    switch (status) {
-      case "approve":
-        title = "Are you sure you want to approve this {}";
-        break;
-      case "moreinfo":
-        title = "Request more information for {}";
-        break;
-      case "restoration-in-progress":
-        title = "Are you sure you want to mark {} as Restoration In Progress?";
-        break;
-    }
-
     let name;
     switch (resource as keyof typeof modules) {
       case "project":
@@ -95,7 +81,16 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
         break;
     }
 
-    return title.replace("{}", name);
+    switch (status) {
+      case "approve":
+        return `Are you sure you want to approve this ${name}`;
+
+      case "moreinfo":
+        return `Request more information for ${name}`;
+
+      case "restoration-in-progress":
+        return `Are you sure you want to mark ${name} as Restoration In Progress?`;
+    }
   })();
 
   const { data: formResponse } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>(
