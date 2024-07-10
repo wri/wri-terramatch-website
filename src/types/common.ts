@@ -201,7 +201,7 @@ export type UploadedFile = {
   };
 };
 
-export type Status = "edit" | "error" | "success" | "awaiting" | "warning";
+export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "restoration";
 
 export type EntityName = BaseModelNames | ReportsModelNames;
 export type BaseModelNames = "projects" | "sites" | "nurseries";

@@ -164,7 +164,7 @@ const ProjectReportDetailPage = () => {
             body: <UploadedFilesTab report={report} />
           }
         ]}
-        containerClassName="max-w-7xl px-10 xl:px-0 w-full overflow-auto"
+        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
       />
     </LoadingContainer>
   );

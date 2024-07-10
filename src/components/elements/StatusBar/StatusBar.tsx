@@ -37,6 +37,10 @@ const StatusBar = ({ title, status, children, description = "", className, ...pr
     warning: {
       classNames: "bg-tertiary-200",
       title: t("Status: More Info Requested")
+    },
+    restoration: {
+      classNames: "bg-green-30",
+      title: t("Status: Restoration in Progress")
     }
   };
 

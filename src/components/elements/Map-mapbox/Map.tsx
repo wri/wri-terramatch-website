@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect } from "react";
@@ -21,6 +22,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import useAlertHook from "../MapPolygonPanel/hooks/useAlertHook";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
@@ -124,7 +126,10 @@ export const MapContainer = ({
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
+  const t = useT();
   const { isUserDrawingEnabled } = contextMapArea;
+  const { displayNotification } = useAlertHook();
+
   if (!mapFunctions) {
     return null;
   }
@@ -182,7 +187,7 @@ export const MapContainer = ({
   }, [bbox]);
 
   useEffect(() => {
-    if (props?.modelFilesData) {
+    if (map?.current && styleLoaded && props?.modelFilesData) {
       if (showMediaPopups) {
         addMediaSourceAndLayer(map.current, props?.modelFilesData);
       } else {
@@ -190,7 +195,7 @@ export const MapContainer = ({
         removeMediaLayer(map.current);
       }
     }
-  }, [props?.modelFilesData, showMediaPopups]);
+  }, [props?.modelFilesData, showMediaPopups, styleLoaded]);
 
   useEffect(() => {
     if (geojson && map.current && draw.current) {
@@ -202,7 +207,7 @@ export const MapContainer = ({
     if (polygonsData && map.current && draw.current) {
       const currentMap = map.current;
       const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-      const statuses = ["submitted", "approved", "need-more-info"];
+      const statuses = ["submitted", "approved", "need-more-info", "draft"];
       statuses.forEach(status => {
         if (newPolygonData[status]) {
           newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
@@ -244,6 +249,9 @@ export const MapContainer = ({
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
+            displayNotification(t("Geometry updated successfully."), "success", t("Success"));
+          } else {
+            displayNotification(t("Please try again later."), "error", t("Error"));
           }
         }
       }
@@ -268,7 +276,7 @@ export const MapContainer = ({
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
-        <When condition={!!status && !!record.uuid && validationType === "bulkValidation"}>
+        <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
             <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
           </ControlGroup>

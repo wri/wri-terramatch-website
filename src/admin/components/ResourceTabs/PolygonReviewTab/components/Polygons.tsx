@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
+import { formatFileName } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
+import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -65,7 +67,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled } = contextMapArea;
+  const { setIsUserDrawingEnabled, polygonNotificationStatus } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -90,7 +92,7 @@ const Polygons = (props: IPolygonProps) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `polygon.geojson`;
+    link.download = `${formatFileName(polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label)}.geojson`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -169,20 +171,6 @@ const Polygons = (props: IPolygonProps) => {
       }
     },
     {
-      id: "4",
-      render: () => (
-        <div className="flex items-center gap-2">
-          <Icon name={IconNames.COMMENT} className="h-6 w-6" />
-          <Text variant="text-12-bold">Comment</Text>
-        </div>
-      ),
-      onClick: () => {
-        setSelectedPolygon(item);
-        setIsOpenPolygonDrawer(true);
-        setIsPolygonStatusOpen(true);
-      }
-    },
-    {
       id: "5",
       render: () => <div className="h-[1px] w-full bg-grey-750" />,
       MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
@@ -191,7 +179,7 @@ const Polygons = (props: IPolygonProps) => {
       id: "6",
       render: () => (
         <div className="flex items-center gap-2">
-          <Icon name={IconNames.TRASH_PA} className="h-6 w-6" />
+          <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
           <Text variant="text-12-bold">Delete Polygon</Text>
         </div>
       ),
@@ -203,6 +191,7 @@ const Polygons = (props: IPolygonProps) => {
 
   return (
     <div>
+      <Notification {...polygonNotificationStatus} />
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer
           polygonSelected={selectedPolygon?.uuid ?? ""}

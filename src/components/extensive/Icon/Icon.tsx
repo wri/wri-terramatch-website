@@ -156,7 +156,9 @@ export enum IconNames {
   IC_NEEDS_MORE_INFORMATION = "ic_needs-more-information",
   IC_SUBMITTED = "ic_submitted",
   IC_ARROW_COLLAPSE = "ic-arrow-collapse",
-  IMAGE_ICON = "image-icon"
+  IMAGE_ICON = "image-icon",
+  DOCUMENT_CIRCLE_HOMEPAGE = "document-circle-home",
+  TREE_CIRCLE_HOMEPAGE = "tree-circle-home"
 }
 
 export interface IconProps {

@@ -47,6 +47,35 @@ interface SiteOverviewTabProps {
   site: any;
 }
 
+const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonsDataResponse }) => {
+  const t = useT();
+  return (
+    <>
+      <Text
+        variant="text-12-light"
+        as="p"
+        className="text-center"
+        dangerouslySetInnerHTML={{
+          __html: t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
+            siteName: siteName
+          })
+        }}
+      />
+      <div className="ml-6">
+        <ul style={{ listStyleType: "circle" }}>
+          {(polygons as SitePolygonsDataResponse)?.map(polygon => (
+            <li key={polygon.id}>
+              <Text variant="text-12-light" as="p">
+                {polygon?.poly_name ?? t("Unnamed Polygon")}
+              </Text>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
+
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
@@ -58,7 +87,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
-  const [polygonsForSubmissions, setPolygonsForSubmissions] = useState<SitePolygonsDataResponse>([]);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -167,34 +195,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
         commentArea
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
-        content={
-          <>
-            <Text
-              variant="text-12-light"
-              as="p"
-              className="text-center"
-              dangerouslySetInnerHTML={{
-                __html: t(
-                  `Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`,
-                  {
-                    siteName: site?.name
-                  }
-                )
-              }}
-            />
-            <div className="ml-6">
-              <ul style={{ listStyleType: "circle" }}>
-                {(polygons as SitePolygonsDataResponse)?.map(polygon => (
-                  <li key={polygon.id}>
-                    <Text variant="text-12-light" as="p">
-                      {polygon?.poly_name}
-                    </Text>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        }
+        content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name} />}
         onClose={closeModal}
         onConfirm={async data => {
           closeModal();
@@ -202,11 +203,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             await fetchPutV2SitePolygonStatusBulk({
               body: {
                 comment: data,
-                updatePolygons: polygonsForSubmissions.map(polygon => {
-                  return { uuid: polygon.uuid, status: polygon.status };
+                updatePolygons: (polygons as SitePolygonsDataResponse).map(polygon => {
+                  return { uuid: polygon.uuid, status: "submitted" };
                 })
               }
             });
+            setShouldRefetchPolygonData(true);
             setShowSubmissionSuccess(true);
             setTimeout(() => {
               setShowSubmissionSuccess(false);
@@ -230,7 +232,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: (polygons: unknown) => {
-            setPolygonsForSubmissions(polygons as SitePolygonsDataResponse);
             closeModal();
             openFormModalHandlerSubmitReviewConfirm(polygons);
           }
@@ -243,15 +244,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   };
 
   const itemsSubmitPolygon = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          {t("Request Support")}
-        </Text>
-      ),
-      onClick: () => {}
-    },
     {
       id: "2",
       render: () => (
@@ -267,14 +259,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
-      <Notification
-        open={showSubmissionSuccess}
-        title={t("Success, Your Polygons were submitted!")}
-        message={t(
-          "Admins have been notified and a confirmation email has been sent. Follow-up through the Audit Log."
-        )}
-        type="success"
-      />
+      <Notification open={showSubmissionSuccess} title={t("Success! Your polygons were submitted.")} type="success" />
       <PageBody>
         <PageRow>
           <PageCard
@@ -294,7 +279,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             <div className="flex w-full">
               <div className="grid w-[50%] grid-cols-2 content-start gap-x-8 gap-y-7 pr-20">
                 <When condition={isPPC}>
-                  <GoalProgressCard label={t("Workday Count (PPC)")} value={site.workday_count} />
+                  <GoalProgressCard label={t("Workday Count (PPC)")} value={site.self_reported_workday_count} />
                 </When>
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
               </div>
@@ -323,9 +308,17 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               <div className="flex gap-11 ">
                 <div className="w-[54%]">
                   <Text variant="text-14-light" className="mb-6">
-                    {t(
-                      "Add, remove or edit polygons associated to a site. Polygons may be edited in the map below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile application."
-                    )}
+                    {t("Use the map below to view, add, remove or edit polygons associated to a site. ")}
+                    <a
+                      className="text-14-light text-primary-500 hover:underline"
+                      target="_blank"
+                      href={
+                        "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                      }
+                      rel="noreferrer"
+                    >
+                      {t("Access our guide for adding polygons to a site on TerraMatch here.")}
+                    </a>
                   </Text>
                   <div className="flex w-full gap-3">
                     {isMonitoring && (
@@ -338,7 +331,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       variant="white-border"
                       className=""
                       onClick={() => {
-                        downloadSiteGeoJsonPolygons(site?.uuid);
+                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
@@ -368,7 +361,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </PageColumn>
         </PageRow>
         <PageRow>
-          <PageColumn>
+          <PageColumn className="relative rounded-xl border border-neutral-200">
+            <div className="absolute z-10 h-full w-full rounded-xl bg-white/30 backdrop-blur-sm" />
             <PageCard title={t("Project Monitoring")}>
               <div className="flex items-center justify-between text-darkCustom">
                 <Text variant="text-14-light" className="w-[65%]">

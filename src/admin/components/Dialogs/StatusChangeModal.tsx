@@ -5,10 +5,11 @@ import {
   DialogActions,
   DialogContent,
   DialogProps,
-  DialogTitle
+  DialogTitle,
+  TextField
 } from "@mui/material";
-import { useMemo } from "react";
-import { AutocompleteArrayInput, Form, TextInput, useShowContext } from "react-admin";
+import { useMemo, useState } from "react";
+import { AutocompleteArrayInput, Form, useShowContext } from "react-admin";
 import { When } from "react-if";
 import * as yup from "yup";
 
@@ -36,6 +37,7 @@ const genericValidationSchema = yup.object({
 
 const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChangeModalProps) => {
   const { record, refetch, resource } = useShowContext();
+  const [feedbackValue, setFeedbackValue] = useState("");
 
   const resourceName = (() => {
     switch (resource as keyof typeof modules) {
@@ -114,7 +116,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     if (!record || !status) return;
 
     const body: any = {
-      feedback: data.feedback
+      feedback: feedbackValue
     };
 
     if (data.feedback_fields && status === "moreinfo") {
@@ -129,7 +131,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
       },
       body
     });
-
+    setFeedbackValue("");
     handleClose();
   };
 
@@ -142,7 +144,15 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
         <DialogTitle>{dialogTitle}</DialogTitle>
 
         <DialogContent>
-          <TextInput source="feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
+          <TextField
+            value={feedbackValue}
+            onChange={e => setFeedbackValue(e.target.value)}
+            label="Feedback"
+            fullWidth
+            multiline
+            margin="dense"
+            helperText={false}
+          />
           <When condition={status === "moreinfo" && feedbackChoices.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"

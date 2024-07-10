@@ -140,9 +140,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       approved: "bg-secondary",
       submitted: "bg-blue",
       draft: "bg-pinkCustom",
+      started: "bg-pinkCustom",
       "Under Review": "bg-tertiary-600",
       "needs-more-information": "bg-tertiary-600",
-      "planting-in-progress": "bg-blue",
+      "restoration-in-progress": "bg-blue",
       "awaiting-approval": "bg-tertiary-600"
     };
 

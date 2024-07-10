@@ -12,7 +12,9 @@ import Modal from "@/components/extensive/Modal/Modal";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -27,6 +29,14 @@ import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
 
+import AuditLog from "./tabs/AuditLog";
+
+const ButtonStates = {
+  PROJECTS: 0,
+  SITE: 1,
+  POLYGON: 2
+};
+
 const SiteDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -34,7 +44,7 @@ const SiteDetailPage = () => {
   const siteUUID = router.query.uuid as string;
   const { openToast } = useToastContext();
 
-  const { data, isLoading } = useGetV2SitesUUID({
+  const { data, isLoading, refetch } = useGetV2SitesUUID({
     pathParams: { uuid: siteUUID }
   });
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
@@ -48,6 +58,7 @@ const SiteDetailPage = () => {
   });
 
   const site = (data?.data || {}) as any;
+  const { loading } = useLoading();
   const { isPPC, isHBF } = useFramework(site);
   const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
   const { handleExport } = useGetExportEntityHandler("sites", site.uuid, site.name);
@@ -91,6 +102,11 @@ const SiteDetailPage = () => {
 
   return (
     <MapAreaProvider>
+      {loading && (
+        <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
+          <Loader />
+        </div>
+      )}
       <LoadingContainer loading={isLoading}>
         <Head>
           <title>{`${t("Site")} ${site.name}`}</title>
@@ -149,6 +165,11 @@ const SiteDetailPage = () => {
               key: "completed-tasks",
               title: t("Completed Reports"),
               body: <SiteCompletedReportsTab siteUUID={site.uuid} />
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog site={site} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"

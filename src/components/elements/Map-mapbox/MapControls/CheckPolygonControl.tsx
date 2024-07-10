@@ -3,12 +3,18 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchPostV2TerrafundValidationSitePolygons, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
+import { useGetV2TerrafundValidationSite, usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
+import Notification from "../../Notification/Notification";
 import Text from "../../Text/Text";
 
 export interface CheckSitePolygonProps {
@@ -22,6 +28,7 @@ interface CheckedPolygon {
   uuid: string;
   valid: boolean;
   checked: boolean;
+  nonValidCriteria: Record<string, any>[];
 }
 
 interface TransformedData {
@@ -39,7 +46,19 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
+  const { showLoader, hideLoader } = useLoading();
   const t = useT();
+  const [notificationStatus, setNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: t("Success!")
+  });
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
     CheckedPolygon[]
   >(
@@ -52,21 +71,58 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       enabled: !!siteUuid
     }
   );
-
-  const validatePolygons = async () => {
-    await fetchPostV2TerrafundValidationSitePolygons({ queryParams: { uuid: siteUuid ?? "" } });
-    reloadSitePolygonValidation();
-    setClickedValidation(false);
+  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
+    setNotificationStatus({
+      open: true,
+      message,
+      type,
+      title
+    });
+    setTimeout(() => {
+      setNotificationStatus({
+        open: false,
+        message: "",
+        type: "success",
+        title: ""
+      });
+    }, 3000);
   };
+
+  const { mutate: getValidations } = usePostV2TerrafundValidationSitePolygons({
+    onSuccess: () => {
+      reloadSitePolygonValidation();
+      setClickedValidation(false);
+      hideLoader();
+      displayNotification(
+        t("Please update and re-run if any polygons fail."),
+        "success",
+        t("Success! TerraMatch reviewed all polygons")
+      );
+    },
+    onError: () => {
+      hideLoader();
+      setClickedValidation(false);
+      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+    }
+  });
 
   const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
     return currentValidationSite.map((checkedPolygon, index) => {
       const matchingPolygon = Array.isArray(sitePolygonData)
         ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
         : null;
+      const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+      const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
+      const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+      let isValid = false;
+      if (checkedPolygon?.nonValidCriteria?.length === 0) {
+        isValid = true;
+      } else if (failingCriterias?.length === 0) {
+        isValid = true;
+      }
       return {
         id: index + 1,
-        valid: checkedPolygon.valid,
+        valid: checkedPolygon.checked && isValid,
         checked: checkedPolygon.checked,
         label: matchingPolygon?.poly_name ?? null
       };
@@ -88,22 +144,21 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     if (clickedValidation) {
-      validatePolygons();
+      showLoader();
+      getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
 
   return (
     <div className="grid gap-2">
+      <Notification {...notificationStatus} />
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
-        <When condition={polygonCheck}>
-          <Text variant="text-10-light">{t("Your polygons have been updated")}</Text>
-        </When>
         <Button
           variant="text"
           className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
           onClick={() => setClickedValidation(true)}
         >
-          {t("Check Polygons")}
+          {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
       </div>
       <When condition={polygonCheck}>

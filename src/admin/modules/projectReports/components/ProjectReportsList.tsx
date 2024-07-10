@@ -9,7 +9,6 @@ import {
   List,
   ReferenceInput,
   SearchInput,
-  SelectField,
   SelectInput,
   ShowButton,
   TextField
@@ -19,6 +18,7 @@ import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -47,12 +47,22 @@ const ProjectReportDataGrid: FC = () => {
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
       <TextField source="title" label="Report Name" />
-      <TextField source="readable_status" label="Status" sortable={false} />
-      <SelectField
+      <FunctionField
+        source="readable_status"
+        label="Status"
+        sortable={false}
+        render={(record: any) => <CustomChipField label={record.readable_status} />}
+      />
+      <FunctionField
         source="update_request_status"
         label="Change Request Status"
         sortable={false}
-        choices={optionToChoices(getChangeRequestStatusOptions())}
+        render={(record: any) => {
+          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+            (option: any) => option.value === record.update_request_status
+          );
+          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+        }}
       />
       <TextField source="project.name" label="Project" />
       <FunctionField

@@ -39,7 +39,7 @@ const VersionInformation = ({ setPreviewVersion }: { setPreviewVersion: Dispatch
       id: "2",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.TRASH_PA} className="h-5 w-4 lg:h-6 lg:w-6 " />
+          <Icon name={IconNames.TRASH_PA} className="h-4 w-4 lg:h-5 lg:w-5 " />
           &nbsp; {t("Delete Version")}
         </Text>
       ),
