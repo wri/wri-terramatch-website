@@ -24,7 +24,7 @@ import { optionToChoices } from "@/utils/options";
 
 interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
-  status: "approve" | "moreinfo" | undefined;
+  status: "approve" | "moreinfo" | "restoration-in-progress" | undefined;
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -59,30 +59,38 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   })();
 
   const dialogTitle = (() => {
-    let title = status === "approve" ? "Are you sure you want to approve this " : "Request more information for ";
-
+    let name;
     switch (resource as keyof typeof modules) {
       case "project":
-        title += record?.name ?? "Project";
+        name = record?.name ?? "Project";
         break;
       case "site":
-        title += record?.name ?? "Site";
+        name = record?.name ?? "Site";
         break;
       case "nursery":
-        title += record?.name ?? "Nursery";
+        name = record?.name ?? "Nursery";
         break;
       case "projectReport":
-        title += record?.title ?? "Project Report";
+        name = record?.title ?? "Project Report";
         break;
       case "siteReport":
-        title += record?.title ?? "Site Report";
+        name = record?.title ?? "Site Report";
         break;
       case "nurseryReport":
-        title += record?.title ?? "Nursery Report";
+        name = record?.title ?? "Nursery Report";
         break;
     }
 
-    return title;
+    switch (status) {
+      case "approve":
+        return `Are you sure you want to approve this ${name}`;
+
+      case "moreinfo":
+        return `Request more information for ${name}`;
+
+      case "restoration-in-progress":
+        return `Are you sure you want to mark ${name} as Restoration In Progress?`;
+    }
   })();
 
   const { data: formResponse } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>(
@@ -144,15 +152,17 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
         <DialogTitle>{dialogTitle}</DialogTitle>
 
         <DialogContent>
-          <TextField
-            value={feedbackValue}
-            onChange={e => setFeedbackValue(e.target.value)}
-            label="Feedback"
-            fullWidth
-            multiline
-            margin="dense"
-            helperText={false}
-          />
+          <When condition={status !== "restoration-in-progress"}>
+            <TextField
+              value={feedbackValue}
+              onChange={e => setFeedbackValue(e.target.value)}
+              label="Feedback"
+              fullWidth
+              multiline
+              margin="dense"
+              helperText={false}
+            />
+          </When>
           <When condition={status === "moreinfo" && feedbackChoices.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"
