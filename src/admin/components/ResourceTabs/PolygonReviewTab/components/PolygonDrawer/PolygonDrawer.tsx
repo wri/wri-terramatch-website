@@ -16,6 +16,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
+  useGetV2SitePolygonUuid,
   useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -61,6 +62,7 @@ const PolygonDrawer = ({
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
+  const [selectPolygonVersion, setSelectPolygonVersion] = useState<string>("");
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -170,6 +172,12 @@ const PolygonDrawer = ({
     fetchCriteriaValidation();
   }, [buttonToogle, selectedPolygonData]);
 
+  const { data: polygonVersion } = useGetV2SitePolygonUuid({
+    pathParams: {
+      uuid: selectPolygonVersion as string
+    }
+  });
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -227,10 +235,15 @@ const PolygonDrawer = ({
             </Accordion>
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
-              {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
+              {selectedPolygonData && (
+                <AttributeInformation selectedPolygon={(polygonVersion as any) ?? selectedPolygonData} />
+              )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
-              <VersionHistory polygonUUID={selectedPolygonData?.uuid as string} />
+              <VersionHistory
+                polygonUUID={selectedPolygonData?.primary_uuid as string}
+                setSelectPolygonVersion={setSelectPolygonVersion}
+              />
             </Accordion>
             <Divider />
           </div>

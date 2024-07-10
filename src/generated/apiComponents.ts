@@ -34714,7 +34714,7 @@ export const useGetV2SitePolygonUuidVersions = <TData = GetV2SitePolygonUuidVers
   );
 };
 
-export type PostV2SitePolygonNewVersionPathParams = {
+export type PostV2SitePolygonUuidNewVersionPathParams = {
   /**
    * The UUID of the site polygon
    *
@@ -34723,9 +34723,9 @@ export type PostV2SitePolygonNewVersionPathParams = {
   uuid: string;
 };
 
-export type PostV2SitePolygonNewVersionError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2SitePolygonUuidNewVersionError = Fetcher.ErrorWrapper<undefined>;
 
-export type PostV2SitePolygonNewVersionResponse = {
+export type PostV2SitePolygonUuidNewVersionResponse = {
   data?: {
     id?: number;
     uuid?: string;
@@ -34775,41 +34775,41 @@ export type PostV2SitePolygonNewVersionResponse = {
   };
 };
 
-export type PostV2SitePolygonNewVersionVariables = {
-  pathParams: PostV2SitePolygonNewVersionPathParams;
+export type PostV2SitePolygonUuidNewVersionVariables = {
+  pathParams: PostV2SitePolygonUuidNewVersionPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPostV2SitePolygonNewVersion = (
-  variables: PostV2SitePolygonNewVersionVariables,
+export const fetchPostV2SitePolygonUuidNewVersion = (
+  variables: PostV2SitePolygonUuidNewVersionVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    PostV2SitePolygonNewVersionResponse,
-    PostV2SitePolygonNewVersionError,
+    PostV2SitePolygonUuidNewVersionResponse,
+    PostV2SitePolygonUuidNewVersionError,
     undefined,
     {},
     {},
-    PostV2SitePolygonNewVersionPathParams
-  >({ url: "/v2/site-polygon/new-version", method: "post", ...variables, signal });
+    PostV2SitePolygonUuidNewVersionPathParams
+  >({ url: "/v2/site-polygon/{uuid}/new-version", method: "post", ...variables, signal });
 
-export const usePostV2SitePolygonNewVersion = (
+export const usePostV2SitePolygonUuidNewVersion = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      PostV2SitePolygonNewVersionResponse,
-      PostV2SitePolygonNewVersionError,
-      PostV2SitePolygonNewVersionVariables
+      PostV2SitePolygonUuidNewVersionResponse,
+      PostV2SitePolygonUuidNewVersionError,
+      PostV2SitePolygonUuidNewVersionVariables
     >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<
-    PostV2SitePolygonNewVersionResponse,
-    PostV2SitePolygonNewVersionError,
-    PostV2SitePolygonNewVersionVariables
+    PostV2SitePolygonUuidNewVersionResponse,
+    PostV2SitePolygonUuidNewVersionError,
+    PostV2SitePolygonUuidNewVersionVariables
   >(
-    (variables: PostV2SitePolygonNewVersionVariables) =>
-      fetchPostV2SitePolygonNewVersion({ ...fetcherOptions, ...variables }),
+    (variables: PostV2SitePolygonUuidNewVersionVariables) =>
+      fetchPostV2SitePolygonUuidNewVersion({ ...fetcherOptions, ...variables }),
     options
   );
 };

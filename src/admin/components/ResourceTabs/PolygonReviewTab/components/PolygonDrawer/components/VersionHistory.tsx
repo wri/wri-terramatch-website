@@ -3,14 +3,33 @@ import { useT } from "@transifex/react";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
+import { fetchPostV2SitePolygonUuidNewVersion, useGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
 import { SitePolygonResponse } from "@/generated/apiSchemas";
 
-const VersionHistory = ({ polygonUUID }: { polygonUUID: string }) => {
+const VersionHistory = ({
+  polygonUUID,
+  setSelectPolygonVersion
+}: {
+  polygonUUID: string;
+  setSelectPolygonVersion: any;
+}) => {
   const t = useT();
   const { data } = useGetV2SitePolygonUuidVersions({
     pathParams: { uuid: polygonUUID }
   });
+
+  const mutate = fetchPostV2SitePolygonUuidNewVersion;
+
+  const clonePolygon = async () => {
+    try {
+      const response = await mutate({
+        pathParams: { uuid: polygonUUID }
+      });
+      console.log("Response:", response);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
   const versionsOptions = data?.map((item: SitePolygonResponse) => {
     return {
@@ -26,7 +45,10 @@ const VersionHistory = ({ polygonUUID }: { polygonUUID: string }) => {
       <Dropdown
         label="Polygon Version"
         suffixLabel={
-          <button className="flex items-center justify-center rounded border-2 border-grey-500 bg-grey-500 text-white hover:border-primary hover:bg-white hover:text-primary">
+          <button
+            onClick={clonePolygon}
+            className="flex items-center justify-center rounded border-2 border-grey-500 bg-grey-500 text-white hover:border-primary hover:bg-white hover:text-primary"
+          >
             <Icon name={IconNames.PLUS_PA} className=" h-3 w-3 lg:h-3.5 lg:w-3.5" />
           </button>
         }
@@ -35,7 +57,9 @@ const VersionHistory = ({ polygonUUID }: { polygonUUID: string }) => {
         labelVariant="text-14-light"
         options={versionsOptions ?? []}
         defaultValue={[polygonUUID]}
-        onChange={() => {}}
+        onChange={e => {
+          setSelectPolygonVersion(e[0]);
+        }}
       />
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full">
