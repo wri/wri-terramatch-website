@@ -61,8 +61,17 @@ const validatePolygonFileShow: FC = () => {
         const blob = response;
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
+        const getFormattedDate = () => {
+          const date = new Date();
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        };
+
+        const currentDate = getFormattedDate();
         a.href = url;
-        a.download = "validation_result.csv";
+        a.download = `polygon-check-results-${currentDate}.csv`;
         a.click();
         window.URL.revokeObjectURL(url);
       }
