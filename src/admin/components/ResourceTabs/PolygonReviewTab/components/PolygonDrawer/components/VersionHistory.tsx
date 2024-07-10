@@ -35,7 +35,7 @@ const VersionHistory = ({ polygonUUID }: { polygonUUID: string }) => {
           {t("Delete")}
         </Button>
         <Button variant="semi-black" className="w-full">
-          {t("Create")}
+          {t("Make Active")}
         </Button>
       </div>
     </div>
