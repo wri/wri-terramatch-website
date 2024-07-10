@@ -88,6 +88,7 @@ const validatePolygonFileShow: FC = () => {
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
+        allowMultiple={false}
       />
     );
   };
