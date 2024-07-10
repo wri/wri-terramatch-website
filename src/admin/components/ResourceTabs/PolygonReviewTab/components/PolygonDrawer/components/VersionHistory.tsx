@@ -2,27 +2,32 @@ import { useT } from "@transifex/react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import { useGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
+import { SitePolygonResponse } from "@/generated/apiSchemas";
 
-const dropdownOptions = [
-  {
-    title: "1213023412",
-    value: 1
-  },
-  {
-    title: "1213023414",
-    value: 2
-  }
-];
-const VersionHistory = () => {
+const VersionHistory = ({ polygonUUID }: { polygonUUID: string }) => {
   const t = useT();
+  const { data } = useGetV2SitePolygonUuidVersions({
+    pathParams: { uuid: polygonUUID }
+  });
+
+  const versionsOptions = data?.map((item: SitePolygonResponse) => {
+    return {
+      title: item?.poly_name,
+      value: item?.uuid
+    };
+  });
+  console.log("test", data);
+  console.log("test", polygonUUID);
+  console.log("test", versionsOptions);
   return (
     <div className="flex flex-col gap-4">
       <Dropdown
         label="Polygon Version"
         labelClassName="capitalize"
         labelVariant="text-14-light"
-        options={dropdownOptions}
-        defaultValue={[1]}
+        options={versionsOptions ?? []}
+        defaultValue={[polygonUUID]}
         onChange={() => {}}
       />
       <div className="mt-auto flex items-center justify-end gap-5">

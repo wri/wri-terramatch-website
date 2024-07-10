@@ -25,6 +25,7 @@ import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
+import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
@@ -227,6 +228,9 @@ const PolygonDrawer = ({
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
+            </Accordion>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
+              <VersionHistory polygonUUID={selectedPolygonData?.uuid as string} />
             </Accordion>
             <Divider />
           </div>
