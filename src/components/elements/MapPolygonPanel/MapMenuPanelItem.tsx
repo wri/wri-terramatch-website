@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -40,6 +40,7 @@ const MapMenuPanelItem = ({
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
+  const [hideCommentFeature] = useState(true);
   const { openModal, closeModal } = useModalContext();
   const { isMonitoring } = useMapAreaContext();
   const t = useT();
@@ -94,6 +95,21 @@ const MapMenuPanelItem = ({
     }
   ];
 
+  if (!hideCommentFeature) {
+    commonItems.push({
+      id: "4",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.COMMENT} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Comment")}
+        </Text>
+      ),
+      onClick: () => {
+        openFormModalHandlerAddCommentary();
+      }
+    });
+  }
+
   const monitoringItems = [
     {
       id: "0",
@@ -106,20 +122,6 @@ const MapMenuPanelItem = ({
       onClick: () => setClickedButton("editPolygon")
     },
     ...commonItems,
-    {
-      id: "4",
-      is_airtable: true,
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center">
-          <Icon name={IconNames.COMMENT} className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; {t("Comment")}
-        </Text>
-      ),
-      onClick: (uuid: any) => {
-        console.log("uuid", uuid);
-        openFormModalHandlerAddCommentary();
-      }
-    },
     {
       id: "5",
       render: () => (

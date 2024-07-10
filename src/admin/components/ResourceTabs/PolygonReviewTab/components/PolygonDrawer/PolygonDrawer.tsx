@@ -5,6 +5,7 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
@@ -30,17 +31,6 @@ const statusColor: Record<string, string> = {
   submitted: "bg-blue",
   approved: "bg-green",
   "needs-more-information": "bg-tertiary-600"
-};
-
-const validationLabels: any = {
-  3: "No Overlapping Polygon",
-  4: "No Self-Intersection",
-  6: "Inside Size Limit",
-  7: "Within Country",
-  8: "No Spike",
-  10: "Polygon Type",
-  12: "Within Total Area Expected",
-  14: "Data Completed"
 };
 
 export interface ICriteriaCheckItem {

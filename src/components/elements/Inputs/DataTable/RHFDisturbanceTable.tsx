@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
@@ -10,7 +10,6 @@ import {
   getDisturbanceIntensityOptions,
   getDisturbanceTypeOptions
 } from "@/constants/options/disturbance";
-import { useDeleteV2DisturbancesUUID, usePostV2Disturbances } from "@/generated/apiComponents";
 import { Entity } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
@@ -117,58 +116,16 @@ export const getDisturbanceTableFields = (
 
 const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFDisturbanceTableProps>) => {
   const t = useT();
-  const { field } = useController(props);
-  const value = field?.value || [];
+  const {
+    field: { value, onChange }
+  } = useController(props);
 
-  const { mutate: createDisturbances } = usePostV2Disturbances({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-      onChangeCapture && onChangeCapture();
-    }
-  });
-
-  const { mutate: removeDisturbance } = useDeleteV2DisturbancesUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
-
-  useEffect(() => {
-    onChangeCapture && onChangeCapture();
-    props.formHook && props.formHook.register(field.name);
-    props.formHook?.clearErrors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.formHook, field.name, entity?.entityName, entity?.entityUUID]);
-
-  useEffect(() => {
-    props.formHook?.clearErrors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, props.formHook]);
   return (
     <DataTable
       {...props}
-      value={value}
-      handleCreate={data => {
-        onChangeCapture && onChangeCapture();
-        createDisturbances({
-          body: {
-            ...data,
-            model_type: entity?.entityName,
-            //@ts-ignore
-            model_uuid: entity?.entityUUID
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeDisturbance({ pathParams: { uuid } });
-        }
-      }}
+      value={value ?? []}
+      generateUuids={true}
+      onChange={onChange}
       addButtonCaption={t("Add Disturbance")}
       tableColumns={getDisturbanceTableColumns(props, t)}
       fields={getDisturbanceTableFields(props, t)}

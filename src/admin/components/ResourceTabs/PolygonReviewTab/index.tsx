@@ -125,14 +125,14 @@ const ContentForApproval = ({
 );
 
 const PolygonReviewTab: FC<IProps> = props => {
-  const { isLoading: ctxLoading, record } = useShowContext();
+  const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
 
   const onSave = (geojson: any, record: any) => {
-    storePolygon(geojson, record, refetch, setPolygonFromMap);
+    storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({

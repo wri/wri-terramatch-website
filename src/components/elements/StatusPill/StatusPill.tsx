@@ -48,6 +48,13 @@ const StatusPill = ({ status, children, className, ...props }: StatusPillProps) 
         name: IconNames.WARNING,
         classNames: "fill-tertiary"
       }
+    },
+    restoration: {
+      classNames: "bg-green-30",
+      iconProps: {
+        name: IconNames.CLOCK,
+        classNames: "fill-green-100"
+      }
     }
   };
 

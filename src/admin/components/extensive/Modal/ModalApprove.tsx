@@ -11,7 +11,11 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2SitesSitePolygon, useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
+import {
+  GetV2TerrafundValidationSiteResponse,
+  useGetV2SitesSitePolygon,
+  useGetV2TerrafundValidationSite
+} from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
@@ -28,9 +32,24 @@ export interface ModalApproveProps extends ModalProps {
 interface DisplayedPolygonType {
   id: string | undefined;
   name: string | undefined;
+  checked: boolean | undefined;
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
 }
+type ValidationCriteria = GetV2TerrafundValidationSiteResponse[number];
+
+const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
+  if (!criteria.checked) {
+    return false;
+  }
+  if (criteria?.nonValidCriteria?.length === 0) {
+    return true;
+  }
+  const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+  const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
+  const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+  return failingCriterias?.length === 0;
+};
 
 const ModalApprove: FC<ModalApproveProps> = ({
   iconProps,
@@ -66,17 +85,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-        let canBeApproved = false;
-        if (criteria?.nonValidCriteria?.length === 0) {
-          canBeApproved = true;
-        } else if (failingCriterias?.length === 0) {
-          canBeApproved = true;
-        }
+        const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
 
         return {
           id: polygon.uuid,
+          checked: criteria?.checked,
           name: polygon.poly_name ?? "Unnamed Polygon",
-          canBeApproved,
+          canBeApproved: approved,
           failingCriterias
         };
       })
@@ -135,7 +150,10 @@ const ModalApprove: FC<ModalApproveProps> = ({
                       <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
                     </div>
                     <Text variant="text-10-light">
-                      {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
+                      <When condition={!item.checked}>{"Run Polygon Check"}</When>
+                      <When condition={!item.canBeApproved}>
+                        {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
+                      </When>
                     </Text>
                   </When>
                 </div>

@@ -43,11 +43,11 @@ const Drawer = (props: DrawerProps) => {
   return (
     <div
       className={classNames(
-        "fixed left-full top-0 z-50 ml-2 flex h-[-webkit-fill-available] w-[25rem] flex-col overflow-visible bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem]",
+        "fixed left-full top-0 z-50 ml-2 flex h-full h-[-webkit-fill-available] w-[25rem] flex-col overflow-visible bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem]",
         {
-          "translate-x-[-25.5rem] lg:translate-x-[-27rem] ": isOpen,
-          "mt-[70px]": !isScrolled || !isScrollingDown,
-          "mt-0": isScrolled && isScrollingDown
+          "translate-x-[-25.5rem] lg:translate-x-[-27rem]": isOpen,
+          "mt-[70px] h-[calc(100%_-_70px)]": !isScrolled || !isScrollingDown,
+          "mt-0 h-full": isScrolled && isScrollingDown
         }
       )}
     >

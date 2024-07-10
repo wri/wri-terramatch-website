@@ -32,10 +32,8 @@ export const Default: Story = {
         amount: 23
       }
     ],
-    handleCreate: () => console.log("create"),
-    handleDelete: uuid => console.log("delete", uuid),
-    handleAmountUpdate: value => console.log("handleAmountUpdate", value),
-    handleNameUpdate: value => console.log("handleNameUpdate", value)
+    onChange: value => console.log("onChange", value),
+    clearErrors: () => console.log("clearErrors")
   }
 };
 

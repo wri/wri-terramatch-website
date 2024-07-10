@@ -12,6 +12,7 @@ import Text from "../Text/Text";
 export const validationLabels: any = {
   3: "No Overlapping Polygon",
   4: "No Self-Intersection",
+  5: "Inside Coordinate System",
   6: "Inside Size Limit",
   7: "Within Country",
   8: "No Spike",
