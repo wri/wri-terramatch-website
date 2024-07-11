@@ -61,7 +61,7 @@ const MapMenuPanelItem = ({
     openModal(
       <ModalWithLogo
         uuid={uuid}
-        title={t("Blue Forest")}
+        title={title}
         onClose={closeModal}
         status={status as StatusEnum}
         primaryButtonText={t("Close")}
