@@ -361,6 +361,19 @@ export const formatPlannedStartDate = (plantStartDate: Date | null | undefined):
     : "Unknown";
 };
 
+export const formatCommentaryDate = (date: Date | null | undefined): string => {
+  return date != null
+    ? date.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+        hour: "numeric",
+        minute: "numeric"
+      })
+    : "Unknown";
+};
+
 export function mapPolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygon) => {
     if (data.status && data.poly_id !== undefined) {
