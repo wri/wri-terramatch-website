@@ -24,7 +24,11 @@ const VersionHistory = ({
 }) => {
   const t = useT();
   const { displayNotification } = useAlertHook();
-  const { data, refetch } = useGetV2SitePolygonUuidVersions({
+  const {
+    data,
+    refetch,
+    isLoading: isLoadingVersions
+  } = useGetV2SitePolygonUuidVersions({
     pathParams: { uuid: selectedPolygon?.primary_uuid as string }
   });
 
@@ -67,7 +71,7 @@ const VersionHistory = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {versionsOptions && (
+      {!isLoadingVersions && (
         <Dropdown
           label="Polygon Version"
           suffixLabel={
