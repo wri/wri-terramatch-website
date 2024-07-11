@@ -132,6 +132,7 @@ const PolygonDrawer = ({
       const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
       setSelectedPolygonData(PolygonData ?? {});
       setStatusSelectedPolygon(PolygonData?.status ?? "");
+      setSelectPolygonVersion(undefined);
     } else {
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
