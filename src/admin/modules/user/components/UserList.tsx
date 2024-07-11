@@ -61,7 +61,7 @@ const tableMenu = [
 
 const UserDataGrid = () => {
   return (
-    <Datagrid>
+    <Datagrid rowClick={"show"}>
       <FunctionField
         label="Name"
         source="first_name"

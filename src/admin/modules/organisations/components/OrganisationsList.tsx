@@ -93,7 +93,7 @@ const ApplicationDataGrid = () => {
         ))}
       </Tabs>
       <Divider />
-      <Datagrid>
+      <Datagrid rowClick={"show"}>
         <DateField source="created_at" label="Date Created" locales="en-GB" />
         <TextField source="name" label="Organisation Name" />
         <SelectField label="Organisation Type" source="type" choices={optionToChoices(getOrganisationTypeOptions())} />
