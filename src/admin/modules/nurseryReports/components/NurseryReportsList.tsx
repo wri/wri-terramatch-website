@@ -45,7 +45,7 @@ const NurseryReportDataGrid: FC = () => {
   const frameworkChoices = useFrameworkChoices();
 
   return (
-    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
+    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
       <TextField source="nursery.name" label="Nursery Name" sortable={false} />
       <FunctionField
         source="readable_status"
