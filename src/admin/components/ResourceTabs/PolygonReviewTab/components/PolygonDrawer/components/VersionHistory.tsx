@@ -57,9 +57,14 @@ const VersionHistory = ({
     });
   };
   const makeActivePolygon = async () => {
-    await mutateMakeActive({
-      pathParams: { uuid: (selectPolygonVersion?.uuid as string) ?? selectedPolygon.uuid }
-    });
+    if (selectedPolygon?.uuid !== selectPolygonVersion?.uuid && !!selectPolygonVersion) {
+      await mutateMakeActive({
+        pathParams: { uuid: (selectPolygonVersion?.uuid as string) ?? selectedPolygon.uuid }
+      });
+      setSelectPolygonVersion(selectedPolygon);
+      return;
+    }
+    displayNotification("Polygon version is already active", "warning", "Warning!");
   };
 
   const versionsOptions = (data as SitePolygonsDataResponse)?.map(item => {
@@ -72,36 +77,38 @@ const VersionHistory = ({
   return (
     <div className="flex flex-col gap-4">
       {!isLoadingVersions && (
-        <Dropdown
-          label="Polygon Version"
-          suffixLabel={
-            <button
-              onClick={clonePolygon}
-              className="flex items-center justify-center rounded border-2 border-grey-500 bg-grey-500 text-white hover:border-primary hover:bg-white hover:text-primary"
-              disabled={isLoadingVersion}
-            >
-              <Icon name={IconNames.PLUS_PA} className=" h-3 w-3 lg:h-3.5 lg:w-3.5" />
-            </button>
-          }
-          suffixLabelView={true}
-          labelClassName="capitalize"
-          labelVariant="text-14-light"
-          options={versionsOptions ?? []}
-          defaultValue={[selectedPolygon?.uuid as string]}
-          onChange={e => {
-            const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);
-            setSelectPolygonVersion(polygonVersionData);
-          }}
-        />
+        <>
+          <Dropdown
+            label="Polygon Version"
+            suffixLabel={
+              <button
+                onClick={clonePolygon}
+                className="flex items-center justify-center rounded border-2 border-grey-500 bg-grey-500 text-white hover:border-primary hover:bg-white hover:text-primary"
+                disabled={isLoadingVersion}
+              >
+                <Icon name={IconNames.PLUS_PA} className=" h-3 w-3 lg:h-3.5 lg:w-3.5" />
+              </button>
+            }
+            suffixLabelView={true}
+            labelClassName="capitalize"
+            labelVariant="text-14-light"
+            options={versionsOptions ?? []}
+            defaultValue={[selectedPolygon?.uuid as string]}
+            onChange={e => {
+              const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);
+              setSelectPolygonVersion(polygonVersionData);
+            }}
+          />
+          <div className="mt-auto flex items-center justify-end gap-5">
+            <Button variant="semi-red" className="w-full">
+              {t("Delete")}
+            </Button>
+            <Button onClick={makeActivePolygon} variant="semi-black" className="w-full" disabled={isLoading}>
+              {t("Make Active")}
+            </Button>
+          </div>
+        </>
       )}
-      <div className="mt-auto flex items-center justify-end gap-5">
-        <Button variant="semi-red" className="w-full">
-          {t("Delete")}
-        </Button>
-        <Button onClick={makeActivePolygon} variant="semi-black" className="w-full" disabled={isLoading}>
-          {t("Make Active")}
-        </Button>
-      </div>
     </div>
   );
 };
