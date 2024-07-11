@@ -9,7 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import { fetchGetV2SitesSiteCheckApprove } from "@/generated/apiComponents";
 
 const SiteOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "restoration-in-progress" | undefined>();
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
 
   const { record } = useShowContext();
@@ -80,6 +80,13 @@ const SiteOverview: FC = () => {
               onClick={() => setStatusModal("moreinfo")}
             >
               Request More Info
+            </Button>
+            <Button
+              className="button-aside-page-admin"
+              disabled={record?.status === "restoration-in-progress"}
+              onClick={() => setStatusModal("restoration-in-progress")}
+            >
+              Restoration in Progress
             </Button>
             <Button
               className="button-aside-page-admin"

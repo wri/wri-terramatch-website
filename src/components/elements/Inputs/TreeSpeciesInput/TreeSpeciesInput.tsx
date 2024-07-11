@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
-import { Fragment, KeyboardEvent, useId, useRef } from "react";
+import { remove } from "lodash";
+import { Fragment, KeyboardEvent, useCallback, useId, useRef } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
 import { When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
@@ -7,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useDebounce } from "@/hooks/useDebounce";
+import { updateArrayState } from "@/utils/array";
 
 import Button from "../../Button/Button";
 import ErrorMessage from "../../ErrorMessage/ErrorMessage";
@@ -21,11 +23,9 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   withNumbers?: boolean;
   withTreeSearch?: boolean;
   value: TreeSpeciesValue[];
-
-  handleCreate?: (value: TreeSpeciesValue) => void;
-  handleNameUpdate?: (value: TreeSpeciesValue) => void;
-  handleAmountUpdate?: (value: TreeSpeciesValue) => void;
-  handleDelete?: (uuid?: string) => void;
+  onChange: (value: any[]) => void;
+  clearErrors: () => void;
+  collection?: string;
 
   onError?: () => void;
   error?: FieldErrors[];
@@ -36,20 +36,40 @@ export type TreeSpeciesValue = { uuid?: string; name?: string; amount?: number }
 const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const id = useId();
   const t = useT();
-
   const lastInputRef = useRef<HTMLInputElement>(null);
 
-  const handleCreate = useDebounce((value: TreeSpeciesValue) => {
-    props.handleCreate?.(value);
-  });
+  const { onChange, value, clearErrors, collection } = props;
 
-  const handleNameUpdate = useDebounce((value: TreeSpeciesValue) => {
-    props.handleNameUpdate?.(value);
-  });
+  const handleCreate = useDebounce(
+    useCallback(
+      (treeValue: TreeSpeciesValue) => {
+        onChange([...value, { ...treeValue, collection }]);
+        clearErrors();
+      },
+      [onChange, value, collection, clearErrors]
+    )
+  );
 
-  const handleAmountUpdate = useDebounce((value: TreeSpeciesValue) => {
-    props.handleAmountUpdate?.(value);
-  });
+  const handleUpdate = useDebounce(
+    useCallback(
+      (treeValue: TreeSpeciesValue) => {
+        onChange(updateArrayState(value, treeValue, "uuid"));
+        clearErrors();
+      },
+      [value, onChange, clearErrors]
+    )
+  );
+
+  const handleDelete = useCallback(
+    (uuid: string | undefined) => {
+      if (uuid != null) {
+        remove(value, (v: TreeSpeciesValue) => v.uuid == uuid);
+        onChange(value);
+        clearErrors();
+      }
+    },
+    [value, onChange, clearErrors]
+  );
 
   const addValue = (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -100,7 +120,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 type="text"
                 variant="secondary"
                 defaultValue={value.name}
-                onChange={e => handleNameUpdate({ ...value, name: e.target.value })}
+                onChange={e => handleUpdate({ ...value, name: e.target.value })}
                 placeholder={t("Species Name")}
                 error={props.error?.[index]?.name ? ({} as FieldError) : undefined}
                 onKeyDownCapture={onKeyDownCapture}
@@ -114,7 +134,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   defaultValue={value.amount}
                   placeholder={t("Enter value")}
                   error={props.error?.[index]?.amount ? ({} as FieldError) : undefined}
-                  onChange={e => handleAmountUpdate({ ...value, amount: +e.target.value })}
+                  onChange={e => handleUpdate({ ...value, amount: +e.target.value })}
                   onKeyDownCapture={onKeyDownCapture}
                   containerClassName="flex-3"
                 />
@@ -122,7 +142,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               <IconButton
                 iconProps={{ name: IconNames.MINUS_CIRCLE, width: 22 }}
                 className="absolute right-0 top-3"
-                onClick={() => props.handleDelete?.(props.value?.[index]?.uuid)}
+                onClick={() => handleDelete(props.value?.[index]?.uuid)}
               />
             </div>
           )}

@@ -28,7 +28,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           <div className="flex w-full flex-wrap items-start gap-8">
             <If condition={isPPC}>
               <Then>
-                <GoalProgressCard label={t("Workday (PPC)")} value={project.workday_count} />
+                <GoalProgressCard label={t("Workday (PPC)")} value={project.self_reported_workday_count} />
               </Then>
               <Else>
                 <GoalProgressCard

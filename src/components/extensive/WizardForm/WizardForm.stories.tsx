@@ -187,9 +187,7 @@ const getSteps = (edit?: boolean): FormStepSchema[] => {
           fieldProps: {
             title: "Tree Species",
             buttonCaptionSuffix: "Species",
-            required: true,
-            uuid: "269dd18c-b713-4a87-9214-bc9c3c403a88",
-            model: "project_pitch"
+            required: true
           },
           validation: yup.array(
             yup.object({
@@ -207,9 +205,7 @@ const getSteps = (edit?: boolean): FormStepSchema[] => {
             title: "Tree Species",
             buttonCaptionSuffix: "Species",
             required: true,
-            withNumbers: true,
-            uuid: "269dd18c-b713-4a87-9214-bc9c3c403a88",
-            model: "project_pitch"
+            withNumbers: true
           },
           validation: yup.array(
             yup.object({
