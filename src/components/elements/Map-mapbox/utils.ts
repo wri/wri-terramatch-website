@@ -1,3 +1,4 @@
+import bbox from "@turf/bbox";
 import * as turfHelper from "@turf/helpers";
 import mapboxgl from "mapbox-gl";
 import { createElement } from "react";
@@ -173,14 +174,20 @@ export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<
   }
 };
 
-export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, currentDraw: MapboxDraw) => {
+export const addGeojsonToDraw = (
+  geojson: any,
+  uuid: string,
+  cb: Function,
+  currentDraw: MapboxDraw,
+  map?: mapboxgl.Map
+) => {
   if (geojson) {
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
     const addToDrawAndFilter = () => {
       if (currentDraw) {
-        const featureGeojson = currentDraw.set(geojsonFormatted);
-        if (featureGeojson.length) {
-          currentDraw.changeMode("direct_select", { featureId: featureGeojson[0] });
+        currentDraw.set(geojsonFormatted);
+        if (map) {
+          zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
         }
         cb(uuid);
       }
