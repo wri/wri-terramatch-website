@@ -16,7 +16,6 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
-  useGetV2SitePolygonUuid,
   useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -62,7 +61,7 @@ const PolygonDrawer = ({
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
-  const [selectPolygonVersion, setSelectPolygonVersion] = useState<string>("");
+  const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygon>();
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -170,13 +169,8 @@ const PolygonDrawer = ({
     };
 
     fetchCriteriaValidation();
+    setSelectPolygonVersion(undefined);
   }, [buttonToogle, selectedPolygonData]);
-
-  const { data: polygonVersion } = useGetV2SitePolygonUuid({
-    pathParams: {
-      uuid: selectPolygonVersion as string
-    }
-  });
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
@@ -236,14 +230,18 @@ const PolygonDrawer = ({
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && (
-                <AttributeInformation selectedPolygon={(polygonVersion as any) ?? selectedPolygonData} />
+                <AttributeInformation selectedPolygon={(selectPolygonVersion as any) ?? selectedPolygonData} />
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
-              <VersionHistory
-                polygonUUID={selectedPolygonData?.primary_uuid as string}
-                setSelectPolygonVersion={setSelectPolygonVersion}
-              />
+              {selectedPolygonData && (
+                <VersionHistory
+                  selectedPolygon={selectedPolygonData}
+                  setSelectPolygonVersion={setSelectPolygonVersion}
+                  selectPolygonVersion={selectPolygonVersion}
+                  refreshPolygonList={refresh}
+                />
+              )}
             </Accordion>
             <Divider />
           </div>

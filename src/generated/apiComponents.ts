@@ -34814,7 +34814,7 @@ export const usePostV2SitePolygonUuidNewVersion = (
   );
 };
 
-export type PutV2SitePolygonMakeActivePathParams = {
+export type PutV2SitePolygonUuidMakeActivePathParams = {
   /**
    * The UUID of the site polygon
    *
@@ -34823,9 +34823,9 @@ export type PutV2SitePolygonMakeActivePathParams = {
   uuid: string;
 };
 
-export type PutV2SitePolygonMakeActiveError = Fetcher.ErrorWrapper<undefined>;
+export type PutV2SitePolygonUuidMakeActiveError = Fetcher.ErrorWrapper<undefined>;
 
-export type PutV2SitePolygonMakeActiveResponse = {
+export type PutV2SitePolygonUuidMakeActiveResponse = {
   data?: {
     id?: number;
     uuid?: string;
@@ -34875,38 +34875,41 @@ export type PutV2SitePolygonMakeActiveResponse = {
   };
 };
 
-export type PutV2SitePolygonMakeActiveVariables = {
-  pathParams: PutV2SitePolygonMakeActivePathParams;
+export type PutV2SitePolygonUuidMakeActiveVariables = {
+  pathParams: PutV2SitePolygonUuidMakeActivePathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPutV2SitePolygonMakeActive = (variables: PutV2SitePolygonMakeActiveVariables, signal?: AbortSignal) =>
+export const fetchPutV2SitePolygonUuidMakeActive = (
+  variables: PutV2SitePolygonUuidMakeActiveVariables,
+  signal?: AbortSignal
+) =>
   apiFetch<
-    PutV2SitePolygonMakeActiveResponse,
-    PutV2SitePolygonMakeActiveError,
+    PutV2SitePolygonUuidMakeActiveResponse,
+    PutV2SitePolygonUuidMakeActiveError,
     undefined,
     {},
     {},
-    PutV2SitePolygonMakeActivePathParams
-  >({ url: "/v2/site-polygon/make-active", method: "put", ...variables, signal });
+    PutV2SitePolygonUuidMakeActivePathParams
+  >({ url: "/v2/site-polygon/{uuid}/make-active", method: "put", ...variables, signal });
 
-export const usePutV2SitePolygonMakeActive = (
+export const usePutV2SitePolygonUuidMakeActive = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      PutV2SitePolygonMakeActiveResponse,
-      PutV2SitePolygonMakeActiveError,
-      PutV2SitePolygonMakeActiveVariables
+      PutV2SitePolygonUuidMakeActiveResponse,
+      PutV2SitePolygonUuidMakeActiveError,
+      PutV2SitePolygonUuidMakeActiveVariables
     >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<
-    PutV2SitePolygonMakeActiveResponse,
-    PutV2SitePolygonMakeActiveError,
-    PutV2SitePolygonMakeActiveVariables
+    PutV2SitePolygonUuidMakeActiveResponse,
+    PutV2SitePolygonUuidMakeActiveError,
+    PutV2SitePolygonUuidMakeActiveVariables
   >(
-    (variables: PutV2SitePolygonMakeActiveVariables) =>
-      fetchPutV2SitePolygonMakeActive({ ...fetcherOptions, ...variables }),
+    (variables: PutV2SitePolygonUuidMakeActiveVariables) =>
+      fetchPutV2SitePolygonUuidMakeActive({ ...fetcherOptions, ...variables }),
     options
   );
 };
