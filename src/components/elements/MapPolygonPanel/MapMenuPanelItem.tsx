@@ -61,7 +61,7 @@ const MapMenuPanelItem = ({
     openModal(
       <ModalWithLogo
         uuid={uuid}
-        title={t("Blue Forest")}
+        title={title}
         onClose={closeModal}
         status={status as StatusEnum}
         primaryButtonText={t("Close")}
@@ -108,15 +108,13 @@ const MapMenuPanelItem = ({
     ...commonItems,
     {
       id: "4",
-      is_airtable: true,
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.COMMENT} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Comment")}
         </Text>
       ),
-      onClick: (uuid: any) => {
-        console.log("uuid", uuid);
+      onClick: () => {
         openFormModalHandlerAddCommentary();
       }
     },

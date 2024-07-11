@@ -91,7 +91,6 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           error={sharedProps.error as any}
           formHook={formHook}
           control={formHook.control}
-          onChangeCapture={onChange}
         />
       );
 
@@ -179,30 +178,13 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
       );
 
     case FieldType.InvasiveDataTable:
-      return (
-        <RHFInvasiveTable
-          {...field.fieldProps}
-          {...sharedProps}
-          control={formHook.control}
-          onChangeCapture={onChange}
-        />
-      );
+      return <RHFInvasiveTable {...field.fieldProps} {...sharedProps} control={formHook.control} />;
 
     case FieldType.SeedingsDataTable:
-      return (
-        <RHFSeedingTable {...field.fieldProps} {...sharedProps} control={formHook.control} onChangeCapture={onChange} />
-      );
+      return <RHFSeedingTable {...field.fieldProps} {...sharedProps} control={formHook.control} />;
 
     case FieldType.InputTable:
-      return (
-        <RHFInputTable
-          {...field.fieldProps}
-          {...sharedProps}
-          control={formHook.control}
-          formHook={formHook}
-          onChangeCapture={onChange}
-        />
-      );
+      return <RHFInputTable {...field.fieldProps} {...sharedProps} control={formHook.control} formHook={formHook} />;
 
     case FieldType.Map:
       return (

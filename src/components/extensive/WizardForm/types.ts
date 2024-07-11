@@ -87,10 +87,7 @@ export type FormField =
       FieldType.FileUpload,
       Omit<RHFFileInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >
-  | FieldTypeBuilder<
-      FieldType.TreeSpecies,
-      Omit<RHFTreeSpeciesInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
-    >
+  | FieldTypeBuilder<FieldType.TreeSpecies, Omit<RHFTreeSpeciesInputProps, "formHook" | keyof UseControllerProps>>
   | FieldTypeBuilder<
       FieldType.SeedingsTableInput,
       Omit<RHFSeedingTableInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
