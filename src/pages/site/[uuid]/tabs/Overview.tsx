@@ -12,6 +12,7 @@ import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Notification from "@/components/elements/Notification/Notification";
@@ -82,6 +83,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
+  const { displayNotification } = useAlertHook();
   const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -140,11 +142,23 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           break;
       }
     }
-
-    await Promise.all(uploadPromises);
-
-    setShouldRefetchPolygonData(true);
-    closeModal();
+    try {
+      await Promise.all(uploadPromises);
+      setShouldRefetchPolygonData(true);
+      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      closeModal();
+    } catch (error) {
+      if (error && typeof error === "object" && "message" in error) {
+        let errorMessage = error.message as string;
+        const parsedMessage = JSON.parse(errorMessage);
+        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          errorMessage = parsedMessage.message;
+        }
+        displayNotification(t("Error uploading file"), "error", errorMessage);
+      } else {
+        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+      }
+    }
   };
 
   const openFormModalHandlerAddPolygon = () => {
