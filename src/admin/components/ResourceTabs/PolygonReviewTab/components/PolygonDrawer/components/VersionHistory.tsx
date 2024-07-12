@@ -106,6 +106,8 @@ const VersionHistory = ({
     await mutateDeletePolygonVersion({
       pathParams: { uuid: selectPolygonVersion?.poly_id as string }
     });
+    refetch();
+    reloadSiteData?.();
   };
 
   const onDeleteVersion = () => {
@@ -116,8 +118,6 @@ const VersionHistory = ({
         onClose={closeModal}
         onConfirm={() => {
           deletePolygonVersion();
-          refetch();
-          reloadSiteData?.();
         }}
       />
     );
