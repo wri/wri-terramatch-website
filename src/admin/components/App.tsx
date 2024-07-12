@@ -151,7 +151,7 @@ const App = () => {
           icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
           options={{ label: "Nursery Reports" }}
         />
-        <Resource name={modules.audit.ResourceName} />
+        {isAdmin && <Resource name={modules.audit.ResourceName} />}
       </Admin>
     </LoadingProvider>
   );
