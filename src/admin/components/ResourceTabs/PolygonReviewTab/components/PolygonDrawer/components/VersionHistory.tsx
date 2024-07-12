@@ -7,7 +7,6 @@ import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHo
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2SitePolygonUuidNewVersion,
   useDeleteV2TerrafundPolygonUuid,
@@ -20,18 +19,18 @@ const VersionHistory = ({
   selectedPolygon,
   setSelectPolygonVersion,
   selectPolygonVersion,
-  refreshPolygonList
+  refreshPolygonList,
+  refreshSiteData
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
   selectPolygonVersion: SitePolygon | undefined;
   refreshPolygonList?: () => void;
+  refreshSiteData?: () => void;
 }) => {
   const t = useT();
   const { displayNotification } = useAlertHook();
   const { openModal, closeModal } = useModalContext();
-  const contextSite = useSitePolygonData();
-  const reloadSiteData = contextSite?.reloadSiteData;
   const {
     data,
     refetch,
@@ -52,6 +51,7 @@ const VersionHistory = ({
   const { mutate: mutateMakeActive, isLoading } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: () => {
       refreshPolygonList?.();
+      refreshSiteData?.();
       displayNotification("Polygon version made active successfully", "success", "Success!");
     },
     onError: () => {
@@ -63,6 +63,7 @@ const VersionHistory = ({
     onSuccess: () => {
       displayNotification("Polygon version deleted successfully", "success", "Success!");
       refetch();
+      refreshSiteData?.();
     },
     onError: () => {
       displayNotification("Error deleting polygon version", "error", "Error!");
@@ -76,7 +77,7 @@ const VersionHistory = ({
       setSelectPolygonVersion(newVersion);
       displayNotification("New version created successfully", "success", "Success!");
       refetch();
-      reloadSiteData?.();
+      refreshSiteData?.();
     } catch (error) {
       displayNotification("Error creating new version", "error", "Error!");
     }
@@ -107,7 +108,7 @@ const VersionHistory = ({
       pathParams: { uuid: selectPolygonVersion?.poly_id as string }
     });
     refetch();
-    reloadSiteData?.();
+    refreshSiteData?.();
   };
 
   const onDeleteVersion = () => {

@@ -67,6 +67,7 @@ const PolygonDrawer = ({
   const contextMapArea = useMapAreaContext();
   const { displayNotification } = useAlertHook();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
+  const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const { showLoader, hideLoader } = useLoading();
@@ -172,6 +173,10 @@ const PolygonDrawer = ({
     setSelectPolygonVersion(selectedPolygonData);
   }, [buttonToogle, selectedPolygonData]);
 
+  useEffect(() => {
+    sitePolygonRefresh?.();
+  }, [selectedPolygon]);
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -240,6 +245,7 @@ const PolygonDrawer = ({
                   setSelectPolygonVersion={setSelectPolygonVersion}
                   selectPolygonVersion={selectPolygonVersion}
                   refreshPolygonList={refresh}
+                  refreshSiteData={sitePolygonRefresh}
                 />
               )}
             </Accordion>
