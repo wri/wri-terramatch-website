@@ -29,6 +29,7 @@ export interface ModalAddProps extends ModalProps {
   status?: StatusEnum;
   onClose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
+  allowMultiple?: boolean;
 }
 
 const ModalAdd: FC<ModalAddProps> = ({
@@ -48,6 +49,7 @@ const ModalAdd: FC<ModalAddProps> = ({
   status,
   setFile,
   onClose,
+  allowMultiple = true,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -57,7 +59,6 @@ const ModalAdd: FC<ModalAddProps> = ({
       setFile(files);
     }
   }, [files, setFile]);
-
   return (
     <ModalAddBase {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -101,24 +102,29 @@ const ModalAdd: FC<ModalAddProps> = ({
               return tmp;
             })
           }
-          onChange={files =>
-            setFiles(f => [
-              ...f,
-              ...files.map(file => ({
-                title: file.name,
-                file_name: file.name,
-                mime_type: file.type,
-                collection_name: "storybook",
-                size: file.size,
-                url: "https://google.com",
-                created_at: "now",
-                uuid: file.name,
-                is_public: true,
-                rawFile: file
-              }))
-            ])
-          }
+          onChange={(files: File[]) => {
+            const formatFile = (file: File): UploadedFile => ({
+              title: file.name,
+              file_name: file.name,
+              mime_type: file.type,
+              collection_name: "storybook",
+              size: file.size,
+              url: "https://google.com",
+              created_at: "now",
+              uuid: file.name,
+              is_public: true,
+              rawFile: file
+            });
+
+            if (!allowMultiple) {
+              const firstFile = files[0];
+              setFiles([formatFile(firstFile)]);
+            } else {
+              setFiles(prevFiles => [...prevFiles, ...files.map(formatFile)]);
+            }
+          }}
           files={files}
+          allowMultiple={false}
         />
         {children}
       </div>

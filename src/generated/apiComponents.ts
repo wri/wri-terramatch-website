@@ -32637,6 +32637,168 @@ export const usePostV2TerrafundUploadKml = (
   );
 };
 
+export type PostV2TerrafundUploadGeojsonValidateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadGeojsonValidateRequestBody = {
+  /**
+   * The GeoJSON file to test
+   *
+   * @format binary
+   */
+  file: Blob;
+};
+
+export type PostV2TerrafundUploadGeojsonValidateVariables = {
+  body: PostV2TerrafundUploadGeojsonValidateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
+ */
+export const fetchPostV2TerrafundUploadGeojsonValidate = (
+  variables: PostV2TerrafundUploadGeojsonValidateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Blob,
+    PostV2TerrafundUploadGeojsonValidateError,
+    PostV2TerrafundUploadGeojsonValidateRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-geojson-validate", method: "post", ...variables, signal });
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
+ */
+export const usePostV2TerrafundUploadGeojsonValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Blob,
+      PostV2TerrafundUploadGeojsonValidateError,
+      PostV2TerrafundUploadGeojsonValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Blob,
+    PostV2TerrafundUploadGeojsonValidateError,
+    PostV2TerrafundUploadGeojsonValidateVariables
+  >(
+    (variables: PostV2TerrafundUploadGeojsonValidateVariables) =>
+      fetchPostV2TerrafundUploadGeojsonValidate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadShapefileValidateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadShapefileValidateRequestBody = {
+  /**
+   * The Shapefile file to test
+   *
+   * @format binary
+   */
+  file: Blob;
+};
+
+export type PostV2TerrafundUploadShapefileValidateVariables = {
+  body: PostV2TerrafundUploadShapefileValidateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
+ */
+export const fetchPostV2TerrafundUploadShapefileValidate = (
+  variables: PostV2TerrafundUploadShapefileValidateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Blob,
+    PostV2TerrafundUploadShapefileValidateError,
+    PostV2TerrafundUploadShapefileValidateRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-shapefile-validate", method: "post", ...variables, signal });
+
+/**
+ * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
+ */
+export const usePostV2TerrafundUploadShapefileValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Blob,
+      PostV2TerrafundUploadShapefileValidateError,
+      PostV2TerrafundUploadShapefileValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Blob,
+    PostV2TerrafundUploadShapefileValidateError,
+    PostV2TerrafundUploadShapefileValidateVariables
+  >(
+    (variables: PostV2TerrafundUploadShapefileValidateVariables) =>
+      fetchPostV2TerrafundUploadShapefileValidate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadKmlValidateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadKmlValidateRequestBody = {
+  /**
+   * The KML file to test
+   *
+   * @format binary
+   */
+  file: Blob;
+};
+
+export type PostV2TerrafundUploadKmlValidateVariables = {
+  body: PostV2TerrafundUploadKmlValidateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a KML file, converts it to GeoJSON, and validate the polygons.
+ */
+export const fetchPostV2TerrafundUploadKmlValidate = (
+  variables: PostV2TerrafundUploadKmlValidateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateRequestBody, {}, {}, {}>({
+    url: "/v2/terrafund/upload-kml-validate",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+/**
+ * Uploads a KML file, converts it to GeoJSON, and validate the polygons.
+ */
+export const usePostV2TerrafundUploadKmlValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Blob,
+      PostV2TerrafundUploadKmlValidateError,
+      PostV2TerrafundUploadKmlValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateVariables>(
+    (variables: PostV2TerrafundUploadKmlValidateVariables) =>
+      fetchPostV2TerrafundUploadKmlValidate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PutV2TerrafundSitePolygonUuidPathParams = {
   /**
    * The UUID of the site polygon

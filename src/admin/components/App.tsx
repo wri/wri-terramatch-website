@@ -151,7 +151,17 @@ const App = () => {
           icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
           options={{ label: "Nursery Reports" }}
         />
-        {isAdmin && <Resource name={modules.audit.ResourceName} />}
+        {isAdmin && (
+          <>
+            <Resource name={modules.audit.ResourceName} />
+            <Resource
+              name={modules.validatePolygonFile.ResourceName}
+              list={modules.validatePolygonFile.List}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
+              options={{ label: "Test Polygon" }}
+            />
+          </>
+        )}
       </Admin>
     </LoadingProvider>
   );
