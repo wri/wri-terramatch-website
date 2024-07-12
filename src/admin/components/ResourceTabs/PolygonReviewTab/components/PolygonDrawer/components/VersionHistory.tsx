@@ -5,7 +5,7 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -110,19 +110,12 @@ const VersionHistory = ({
 
   const onDeleteProject = () => {
     openModal(
-      <Modal
+      <ModalConfirm
         title={t("Confirmation")}
-        content={t("Do you want to delete this version? ")}
-        primaryButtonProps={{
-          children: t("Confirm"),
-          onClick: () => {
-            deletePolygonVersion();
-            closeModal();
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("Cancel"),
-          onClick: closeModal
+        content={t("Do you want to delete this version?")}
+        onClose={closeModal}
+        onConfirm={() => {
+          deletePolygonVersion();
         }}
       />
     );
