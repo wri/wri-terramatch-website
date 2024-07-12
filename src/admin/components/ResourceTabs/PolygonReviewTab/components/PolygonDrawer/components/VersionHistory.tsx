@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -20,17 +20,22 @@ const VersionHistory = ({
   setSelectPolygonVersion,
   selectPolygonVersion,
   refreshPolygonList,
-  refreshSiteData
+  refreshSiteData,
+  setIsOpenPolygonDrawer,
+  setSelectedPolygonData
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
   selectPolygonVersion: SitePolygon | undefined;
   refreshPolygonList?: () => void;
   refreshSiteData?: () => void;
+  setIsOpenPolygonDrawer?: any;
+  setSelectedPolygonData?: any;
 }) => {
   const t = useT();
   const { displayNotification } = useAlertHook();
   const { openModal, closeModal } = useModalContext();
+  const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const {
     data,
     refetch,
@@ -108,7 +113,14 @@ const VersionHistory = ({
       pathParams: { uuid: selectPolygonVersion?.poly_id as string }
     });
     refetch();
+    setSelectPolygonVersion((data as SitePolygonsDataResponse)?.find(item => item?.is_active == 1));
+    setSelectedPolygonData((data as SitePolygonsDataResponse)?.find(item => item?.is_active == 1));
     refreshSiteData?.();
+
+    if (polygonVersionData.length == 0) {
+      setIsOpenPolygonDrawer(false);
+    }
+    setIsLoadingDropdown(false);
   };
 
   const onDeleteVersion = () => {
@@ -118,6 +130,7 @@ const VersionHistory = ({
         content={t("Do you want to delete this version?")}
         onClose={closeModal}
         onConfirm={() => {
+          setIsLoadingDropdown(true);
           deletePolygonVersion();
         }}
       />
@@ -126,7 +139,7 @@ const VersionHistory = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {!isLoadingVersions && selectPolygonVersion && (
+      {!isLoadingVersions && !isLoadingDropdown && (
         <>
           <Dropdown
             label="Polygon Version"

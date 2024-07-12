@@ -47,11 +47,13 @@ export const COMPLETED_DATA_CRITERIA_ID = 14;
 const PolygonDrawer = ({
   polygonSelected,
   isPolygonStatusOpen,
-  refresh
+  refresh,
+  setIsOpenPolygonDrawer
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
   refresh?: () => void;
+  setIsOpenPolygonDrawer: any;
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
@@ -246,6 +248,8 @@ const PolygonDrawer = ({
                   selectPolygonVersion={selectPolygonVersion}
                   refreshPolygonList={refresh}
                   refreshSiteData={sitePolygonRefresh}
+                  setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
+                  setSelectedPolygonData={setSelectedPolygonData}
                 />
               )}
             </Accordion>
