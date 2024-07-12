@@ -1,16 +1,19 @@
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import { PropsWithChildren, useEffect } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
+import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
 
-const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
+import { useMap } from "../../Map-mapbox/hooks/useMap";
+
+// const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
 
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
@@ -26,6 +29,7 @@ const RHFMap = ({
   entity,
   ...inputWrapperProps
 }: PropsWithChildren<RHFMapProps>) => {
+  const mapFunctions = useMap();
   const t = useT();
   const {
     field: { value, onChange }
@@ -87,13 +91,14 @@ const RHFMap = ({
 
   return (
     <InputWrapper {...inputWrapperProps}>
-      <Map
+      <MapContainer
         geojson={value}
         onGeojsonChange={_onChange}
         editable
         onError={onError}
         additionalPolygonProperties={additionalPolygonProperties}
         captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
+        mapFunctions={mapFunctions}
       />
     </InputWrapper>
   );
