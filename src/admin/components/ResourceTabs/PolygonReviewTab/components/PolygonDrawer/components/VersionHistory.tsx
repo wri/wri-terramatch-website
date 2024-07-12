@@ -121,8 +121,8 @@ const VersionHistory = ({
 
   const polygonVersionData = (data as SitePolygonsDataResponse)?.map(item => {
     return {
-      title: item.version_name ?? "first polygon",
-      value: item.uuid ?? ""
+      title: item.version_name as string,
+      value: item.uuid as string
     };
   });
 
