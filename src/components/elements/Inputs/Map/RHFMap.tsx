@@ -13,8 +13,6 @@ import { Entity, SingularEntityName } from "@/types/common";
 
 import { useMap } from "../../Map-mapbox/hooks/useMap";
 
-// const Map = dynamic(() => import("@/components/elements/Map-mapbox/Map"), { ssr: false });
-
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
   formHook: UseFormReturn;
