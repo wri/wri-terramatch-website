@@ -132,7 +132,6 @@ const PolygonDrawer = ({
       const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
       setSelectedPolygonData(PolygonData ?? {});
       setStatusSelectedPolygon(PolygonData?.status ?? "");
-      setSelectPolygonVersion(PolygonData);
     } else {
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
@@ -170,7 +169,7 @@ const PolygonDrawer = ({
     };
 
     fetchCriteriaValidation();
-    setSelectPolygonVersion(undefined);
+    setSelectPolygonVersion(selectedPolygonData);
   }, [buttonToogle, selectedPolygonData]);
 
   return (
@@ -231,7 +230,7 @@ const PolygonDrawer = ({
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && (
-                <AttributeInformation selectedPolygon={(selectPolygonVersion as any) ?? selectedPolygonData} />
+                <AttributeInformation selectedPolygon={selectPolygonVersion ?? selectedPolygonData} />
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
