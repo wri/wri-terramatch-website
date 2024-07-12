@@ -45,7 +45,7 @@ const SiteReportDataGrid: FC = () => {
   ];
 
   return (
-    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
+    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
       <TextField source="site.name" label="Site Name" sortable={false} />
       <FunctionField
         source="readable_status"

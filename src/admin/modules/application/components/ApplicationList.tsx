@@ -46,7 +46,7 @@ const tableMenu = [
 
 const ApplicationDataGrid = () => {
   return (
-    <Datagrid>
+    <Datagrid rowClick={"show"}>
       <ReferenceField source="organisation_uuid" reference={modules.organisation.ResourceName} label="Organization">
         <FunctionField render={(record: V2OrganisationRead) => `${record?.name || ""}`} />
       </ReferenceField>

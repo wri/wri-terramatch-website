@@ -45,7 +45,7 @@ const ProjectReportDataGrid: FC = () => {
   ];
 
   return (
-    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />}>
+    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
       <TextField source="title" label="Report Name" />
       <FunctionField
         source="readable_status"

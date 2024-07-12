@@ -66,7 +66,7 @@ const SiteDataGrid: FC = () => {
   const frameworkChoices = useFrameworkChoices();
 
   return (
-    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />}>
+    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Site Name" />
       <FunctionField
         source="readable_status"
