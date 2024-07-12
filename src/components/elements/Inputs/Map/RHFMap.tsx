@@ -97,6 +97,8 @@ const RHFMap = ({
         additionalPolygonProperties={additionalPolygonProperties}
         captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
         mapFunctions={mapFunctions}
+        hasControls={false}
+        showLegend={false}
       />
     </InputWrapper>
   );
