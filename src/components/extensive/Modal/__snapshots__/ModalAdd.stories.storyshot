@@ -74,6 +74,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
           <input
             hidden={true}
             id=":r3b:"
+            multiple={false}
             onChange={[Function]}
             onClick={[Function]}
             style={
