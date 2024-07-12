@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-// import dynamic from "next/dynamic";
 import { PropsWithChildren, useEffect } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
