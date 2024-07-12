@@ -362,6 +362,8 @@ const ReportingTaskPage = () => {
               data={reports.additional}
               columns={tableColumns}
               onTableStateChange={state => setFilters(state.filters)}
+              hasPagination={true}
+              initialTableState={{ pagination: { pageSize: 15 } }}
               columnFilters={[
                 {
                   type: "dropDown",
