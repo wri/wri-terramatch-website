@@ -108,7 +108,7 @@ const VersionHistory = ({
     });
   };
 
-  const onDeleteProject = () => {
+  const onDeleteVersion = () => {
     openModal(
       <ModalConfirm
         title={t("Confirmation")}
@@ -116,6 +116,8 @@ const VersionHistory = ({
         onClose={closeModal}
         onConfirm={() => {
           deletePolygonVersion();
+          refetch();
+          reloadSiteData?.();
         }}
       />
     );
@@ -146,7 +148,7 @@ const VersionHistory = ({
             }}
           />
           <div className="mt-auto flex items-center justify-end gap-5">
-            <Button onClick={onDeleteProject} variant="semi-red" className="w-full" disabled={isLoadingDelete}>
+            <Button onClick={onDeleteVersion} variant="semi-red" className="w-full" disabled={isLoadingDelete}>
               {t("Delete")}
             </Button>
             <Button onClick={makeActivePolygon} variant="semi-black" className="w-full" disabled={isLoading}>
