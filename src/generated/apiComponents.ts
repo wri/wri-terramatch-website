@@ -30714,6 +30714,80 @@ export const usePostV2ProjectsInviteAccept = (
   );
 };
 
+export type PostV2ProjectsUUIDManagersPathParams = {
+  uuid: string;
+};
+
+export type PostV2ProjectsUUIDManagersError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        detail?: void;
+      };
+    }
+  | {
+      status: 422;
+      payload: {
+        detail?: void;
+      };
+    }
+>;
+
+export type PostV2ProjectsUUIDManagersResponse = {
+  uuid?: string;
+  user_type?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * allowed values Pending|Accepted
+   */
+  status?: string;
+};
+
+export type PostV2ProjectsUUIDManagersRequestBody = {
+  email_address?: string;
+  required?: void;
+};
+
+export type PostV2ProjectsUUIDManagersVariables = {
+  body?: PostV2ProjectsUUIDManagersRequestBody;
+  pathParams: PostV2ProjectsUUIDManagersPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2ProjectsUUIDManagers = (variables: PostV2ProjectsUUIDManagersVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2ProjectsUUIDManagersResponse,
+    PostV2ProjectsUUIDManagersError,
+    PostV2ProjectsUUIDManagersRequestBody,
+    {},
+    {},
+    PostV2ProjectsUUIDManagersPathParams
+  >({ url: "/v2/projects/{uuid}/managers", method: "post", ...variables, signal });
+
+export const usePostV2ProjectsUUIDManagers = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2ProjectsUUIDManagersResponse,
+      PostV2ProjectsUUIDManagersError,
+      PostV2ProjectsUUIDManagersVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2ProjectsUUIDManagersResponse,
+    PostV2ProjectsUUIDManagersError,
+    PostV2ProjectsUUIDManagersVariables
+  >(
+    (variables: PostV2ProjectsUUIDManagersVariables) =>
+      fetchPostV2ProjectsUUIDManagers({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type DeleteV2NurseriesUUIDPathParams = {
   uuid: string;
 };
