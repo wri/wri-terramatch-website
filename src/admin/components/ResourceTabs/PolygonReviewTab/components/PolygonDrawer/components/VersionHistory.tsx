@@ -82,12 +82,21 @@ const VersionHistory = ({
     }
   };
 
+  const polygonVersionData = (data as SitePolygonsDataResponse)?.map(item => {
+    return {
+      title: item.version_name as string,
+      value: item.uuid as string
+    };
+  });
+
   const makeActivePolygon = async () => {
-    if (selectedPolygon?.uuid !== selectPolygonVersion?.uuid && !!selectPolygonVersion) {
+    refetch();
+    if (selectPolygonVersion?.is_active != 1) {
       await mutateMakeActive({
         pathParams: { uuid: (selectPolygonVersion?.uuid as string) ?? selectedPolygon.uuid }
       });
       setSelectPolygonVersion(selectedPolygon);
+      displayNotification("Polygon version made active successfully", "success", "Success!");
       return;
     }
     displayNotification("Polygon version is already active", "warning", "Warning!");
@@ -118,13 +127,6 @@ const VersionHistory = ({
       />
     );
   };
-
-  const polygonVersionData = (data as SitePolygonsDataResponse)?.map(item => {
-    return {
-      title: item.version_name as string,
-      value: item.uuid as string
-    };
-  });
 
   return (
     <div className="flex flex-col gap-4">
