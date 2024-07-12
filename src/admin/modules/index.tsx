@@ -11,7 +11,7 @@ import { StageEdit } from "@/admin/modules/stages/StageEdit";
 import { StageShow } from "@/admin/modules/stages/StageShow";
 import TaskShow from "@/admin/modules/tasks/components/TaskShow";
 import { TasksList } from "@/admin/modules/tasks/components/TasksList";
-import validatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/validationPolygonFileShow";
+import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/ValidationPolygonFileShow";
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
@@ -152,7 +152,7 @@ const audit = {
 
 const validatePolygonFile = {
   ResourceName: "validatePolygonFile",
-  List: validatePolygonFileShow
+  List: ValidatePolygonFileShow
 };
 
 const modules = {

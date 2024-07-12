@@ -12,7 +12,7 @@ import {
 } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 
-const validatePolygonFileShow: FC = () => {
+const ValidatePolygonFileShow: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
@@ -119,4 +119,4 @@ const validatePolygonFileShow: FC = () => {
   );
 };
 
-export default validatePolygonFileShow;
+export default ValidatePolygonFileShow;
