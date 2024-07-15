@@ -8,6 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 import {
+  fetchGetV2SitePolygonUuidVersions,
   fetchPostV2SitePolygonUuidNewVersion,
   useDeleteV2TerrafundPolygonUuid,
   useGetV2SitePolygonUuidVersions,
@@ -21,16 +22,16 @@ const VersionHistory = ({
   selectPolygonVersion,
   refreshPolygonList,
   refreshSiteData,
-  setIsOpenPolygonDrawer,
-  setSelectedPolygonData
+  setSelectedPolygonData,
+  setStatusSelectedPolygon
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
   selectPolygonVersion: SitePolygon | undefined;
   refreshPolygonList?: () => void;
   refreshSiteData?: () => void;
-  setIsOpenPolygonDrawer?: any;
   setSelectedPolygonData?: any;
+  setStatusSelectedPolygon?: any;
 }) => {
   const t = useT();
   const { displayNotification } = useAlertHook();
@@ -55,8 +56,6 @@ const VersionHistory = ({
 
   const { mutate: mutateMakeActive, isLoading } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: () => {
-      refreshPolygonList?.();
-      refreshSiteData?.();
       displayNotification("Polygon version made active successfully", "success", "Success!");
     },
     onError: () => {
@@ -65,10 +64,18 @@ const VersionHistory = ({
   });
 
   const { mutate: mutateDeletePolygonVersion, isPaused: isLoadingDelete } = useDeleteV2TerrafundPolygonUuid({
-    onSuccess: () => {
+    onSuccess: async () => {
       displayNotification("Polygon version deleted successfully", "success", "Success!");
-      refetch();
-      refreshSiteData?.();
+      await refetch();
+      await refreshPolygonList?.();
+      await refreshSiteData?.();
+      const response = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: selectedPolygon.primary_uuid as string }
+      })) as SitePolygonsDataResponse;
+      setSelectedPolygonData(response?.find(item => item.is_active == 1));
+      setSelectPolygonVersion(response?.find(item => item.is_active == 1));
+      setStatusSelectedPolygon(response?.find(item => item.is_active == 1)?.status ?? "");
+      setIsLoadingDropdown(false);
     },
     onError: () => {
       displayNotification("Error deleting polygon version", "error", "Error!");
@@ -96,13 +103,16 @@ const VersionHistory = ({
   });
 
   const makeActivePolygon = async () => {
-    refetch();
-    if (selectPolygonVersion?.is_active != 1) {
+    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const versionActive = (data as SitePolygonsDataResponse)?.find(item => item?.uuid == polygonSelectedUuid);
+    if (versionActive?.is_active != 1) {
       await mutateMakeActive({
-        pathParams: { uuid: (selectPolygonVersion?.uuid as string) ?? selectedPolygon.uuid }
+        pathParams: { uuid: polygonSelectedUuid as string }
       });
-      setSelectPolygonVersion(selectedPolygon);
-      displayNotification("Polygon version made active successfully", "success", "Success!");
+      await refetch();
+      await refreshPolygonList?.();
+      await refreshSiteData?.();
+      setSelectedPolygonData(selectPolygonVersion);
       return;
     }
     displayNotification("Polygon version is already active", "warning", "Warning!");
@@ -112,15 +122,6 @@ const VersionHistory = ({
     await mutateDeletePolygonVersion({
       pathParams: { uuid: selectPolygonVersion?.poly_id as string }
     });
-    refetch();
-    setSelectPolygonVersion((data as SitePolygonsDataResponse)?.find(item => item?.is_active == 1));
-    setSelectedPolygonData((data as SitePolygonsDataResponse)?.find(item => item?.is_active == 1));
-    refreshSiteData?.();
-
-    if (polygonVersionData.length == 0) {
-      setIsOpenPolygonDrawer(false);
-    }
-    setIsLoadingDropdown(false);
   };
 
   const onDeleteVersion = () => {

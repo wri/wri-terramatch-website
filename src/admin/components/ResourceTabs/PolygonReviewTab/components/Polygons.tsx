@@ -197,7 +197,6 @@ const Polygons = (props: IPolygonProps) => {
           polygonSelected={selectedPolygon?.uuid ?? ""}
           isPolygonStatusOpen={isPolygonStatusOpen}
           refresh={props?.refresh}
-          setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
         />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
