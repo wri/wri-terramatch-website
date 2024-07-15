@@ -104,7 +104,6 @@ const VersionHistory = ({
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
     const versionActive = (data as SitePolygonsDataResponse)?.find(item => item?.uuid == polygonSelectedUuid);
     if (versionActive?.is_active != 1) {
-      setIsLoadingDropdown(true);
       await mutateMakeActive({
         pathParams: { uuid: polygonSelectedUuid as string }
       });
@@ -113,7 +112,6 @@ const VersionHistory = ({
       await refreshSiteData?.();
       setSelectedPolygonData(selectPolygonVersion);
       setStatusSelectedPolygon(selectPolygonVersion?.status ?? "");
-      setIsLoadingDropdown(false);
       return;
     }
     displayNotification("Polygon version is already active", "warning", "Warning!");

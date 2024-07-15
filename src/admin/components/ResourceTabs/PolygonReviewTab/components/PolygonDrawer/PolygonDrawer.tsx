@@ -48,11 +48,13 @@ export const COMPLETED_DATA_CRITERIA_ID = 14;
 const PolygonDrawer = ({
   polygonSelected,
   isPolygonStatusOpen,
-  refresh
+  refresh,
+  isOpenPolygonDrawer
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
   refresh?: () => void;
+  isOpenPolygonDrawer: boolean;
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
@@ -195,7 +197,7 @@ const PolygonDrawer = ({
       setIsLoadingDropdown(false);
     };
     onLoading();
-  }, [selectedPolygon, buttonToogle]);
+  }, [isOpenPolygonDrawer]);
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
