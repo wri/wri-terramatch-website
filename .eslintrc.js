@@ -40,13 +40,13 @@ module.exports = {
       }
     }
   ],
-  plugins: ["simple-import-sort", "prettier", "react-hooks"],
+  plugins: ["simple-import-sort", "prettier", "react-hooks", "@typescript-eslint"],
   rules: {
     "react/display-name": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/no-autofocus": "off",
-    "no-unused-vars": [
+    "@typescript-eslint/no-unused-vars": [
       "error",
       {
         args: "none"
