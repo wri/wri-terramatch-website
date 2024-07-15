@@ -1,7 +1,9 @@
 import { Stack } from "@mui/material";
+import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -18,7 +20,8 @@ const ValidatePolygonFileShow: FC = () => {
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { showLoader, hideLoader } = useLoading();
-
+  const { displayNotification } = useAlertHook();
+  const t = useT();
   useEffect(() => {
     if (file && saveFlags) {
       uploadFile();
@@ -58,26 +61,40 @@ const ValidatePolygonFileShow: FC = () => {
         break;
     }
 
-    if (uploadPromise) {
-      const response = await uploadPromise;
-      if (response instanceof Blob) {
-        const blob = response;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        const getFormattedDate = () => {
-          const date = new Date();
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, "0");
-          const day = String(date.getDate()).padStart(2, "0");
-          return `${year}-${month}-${day}`;
-        };
+    try {
+      if (uploadPromise) {
+        const response = await uploadPromise;
+        if (response instanceof Blob) {
+          displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+          const blob = response;
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const getFormattedDate = () => {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+          };
 
-        const currentDate = getFormattedDate();
-        a.href = url;
-        a.download = `polygon-check-results-${currentDate}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        hideLoader();
+          const currentDate = getFormattedDate();
+          a.href = url;
+          a.download = `polygon-check-results-${currentDate}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+          hideLoader();
+        }
+      }
+    } catch (error) {
+      if (error && typeof error === "object" && "message" in error) {
+        let errorMessage = error.message as string;
+        const parsedMessage = JSON.parse(errorMessage);
+        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          errorMessage = parsedMessage.message;
+        }
+        displayNotification(t("Error uploading file"), "error", errorMessage);
+      } else {
+        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
       }
     }
 
