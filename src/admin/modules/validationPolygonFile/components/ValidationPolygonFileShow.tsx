@@ -129,7 +129,6 @@ const ValidatePolygonFileShow: FC = () => {
           Test Polygon
         </Text>
       </Stack>
-      upload polygon file
       <div className="flex gap-3">
         <Button onClick={openFormModalHandlerAddPolygon} className="px-8 py-3" variant="primary">
           <Text variant="text-14-bold">Upload Polygon File</Text>
