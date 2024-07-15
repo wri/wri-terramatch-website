@@ -202,9 +202,11 @@ const PolygonDrawer = ({
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
-        <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
+        <Text variant={"text-12-light"}>{`Polygon ID: ${
+          selectedPolygonData?.id ?? (selectPolygonVersion?.id as Number)
+        }`}</Text>
         <Text variant={"text-20-bold"} className="flex items-center gap-1">
-          {selectedPolygonData?.poly_name ? selectedPolygonData?.poly_name : "Unnamed Polygon"}
+          {selectedPolygonData?.poly_name ?? selectPolygonVersion?.poly_name ?? "Unnamed Polygon"}
           <div className={`h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
         </Text>
       </div>
@@ -229,15 +231,18 @@ const PolygonDrawer = ({
               <Text variant="text-14-semibold" className="w-[15%] break-words">
                 Status:
               </Text>
-              <When condition={selectedPolygon?.status}>
-                <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
+              <When condition={selectedPolygon?.status ?? selectPolygonVersion?.status}>
+                <Status
+                  className="w-[35%]"
+                  status={(selectedPolygon?.status ?? selectPolygonVersion?.status) as StatusEnum}
+                />
               </When>
             </div>
             <StatusDisplay
               titleStatus="Polygon"
-              name={selectedPolygon?.poly_name}
+              name={selectedPolygon?.poly_name ?? selectPolygonVersion?.poly_name}
               refresh={refresh}
-              record={selectedPolygon}
+              record={selectedPolygon ?? selectPolygonVersion}
               mutate={mutateSitePolygons}
               showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
@@ -257,7 +262,12 @@ const PolygonDrawer = ({
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && (
-                <AttributeInformation selectedPolygon={selectPolygonVersion ?? selectedPolygonData} />
+                <AttributeInformation
+                  selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
+                  sitePolygonRefresh={sitePolygonRefresh}
+                  setSelectedPolygonData={setSelectPolygonVersion}
+                  setStatusSelectedPolygon={setStatusSelectedPolygon}
+                />
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>

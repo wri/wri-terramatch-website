@@ -7,8 +7,7 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
+import { fetchGetV2SitePolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 const dropdownOptionsRestoration = [
@@ -74,7 +73,17 @@ const dropdownOptionsTree = [
     value: "full"
   }
 ];
-const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygon }) => {
+const AttributeInformation = ({
+  selectedPolygon,
+  sitePolygonRefresh,
+  setSelectedPolygonData,
+  setStatusSelectedPolygon
+}: {
+  selectedPolygon: SitePolygon;
+  sitePolygonRefresh?: () => void;
+  setSelectedPolygonData: any;
+  setStatusSelectedPolygon: any;
+}) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
   const [plantEndDate, setPlantEndDate] = useState<string>();
@@ -84,8 +93,8 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
-  const contextSite = useSitePolygonData();
-  const reloadSiteData = contextSite?.reloadSiteData;
+  // const contextSite = useSitePolygonData();
+  // const reloadSiteData = contextSite?.reloadSiteData;
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   const { displayNotification } = useAlertHook();
   const t = useT();
@@ -146,9 +155,14 @@ const AttributeInformation = ({ selectedPolygon }: { selectedPolygon: SitePolygo
             pathParams: { uuid: selectedPolygon.uuid }
           },
           {
-            onSuccess: () => {
-              reloadSiteData?.();
+            onSuccess: async () => {
+              sitePolygonRefresh?.();
               displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+              const response = (await fetchGetV2SitePolygonUuid({
+                pathParams: { uuid: selectedPolygon.uuid as string }
+              })) as SitePolygon;
+              setStatusSelectedPolygon(response?.status ?? "");
+              setSelectedPolygonData(response);
             },
             onError: error => {
               displayNotification(t("Error updating polygon data"), "error", t("Error!"));

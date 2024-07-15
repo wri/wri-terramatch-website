@@ -70,8 +70,8 @@ const VersionHistory = ({
         pathParams: { uuid: selectedPolygon.primary_uuid as string }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active == 1);
-      setSelectedPolygonData(polygonActive);
       setSelectPolygonVersion(polygonActive);
+      setSelectedPolygonData(polygonActive);
       setStatusSelectedPolygon(polygonActive?.status ?? "");
       setIsLoadingDropdown(false);
     },
@@ -81,10 +81,9 @@ const VersionHistory = ({
   });
   const createNewVersion = async () => {
     try {
-      const newVersion = await fetchPostV2SitePolygonUuidNewVersion({
+      await fetchPostV2SitePolygonUuidNewVersion({
         pathParams: { uuid: selectedPolygon.uuid as string }
       });
-      setSelectPolygonVersion(newVersion);
       displayNotification("New version created successfully", "success", "Success!");
       refetch();
       refreshSiteData?.();
