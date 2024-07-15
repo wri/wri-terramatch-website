@@ -30722,13 +30722,13 @@ export type PostV2ProjectsUUIDManagersError = Fetcher.ErrorWrapper<
   | {
       status: 404;
       payload: {
-        detail?: void;
+        detail?: string;
       };
     }
   | {
       status: 422;
       payload: {
-        detail?: void;
+        detail?: string;
       };
     }
 >;
@@ -30747,12 +30747,11 @@ export type PostV2ProjectsUUIDManagersResponse = {
 };
 
 export type PostV2ProjectsUUIDManagersRequestBody = {
-  email_address?: string;
-  required?: void;
+  email_address: string;
 };
 
 export type PostV2ProjectsUUIDManagersVariables = {
-  body?: PostV2ProjectsUUIDManagersRequestBody;
+  body: PostV2ProjectsUUIDManagersRequestBody;
   pathParams: PostV2ProjectsUUIDManagersPathParams;
 } & ApiContext["fetcherOptions"];
 

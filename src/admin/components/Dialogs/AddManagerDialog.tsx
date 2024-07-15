@@ -60,7 +60,7 @@ export const AddManagerDialog = ({ handleClose, ...props }: AddManagerDialogProp
   const onSubmit = (data: FormValues) => {
     addManager({
       pathParams: { uuid: record.id as string },
-      queryParams: {
+      body: {
         email_address: data.email
       }
     });
