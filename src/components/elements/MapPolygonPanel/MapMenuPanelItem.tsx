@@ -6,6 +6,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
+import ModalWithMap from "@/components/extensive/Modal/ModalWithMap";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -15,6 +16,7 @@ import { StatusEnum } from "../Status/constants/statusMap";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
+  polygonUuid?: string;
   title: string;
   subtitle: string;
   status: string;
@@ -29,6 +31,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
 
 const MapMenuPanelItem = ({
   uuid,
+  polygonUuid,
   title,
   subtitle,
   status,
@@ -68,6 +71,19 @@ const MapMenuPanelItem = ({
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
       />,
       true
+    );
+  };
+
+  const openFormModalHandlerRequestPolygonSupport = () => {
+    openModal(
+      <ModalWithMap
+        polygonSelected={uuid}
+        polygonUuid={polygonUuid}
+        title="Request Support"
+        onClose={closeModal}
+        primaryButtonText="Submit"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+      ></ModalWithMap>
     );
   };
 
@@ -120,6 +136,16 @@ const MapMenuPanelItem = ({
     },
     {
       id: "5",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center">
+          <Icon name={IconNames.REQUEST} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Request Support")}
+        </Text>
+      ),
+      onClick: () => openFormModalHandlerRequestPolygonSupport()
+    },
+    {
+      id: "6",
       render: () => (
         <Text variant="text-14-semibold" className="flex items-center">
           <Icon name={IconNames.TRASH_PA} className="h-4 w-4 lg:h-5 lg:w-5" />

@@ -9,6 +9,7 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
+import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -77,6 +78,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   validationType?: string;
   editPolygon?: boolean;
   polygonChecks?: boolean;
+  polygonValidationData?: ICriteriaCheckItem[];
   legend?: LegendItem[];
   centroids?: any;
   polygonsData?: Record<string, string[]>;
@@ -110,6 +112,7 @@ export const MapContainer = ({
   validationType = "bulkValidation",
   editPolygon = false,
   polygonChecks = false,
+  polygonValidationData,
   record,
   showPopups = false,
   showLegend = false,
@@ -325,7 +328,7 @@ export const MapContainer = ({
       </When>
       <When condition={polygonChecks}>
         <ControlGroup position="bottom-left" className="bottom-13">
-          <PolygonCheck />
+          <PolygonCheck polygonValidationData={polygonValidationData ?? []} />
         </ControlGroup>
       </When>
       <When condition={!polygonsExists}>

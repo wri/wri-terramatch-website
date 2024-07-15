@@ -220,6 +220,7 @@ const MapSidePanel = ({
             render={item => (
               <MapMenuPanelItem
                 uuid={item.uuid}
+                polygonUuid={item.poly_id}
                 title={item.title}
                 subtitle={item.subtitle}
                 status={item.status}

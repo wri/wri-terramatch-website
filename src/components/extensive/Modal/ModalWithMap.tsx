@@ -3,16 +3,23 @@ import { remove } from "lodash";
 import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 
+import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { fetchGetV2TerrafundPolygonBboxUuid, fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2TerrafundPolygonBboxUuid,
+  fetchGetV2TerrafundPolygonUuid,
+  fetchGetV2TerrafundValidationCriteriaData
+} from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -24,11 +31,13 @@ export interface ModalWithMapProps extends ModalProps {
   polygonSelected?: string;
   primaryButtonText?: string;
   status?: StatusEnum;
+  polygonUuid?: string;
   onClose?: () => void;
 }
 
 const ModalWithMap: FC<ModalWithMapProps> = ({
   polygonSelected,
+  polygonUuid,
   iconProps,
   title,
   content,
@@ -43,21 +52,40 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   const [polygonData, setPolygonData] = useState<any>();
   const [initialPolygonData, setInitialPolygonData] = useState<any>();
   const [polygonBbox, setPolygonBbox] = useState<any>();
+  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
+  const mapFunctions = useMap();
   const t = useT();
 
   useEffect(() => {
     const getPolygonData = async () => {
-      if (polygonSelected) {
-        const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-          pathParams: { uuid: polygonSelected }
+      if (polygonUuid) {
+        const polygonData = await fetchGetV2TerrafundPolygonUuid({
+          pathParams: { uuid: polygonUuid }
         });
-        setInitialPolygonData(polygonGeojson);
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonSelected } });
+        setInitialPolygonData(polygonData);
+        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonUuid } });
         setPolygonBbox(bbox?.bbox);
+
+        const currentValidationStatusPolygon = await fetchGetV2TerrafundValidationCriteriaData({
+          queryParams: {
+            uuid: polygonUuid
+          }
+        });
+        if (currentValidationStatusPolygon?.criteria_list && currentValidationStatusPolygon?.criteria_list.length > 0) {
+          const transformedData: ICriteriaCheckItem[] = currentValidationStatusPolygon.criteria_list.map(
+            (criteria: any) => ({
+              id: criteria.criteria_id,
+              date: criteria.latest_created_at,
+              status: criteria.valid === 1,
+              label: validationLabels[criteria.criteria_id]
+            })
+          );
+          setPolygonValidationData(transformedData);
+        }
       }
     };
     getPolygonData();
-  }, [polygonSelected]);
+  }, [polygonUuid]);
 
   useEffect(() => {
     if (initialPolygonData) {
@@ -84,9 +112,9 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             <div className="flex items-center justify-between">
               <Text variant="text-24-bold">{t(title)}</Text>
             </div>
-            <When condition={!!content}>
+            <When condition={!!initialPolygonData}>
               <Text as="div" variant="text-12-bold" className="mt-1 mb-8" containHtml>
-                {t(content)}
+                {t(initialPolygonData?.site_polygon?.poly_name ?? "Unnamed Polygon")}
               </Text>
             </When>
             <div className="mb-[72px]">
@@ -142,13 +170,15 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             </Button>
           </div>
         </div>
-        <div className="relative h-[700px] w-[60%]">
+        <div className="relative h-[500px] w-[60%]">
           <MapContainer
             className="h-full w-full"
             hasControls={false}
             polygonChecks
+            polygonValidationData={polygonValidationData}
             polygonsData={polygonData}
             bbox={polygonBbox}
+            mapFunctions={mapFunctions}
           />
           <button onClick={onClose} className="absolute right-1 top-1 z-10 rounded bg-grey-750 p-1 drop-shadow-md">
             <Icon name={IconNames.CLEAR} className="h-4 w-4 text-darkCustom-100" />
