@@ -1,4 +1,5 @@
 import { Grid, Stack } from "@mui/material";
+import { useT } from "@transifex/react";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
@@ -15,6 +16,7 @@ import {
   mapPolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Notification from "@/components/elements/Notification/Notification";
@@ -130,7 +132,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
-
+  const { displayNotification } = useAlertHook();
+  const t = useT();
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -269,12 +272,24 @@ const PolygonReviewTab: FC<IProps> = props => {
           break;
       }
     }
-
-    await Promise.all(uploadPromises);
-
-    refetch();
-    refetchSiteBbox();
-    closeModal();
+    try {
+      await Promise.all(uploadPromises);
+      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      refetch();
+      refetchSiteBbox();
+      closeModal();
+    } catch (error) {
+      if (error && typeof error === "object" && "message" in error) {
+        let errorMessage = error.message as string;
+        const parsedMessage = JSON.parse(errorMessage);
+        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          errorMessage = parsedMessage.message;
+        }
+        displayNotification(t("Error uploading file"), "error", errorMessage);
+      } else {
+        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+      }
+    }
   };
 
   const getFileType = (file: UploadedFile) => {
