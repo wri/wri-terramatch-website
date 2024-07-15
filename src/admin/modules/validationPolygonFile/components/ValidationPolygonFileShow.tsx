@@ -82,7 +82,6 @@ const ValidatePolygonFileShow: FC = () => {
           a.download = `polygon-check-results-${currentDate}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
-          hideLoader();
         }
       }
     } catch (error) {
@@ -97,7 +96,7 @@ const ValidatePolygonFileShow: FC = () => {
         displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
       }
     }
-
+    hideLoader();
     closeModal();
   };
 
