@@ -121,7 +121,7 @@ const VersionHistory = ({
 
   const deletePolygonVersion = async () => {
     await mutateDeletePolygonVersion({
-      pathParams: { uuid: selectPolygonVersion?.poly_id as string }
+      pathParams: { uuid: (selectPolygonVersion?.poly_id ?? selectedPolygon.uuid) as string }
     });
   };
 
