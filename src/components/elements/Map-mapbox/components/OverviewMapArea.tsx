@@ -23,9 +23,10 @@ import { storePolygon } from "../utils";
 interface EntityAreaProps {
   entityModel: any;
   type: string;
+  refetch?: () => void;
 }
 
-const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
+const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity }: EntityAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
@@ -47,7 +48,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
   };
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon);
+  const onSave = (geojson: any) =>
+    storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon, refreshEntity);
 
   const mapFunctions = useMap(onSave);
 

@@ -143,7 +143,7 @@ const SiteDetailPage = () => {
         <StatusBar entityName="sites" entity={site} />
         <SecondaryTabs
           tabItems={[
-            { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} /> },
+            { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} refetch={refetch} /> },
             { key: "details", title: t("Details"), body: <SiteDetailTab site={site} /> },
             {
               key: "gallery",

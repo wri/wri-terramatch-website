@@ -46,6 +46,7 @@ import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
   site: any;
+  refetch?: () => void;
 }
 
 const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonsDataResponse }) => {
@@ -77,7 +78,7 @@ const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygo
   );
 };
 
-const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
+const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
   const { isPPC } = useFramework(site);
@@ -370,7 +371,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   />
                 </div>
               </div>
-              <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
+              <SiteArea
+                sites={site}
+                setEditPolygon={setEditPolygon}
+                editPolygon={editPolygon}
+                refetch={refetchEntity}
+              />
             </PageCard>
           </PageColumn>
         </PageRow>
