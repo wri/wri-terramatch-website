@@ -25,6 +25,7 @@ import { optionToChoices } from "@/utils/options";
 interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   status: "approve" | "moreinfo" | "restoration-in-progress" | undefined;
+  setNotificationStatus?: any;
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -35,7 +36,7 @@ const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
 });
 
-const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChangeModalProps) => {
+const StatusChangeModal = ({ handleClose, status, setNotificationStatus, ...dialogProps }: StatusChangeModalProps) => {
   const { record, refetch, resource } = useShowContext();
   const [feedbackValue, setFeedbackValue] = useState("");
 
@@ -117,6 +118,36 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   const { mutateAsync, isLoading } = usePutV2AdminENTITYUUIDSTATUS({
     onSuccess: () => {
       refetch();
+      setNotificationStatus({
+        open: true,
+        message: "Status updated successfully.",
+        type: "success",
+        title: "Success!"
+      });
+      setTimeout(() => {
+        setNotificationStatus({
+          open: false,
+          message: "",
+          type: "success",
+          title: "Success!"
+        });
+      }, 3000);
+    },
+    onError: () => {
+      setNotificationStatus({
+        open: true,
+        message: "Status update failed.",
+        type: "error",
+        title: "Error!"
+      });
+      setTimeout(() => {
+        setNotificationStatus({
+          open: false,
+          message: "",
+          type: "error",
+          title: "Error!"
+        });
+      }, 3000);
     }
   });
 

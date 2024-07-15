@@ -5,12 +5,24 @@ import { BooleanField, FunctionField, Labeled, TextField, useShowContext } from 
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import { fetchGetV2SitesSiteCheckApprove } from "@/generated/apiComponents";
 
 const SiteOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "restoration-in-progress" | undefined>();
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
+  const [notificationStatus, setNotificationStatus] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning";
+    title: string;
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    title: "Success!"
+  });
 
   const { record } = useShowContext();
 
@@ -100,7 +112,13 @@ const SiteOverview: FC = () => {
         </Stack>
       </Card>
 
-      <StatusChangeModal open={!!statusModal} status={statusModal} handleClose={() => setStatusModal(undefined)} />
+      <StatusChangeModal
+        open={!!statusModal}
+        status={statusModal}
+        handleClose={() => setStatusModal(undefined)}
+        setNotificationStatus={setNotificationStatus}
+      />
+      <Notification {...notificationStatus} />
     </>
   );
 };
