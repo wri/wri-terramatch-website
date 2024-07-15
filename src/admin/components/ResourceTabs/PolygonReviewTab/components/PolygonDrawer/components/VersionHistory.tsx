@@ -82,7 +82,7 @@ const VersionHistory = ({
   const createNewVersion = async () => {
     try {
       await fetchPostV2SitePolygonUuidNewVersion({
-        pathParams: { uuid: selectedPolygon.uuid as string }
+        pathParams: { uuid: (selectedPolygon.primary_uuid ?? selectPolygonVersion?.primary_uuid) as string }
       });
       displayNotification("New version created successfully", "success", "Success!");
       refetch();
