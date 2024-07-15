@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -10,8 +10,8 @@ import { useModalContext } from "@/context/modal.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
   fetchPostV2SitePolygonUuidNewVersion,
+  GetV2SitePolygonUuidVersionsResponse,
   useDeleteV2TerrafundPolygonUuid,
-  useGetV2SitePolygonUuidVersions,
   usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -23,7 +23,12 @@ const VersionHistory = ({
   refreshPolygonList,
   refreshSiteData,
   setSelectedPolygonData,
-  setStatusSelectedPolygon
+  setStatusSelectedPolygon,
+  data,
+  isLoadingVersions,
+  refetch,
+  isLoadingDropdown,
+  setIsLoadingDropdown
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
@@ -32,23 +37,15 @@ const VersionHistory = ({
   refreshSiteData?: () => void;
   setSelectedPolygonData?: any;
   setStatusSelectedPolygon?: any;
+  data: GetV2SitePolygonUuidVersionsResponse | [];
+  isLoadingVersions: boolean;
+  refetch: () => void;
+  isLoadingDropdown: boolean;
+  setIsLoadingDropdown: Dispatch<SetStateAction<boolean>>;
 }) => {
   const t = useT();
   const { displayNotification } = useAlertHook();
   const { openModal, closeModal } = useModalContext();
-  const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
-  const {
-    data,
-    refetch,
-    isLoading: isLoadingVersions
-  } = useGetV2SitePolygonUuidVersions(
-    {
-      pathParams: { uuid: selectPolygonVersion?.primary_uuid as string }
-    },
-    {
-      enabled: !!selectPolygonVersion?.primary_uuid
-    }
-  );
 
   useEffect(() => {
     refetch();
@@ -72,9 +69,10 @@ const VersionHistory = ({
       const response = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: selectedPolygon.primary_uuid as string }
       })) as SitePolygonsDataResponse;
-      setSelectedPolygonData(response?.find(item => item.is_active == 1));
-      setSelectPolygonVersion(response?.find(item => item.is_active == 1));
-      setStatusSelectedPolygon(response?.find(item => item.is_active == 1)?.status ?? "");
+      const polygonActive = response?.find(item => item.is_active == 1);
+      setSelectedPolygonData(polygonActive);
+      setSelectPolygonVersion(polygonActive);
+      setStatusSelectedPolygon(polygonActive?.status ?? "");
       setIsLoadingDropdown(false);
     },
     onError: () => {

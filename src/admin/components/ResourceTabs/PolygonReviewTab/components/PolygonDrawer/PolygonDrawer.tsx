@@ -16,6 +16,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
+  useGetV2SitePolygonUuidVersions,
   useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -62,6 +63,7 @@ const PolygonDrawer = ({
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygon>();
+  const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -173,9 +175,29 @@ const PolygonDrawer = ({
     setSelectPolygonVersion(selectedPolygonData);
   }, [buttonToogle, selectedPolygonData]);
 
+  const {
+    data: polygonVersions,
+    refetch: refetchPolygonVersions,
+    isLoading: isLoadingVersions
+  } = useGetV2SitePolygonUuidVersions(
+    {
+      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygon?.primary_uuid) as string }
+    },
+    {
+      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygon?.primary_uuid
+    }
+  );
+
   useEffect(() => {
-    sitePolygonRefresh?.();
-  }, [selectedPolygon]);
+    setIsLoadingDropdown(true);
+    const onLoading = async () => {
+      await sitePolygonRefresh?.();
+      await refetchPolygonVersions();
+      await refresh?.();
+      setIsLoadingDropdown(false);
+    };
+    onLoading();
+  }, [selectedPolygon, buttonToogle]);
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
@@ -248,6 +270,11 @@ const PolygonDrawer = ({
                   refreshSiteData={sitePolygonRefresh}
                   setSelectedPolygonData={setSelectedPolygonData}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
+                  data={polygonVersions ?? []}
+                  isLoadingVersions={isLoadingVersions}
+                  refetch={refetchPolygonVersions}
+                  isLoadingDropdown={isLoadingDropdown}
+                  setIsLoadingDropdown={setIsLoadingDropdown}
                 />
               )}
             </Accordion>
