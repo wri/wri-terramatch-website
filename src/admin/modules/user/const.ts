@@ -4,6 +4,7 @@ export const userTypesChoices = [
   { name: "Admin", id: "admin" },
   { name: "User", id: "user" },
   { name: "Project Developer", id: "project-developer" },
+  { name: "Project Manager", id: "project-manager" },
   { name: "Funder", id: "funder" },
   { name: "government", id: "government" }
 ];
@@ -28,6 +29,10 @@ export const userPrimaryRoleChoices = [
   {
     id: "project-developer",
     name: "Project Developer"
+  },
+  {
+    id: "project-manager",
+    name: "Project Manager"
   },
   {
     id: "funder",

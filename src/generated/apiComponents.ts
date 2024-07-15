@@ -30714,6 +30714,176 @@ export const usePostV2ProjectsInviteAccept = (
   );
 };
 
+export type PostV2ProjectsUUIDManagersPathParams = {
+  uuid: string;
+};
+
+export type PostV2ProjectsUUIDManagersError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        detail?: string;
+      };
+    }
+  | {
+      status: 422;
+      payload: {
+        detail?: string;
+      };
+    }
+>;
+
+export type PostV2ProjectsUUIDManagersResponse = {
+  uuid?: string;
+  user_type?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * allowed values Pending|Accepted
+   */
+  status?: string;
+};
+
+export type PostV2ProjectsUUIDManagersRequestBody = {
+  email_address: string;
+};
+
+export type PostV2ProjectsUUIDManagersVariables = {
+  body: PostV2ProjectsUUIDManagersRequestBody;
+  pathParams: PostV2ProjectsUUIDManagersPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2ProjectsUUIDManagers = (variables: PostV2ProjectsUUIDManagersVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2ProjectsUUIDManagersResponse,
+    PostV2ProjectsUUIDManagersError,
+    PostV2ProjectsUUIDManagersRequestBody,
+    {},
+    {},
+    PostV2ProjectsUUIDManagersPathParams
+  >({ url: "/v2/projects/{uuid}/managers", method: "post", ...variables, signal });
+
+export const usePostV2ProjectsUUIDManagers = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2ProjectsUUIDManagersResponse,
+      PostV2ProjectsUUIDManagersError,
+      PostV2ProjectsUUIDManagersVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2ProjectsUUIDManagersResponse,
+    PostV2ProjectsUUIDManagersError,
+    PostV2ProjectsUUIDManagersVariables
+  >(
+    (variables: PostV2ProjectsUUIDManagersVariables) =>
+      fetchPostV2ProjectsUUIDManagers({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2ProjectsUUIDManagersPathParams = {
+  uuid: string;
+};
+
+export type GetV2ProjectsUUIDManagersError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectsUUIDManagersResponse = {
+  uuid?: string;
+  user_type?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * allowed values Pending|Accepted
+   */
+  status?: string;
+}[];
+
+export type GetV2ProjectsUUIDManagersVariables = {
+  pathParams: GetV2ProjectsUUIDManagersPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectsUUIDManagers = (variables: GetV2ProjectsUUIDManagersVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2ProjectsUUIDManagersResponse,
+    GetV2ProjectsUUIDManagersError,
+    undefined,
+    {},
+    {},
+    GetV2ProjectsUUIDManagersPathParams
+  >({ url: "/v2/projects/{uuid}/managers", method: "get", ...variables, signal });
+
+export const useGetV2ProjectsUUIDManagers = <TData = GetV2ProjectsUUIDManagersResponse>(
+  variables: GetV2ProjectsUUIDManagersVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDManagersError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDManagersError, TData>(
+    queryKeyFn({ path: "/v2/projects/{UUID}/managers", operationId: "getV2ProjectsUUIDManagers", variables }),
+    ({ signal }) => fetchGetV2ProjectsUUIDManagers({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type DeleteV2ProjectsUUIDManagersUSERUUIDPathParams = {
+  uuid: string;
+  userUuid: string;
+};
+
+export type DeleteV2ProjectsUUIDManagersUSERUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ProjectsUUIDManagersUSERUUIDVariables = {
+  pathParams: DeleteV2ProjectsUUIDManagersUSERUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ProjectsUUIDManagersUSERUUID = (
+  variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2ProjectsUUIDManagersUSERUUIDError,
+    undefined,
+    {},
+    {},
+    DeleteV2ProjectsUUIDManagersUSERUUIDPathParams
+  >({ url: "/v2/projects/{uuid}/managers/{userUuid}", method: "delete", ...variables, signal });
+
+export const useDeleteV2ProjectsUUIDManagersUSERUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2ProjectsUUIDManagersUSERUUIDError,
+      DeleteV2ProjectsUUIDManagersUSERUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2ProjectsUUIDManagersUSERUUIDError,
+    DeleteV2ProjectsUUIDManagersUSERUUIDVariables
+  >(
+    (variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables) =>
+      fetchDeleteV2ProjectsUUIDManagersUSERUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type DeleteV2NurseriesUUIDPathParams = {
   uuid: string;
 };
@@ -35156,6 +35326,11 @@ export type QueryOperation =
       path: "/v2/projects/{UUID}/monitorings";
       operationId: "getV2ProjectsUUIDMonitorings";
       variables: GetV2ProjectsUUIDMonitoringsVariables;
+    }
+  | {
+      path: "/v2/projects/{UUID}/managers";
+      operationId: "getV2ProjectsUUIDManagers";
+      variables: GetV2ProjectsUUIDManagersVariables;
     }
   | {
       path: "/v2/admin/audits/{ENTITY}/{UUID}";

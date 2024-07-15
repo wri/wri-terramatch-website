@@ -11,7 +11,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeletePartner } from "@/hooks/usePartnerDeletion";
+import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
 import { MENU_PLACEMENT_RIGHT_TOP } from "../../Menu/MenuVariant";
 
@@ -47,7 +47,7 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
 
   const statusProps = statusMapping[status];
   const { openModal, closeModal } = useModalContext();
-  const { notificationStatus, deletePartner } = useDeletePartner(project, refetch);
+  const { notificationStatus, deletePartner } = useDeleteAssociate("partner", project, refetch);
 
   const ModalConfirmDeletePartner = (email_address: string) => {
     openModal(
