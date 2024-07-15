@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
   fetchPostV2TerrafundUploadGeojsonValidate,
@@ -16,6 +17,7 @@ const ValidatePolygonFileShow: FC = () => {
   const { openModal, closeModal } = useModalContext();
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const { showLoader, hideLoader } = useLoading();
 
   useEffect(() => {
     if (file && saveFlags) {
@@ -33,6 +35,7 @@ const ValidatePolygonFileShow: FC = () => {
   };
 
   const uploadFile = async () => {
+    showLoader();
     const fileToUpload = file?.rawFile as File;
     const formData = new FormData();
     const fileType = getFileType(file!);
@@ -74,6 +77,7 @@ const ValidatePolygonFileShow: FC = () => {
         a.download = `polygon-check-results-${currentDate}.csv`;
         a.click();
         window.URL.revokeObjectURL(url);
+        hideLoader();
       }
     }
 

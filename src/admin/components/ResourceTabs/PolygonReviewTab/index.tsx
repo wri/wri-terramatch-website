@@ -25,6 +25,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -130,7 +131,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
-
+  const { showLoader, hideLoader } = useLoading();
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -245,6 +246,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const uploadFiles = async () => {
     const uploadPromises = [];
+    showLoader();
 
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
@@ -275,6 +277,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     refetch();
     refetchSiteBbox();
     closeModal();
+    hideLoader();
   };
 
   const getFileType = (file: UploadedFile) => {
