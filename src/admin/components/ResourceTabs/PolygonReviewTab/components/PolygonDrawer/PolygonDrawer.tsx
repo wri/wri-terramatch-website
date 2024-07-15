@@ -191,9 +191,7 @@ const PolygonDrawer = ({
   useEffect(() => {
     setIsLoadingDropdown(true);
     const onLoading = async () => {
-      await sitePolygonRefresh?.();
       await refetchPolygonVersions();
-      await refresh?.();
       setIsLoadingDropdown(false);
     };
     onLoading();
