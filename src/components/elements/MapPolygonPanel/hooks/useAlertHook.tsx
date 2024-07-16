@@ -7,6 +7,7 @@ const useAlertHook = () => {
 
   const displayNotification = useCallback(
     (message: string, type: "success" | "error" | "warning", title: string) => {
+      const time = type === "success" ? 3000 : 5000;
       setpolygonNotificationStatus({
         open: true,
         message,
@@ -20,7 +21,7 @@ const useAlertHook = () => {
           type: "success",
           title: ""
         });
-      }, 3000);
+      }, time);
     },
     [setpolygonNotificationStatus]
   );

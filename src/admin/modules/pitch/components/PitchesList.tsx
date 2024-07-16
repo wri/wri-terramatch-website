@@ -59,7 +59,7 @@ const tableMenu = [
 
 const ApplicationDataGrid = () => {
   return (
-    <Datagrid>
+    <Datagrid rowClick={"show"}>
       <TextField source="project_name" label="Project Name" sortable />
       <ReferenceField
         source="organisation_id"

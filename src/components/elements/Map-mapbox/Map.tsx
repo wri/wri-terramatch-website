@@ -199,7 +199,7 @@ export const MapContainer = ({
 
   useEffect(() => {
     if (geojson && map.current && draw.current) {
-      addGeojsonToDraw(geojson, "", () => {}, draw.current);
+      addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
     }
   }, [showMediaPopups]);
 

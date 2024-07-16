@@ -211,6 +211,8 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                     email={partner.email_address || ""}
                     username={fullName || ""}
                     status={partner.status as string}
+                    project={project}
+                    refetch={refetch}
                   />
                 );
               }}

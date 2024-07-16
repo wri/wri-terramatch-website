@@ -2381,6 +2381,52 @@ export const useGetV2ProjectsUUIDPartners = <TData = GetV2ProjectsUUIDPartnersRe
   );
 };
 
+export type DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams = {
+  uuid: string;
+  email: string;
+};
+
+export type DeleteV2ProjectsUUIDEMAILRemovePartnerError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ProjectsUUIDEMAILRemovePartnerVariables = {
+  pathParams: DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ProjectsUUIDEMAILRemovePartner = (
+  variables: DeleteV2ProjectsUUIDEMAILRemovePartnerVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2ProjectsUUIDEMAILRemovePartnerError,
+    undefined,
+    {},
+    {},
+    DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams
+  >({ url: "/v2/projects/{uuid}/{email}/remove-partner", method: "delete", ...variables, signal });
+
+export const useDeleteV2ProjectsUUIDEMAILRemovePartner = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2ProjectsUUIDEMAILRemovePartnerError,
+      DeleteV2ProjectsUUIDEMAILRemovePartnerVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2ProjectsUUIDEMAILRemovePartnerError,
+    DeleteV2ProjectsUUIDEMAILRemovePartnerVariables
+  >(
+    (variables: DeleteV2ProjectsUUIDEMAILRemovePartnerVariables) =>
+      fetchDeleteV2ProjectsUUIDEMAILRemovePartner({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2MyProjectsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2MyProjectsResponse = {
@@ -30668,6 +30714,176 @@ export const usePostV2ProjectsInviteAccept = (
   );
 };
 
+export type PostV2ProjectsUUIDManagersPathParams = {
+  uuid: string;
+};
+
+export type PostV2ProjectsUUIDManagersError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        detail?: string;
+      };
+    }
+  | {
+      status: 422;
+      payload: {
+        detail?: string;
+      };
+    }
+>;
+
+export type PostV2ProjectsUUIDManagersResponse = {
+  uuid?: string;
+  user_type?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * allowed values Pending|Accepted
+   */
+  status?: string;
+};
+
+export type PostV2ProjectsUUIDManagersRequestBody = {
+  email_address: string;
+};
+
+export type PostV2ProjectsUUIDManagersVariables = {
+  body: PostV2ProjectsUUIDManagersRequestBody;
+  pathParams: PostV2ProjectsUUIDManagersPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2ProjectsUUIDManagers = (variables: PostV2ProjectsUUIDManagersVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2ProjectsUUIDManagersResponse,
+    PostV2ProjectsUUIDManagersError,
+    PostV2ProjectsUUIDManagersRequestBody,
+    {},
+    {},
+    PostV2ProjectsUUIDManagersPathParams
+  >({ url: "/v2/projects/{uuid}/managers", method: "post", ...variables, signal });
+
+export const usePostV2ProjectsUUIDManagers = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2ProjectsUUIDManagersResponse,
+      PostV2ProjectsUUIDManagersError,
+      PostV2ProjectsUUIDManagersVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2ProjectsUUIDManagersResponse,
+    PostV2ProjectsUUIDManagersError,
+    PostV2ProjectsUUIDManagersVariables
+  >(
+    (variables: PostV2ProjectsUUIDManagersVariables) =>
+      fetchPostV2ProjectsUUIDManagers({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2ProjectsUUIDManagersPathParams = {
+  uuid: string;
+};
+
+export type GetV2ProjectsUUIDManagersError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ProjectsUUIDManagersResponse = {
+  uuid?: string;
+  user_type?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * allowed values Pending|Accepted
+   */
+  status?: string;
+}[];
+
+export type GetV2ProjectsUUIDManagersVariables = {
+  pathParams: GetV2ProjectsUUIDManagersPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2ProjectsUUIDManagers = (variables: GetV2ProjectsUUIDManagersVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2ProjectsUUIDManagersResponse,
+    GetV2ProjectsUUIDManagersError,
+    undefined,
+    {},
+    {},
+    GetV2ProjectsUUIDManagersPathParams
+  >({ url: "/v2/projects/{uuid}/managers", method: "get", ...variables, signal });
+
+export const useGetV2ProjectsUUIDManagers = <TData = GetV2ProjectsUUIDManagersResponse>(
+  variables: GetV2ProjectsUUIDManagersVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDManagersError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDManagersError, TData>(
+    queryKeyFn({ path: "/v2/projects/{UUID}/managers", operationId: "getV2ProjectsUUIDManagers", variables }),
+    ({ signal }) => fetchGetV2ProjectsUUIDManagers({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type DeleteV2ProjectsUUIDManagersUSERUUIDPathParams = {
+  uuid: string;
+  userUuid: string;
+};
+
+export type DeleteV2ProjectsUUIDManagersUSERUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ProjectsUUIDManagersUSERUUIDVariables = {
+  pathParams: DeleteV2ProjectsUUIDManagersUSERUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ProjectsUUIDManagersUSERUUID = (
+  variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2ProjectsUUIDManagersUSERUUIDError,
+    undefined,
+    {},
+    {},
+    DeleteV2ProjectsUUIDManagersUSERUUIDPathParams
+  >({ url: "/v2/projects/{uuid}/managers/{userUuid}", method: "delete", ...variables, signal });
+
+export const useDeleteV2ProjectsUUIDManagersUSERUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2ProjectsUUIDManagersUSERUUIDError,
+      DeleteV2ProjectsUUIDManagersUSERUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2ProjectsUUIDManagersUSERUUIDError,
+    DeleteV2ProjectsUUIDManagersUSERUUIDVariables
+  >(
+    (variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables) =>
+      fetchDeleteV2ProjectsUUIDManagersUSERUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type DeleteV2NurseriesUUIDPathParams = {
   uuid: string;
 };
@@ -32419,6 +32635,168 @@ export const usePostV2TerrafundUploadKml = (
   >(
     (variables: PostV2TerrafundUploadKmlVariables) =>
       fetchPostV2TerrafundUploadKml({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadGeojsonValidateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadGeojsonValidateRequestBody = {
+  /**
+   * The GeoJSON file to test
+   *
+   * @format binary
+   */
+  file: Blob;
+};
+
+export type PostV2TerrafundUploadGeojsonValidateVariables = {
+  body: PostV2TerrafundUploadGeojsonValidateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
+ */
+export const fetchPostV2TerrafundUploadGeojsonValidate = (
+  variables: PostV2TerrafundUploadGeojsonValidateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Blob,
+    PostV2TerrafundUploadGeojsonValidateError,
+    PostV2TerrafundUploadGeojsonValidateRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-geojson-validate", method: "post", ...variables, signal });
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
+ */
+export const usePostV2TerrafundUploadGeojsonValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Blob,
+      PostV2TerrafundUploadGeojsonValidateError,
+      PostV2TerrafundUploadGeojsonValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Blob,
+    PostV2TerrafundUploadGeojsonValidateError,
+    PostV2TerrafundUploadGeojsonValidateVariables
+  >(
+    (variables: PostV2TerrafundUploadGeojsonValidateVariables) =>
+      fetchPostV2TerrafundUploadGeojsonValidate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadShapefileValidateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadShapefileValidateRequestBody = {
+  /**
+   * The Shapefile file to test
+   *
+   * @format binary
+   */
+  file: Blob;
+};
+
+export type PostV2TerrafundUploadShapefileValidateVariables = {
+  body: PostV2TerrafundUploadShapefileValidateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
+ */
+export const fetchPostV2TerrafundUploadShapefileValidate = (
+  variables: PostV2TerrafundUploadShapefileValidateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Blob,
+    PostV2TerrafundUploadShapefileValidateError,
+    PostV2TerrafundUploadShapefileValidateRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-shapefile-validate", method: "post", ...variables, signal });
+
+/**
+ * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
+ */
+export const usePostV2TerrafundUploadShapefileValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Blob,
+      PostV2TerrafundUploadShapefileValidateError,
+      PostV2TerrafundUploadShapefileValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    Blob,
+    PostV2TerrafundUploadShapefileValidateError,
+    PostV2TerrafundUploadShapefileValidateVariables
+  >(
+    (variables: PostV2TerrafundUploadShapefileValidateVariables) =>
+      fetchPostV2TerrafundUploadShapefileValidate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadKmlValidateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadKmlValidateRequestBody = {
+  /**
+   * The KML file to test
+   *
+   * @format binary
+   */
+  file: Blob;
+};
+
+export type PostV2TerrafundUploadKmlValidateVariables = {
+  body: PostV2TerrafundUploadKmlValidateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a KML file, converts it to GeoJSON, and validate the polygons.
+ */
+export const fetchPostV2TerrafundUploadKmlValidate = (
+  variables: PostV2TerrafundUploadKmlValidateVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateRequestBody, {}, {}, {}>({
+    url: "/v2/terrafund/upload-kml-validate",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+/**
+ * Uploads a KML file, converts it to GeoJSON, and validate the polygons.
+ */
+export const usePostV2TerrafundUploadKmlValidate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Blob,
+      PostV2TerrafundUploadKmlValidateError,
+      PostV2TerrafundUploadKmlValidateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateVariables>(
+    (variables: PostV2TerrafundUploadKmlValidateVariables) =>
+      fetchPostV2TerrafundUploadKmlValidate({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -35344,6 +35722,11 @@ export type QueryOperation =
       path: "/v2/projects/{UUID}/monitorings";
       operationId: "getV2ProjectsUUIDMonitorings";
       variables: GetV2ProjectsUUIDMonitoringsVariables;
+    }
+  | {
+      path: "/v2/projects/{UUID}/managers";
+      operationId: "getV2ProjectsUUIDManagers";
+      variables: GetV2ProjectsUUIDManagersVariables;
     }
   | {
       path: "/v2/admin/audits/{ENTITY}/{UUID}";

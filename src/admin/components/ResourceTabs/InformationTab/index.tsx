@@ -6,6 +6,7 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
+import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
 import SeedingsTable from "@/admin/components/Tables/SeedingsTable";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import List from "@/components/extensive/List/List";
@@ -162,7 +163,8 @@ const InformationTab: FC<IProps> = props => {
                   </When>
 
                   <When condition={props.type === "projects"}>
-                    <MonitoringPartnersTable projectUUID={record?.uuid} />
+                    <MonitoringPartnersTable project={record} />
+                    <ProjectManagersTable project={record} />
                   </When>
                 </Stack>
               </Else>

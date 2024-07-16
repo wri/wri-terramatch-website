@@ -98,19 +98,26 @@ export const getFormEntries = (
         outputArr.push({
           title: f.label,
           type: f.type,
-          value: siteGeojson ? (
-            <MapContainer
-              polygonsData={siteGeojson}
-              bbox={bbox}
-              className="h-[240px] flex-1"
-              hasControls={false}
-              showPopups
-              showLegend
-              mapFunctions={mapFunctions}
-            />
-          ) : (
-            <></>
-          )
+          value:
+            siteGeojson && Object.keys(siteGeojson).length !== 0 ? (
+              <MapContainer
+                polygonsData={siteGeojson}
+                bbox={bbox}
+                className="h-[240px] flex-1"
+                hasControls={false}
+                showPopups
+                showLegend
+                mapFunctions={mapFunctions}
+              />
+            ) : (
+              <MapContainer
+                geojson={values[f.name]}
+                className="h-[240px] flex-1"
+                hasControls={false}
+                showLegend={false}
+                mapFunctions={mapFunctions}
+              />
+            )
         });
         break;
       }

@@ -1,3 +1,4 @@
+import bbox from "@turf/bbox";
 import * as turfHelper from "@turf/helpers";
 import mapboxgl from "mapbox-gl";
 import { createElement } from "react";
@@ -173,14 +174,20 @@ export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<
   }
 };
 
-export const addGeojsonToDraw = (geojson: any, uuid: string, cb: Function, currentDraw: MapboxDraw) => {
+export const addGeojsonToDraw = (
+  geojson: any,
+  uuid: string,
+  cb: Function,
+  currentDraw: MapboxDraw,
+  map?: mapboxgl.Map
+) => {
   if (geojson) {
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
     const addToDrawAndFilter = () => {
       if (currentDraw) {
-        const featureGeojson = currentDraw.set(geojsonFormatted);
-        if (featureGeojson.length) {
-          currentDraw.changeMode("direct_select", { featureId: featureGeojson[0] });
+        currentDraw.set(geojsonFormatted);
+        if (map) {
+          zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
         }
         cb(uuid);
       }
@@ -357,6 +364,19 @@ export const formatPlannedStartDate = (plantStartDate: Date | null | undefined):
         day: "numeric",
         year: "numeric",
         timeZone: "UTC"
+      })
+    : "Unknown";
+};
+
+export const formatCommentaryDate = (date: Date | null | undefined): string => {
+  return date != null
+    ? date.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+        hour: "numeric",
+        minute: "numeric"
       })
     : "Unknown";
 };

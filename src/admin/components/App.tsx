@@ -14,7 +14,6 @@ import AdminLoginPage from "../pages/AdminLoginPage";
 
 const App = () => {
   const [identity, setIdentity] = useState<any>(null);
-  const [canCreate, setCanCreate] = useState(false);
 
   useEffect(() => {
     const getIdentity = async () => {
@@ -24,12 +23,11 @@ const App = () => {
 
     getIdentity();
   }, []);
-  useEffect(() => {
-    if (identity) {
-      setCanCreate(identity?.role === "admin-super" ? true : false);
-    }
-  }, [identity]);
 
+  if (identity == null) return null;
+
+  const canCreate = identity.role === "admin-super";
+  const isAdmin = identity.role?.includes("admin");
   return (
     <LoadingProvider>
       <Admin
@@ -39,64 +37,68 @@ const App = () => {
         layout={AppLayout}
         loginPage={AdminLoginPage}
       >
-        <Resource
-          name={modules.user.ResourceName}
-          list={modules.user.List}
-          show={modules.user.Show}
-          edit={modules.user.Edit}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.USERS} />}
-        />
-        <Resource
-          name={modules.organisation.ResourceName}
-          list={modules.organisation.List}
-          show={modules.organisation.Show}
-          edit={modules.organisation.Edit}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.ORGANISATIONS} />}
-        />
-        <Resource
-          name={modules.pitch.ResourceName}
-          list={modules.pitch.List}
-          show={modules.pitch.Show}
-          edit={modules.pitch.Edit}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.PITCHES} />}
-        />
-        <Resource
-          name={modules.fundingProgramme.ResourceName}
-          list={modules.fundingProgramme.List}
-          edit={modules.fundingProgramme.Edit}
-          show={modules.fundingProgramme.Show}
-          create={modules.fundingProgramme.Create}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.FUNDING_PROGRAMMES} />}
-          options={{ label: "Funding Programmes" }}
-        />
-        <Resource
-          name={modules.reportingFramework.ResourceName}
-          list={modules.reportingFramework.List}
-          show={modules.reportingFramework.Show}
-          edit={modules.reportingFramework.Edit}
-          {...(canCreate ? { create: modules.reportingFramework.Create } : null)}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTING_FRAMEWORKS} />}
-          options={{ label: "Reporting Frameworks" }}
-        />
-        <Resource
-          name={modules.application.ResourceName}
-          list={modules.application.List}
-          show={modules.application.Show}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.APPLICATIONS} />}
-        />
-        <Resource
-          name={modules.stage.ResourceName}
-          show={modules.stage.Show}
-          edit={modules.stage.Edit}
-          create={modules.stage.Create}
-        />
-        <Resource
-          name={modules.form.ResourceName}
-          list={modules.form.List}
-          edit={modules.form.Edit}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.FORMS} />}
-          create={modules.form.Create}
-        />
+        {isAdmin && (
+          <>
+            <Resource
+              name={modules.user.ResourceName}
+              list={modules.user.List}
+              show={modules.user.Show}
+              edit={modules.user.Edit}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.USERS} />}
+            />
+            <Resource
+              name={modules.organisation.ResourceName}
+              list={modules.organisation.List}
+              show={modules.organisation.Show}
+              edit={modules.organisation.Edit}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.ORGANISATIONS} />}
+            />
+            <Resource
+              name={modules.pitch.ResourceName}
+              list={modules.pitch.List}
+              show={modules.pitch.Show}
+              edit={modules.pitch.Edit}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.PITCHES} />}
+            />
+            <Resource
+              name={modules.fundingProgramme.ResourceName}
+              list={modules.fundingProgramme.List}
+              edit={modules.fundingProgramme.Edit}
+              show={modules.fundingProgramme.Show}
+              create={modules.fundingProgramme.Create}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.FUNDING_PROGRAMMES} />}
+              options={{ label: "Funding Programmes" }}
+            />
+            <Resource
+              name={modules.reportingFramework.ResourceName}
+              list={modules.reportingFramework.List}
+              show={modules.reportingFramework.Show}
+              edit={modules.reportingFramework.Edit}
+              {...(canCreate ? { create: modules.reportingFramework.Create } : null)}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTING_FRAMEWORKS} />}
+              options={{ label: "Reporting Frameworks" }}
+            />
+            <Resource
+              name={modules.application.ResourceName}
+              list={modules.application.List}
+              show={modules.application.Show}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.APPLICATIONS} />}
+            />
+            <Resource
+              name={modules.stage.ResourceName}
+              show={modules.stage.Show}
+              edit={modules.stage.Edit}
+              create={modules.stage.Create}
+            />
+            <Resource
+              name={modules.form.ResourceName}
+              list={modules.form.List}
+              edit={modules.form.Edit}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.FORMS} />}
+              create={modules.form.Create}
+            />
+          </>
+        )}
         <Resource
           name={modules.project.ResourceName}
           list={modules.project.List}
@@ -149,7 +151,17 @@ const App = () => {
           icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
           options={{ label: "Nursery Reports" }}
         />
-        <Resource name={modules.audit.ResourceName} />
+        {isAdmin && (
+          <>
+            <Resource name={modules.audit.ResourceName} />
+            <Resource
+              name={modules.validatePolygonFile.ResourceName}
+              list={modules.validatePolygonFile.List}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
+              options={{ label: "Test Polygon" }}
+            />
+          </>
+        )}
       </Admin>
     </LoadingProvider>
   );

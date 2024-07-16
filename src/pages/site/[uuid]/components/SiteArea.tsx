@@ -11,9 +11,10 @@ interface SiteAreaProps {
   sites: any;
   editPolygon: boolean;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
+  refetch?: () => void;
 }
 
-const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
+const SiteArea = ({ sites, editPolygon, setEditPolygon, refetch }: SiteAreaProps) => {
   const t = useT();
   const [tabEditPolygon] = useState("Attributes");
   const [previewVersion, setPreviewVersion] = useState(false);
@@ -77,7 +78,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon }: SiteAreaProps) => {
           </div>
         </When>
       </div>
-      <OverviewMapArea entityModel={sites} type="sites" />
+      <OverviewMapArea entityModel={sites} type="sites" refetch={refetch} />
     </div>
   );
 };

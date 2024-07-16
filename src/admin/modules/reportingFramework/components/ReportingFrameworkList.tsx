@@ -57,7 +57,7 @@ export const ReportingFrameworkList: FC = () => {
       </Stack>
 
       <List actions={<ListActionsCreate onExport={handleExport} />}>
-        <Datagrid bulkActionButtons={false}>
+        <Datagrid bulkActionButtons={false} rowClick={"show"}>
           <TextField source="name" label="Framework" />
           <TextField source="access_code" label="Access Code" />
           <TextField source="total_projects_count" label="Enrolled Projects" />

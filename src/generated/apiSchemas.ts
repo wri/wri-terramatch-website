@@ -42,7 +42,7 @@ export type TreeSpeciesReadAll = {
   collection?: string;
 }[];
 
-export type MonitoringUserRead = {
+export type AssociatedUserRead = {
   uuid?: string;
   user_type?: string;
   job_role?: string;

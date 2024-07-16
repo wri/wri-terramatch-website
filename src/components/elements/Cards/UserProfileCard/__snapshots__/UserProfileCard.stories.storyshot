@@ -34,6 +34,49 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
           }
         }
       />
+      <div
+        className="absolute top-3 right-3"
+      >
+        <div
+          className="relative w-fit-content"
+          onClick={[Function]}
+        >
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+          <div
+            className="absolute z-40 left-full bottom-0 ml-[5px] invisible"
+            style={
+              Object {
+                "width": "undefinedpx",
+              }
+            }
+          >
+            <div
+              className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] p-1"
+              style={Object {}}
+            >
+              <button
+                className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                onClick={[Function]}
+              >
+                <p
+                  className="text-14-bold"
+                  data-testid="txt"
+                  onClick={[Function]}
+                >
+                  Remove Partner
+                </p>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div
       className="mt-4 space-y-2 px-3"
@@ -77,6 +120,9 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
       </p>
     </div>
   </div>
+  <div
+    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
+  />
 </div>
 `;
 
@@ -114,6 +160,49 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard No Image 1`] = `
           }
         }
       />
+      <div
+        className="absolute top-3 right-3"
+      >
+        <div
+          className="relative w-fit-content"
+          onClick={[Function]}
+        >
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 24,
+              }
+            }
+          />
+          <div
+            className="absolute z-40 left-full bottom-0 ml-[5px] invisible"
+            style={
+              Object {
+                "width": "undefinedpx",
+              }
+            }
+          >
+            <div
+              className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] p-1"
+              style={Object {}}
+            >
+              <button
+                className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                onClick={[Function]}
+              >
+                <p
+                  className="text-14-bold"
+                  data-testid="txt"
+                  onClick={[Function]}
+                >
+                  Remove Partner
+                </p>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div
       className="mt-4 space-y-2 px-3"
@@ -139,5 +228,8 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard No Image 1`] = `
       </p>
     </div>
   </div>
+  <div
+    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
+  />
 </div>
 `;
