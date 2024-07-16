@@ -21,7 +21,7 @@ import FrameworkProvider from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
-import { NurseryReportHeader } from "@/pages/reports/nursery-report/components/NurseryReportHeader";
+import NurseryReportHeader from "@/pages/reports/nursery-report/components/NurseryReportHeader";
 import { getFullName } from "@/utils/user";
 
 const NurseryReportDetailPage = () => {

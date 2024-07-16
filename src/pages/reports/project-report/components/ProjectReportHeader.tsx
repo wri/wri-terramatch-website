@@ -13,7 +13,7 @@ interface ProjectReportHeaderProps {
   report: any;
 }
 
-export const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps) => {
+const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps) => {
   const t = useT();
   const { handleExport } = useGetExportEntityHandler("project-reports", report.uuid, report.title);
   const { handleEdit } = useGetEditEntityHandler({
@@ -45,3 +45,5 @@ export const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps)
     </PageHeader>
   );
 };
+
+export default ProjectReportHeader;

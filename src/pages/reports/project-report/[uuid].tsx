@@ -9,8 +9,8 @@ import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2ProjectsUUID, useGetV2TasksUUID } from "@/generated/apiComponents";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
-import { ProjectReportBreadcrumbs } from "@/pages/reports/project-report/components/ProjectReportBreadcrumbs";
-import { ProjectReportHeader } from "@/pages/reports/project-report/components/ProjectReportHeader";
+import ProjectReportBreadcrumbs from "@/pages/reports/project-report/components/ProjectReportBreadcrumbs";
+import ProjectReportHeader from "@/pages/reports/project-report/components/ProjectReportHeader";
 
 import NurseryReportsTab from "./tabs/NurseryReports";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";

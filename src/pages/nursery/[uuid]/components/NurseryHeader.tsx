@@ -18,7 +18,7 @@ interface NurseryHeaderProps {
   nursery: any;
 }
 
-export const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
+const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
   const t = useT();
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
@@ -93,3 +93,5 @@ export const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
     </PageHeader>
   );
 };
+
+export default NurseryHeader;

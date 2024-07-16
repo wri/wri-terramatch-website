@@ -20,7 +20,7 @@ interface SiteHeaderProps {
   site: any;
 }
 
-export const SiteHeader = ({ site }: SiteHeaderProps) => {
+const SiteHeader = ({ site }: SiteHeaderProps) => {
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
   const t = useT();
@@ -99,3 +99,5 @@ export const SiteHeader = ({ site }: SiteHeaderProps) => {
     </PageHeader>
   );
 };
+
+export default SiteHeader;

@@ -24,7 +24,7 @@ interface EditEntityFormProps {
   formData: GetV2FormsENTITYUUIDResponse;
 }
 
-export const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntityFormProps) => {
+const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
 
@@ -131,3 +131,5 @@ export const EditEntityForm = ({ entityName, entityUUID, entity, formData }: Edi
     />
   );
 };
+
+export default EditEntityForm;

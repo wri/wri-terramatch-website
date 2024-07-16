@@ -6,7 +6,7 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
-import { EditEntityForm } from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
+import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
 import { EntityName } from "@/types/common";
 
 /**

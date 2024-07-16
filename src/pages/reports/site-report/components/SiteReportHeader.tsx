@@ -12,7 +12,7 @@ interface SiteReportHeaderProps {
   reportTitle: string;
 }
 
-export const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
+const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
   const t = useT();
 
   const { handleExport } = useGetExportEntityHandler("site-reports", report.uuid, report.name);
@@ -43,3 +43,5 @@ export const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps)
     </PageHeader>
   );
 };
+
+export default SiteReportHeader;

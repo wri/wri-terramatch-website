@@ -9,7 +9,7 @@ interface ProjectReportBreadcrumbsProps {
   task: any;
 }
 
-export const ProjectReportBreadcrumbs = ({ title, report, task }: ProjectReportBreadcrumbsProps) => {
+const ProjectReportBreadcrumbs = ({ title, report, task }: ProjectReportBreadcrumbsProps) => {
   const t = useT();
   const window = useReportingWindow(task?.due_at);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -25,3 +25,5 @@ export const ProjectReportBreadcrumbs = ({ title, report, task }: ProjectReportB
     />
   );
 };
+
+export default ProjectReportBreadcrumbs;

@@ -19,7 +19,7 @@ interface ProjectHeaderProps {
   frameworkName?: string;
 }
 
-export const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
+const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
@@ -93,3 +93,5 @@ export const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) =>
     </PageHeader>
   );
 };
+
+export default ProjectHeader;

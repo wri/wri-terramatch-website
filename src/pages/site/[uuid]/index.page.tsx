@@ -13,7 +13,7 @@ import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useGetV2SitesUUID } from "@/generated/apiComponents";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
-import { SiteHeader } from "@/pages/site/[uuid]/components/SiteHeader";
+import SiteHeader from "@/pages/site/[uuid]/components/SiteHeader";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";

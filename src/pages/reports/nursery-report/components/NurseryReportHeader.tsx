@@ -12,7 +12,7 @@ interface NurseryReportHeaderProps {
   title: string;
 }
 
-export const NurseryReportHeader = ({ report, title }: NurseryReportHeaderProps) => {
+const NurseryReportHeader = ({ report, title }: NurseryReportHeaderProps) => {
   const t = useT();
 
   const { handleExport } = useGetExportEntityHandler("nursery-reports", report.uuid, report.name);
@@ -43,3 +43,5 @@ export const NurseryReportHeader = ({ report, title }: NurseryReportHeaderProps)
     </PageHeader>
   );
 };
+
+export default NurseryReportHeader;

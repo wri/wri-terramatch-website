@@ -18,7 +18,7 @@ interface ReportingTaskHeaderProps {
   reports: any;
 }
 
-export const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskHeaderProps) => {
+const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskHeaderProps) => {
   const t = useT();
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
@@ -136,3 +136,5 @@ export const ReportingTaskHeader = ({ project, reportingTask, reports }: Reporti
     </>
   );
 };
+
+export default ReportingTaskHeader;

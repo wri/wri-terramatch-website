@@ -31,7 +31,7 @@ import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports, useGetV2WorkdaysENTITYUUI
 import { useDate } from "@/hooks/useDate";
 import useWorkdayData from "@/hooks/useWorkdayData";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
-import { SiteReportHeader } from "@/pages/reports/site-report/components/SiteReportHeader";
+import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
 
 const SiteReportDetailPage = () => {

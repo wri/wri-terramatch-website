@@ -30,7 +30,7 @@ import {
 } from "@/generated/apiComponents";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { ReportingTaskHeader } from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
+import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import { ReportsModelNames, Status } from "@/types/common";
 

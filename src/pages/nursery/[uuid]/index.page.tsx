@@ -7,7 +7,7 @@ import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/Pag
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider from "@/context/framework.provider";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
-import { NurseryHeader } from "@/pages/nursery/[uuid]/components/NurseryHeader";
+import NurseryHeader from "@/pages/nursery/[uuid]/components/NurseryHeader";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";

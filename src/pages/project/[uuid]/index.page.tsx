@@ -13,7 +13,7 @@ import {
   useGetV2ProjectsUUID,
   useGetV2ReportingFrameworksUUID
 } from "@/generated/apiComponents";
-import { ProjectHeader } from "@/pages/project/[uuid]/components/ProjectHeader";
+import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
