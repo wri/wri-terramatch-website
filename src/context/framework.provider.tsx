@@ -10,6 +10,8 @@ export enum Framework {
   UNDEFINED = "undefined"
 }
 
+export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES];
+
 interface IFrameworkContext {
   framework: Framework;
 }

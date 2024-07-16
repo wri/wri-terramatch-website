@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { Else, If, Then, When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import GenericField from "@/components/elements/Field/GenericField";
@@ -11,7 +10,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
-import { useFramework } from "@/hooks/useFramework";
+import { Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressProps {
   project: any;
@@ -19,25 +18,23 @@ interface GoalsAndProgressProps {
 
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
-  const { isPPC } = useFramework(project);
 
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
           <div className="flex w-full flex-wrap items-start gap-8">
-            <If condition={isPPC}>
-              <Then>
-                <GoalProgressCard label={t("Workday (PPC)")} value={project.self_reported_workday_count} />
-              </Then>
-              <Else>
-                <GoalProgressCard
-                  label={t("Jobs Created")}
-                  value={project.total_jobs_created}
-                  limit={project.jobs_created_goal}
-                />
-              </Else>
-            </If>
+            <GoalProgressCard
+              frameworksShow={[Framework.PPC]}
+              label={t("Workday (PPC)")}
+              value={project.self_reported_workday_count}
+            />
+            <GoalProgressCard
+              frameworksHide={[Framework.PPC]}
+              label={t("Jobs Created")}
+              value={project.total_jobs_created}
+              limit={project.jobs_created_goal}
+            />
             <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
             <GoalProgressCard
               label={t("Trees restored")}
@@ -77,9 +74,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
 
         <PageColumn>
           <PageCard title={t("Other Goals")} gap={4}>
-            <When condition={isPPC}>
-              <TextField label={t("Year 5 Grown Cover Goal (PPC)")} value={project.year_five_crown_cover} />
-            </When>
+            <TextField
+              frameworksShow={[Framework.PPC]}
+              label={t("Year 5 Grown Cover Goal (PPC)")}
+              value={project.year_five_crown_cover}
+            />
             <TextField label={t("Survival Rate (Goal)")} value={project.survival_rate} />
             <br />
             <GenericField label={t("Tree Species")}>

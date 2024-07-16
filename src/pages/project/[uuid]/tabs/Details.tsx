@@ -16,9 +16,10 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
+import { ContextCondition } from "@/context/ContextCondition";
+import { ALL_TF } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
-import { useFramework } from "@/hooks/useFramework";
 import { useGetOptions } from "@/hooks/useGetOptions";
 import InviteMonitoringPartnerModal from "@/pages/project/[uuid]/components/InviteMonitoringPartnerModal";
 
@@ -29,7 +30,6 @@ interface ProjectDetailsTabProps {
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
   const { openModal } = useModalContext();
-  const { isTerrafund } = useFramework(project);
 
   const restorationOptions = getRestorationStrategyOptions(t);
 
@@ -70,57 +70,55 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             />
           </PageCard>
 
-          <When condition={isTerrafund}>
-            <PageCard title={t("Project Objectives")}>
-              <LongTextField title={t("Objectives")}>{project.objectives}</LongTextField>
-              <LongTextField title={t("Environmental Goals")}>{project.environmental_goals}</LongTextField>
-              <LongTextField title={t("Socioeconomic Goals")}>{project.socioeconomic_goals}</LongTextField>
-              <SelectImageListField
-                title={t("SDGs Impacted")}
-                options={sdgsImpactedOptions}
-                selectedValues={project.sdgs_impacted}
-              />
-              <LongTextField title={t("Project Partners")}>{project.proj_partner_info}</LongTextField>
-              <LongTextField title={t("Seedlings Source")}>{project.seedlings_source}</LongTextField>
-              <LongTextField title={t("Overview of Siting Strategy")}>
-                {project.siting_strategy_description}
-              </LongTextField>
-              <LongTextField title={t("Siting Strategy")}>{project.siting_strategy}</LongTextField>
-              <LongTextField title={t("Community Engagement Strategy")}>{project.landholder_comm_engage}</LongTextField>
-              <SelectImageListField
-                title={t("Land Tenure")}
-                options={getLandTenureOptions(t)}
-                selectedValues={project.land_tenure_project_area || []}
-              />
-              <If condition={!project?.proof_of_land_tenure_mou}>
+          <PageCard frameworksShow={ALL_TF} title={t("Project Objectives")}>
+            <LongTextField title={t("Objectives")}>{project.objectives}</LongTextField>
+            <LongTextField title={t("Environmental Goals")}>{project.environmental_goals}</LongTextField>
+            <LongTextField title={t("Socioeconomic Goals")}>{project.socioeconomic_goals}</LongTextField>
+            <SelectImageListField
+              title={t("SDGs Impacted")}
+              options={sdgsImpactedOptions}
+              selectedValues={project.sdgs_impacted}
+            />
+            <LongTextField title={t("Project Partners")}>{project.proj_partner_info}</LongTextField>
+            <LongTextField title={t("Seedlings Source")}>{project.seedlings_source}</LongTextField>
+            <LongTextField title={t("Overview of Siting Strategy")}>
+              {project.siting_strategy_description}
+            </LongTextField>
+            <LongTextField title={t("Siting Strategy")}>{project.siting_strategy}</LongTextField>
+            <LongTextField title={t("Community Engagement Strategy")}>{project.landholder_comm_engage}</LongTextField>
+            <SelectImageListField
+              title={t("Land Tenure")}
+              options={getLandTenureOptions(t)}
+              selectedValues={project.land_tenure_project_area || []}
+            />
+            <If condition={!project?.proof_of_land_tenure_mou}>
+              <Then>
+                <Paper className="min-w-[500px]">
+                  <h3>{t("Files not found")}</h3>
+                </Paper>
+              </Then>
+              <Else>
                 <Then>
-                  <Paper className="min-w-[500px]">
-                    <h3>{t("Files not found")}</h3>
-                  </Paper>
+                  {project?.proof_of_land_tenure_mou?.map((document: any, index: any) => (
+                    <ButtonField
+                      key={index}
+                      label={t("Land Tenure MOU")}
+                      buttonProps={{
+                        as: Link,
+                        children: t("Download"),
+                        href: document?.url || "",
+                        download: true
+                      }}
+                    />
+                  ))}
                 </Then>
-                <Else>
-                  <Then>
-                    {project?.proof_of_land_tenure_mou?.map((document: any, index: any) => (
-                      <ButtonField
-                        key={index}
-                        label={t("Land Tenure MOU")}
-                        buttonProps={{
-                          as: Link,
-                          children: t("Download"),
-                          href: document?.url || "",
-                          download: true
-                        }}
-                      />
-                    ))}
-                  </Then>
-                </Else>
-              </If>
-            </PageCard>
-          </When>
+              </Else>
+            </If>
+          </PageCard>
         </PageColumn>
 
         <PageColumn>
-          <When condition={isTerrafund}>
+          <ContextCondition frameworksShow={ALL_TF}>
             <Paper className="min-w-[500px]">
               <TextField label={t("Project Budget")} value={project.budget} />
               <br />
@@ -158,7 +156,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                 </Else>
               </If>
             </Paper>
-          </When>
+          </ContextCondition>
           <When condition={!!project.application}>
             <Paper className="min-w-[500px]">
               <ButtonField
