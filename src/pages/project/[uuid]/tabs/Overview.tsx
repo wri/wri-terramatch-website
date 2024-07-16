@@ -43,12 +43,12 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <div className="flex w-full text-darkCustom">
             <div className="grid w-[50%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
               <GoalProgressCard
-                show={[Framework.PPC]}
+                frameworksShow={[Framework.PPC]}
                 label={t("Workday Count (PPC)")}
                 value={project.self_reported_workday_count}
               />
               <GoalProgressCard
-                hide={[Framework.PPC]}
+                frameworksHide={[Framework.PPC]}
                 label={t("Jobs Created")}
                 value={project.total_jobs_created}
                 limit={project.jobs_created_goal}

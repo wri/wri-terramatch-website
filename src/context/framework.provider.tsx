@@ -32,25 +32,25 @@ export const useFrameworkContext = () => useContext(FrameworkContext);
 
 export interface ShowHideProps {
   // The element will only be shown if the current framework is in this list.
-  show?: Framework[];
+  frameworksShow?: Framework[];
   // The element will only be shown if the current framework is not in this list. `hide` will be
   // ignored if `show` is also included.
-  hide?: Framework[];
+  frameworksHide?: Framework[];
 }
 
-export const useFrameworkShowHide = ({ show, hide }: ShowHideProps) => {
+export const useFrameworkShowHide = ({ frameworksShow, frameworksHide }: ShowHideProps) => {
   const { framework } = useFrameworkContext();
 
-  if (show != null) return show.includes(framework);
-  if (hide != null) return !hide.includes(framework);
+  if (frameworksShow != null) return frameworksShow.includes(framework);
+  if (frameworksHide != null) return !frameworksHide.includes(framework);
   return true;
 };
 
 export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
   const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
   const FrameworkShowHide = (props: T & ShowHideProps) => {
-    const { show, hide, ...rest } = props;
-    if (!useFrameworkShowHide({ show, hide })) return null;
+    const { frameworksShow, frameworksHide, ...rest } = props;
+    if (!useFrameworkShowHide({ frameworksShow, frameworksHide })) return null;
 
     return <WrappedComponent {...(rest as T & JSX.IntrinsicAttributes)} />;
   };
