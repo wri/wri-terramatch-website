@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -14,7 +13,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { useFramework } from "@/hooks/useFramework";
+import { Framework } from "@/context/framework.provider";
 
 interface ProjectOverviewTabProps {
   project: any;
@@ -23,7 +22,6 @@ interface ProjectOverviewTabProps {
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
-  const { isPPC } = useFramework(project);
 
   return (
     <PageBody>
@@ -44,18 +42,17 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         >
           <div className="flex w-full text-darkCustom">
             <div className="grid w-[50%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
-              <If condition={isPPC}>
-                <Then>
-                  <GoalProgressCard label={t("Workday Count (PPC)")} value={project.self_reported_workday_count} />
-                </Then>
-                <Else>
-                  <GoalProgressCard
-                    label={t("Jobs Created")}
-                    value={project.total_jobs_created}
-                    limit={project.jobs_created_goal}
-                  />
-                </Else>
-              </If>
+              <GoalProgressCard
+                show={[Framework.PPC]}
+                label={t("Workday Count (PPC)")}
+                value={project.self_reported_workday_count}
+              />
+              <GoalProgressCard
+                hide={[Framework.PPC]}
+                label={t("Jobs Created")}
+                value={project.total_jobs_created}
+                limit={project.jobs_created_goal}
+              />
               <GoalProgressCard
                 label={t("Trees Restored")}
                 value={project.trees_restored_count}

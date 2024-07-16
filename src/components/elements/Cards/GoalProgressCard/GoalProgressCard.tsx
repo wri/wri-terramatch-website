@@ -3,6 +3,7 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
+import { withFrameworkShow } from "@/context/framework.provider";
 
 import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
 import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressCardItem";
@@ -69,4 +70,4 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   );
 };
 
-export default GoalProgressCard;
+export default withFrameworkShow(GoalProgressCard);

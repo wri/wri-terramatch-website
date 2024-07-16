@@ -52,6 +52,7 @@ module.exports = {
         args: "none"
       }
     ],
+    "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "warn",
     "prettier/prettier": [
       "error",
