@@ -201,7 +201,7 @@ const PolygonDrawer = ({
   }, [isOpenPolygonDrawer]);
 
   useEffect(() => {
-    if (Object.keys(selectedPolygonData as SitePolygon).length === 0 && isEmpty(polygonSelected)) {
+    if (Object?.keys(selectedPolygonData as SitePolygon).length === 0 && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
   }, [selectPolygonVersion]);
