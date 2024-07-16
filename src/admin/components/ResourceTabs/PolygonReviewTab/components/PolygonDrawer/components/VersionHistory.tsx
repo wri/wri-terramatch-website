@@ -68,7 +68,7 @@ const VersionHistory = ({
       const response = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: selectedPolygon.primary_uuid as string }
       })) as SitePolygonsDataResponse;
-      const polygonActive = response?.find(item => item.is_active == 1);
+      const polygonActive = response?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);
       setStatusSelectedPolygon(polygonActive?.status ?? "");
       displayNotification("Polygon version deleted successfully", "success", "Success!");
@@ -101,7 +101,7 @@ const VersionHistory = ({
   const makeActivePolygon = async () => {
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
     const versionActive = (data as SitePolygonsDataResponse)?.find(item => item?.uuid == polygonSelectedUuid);
-    if (versionActive?.is_active != 1) {
+    if (!versionActive?.is_active) {
       await mutateMakeActive({
         pathParams: { uuid: polygonSelectedUuid as string }
       });
