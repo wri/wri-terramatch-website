@@ -7,15 +7,19 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
   <div
     className="space-y-2"
   >
-    <label
-      className="mr-2 inline uppercase text-bold-body-300"
+    <div
+      className="flex items-baseline gap-1"
       data-headlessui-state=""
-      data-testid="txt"
       id="headlessui-listbox-label-:rm:"
       onClick={[Function]}
     >
-      Drop down label 
-    </label>
+      <label
+        className="mr-2 inline uppercase text-bold-body-300"
+        data-testid="txt"
+      >
+        Drop down label 
+      </label>
+    </div>
     <p
       className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
@@ -67,15 +71,19 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
   <div
     className="space-y-2"
   >
-    <label
-      className="mr-2 inline uppercase text-bold-body-300"
+    <div
+      className="flex items-baseline gap-1"
       data-headlessui-state=""
-      data-testid="txt"
       id="headlessui-listbox-label-:rq:"
       onClick={[Function]}
     >
-      Drop down label 
-    </label>
+      <label
+        className="mr-2 inline uppercase text-bold-body-300"
+        data-testid="txt"
+      >
+        Drop down label 
+      </label>
+    </div>
     <p
       className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
@@ -127,15 +135,19 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
   <div
     className="space-y-2"
   >
-    <label
-      className="mr-2 inline uppercase text-bold-body-300"
+    <div
+      className="flex items-baseline gap-1"
       data-headlessui-state=""
-      data-testid="txt"
       id="headlessui-listbox-label-:rk:"
       onClick={[Function]}
     >
-      Drop down label 
-    </label>
+      <label
+        className="mr-2 inline uppercase text-bold-body-300"
+        data-testid="txt"
+      >
+        Drop down label 
+      </label>
+    </div>
     <p
       className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
@@ -184,15 +196,19 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
 <div
   className="space-y-2"
 >
-  <label
-    className="mr-2 inline uppercase capitalize text-16-bold"
+  <div
+    className="flex items-baseline gap-1"
     data-headlessui-state=""
-    data-testid="txt"
     id="headlessui-listbox-label-:rs:"
     onClick={[Function]}
   >
-    Select Polygon 
-  </label>
+    <label
+      className="mr-2 inline uppercase capitalize text-16-bold"
+      data-testid="txt"
+    >
+      Select Polygon 
+    </label>
+  </div>
   <div
     aria-expanded={false}
     aria-haspopup="listbox"
@@ -237,15 +253,19 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
   <div
     className="space-y-2"
   >
-    <label
-      className="mr-2 inline uppercase text-bold-body-300"
+    <div
+      className="flex items-baseline gap-1"
       data-headlessui-state=""
-      data-testid="txt"
       id="headlessui-listbox-label-:ro:"
       onClick={[Function]}
     >
-      Drop down label 
-    </label>
+      <label
+        className="mr-2 inline uppercase text-bold-body-300"
+        data-testid="txt"
+      >
+        Drop down label 
+      </label>
+    </div>
     <p
       className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={

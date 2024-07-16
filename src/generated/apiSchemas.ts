@@ -23164,7 +23164,7 @@ export type SitePolygon = {
   source?: string;
   country?: string;
   version_name?: string;
-  is_active?: number;
+  is_active?: boolean;
 };
 
 export type GeometryString = {
@@ -23216,7 +23216,7 @@ export type SitePolygonsDataResponse = {
   source?: string;
   country?: string;
   version_name?: string;
-  is_active?: number;
+  is_active?: boolean;
 }[];
 
 export type SitePolygonsBboxResponse = {
@@ -23722,7 +23722,7 @@ export type EntityTypeResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -23805,7 +23805,7 @@ export type PolygonChangeStatus = {
   source?: string;
   country?: string;
   version_name?: string;
-  is_active?: number;
+  is_active?: boolean;
 }[];
 
 export type PolygonChangeStatusUpdate = {
