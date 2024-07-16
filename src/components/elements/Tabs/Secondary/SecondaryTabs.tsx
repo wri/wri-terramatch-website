@@ -18,9 +18,6 @@ export interface TabItem {
   disabled?: boolean;
   key?: string;
 
-  // TODO (TM-1105) deprecated, remove
-  hidden?: boolean;
-
   // The tab will only be shown if one of the given frameworks is active.
   show?: Framework[];
   // The tab will only be shown if one of the given frameworks is not active. `hide` will be ignored
@@ -38,8 +35,7 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
       return !item.hide.includes(framework);
     }
 
-    // TODO (TM-1105) deprecated, remove
-    return !item.hidden;
+    return true;
   });
   //Default to zero
   const _defaultIndex = Math.max(
