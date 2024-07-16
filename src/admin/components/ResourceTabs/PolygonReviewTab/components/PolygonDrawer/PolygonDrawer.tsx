@@ -1,5 +1,6 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
+import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -183,10 +184,10 @@ const PolygonDrawer = ({
     isLoading: isLoadingVersions
   } = useGetV2SitePolygonUuidVersions(
     {
-      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygon?.primary_uuid) as string }
+      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string }
     },
     {
-      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygon?.primary_uuid
+      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid
     }
   );
 
@@ -199,14 +200,18 @@ const PolygonDrawer = ({
     onLoading();
   }, [isOpenPolygonDrawer]);
 
+  useEffect(() => {
+    if (Object.keys(selectedPolygonData as SitePolygon).length === 0 && isEmpty(polygonSelected)) {
+      setSelectedPolygonData(selectPolygonVersion);
+    }
+  }, [selectPolygonVersion]);
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
-        <Text variant={"text-12-light"}>{`Polygon ID: ${
-          selectedPolygonData?.id ?? (selectPolygonVersion?.id as Number)
-        }`}</Text>
+        <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
         <Text variant={"text-20-bold"} className="flex items-center gap-1">
-          {selectedPolygonData?.poly_name ?? selectPolygonVersion?.poly_name ?? "Unnamed Polygon"}
+          {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
           <div className={`h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
         </Text>
       </div>
@@ -231,18 +236,15 @@ const PolygonDrawer = ({
               <Text variant="text-14-semibold" className="w-[15%] break-words">
                 Status:
               </Text>
-              <When condition={selectedPolygon?.status ?? selectPolygonVersion?.status}>
-                <Status
-                  className="w-[35%]"
-                  status={(selectedPolygon?.status ?? selectPolygonVersion?.status) as StatusEnum}
-                />
+              <When condition={selectedPolygon?.status}>
+                <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
               </When>
             </div>
             <StatusDisplay
               titleStatus="Polygon"
-              name={selectedPolygon?.poly_name ?? selectPolygonVersion?.poly_name}
+              name={selectedPolygon?.poly_name}
               refresh={refresh}
-              record={selectedPolygon ?? selectPolygonVersion}
+              record={selectedPolygon}
               mutate={mutateSitePolygons}
               showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
@@ -267,13 +269,14 @@ const PolygonDrawer = ({
                   sitePolygonRefresh={sitePolygonRefresh}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
+                  refetchPolygonVersions={refetchPolygonVersions}
                 />
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
               {selectedPolygonData && (
                 <VersionHistory
-                  selectedPolygon={selectedPolygonData}
+                  selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
                   setSelectPolygonVersion={setSelectPolygonVersion}
                   selectPolygonVersion={selectPolygonVersion}
                   refreshPolygonList={refresh}

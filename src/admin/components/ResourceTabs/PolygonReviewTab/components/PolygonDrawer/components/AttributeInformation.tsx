@@ -77,12 +77,14 @@ const AttributeInformation = ({
   selectedPolygon,
   sitePolygonRefresh,
   setSelectedPolygonData,
-  setStatusSelectedPolygon
+  setStatusSelectedPolygon,
+  refetchPolygonVersions
 }: {
   selectedPolygon: SitePolygon;
   sitePolygonRefresh?: () => void;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
+  refetchPolygonVersions: () => void;
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -93,8 +95,6 @@ const AttributeInformation = ({
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
-  // const contextSite = useSitePolygonData();
-  // const reloadSiteData = contextSite?.reloadSiteData;
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   const { displayNotification } = useAlertHook();
   const t = useT();
@@ -156,13 +156,15 @@ const AttributeInformation = ({
           },
           {
             onSuccess: async () => {
-              sitePolygonRefresh?.();
-              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+              await refetchPolygonVersions();
+              await sitePolygonRefresh?.();
+              await refetch();
               const response = (await fetchGetV2SitePolygonUuid({
                 pathParams: { uuid: selectedPolygon.uuid as string }
               })) as SitePolygon;
-              setStatusSelectedPolygon(response?.status ?? "");
               setSelectedPolygonData(response);
+              setStatusSelectedPolygon(response?.status ?? "");
+              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
             },
             onError: error => {
               displayNotification(t("Error updating polygon data"), "error", t("Error!"));
@@ -173,7 +175,11 @@ const AttributeInformation = ({
         console.error("Error updating polygon data:", error);
       }
     }
-    refetch();
+    const response = (await fetchGetV2SitePolygonUuid({
+      pathParams: { uuid: selectedPolygon.uuid as string }
+    })) as SitePolygon;
+    setSelectedPolygonData(response);
+    setStatusSelectedPolygon(response?.status ?? "");
   };
 
   return (

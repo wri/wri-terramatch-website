@@ -62,17 +62,16 @@ const VersionHistory = ({
 
   const { mutate: mutateDeletePolygonVersion, isPaused: isLoadingDelete } = useDeleteV2TerrafundPolygonUuid({
     onSuccess: async () => {
-      displayNotification("Polygon version deleted successfully", "success", "Success!");
-      await refetch();
       await refreshPolygonList?.();
       await refreshSiteData?.();
+      await refetch();
       const response = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: selectedPolygon.primary_uuid as string }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active == 1);
-      setSelectPolygonVersion(polygonActive);
       setSelectedPolygonData(polygonActive);
       setStatusSelectedPolygon(polygonActive?.status ?? "");
+      displayNotification("Polygon version deleted successfully", "success", "Success!");
       setIsLoadingDropdown(false);
     },
     onError: () => {
@@ -82,11 +81,11 @@ const VersionHistory = ({
   const createNewVersion = async () => {
     try {
       await fetchPostV2SitePolygonUuidNewVersion({
-        pathParams: { uuid: (selectedPolygon.primary_uuid ?? selectPolygonVersion?.primary_uuid) as string }
+        pathParams: { uuid: (selectedPolygon.uuid ?? selectPolygonVersion?.uuid) as string }
       });
-      displayNotification("New version created successfully", "success", "Success!");
       refetch();
       refreshSiteData?.();
+      displayNotification("New version created successfully", "success", "Success!");
     } catch (error) {
       displayNotification("Error creating new version", "error", "Error!");
     }
@@ -154,7 +153,7 @@ const VersionHistory = ({
             labelClassName="capitalize"
             labelVariant="text-14-light"
             options={polygonVersionData ?? []}
-            defaultValue={[selectPolygonVersion?.uuid] as string[]}
+            defaultValue={[selectPolygonVersion?.uuid ?? selectedPolygon?.uuid] as string[]}
             onChange={e => {
               const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);
               setSelectPolygonVersion(polygonVersionData);
