@@ -4,6 +4,7 @@ import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
+import { withFrameworkShow } from "@/context/framework.provider";
 
 /** Button can either be, a Button, a Next Link or Anchor element */
 export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
@@ -183,4 +184,4 @@ const Button: FC<IButtonProps> = props => {
   );
 };
 
-export default Button;
+export default withFrameworkShow(Button);
