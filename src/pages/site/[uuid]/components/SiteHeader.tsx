@@ -14,6 +14,7 @@ import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
+import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 interface SiteHeaderProps {
   site: any;
@@ -68,19 +69,9 @@ export const SiteHeader = ({ site }: SiteHeaderProps) => {
     );
   };
 
-  const subtitles = [t("Organisation: {org}", { org: site.organisation?.name })];
-  switch (framework) {
-    case Framework.PPC:
-      subtitles.push(t("Priceless Planet Coalition"));
-      subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));
-      break;
-
-    case Framework.HBF:
-      subtitles.push(t("Harit Bharat Fund"));
-      break;
-
-    default:
-      subtitles.push(t("TerraFund"));
+  const subtitles = [t("Organisation: {org}", { org: site.organisation?.name }), useFrameworkTitle()];
+  if (framework === Framework.PPC) {
+    subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));
   }
 
   return (

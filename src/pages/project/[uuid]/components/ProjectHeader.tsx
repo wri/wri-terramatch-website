@@ -7,28 +7,19 @@ import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2ProjectsUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
+import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 interface ProjectHeaderProps {
   project: any;
   frameworkName?: string;
 }
 
-const FRAMEWORK_TITLES: { [key in Framework]?: string } = {
-  [Framework.PPC]: "Priceless Planet Coalition",
-  [Framework.HBF]: "Harit Bharat Fund",
-  [Framework.TF]: "TerraFund",
-  [Framework.TF_LANDSCAPES]: "TerraFund",
-  [Framework.ENTERPRISES]: "TerraFund"
-};
-
 export const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
-  const { framework } = useFrameworkContext();
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
@@ -75,16 +66,10 @@ export const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) =>
     );
   };
 
+  const subtitles = [`${t("Organisation")}: ${project.organisation?.name}`, useFrameworkTitle()];
+
   return (
-    <PageHeader
-      className="h-[203px]"
-      title={project.name}
-      subtitles={[
-        `${t("Organisation")}: ${project.organisation?.name}`,
-        t(FRAMEWORK_TITLES[framework]) ?? frameworkName
-      ]}
-      hasBackButton={false}
-    >
+    <PageHeader className="h-[203px]" title={project.name} subtitles={subtitles} hasBackButton={false}>
       <If condition={project.status === "started"}>
         <Then>
           <div className="flex gap-4">

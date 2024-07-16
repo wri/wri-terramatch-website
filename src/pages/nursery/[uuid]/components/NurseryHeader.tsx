@@ -7,12 +7,12 @@ import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2NurseriesUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
+import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 interface NurseryHeaderProps {
   nursery: any;
@@ -23,7 +23,6 @@ export const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
-  const { framework } = useFrameworkContext();
 
   const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
     onSuccess() {
@@ -43,6 +42,8 @@ export const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
     entityStatus: nursery.status,
     updateRequestStatus: nursery.update_request_status
   });
+
+  const subtitles = [t("Project name: {project}", { project: nursery.project?.name }), useFrameworkTitle()];
 
   const onDeleteNursery = () => {
     openModal(
@@ -66,20 +67,6 @@ export const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
       />
     );
   };
-
-  const subtitles = [t("Project name: {project}", { project: nursery.project?.name })];
-  switch (framework) {
-    case Framework.PPC:
-      subtitles.push(t("Priceless Planet Coalition"));
-      break;
-
-    case Framework.HBF:
-      subtitles.push(t("Harit Bharat Fund"));
-      break;
-
-    default:
-      subtitles.push(t("TerraFund"));
-  }
 
   return (
     <PageHeader className="h-[203px]" title={nursery.name} subtitles={subtitles} hasBackButton={false}>

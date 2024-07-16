@@ -91,12 +91,7 @@ const ProjectDetailPage = () => {
               {
                 key: "reporting-tasks",
                 title: t("Reporting Tasks"),
-                body: (
-                  <ReportingTasksTab
-                    projectUUID={project.uuid}
-                    reportingPeriod={reportingFramework.slug === "ppc" ? "quarterly" : "bi-annually"}
-                  />
-                )
+                body: <ReportingTasksTab projectUUID={project.uuid} />
               },
               {
                 key: "audit-log",

@@ -1,4 +1,4 @@
-import { ComponentType, createContext, ReactNode, useContext } from "react";
+import { ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
 
 export enum Framework {
   PPC = "ppc",
@@ -23,9 +23,13 @@ export const FrameworkContext = createContext<IFrameworkContext>({
 type FrameworkProviderProps = { children: ReactNode; frameworkKey?: string };
 
 const FrameworkProvider = ({ children, frameworkKey }: FrameworkProviderProps) => {
-  const framework = Object.values(Framework).includes(frameworkKey as unknown as Framework)
-    ? (frameworkKey as Framework)
-    : Framework.UNDEFINED;
+  const framework = useMemo(
+    () =>
+      Object.values(Framework).includes(frameworkKey as unknown as Framework)
+        ? (frameworkKey as Framework)
+        : Framework.UNDEFINED,
+    [frameworkKey]
+  );
 
   return <FrameworkContext.Provider value={{ framework }}>{children}</FrameworkContext.Provider>;
 };
