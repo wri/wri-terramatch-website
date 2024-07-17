@@ -90,6 +90,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
+  const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -376,6 +377,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                 setEditPolygon={setEditPolygon}
                 editPolygon={editPolygon}
                 refetch={refetchEntity}
+                previewVersion={previewVersion}
+                setPreviewVersion={setPreviewVersion}
               />
             </PageCard>
           </PageColumn>

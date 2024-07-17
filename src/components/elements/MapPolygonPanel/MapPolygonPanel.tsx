@@ -21,7 +21,7 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   stateViewPanel: boolean;
   setStateViewPanel: Dispatch<SetStateAction<boolean>>;
-  setPreviewVersion: Dispatch<SetStateAction<boolean>>;
+  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
   mapFunctions: any;
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
@@ -53,6 +53,7 @@ const MapPolygonPanel = ({
   const t = useT();
   const [selected] = useState<MapMenuPanelItemProps>();
   const { editPolygon } = useMapAreaContext();
+
   return (
     <div {...props} className={classNames(className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />

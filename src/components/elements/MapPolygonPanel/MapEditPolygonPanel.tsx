@@ -5,6 +5,8 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
+import { SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../Button/Button";
 import Text from "../Text/Text";
@@ -15,11 +17,20 @@ import VersionInformation from "./VersionInformation";
 export interface MapEditPolygonPanelProps {
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
-  setPreviewVersion: Dispatch<SetStateAction<boolean>>;
+  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
 }
 
 const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVersion }: MapEditPolygonPanelProps) => {
-  const { setEditPolygon, siteData } = useMapAreaContext();
+  const { setEditPolygon, siteData, editPolygon } = useMapAreaContext();
+  const { data: polygonVersions, refetch: refetchPolygonVersions } = useGetV2SitePolygonUuidVersions(
+    {
+      pathParams: { uuid: editPolygon.primary_uuid as string }
+    },
+    {
+      enabled: !!editPolygon.uuid
+    }
+  );
+
   return (
     <>
       <div className="flex items-start justify-between gap-4">
@@ -34,7 +45,7 @@ const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVers
 
         <Button
           variant="text"
-          onClick={() => setEditPolygon?.({ isOpen: false, uuid: "" })}
+          onClick={() => setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" })}
           className="text-white hover:text-primary"
         >
           <Icon name={IconNames.CLEAR} className="h-4 w-4" />
@@ -85,7 +96,11 @@ const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVers
         <When condition={tabEditPolygon === "Attributes"}>{AttributeInformation}</When>
         <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
         <When condition={tabEditPolygon === "Version"}>
-          <VersionInformation setPreviewVersion={setPreviewVersion} />
+          <VersionInformation
+            setPreviewVersion={setPreviewVersion}
+            polygonVersionData={polygonVersions as SitePolygon[]}
+            refetchPolygonVersions={refetchPolygonVersions}
+          />
         </When>
       </div>
     </>

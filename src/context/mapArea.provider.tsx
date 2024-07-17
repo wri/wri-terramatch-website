@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 import { fetchGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
+import { SitePolygon } from "@/generated/apiSchemas";
 
 type MapAreaType = {
   isMonitoring: boolean;
@@ -10,8 +11,8 @@ type MapAreaType = {
   setIsUserDrawingEnabled: (arg0: boolean) => void;
   toggleAttribute: (arg0: boolean) => void;
   openEditNewPolygon: boolean;
-  editPolygon: { isOpen: boolean; uuid: string };
-  setEditPolygon: (value: { isOpen: boolean; uuid: string }) => void;
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid: string };
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid: string }) => void;
   siteData: any;
   setSiteData: (value: any) => void;
   shouldRefetchPolygonData: boolean;
@@ -30,6 +31,8 @@ type MapAreaType = {
     type: "success" | "error" | "warning";
     title: string;
   }) => void;
+  setSelectedPolyVersion: (value: SitePolygon) => void;
+  selectedPolyVersion: SitePolygon | undefined;
 };
 
 const defaultValue: MapAreaType = {
@@ -40,7 +43,7 @@ const defaultValue: MapAreaType = {
   setIsUserDrawingEnabled: () => {},
   toggleAttribute: () => {},
   openEditNewPolygon: false,
-  editPolygon: { isOpen: false, uuid: "" },
+  editPolygon: { isOpen: false, uuid: "", primary_uuid: "" },
   setEditPolygon: () => {},
   siteData: undefined,
   setSiteData: () => {},
@@ -54,7 +57,9 @@ const defaultValue: MapAreaType = {
     type: "success",
     title: ""
   },
-  setpolygonNotificationStatus: () => {}
+  setpolygonNotificationStatus: () => {},
+  setSelectedPolyVersion: () => {},
+  selectedPolyVersion: undefined
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -66,9 +71,11 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
-  const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string }>({
+  const [selectedPolyVersion, setSelectedPolyVersion] = useState<SitePolygon | undefined>();
+  const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid: string }>({
     isOpen: false,
-    uuid: ""
+    uuid: "",
+    primary_uuid: ""
   });
   const [polygonNotificationStatus, setpolygonNotificationStatus] = useState<{
     open: boolean;
@@ -114,7 +121,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     shouldRefetchValidation,
     setShouldRefetchValidation,
     polygonNotificationStatus,
-    setpolygonNotificationStatus
+    setpolygonNotificationStatus,
+    setSelectedPolyVersion,
+    selectedPolyVersion
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

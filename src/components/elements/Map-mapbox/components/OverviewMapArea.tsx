@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -24,9 +24,10 @@ interface EntityAreaProps {
   entityModel: any;
   type: string;
   refetch?: () => void;
+  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
 }
 
-const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity }: EntityAreaProps) => {
+const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity, setPreviewVersion }: EntityAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
@@ -161,7 +162,7 @@ const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity }: EntityAr
           setStateViewPanel={setStateViewPanel}
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
-          setPreviewVersion={() => {}}
+          setPreviewVersion={setPreviewVersion}
           recallEntityData={refetch}
         />
       ) : (

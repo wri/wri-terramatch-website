@@ -110,11 +110,11 @@ const MapSidePanel = ({
       deletePolygon(selected?.poly_id ?? "");
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
-      setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "" });
+      setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "", primary_uuid: selected?.uuid ?? "" });
       setClickedButton("");
     }
   }, [clickedButton, selected]);
-
+  console.log(selected);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuCheckboxRef.current && !menuCheckboxRef.current?.contains(event.target as Node)) {
@@ -153,6 +153,8 @@ const MapSidePanel = ({
       )
     }
   ];
+
+  console.log(items);
 
   return (
     <div {...props} className={classNames("h-[250px] flex-1", className)}>
@@ -224,6 +226,9 @@ const MapSidePanel = ({
                 subtitle={item.subtitle}
                 status={item.status}
                 onClick={() => {
+                  setSelected(item);
+                }}
+                onClickCapture={() => {
                   setSelected(item);
                 }}
                 setClickedButton={setClickedButton}

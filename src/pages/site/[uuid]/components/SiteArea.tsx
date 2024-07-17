@@ -1,27 +1,37 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 
 interface SiteAreaProps {
   sites: any;
   editPolygon: boolean;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
   refetch?: () => void;
+  previewVersion?: boolean;
+  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
 }
 
-const SiteArea = ({ sites, editPolygon, setEditPolygon, refetch }: SiteAreaProps) => {
+const SiteArea = ({
+  sites,
+  editPolygon,
+  setEditPolygon,
+  refetch,
+  previewVersion,
+  setPreviewVersion
+}: SiteAreaProps) => {
   const t = useT();
-  const [tabEditPolygon] = useState("Attributes");
-  const [previewVersion, setPreviewVersion] = useState(false);
+  const { selectedPolyVersion } = useMapAreaContext();
+  console.log(selectedPolyVersion);
   return (
     <div className="flex h-[500px] rounded-lg text-darkCustom wide:h-[700px]">
       <div className="relative h-auto w-auto">
-        <When condition={tabEditPolygon === "Version" && !!editPolygon}>
+        <When condition={!!selectedPolyVersion}>
           <div className="absolute top-5 left-[43vw] z-20 text-center">
             <Button variant="primary" className="" onClick={() => {}}>
               {t("Confirm Version")}
@@ -39,7 +49,7 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon, refetch }: SiteAreaProps
         </When>
         <When condition={!!previewVersion}>
           <div className="absolute bottom-8 left-[54vw] z-20 w-[22vw] rounded bg-white p-3">
-            <button className="absolute top-3 right-4 hover:opacity-60" onClick={() => setPreviewVersion(false)}>
+            <button className="absolute top-3 right-4 hover:opacity-60" onClick={() => setPreviewVersion?.(false)}>
               <Icon name={IconNames.CLEAR} className="h-3 w-3 wide:h-4 wide:w-4" />
             </button>
             <Text variant="text-10-bold" className="mb-4 text-center">
@@ -49,36 +59,36 @@ const SiteArea = ({ sites, editPolygon, setEditPolygon, refetch }: SiteAreaProps
               <Text variant="text-10-light" className="opacity-60">
                 {t("Polygon ID")}
               </Text>
-              <Text variant="text-10-light">-</Text>
+              <Text variant="text-10-light">{selectedPolyVersion?.id ?? "-"}</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Restoration Practice")}
               </Text>
-              <Text variant="text-10-light">-</Text>
+              <Text variant="text-10-light">{selectedPolyVersion?.practice ?? "-"}</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Target Land Use System")}
               </Text>
-              <Text variant="text-10-light">-</Text>
+              <Text variant="text-10-light">{selectedPolyVersion?.target_sys ?? "-"}</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Tree Distribution")}
               </Text>
-              <Text variant="text-10-light">-</Text>
+              <Text variant="text-10-light">{selectedPolyVersion?.distr ?? "-"}</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Source")}
               </Text>
-              <Text variant="text-10-light">-</Text>
+              <Text variant="text-10-light">{selectedPolyVersion?.source ?? ""}</Text>
             </div>
           </div>
         </When>
       </div>
-      <OverviewMapArea entityModel={sites} type="sites" refetch={refetch} />
+      <OverviewMapArea entityModel={sites} type="sites" refetch={refetch} setPreviewVersion={setPreviewVersion} />
     </div>
   );
 };

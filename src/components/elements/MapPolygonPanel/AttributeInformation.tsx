@@ -166,7 +166,7 @@ const AttributeInformation = () => {
           {
             onSuccess: () => {
               setShouldRefetchPolygonData(true);
-              setEditPolygon({ isOpen: false, uuid: "" });
+              setEditPolygon({ isOpen: false, uuid: "", primary_uuid: "" });
               displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
             },
             onError: error => {
@@ -180,6 +180,7 @@ const AttributeInformation = () => {
     }
   };
 
+  console.log(sitePolygonData);
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -269,7 +270,11 @@ const AttributeInformation = () => {
         readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
-        <Button variant="semi-red" className="w-full" onClick={() => setEditPolygon({ isOpen: false, uuid: "" })}>
+        <Button
+          variant="semi-red"
+          className="w-full"
+          onClick={() => setEditPolygon({ isOpen: false, uuid: "", primary_uuid: "" })}
+        >
           {t("Close")}
         </Button>
         <Button
