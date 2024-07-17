@@ -1,5 +1,6 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
+import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -16,6 +17,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
+  useGetV2SitePolygonUuidVersions,
   useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -25,6 +27,7 @@ import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
 import PolygonValidation from "./components/PolygonValidation";
+import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
@@ -46,11 +49,13 @@ export const COMPLETED_DATA_CRITERIA_ID = 14;
 const PolygonDrawer = ({
   polygonSelected,
   isPolygonStatusOpen,
-  refresh
+  refresh,
+  isOpenPolygonDrawer
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
   refresh?: () => void;
+  isOpenPolygonDrawer: boolean;
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
@@ -60,11 +65,14 @@ const PolygonDrawer = ({
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
+  const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygon>();
+  const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { displayNotification } = useAlertHook();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
+  const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const { showLoader, hideLoader } = useLoading();
@@ -167,14 +175,43 @@ const PolygonDrawer = ({
     };
 
     fetchCriteriaValidation();
+    setSelectPolygonVersion(selectedPolygonData);
   }, [buttonToogle, selectedPolygonData]);
+
+  const {
+    data: polygonVersions,
+    refetch: refetchPolygonVersions,
+    isLoading: isLoadingVersions
+  } = useGetV2SitePolygonUuidVersions(
+    {
+      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string }
+    },
+    {
+      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid
+    }
+  );
+
+  useEffect(() => {
+    setIsLoadingDropdown(true);
+    const onLoading = async () => {
+      await refetchPolygonVersions();
+      setIsLoadingDropdown(false);
+    };
+    onLoading();
+  }, [isOpenPolygonDrawer]);
+
+  useEffect(() => {
+    if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
+      setSelectedPolygonData(selectPolygonVersion);
+    }
+  }, [selectPolygonVersion]);
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
         <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
         <Text variant={"text-20-bold"} className="flex items-center gap-1">
-          {selectedPolygonData?.poly_name ? selectedPolygonData?.poly_name : "Unnamed Polygon"}
+          {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
           <div className={`h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
         </Text>
       </div>
@@ -226,7 +263,33 @@ const PolygonDrawer = ({
             </Accordion>
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
-              {selectedPolygonData && <AttributeInformation selectedPolygon={selectedPolygonData} />}
+              {selectedPolygonData && (
+                <AttributeInformation
+                  selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
+                  sitePolygonRefresh={sitePolygonRefresh}
+                  setSelectedPolygonData={setSelectPolygonVersion}
+                  setStatusSelectedPolygon={setStatusSelectedPolygon}
+                  refetchPolygonVersions={refetchPolygonVersions}
+                />
+              )}
+            </Accordion>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
+              {selectedPolygonData && (
+                <VersionHistory
+                  selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                  setSelectPolygonVersion={setSelectPolygonVersion}
+                  selectPolygonVersion={selectPolygonVersion}
+                  refreshPolygonList={refresh}
+                  refreshSiteData={sitePolygonRefresh}
+                  setSelectedPolygonData={setSelectedPolygonData}
+                  setStatusSelectedPolygon={setStatusSelectedPolygon}
+                  data={polygonVersions ?? []}
+                  isLoadingVersions={isLoadingVersions}
+                  refetch={refetchPolygonVersions}
+                  isLoadingDropdown={isLoadingDropdown}
+                  setIsLoadingDropdown={setIsLoadingDropdown}
+                />
+              )}
             </Accordion>
             <Divider />
           </div>

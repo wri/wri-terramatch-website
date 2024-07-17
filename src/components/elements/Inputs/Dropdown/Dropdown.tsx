@@ -2,7 +2,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { uniq } from "lodash";
-import { ChangeEvent, Fragment, PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, Fragment, PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorOption, FieldError, UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
@@ -22,6 +22,8 @@ import { formatOptionsList, statusColor } from "@/utils/options";
 export interface DropdownProps {
   customName?: string;
   label?: string;
+  suffixLabelView?: boolean;
+  suffixLabel?: React.ReactNode;
   labelClassName?: string;
   labelVariant?: TextVariants;
   description?: string;
@@ -161,14 +163,19 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
           <>
             <When condition={!!props.label}>
               <Listbox.Label as={Fragment}>
-                <InputLabel
-                  required={props.required}
-                  feedbackRequired={props.feedbackRequired}
-                  className={props.labelClassName}
-                  labelVariant={props.labelVariant}
-                >
-                  {props.label}
-                </InputLabel>
+                <div className="flex items-baseline gap-1">
+                  <InputLabel
+                    required={props.required}
+                    feedbackRequired={props.feedbackRequired}
+                    className={props.labelClassName}
+                    labelVariant={props.labelVariant}
+                  >
+                    {props.label}
+                  </InputLabel>
+                  <When condition={props.suffixLabelView}>
+                    <div className="flex items-center">{props.suffixLabel}</div>
+                  </When>
+                </div>
               </Listbox.Label>
             </When>
             <When condition={!!props.description}>
