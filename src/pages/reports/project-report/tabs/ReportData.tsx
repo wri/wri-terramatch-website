@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import GenericField from "@/components/elements/Field/GenericField";
@@ -11,9 +10,10 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { ContextCondition } from "@/context/ContextCondition";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { useFramework } from "@/hooks/useFramework";
 import { getFullName } from "@/utils/user";
 
 interface ReportOverviewTabProps {
@@ -24,18 +24,17 @@ interface ReportOverviewTabProps {
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
   const { format } = useDate();
-  const { isPPC, isTerrafund } = useFramework(report);
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
           <PageCard title={t("Reported Data")} gap={8}>
-            <When condition={isPPC}>
+            <ContextCondition frameworksShow={[Framework.PPC]}>
               <LongTextField title={t("Technical Narrative")}>{report.technical_narrative}</LongTextField>
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
-            </When>
-            <When condition={isTerrafund}>
+            </ContextCondition>
+            <ContextCondition frameworksShow={ALL_TF}>
               <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
               <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
               <LongTextField title={t("Community Engagement Approach")}>{report.local_engagement}</LongTextField>
@@ -52,7 +51,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
                 {report.equitable_opportunities}
               </LongTextField>
-            </When>
+            </ContextCondition>
           </PageCard>
         </PageColumn>
 
@@ -70,16 +69,14 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               </Button>
             }
           >
-            <If condition={isPPC}>
-              <Then>
-                <TextField label={t("Workdays")} value={report.workdays_total} />
-                <TextField label={t("Workdays Paid")} value={report.workdays_paid} />
-                <TextField label={t("Workdays Volunteer")} value={report.workdays_volunteer} />
-              </Then>
-              <Else>
-                <TextField label={t("Jobs Created")} value={report.total_jobs_created} />
-              </Else>
-            </If>
+            <ContextCondition frameworksShow={[Framework.PPC]}>
+              <TextField label={t("Workdays")} value={report.workdays_total} />
+              <TextField label={t("Workdays Paid")} value={report.workdays_paid} />
+              <TextField label={t("Workdays Volunteer")} value={report.workdays_volunteer} />
+            </ContextCondition>
+            <ContextCondition frameworksHide={[Framework.PPC]}>
+              <TextField label={t("Jobs Created")} value={report.total_jobs_created} />
+            </ContextCondition>
           </PageCard>
           <PageCard
             title={t("Images")}
@@ -111,26 +108,25 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           <PageCard
             title={t("Seedlings Data")}
             headerChildren={
-              <When condition={isTerrafund}>
-                <Button
-                  as={Link}
-                  variant="secondary"
-                  href={getEntityDetailPageLink("project-reports", report.uuid, "nursery-reports")}
-                >
-                  {t("View all Nurseries")}
-                </Button>
-              </When>
+              <Button
+                frameworksShow={ALL_TF}
+                as={Link}
+                variant="secondary"
+                href={getEntityDetailPageLink("project-reports", report.uuid, "nursery-reports")}
+              >
+                {t("View all Nurseries")}
+              </Button>
             }
           >
-            <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} /> {/*TODO*/}
-            <If condition={isPPC}>
-              <GenericField label={t("Tree Species")}>
-                <TreeSpeciesTable modelName="project-report" modelUUID={report.uuid} />
-              </GenericField>
-            </If>
-            <When condition={isTerrafund}>
-              <TextField label={t("Number of Nursery Reports")} value={report.nursery_reports_count} />
-            </When>
+            <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} />
+            <GenericField frameworksShow={[Framework.PPC]} label={t("Tree Species")}>
+              <TreeSpeciesTable modelName="project-report" modelUUID={report.uuid} />
+            </GenericField>
+            <TextField
+              frameworksShow={ALL_TF}
+              label={t("Number of Nursery Reports")}
+              value={report.nursery_reports_count}
+            />
           </PageCard>
           <PageCard title={t("Project Report Details")}>
             <TextField label={t("Project Report name")} value={report.title} />

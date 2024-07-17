@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import GenericField from "@/components/elements/Field/GenericField";
@@ -11,7 +10,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
-import { useFramework } from "@/hooks/useFramework";
+import { Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressTabProps {
   site: any;
@@ -19,20 +18,18 @@ interface GoalsAndProgressTabProps {
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
-  const { isPPC } = useFramework(site);
 
   return (
     <PageBody>
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
           <div className="flex w-full flex-wrap items-start gap-8">
-            <When condition={isPPC}>
-              <GoalProgressCard
-                label={t("Workday Count (PPC)")}
-                value={site.self_reported_workday_count}
-                className="w-[170px]"
-              />
-            </When>
+            <GoalProgressCard
+              frameworksShow={[Framework.PPC]}
+              label={t("Workday Count (PPC)")}
+              value={site.self_reported_workday_count}
+              className="w-[170px]"
+            />
             <GoalProgressCard label={t("Hectares Restored Goal")} value={site.total_hectares_restored_goal} />
 
             <GoalProgressCard
@@ -82,9 +79,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <TextField label={t("Trees Grown")} value={site.a_nat_regeneration_hectares} />
             <TextField label={t("Direct Seeding Survival Rate")} value={site.direct_seeding_survival_rate} />
             <TextField label={t("Survival Rate of Planted Trees")} value={site.survival_rate_planted} />
-            <When condition={isPPC}>
-              <TextField label={t("Year 5 Grown Cover Goal (PPC)")} value={site.aim_year_five_crown_cover} />
-            </When>
+            <TextField
+              frameworksShow={[Framework.PPC]}
+              label={t("Year 5 Grown Cover Goal (PPC)")}
+              value={site.aim_year_five_crown_cover}
+            />
             <GenericField label={t("Tree Species")}>
               <TreeSpeciesTable modelName="site" modelUUID={site.uuid} variantTable={VARIANT_TABLE_BORDER} />
             </GenericField>

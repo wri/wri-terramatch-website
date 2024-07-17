@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { When } from "react-if";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
@@ -26,6 +25,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -39,7 +39,6 @@ import {
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
-import { useFramework } from "@/hooks/useFramework";
 import { FileType, UploadedFile } from "@/types/common";
 
 import SiteArea from "../components/SiteArea";
@@ -81,7 +80,6 @@ const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygo
 const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
-  const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
   const { displayNotification } = useAlertHook();
@@ -293,9 +291,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           >
             <div className="flex w-full">
               <div className="grid w-[50%] grid-cols-2 content-start gap-x-8 gap-y-7 pr-20">
-                <When condition={isPPC}>
-                  <GoalProgressCard label={t("Workday Count (PPC)")} value={site.self_reported_workday_count} />
-                </When>
+                <GoalProgressCard
+                  frameworksShow={[Framework.PPC]}
+                  label={t("Workday Count (PPC)")}
+                  value={site.self_reported_workday_count}
+                />
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
               </div>
               <div>

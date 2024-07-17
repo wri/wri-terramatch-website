@@ -8,18 +8,22 @@ import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCe
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import { useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
-import { useGetReportingWindow } from "@/hooks/useGetReportingWindow";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 
 interface ReportingTasksTableProps {
   projectUUID: string;
-  reportingPeriod: "quarterly" | "bi-annually";
 }
 
-const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTableProps) => {
+const ReportingWindow = ({ dueDate }: { dueDate: string }) => {
+  const t = useT();
+  const window = useReportingWindow(dueDate);
+  return <p className="text-14-light whitespace-nowrap">{t("Project Report {window}", { window })}</p>;
+};
+
+const ReportingTasksTable = ({ projectUUID }: ReportingTasksTableProps) => {
   const t = useT();
   const { format } = useDate();
   const [queryParams, setQueryParams] = useState();
-  const { getReportingWindow } = useGetReportingWindow();
 
   const { data: reportingTasks, isLoading } = useGetV2ProjectsUUIDTasks(
     {
@@ -35,7 +39,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTab
   return (
     <ServerSideTable
       meta={reportingTasks?.meta}
-      data={reportingTasks?.data || []}
+      data={reportingTasks?.data ?? []}
       isLoading={isLoading}
       onQueryParamChange={setQueryParams}
       variant={VARIANT_TABLE_BORDER_ALL}
@@ -50,7 +54,7 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTab
           accessorKey: "status",
           header: t("Submission Status"),
           cell: props => {
-            const statusProps = SubmissionStatusMapping(t)?.[props.getValue() as string] || {};
+            const statusProps = SubmissionStatusMapping(t)?.[props.getValue() as string] ?? {};
             return <StatusTableCell statusProps={statusProps} />;
           }
         },
@@ -59,21 +63,14 @@ const ReportingTasksTable = ({ projectUUID, reportingPeriod }: ReportingTasksTab
           accessorKey: "due_at",
           header: t("Title"),
           enableSorting: false,
-          cell: props => {
-            const value = props.getValue() as string;
-            return (
-              <p className="text-14-light whitespace-nowrap">
-                {t("Project Report") + ` ${getReportingWindow(value, reportingPeriod)}`}
-              </p>
-            );
-          }
+          cell: props => <ReportingWindow dueDate={props.getValue() as string} />
         },
         {
           accessorKey: "completion_status",
           header: t("Completion Status"),
           enableSorting: false,
           cell: props => {
-            const statusProps = CompletionStatusMapping(t)?.[props.getValue() as string] || {};
+            const statusProps = CompletionStatusMapping(t)?.[props.getValue() as string] ?? {};
             return <StatusTableCell statusProps={statusProps} />;
           }
         },
