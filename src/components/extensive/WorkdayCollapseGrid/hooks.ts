@@ -1,4 +1,4 @@
-import { Dictionary, findIndex, uniq } from "lodash";
+import { Dictionary, findLastIndex, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { Demographic, DEMOGRAPHIC_TYPE_MAP, DEMOGRAPHIC_TYPES, DemographicType, Status } from "./types";
@@ -59,7 +59,9 @@ function mapRows(usesSubtype: boolean, typeMap: Dictionary<string>, demographics
   }
 
   return Object.keys(typeMap).map((typeName): SectionRow => {
-    const demographicIndex = findIndex(demographics, ({ name }) => name === typeName);
+    // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
+    // data in update requests that is still affected. TM-1098
+    const demographicIndex = findLastIndex(demographics, ({ name }) => name === typeName);
     return {
       demographicIndex,
       typeName,
