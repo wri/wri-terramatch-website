@@ -4,44 +4,87 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useGetV2SitePolygonUuidVersions, usePutV2SitePolygonUuidMakeActive } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 interface SiteAreaProps {
   sites: any;
   editPolygon: boolean;
   setEditPolygon: Dispatch<SetStateAction<boolean>>;
   refetch?: () => void;
-  previewVersion?: boolean;
-  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
 }
 
-const SiteArea = ({
-  sites,
-  editPolygon,
-  setEditPolygon,
-  refetch,
-  previewVersion,
-  setPreviewVersion
-}: SiteAreaProps) => {
+const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
   const t = useT();
-  const { selectedPolyVersion } = useMapAreaContext();
-  console.log(selectedPolyVersion);
+  const {
+    selectedPolyVersion,
+    setOpenModalConfirmation,
+    openModalConfirmation,
+    editPolygon: polygon,
+    previewVersion,
+    setPreviewVersion,
+    setEditPolygon,
+    setSelectedPolyVersion
+  } = useMapAreaContext();
+  const { displayNotification } = useAlertHook();
+
+  const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
+    onSuccess: () => {
+      displayNotification("Polygon version made active successfully", "success", "Success!");
+    },
+    onError: () => {
+      displayNotification("Error making polygon version active", "error", "Error!");
+    }
+  });
+
+  const { data: polygonVersions, refetch: refetchPolygonVersions } = useGetV2SitePolygonUuidVersions(
+    {
+      pathParams: { uuid: polygon?.primary_uuid as string }
+    },
+    {
+      enabled: !!polygon?.primary_uuid
+    }
+  );
+  console.log(polygon);
+
+  const makeActivePolygon = async () => {
+    const versionActive = (polygonVersions as SitePolygonsDataResponse)?.find(
+      item => item?.uuid == selectedPolyVersion?.uuid
+    );
+    if (versionActive?.is_active != 1) {
+      await mutateMakeActive({
+        pathParams: { uuid: selectedPolyVersion?.uuid as string }
+      });
+      await refetchPolygonVersions();
+      return;
+    }
+    displayNotification("Polygon version is already active", "warning", "Warning!");
+  };
+
   return (
     <div className="flex h-[500px] rounded-lg text-darkCustom wide:h-[700px]">
       <div className="relative h-auto w-auto">
-        <When condition={!!selectedPolyVersion}>
+        <When condition={!!selectedPolyVersion && openModalConfirmation}>
           <div className="absolute top-5 left-[43vw] z-20 text-center">
-            <Button variant="primary" className="" onClick={() => {}}>
+            <Button variant="primary" className="" onClick={makeActivePolygon}>
               {t("Confirm Version")}
-              <Icon name={IconNames.IC_INFO_WHITE} className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
             </Button>
             <br />
             <Button
               variant="text"
               className="text-12-bold m-auto rounded-lg bg-[#a2a295b5] px-4 py-1 text-black underline underline-offset-2 hover:text-white"
-              onClick={() => {}}
+              onClick={() => {
+                setOpenModalConfirmation(false);
+                setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
+                setOpenModalConfirmation(false);
+                setSelectedPolyVersion({});
+                setPreviewVersion(false);
+                refetch?.();
+              }}
             >
               {t("Cancel")}
             </Button>
@@ -88,7 +131,13 @@ const SiteArea = ({
           </div>
         </When>
       </div>
-      <OverviewMapArea entityModel={sites} type="sites" refetch={refetch} setPreviewVersion={setPreviewVersion} />
+      <OverviewMapArea
+        entityModel={sites}
+        type="sites"
+        refetch={refetch}
+        polygonVersionData={polygonVersions as SitePolygonsDataResponse}
+        refetchPolygonVersions={refetchPolygonVersions}
+      />
     </div>
   );
 };

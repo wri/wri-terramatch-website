@@ -5,8 +5,7 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Button from "../Button/Button";
 import Text from "../Text/Text";
@@ -17,20 +16,27 @@ import VersionInformation from "./VersionInformation";
 export interface MapEditPolygonPanelProps {
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
-  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
+  polygonVersionData?: SitePolygonsDataResponse;
+  refetchPolygonVersions?: () => void;
+  refreshEntity?: () => void;
+  mapFunctions?: any;
+  polygonData?: Record<string, string[]>;
+  recallEntityData?: () => void;
 }
 
-const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVersion }: MapEditPolygonPanelProps) => {
-  const { setEditPolygon, siteData, editPolygon } = useMapAreaContext();
-  const { data: polygonVersions, refetch: refetchPolygonVersions } = useGetV2SitePolygonUuidVersions(
-    {
-      pathParams: { uuid: editPolygon.primary_uuid as string }
-    },
-    {
-      enabled: !!editPolygon.uuid
-    }
-  );
-
+const MapEditPolygonPanel = ({
+  tabEditPolygon,
+  setTabEditPolygon,
+  polygonVersionData,
+  refetchPolygonVersions,
+  refreshEntity,
+  mapFunctions,
+  polygonData,
+  recallEntityData
+}: MapEditPolygonPanelProps) => {
+  const { setEditPolygon, siteData, setSelectedPolyVersion, setOpenModalConfirmation, setPreviewVersion } =
+    useMapAreaContext();
+  const { onCancel } = mapFunctions;
   return (
     <>
       <div className="flex items-start justify-between gap-4">
@@ -45,7 +51,15 @@ const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVers
 
         <Button
           variant="text"
-          onClick={() => setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" })}
+          onClick={() => {
+            setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
+            setOpenModalConfirmation(false);
+            setSelectedPolyVersion({});
+            setPreviewVersion(false);
+            refreshEntity?.();
+            onCancel(polygonData);
+            recallEntityData?.();
+          }}
           className="text-white hover:text-primary"
         >
           <Icon name={IconNames.CLEAR} className="h-4 w-4" />
@@ -97,9 +111,9 @@ const MapEditPolygonPanel = ({ tabEditPolygon, setTabEditPolygon, setPreviewVers
         <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
         <When condition={tabEditPolygon === "Version"}>
           <VersionInformation
-            setPreviewVersion={setPreviewVersion}
-            polygonVersionData={polygonVersions as SitePolygon[]}
+            polygonVersionData={polygonVersionData as SitePolygon[]}
             refetchPolygonVersions={refetchPolygonVersions}
+            recallEntityData={recallEntityData}
           />
         </When>
       </div>

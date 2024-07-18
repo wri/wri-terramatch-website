@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { format } from "date-fns";
-import { Dispatch, SetStateAction } from "react";
+import { useEffect } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -20,21 +20,23 @@ import Text from "../Text/Text";
 import useAlertHook from "./hooks/useAlertHook";
 
 const VersionInformation = ({
-  setPreviewVersion,
   polygonVersionData,
-  refetchPolygonVersions
+  refetchPolygonVersions,
+  recallEntityData
 }: {
-  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
   polygonVersionData: SitePolygon[];
-  refetchPolygonVersions: () => void;
+  refetchPolygonVersions?: () => void;
+  recallEntityData?: () => void;
 }) => {
   const { openModal, closeModal } = useModalContext();
   const { displayNotification } = useAlertHook();
-  const { editPolygon, setSelectedPolyVersion } = useMapAreaContext();
+  const { editPolygon, setSelectedPolyVersion, setOpenModalConfirmation, setPreviewVersion, selectedPolyVersion } =
+    useMapAreaContext();
   const t = useT();
   const { mutate: mutateDeletePolygonVersion } = useDeleteV2TerrafundPolygonUuid({
     onSuccess: async () => {
-      refetchPolygonVersions();
+      refetchPolygonVersions?.();
+      recallEntityData?.();
       displayNotification("Polygon version deleted successfully", "success", "Success!");
     },
     onError: () => {
@@ -60,7 +62,8 @@ const VersionInformation = ({
       await fetchPostV2SitePolygonUuidNewVersion({
         pathParams: { uuid: editPolygon.primary_uuid as string }
       });
-      refetchPolygonVersions();
+      refetchPolygonVersions?.();
+      recallEntityData?.();
       displayNotification("New version created successfully", "success", "Success!");
     } catch (error) {
       displayNotification("Error creating new version", "error", "Error!");
@@ -82,6 +85,7 @@ const VersionInformation = ({
         });
         setSelectedPolyVersion(response as SitePolygon);
         setPreviewVersion?.(true);
+        setOpenModalConfirmation(true);
       }
     },
     {
@@ -102,6 +106,10 @@ const VersionInformation = ({
     });
   };
 
+  useEffect(() => {
+    recallEntityData?.();
+  }, [selectedPolyVersion]);
+
   return (
     <div className="grid">
       <div className="grid grid-flow-col grid-cols-4 border-b-2 border-t border-[#ffffff1a] py-2 opacity-60">
@@ -112,7 +120,7 @@ const VersionInformation = ({
           {t("Date")}
         </Text>
         <Text variant="text-10-light" className="text-white">
-          {t("Current")}
+          {t("Active")}
         </Text>
       </div>
       {polygonVersionData?.map((item: any) => (
@@ -125,9 +133,9 @@ const VersionInformation = ({
           </Text>
           <div className="flex justify-between">
             <button
-              className={classNames("text-10-bold w-[64%] rounded-md border border-white", {
+              className={classNames("text-10-bold h-min w-[64%] rounded-md border border-white", {
                 "bg-white text-[#797F62]": !!item.is_active,
-                "bg-transparent text-white": !!item.is_active
+                "bg-transparent text-white": !item.is_active
               })}
             >
               {item.is_active == 1 ? "Yes" : "No"}

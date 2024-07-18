@@ -44,6 +44,7 @@ import {
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  // drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
   startDrawing,
@@ -127,7 +128,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { isUserDrawingEnabled } = contextMapArea;
+  const { isUserDrawingEnabled, selectedPolyVersion } = contextMapArea;
   const { displayNotification } = useAlertHook();
 
   if (!mapFunctions) {
@@ -224,15 +225,37 @@ export const MapContainer = ({
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");
+    // if ((polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") || selectedPolyVersion?.uuid) {
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
-      const polygonuuid = polygonFromMap.uuid;
+      const polygonuuid = polygonFromMap?.uuid as string;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
+        // pathParams: { uuid: selectedPolyVersion?.poly_id ?? polygonuuid }
         pathParams: { uuid: polygonuuid }
       });
       if (map.current && draw.current && polygonGeojson) {
-        addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
+        addGeojsonToDraw(
+          polygonGeojson.geojson,
+          // selectedPolyVersion?.poly_id ?? polygonuuid,
+          // () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id ?? polygonuuid),
+          polygonuuid,
+          () => handleAddGeojsonToDraw(polygonuuid),
+          draw.current
+        );
       }
     }
+    // if (selectedPolyVersion?.uuid) {
+    //   const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
+    //     pathParams: { uuid: selectedPolyVersion?.poly_id as string }
+    //   });
+    //   if (map.current && draw.current && polygonGeojson) {
+    //     addGeojsonToDraw(
+    //       polygonGeojson.geojson,
+    //       selectedPolyVersion?.poly_id as string,
+    //       () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id as string),
+    //       draw.current
+    //     );
+    //   }
+    // }
   };
 
   const onSaveEdit = async () => {
@@ -262,6 +285,19 @@ export const MapContainer = ({
     onCancel(polygonsData);
   };
 
+  useEffect(() => {
+    if (selectedPolyVersion?.poly_id) {
+      const polygonGeojson = fetchGetV2TerrafundPolygonGeojsonUuid({
+        pathParams: { uuid: selectedPolyVersion?.poly_id }
+      });
+      console.log(polygonGeojson);
+      // if (polygonGeojson) {
+      //   // drawTemporaryPolygon(map, polygonGeojson.geojson);
+      // }
+
+      // handleEditPolygon();
+    }
+  }, [selectedPolyVersion]);
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>

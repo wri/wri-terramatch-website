@@ -448,3 +448,32 @@ export async function storePolygon(
     }
   }
 }
+
+// export const drawTemporaryPolygon = (map: any, coordinates: any) => {
+//   const polygon = turfHelper.polygon([coordinates]);
+
+//   // Convert polygon to GeoJSON
+//   const geojson = polygon.geometry;
+
+//   // Add the temporary polygon source to the map
+//   if (map.getSource("temporary-polygon")) {
+//     map.getSource("temporary-polygon").setData(geojson);
+//   } else {
+//     map.addSource("temporary-polygon", {
+//       type: "geojson",
+//       data: geojson
+//     });
+
+//     // Add the temporary polygon layer to the map
+//     map.addLayer({
+//       id: "temporary-polygon",
+//       type: "fill",
+//       source: "temporary-polygon",
+//       layout: {},
+//       paint: {
+//         "fill-color": "#088",
+//         "fill-opacity": 0.5
+//       }
+//     });
+//   }
+// };

@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -24,10 +24,17 @@ interface EntityAreaProps {
   entityModel: any;
   type: string;
   refetch?: () => void;
-  setPreviewVersion?: Dispatch<SetStateAction<boolean>>;
+  polygonVersionData?: SitePolygonsDataResponse;
+  refetchPolygonVersions?: () => void;
 }
 
-const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity, setPreviewVersion }: EntityAreaProps) => {
+const OverviewMapArea = ({
+  entityModel,
+  type,
+  refetch: refreshEntity,
+  polygonVersionData,
+  refetchPolygonVersions
+}: EntityAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
@@ -150,6 +157,7 @@ const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity, setPreview
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
+          polygonsData={polygonDataMap}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
@@ -162,8 +170,10 @@ const OverviewMapArea = ({ entityModel, type, refetch: refreshEntity, setPreview
           setStateViewPanel={setStateViewPanel}
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
-          setPreviewVersion={setPreviewVersion}
           recallEntityData={refetch}
+          polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
+          refetchPolygonVersions={refetchPolygonVersions}
+          refreshEntity={refreshEntity}
         />
       ) : (
         <MapSidePanel

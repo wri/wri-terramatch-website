@@ -11,8 +11,8 @@ type MapAreaType = {
   setIsUserDrawingEnabled: (arg0: boolean) => void;
   toggleAttribute: (arg0: boolean) => void;
   openEditNewPolygon: boolean;
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid: string };
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid: string }) => void;
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string };
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
   siteData: any;
   setSiteData: (value: any) => void;
   shouldRefetchPolygonData: boolean;
@@ -33,6 +33,10 @@ type MapAreaType = {
   }) => void;
   setSelectedPolyVersion: (value: SitePolygon) => void;
   selectedPolyVersion: SitePolygon | undefined;
+  openModalConfirmation: boolean;
+  setOpenModalConfirmation: (value: boolean) => void;
+  previewVersion: boolean;
+  setPreviewVersion: (value: boolean) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -59,7 +63,11 @@ const defaultValue: MapAreaType = {
   },
   setpolygonNotificationStatus: () => {},
   setSelectedPolyVersion: () => {},
-  selectedPolyVersion: undefined
+  selectedPolyVersion: undefined,
+  openModalConfirmation: false,
+  setOpenModalConfirmation: () => {},
+  previewVersion: false,
+  setPreviewVersion: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -72,7 +80,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
   const [selectedPolyVersion, setSelectedPolyVersion] = useState<SitePolygon | undefined>();
-  const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid: string }>({
+  const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
+  const [previewVersion, setPreviewVersion] = useState<boolean>(false);
+  const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
     primary_uuid: ""
@@ -123,7 +133,11 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     polygonNotificationStatus,
     setpolygonNotificationStatus,
     setSelectedPolyVersion,
-    selectedPolyVersion
+    selectedPolyVersion,
+    setOpenModalConfirmation,
+    openModalConfirmation,
+    previewVersion,
+    setPreviewVersion
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;
