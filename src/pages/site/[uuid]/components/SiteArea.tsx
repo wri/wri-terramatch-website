@@ -55,7 +55,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     const versionActive = (polygonVersions as SitePolygonsDataResponse)?.find(
       item => item?.uuid == selectedPolyVersion?.uuid
     );
-    if (versionActive?.is_active != 1) {
+    if (versionActive?.is_active != true) {
       await mutateMakeActive({
         pathParams: { uuid: selectedPolyVersion?.uuid as string }
       });

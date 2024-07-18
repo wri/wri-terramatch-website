@@ -31868,7 +31868,7 @@ export type GetV2SitesSitePolygonResponse = {
   source?: string;
   country?: string;
   version_name?: string;
-  is_active?: number;
+  is_active?: boolean;
 }[];
 
 export type GetV2SitesSitePolygonVariables = {
@@ -34629,7 +34629,7 @@ export type GetV2TypeEntityResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -34857,7 +34857,7 @@ export type PutV2SitePolygonStatusBulkResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   }[];
 };
 
@@ -34962,7 +34962,7 @@ export type GetV2SitePolygonUuidResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   };
 };
 
@@ -35053,7 +35053,7 @@ export type GetV2SitePolygonUuidVersionsResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   }[];
 };
 
@@ -35149,7 +35149,7 @@ export type PostV2SitePolygonUuidNewVersionResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   };
 };
 
@@ -35249,7 +35249,7 @@ export type PutV2SitePolygonUuidMakeActiveResponse = {
     source?: string;
     country?: string;
     version_name?: string;
-    is_active?: number;
+    is_active?: boolean;
   };
 };
 
