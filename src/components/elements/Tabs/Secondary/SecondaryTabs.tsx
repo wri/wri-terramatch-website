@@ -5,6 +5,7 @@ import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement } from "react
 
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 export interface SecondaryTabsProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   tabItems: TabItem[];
@@ -16,12 +17,26 @@ export interface TabItem {
   body: ReactElement;
   disabled?: boolean;
   key?: string;
-  hidden?: boolean;
+
+  // The tab will only be shown if one of the given frameworks is active.
+  show?: Framework[];
+  // The tab will only be shown if one of the given frameworks is not active. `hide` will be ignored
+  // `show` is also included
+  hide?: Framework[];
 }
 
 const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...divProps }: SecondaryTabsProps) => {
   const router = useRouter();
-  const tabItems = _tabItems.filter(item => !item.hidden);
+  const { framework } = useFrameworkContext();
+  const tabItems = _tabItems.filter(item => {
+    if (item.show != null) {
+      return item.show.includes(framework);
+    } else if (item.hide != null) {
+      return !item.hide.includes(framework);
+    }
+
+    return true;
+  });
   //Default to zero
   const _defaultIndex = Math.max(
     tabItems.findIndex(item => item.key === router.query.tab),
