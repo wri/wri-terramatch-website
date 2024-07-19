@@ -225,37 +225,15 @@ export const MapContainer = ({
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");
-    // if ((polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") || selectedPolyVersion?.uuid) {
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap?.uuid as string;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-        // pathParams: { uuid: selectedPolyVersion?.poly_id ?? polygonuuid }
         pathParams: { uuid: polygonuuid }
       });
       if (map.current && draw.current && polygonGeojson) {
-        addGeojsonToDraw(
-          polygonGeojson.geojson,
-          // selectedPolyVersion?.poly_id ?? polygonuuid,
-          // () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id ?? polygonuuid),
-          polygonuuid,
-          () => handleAddGeojsonToDraw(polygonuuid),
-          draw.current
-        );
+        addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
       }
     }
-    // if (selectedPolyVersion?.uuid) {
-    //   const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-    //     pathParams: { uuid: selectedPolyVersion?.poly_id as string }
-    //   });
-    //   if (map.current && draw.current && polygonGeojson) {
-    //     addGeojsonToDraw(
-    //       polygonGeojson.geojson,
-    //       selectedPolyVersion?.poly_id as string,
-    //       () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id as string),
-    //       draw.current
-    //     );
-    //   }
-    // }
   };
 
   const onSaveEdit = async () => {
@@ -293,13 +271,22 @@ export const MapContainer = ({
       polygonGeojson.geojson,
       selectedPolyVersion?.poly_id as string,
       () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id as string),
-      draw.current
+      draw.current,
+      map.current
     );
   };
 
   useEffect(() => {
+    console.log(selectedPolyVersion);
+    const handlePreventEdit = (e: any) => {
+      draw?.current?.changeMode("simple_select");
+    };
     if (selectedPolyVersion?.poly_id) {
-      addGeometryVersion();
+      if (!selectedPolyVersion?.is_active) {
+        addGeometryVersion();
+        map.current?.on("click", handlePreventEdit);
+        map.current?.on("dblclick", handlePreventEdit);
+      }
     } else {
       onCancel(selectedPolyVersion?.poly_id);
     }
