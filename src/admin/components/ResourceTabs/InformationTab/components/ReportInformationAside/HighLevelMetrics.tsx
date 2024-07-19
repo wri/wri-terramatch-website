@@ -15,8 +15,8 @@ const HighLevelMetics: FC = () => {
   };
 
   const workdaysType = resource === "projectReport" ? "Project" : resource === "siteReport" ? "Site" : null;
-  const isSiteReport = resource === "siteReport";
-  console.log(resource);
+  const isTerrafund = record.framework_key === Framework.TF || record.framework === Framework.TF_LANDSCAPES;
+  const isSiteReport = resource === "siteReport" && isTerrafund;
   return (
     <Card>
       <Box paddingX={3.75} paddingY={2}>
@@ -28,7 +28,7 @@ const HighLevelMetics: FC = () => {
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
           <When condition={!isSiteReport}>
-            <ContextCondition frameworksHide={[Framework.TF]}>
+            <ContextCondition frameworksHide={[Framework.TF, Framework.TF_LANDSCAPES]}>
               <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
                 <NumberField source={record.workdays_total ? "workdays_total" : "total_workdays_count"} emptyText="0" />
               </Labeled>
