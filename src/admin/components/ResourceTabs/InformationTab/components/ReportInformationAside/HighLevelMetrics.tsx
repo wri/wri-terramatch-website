@@ -41,7 +41,7 @@ const HighLevelMetics: FC = () => {
                 </Labeled>
               </When>
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.TF]}>
+            <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES]}>
               <Labeled label="Total Number Of Jobs Created" sx={inlineLabelSx}>
                 <NumberField source="total_jobs_created" emptyText="0" />
               </Labeled>
@@ -64,7 +64,7 @@ const HighLevelMetics: FC = () => {
                 </Labeled>
               </When>
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.TF]}>
+            <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES]}>
               <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
                 <NumberField source="seedlings_grown" emptyText="0" />
               </Labeled>
