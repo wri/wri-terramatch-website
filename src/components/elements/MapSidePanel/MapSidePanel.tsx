@@ -114,7 +114,7 @@ const MapSidePanel = ({
       setClickedButton("");
     }
   }, [clickedButton, selected]);
-  console.log(selected);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuCheckboxRef.current && !menuCheckboxRef.current?.contains(event.target as Node)) {
@@ -153,8 +153,6 @@ const MapSidePanel = ({
       )
     }
   ];
-
-  console.log(items);
 
   return (
     <div {...props} className={classNames("h-[250px] flex-1", className)}>
