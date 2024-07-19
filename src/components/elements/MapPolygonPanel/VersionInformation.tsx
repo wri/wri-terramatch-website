@@ -80,6 +80,7 @@ const VersionInformation = ({
         </Text>
       ),
       onClick: async () => {
+        setSelectedPolyVersion({});
         const response = await fetchGetV2SitePolygonUuid({
           pathParams: { uuid: versionUuid as string }
         });

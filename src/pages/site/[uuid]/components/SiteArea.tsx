@@ -80,7 +80,6 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
               onClick={() => {
                 setOpenModalConfirmation(false);
                 setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
-                setOpenModalConfirmation(false);
                 setSelectedPolyVersion({});
                 setPreviewVersion(false);
                 refetch?.();

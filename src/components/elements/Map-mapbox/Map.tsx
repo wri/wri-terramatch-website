@@ -44,7 +44,7 @@ import {
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
-  // drawTemporaryPolygon,
+  drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
   startDrawing,
@@ -285,19 +285,26 @@ export const MapContainer = ({
     onCancel(polygonsData);
   };
 
+  const addGeometryVersion = async () => {
+    const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
+      pathParams: { uuid: selectedPolyVersion?.poly_id as string }
+    });
+    drawTemporaryPolygon(
+      polygonGeojson.geojson,
+      selectedPolyVersion?.poly_id as string,
+      () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id as string),
+      draw.current
+    );
+  };
+
   useEffect(() => {
     if (selectedPolyVersion?.poly_id) {
-      const polygonGeojson = fetchGetV2TerrafundPolygonGeojsonUuid({
-        pathParams: { uuid: selectedPolyVersion?.poly_id }
-      });
-      console.log(polygonGeojson);
-      // if (polygonGeojson) {
-      //   // drawTemporaryPolygon(map, polygonGeojson.geojson);
-      // }
-
-      // handleEditPolygon();
+      addGeometryVersion();
+    } else {
+      onCancel(selectedPolyVersion?.poly_id);
     }
   }, [selectedPolyVersion]);
+
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
