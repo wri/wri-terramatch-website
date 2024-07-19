@@ -139,7 +139,7 @@ const VersionInformation = ({
                 "bg-transparent text-white": !item.is_active
               })}
             >
-              {item.is_active == 1 ? "Yes" : "No"}
+              {item.is_active ? "Yes" : "No"}
             </button>
             <Menu placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu(item.poly_id, item.uuid)} className="">
               <Icon
