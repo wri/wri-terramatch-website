@@ -49,7 +49,6 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
       enabled: !!polygon?.primary_uuid
     }
   );
-  console.log(polygon);
 
   const makeActivePolygon = async () => {
     const versionActive = (polygonVersions as SitePolygonsDataResponse)?.find(

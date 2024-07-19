@@ -180,7 +180,6 @@ const AttributeInformation = () => {
     }
   };
 
-  console.log(sitePolygonData);
   return (
     <div className="flex flex-col gap-4">
       <Input

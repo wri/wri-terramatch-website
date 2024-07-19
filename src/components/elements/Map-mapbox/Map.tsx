@@ -277,7 +277,6 @@ export const MapContainer = ({
   };
 
   useEffect(() => {
-    console.log(selectedPolyVersion);
     const handlePreventEdit = (e: any) => {
       draw?.current?.changeMode("simple_select");
     };
