@@ -112,7 +112,7 @@ const VersionInformation = ({
   }, [selectedPolyVersion]);
 
   return (
-    <div className="grid">
+    <div className="flex h-full flex-col">
       <div className="grid grid-flow-col grid-cols-4 border-b-2 border-t border-[#ffffff1a] py-2 opacity-60">
         <Text variant="text-10-light" className="col-span-2 text-white">
           {t("Version")}
@@ -150,7 +150,7 @@ const VersionInformation = ({
           </div>
         </div>
       ))}
-      <button className="pt-40 text-white hover:text-primary-300" onClick={createNewVersion}>
+      <button className="mt-auto text-white hover:text-primary-300" onClick={createNewVersion}>
         <Text variant="text-14-bold" className="flex items-center uppercase ">
           <Icon name={IconNames.PLUS_PA} className="h-4 w-6" />
           &nbsp; {t("Add Polygon")}

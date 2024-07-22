@@ -268,27 +268,22 @@ export const MapContainer = ({
       pathParams: { uuid: selectedPolyVersion?.poly_id as string }
     });
     drawTemporaryPolygon(
-      polygonGeojson.geojson,
-      selectedPolyVersion?.poly_id as string,
-      () => handleAddGeojsonToDraw(selectedPolyVersion?.poly_id as string),
-      draw.current,
-      map.current
+      polygonGeojson?.geojson,
+      () => {
+        console.log(`Polygon with UUID: ${selectedPolyVersion?.poly_id}.`);
+      },
+      map.current,
+      selectedPolyVersion
     );
   };
 
   useEffect(() => {
-    const handlePreventEdit = (e: any) => {
-      draw?.current?.changeMode("simple_select");
-    };
-    if (selectedPolyVersion?.poly_id) {
-      if (!selectedPolyVersion?.is_active) {
-        addGeometryVersion();
-        map.current?.on("click", handlePreventEdit);
-        map.current?.on("dblclick", handlePreventEdit);
-      }
-    } else {
-      onCancel(selectedPolyVersion?.poly_id);
+    if (map?.current?.getSource("temp-polygon-source") || map?.current?.getLayer("temp-polygon-source-line")) {
+      map?.current.removeLayer("temp-polygon-source-line");
+      map?.current?.removeLayer("temp-polygon-source");
+      map?.current?.removeSource("temp-polygon-source");
     }
+    addGeometryVersion();
   }, [selectedPolyVersion]);
 
   return (
