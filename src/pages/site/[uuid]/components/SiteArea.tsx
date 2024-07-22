@@ -33,8 +33,17 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
   const { displayNotification } = useAlertHook();
 
   const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
-    onSuccess: () => {
+    onSuccess: async () => {
       displayNotification("Polygon version made active successfully", "success", "Success!");
+      await refetchPolygonVersions();
+      setSelectedPolyVersion({});
+      setPreviewVersion(false);
+      setOpenModalConfirmation(false);
+      setEditPolygon?.({
+        isOpen: true,
+        uuid: selectedPolyVersion?.poly_id as string,
+        primary_uuid: selectedPolyVersion?.primary_uuid
+      });
     },
     onError: () => {
       displayNotification("Error making polygon version active", "error", "Error!");

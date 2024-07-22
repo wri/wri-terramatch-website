@@ -9,10 +9,11 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
   fetchGetV2SitePolygonUuid,
+  fetchGetV2SitePolygonUuidVersions,
   fetchPostV2SitePolygonUuidNewVersion,
   useDeleteV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -30,13 +31,28 @@ const VersionInformation = ({
 }) => {
   const { openModal, closeModal } = useModalContext();
   const { displayNotification } = useAlertHook();
-  const { editPolygon, setSelectedPolyVersion, setOpenModalConfirmation, setPreviewVersion, selectedPolyVersion } =
-    useMapAreaContext();
+  const {
+    editPolygon,
+    setSelectedPolyVersion,
+    setOpenModalConfirmation,
+    setPreviewVersion,
+    selectedPolyVersion,
+    setEditPolygon
+  } = useMapAreaContext();
   const t = useT();
   const { mutate: mutateDeletePolygonVersion } = useDeleteV2TerrafundPolygonUuid({
     onSuccess: async () => {
-      refetchPolygonVersions?.();
-      recallEntityData?.();
+      await refetchPolygonVersions?.();
+      await recallEntityData?.();
+      const response = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: selectedPolyVersion?.primary_uuid as string }
+      })) as SitePolygonsDataResponse;
+      const polygonActive = response?.find(item => item.is_active);
+      setEditPolygon({
+        isOpen: true,
+        uuid: polygonActive?.poly_id as string,
+        primary_uuid: polygonActive?.primary_uuid
+      });
       displayNotification("Polygon version deleted successfully", "success", "Success!");
     },
     onError: () => {
