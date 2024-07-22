@@ -33080,11 +33080,15 @@ export const usePutV2TerrafundSitePolygonUuid = (
   );
 };
 
-export type GetV2TerrafundProjectPolygonPathParams = {
+export type GetV2TerrafundProjectPolygonQueryParams = {
   /**
-   * The UUID of the site polygon.
+   * The UUID of the project polygon.
    */
   uuid: string;
+  /**
+   * The entity type of the project polygon.
+   */
+  entityType: string;
 };
 
 export type GetV2TerrafundProjectPolygonError = Fetcher.ErrorWrapper<
@@ -33133,11 +33137,11 @@ export type GetV2TerrafundProjectPolygonResponse = {
 };
 
 export type GetV2TerrafundProjectPolygonVariables = {
-  pathParams: GetV2TerrafundProjectPolygonPathParams;
+  queryParams: GetV2TerrafundProjectPolygonQueryParams;
 } & ApiContext["fetcherOptions"];
 
 /**
- * Retrieve site polygon data for the given UUID.
+ * Retrieve project polygon data for the given UUID.
  */
 export const fetchGetV2TerrafundProjectPolygon = (
   variables: GetV2TerrafundProjectPolygonVariables,
@@ -33148,12 +33152,12 @@ export const fetchGetV2TerrafundProjectPolygon = (
     GetV2TerrafundProjectPolygonError,
     undefined,
     {},
-    {},
-    GetV2TerrafundProjectPolygonPathParams
-  >({ url: '/v2/terrafund//project-polygon"', method: "get", ...variables, signal });
+    GetV2TerrafundProjectPolygonQueryParams,
+    {}
+  >({ url: "/v2/terrafund/project-polygon", method: "get", ...variables, signal });
 
 /**
- * Retrieve site polygon data for the given UUID.
+ * Retrieve project polygon data for the given UUID.
  */
 export const useGetV2TerrafundProjectPolygon = <TData = GetV2TerrafundProjectPolygonResponse>(
   variables: GetV2TerrafundProjectPolygonVariables,
@@ -33164,12 +33168,133 @@ export const useGetV2TerrafundProjectPolygon = <TData = GetV2TerrafundProjectPol
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundProjectPolygonResponse, GetV2TerrafundProjectPolygonError, TData>(
-    queryKeyFn({ path: '/v2/terrafund//project-polygon"', operationId: "getV2TerrafundProjectPolygon", variables }),
+    queryKeyFn({ path: "/v2/terrafund/project-polygon", operationId: "getV2TerrafundProjectPolygon", variables }),
     ({ signal }) => fetchGetV2TerrafundProjectPolygon({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
     }
+  );
+};
+
+export type DeleteV2TerrafundProjectPolygonUuidPathParams = {
+  /**
+   * The UUID of the polygon geometry to delete
+   */
+  uuid: string;
+};
+
+export type DeleteV2TerrafundProjectPolygonUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2TerrafundProjectPolygonUuidVariables = {
+  pathParams: DeleteV2TerrafundProjectPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2TerrafundProjectPolygonUuid = (
+  variables: DeleteV2TerrafundProjectPolygonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2TerrafundProjectPolygonUuidError,
+    undefined,
+    {},
+    {},
+    DeleteV2TerrafundProjectPolygonUuidPathParams
+  >({ url: "/v2/terrafund/project-polygon/{uuid}", method: "delete", ...variables, signal });
+
+export const useDeleteV2TerrafundProjectPolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2TerrafundProjectPolygonUuidError,
+      DeleteV2TerrafundProjectPolygonUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2TerrafundProjectPolygonUuidError,
+    DeleteV2TerrafundProjectPolygonUuidVariables
+  >(
+    (variables: DeleteV2TerrafundProjectPolygonUuidVariables) =>
+      fetchDeleteV2TerrafundProjectPolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams = {
+  /**
+   * The UUID of the polygon related
+   */
+  uuid: string;
+  /**
+   * The UUID of the entity
+   */
+  entityUuid: string;
+  /**
+   * The type of the entity
+   */
+  entityType: string;
+};
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse = {
+  /**
+   * @example Project polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created project polygon
+   */
+  uuid?: string;
+};
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables = {
+  pathParams: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+ */
+export const fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
+  variables: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse,
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError,
+    undefined,
+    {},
+    {},
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams
+  >({ url: "/v2/terrafund/project-polygon/{uuid}/{entityUuid}/{entityType}", method: "post", ...variables, signal });
+
+/**
+ * Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+ */
+export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse,
+      PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError,
+      PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse,
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError,
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables
+  >(
+    (variables: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables) =>
+      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 
@@ -36094,7 +36219,7 @@ export type QueryOperation =
       variables: GetV2TerrafundGeojsonSiteVariables;
     }
   | {
-      path: '/v2/terrafund//project-polygon"';
+      path: "/v2/terrafund/project-polygon";
       operationId: "getV2TerrafundProjectPolygon";
       variables: GetV2TerrafundProjectPolygonVariables;
     }

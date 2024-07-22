@@ -1,12 +1,12 @@
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundProjectPolygon, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
@@ -33,6 +33,7 @@ const RHFMap = ({
     field: { value, onChange }
   } = useController(inputWrapperProps);
   const values = formHook.watch();
+  const [projectPolygonData, setProjectPolygonData] = useState<any>(null);
 
   const { data, refetch } = useGetV2ENTITYUUID(
     {
@@ -47,6 +48,24 @@ const RHFMap = ({
       cacheTime: 0
     }
   );
+
+  useEffect(() => {
+    const getDataProjectPolygon = async () => {
+      const projectPolygon = fetchGetV2TerrafundProjectPolygon({
+        queryParams: {
+          entityType: entity?.entityName || "",
+          uuid: entity?.entityUUID || ""
+        }
+      });
+      setProjectPolygonData(projectPolygon);
+    };
+    getDataProjectPolygon();
+  }, [entity]);
+
+  useEffect(() => {
+    console.log("projectPolygonData", projectPolygonData);
+  }, [projectPolygonData]);
+
   const debouncedRefetch = useDebounce(refetch, 500);
   const entityData: any = data?.data || {};
 
