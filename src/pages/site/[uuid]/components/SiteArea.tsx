@@ -113,7 +113,9 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
               <Text variant="text-10-light" className="opacity-60">
                 {t("Polygon Name")}
               </Text>
-              <Text variant="text-10-light">{selectedPolyVersion?.poly_name ?? "-"}</Text>
+              <Text variant="text-10-light" className="capitalize">
+                {convertText(selectedPolyVersion?.poly_name as string) ?? "-"}
+              </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
