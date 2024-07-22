@@ -5,6 +5,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -87,19 +88,22 @@ const RHFMap = ({
   }, [values, debouncedRefetch, entity]);
 
   return (
-    <InputWrapper {...inputWrapperProps}>
-      <MapContainer
-        geojson={value}
-        onGeojsonChange={_onChange}
-        editable
-        onError={onError}
-        additionalPolygonProperties={additionalPolygonProperties}
-        captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
-        mapFunctions={mapFunctions}
-        hasControls={false}
-        showLegend={false}
-      />
-    </InputWrapper>
+    <MapAreaProvider>
+      <InputWrapper {...inputWrapperProps}>
+        <MapContainer
+          geojson={value}
+          onGeojsonChange={_onChange}
+          editable
+          onError={onError}
+          additionalPolygonProperties={additionalPolygonProperties}
+          captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
+          mapFunctions={mapFunctions}
+          // hasControls={false}
+          showLegend={false}
+          formMap={true}
+        />
+      </InputWrapper>
+    </MapAreaProvider>
   );
 };
 
