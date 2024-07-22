@@ -15,7 +15,7 @@ const HighLevelMetics: FC = () => {
   };
 
   const workdaysType = resource === "projectReport" ? "Project" : resource === "siteReport" ? "Site" : null;
-  const isTerrafund = record.framework_key === Framework.TF || record.framework === Framework.TF_LANDSCAPES;
+  const isTerrafund = record.framework_key === Framework.TF || record.framework_key === Framework.TF_LANDSCAPES;
   const isSiteReport = resource === "siteReport" && isTerrafund;
   return (
     <Card>
