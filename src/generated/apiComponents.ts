@@ -32801,6 +32801,213 @@ export const usePostV2TerrafundUploadKmlValidate = (
   );
 };
 
+export type PostV2TerrafundUploadGeojsonProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadGeojsonProjectResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadGeojsonProjectRequestBody = {
+  /**
+   * The GeoJSON file to upload
+   *
+   * @format binary
+   */
+  file: Blob;
+  /**
+   * The UUID of the entity associated with the GeoJSON file
+   */
+  entity_uuid: string;
+  /**
+   * The Enity Type of the entity associated with the GeoJSON file
+   */
+  entity_type: string;
+};
+
+export type PostV2TerrafundUploadGeojsonProjectVariables = {
+  body: PostV2TerrafundUploadGeojsonProjectRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadGeojsonProject = (
+  variables: PostV2TerrafundUploadGeojsonProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadGeojsonProjectResponse,
+    PostV2TerrafundUploadGeojsonProjectError,
+    PostV2TerrafundUploadGeojsonProjectRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-geojson-project", method: "post", ...variables, signal });
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadGeojsonProject = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadGeojsonProjectResponse,
+      PostV2TerrafundUploadGeojsonProjectError,
+      PostV2TerrafundUploadGeojsonProjectVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadGeojsonProjectResponse,
+    PostV2TerrafundUploadGeojsonProjectError,
+    PostV2TerrafundUploadGeojsonProjectVariables
+  >(
+    (variables: PostV2TerrafundUploadGeojsonProjectVariables) =>
+      fetchPostV2TerrafundUploadGeojsonProject({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadShapefileProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadShapefileProjectResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadShapefileProjectRequestBody = {
+  /**
+   * The Shapefile to upload
+   *
+   * @format binary
+   */
+  file: Blob;
+  /**
+   * The UUID of the entity associated with the Shapefile
+   */
+  entity_uuid: string;
+  /**
+   * The Enity Type of the entity associated with the Shapefile
+   */
+  entity_type: string;
+};
+
+export type PostV2TerrafundUploadShapefileProjectVariables = {
+  body: PostV2TerrafundUploadShapefileProjectRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a Shapefile, converts it to Shapefile, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadShapefileProject = (
+  variables: PostV2TerrafundUploadShapefileProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadShapefileProjectResponse,
+    PostV2TerrafundUploadShapefileProjectError,
+    PostV2TerrafundUploadShapefileProjectRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-shapefile-project", method: "post", ...variables, signal });
+
+/**
+ * Uploads a Shapefile, converts it to Shapefile, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadShapefileProject = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadShapefileProjectResponse,
+      PostV2TerrafundUploadShapefileProjectError,
+      PostV2TerrafundUploadShapefileProjectVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadShapefileProjectResponse,
+    PostV2TerrafundUploadShapefileProjectError,
+    PostV2TerrafundUploadShapefileProjectVariables
+  >(
+    (variables: PostV2TerrafundUploadShapefileProjectVariables) =>
+      fetchPostV2TerrafundUploadShapefileProject({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadKmlProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadKmlProjectResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadKmlProjectRequestBody = {
+  /**
+   * The KML file to upload
+   *
+   * @format binary
+   */
+  file: Blob;
+  /**
+   * The UUID of the entity associated with the KML file
+   */
+  entity_uuid: string;
+  /**
+   * The Enity Type of the entity associated with the KML file
+   */
+  entity_type: string;
+};
+
+export type PostV2TerrafundUploadKmlProjectVariables = {
+  body: PostV2TerrafundUploadKmlProjectRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a KML file, converts it to KML, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadKmlProject = (
+  variables: PostV2TerrafundUploadKmlProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadKmlProjectResponse,
+    PostV2TerrafundUploadKmlProjectError,
+    PostV2TerrafundUploadKmlProjectRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-kml-project", method: "post", ...variables, signal });
+
+/**
+ * Uploads a KML file, converts it to KML, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadKmlProject = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadKmlProjectResponse,
+      PostV2TerrafundUploadKmlProjectError,
+      PostV2TerrafundUploadKmlProjectVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadKmlProjectResponse,
+    PostV2TerrafundUploadKmlProjectError,
+    PostV2TerrafundUploadKmlProjectVariables
+  >(
+    (variables: PostV2TerrafundUploadKmlProjectVariables) =>
+      fetchPostV2TerrafundUploadKmlProject({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PutV2TerrafundSitePolygonUuidPathParams = {
   /**
    * The UUID of the site polygon
@@ -32870,6 +33077,99 @@ export const usePutV2TerrafundSitePolygonUuid = (
     (variables: PutV2TerrafundSitePolygonUuidVariables) =>
       fetchPutV2TerrafundSitePolygonUuid({ ...fetcherOptions, ...variables }),
     options
+  );
+};
+
+export type GetV2TerrafundProjectPolygonPathParams = {
+  /**
+   * The UUID of the site polygon.
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example No site polygons found for the given UUID.
+         */
+        message?: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example An error message describing the issue.
+         */
+        message?: string;
+      };
+    }
+>;
+
+export type GetV2TerrafundProjectPolygonResponse = {
+  project_polygon?: {
+    id?: number;
+    uuid?: string;
+    poly_uuid?: string;
+    entity_type?: string;
+    entity_id?: number;
+    last_modified_by?: string;
+    created_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+  };
+};
+
+export type GetV2TerrafundProjectPolygonVariables = {
+  pathParams: GetV2TerrafundProjectPolygonPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieve site polygon data for the given UUID.
+ */
+export const fetchGetV2TerrafundProjectPolygon = (
+  variables: GetV2TerrafundProjectPolygonVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundProjectPolygonResponse,
+    GetV2TerrafundProjectPolygonError,
+    undefined,
+    {},
+    {},
+    GetV2TerrafundProjectPolygonPathParams
+  >({ url: '/v2/terrafund//project-polygon"', method: "get", ...variables, signal });
+
+/**
+ * Retrieve site polygon data for the given UUID.
+ */
+export const useGetV2TerrafundProjectPolygon = <TData = GetV2TerrafundProjectPolygonResponse>(
+  variables: GetV2TerrafundProjectPolygonVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundProjectPolygonResponse, GetV2TerrafundProjectPolygonError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2TerrafundProjectPolygonResponse, GetV2TerrafundProjectPolygonError, TData>(
+    queryKeyFn({ path: '/v2/terrafund//project-polygon"', operationId: "getV2TerrafundProjectPolygon", variables }),
+    ({ signal }) => fetchGetV2TerrafundProjectPolygon({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
   );
 };
 
@@ -35792,6 +36092,11 @@ export type QueryOperation =
       path: "/v2/terrafund/geojson/site";
       operationId: "getV2TerrafundGeojsonSite";
       variables: GetV2TerrafundGeojsonSiteVariables;
+    }
+  | {
+      path: '/v2/terrafund//project-polygon"';
+      operationId: "getV2TerrafundProjectPolygon";
+      variables: GetV2TerrafundProjectPolygonVariables;
     }
   | {
       path: "/v2/dashboard/jobs-created";
