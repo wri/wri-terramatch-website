@@ -73,6 +73,10 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     displayNotification("Polygon version is already active", "warning", "Warning!");
   };
 
+  const convertText = (text: string) => {
+    return text?.replace(/-/g, " ");
+  };
+
   return (
     <div className="flex h-[500px] rounded-lg text-darkCustom wide:h-[700px]">
       <div className="relative h-auto w-auto">
@@ -107,33 +111,41 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
             </Text>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
-                {t("Polygon ID")}
+                {t("Polygon Name")}
               </Text>
-              <Text variant="text-10-light">{selectedPolyVersion?.id ?? "-"}</Text>
+              <Text variant="text-10-light">{selectedPolyVersion?.poly_name ?? "-"}</Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Restoration Practice")}
               </Text>
-              <Text variant="text-10-light">{selectedPolyVersion?.practice ?? "-"}</Text>
+              <Text variant="text-10-light" className="capitalize">
+                {convertText(selectedPolyVersion?.practice as string) ?? "-"}
+              </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Target Land Use System")}
               </Text>
-              <Text variant="text-10-light">{selectedPolyVersion?.target_sys ?? "-"}</Text>
+              <Text variant="text-10-light" className="capitalize">
+                {convertText(selectedPolyVersion?.target_sys as string) ?? "-"}
+              </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Tree Distribution")}
               </Text>
-              <Text variant="text-10-light">{selectedPolyVersion?.distr ?? "-"}</Text>
+              <Text variant="text-10-light" className="capitalize">
+                {convertText(selectedPolyVersion?.distr as string) ?? "-"}
+              </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
               <Text variant="text-10-light" className="opacity-60">
                 {t("Source")}
               </Text>
-              <Text variant="text-10-light">{selectedPolyVersion?.source ?? ""}</Text>
+              <Text variant="text-10-light" className="capitalize">
+                {selectedPolyVersion?.source == "terramatch" ? "TerraMatch" : selectedPolyVersion?.source ?? "-"}
+              </Text>
             </div>
           </div>
         </When>

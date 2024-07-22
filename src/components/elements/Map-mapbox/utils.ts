@@ -466,7 +466,7 @@ export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.M
         layout: {},
         paint: {
           "fill-color": getPolygonColor(polygonVersion?.status),
-          "fill-opacity": 0.7
+          "fill-opacity": 0
         }
       });
       map.addLayer({
@@ -476,7 +476,8 @@ export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.M
         layout: {},
         paint: {
           "line-color": getPolygonColor(polygonVersion?.status),
-          "line-width": 2
+          "line-width": 2,
+          "line-dasharray": [4, 2]
         }
       });
     }

@@ -163,7 +163,7 @@ const VersionInformation = ({
     <div className="flex h-full flex-col">
       <div className="grid grid-flow-col grid-cols-4 border-b-2 border-t border-[#ffffff1a] py-2 opacity-60">
         <Text variant="text-10-light" className="col-span-2 text-white">
-          {t("Version")}
+          {t("Version/Name")}
         </Text>
         <Text variant="text-10-light" className="text-white">
           {t("Date")}
@@ -175,7 +175,7 @@ const VersionInformation = ({
       {polygonVersionData?.map((item: any) => (
         <div key={item.id} className="grid grid-flow-col grid-cols-4 border-b border-[#ffffff1a] py-2 ">
           <Text variant="text-10" className="col-span-1 break-words pr-2 text-white sm:col-span-2">
-            {item.version_name}
+            {item.poly_name ?? item.version_name}
           </Text>
           <Text variant="text-10" className="text-white">
             {format(new Date(item.created_at), "MMM dd, yy")}
