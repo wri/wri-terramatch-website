@@ -174,10 +174,10 @@ const VersionInformation = ({
       </div>
       {polygonVersionData?.map((item: any) => (
         <div key={item.id} className="grid grid-flow-col grid-cols-4 border-b border-[#ffffff1a] py-2 ">
-          <Text variant="text-10" className="col-span-2 pr-2 text-white">
+          <Text variant="text-10" className="col-span-1 break-words pr-2 text-white sm:col-span-2">
             {item.version_name}
           </Text>
-          <Text variant="text-10" className="pr-2 text-white">
+          <Text variant="text-10" className="text-white">
             {format(new Date(item.created_at), "MMM dd, yy")}
           </Text>
           <div className="flex justify-between">
