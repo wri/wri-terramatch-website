@@ -23811,3 +23811,14 @@ export type PolygonChangeStatusUpdate = {
     status?: string;
   }[];
 };
+
+export type ProjectPolygonResponse = {
+  /**
+   * @example Project polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created project polygon
+   */
+  uuid?: string;
+};
