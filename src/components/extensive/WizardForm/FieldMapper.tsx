@@ -40,7 +40,6 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
     description: field.description,
     feedbackRequired: field.feedbackRequired
   };
-
   switch (field.type) {
     case FieldType.Input:
       return <Input {...field.fieldProps} {...sharedProps} formHook={formHook} onChangeCapture={onChange} ref={null} />;

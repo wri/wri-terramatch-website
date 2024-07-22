@@ -19,7 +19,6 @@ export type WizardEditFormProps = {
 const WizardEditForm = ({ title, steps, onSave, defaultValues, errors }: WizardEditFormProps) => {
   const { closeModal } = useModalContext();
   const t = useT();
-
   return (
     <div className="w-full bg-white">
       <div className="flex items-center justify-between bg-neutral-200 py-11 pl-8 pr-11">
