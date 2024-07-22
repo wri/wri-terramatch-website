@@ -11,7 +11,8 @@ import {
   fetchGetV2SitePolygonUuid,
   fetchGetV2SitePolygonUuidVersions,
   fetchPostV2SitePolygonUuidNewVersion,
-  useDeleteV2TerrafundPolygonUuid
+  useDeleteV2TerrafundPolygonUuid,
+  usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -45,7 +46,7 @@ const VersionInformation = ({
       await refetchPolygonVersions?.();
       await recallEntityData?.();
       const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolyVersion?.primary_uuid as string }
+        pathParams: { uuid: editPolygon?.primary_uuid as string }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
       setEditPolygon({
@@ -57,6 +58,19 @@ const VersionInformation = ({
     },
     onError: () => {
       displayNotification("Error deleting polygon version", "error", "Error!");
+    }
+  });
+
+  const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
+    onSuccess: async () => {
+      displayNotification("Polygon version made active successfully", "success", "Success!");
+      await refetchPolygonVersions?.();
+      setPreviewVersion(false);
+      setOpenModalConfirmation(false);
+      setSelectedPolyVersion({});
+    },
+    onError: () => {
+      displayNotification("Error making polygon version active", "error", "Error!");
     }
   });
 
@@ -102,7 +116,6 @@ const VersionInformation = ({
         });
         setSelectedPolyVersion(response as SitePolygon);
         setPreviewVersion?.(true);
-        setOpenModalConfirmation(true);
       }
     },
     {
@@ -126,6 +139,25 @@ const VersionInformation = ({
   useEffect(() => {
     recallEntityData?.();
   }, [selectedPolyVersion]);
+
+  const makeActivePolygon = async (polygon: any) => {
+    const versionActive = (polygonVersionData as SitePolygonsDataResponse)?.find(
+      item => item?.uuid == (polygon?.uuid as string)
+    );
+    if (!versionActive?.is_active) {
+      await mutateMakeActive({
+        pathParams: { uuid: polygon?.uuid as string }
+      });
+      setEditPolygon?.({
+        isOpen: true,
+        uuid: polygon?.poly_id as string,
+        primary_uuid: polygon?.primary_uuid
+      });
+      return;
+    }
+    await refetchPolygonVersions?.();
+    displayNotification("Polygon version is already active", "warning", "Warning!");
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -154,6 +186,7 @@ const VersionInformation = ({
                 "bg-white text-[#797F62]": !!item.is_active,
                 "bg-transparent text-white": !item.is_active
               })}
+              onClick={() => makeActivePolygon(item)}
             >
               {item.is_active ? "Yes" : "No"}
             </button>
