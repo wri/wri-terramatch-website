@@ -47,7 +47,8 @@ const EntityIntroPage = () => {
 
   const { data: entityData } = useGetV2FormsENTITYUUID(
     {
-      pathParams: { entity: entityName, uuid: entityUUID! }
+      pathParams: { entity: entityName, uuid: entityUUID! },
+      queryParams: { lang: router.locale }
     },
     { enabled: !!entityUUID }
   );
