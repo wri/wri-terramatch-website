@@ -29,14 +29,7 @@ const RHFWorkdaysTable = ({
     field: { value, onChange }
   } = useController(props);
 
-  const demographics = useMemo(
-    function () {
-      if (value == null || value.length == 0) {
-        return [];
-      } else return value[0].demographics;
-    },
-    [value]
-  );
+  const demographics = useMemo(() => value?.[0]?.demographics ?? [], [value]);
 
   const updateDemographics = useCallback(
     (updatedDemographics: Demographic[]) => {
