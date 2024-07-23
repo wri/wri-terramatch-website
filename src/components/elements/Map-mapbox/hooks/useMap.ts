@@ -33,7 +33,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       const currentMap = map.current as mapboxgl.Map;
       const currentDraw = draw.current as MapboxDraw;
       currentDraw.deleteAll();
-      console.log("on CANCEL", parsedPolygonData);
       addFilterOfPolygonsData(currentMap, parsedPolygonData);
     }
   };
@@ -45,7 +44,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
 
   const refreshMapPolygon = (parsedPolygonData: any) => {
     const currentMap = map.current as mapboxgl.Map;
-    console.log("resfresg parsedPolygonData", parsedPolygonData);
     loadLayersInMap(currentMap, parsedPolygonData);
   };
 
