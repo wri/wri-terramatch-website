@@ -39,8 +39,8 @@ const RHFMap = ({
   ...inputWrapperProps
 }: PropsWithChildren<RHFMapProps>) => {
   const onSave = (geojson: any) => {
-    if (uuid && model) {
-      storePolygonProject(geojson, uuid, model);
+    if (entity?.entityUUID && entity?.entityName) {
+      storePolygonProject(geojson, entity.entityUUID, entity.entityName);
     }
   };
   const mapFunctions = useMap(onSave);
@@ -96,7 +96,6 @@ const RHFMap = ({
     };
     getDataProjectPolygon();
   }, [projectPolygon]);
-
   const debouncedRefetch = useDebounce(refetch, 500);
   const entityData: any = data?.data || {};
 

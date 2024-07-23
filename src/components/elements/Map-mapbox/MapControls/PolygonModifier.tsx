@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
@@ -23,6 +23,7 @@ export const PolygonModifier = ({
   onClick?: any;
   onSave?: any;
   onCancel?: any;
+  polygonData?: any;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const { openModal, closeModal } = useModalContext();
@@ -30,11 +31,6 @@ export const PolygonModifier = ({
   const reloadSiteData = contextSite?.reloadSiteData;
   const t = useT();
 
-  useEffect(() => {
-    return () => {
-      onCancel();
-    };
-  }, []);
   const handleSaveButton = () => {
     onSave();
     setIsEditing(false);
