@@ -1,4 +1,5 @@
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import router from "next/router";
 import { useEffect, useState } from "react";
 import { Admin, Resource } from "react-admin";
 
@@ -17,8 +18,12 @@ const App = () => {
 
   useEffect(() => {
     const getIdentity = async () => {
-      const data: any = await authProvider?.getIdentity?.();
-      setIdentity(data);
+      try {
+        const data: any = await authProvider?.getIdentity?.();
+        setIdentity(data);
+      } catch (error) {
+        router.push("/auth/login");
+      }
     };
 
     getIdentity();
