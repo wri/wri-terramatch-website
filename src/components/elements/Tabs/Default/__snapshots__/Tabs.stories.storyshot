@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
 <div
-  className="flex h-full w-full shadow"
+  className="flex h-full w-full rounded-2xl shadow"
 >
   <div
     aria-orientation="vertical"
