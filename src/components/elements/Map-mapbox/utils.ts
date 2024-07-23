@@ -1,3 +1,4 @@
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
 import * as turfHelper from "@turf/helpers";
 import mapboxgl from "mapbox-gl";
@@ -448,3 +449,54 @@ export async function storePolygon(
     }
   }
 }
+
+export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.Map, polygonVersion?: any) => {
+  if (geojson) {
+    const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
+    if (polygonVersion?.poly_id && !polygonVersion?.is_active) {
+      map.addSource("temp-polygon-source", {
+        type: "geojson",
+        data: geojsonFormatted
+      });
+
+      map?.addLayer({
+        id: `temp-polygon-source`,
+        type: "fill",
+        source: `temp-polygon-source`,
+        layout: {},
+        paint: {
+          "fill-color": getPolygonColor(polygonVersion?.status),
+          "fill-opacity": 0
+        }
+      });
+      map.addLayer({
+        id: `temp-polygon-source-line`,
+        type: "line",
+        source: `temp-polygon-source`,
+        layout: {},
+        paint: {
+          "line-color": getPolygonColor(polygonVersion?.status),
+          "line-width": 2,
+          "line-dasharray": [4, 2]
+        }
+      });
+    }
+    zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
+    cb(polygonVersion?.poly_id as string);
+  }
+};
+
+const getPolygonColor = (polygonStatus: string) => {
+  switch (polygonStatus) {
+    case "draft":
+      return "#E468EF";
+    case "submitted":
+      return "#2398d8";
+    case "approved":
+      return "#72d961";
+    case "needs-more-information":
+      return "#ff8938";
+    default:
+      return "#000000";
+  }
+};
