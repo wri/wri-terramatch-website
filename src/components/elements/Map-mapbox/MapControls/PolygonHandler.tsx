@@ -160,16 +160,20 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-primary-200 bg-primary-200 p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
         onClick={() => openFormModalHandlerConfirmUpload("Creation")}
       >
-        <Icon name={IconNames.PLUS_PA} />
-        &nbsp;{t("Create Polygon")}
+        <span className="flex items-center">
+          <Icon name={IconNames.PLUS_PA} />
+          &nbsp;{t("Create Polygon")}
+        </span>
       </Button>
       <Button
         variant="text"
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-white bg-white p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
         onClick={() => openFormModalHandlerConfirmUpload("Upload")}
       >
-        <Icon name={IconNames.DOWNLOAD_PA} />
-        &nbsp; {t("Upload Polygon")}
+        <span className="flex items-center">
+          <Icon name={IconNames.DOWNLOAD_PA} />
+          &nbsp; {t("Upload Polygon")}
+        </span>
       </Button>
     </div>
   );
