@@ -34,6 +34,7 @@ export const PolygonModifier = ({
   const handleSaveButton = () => {
     onSave();
     setIsEditing(false);
+    reloadSiteData?.();
   };
 
   const deletePolygon = async (polygonUuid: string) => {
