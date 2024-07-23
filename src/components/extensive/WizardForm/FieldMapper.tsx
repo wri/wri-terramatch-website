@@ -22,6 +22,7 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import RHFWorkdaysTable from "@/components/elements/Inputs/WorkdaysInput/RHFWorkdaysTable";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 
 import { FieldType, FormField } from "./types";
 
@@ -187,13 +188,15 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
 
     case FieldType.Map:
       return (
-        <RHFMap
-          {...field.fieldProps}
-          {...sharedProps}
-          formHook={formHook}
-          control={formHook.control}
-          onChangeCapture={onChange}
-        />
+        <MapAreaProvider>
+          <RHFMap
+            {...field.fieldProps}
+            {...sharedProps}
+            formHook={formHook}
+            control={formHook.control}
+            onChangeCapture={onChange}
+          />
+        </MapAreaProvider>
       );
 
     case FieldType.Conditional:

@@ -6,7 +6,7 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { MapAreaProvider } from "@/context/mapArea.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundPolygonBboxUuid,
@@ -40,7 +40,7 @@ const RHFMap = ({
 }: PropsWithChildren<RHFMapProps>) => {
   const onSave = (geojson: any) => {
     if (entity?.entityUUID && entity?.entityName) {
-      storePolygonProject(geojson, entity.entityUUID, entity.entityName);
+      storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData);
     }
   };
   const mapFunctions = useMap(onSave);
@@ -52,6 +52,7 @@ const RHFMap = ({
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
+  const { setSiteData, setIsUserDrawingEnabled } = useMapAreaContext();
 
   const { data, refetch } = useGetV2ENTITYUUID(
     {
@@ -66,6 +67,11 @@ const RHFMap = ({
       cacheTime: 0
     }
   );
+
+  const refetchData = () => {
+    reloadProjectPolygonData();
+    setIsUserDrawingEnabled(false);
+  };
 
   const { data: projectPolygon, refetch: reloadProjectPolygonData } = useGetV2TerrafundProjectPolygon(
     {
@@ -96,6 +102,13 @@ const RHFMap = ({
     };
     getDataProjectPolygon();
   }, [projectPolygon]);
+
+  useEffect(() => {
+    if (entity) {
+      setSiteData(entity);
+    }
+  }, [entity, setSiteData]);
+
   const debouncedRefetch = useDebounce(refetch, 500);
   const entityData: any = data?.data || {};
 
@@ -142,26 +155,24 @@ const RHFMap = ({
       sitePolygonData={projectPolygon?.project_polygon as any}
       reloadSiteData={reloadProjectPolygonData}
     >
-      <MapAreaProvider>
-        <InputWrapper {...inputWrapperProps}>
-          <MapContainer
-            // geojson={value}
-            polygonsData={polygonDataMap}
-            bbox={polygonBbox}
-            polygonFromMap={polygonFromMap}
-            setPolygonFromMap={setPolygonFromMap}
-            onGeojsonChange={_onChange}
-            editable
-            onError={onError}
-            additionalPolygonProperties={additionalPolygonProperties}
-            captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
-            mapFunctions={mapFunctions}
-            // hasControls={false}
-            showLegend={false}
-            formMap={true}
-          />
-        </InputWrapper>
-      </MapAreaProvider>
+      <InputWrapper {...inputWrapperProps}>
+        <MapContainer
+          // geojson={value}
+          polygonsData={polygonDataMap}
+          bbox={polygonBbox}
+          polygonFromMap={polygonFromMap}
+          setPolygonFromMap={setPolygonFromMap}
+          onGeojsonChange={_onChange}
+          editable
+          onError={onError}
+          additionalPolygonProperties={additionalPolygonProperties}
+          captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
+          mapFunctions={mapFunctions}
+          // hasControls={false}
+          showLegend={false}
+          formMap={true}
+        />
+      </InputWrapper>
     </SitePolygonDataProvider>
   );
 };
