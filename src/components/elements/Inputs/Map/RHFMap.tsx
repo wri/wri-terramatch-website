@@ -5,8 +5,14 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
+import { FORM_POLYGONS } from "@/constants/statuses";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { fetchGetV2TerrafundProjectPolygon, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
+import {
+  fetchGetV2TerrafundPolygonBboxUuid,
+  useGetV2ENTITYUUID,
+  useGetV2TerrafundProjectPolygon
+} from "@/generated/apiComponents";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
@@ -40,10 +46,12 @@ const RHFMap = ({
   const mapFunctions = useMap(onSave);
   const t = useT();
   const {
-    field: { value, onChange }
+    field: { onChange }
   } = useController(inputWrapperProps);
   const values = formHook.watch();
-  const [projectPolygonData, setProjectPolygonData] = useState<any>(null);
+  const [polygonBbox, setPolygonBbox] = useState<any>(null);
+  const [polygonDataMap, setPolygonDataMap] = useState<any>({});
+  const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
 
   const { data, refetch } = useGetV2ENTITYUUID(
     {
@@ -59,22 +67,35 @@ const RHFMap = ({
     }
   );
 
-  useEffect(() => {
-    const getDataProjectPolygon = async () => {
-      const projectPolygon = fetchGetV2TerrafundProjectPolygon({
-        queryParams: {
-          entityType: model || "",
-          uuid: uuid || ""
-        }
-      });
-      setProjectPolygonData(projectPolygon);
-    };
-    getDataProjectPolygon();
-  }, [entity]);
+  const { data: projectPolygon, refetch: reloadProjectPolygonData } = useGetV2TerrafundProjectPolygon(
+    {
+      queryParams: {
+        entityType: entity?.entityName || "",
+        uuid: entity?.entityUUID || ""
+      }
+    },
+    {
+      enabled: !!entity,
+      staleTime: 0,
+      cacheTime: 0
+    }
+  );
 
   useEffect(() => {
-    console.log("projectPolygonData", projectPolygonData);
-  }, [projectPolygonData]);
+    const getDataProjectPolygon = async () => {
+      if (!projectPolygon) {
+        return;
+      }
+      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
+        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid || "" }
+      });
+      const bounds: any = bbox.bbox;
+      setPolygonBbox(bounds);
+      setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
+      setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
+    };
+    getDataProjectPolygon();
+  }, [projectPolygon]);
 
   const debouncedRefetch = useDebounce(refetch, 500);
   const entityData: any = data?.data || {};
@@ -117,22 +138,32 @@ const RHFMap = ({
   }, [values, debouncedRefetch, entity]);
 
   return (
-    <MapAreaProvider>
-      <InputWrapper {...inputWrapperProps}>
-        <MapContainer
-          geojson={value}
-          onGeojsonChange={_onChange}
-          editable
-          onError={onError}
-          additionalPolygonProperties={additionalPolygonProperties}
-          captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
-          mapFunctions={mapFunctions}
-          // hasControls={false}
-          showLegend={false}
-          formMap={true}
-        />
-      </InputWrapper>
-    </MapAreaProvider>
+    <SitePolygonDataProvider
+      // sitePolygonData should follow the correct structure
+      sitePolygonData={projectPolygon?.project_polygon as any}
+      reloadSiteData={reloadProjectPolygonData}
+    >
+      <MapAreaProvider>
+        <InputWrapper {...inputWrapperProps}>
+          <MapContainer
+            // geojson={value}
+            polygonsData={polygonDataMap}
+            bbox={polygonBbox}
+            polygonFromMap={polygonFromMap}
+            setPolygonFromMap={setPolygonFromMap}
+            onGeojsonChange={_onChange}
+            editable
+            onError={onError}
+            additionalPolygonProperties={additionalPolygonProperties}
+            captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
+            mapFunctions={mapFunctions}
+            // hasControls={false}
+            showLegend={false}
+            formMap={true}
+          />
+        </InputWrapper>
+      </MapAreaProvider>
+    </SitePolygonDataProvider>
   );
 };
 
