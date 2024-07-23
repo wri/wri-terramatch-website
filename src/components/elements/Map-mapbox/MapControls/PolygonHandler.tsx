@@ -166,6 +166,7 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
       <Button
         variant="text"
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-white bg-white p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
+        onClick={() => openFormModalHandlerConfirmUpload("Upload")}
       >
         <Icon name={IconNames.DOWNLOAD_PA} />
         &nbsp; {t("Upload Polygon")}
