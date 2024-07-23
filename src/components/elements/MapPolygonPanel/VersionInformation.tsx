@@ -54,23 +54,23 @@ const VersionInformation = ({
         uuid: polygonActive?.poly_id as string,
         primary_uuid: polygonActive?.primary_uuid
       });
-      displayNotification("Polygon version deleted successfully", "success", "Success!");
+      displayNotification(t("Polygon version deleted successfully"), "success", t("Success!"));
     },
     onError: () => {
-      displayNotification("Error deleting polygon version", "error", "Error!");
+      displayNotification(t("Error deleting polygon version"), "error", t("Error!"));
     }
   });
 
   const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: async () => {
-      displayNotification("Polygon version made active successfully", "success", "Success!");
+      displayNotification(t("Polygon version made active successfully"), "success", t("Success!"));
       await refetchPolygonVersions?.();
       setPreviewVersion(false);
       setOpenModalConfirmation(false);
       setSelectedPolyVersion({});
     },
     onError: () => {
-      displayNotification("Error making polygon version active", "error", "Error!");
+      displayNotification(t("Error making polygon version active"), "error", t("Error!"));
     }
   });
 
@@ -94,9 +94,9 @@ const VersionInformation = ({
       });
       refetchPolygonVersions?.();
       recallEntityData?.();
-      displayNotification("New version created successfully", "success", "Success!");
+      displayNotification(t("New version created successfully"), "success", t("Success!"));
     } catch (error) {
-      displayNotification("Error creating new version", "error", "Error!");
+      displayNotification(t("Error creating new version"), "error", t("Error!"));
     }
   };
 
@@ -188,7 +188,7 @@ const VersionInformation = ({
               })}
               onClick={() => makeActivePolygon(item)}
             >
-              {item.is_active ? "Yes" : "No"}
+              {item.is_active ? t("Yes") : t("No")}
             </button>
             <Menu placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu(item.poly_id, item.uuid)} className="">
               <Icon

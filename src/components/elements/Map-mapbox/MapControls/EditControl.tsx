@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React, { useEffect } from "react";
 import { When } from "react-if";
 
@@ -7,6 +8,7 @@ import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
 const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: any; onCancel?: any }) => {
+  const t = useT();
   const [isEditing, setIsEditing] = React.useState(false);
   const { selectedPolyVersion } = useMapAreaContext();
   useEffect(() => {
@@ -31,14 +33,14 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
           }}
         >
           <Text variant="text-12-bold" className="leading-[normal] text-black">
-            Edit Polygon
+            {t("Edit Polygon")}
           </Text>
         </Button>
         <When condition={isEditing}>
           <div className="flex w-full items-center gap-1">
             <Button onClick={handleSaveButton} className="w-full">
               <Text variant="text-12-bold" className="leading-[normal]">
-                Save
+                {t("Save")}
               </Text>
             </Button>
             <Button
@@ -50,7 +52,7 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
               }}
             >
               <Text variant="text-12-bold" className="leading-[normal]">
-                Cancel
+                {t("Cancel")}
               </Text>
             </Button>
           </div>

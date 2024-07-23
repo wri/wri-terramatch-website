@@ -267,14 +267,7 @@ export const MapContainer = ({
     const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
       pathParams: { uuid: selectedPolyVersion?.poly_id as string }
     });
-    drawTemporaryPolygon(
-      polygonGeojson?.geojson,
-      () => {
-        console.log(`Polygon with UUID: ${selectedPolyVersion?.poly_id}.`);
-      },
-      map.current,
-      selectedPolyVersion
-    );
+    drawTemporaryPolygon(polygonGeojson?.geojson, () => {}, map.current, selectedPolyVersion);
   };
 
   useEffect(() => {

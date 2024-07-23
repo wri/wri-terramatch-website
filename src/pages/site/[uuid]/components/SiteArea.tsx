@@ -34,7 +34,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
 
   const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: async () => {
-      displayNotification("Polygon version made active successfully", "success", "Success!");
+      displayNotification(t("Polygon version made active successfully"), "success", t("Success!"));
       await refetchPolygonVersions();
       setSelectedPolyVersion({});
       setPreviewVersion(false);
@@ -46,7 +46,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
       });
     },
     onError: () => {
-      displayNotification("Error making polygon version active", "error", "Error!");
+      displayNotification(t("Error making polygon version active"), "error", t("Error!"));
     }
   });
 
@@ -70,7 +70,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
       await refetchPolygonVersions();
       return;
     }
-    displayNotification("Polygon version is already active", "warning", "Warning!");
+    displayNotification(t("Polygon version is already active"), "warning", t("Warning!"));
   };
 
   const convertText = (text: string) => {
