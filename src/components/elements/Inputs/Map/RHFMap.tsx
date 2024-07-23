@@ -89,16 +89,18 @@ const RHFMap = ({
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {
-      if (!projectPolygon) {
-        return;
+      if (!projectPolygon?.project_polygon) {
+        setPolygonDataMap({ [FORM_POLYGONS]: [] });
+        setPolygonFromMap({ isOpen: false, uuid: "" });
+      } else {
+        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
+          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid || "" }
+        });
+        const bounds: any = bbox.bbox;
+        setPolygonBbox(bounds);
+        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
+        setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
       }
-      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid || "" }
-      });
-      const bounds: any = bbox.bbox;
-      setPolygonBbox(bounds);
-      setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
-      setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
     };
     getDataProjectPolygon();
   }, [projectPolygon]);
