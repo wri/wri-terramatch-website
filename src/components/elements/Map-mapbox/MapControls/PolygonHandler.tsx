@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
-  fetchPostV2TerrafundUploadGeojson,
-  fetchPostV2TerrafundUploadKml,
-  fetchPostV2TerrafundUploadShapefile
+  fetchPostV2TerrafundUploadGeojsonProject,
+  fetchPostV2TerrafundUploadKmlProject,
+  fetchPostV2TerrafundUploadShapefileProject
 } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 
@@ -20,56 +22,72 @@ import useAlertHook from "../../MapPolygonPanel/hooks/useAlertHook";
 export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
-  console.log("context", contextMapArea);
-  const { setIsUserDrawingEnabled } = contextMapArea;
+  const { setIsUserDrawingEnabled, siteData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
   const { displayNotification } = useAlertHook();
+  const context = useSitePolygonData();
+  const reloadSiteData = context?.reloadSiteData;
 
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
   useEffect(() => {
-    if (files && files.length > 0 && saveFlags) {
-      uploadFiles();
+    if (file && saveFlags) {
+      uploadFile();
       setSaveFlags(false);
     }
-  }, [files, saveFlags]);
+  }, [file, saveFlags]);
 
-  const uploadFiles = async () => {
-    const uploadPromises = [];
+  const uploadFile = async () => {
     showLoader();
+    const fileToUpload = file?.rawFile as File;
+    const formData = new FormData();
+    const fileType = getFileType(file!);
+    formData.append("file", fileToUpload);
+    formData.append("entity_uuid", siteData?.entityUUID);
+    formData.append("entity_type", siteData?.entityName);
+    let newRequest: any = formData;
 
-    for (const file of files) {
-      const fileToUpload = file.rawFile as File;
-      // const site_uuid = record.uuid;
-      const formData = new FormData();
-      const fileType = getFileType(file);
-      formData.append("file", fileToUpload);
-      // formData.append("uuid", site_uuid);
-      let newRequest: any = formData;
+    let uploadPromise;
 
-      switch (fileType) {
-        case "geojson":
-          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
-          break;
-        case "shapefile":
-          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
-          break;
-        case "kml":
-          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
-          break;
-        default:
-          break;
-      }
+    switch (fileType) {
+      case "geojson":
+        uploadPromise = fetchPostV2TerrafundUploadGeojsonProject({ body: newRequest });
+        break;
+      case "shapefile":
+        uploadPromise = fetchPostV2TerrafundUploadShapefileProject({ body: newRequest });
+        break;
+      case "kml":
+        uploadPromise = fetchPostV2TerrafundUploadKmlProject({ body: newRequest });
+        break;
+      default:
+        break;
     }
+
     try {
-      await Promise.all(uploadPromises);
-      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
-      // refetch();
-      // refetchSiteBbox();
-      closeModal();
-      hideLoader();
+      if (uploadPromise) {
+        const response = await uploadPromise;
+        if (response instanceof Blob) {
+          displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+          const blob = response;
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const getFormattedDate = () => {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+          };
+
+          const currentDate = getFormattedDate();
+          a.href = url;
+          a.download = `polygon-check-results-${currentDate}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        }
+      }
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
         let errorMessage = error.message as string;
@@ -82,6 +100,9 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
         displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
       }
     }
+    hideLoader();
+    closeModal();
+    reloadSiteData?.();
   };
 
   const getFileType = (file: UploadedFile) => {
@@ -90,6 +111,23 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
     if (fileType === "zip") return "shapefile";
     if (fileType === "kml") return "kml";
     return null;
+  };
+
+  const openFormModalHandlerConfirmUpload = (type: string) => {
+    openModal(
+      <ModalConfirm
+        title={t(`Confirm Polygon ${type}`)}
+        content={t(
+          `${
+            type === "Creation" ? "Creating" : "Uploading"
+          } a new polygon will overwrite the existing geometry. Proceed?`
+        )}
+        onClose={() => closeModal()}
+        onConfirm={() => {
+          type === "Creation" ? setIsUserDrawingEnabled(true) : openFormModalHandlerAddPolygon();
+        }}
+      />
+    );
   };
 
   const openFormModalHandlerAddPolygon = () => {
@@ -108,7 +146,8 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
-        setFile={setFiles}
+        setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
+        allowMultiple={false}
       />
     );
   };
@@ -118,14 +157,14 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
       <Button
         variant="text"
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-black hover:border-black"
-        onClick={() => setIsUserDrawingEnabled(true)}
+        onClick={() => openFormModalHandlerConfirmUpload("Creation")}
       >
         {t("Create Polygon")}
       </Button>
       <Button
         variant="text"
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 text-white hover:border-white"
-        onClick={openFormModalHandlerAddPolygon}
+        onClick={() => openFormModalHandlerConfirmUpload("Upload")}
       >
         {t("Upload Polygon")}
       </Button>

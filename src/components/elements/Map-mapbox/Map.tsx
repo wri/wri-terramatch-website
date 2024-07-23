@@ -148,6 +148,9 @@ export const MapContainer = ({
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
         startDrawing(draw.current, map.current);
+        if (formMap && polygonFromMap?.uuid) {
+          handleAddGeojsonToDraw(polygonFromMap?.uuid);
+        }
       } else {
         stopDrawing(draw.current, map.current);
       }

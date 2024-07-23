@@ -454,7 +454,7 @@ export async function storePolygon(
   }
 }
 
-export async function storePolygonProject(geojson: any, entity_uuid: string, entity_type: string) {
+export async function storePolygonProject(geojson: any, entity_uuid: string, entity_type: string, refecth: any) {
   if (geojson?.length) {
     const response = await fetchPostV2TerrafundPolygon({
       body: { geometry: JSON.stringify(geojson[0].geometry) }
@@ -465,6 +465,7 @@ export async function storePolygonProject(geojson: any, entity_uuid: string, ent
         pathParams: { uuid: polygonUUID, entityUuid: entity_uuid, entityType: entity_type }
       }).then(res => {
         console.log("Response after create project polygon", res);
+        refecth?.();
       });
     }
   }
