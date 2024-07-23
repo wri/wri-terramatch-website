@@ -108,8 +108,8 @@ const MyProjectsPage = () => {
         </If>
         <br />
         <br />
-        <PageFooter />
       </PageBody>
+      <PageFooter />
     </>
   );
 };

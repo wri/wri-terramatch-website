@@ -46,6 +46,7 @@ import {
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
   startDrawing,
@@ -131,7 +132,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { isUserDrawingEnabled } = contextMapArea;
+  const { isUserDrawingEnabled, selectedPolyVersion } = contextMapArea;
   const { displayNotification } = useAlertHook();
 
   if (!mapFunctions) {
@@ -232,7 +233,7 @@ export const MapContainer = ({
   const handleEditPolygon = async () => {
     removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
-      const polygonuuid = polygonFromMap.uuid;
+      const polygonuuid = polygonFromMap?.uuid as string;
       const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
         pathParams: { uuid: polygonuuid }
       });
@@ -268,6 +269,22 @@ export const MapContainer = ({
   const onCancelEdit = () => {
     onCancel(polygonsData);
   };
+
+  const addGeometryVersion = async () => {
+    const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
+      pathParams: { uuid: selectedPolyVersion?.poly_id as string }
+    });
+    drawTemporaryPolygon(polygonGeojson?.geojson, () => {}, map.current, selectedPolyVersion);
+  };
+
+  useEffect(() => {
+    if (map?.current?.getSource("temp-polygon-source") || map?.current?.getLayer("temp-polygon-source-line")) {
+      map?.current.removeLayer("temp-polygon-source-line");
+      map?.current?.removeLayer("temp-polygon-source");
+      map?.current?.removeSource("temp-polygon-source");
+    }
+    addGeometryVersion();
+  }, [selectedPolyVersion]);
 
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">

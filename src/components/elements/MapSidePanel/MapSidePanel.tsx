@@ -110,7 +110,7 @@ const MapSidePanel = ({
       deletePolygon(selected?.poly_id ?? "");
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
-      setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "" });
+      setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "", primary_uuid: selected?.primary_uuid ?? "" });
       setClickedButton("");
     }
   }, [clickedButton, selected]);
@@ -224,6 +224,9 @@ const MapSidePanel = ({
                 subtitle={item.subtitle}
                 status={item.status}
                 onClick={() => {
+                  setSelected(item);
+                }}
+                onClickCapture={() => {
                   setSelected(item);
                 }}
                 setClickedButton={setClickedButton}
