@@ -25,6 +25,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   refContainer: React.RefObject<HTMLDivElement> | null;
   type: string;
   poly_name?: string;
+  primary_uuid?: string;
 }
 
 const MapMenuPanelItem = ({
@@ -32,6 +33,7 @@ const MapMenuPanelItem = ({
   title,
   subtitle,
   status,
+  primary_uuid,
   isSelected,
   setClickedButton,
   className,
