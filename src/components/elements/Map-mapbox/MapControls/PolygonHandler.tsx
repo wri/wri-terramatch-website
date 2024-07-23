@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import { useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -156,17 +157,18 @@ export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
     <div className="flex gap-2">
       <Button
         variant="text"
-        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-black hover:border-black"
+        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-primary-200 bg-primary-200 p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
         onClick={() => openFormModalHandlerConfirmUpload("Creation")}
       >
-        {t("Create Polygon")}
+        <Icon name={IconNames.PLUS_PA} />
+        &nbsp;{t("Create Polygon")}
       </Button>
       <Button
         variant="text"
-        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 text-white hover:border-white"
-        onClick={() => openFormModalHandlerConfirmUpload("Upload")}
+        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-white bg-white p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
       >
-        {t("Upload Polygon")}
+        <Icon name={IconNames.DOWNLOAD_PA} />
+        &nbsp; {t("Upload Polygon")}
       </Button>
     </div>
   );
