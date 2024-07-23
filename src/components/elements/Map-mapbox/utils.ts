@@ -97,7 +97,7 @@ const showPolygons = (
   styles.forEach((style: LayerWithStyle, index: number) => {
     const layerName = `${name}-${index}`;
     if (!map.getLayer(layerName)) {
-      console.error(`Layer ${layerName} does not exist.`);
+      console.warn(`Layer ${layerName} does not exist.`);
       return;
     }
     const polygonStatus = style?.metadata?.polygonStatus;
@@ -187,7 +187,11 @@ export const addGeojsonToDraw = (
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
     const addToDrawAndFilter = () => {
       if (currentDraw) {
-        currentDraw.set(geojsonFormatted);
+        currentDraw.add(geojsonFormatted);
+        const currentDrawFeatures = currentDraw.getAll();
+        currentDraw.set(currentDrawFeatures);
+        const featureId = currentDrawFeatures.features[0].id;
+        currentDraw.changeMode("direct_select", { featureId: featureId as string });
         if (map) {
           zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
         }
