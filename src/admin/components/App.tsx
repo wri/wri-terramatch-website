@@ -8,9 +8,9 @@ import { AppLayout } from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
+import LoginPage from "@/pages/auth/login/index.page";
 
 import modules from "../modules";
-import AdminLoginPage from "../pages/AdminLoginPage";
 
 const App = () => {
   const [identity, setIdentity] = useState<any>(null);
@@ -35,7 +35,7 @@ const App = () => {
         authProvider={authProvider}
         dataProvider={dataProvider}
         layout={AppLayout}
-        loginPage={AdminLoginPage}
+        loginPage={LoginPage}
       >
         {isAdmin && (
           <>

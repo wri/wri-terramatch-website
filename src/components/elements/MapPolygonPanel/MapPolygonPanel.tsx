@@ -4,6 +4,7 @@ import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction, useState }
 import { Else, If, Then, When } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Button from "../Button/Button";
 import MapSidePanel from "../MapSidePanel/MapSidePanel";
@@ -21,13 +22,16 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   stateViewPanel: boolean;
   setStateViewPanel: Dispatch<SetStateAction<boolean>>;
-  setPreviewVersion: Dispatch<SetStateAction<boolean>>;
   mapFunctions: any;
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
   type: string;
   recallEntityData?: () => void;
+  polygonVersionData?: SitePolygonsDataResponse;
+  refetchPolygonVersions?: () => void;
+  refreshEntity?: () => void;
+  polygonsData?: Record<string, string[]>;
 }
 
 const MapPolygonPanel = ({
@@ -41,18 +45,22 @@ const MapPolygonPanel = ({
   setTabEditPolygon,
   stateViewPanel,
   setStateViewPanel,
-  setPreviewVersion,
   mapFunctions,
   checkedValues,
   onCheckboxChange,
   setSortOrder,
   type,
   recallEntityData,
+  polygonVersionData,
+  refetchPolygonVersions,
+  refreshEntity,
+  polygonsData,
   ...props
 }: MapPolygonPanelProps) => {
   const t = useT();
   const [selected] = useState<MapMenuPanelItemProps>();
   const { editPolygon } = useMapAreaContext();
+
   return (
     <div {...props} className={classNames(className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
@@ -62,7 +70,12 @@ const MapPolygonPanel = ({
           <MapEditPolygonPanel
             tabEditPolygon={tabEditPolygon}
             setTabEditPolygon={setTabEditPolygon}
-            setPreviewVersion={setPreviewVersion}
+            polygonVersionData={polygonVersionData}
+            refetchPolygonVersions={refetchPolygonVersions}
+            refreshEntity={refreshEntity}
+            mapFunctions={mapFunctions}
+            polygonData={polygonsData}
+            recallEntityData={recallEntityData}
           />
         </Then>
         <Else>
