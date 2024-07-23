@@ -269,7 +269,7 @@ export const MapContainer = ({
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
-        <When condition={polygonFromMap?.isOpen}>
+        <When condition={polygonFromMap?.isOpen && !formMap}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
             <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
           </ControlGroup>
@@ -290,7 +290,12 @@ export const MapContainer = ({
             <PolygonHandler map={map.current}></PolygonHandler>
           </ControlGroup>
           <ControlGroup position="top-right" className="top-64">
-            <PolygonModifier map={map.current} />
+            <PolygonModifier
+              polygonFromMap={polygonFromMap}
+              onClick={handleEditPolygon}
+              onSave={onSaveEdit}
+              onCancel={onCancelEdit}
+            />
           </ControlGroup>
         </When>
         <When condition={!!status && validationType === "individualValidation"}>
