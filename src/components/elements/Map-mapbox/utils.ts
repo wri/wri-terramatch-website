@@ -506,7 +506,13 @@ const getPolygonColor = (polygonStatus: string) => {
   }
 };
 
-export async function storePolygonProject(geojson: any, entity_uuid: string, entity_type: string) {
+export async function storePolygonProject(
+  geojson: any,
+  entity_uuid: string,
+  entity_type: string,
+  refetch: any,
+  setPolygonFromMap: any
+) {
   if (geojson?.length) {
     const response = await fetchPostV2TerrafundPolygon({
       body: { geometry: JSON.stringify(geojson[0].geometry) }
@@ -516,7 +522,8 @@ export async function storePolygonProject(geojson: any, entity_uuid: string, ent
       fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({
         pathParams: { uuid: polygonUUID, entityUuid: entity_uuid, entityType: entity_type }
       }).then(res => {
-        console.log("Response after create project polygon", res);
+        refetch?.();
+        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
       });
     }
   }

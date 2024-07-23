@@ -40,7 +40,7 @@ const RHFMap = ({
 }: PropsWithChildren<RHFMapProps>) => {
   const onSave = (geojson: any) => {
     if (entity?.entityUUID && entity?.entityName) {
-      storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData);
+      storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData, setPolygonFromMap);
     }
   };
   const mapFunctions = useMap(onSave);
@@ -52,7 +52,7 @@ const RHFMap = ({
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
-  const { setSiteData, setIsUserDrawingEnabled } = useMapAreaContext();
+  const { setSiteData } = useMapAreaContext();
 
   const { data, refetch } = useGetV2ENTITYUUID(
     {
@@ -70,7 +70,7 @@ const RHFMap = ({
 
   const refetchData = () => {
     reloadProjectPolygonData();
-    setIsUserDrawingEnabled(false);
+    mapFunctions?.onCancel(polygonDataMap);
   };
 
   const { data: projectPolygon, refetch: reloadProjectPolygonData } = useGetV2TerrafundProjectPolygon(
