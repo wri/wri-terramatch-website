@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import mapboxgl from "mapbox-gl";
 import { useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -20,7 +19,7 @@ import { FileType, UploadedFile } from "@/types/common";
 import Button from "../../Button/Button";
 import useAlertHook from "../../MapPolygonPanel/hooks/useAlertHook";
 
-export const PolygonHandler = ({ map }: { map: mapboxgl.Map | null }) => {
+export const PolygonHandler = () => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
   const { setIsUserDrawingEnabled, siteData } = contextMapArea;

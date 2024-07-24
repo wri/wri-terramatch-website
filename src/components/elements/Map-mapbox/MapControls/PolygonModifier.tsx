@@ -13,43 +13,41 @@ import { fetchDeleteV2TerrafundProjectPolygonUuid } from "@/generated/apiCompone
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
-export const PolygonModifier = ({
-  polygonFromMap,
-  onClick,
-  onSave,
-  onCancel
-}: {
-  polygonFromMap: any;
-  onClick?: any;
-  onSave?: any;
-  onCancel?: any;
-  polygonData?: any;
-}) => {
+interface PolygonModifierProps {
+  polygonFromMap: { uuid: string; isOpen: boolean } | undefined;
+  onClick?: () => void;
+  onSave?: () => void;
+  onCancel?: () => void;
+}
+
+const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonModifierProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
   const t = useT();
 
-  const handleSaveButton = () => {
-    onSave();
+  const handleSave = () => {
+    onSave?.();
     setIsEditing(false);
     reloadSiteData?.();
   };
 
-  const deletePolygon = async (polygonUuid: string) => {
-    await fetchDeleteV2TerrafundProjectPolygonUuid({ pathParams: { uuid: polygonUuid } });
-    reloadSiteData?.();
+  const handleDelete = async () => {
+    if (polygonFromMap?.uuid) {
+      await fetchDeleteV2TerrafundProjectPolygonUuid({ pathParams: { uuid: polygonFromMap.uuid } });
+      reloadSiteData?.();
+    }
   };
 
-  const openFormModalHandlerConfirm = () => {
+  const openDeleteConfirmation = () => {
     openModal(
       <ModalConfirm
         title={t("Confirm Polygon Deletion")}
         content={t("Do you want to delete this polygon?")}
         onClose={closeModal}
         onConfirm={() => {
-          deletePolygon(polygonFromMap?.uuid ?? "");
+          handleDelete();
           closeModal();
         }}
       />
@@ -59,21 +57,17 @@ export const PolygonModifier = ({
   return (
     <ControlButtonsGroup direction="col" className="z-10 w-auto">
       <IconButton
-        iconProps={{
-          name: IconNames.EDIT,
-          width: 24,
-          height: 24
-        }}
+        iconProps={{ name: IconNames.EDIT, width: 24, height: 24 }}
         onClick={() => {
           setIsEditing(true);
-          onClick();
+          onClick?.();
         }}
         className="rounded-b-none rounded-t-lg p-[10px]"
         aria-label="Edit Polygon"
       />
       {isEditing && (
         <div className="flex w-full items-center gap-1">
-          <Button onClick={handleSaveButton} className="w-full">
+          <Button onClick={handleSave} className="w-full">
             <Text variant="text-12-bold" className="leading-[normal]">
               Save
             </Text>
@@ -83,7 +77,7 @@ export const PolygonModifier = ({
             className="w-full"
             onClick={() => {
               setIsEditing(false);
-              onCancel();
+              onCancel?.();
             }}
           >
             <Text variant="text-12-bold" className="leading-[normal]">
@@ -94,15 +88,13 @@ export const PolygonModifier = ({
       )}
       <ControlDivider direction="horizontal" className="m-0 w-auto bg-neutral-200" />
       <IconButton
-        iconProps={{
-          name: IconNames.TRASH,
-          width: 24,
-          height: 24
-        }}
-        onClick={() => openFormModalHandlerConfirm()}
+        iconProps={{ name: IconNames.TRASH, width: 24, height: 24 }}
+        onClick={openDeleteConfirmation}
         className="rounded-t-none rounded-b-lg p-[10px]"
         aria-label="Delete Polygon"
       />
     </ControlButtonsGroup>
   );
 };
+
+export default PolygonModifier;
