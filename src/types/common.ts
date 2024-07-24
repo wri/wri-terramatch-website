@@ -204,11 +204,11 @@ export type UploadedFile = {
 export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "restoration";
 
 export type EntityName = BaseModelNames | ReportsModelNames;
-export type BaseModelNames = "projects" | "sites" | "nurseries";
+export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
 export type ReportsModelNames = "project-reports" | "site-reports" | "nursery-reports";
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
-export type SingularBaseModelNames = "project" | "site" | "nursery";
+export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";
 export type SingularReportsModelNames = "project-report" | "site-report" | "nursery-report";
 
 export type Entity = {
