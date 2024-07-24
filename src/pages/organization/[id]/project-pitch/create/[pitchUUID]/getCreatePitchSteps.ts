@@ -173,7 +173,11 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => [
         validation: yup.object(),
         fieldProps: {
           uuid,
-          model: ModelName
+          model: ModelName,
+          entity: {
+            entityName: ModelName,
+            entityUUID: uuid
+          }
         }
       },
       {

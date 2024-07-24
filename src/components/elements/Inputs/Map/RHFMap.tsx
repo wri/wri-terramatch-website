@@ -44,6 +44,7 @@ const RHFMap = ({
       storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData, setPolygonFromMap);
     }
   };
+
   const mapFunctions = useMap(onSave);
   const t = useT();
   const {
@@ -119,7 +120,6 @@ const RHFMap = ({
       setSiteData(entity);
     }
   }, [entity, setSiteData]);
-
   const debouncedRefetch = useDebounce(refetch, 500);
   const entityData: any = data?.data || {};
 
