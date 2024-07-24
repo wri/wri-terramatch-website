@@ -47,7 +47,17 @@ export const getSeedingTableColumns = (
         {
           accessorKey: "seeds_per_kg",
           header: t("Seeds Per Kg"),
-          cell: props => (props.row?.original?.seeds_in_sample / props.row?.original?.weight_of_sample).toFixed(2)
+          cell: props => {
+            const original = props.row?.original ?? {};
+            if (
+              original.seeds_in_sample == null ||
+              original.weight_of_sample === 0 ||
+              original.weight_of_sample == null
+            ) {
+              return null;
+            }
+            return (original.seeds_in_sample / original.weight_of_sample).toFixed(2);
+          }
         }
       ];
 
