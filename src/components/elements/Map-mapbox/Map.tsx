@@ -35,7 +35,7 @@ import ImageCheck from "./MapControls/ImageCheck";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { PolygonHandler } from "./MapControls/PolygonHandler";
-import { PolygonModifier } from "./MapControls/PolygonModifier";
+import PolygonModifier from "./MapControls/PolygonModifier";
 import { StyleControl } from "./MapControls/StyleControl";
 import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
@@ -290,7 +290,7 @@ export const MapContainer = ({
         </When>
         <When condition={formMap}>
           <ControlGroup position="top-left">
-            <PolygonHandler map={map.current}></PolygonHandler>
+            <PolygonHandler />
           </ControlGroup>
           <ControlGroup position="top-right" className="top-64">
             <PolygonModifier
