@@ -13,6 +13,7 @@ import {
   useGetV2ENTITYUUID,
   useGetV2TerrafundProjectPolygon
 } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
@@ -153,7 +154,6 @@ const RHFMap = ({
   };
 
   useEffect(() => {
-    //To make sure additionalPolygonProperties is always up to date
     if (entity) {
       debouncedRefetch();
     }
@@ -161,13 +161,11 @@ const RHFMap = ({
 
   return (
     <SitePolygonDataProvider
-      // sitePolygonData should follow the correct structure
-      sitePolygonData={projectPolygon?.project_polygon as any}
+      sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
       reloadSiteData={reloadProjectPolygonData}
     >
       <InputWrapper {...inputWrapperProps}>
         <MapContainer
-          // geojson={value}
           polygonsData={polygonDataMap}
           bbox={polygonBbox}
           polygonFromMap={polygonFromMap}
@@ -178,7 +176,6 @@ const RHFMap = ({
           additionalPolygonProperties={additionalPolygonProperties}
           captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
           mapFunctions={mapFunctions}
-          // hasControls={false}
           showLegend={false}
           formMap={true}
         />
