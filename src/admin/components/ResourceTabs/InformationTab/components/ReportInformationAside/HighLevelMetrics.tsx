@@ -4,7 +4,7 @@ import { Labeled, NumberField, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 
 const HighLevelMetics: FC = () => {
   const { record, resource } = useShowContext();
@@ -26,7 +26,7 @@ const HighLevelMetics: FC = () => {
 
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
-          <ContextCondition frameworksHide={[Framework.TF]}>
+          <ContextCondition frameworksHide={ALL_TF}>
             <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
               <NumberField source={record.workdays_total ? "workdays_total" : "total_workdays_count"} emptyText="0" />
             </Labeled>
@@ -39,10 +39,12 @@ const HighLevelMetics: FC = () => {
               </Labeled>
             </When>
           </ContextCondition>
-          <ContextCondition frameworksShow={[Framework.TF]}>
-            <Labeled label="Total Number Of Jobs Created" sx={inlineLabelSx}>
-              <NumberField source="total_jobs_created" emptyText="0" />
-            </Labeled>
+          <ContextCondition frameworksShow={ALL_TF}>
+            <When condition={resource !== "siteReport"}>
+              <Labeled label="Total Number Of Jobs Created" sx={inlineLabelSx}>
+                <NumberField source="total_jobs_created" emptyText="0" />
+              </Labeled>
+            </When>
           </ContextCondition>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
             <NumberField
@@ -60,10 +62,12 @@ const HighLevelMetics: FC = () => {
               </Labeled>
             </When>
           </ContextCondition>
-          <ContextCondition frameworksShow={[Framework.TF]}>
-            <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
-              <NumberField source="seedlings_grown" emptyText="0" />
-            </Labeled>
+          <ContextCondition frameworksShow={ALL_TF}>
+            <When condition={resource !== "siteReport"}>
+              <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
+                <NumberField source="seedlings_grown" emptyText="0" />
+              </Labeled>
+            </When>
           </ContextCondition>
         </Stack>
       </Box>

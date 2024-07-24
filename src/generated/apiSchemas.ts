@@ -23163,7 +23163,6 @@ export type SitePolygon = {
   status?: string;
   source?: string;
   country?: string;
-  version_name?: string;
   is_active?: boolean;
 };
 
@@ -23215,7 +23214,6 @@ export type SitePolygonsDataResponse = {
   status?: string;
   source?: string;
   country?: string;
-  version_name?: string;
   is_active?: boolean;
 }[];
 
@@ -23721,7 +23719,6 @@ export type EntityTypeResponse = {
     status?: string;
     source?: string;
     country?: string;
-    version_name?: string;
     is_active?: boolean;
   }[];
   /**
@@ -23804,7 +23801,6 @@ export type PolygonChangeStatus = {
   status?: string;
   source?: string;
   country?: string;
-  version_name?: string;
   is_active?: boolean;
 }[];
 

@@ -1,4 +1,5 @@
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import router from "next/router";
 import { useEffect, useState } from "react";
 import { Admin, Resource } from "react-admin";
 
@@ -8,17 +9,21 @@ import { AppLayout } from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
+import LoginPage from "@/pages/auth/login/index.page";
 
 import modules from "../modules";
-import AdminLoginPage from "../pages/AdminLoginPage";
 
 const App = () => {
   const [identity, setIdentity] = useState<any>(null);
 
   useEffect(() => {
     const getIdentity = async () => {
-      const data: any = await authProvider?.getIdentity?.();
-      setIdentity(data);
+      try {
+        const data: any = await authProvider?.getIdentity?.();
+        setIdentity(data);
+      } catch (error) {
+        router.push("/auth/login");
+      }
     };
 
     getIdentity();
@@ -35,7 +40,7 @@ const App = () => {
         authProvider={authProvider}
         dataProvider={dataProvider}
         layout={AppLayout}
-        loginPage={AdminLoginPage}
+        loginPage={LoginPage}
       >
         {isAdmin && (
           <>

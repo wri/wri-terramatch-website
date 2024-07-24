@@ -13,6 +13,7 @@ import {
   useGetV2ENTITYUUID,
   useGetV2TerrafundProjectPolygon
 } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
@@ -73,7 +74,11 @@ const RHFMap = ({
     mapFunctions?.onCancel(polygonDataMap);
   };
 
-  const { data: projectPolygon, refetch: reloadProjectPolygonData } = useGetV2TerrafundProjectPolygon(
+  const {
+    data: projectPolygon,
+    refetch: reloadProjectPolygonData,
+    isRefetching
+  } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
         entityType: entity?.entityName || "",
@@ -86,24 +91,28 @@ const RHFMap = ({
       cacheTime: 0
     }
   );
-
+  const setBbboxAndZoom = async () => {
+    if (projectPolygon?.project_polygon?.poly_uuid) {
+      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
+        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid || "" }
+      });
+      const bounds: any = bbox.bbox;
+      setPolygonBbox(bounds);
+    }
+  };
   useEffect(() => {
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
         setPolygonFromMap({ isOpen: false, uuid: "" });
       } else {
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid || "" }
-        });
-        const bounds: any = bbox.bbox;
-        setPolygonBbox(bounds);
+        setBbboxAndZoom();
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
         setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
       }
     };
     getDataProjectPolygon();
-  }, [projectPolygon]);
+  }, [projectPolygon, isRefetching]);
 
   useEffect(() => {
     if (entity) {
@@ -145,7 +154,6 @@ const RHFMap = ({
   };
 
   useEffect(() => {
-    //To make sure additionalPolygonProperties is always up to date
     if (entity) {
       debouncedRefetch();
     }
@@ -153,13 +161,11 @@ const RHFMap = ({
 
   return (
     <SitePolygonDataProvider
-      // sitePolygonData should follow the correct structure
-      sitePolygonData={projectPolygon?.project_polygon as any}
+      sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
       reloadSiteData={reloadProjectPolygonData}
     >
       <InputWrapper {...inputWrapperProps}>
         <MapContainer
-          // geojson={value}
           polygonsData={polygonDataMap}
           bbox={polygonBbox}
           polygonFromMap={polygonFromMap}
@@ -170,7 +176,6 @@ const RHFMap = ({
           additionalPolygonProperties={additionalPolygonProperties}
           captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
           mapFunctions={mapFunctions}
-          // hasControls={false}
           showLegend={false}
           formMap={true}
         />

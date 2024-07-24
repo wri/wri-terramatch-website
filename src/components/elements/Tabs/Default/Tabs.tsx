@@ -54,7 +54,7 @@ const Tabs = (props: TabsProps) => {
     <HTab.Group
       as="div"
       vertical
-      className={twMerge("flex h-full w-full shadow", props.className)}
+      className={twMerge("flex h-full w-full rounded-2xl shadow", props.className)}
       selectedIndex={selectedIndex}
       //@ts-ignore
       onChange={v => {
