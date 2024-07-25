@@ -63,7 +63,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
           onClick?.();
         }}
         className="rounded-b-none rounded-t-lg p-[10px]"
-        aria-label="Edit Polygon"
+        aria-label={t("Edit Polygon")}
       />
       {isEditing && (
         <div className="flex w-full items-center gap-1">
@@ -91,7 +91,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
         iconProps={{ name: IconNames.TRASH, width: 24, height: 24 }}
         onClick={openDeleteConfirmation}
         className="rounded-t-none rounded-b-lg p-[10px]"
-        aria-label="Delete Polygon"
+        aria-label={t("Delete Polygon")}
       />
     </ControlButtonsGroup>
   );
