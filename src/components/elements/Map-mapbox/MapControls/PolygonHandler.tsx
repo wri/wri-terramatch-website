@@ -133,17 +133,17 @@ export const PolygonHandler = () => {
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       <ModalAdd
-        title="Add Polygons"
-        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML.`}
+        title={t("Add Polygons")}
+        descriptionInput={t("Drag and drop a GeoJSON, Shapefile, or KML.")}
         descriptionList={
           <div className="mt-9 flex">
-            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
-            <Text variant="text-12-light">50 MB per upload</Text>
+            <Text variant="text-12-bold">{t("TerraMatch upload limits:")}&nbsp;</Text>
+            <Text variant="text-12-light">{t("1 MB per upload")}</Text>
           </div>
         }
         onClose={closeModal}
-        content="Start by adding polygons to your site."
-        primaryButtonText="Save"
+        content={t("Start by adding polygons to your site.")}
+        primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
         setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file

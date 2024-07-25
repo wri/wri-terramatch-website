@@ -60,11 +60,11 @@ const RHFMap = ({
     {
       pathParams: {
         entity: singularEntityNameToPlural(entity?.entityName as SingularEntityName),
-        uuid: entity?.entityUUID || ""
+        uuid: entity?.entityUUID ?? ""
       }
     },
     {
-      enabled: !!entity,
+      enabled: entity?.entityName != null && entity?.entityUUID != null,
       staleTime: 0,
       cacheTime: 0
     }
@@ -82,12 +82,12 @@ const RHFMap = ({
   } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
-        entityType: entity?.entityName || "",
-        uuid: entity?.entityUUID || ""
+        entityType: entity?.entityName ?? "",
+        uuid: entity?.entityUUID ?? ""
       }
     },
     {
-      enabled: !!entity,
+      enabled: entity?.entityName != null && entity?.entityUUID != null,
       staleTime: 0,
       cacheTime: 0
     }
@@ -95,7 +95,7 @@ const RHFMap = ({
   const setBbboxAndZoom = async () => {
     if (projectPolygon?.project_polygon?.poly_uuid) {
       const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid || "" }
+        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid ?? "" }
       });
       const bounds: any = bbox.bbox;
       setPolygonBbox(bounds);
