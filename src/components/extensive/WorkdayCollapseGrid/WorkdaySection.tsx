@@ -90,7 +90,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
 
       <div className={classNames("bg-white", variant.secondCol)}>
         <Text variant="text-14-semibold" className={classNames("text-customBlue-50 px-4 py-2", variant.columTitle)}>
-          Total Workdays
+          {t("Total Workdays")}
         </Text>
       </div>
       <div
