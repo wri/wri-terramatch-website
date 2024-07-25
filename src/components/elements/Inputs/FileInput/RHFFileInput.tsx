@@ -184,6 +184,7 @@ const RHFFileInput = ({
       //@ts-ignore swagger issue
       body
     });
+    formHook?.clearErrors(fileInputProps.name);
   };
 
   const handleFileUpdate = (file: Partial<UploadedFile>, isPrivate: boolean) => {
