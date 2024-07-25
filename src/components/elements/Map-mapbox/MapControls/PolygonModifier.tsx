@@ -69,7 +69,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
         <div className="flex w-full items-center gap-1">
           <Button onClick={handleSave} className="w-full">
             <Text variant="text-12-bold" className="leading-[normal]">
-              Save
+              {t("Save")}
             </Text>
           </Button>
           <Button
@@ -81,7 +81,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
             }}
           >
             <Text variant="text-12-bold" className="leading-[normal]">
-              Cancel
+              {t("Cancel")}
             </Text>
           </Button>
         </div>
