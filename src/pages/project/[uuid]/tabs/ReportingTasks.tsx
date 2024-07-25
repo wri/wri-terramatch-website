@@ -13,14 +13,13 @@ import { useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
 
 interface ReportingTasksProps {
   projectUUID: string;
-  reportingPeriod: "quarterly" | "bi-annually";
 }
 
-const ReportingTasksTab = (props: ReportingTasksProps) => {
+const ReportingTasksTab = ({ projectUUID }: ReportingTasksProps) => {
   const t = useT();
   const { data: reportingTasks, isLoading } = useGetV2ProjectsUUIDTasks(
     {
-      pathParams: { uuid: props.projectUUID }
+      pathParams: { uuid: projectUUID }
     },
     { keepPreviousData: true }
   );
@@ -47,7 +46,7 @@ const ReportingTasksTab = (props: ReportingTasksProps) => {
                     "This is a list of your reporting tasks for this project. Please ensure that you review the submission status and complete all reports that are both due and overdue."
                   )}
                 >
-                  <ReportingTasksTable {...props} />
+                  <ReportingTasksTable projectUUID={projectUUID} />
                 </PageCard>
               </Else>
             </If>

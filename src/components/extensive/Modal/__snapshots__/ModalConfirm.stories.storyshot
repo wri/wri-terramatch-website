@@ -27,24 +27,13 @@ exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
       >
         <textarea
           className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 p-4 text-xs border-light "
-          id=":r3c:"
+          id=":r37:"
           name=""
           onChange={[Function]}
           placeholder="Type comment here..."
           rows={4}
           value=""
         />
-      </div>
-      <div
-        className="display-grid"
-      >
-        <div
-          className="text-right text-xs text-grey-500"
-        >
-          0
-          /255 
-          characters
-        </div>
       </div>
     </div>
     <div

@@ -10,6 +10,7 @@ import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab
 import Button from "@/components/elements/Button/Button";
 import Commentary from "@/components/elements/Commentary/Commentary";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
+import { formatCommentaryDate } from "@/components/elements/Map-mapbox/utils";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
@@ -134,7 +135,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
                   key={item.id}
                   name={item.first_name!}
                   lastName={item.last_name!}
-                  date={item.date_created!}
+                  date={formatCommentaryDate(new Date(item.date_created!))}
                   commentary={item.comment!}
                   files={item.attachments}
                   status={item.status}

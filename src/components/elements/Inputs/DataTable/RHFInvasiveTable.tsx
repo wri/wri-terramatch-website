@@ -1,24 +1,18 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren } from "react";
-import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { useController, UseControllerProps } from "react-hook-form";
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { getInvasiveTypeOptions } from "@/constants/options/invasives";
-import { useDeleteV2InvasivesUUID, usePostV2Invasives } from "@/generated/apiComponents";
-import { Entity } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFInvasiveTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
-    UseControllerProps {
-  onChangeCapture?: () => void;
-  formHook?: UseFormReturn;
-  entity: Entity;
-}
+    UseControllerProps {}
 
 export const getInvasiveTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
   {
@@ -32,47 +26,18 @@ export const getInvasiveTableColumns = (t: typeof useT | Function = (t: string) 
   }
 ];
 
-const RHFInvasiveTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFInvasiveTableProps>) => {
+const RHFInvasiveTable = (props: PropsWithChildren<RHFInvasiveTableProps>) => {
   const t = useT();
-  const { field } = useController(props);
-  const value = field?.value || [];
-
-  const { mutate: createInvasive } = usePostV2Invasives({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-    }
-  });
-
-  const { mutate: removeInvasive } = useDeleteV2InvasivesUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
+  const {
+    field: { value, onChange }
+  } = useController(props);
 
   return (
     <DataTable
       {...props}
-      value={value}
-      handleCreate={data => {
-        createInvasive({
-          body: {
-            ...data,
-            model_type: entity?.entityName,
-            //@ts-ignore
-            model_uuid: entity?.entityUUID
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeInvasive({ pathParams: { uuid } });
-        }
-      }}
+      value={value ?? []}
+      onChange={onChange}
+      generateUuids={true}
       addButtonCaption={t("Add invasive")}
       tableColumns={getInvasiveTableColumns(t)}
       fields={[

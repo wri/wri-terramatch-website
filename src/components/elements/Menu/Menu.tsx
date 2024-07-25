@@ -167,7 +167,10 @@ const Menu = (props: MenuProps) => {
     <div
       ref={menuContainerRef}
       className={classNames(className, "relative w-fit-content")}
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={e => {
+        e.stopPropagation();
+        setIsOpen(!isOpen);
+      }}
     >
       {children}
       <div

@@ -40,7 +40,7 @@ export const FundingProgrammeList = () => {
       </Stack>
 
       <List actions={<ListActionsCreate onExport={handleExport} />} filters={[]}>
-        <Datagrid>
+        <Datagrid rowClick={"show"}>
           <TextField source="name" label="Name" sortable={false} />
           <TextField source="description" label="Description" sortable={false} />
           <TextField source="status" label="Status" sortable={false} sx={{ textTransform: "capitalize" }} />

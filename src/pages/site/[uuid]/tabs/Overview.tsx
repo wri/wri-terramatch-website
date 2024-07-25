@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { When } from "react-if";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
@@ -12,6 +11,7 @@ import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
+import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Notification from "@/components/elements/Notification/Notification";
@@ -25,6 +25,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -38,13 +39,13 @@ import {
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
-import { useFramework } from "@/hooks/useFramework";
 import { FileType, UploadedFile } from "@/types/common";
 
 import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
   site: any;
+  refetch?: () => void;
 }
 
 const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonsDataResponse }) => {
@@ -76,12 +77,12 @@ const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygo
   );
 };
 
-const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
+const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
-  const { isPPC } = useFramework(site);
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
+  const { displayNotification } = useAlertHook();
   const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -140,11 +141,23 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           break;
       }
     }
-
-    await Promise.all(uploadPromises);
-
-    setShouldRefetchPolygonData(true);
-    closeModal();
+    try {
+      await Promise.all(uploadPromises);
+      setShouldRefetchPolygonData(true);
+      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      closeModal();
+    } catch (error) {
+      if (error && typeof error === "object" && "message" in error) {
+        let errorMessage = error.message as string;
+        const parsedMessage = JSON.parse(errorMessage);
+        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          errorMessage = parsedMessage.message;
+        }
+        displayNotification(t("Error uploading file"), "error", errorMessage);
+      } else {
+        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+      }
+    }
   };
 
   const openFormModalHandlerAddPolygon = () => {
@@ -278,9 +291,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           >
             <div className="flex w-full">
               <div className="grid w-[50%] grid-cols-2 content-start gap-x-8 gap-y-7 pr-20">
-                <When condition={isPPC}>
-                  <GoalProgressCard label={t("Workday Count (PPC)")} value={site.self_reported_workday_count} />
-                </When>
+                <GoalProgressCard
+                  frameworksShow={[Framework.PPC]}
+                  label={t("Workday Count (PPC)")}
+                  value={site.self_reported_workday_count}
+                />
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
               </div>
               <div>
@@ -356,7 +371,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   />
                 </div>
               </div>
-              <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} />
+              <SiteArea
+                sites={site}
+                setEditPolygon={setEditPolygon}
+                editPolygon={editPolygon}
+                refetch={refetchEntity}
+              />
             </PageCard>
           </PageColumn>
         </PageRow>

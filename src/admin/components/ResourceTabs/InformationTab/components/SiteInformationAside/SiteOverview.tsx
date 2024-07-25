@@ -2,6 +2,7 @@ import { Check } from "@mui/icons-material";
 import { Button, Card, Grid, Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { BooleanField, FunctionField, Labeled, TextField, useShowContext } from "react-admin";
+import { When } from "react-if";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
@@ -25,6 +26,8 @@ const SiteOverview: FC = () => {
     fetchCheckPolygons();
   }, [record]);
 
+  const isPPC = record.framework_key === "ppc";
+
   return (
     <>
       <Card sx={{ padding: 3.75 }} className="!shadow-none">
@@ -36,6 +39,12 @@ const SiteOverview: FC = () => {
           <Labeled label="Site" className="label-field-aside">
             <TextField source="name" />
           </Labeled>
+
+          <When condition={isPPC}>
+            <Labeled label="ID" className="label-field-aside">
+              <TextField source="ppc_external_id" />
+            </Labeled>
+          </When>
 
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={6} item>

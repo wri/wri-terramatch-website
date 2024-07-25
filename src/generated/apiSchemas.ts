@@ -42,7 +42,7 @@ export type TreeSpeciesReadAll = {
   collection?: string;
 }[];
 
-export type MonitoringUserRead = {
+export type AssociatedUserRead = {
   uuid?: string;
   user_type?: string;
   job_role?: string;
@@ -4851,18 +4851,6 @@ export type V2StrataRead = {
   extent?: number;
 };
 
-export type V2StrataCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  description?: string;
-  extent?: number;
-};
-
-export type V2StrataUpdate = {
-  description?: string;
-  extent?: number;
-};
-
 export type V2StrataPaginated = {
   data?: {
     uuid?: string;
@@ -4886,22 +4874,6 @@ export type V2StrataPaginated = {
 
 export type V2SeedingRead = {
   uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingUpdate = {
   name?: string;
   weight_of_sample?: number;
   seeds_in_sample?: number;
@@ -4950,21 +4922,6 @@ export type V2DisturbanceRead = {
   extent?: string;
 };
 
-export type V2DisturbanceCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  description?: string;
-  intensity?: string;
-  extent?: string;
-  collection?: string;
-};
-
-export type V2DisturbanceUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
-};
-
 export type V2DisturbancePaginated = {
   data?: {
     uuid?: string;
@@ -4991,20 +4948,6 @@ export type V2InvasiveRead = {
   uuid?: string;
   name?: string;
   type?: number;
-};
-
-export type V2InvasiveCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  type?: string;
-  collection?: string;
-};
-
-export type V2InvasiveUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
 };
 
 export type V2InvasivePaginated = {
@@ -23179,6 +23122,7 @@ export type V2TerrafundCriteriaSite = {
 export type SitePolygon = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -23219,6 +23163,7 @@ export type SitePolygon = {
   status?: string;
   source?: string;
   country?: string;
+  is_active?: boolean;
 };
 
 export type GeometryString = {
@@ -23228,6 +23173,7 @@ export type GeometryString = {
 export type SitePolygonsDataResponse = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -23268,6 +23214,7 @@ export type SitePolygonsDataResponse = {
   status?: string;
   source?: string;
   country?: string;
+  is_active?: boolean;
 }[];
 
 export type SitePolygonsBboxResponse = {
@@ -23731,6 +23678,7 @@ export type EntityTypeResponse = {
   polygonsData?: {
     id?: number;
     uuid?: string;
+    primary_uuid?: string;
     project_id?: string;
     proj_name?: string;
     org_name?: string;
@@ -23771,6 +23719,7 @@ export type EntityTypeResponse = {
     status?: string;
     source?: string;
     country?: string;
+    is_active?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -23811,6 +23760,7 @@ export type DashboardProjectViewResponse = {
 export type PolygonChangeStatus = {
   id?: number;
   uuid?: string;
+  primary_uuid?: string;
   project_id?: string;
   proj_name?: string;
   org_name?: string;
@@ -23851,6 +23801,7 @@ export type PolygonChangeStatus = {
   status?: string;
   source?: string;
   country?: string;
+  is_active?: boolean;
 }[];
 
 export type PolygonChangeStatusUpdate = {

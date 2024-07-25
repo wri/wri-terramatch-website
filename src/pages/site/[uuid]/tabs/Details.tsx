@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { When } from "react-if";
 
 import ButtonField from "@/components/elements/Field/ButtonField";
 import LongTextField from "@/components/elements/Field/LongTextField";
@@ -13,8 +12,9 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import InvasiveTable from "@/components/extensive/Tables/InvasiveTable";
 import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
+import { ContextCondition } from "@/context/ContextCondition";
+import { Framework } from "@/context/framework.provider";
 import { useDate } from "@/hooks/useDate";
-import { useFramework } from "@/hooks/useFramework";
 import { useGetOptions } from "@/hooks/useGetOptions";
 
 interface SiteDetailsTabProps {
@@ -24,7 +24,6 @@ interface SiteDetailsTabProps {
 const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
   const t = useT();
   const { format } = useDate();
-  const { isPPC } = useFramework(site);
 
   const landUseTypesOptions = useGetOptions(site.land_use_types);
   const landTenuresOptions = useGetOptions(site.land_tenures);
@@ -63,15 +62,13 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           <PageCard title={t("Site Creation")}>
             <TextField label={t("Site Created")} value={format(site.created_at)} />
           </PageCard>
-          <When condition={isPPC}>
+          <ContextCondition frameworksShow={[Framework.PPC]}>
             <PageCard title={t("Direct seeding")}>
               <SeedingsTable modelName="site" modelUUID={site.uuid} type="weight" />
             </PageCard>
             <PageCard title={t("Invasives")}>
               <InvasiveTable modelName="site" modelUUID={site.uuid} collection="invasive" />
             </PageCard>
-          </When>
-          <When condition={isPPC}>
             <PageCard title={t("Additional Information")} gap={4}>
               <TextField label={t("Mature Trees Count")} value={site.aim_number_of_mature_trees} />
               <TextField label={t("Soil Condition")} value={site.soil_condition} />
@@ -88,7 +85,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
                 }}
               />
             </Paper>
-          </When>
+          </ContextCondition>
         </PageColumn>
       </PageRow>
       <br />

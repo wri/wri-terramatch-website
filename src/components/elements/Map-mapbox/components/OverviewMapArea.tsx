@@ -23,9 +23,18 @@ import { storePolygon } from "../utils";
 interface EntityAreaProps {
   entityModel: any;
   type: string;
+  refetch?: () => void;
+  polygonVersionData?: SitePolygonsDataResponse;
+  refetchPolygonVersions?: () => void;
 }
 
-const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
+const OverviewMapArea = ({
+  entityModel,
+  type,
+  refetch: refreshEntity,
+  polygonVersionData,
+  refetchPolygonVersions
+}: EntityAreaProps) => {
   const t = useT();
   const { format } = useDate();
   const [polygonsData, setPolygonsData] = useState<any[]>([]);
@@ -47,7 +56,8 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
   };
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon);
+  const onSave = (geojson: any) =>
+    storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon, refreshEntity);
 
   const mapFunctions = useMap(onSave);
 
@@ -147,6 +157,7 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
+          polygonsData={polygonDataMap}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
@@ -159,8 +170,10 @@ const OverviewMapArea = ({ entityModel, type }: EntityAreaProps) => {
           setStateViewPanel={setStateViewPanel}
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
-          setPreviewVersion={() => {}}
           recallEntityData={refetch}
+          polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
+          refetchPolygonVersions={refetchPolygonVersions}
+          refreshEntity={refreshEntity}
         />
       ) : (
         <MapSidePanel
