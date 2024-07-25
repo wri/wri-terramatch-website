@@ -62,10 +62,8 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [charCount, setCharCount] = useState<number>(0);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [warning, setWarning] = useState<string>("");
 
   const validFileTypes = [
     "application/pdf",
@@ -119,12 +117,6 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
 
   const handleCommentChange = (e: any) => {
     setComment(e.target.value);
-    setCharCount(e.target.value.length);
-    if (charCount >= 255) {
-      setWarning("Your comment exceeds 255 characters.");
-    } else {
-      setWarning("");
-    }
   };
   return (
     <div className="flex flex-col gap-4">
@@ -183,13 +175,6 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
               </div>
             ))}
           </When>
-        </div>
-
-        <div className="display-grid">
-          {warning && charCount > 255 && <div className="text-right text-xs text-red">{warning}</div>}
-          <div className={`text-nowrap text-right text-xs ${charCount > 255 ? "text-red" : "text-grey-500"}`}>
-            {charCount}/255 {t("characters")}
-          </div>
         </div>
       </div>
 
