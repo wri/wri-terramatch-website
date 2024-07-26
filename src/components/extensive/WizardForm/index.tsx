@@ -67,7 +67,6 @@ export interface WizardFormProps {
 function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
-
   const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
   const selectedStep = props.steps?.[selectedStepIndex];
   const selectedValidationSchema = selectedStep ? getSchema(selectedStep.fields) : undefined;

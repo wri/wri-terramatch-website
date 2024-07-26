@@ -351,7 +351,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               setShowApprovalSuccess(false);
             }, 3000);
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         }}
       />

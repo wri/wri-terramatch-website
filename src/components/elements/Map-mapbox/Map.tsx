@@ -34,6 +34,8 @@ import { FilterControl } from "./MapControls/FilterControl";
 import ImageCheck from "./MapControls/ImageCheck";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
+import { PolygonHandler } from "./MapControls/PolygonHandler";
+import PolygonModifier from "./MapControls/PolygonModifier";
 import { StyleControl } from "./MapControls/StyleControl";
 import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
@@ -93,6 +95,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
   modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
+  formMap?: boolean;
 }
 
 export const MapContainer = ({
@@ -118,6 +121,7 @@ export const MapContainer = ({
   tooltipType = "view",
   polygonsExists = true,
   shouldBboxZoom = true,
+  formMap,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -145,6 +149,9 @@ export const MapContainer = ({
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
         startDrawing(draw.current, map.current);
+        if (formMap && polygonFromMap?.uuid) {
+          handleAddGeojsonToDraw(polygonFromMap?.uuid);
+        }
       } else {
         stopDrawing(draw.current, map.current);
       }
@@ -208,7 +215,7 @@ export const MapContainer = ({
     if (polygonsData && map.current && draw.current) {
       const currentMap = map.current;
       const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-      const statuses = ["submitted", "approved", "need-more-info", "draft"];
+      const statuses = ["submitted", "approved", "need-more-info", "draft", "form-polygons"];
       statuses.forEach(status => {
         if (newPolygonData[status]) {
           newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
@@ -282,7 +289,7 @@ export const MapContainer = ({
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
-        <When condition={polygonFromMap?.isOpen}>
+        <When condition={polygonFromMap?.isOpen && !formMap}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
             <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
           </ControlGroup>
@@ -296,6 +303,19 @@ export const MapContainer = ({
         <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
             <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
+          </ControlGroup>
+        </When>
+        <When condition={formMap}>
+          <ControlGroup position="top-left">
+            <PolygonHandler />
+          </ControlGroup>
+          <ControlGroup position="top-right" className="top-64">
+            <PolygonModifier
+              polygonFromMap={polygonFromMap}
+              onClick={handleEditPolygon}
+              onSave={onSaveEdit}
+              onCancel={onCancelEdit}
+            />
           </ControlGroup>
         </When>
         <When condition={!!status && validationType === "individualValidation"}>
@@ -327,10 +347,12 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
-        <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
-          <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-          <ViewImageCarousel modelFilesData={props?.modelFilesData} />
-        </ControlGroup>
+        <When condition={!formMap}>
+          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+            <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            <ViewImageCarousel modelFilesData={props?.modelFilesData} />
+          </ControlGroup>
+        </When>
       </When>
       <When condition={showLegend}>
         <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>

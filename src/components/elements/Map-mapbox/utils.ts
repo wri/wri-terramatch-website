@@ -10,6 +10,7 @@ import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
+  fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
   GetV2MODELUUIDFilesResponse
 } from "@/generated/apiComponents";
@@ -96,7 +97,7 @@ const showPolygons = (
   styles.forEach((style: LayerWithStyle, index: number) => {
     const layerName = `${name}-${index}`;
     if (!map.getLayer(layerName)) {
-      console.error(`Layer ${layerName} does not exist.`);
+      console.warn(`Layer ${layerName} does not exist.`);
       return;
     }
     const polygonStatus = style?.metadata?.polygonStatus;
@@ -186,7 +187,11 @@ export const addGeojsonToDraw = (
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
     const addToDrawAndFilter = () => {
       if (currentDraw) {
-        currentDraw.set(geojsonFormatted);
+        currentDraw.add(geojsonFormatted);
+        const currentDrawFeatures = currentDraw.getAll();
+        currentDraw.set(currentDrawFeatures);
+        const featureId = currentDrawFeatures.features[0].id;
+        currentDraw.changeMode("direct_select", { featureId: featureId as string });
         if (map) {
           zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
         }
@@ -438,7 +443,7 @@ export async function storePolygon(
     const polygonUUID = response.uuid;
     if (polygonUUID) {
       const site_id = record.uuid;
-      await fetchPostV2TerrafundSitePolygonUuidSiteUuid({
+      fetchPostV2TerrafundSitePolygonUuidSiteUuid({
         body: {},
         pathParams: { uuid: polygonUUID, siteUuid: site_id }
       }).then(() => {
@@ -450,6 +455,28 @@ export async function storePolygon(
   }
 }
 
+export async function storePolygonProject(
+  geojson: any,
+  entity_uuid: string,
+  entity_type: string,
+  refetch: any,
+  setPolygonFromMap: any
+) {
+  if (geojson?.length) {
+    const response = await fetchPostV2TerrafundPolygon({
+      body: { geometry: JSON.stringify(geojson[0].geometry) }
+    });
+    const polygonUUID = response.uuid;
+    if (polygonUUID) {
+      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({
+        pathParams: { uuid: polygonUUID, entityUuid: entity_uuid, entityType: entity_type }
+      }).then(res => {
+        refetch?.();
+        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
+      });
+    }
+  }
+}
 export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.Map, polygonVersion?: any) => {
   if (geojson) {
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
