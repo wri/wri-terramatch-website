@@ -540,7 +540,6 @@ export const getPolygonBbox = (polygon_uuid: any) => {
     }
   );
   const bbox = data?.bbox;
-  console.log(polygon_uuid, "get the data correclty", bbox);
   return bbox;
 };
 
