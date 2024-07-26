@@ -122,6 +122,7 @@ export enum IconNames {
   PLUS_PA = "plus-pa",
   DOWNLOAD_PA = "download-pa",
   PLUS_CIRCLE = "plus-circle",
+  PLUS_CIRCLE_CUSTOM = "plus-circle-custom",
   POLYGON = "polygon",
   SEARCH_PA = "search-pa",
   SEND = "send",
