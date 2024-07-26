@@ -12,6 +12,7 @@ export const ModalId = {
   CONFIRM_USER: "ConfirmUser",
   CONFIRM_PROJECT_DRAFT_DELETION: "ConfirmProjectDraftDeletion",
   CONFIRM_DELETE: "confirmDelete",
+  CONFIRM_UPDATE: "ConfirmUpdate",
   CONFIRM_NURSERY_DELETION: "ConfirmNurseryDeletion",
   CONFIRM_POLYGON_DELETION: "ConfirmPolygonDeletion",
   CONFIRMATION_MODAL: "ConfirmationModal",
