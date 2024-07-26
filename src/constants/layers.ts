@@ -91,6 +91,26 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
+      } as mapboxgl.Style & mapboxgl.LineLayer,
+      {
+        metadata: { polygonStatus: "form-polygons" },
+        type: "fill",
+        layout: {},
+        paint: {
+          "fill-color": "#3bb2d0",
+          "fill-opacity": 0.1
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      } as mapboxgl.Style & mapboxgl.FillLayer,
+      {
+        metadata: { polygonStatus: "form-polygons" },
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#3bb2d0",
+          "line-width": 2
+        },
+        filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.LineLayer
     ]
   }

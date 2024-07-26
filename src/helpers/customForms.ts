@@ -475,7 +475,9 @@ export const apiFormQuestionToFormField = (
           required,
           id: question.uuid,
           inputId: question.uuid,
-          entity
+          entity,
+          model: entity.entityName,
+          uuid: entity.entityUUID
         }
       };
 
