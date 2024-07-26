@@ -127,7 +127,7 @@ const VersionInformation = ({
       await Promise.all(uploadPromises);
       await refetchPolygonVersions?.();
       displayNotification(t("File uploaded successfully"), "success", t("Success!"));
-      closeModal();
+      closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
         let errorMessage = error.message as string;
@@ -144,6 +144,7 @@ const VersionInformation = ({
 
   const openFormModalHandlerAddNewVersion = () => {
     openModal(
+      ModalId.ADD_POLYGON,
       <ModalAdd
         title="Upload Polygon"
         descriptionInput={`Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.`}
@@ -153,7 +154,7 @@ const VersionInformation = ({
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.ADD_POLYGON)}
         content="Create a new polygon version."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
