@@ -50,7 +50,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const { record } = useShowContext();
   const { type } = props;
   const entityPolygonData = getEntityPolygonData(record, type);
-  let bbox;
+  let bbox: any;
   if (type === "sites") {
     bbox = getSiteBbox(record);
   } else {
