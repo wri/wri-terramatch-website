@@ -21,7 +21,13 @@ import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
-import { useGetV2SitesSiteBbox, useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { FORM_POLYGONS } from "@/constants/statuses";
+import {
+  useGetV2SitesSiteBbox,
+  useGetV2SitesSitePolygon,
+  useGetV2TerrafundProjectPolygon
+} from "@/generated/apiComponents";
+import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 
 import List from "../List/List";
@@ -43,20 +49,55 @@ export interface FormEntry {
   value: any;
 }
 
+// export const useGetFormEntries = (props: GetFormEntriesProps) => {
+//   const t = useT();
+//   const { record } = useShowContext();
+//   const { type } = props;
+//   const entityPolygonData = getEntityPolygonData(record, type);
+
+//   const [bbox, setBbox] = useState<ReturnType<typeof getSiteBbox | typeof getPolygonBbox> | undefined>(undefined);
+
+//   const fetchBbox = async () => {
+//     if (type === "sites") {
+//       const siteBbox = getSiteBbox(record);
+//       setBbox(siteBbox);
+//     } else {
+//       const polygon_uuid = entityPolygonData?.[FORM_POLYGONS]?.[0];
+//       if (polygon_uuid) {
+//         const polygonBbox = await getPolygonBbox(polygon_uuid);
+//         setBbox(polygonBbox);
+//       }
+//     }
+//   };
+//   fetchBbox();
+
+//   const mapFunctions = useMap();
+
+//   return useMemo<any[]>(
+//     () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+//     [props, t, entityPolygonData, bbox, mapFunctions]
+//   );
+// };
+
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   const { record } = useShowContext();
-  const siteGeojson = getSitePolygonData(record);
+  const { type } = props;
+  const entityPolygonData = getEntityPolygonData(record, type);
   const bbox = getSiteBbox(record);
+
   const mapFunctions = useMap();
 
-  return useMemo<any[]>(() => getFormEntries(props, t, siteGeojson, bbox, mapFunctions), [props, t, siteGeojson, bbox]);
+  return useMemo<any[]>(
+    () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+    [props, t, entityPolygonData, bbox]
+  );
 };
 
 export const getFormEntries = (
-  { step, values, nullText }: GetFormEntriesProps,
+  { step, values, nullText, type }: GetFormEntriesProps,
   t: typeof useT,
-  siteGeojson?: any,
+  entityPolygonData?: any,
   bbox?: any,
   mapFunctions?: any
 ) => {
@@ -98,26 +139,17 @@ export const getFormEntries = (
         outputArr.push({
           title: f.label,
           type: f.type,
-          value:
-            siteGeojson && Object.keys(siteGeojson).length !== 0 ? (
-              <MapContainer
-                polygonsData={siteGeojson}
-                bbox={bbox}
-                className="h-[240px] flex-1"
-                hasControls={false}
-                showPopups
-                showLegend
-                mapFunctions={mapFunctions}
-              />
-            ) : (
-              <MapContainer
-                geojson={values[f.name]}
-                className="h-[240px] flex-1"
-                hasControls={false}
-                showLegend={false}
-                mapFunctions={mapFunctions}
-              />
-            )
+          value: entityPolygonData && Object.keys(entityPolygonData).length !== 0 && (
+            <MapContainer
+              polygonsData={entityPolygonData}
+              bbox={bbox}
+              className="h-[240px] flex-1"
+              hasControls={false}
+              showPopups={type === "sites"}
+              showLegend={type === "sites"}
+              mapFunctions={mapFunctions}
+            />
+          )
         });
         break;
       }
@@ -204,9 +236,12 @@ export const getFormEntries = (
   return outputArr;
 };
 
-const getSitePolygonData = (record: any) => {
+const getEntityPolygonData = (record: any, entity_type?: string) => {
   let result = null;
-  if (record) {
+  if (!record) {
+    return null;
+  }
+  if (entity_type === "sites") {
     const { data: sitePolygonData } = useGetV2SitesSitePolygon({
       pathParams: {
         site: record.uuid
@@ -215,7 +250,18 @@ const getSitePolygonData = (record: any) => {
     if (sitePolygonData) {
       result = mapPolygonData(sitePolygonData);
     }
+  } else if (entity_type === "projects") {
+    const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
+      queryParams: {
+        entityType: pluralEntityNameToSingular(entity_type) ?? "",
+        uuid: record.uuid ?? ""
+      }
+    });
+    if (projectPolygonData) {
+      result = { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] };
+    }
   }
+
   return result;
 };
 
@@ -236,7 +282,6 @@ const getSiteBbox = (record: any) => {
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
-
   return (
     <Accordion
       variant="secondary"

@@ -15,6 +15,7 @@ export type FormSummaryOptions = {
 };
 
 const FormSummary = (props: FormSummaryProps) => {
+  console.log("Props i fro", props);
   return (
     <List
       className="space-y-8"
