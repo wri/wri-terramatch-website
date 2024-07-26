@@ -11,6 +11,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -113,16 +114,17 @@ const Polygons = (props: IPolygonProps) => {
     const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
     if (response?.uuid) {
       reloadSiteData?.();
-      closeModal();
+      closeModal(ModalId.CONFIRM_POLYGON_DELETION);
     }
   };
 
   const openFormModalHandlerConfirm = (item: any) => {
     openModal(
+      ModalId.CONFIRM_POLYGON_DELETION,
       <ModalConfirm
         title={"Confirm Polygon Deletion"}
         content="Do you want to delete this polygon?"
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_DELETION)}
         onConfirm={() => {
           deletePolygon(item);
         }}

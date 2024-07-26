@@ -4,6 +4,7 @@ import { useModalContext } from "@/context/modal.provider";
 
 import { IconNames } from "../../Icon/Icon";
 import Modal from "../../Modal/Modal";
+import { ModalId } from "../../Modal/ModalConst";
 
 export interface SaveAndCloseModalProps {
   title?: string;
@@ -33,12 +34,12 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
         children: t("Close and continue later"),
         onClick: () => {
           props.onConfirm?.();
-          closeModal();
+          closeModal(ModalId.SAVE_AND_CLOSE_MODAL);
         }
       }}
       secondaryButtonProps={{
         children: t("Cancel"),
-        onClick: () => closeModal()
+        onClick: () => closeModal(ModalId.SAVE_AND_CLOSE_MODAL)
       }}
     />
   );

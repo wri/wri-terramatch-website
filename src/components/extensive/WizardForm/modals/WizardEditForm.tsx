@@ -5,6 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import { useModalContext } from "@/context/modal.provider";
 
 import { IconNames } from "../../Icon/Icon";
+import { ModalId } from "../../Modal/ModalConst";
 import WizardForm from "..";
 import { FormStepSchema } from "../types";
 
@@ -23,7 +24,13 @@ const WizardEditForm = ({ title, steps, onSave, defaultValues, errors }: WizardE
     <div className="w-full bg-white">
       <div className="flex items-center justify-between bg-neutral-200 py-11 pl-8 pr-11">
         <Text variant="text-heading-2000">{title}</Text>
-        <IconButton iconProps={{ name: IconNames.X_CIRCLE, width: 30 }} onClick={() => closeModal()} />
+        <IconButton
+          iconProps={{ name: IconNames.X_CIRCLE, width: 30 }}
+          onClick={() => {
+            closeModal(ModalId.PITCH_EDIT_MODAL);
+            closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+          }}
+        />
       </div>
       <WizardForm
         hideBackButton

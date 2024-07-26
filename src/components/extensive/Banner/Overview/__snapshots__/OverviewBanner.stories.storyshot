@@ -10,7 +10,7 @@ exports[`Storyshots Components/Extensive/Banner/OverviewBanner Default 1`] = `
   }
 >
   <div
-    className="flex w-full max-w-[1218px] items-center justify-between gap-8"
+    className="flex w-full max-w-[82vw] items-center justify-between gap-8"
   >
     <div
       className="flex flex-col gap-3 text-white"

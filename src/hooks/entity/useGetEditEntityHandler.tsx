@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
@@ -33,6 +34,7 @@ export const useGetEditEntityHandler = ({
   const handleEdit = () => {
     if (entityStatus === "awaiting-approval" || updateRequestStatus === "awaiting-approval") {
       openModal(
+        ModalId.REVIEW_IN_PROGRESS,
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
           title={t("Review in Progress")}
@@ -42,12 +44,13 @@ export const useGetEditEntityHandler = ({
           )}
           primaryButtonProps={{
             children: t("Close"),
-            onClick: closeModal
+            onClick: () => closeModal(ModalId.REVIEW_IN_PROGRESS)
           }}
         />
       );
     } else {
       openModal(
+        ModalId.CONFIRM_EDIT,
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
           title={t("Are you sure you want to edit your {entityName}?", {
@@ -61,12 +64,12 @@ export const useGetEditEntityHandler = ({
             children: t("Edit"),
             onClick: () => {
               router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
-              closeModal();
+              closeModal(ModalId.CONFIRM_EDIT);
             }
           }}
           secondaryButtonProps={{
             children: t("Cancel"),
-            onClick: closeModal
+            onClick: () => closeModal(ModalId.CONFIRM_EDIT)
           }}
         />
       );
