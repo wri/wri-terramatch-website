@@ -1,20 +1,28 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
+import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { useModalContext } from "@/context/modal.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
+  fetchGetV2TerrafundGeojsonComplete,
   fetchPostV2SitePolygonUuidNewVersion,
+  fetchPostV2TerrafundUploadGeojson,
+  fetchPostV2TerrafundUploadKml,
+  fetchPostV2TerrafundUploadShapefile,
   GetV2SitePolygonUuidVersionsResponse,
   useDeleteV2TerrafundPolygonUuid,
   usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { FileType, UploadedFile } from "@/types/common";
 
 const VersionHistory = ({
   selectedPolygon,
@@ -46,10 +54,73 @@ const VersionHistory = ({
   const t = useT();
   const { displayNotification } = useAlertHook();
   const { openModal, closeModal } = useModalContext();
+  const ctx = useShowContext();
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
   useEffect(() => {
     refetch();
   }, [selectPolygonVersion]);
+
+  useEffect(() => {
+    if (files && files.length > 0 && saveFlags) {
+      uploadFiles();
+      setSaveFlags(false);
+    }
+  }, [files, saveFlags]);
+
+  const getFileType = (file: UploadedFile) => {
+    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    if (fileType === "geojson") return "geojson";
+    if (fileType === "zip") return "shapefile";
+    if (fileType === "kml") return "kml";
+    return null;
+  };
+
+  const uploadFiles = async () => {
+    const uploadPromises = [];
+    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    for (const file of files) {
+      const fileToUpload = file.rawFile as File;
+      const formData = new FormData();
+      const fileType = getFileType(file);
+      formData.append("file", fileToUpload);
+      formData.append("uuid", ctx?.record?.uuid as string);
+      formData.append("primary_uuid", polygonSelectedUuid as string);
+      let newRequest: any = formData;
+
+      switch (fileType) {
+        case "geojson":
+          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
+          break;
+        case "shapefile":
+          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
+          break;
+        case "kml":
+          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
+          break;
+        default:
+          break;
+      }
+    }
+    try {
+      await Promise.all(uploadPromises);
+      await refetch();
+      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      closeModal();
+    } catch (error) {
+      if (error && typeof error === "object" && "message" in error) {
+        let errorMessage = error.message as string;
+        const parsedMessage = JSON.parse(errorMessage);
+        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          errorMessage = parsedMessage.message;
+        }
+        displayNotification(t("Error uploading file"), "error", errorMessage);
+      } else {
+        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+      }
+    }
+  };
 
   const { mutate: mutateMakeActive, isLoading } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: () => {
@@ -79,9 +150,10 @@ const VersionHistory = ({
     }
   });
   const createNewVersion = async () => {
+    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
     try {
       await fetchPostV2SitePolygonUuidNewVersion({
-        pathParams: { uuid: (selectedPolygon.uuid ?? selectPolygonVersion?.uuid) as string }
+        pathParams: { uuid: polygonSelectedUuid as string }
       });
       refetch();
       refreshSiteData?.();
@@ -135,6 +207,45 @@ const VersionHistory = ({
     );
   };
 
+  const openFormModalHandlerAddNewVersion = () => {
+    openModal(
+      <ModalAdd
+        title="Upload Polygon"
+        descriptionInput={`Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.`}
+        descriptionList={
+          <div className="mt-9 flex">
+            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
+            <Text variant="text-12-light">50 MB per upload</Text>
+          </div>
+        }
+        onClose={closeModal}
+        content="Create a new polygon version."
+        primaryButtonText="Save"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
+        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        setFile={setFiles}
+        allowMultiple={false}
+      />
+    );
+  };
+
+  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygonUuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${polygon_name}.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const formatStringName = (name: string) => {
+    return name.replace(/ /g, "_");
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {!isLoadingVersions && !isLoadingDropdown && (
@@ -142,12 +253,46 @@ const VersionHistory = ({
           <Dropdown
             label="Polygon Version"
             suffixLabel={
-              <button
-                onClick={createNewVersion}
-                className="flex items-center justify-center rounded border-2 border-grey-500 bg-grey-500 text-white hover:border-primary hover:bg-white hover:text-primary"
-              >
-                <Icon name={IconNames.PLUS_PA} className=" h-3 w-3 lg:h-3.5 lg:w-3.5" />
-              </button>
+              <div className="flex items-center gap-2 text-blue">
+                <div
+                  className="flex cursor-pointer items-center gap-1 text-blue hover:opacity-50"
+                  onClick={createNewVersion}
+                >
+                  <button className="border-1 border-blue-500 flex items-center justify-center rounded-md bg-blue text-white">
+                    <Icon name={IconNames.PLUS_PA} className="h-2.5 w-2.5 lg:h-2.5 lg:w-2.5" />
+                  </button>
+                  <Text variant="text-12" className="flex-[2]">
+                    Create
+                  </Text>
+                </div>
+                <div
+                  className="flex cursor-pointer items-center gap-1 text-blue hover:opacity-50"
+                  onClick={() =>
+                    downloadGeoJsonPolygon(
+                      selectPolygonVersion?.poly_id ?? "",
+                      selectPolygonVersion?.poly_name ? formatStringName(selectPolygonVersion.poly_name) : "polygon"
+                    )
+                  }
+                >
+                  <button className="border-1 flex items-center justify-center">
+                    <Icon name={IconNames.DOWNLOAD_CUSTOM} className="h-3.5 w-3.5 lg:h-3.5 lg:w-3.5" />
+                  </button>
+                  <Text variant="text-12" className="flex-[2]">
+                    Download
+                  </Text>
+                </div>
+                <div
+                  className="flex cursor-pointer items-center gap-1 text-blue hover:opacity-50"
+                  onClick={openFormModalHandlerAddNewVersion}
+                >
+                  <button className="border-1 flex items-center justify-center">
+                    <Icon name={IconNames.UPLOAD_CLOUD_CUSTOM} className="h-3.5 w-3.5 lg:h-3.5 lg:w-3.5" />
+                  </button>
+                  <Text variant="text-12" className="flex-[2]">
+                    Upload
+                  </Text>
+                </div>
+              </div>
             }
             suffixLabelView={true}
             labelClassName="capitalize"
