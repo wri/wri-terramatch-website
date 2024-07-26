@@ -6,6 +6,7 @@ import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/Con
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { fetchDeleteV2TerrafundProjectPolygonUuid } from "@/generated/apiComponents";
@@ -42,13 +43,14 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
 
   const openDeleteConfirmation = () => {
     openModal(
+      ModalId.CONFIRM_POLYGON_DELETION,
       <ModalConfirm
         title={t("Confirm Polygon Deletion")}
         content={t("Do you want to delete this polygon?")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_DELETION)}
         onConfirm={() => {
           handleDelete();
-          closeModal();
+          closeModal(ModalId.CONFIRM_POLYGON_DELETION);
         }}
       />
     );
