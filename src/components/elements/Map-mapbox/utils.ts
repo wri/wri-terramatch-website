@@ -13,6 +13,7 @@ import {
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
   GetV2MODELUUIDFilesResponse,
+  useGetV2SitesSiteBbox,
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -541,4 +542,12 @@ export const getPolygonBbox = (polygon_uuid: any) => {
   const bbox = data?.bbox;
   console.log(polygon_uuid, "get the data correclty", bbox);
   return bbox;
+};
+
+export const getSiteBbox = (record: any) => {
+  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
+    { pathParams: { site: record?.uuid } },
+    { enabled: record?.uuid != null }
+  );
+  return sitePolygonBbox?.bbox;
 };
