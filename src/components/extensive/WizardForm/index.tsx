@@ -14,6 +14,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 
+import { ModalId } from "../Modal/ModalConst";
 import { FormFooter } from "./FormFooter";
 import { WizardFormHeader } from "./FormHeader";
 import FormSummary, { FormSummaryOptions } from "./FormSummary";
@@ -117,6 +118,7 @@ function WizardForm(props: WizardFormProps) {
   const onClickSaveAndClose = () => {
     props.onChange?.(formHook.getValues());
     modal.openModal(
+      ModalId.SAVE_AND_CLOSE_MODAL,
       <SaveAndCloseModal
         {...props.saveAndCloseModal}
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}

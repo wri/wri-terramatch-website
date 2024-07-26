@@ -12,7 +12,9 @@ import {
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  GetV2MODELUUIDFilesResponse
+  GetV2MODELUUIDFilesResponse,
+  useGetV2SitesSiteBbox,
+  useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -455,6 +457,28 @@ export async function storePolygon(
   }
 }
 
+export async function storePolygonProject(
+  geojson: any,
+  entity_uuid: string,
+  entity_type: string,
+  refetch: any,
+  setPolygonFromMap: any
+) {
+  if (geojson?.length) {
+    const response = await fetchPostV2TerrafundPolygon({
+      body: { geometry: JSON.stringify(geojson[0].geometry) }
+    });
+    const polygonUUID = response.uuid;
+    if (polygonUUID) {
+      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({
+        pathParams: { uuid: polygonUUID, entityUuid: entity_uuid, entityType: entity_type }
+      }).then(res => {
+        refetch?.();
+        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
+      });
+    }
+  }
+}
 export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.Map, polygonVersion?: any) => {
   if (geojson) {
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
@@ -506,25 +530,23 @@ const getPolygonColor = (polygonStatus: string) => {
   }
 };
 
-export async function storePolygonProject(
-  geojson: any,
-  entity_uuid: string,
-  entity_type: string,
-  refetch: any,
-  setPolygonFromMap: any
-) {
-  if (geojson?.length) {
-    const response = await fetchPostV2TerrafundPolygon({
-      body: { geometry: JSON.stringify(geojson[0].geometry) }
-    });
-    const polygonUUID = response.uuid;
-    if (polygonUUID) {
-      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({
-        pathParams: { uuid: polygonUUID, entityUuid: entity_uuid, entityType: entity_type }
-      }).then(res => {
-        refetch?.();
-        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
-      });
+export const getPolygonBbox = (polygon_uuid: any) => {
+  const { data } = useGetV2TerrafundPolygonBboxUuid(
+    {
+      pathParams: { uuid: polygon_uuid }
+    },
+    {
+      enabled: !!polygon_uuid
     }
-  }
-}
+  );
+  const bbox = data?.bbox;
+  return bbox;
+};
+
+export const getSiteBbox = (record: any) => {
+  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
+    { pathParams: { site: record?.uuid } },
+    { enabled: record?.uuid != null }
+  );
+  return sitePolygonBbox?.bbox;
+};

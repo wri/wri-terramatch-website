@@ -16,6 +16,7 @@ import { useDate } from "@/hooks/useDate";
 
 import { IconNames } from "../Icon/Icon";
 import Modal from "../Modal/Modal";
+import { ModalId } from "../Modal/ModalConst";
 
 interface PitchesTableProps {
   organisationUUID: string;
@@ -58,6 +59,7 @@ const PitchesTable = (props: PitchesTableProps) => {
 
   const handleDeleteClick = (uuid: string) => {
     openModal(
+      ModalId.DELETE_DRAFT,
       <Modal
         iconProps={{ name: IconNames.INFO_CIRCLE_ALT, width: 60, height: 60 }}
         title={t("Are you sure you want to delete this draft?")}
@@ -67,13 +69,13 @@ const PitchesTable = (props: PitchesTableProps) => {
         primaryButtonProps={{
           children: "Delete Draft",
           onClick: () => {
-            closeModal();
+            closeModal(ModalId.DELETE_DRAFT);
             deletePitch({ pathParams: { uuid } });
           }
         }}
         secondaryButtonProps={{
           children: "Cancel",
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.DELETE_DRAFT)
         }}
       />
     );

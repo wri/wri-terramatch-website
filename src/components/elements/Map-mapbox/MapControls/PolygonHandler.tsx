@@ -5,6 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -101,7 +102,7 @@ export const PolygonHandler = () => {
       }
     }
     hideLoader();
-    closeModal();
+    closeModal(ModalId.ADD_POLYGONS);
     reloadSiteData?.();
   };
 
@@ -115,6 +116,7 @@ export const PolygonHandler = () => {
 
   const openFormModalHandlerConfirmUpload = (type: string) => {
     openModal(
+      ModalId.CONFIRM_POLYGON_TYPE,
       <ModalConfirm
         title={t(`Confirm Polygon ${type}`)}
         content={t(
@@ -122,7 +124,7 @@ export const PolygonHandler = () => {
             type === "Creation" ? "Creating" : "Uploading"
           } a new polygon will overwrite the existing geometry. Proceed?`
         )}
-        onClose={() => closeModal()}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_TYPE)}
         onConfirm={() => {
           type === "Creation" ? setIsUserDrawingEnabled(true) : openFormModalHandlerAddPolygon();
         }}
@@ -132,6 +134,7 @@ export const PolygonHandler = () => {
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
+      ModalId.ADD_POLYGONS,
       <ModalAdd
         title={t("Add Polygons")}
         descriptionInput={t("Drag and drop a GeoJSON, Shapefile, or KML.")}
@@ -141,7 +144,7 @@ export const PolygonHandler = () => {
             <Text variant="text-12-light">{t("1 MB per upload")}</Text>
           </div>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.ADD_POLYGONS)}
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}

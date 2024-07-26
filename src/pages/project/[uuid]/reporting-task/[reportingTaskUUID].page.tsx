@@ -14,6 +14,7 @@ import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
@@ -123,6 +124,7 @@ const ReportingTaskPage = () => {
 
   const nothingToReportHandler = (entity: ReportsModelNames, uuid: string) => {
     openModal(
+      ModalId.CONFIRM_UPDATE,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Are you sure you don't want to provide any updates for this {entity}?", {
@@ -138,12 +140,12 @@ const ReportingTaskPage = () => {
           children: t("Nothing to report"),
           onClick: () => {
             submitNothingToReport({ pathParams: { entity, uuid } });
-            closeModal();
+            closeModal(ModalId.CONFIRM_UPDATE);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_UPDATE)
         }}
       />
     );

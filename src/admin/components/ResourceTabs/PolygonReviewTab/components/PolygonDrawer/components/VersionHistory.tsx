@@ -9,6 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
@@ -192,10 +193,11 @@ const VersionHistory = ({
 
   const onDeleteVersion = () => {
     openModal(
+      ModalId.CONFIRMATION,
       <ModalConfirm
         title={t("Confirmation")}
         content={t("Do you want to delete this version?")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRMATION)}
         onConfirm={() => {
           setIsLoadingDropdown(true);
           deletePolygonVersion();

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
@@ -182,10 +183,11 @@ const VersionInformation = ({
 
   const openFormModalHandlerConfirm = (polyId: string) => {
     openModal(
+      ModalId.CONFIRMATION,
       <ModalConfirm
         title={t("Confirmation")}
         content={t("Do you want to delete this version?")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRMATION)}
         onConfirm={() => {
           deletePolygonVersion(polyId);
         }}

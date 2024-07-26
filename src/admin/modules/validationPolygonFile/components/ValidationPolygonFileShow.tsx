@@ -6,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
@@ -97,11 +98,12 @@ const ValidatePolygonFileShow: FC = () => {
       }
     }
     hideLoader();
-    closeModal();
+    closeModal(ModalId.ADD_POLYGON);
   };
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
+      ModalId.ADD_POLYGON,
       <ModalAdd
         title="Add Polygon"
         descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML.`}
@@ -111,7 +113,7 @@ const ValidatePolygonFileShow: FC = () => {
             <Text variant="text-12-light">Test polygon</Text>
           </div>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.ADD_POLYGON)}
         content="Add a polygon to test validation."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}

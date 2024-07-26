@@ -10,6 +10,7 @@ import SelectImageListField from "@/components/elements/Field/SelectImageListFie
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import List from "@/components/extensive/List/List";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -46,7 +47,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   });
 
   const handleInvite = () => {
-    openModal(<InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />);
+    openModal(
+      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />
+    );
   };
 
   return (

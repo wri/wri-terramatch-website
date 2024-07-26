@@ -20,6 +20,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -145,7 +146,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       await Promise.all(uploadPromises);
       setShouldRefetchPolygonData(true);
       displayNotification(t("File uploaded successfully"), "success", t("Success!"));
-      closeModal();
+      closeModal(ModalId.UPLOAD_IMAGES);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
         let errorMessage = error.message as string;
@@ -162,6 +163,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
+      ModalId.ADD_POLYGONS,
       <ModalAdd
         title={t("Add Polygons")}
         descriptionInput={`${t("Drag and drop a GeoJSON, Shapefile, or KML for your site")} ${site?.name}.`}
@@ -171,7 +173,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             <Text variant="text-12-light">{t("50 MB per upload")}</Text>
           </div>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.ADD_POLYGONS)}
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
@@ -183,6 +185,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
+      ModalId.UPLOAD_IMAGES,
       <ModalAdd
         title={t("Upload Images")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
@@ -194,24 +197,29 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             {t("Uploaded Files")}
           </Text>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
         content={t("Start by adding images for processing.")}
         primaryButtonText={t("Save")}
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => closeModal(ModalId.UPLOAD_IMAGES)
+        }}
       ></ModalAdd>
     );
   };
 
   const openFormModalHandlerSubmitReviewConfirm = (polygons: unknown) => {
     openModal(
+      ModalId.CONFIRM_POLYGON_SUBMISSION,
       <ModalConfirm
         commentArea
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
         content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name} />}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION)}
         onConfirm={async data => {
-          closeModal();
+          closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION);
           try {
             await fetchPutV2SitePolygonStatusBulk({
               body: {
@@ -236,21 +244,26 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   const openFormModalHandlerSubmitPolygon = () => {
     openModal(
+      ModalId.SUBMIT_POLYGONS,
       <ModalSubmit
         title={t("Submit Polygons")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.SUBMIT_POLYGONS)}
         content={t("Project Developers may submit one, many, or all polygons for review.")}
         primaryButtonText={t("Next")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: (polygons: unknown) => {
-            closeModal();
+            closeModal(ModalId.SUBMIT_POLYGONS);
             openFormModalHandlerSubmitReviewConfirm(polygons);
           }
         }}
         secondaryButtonText={t("Cancel")}
-        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
+        }}
         site={site}
       />
     );

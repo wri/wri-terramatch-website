@@ -12,7 +12,7 @@ export interface OverviewBannerProps extends BannerProps {
 const OverviewBanner = ({ title, iconName, pillText, subtitle, children, ...props }: OverviewBannerProps) => {
   return (
     <Banner {...props}>
-      <div className="flex w-full max-w-[1218px] items-center justify-between gap-8">
+      <div className="flex w-full max-w-[82vw] items-center justify-between gap-8">
         <div className="flex flex-col gap-3 text-white">
           <Pill className="w-[75px] bg-tertiary">{pillText}</Pill>
           <Text variant="text-heading-700" className="first-letter:uppercase">
