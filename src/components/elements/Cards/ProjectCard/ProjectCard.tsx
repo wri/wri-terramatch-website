@@ -13,6 +13,7 @@ import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
@@ -46,6 +47,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
 
   const onDeleteProject = () => {
     openModal(
+      ModalId.CONFIRM_PROJECT_DRAFT_DELETION,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Confirm Project Draft Deletion")}
@@ -56,12 +58,12 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
           children: t("Yes"),
           onClick: () => {
             onDelete(project.uuid);
-            closeModal();
+            closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
           }
         }}
         secondaryButtonProps={{
           children: t("No"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION)
         }}
       />
     );

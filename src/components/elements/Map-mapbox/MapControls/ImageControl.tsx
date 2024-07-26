@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { uploadImageData } from "@/components/extensive/Modal/ModalContent/MockedData";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -21,6 +22,7 @@ const ImageControl = ({
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
+      ModalId.UPLOAD_IMAGES,
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
@@ -30,10 +32,14 @@ const ImageControl = ({
             {t("Uploaded Files")}
           </Text>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
         content="Start by adding images for processing."
         primaryButtonText="Save"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => closeModal(ModalId.UPLOAD_IMAGES)
+        }}
       >
         {/* Next div is only Mocked data delete this children later*/}
         <div className="mb-6 flex flex-col gap-4">

@@ -3,6 +3,7 @@ import { EventData, GeoJSONSourceRaw, Map, MapboxEvent, MapMouseEvent } from "ma
 import { useEffect } from "react";
 
 import ImageGalleryPreviewer from "@/components/elements/ImageGallery/ImageGalleryPreviewer";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapContext } from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { toDataURL } from "@/utils/image";
@@ -36,6 +37,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
 
       if (properties?.image_url) {
         openModal(
+          ModalId.IMAGE_GALLERY_PREVIEWER,
           <ImageGalleryPreviewer
             data={{
               uuid: properties.uuid,

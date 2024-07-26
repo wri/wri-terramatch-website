@@ -6,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocial from "@/components/extensive/Icon/IconSocial";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
@@ -26,7 +27,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const { openModal } = useModalContext();
 
   const showEditOrgModal = () => {
-    return openModal(<OrganizationEditModal organization={organization} />);
+    return openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />);
   };
 
   useEffect(() => {

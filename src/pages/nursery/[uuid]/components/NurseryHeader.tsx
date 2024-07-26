@@ -6,6 +6,7 @@ import { Else, If, Then, When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -47,6 +48,7 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
 
   const onDeleteNursery = () => {
     openModal(
+      ModalId.CONFIRM_NURSERY_DELETION,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Confirm Nursery Deletion")}
@@ -57,12 +59,12 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
           children: t("Delete"),
           onClick: () => {
             deleteNursery({ pathParams: { uuid: nursery.uuid } });
-            closeModal();
+            closeModal(ModalId.CONFIRM_NURSERY_DELETION);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_NURSERY_DELETION)
         }}
       />
     );

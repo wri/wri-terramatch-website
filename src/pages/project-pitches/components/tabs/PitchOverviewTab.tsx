@@ -32,7 +32,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
 
   const { openModal } = useModalContext();
   const { format } = useDate();
-  const onEdit = () => openModal(<PitchEditModal pitch={pitch} />);
+  const onEdit = () => openModal("pitchEditModal", <PitchEditModal pitch={pitch} />);
 
   let projectBoundary: any;
   try {

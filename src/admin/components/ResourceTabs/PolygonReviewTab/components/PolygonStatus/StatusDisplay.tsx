@@ -6,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 
 import { AuditLogEntity, AuditLogEntityEnum } from "../../../AuditLogTab/constants/types";
@@ -244,17 +245,19 @@ const StatusDisplay = ({
   const onFinallyRequest = () => {
     refresh?.();
     reloadEntity?.();
-    closeModal();
+    closeModal(ModalId.STATUS_CHANGE);
+    closeModal(ModalId.CHANGE_REQUEST);
   };
 
   const openFormModalHandlerStatus = () => {
     openModal(
+      ModalId.STATUS_CHANGE,
       <ModalConfirm
         title={`${removeUnderscore(titleStatus)} Status Change`}
         commentArea
         menuLabel={""}
         menu={filterViewPd}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.STATUS_CHANGE)}
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}
         onConfirm={async (text: any, opt) => {
@@ -311,11 +314,12 @@ const StatusDisplay = ({
 
   const openFormModalHandlerRequest = () => {
     openModal(
+      ModalId.CHANGE_REQUEST,
       <ModalConfirm
         title={"Change Request"}
         content={contentRequest}
         commentArea
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CHANGE_REQUEST)}
         onConfirm={async (text: any) => {
           try {
             await mutate({
