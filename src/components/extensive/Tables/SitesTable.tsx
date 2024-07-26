@@ -19,6 +19,8 @@ import {
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
+import { ModalId } from "../Modal/ModalConst";
+
 interface SitesTableProps {
   project: any;
   hasAddButton?: boolean;
@@ -54,6 +56,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
 
   const handleDeleteSite = (uuid: string) => {
     openModal(
+      ModalId.CONFIRM_SITE_DELETION,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Confirm Site Deletion")}
@@ -64,12 +67,12 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           children: t("Yes"),
           onClick: () => {
             deleteSite({ pathParams: { uuid } });
-            closeModal();
+            closeModal(ModalId.CONFIRM_SITE_DELETION);
           }
         }}
         secondaryButtonProps={{
           children: t("No"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_SITE_DELETION)
         }}
       />
     );

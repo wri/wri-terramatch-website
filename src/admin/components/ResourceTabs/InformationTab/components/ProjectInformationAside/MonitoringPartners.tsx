@@ -7,6 +7,7 @@ import { Else, If, Then } from "react-if";
 import Notification from "@/components/elements/Notification/Notification";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
@@ -22,6 +23,7 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
 
   const ModalConfirmDeletePartner = (email_address: string) => {
     openModal(
+      ModalId.MODAL_CONFIRM_DELETE_PARTNER,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={""}
@@ -33,12 +35,12 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
           children: t("Confirm"),
           onClick: () => {
             deletePartner(email_address as string);
-            closeModal();
+            closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER)
         }}
       />
     );

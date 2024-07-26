@@ -11,6 +11,7 @@ import { FormField } from "@/components/extensive/WizardForm/types";
 import { getSchema } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
 
+import { ModalId } from "./ModalConst";
 import { ModalBase } from "./ModalsBases";
 
 export interface FormModalProps {
@@ -34,7 +35,10 @@ const FormModal = ({ title, fields, onSubmit }: FormModalProps) => {
         <Text variant="text-bold-headline-1000" className="flex-1">
           {title}
         </Text>
-        <IconButton iconProps={{ name: IconNames.CROSS_CIRCLE, width: 32 }} onClick={closeModal} />
+        <IconButton
+          iconProps={{ name: IconNames.CROSS_CIRCLE, width: 32 }}
+          onClick={() => closeModal(ModalId.FORM_MODAL)}
+        />
       </div>
       <form
         className="w-full p-15"
