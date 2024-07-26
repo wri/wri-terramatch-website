@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useShowContext } from "react-admin";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
@@ -81,7 +80,6 @@ const VersionInformation = ({
     }
   });
 
-  const ctx = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
@@ -98,6 +96,7 @@ const VersionInformation = ({
   };
 
   const uploadFiles = async () => {
+    const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
     const uploadPromises = [];
     const polygonSelectedUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
     for (const file of files) {
@@ -105,7 +104,7 @@ const VersionInformation = ({
       const formData = new FormData();
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
-      formData.append("uuid", ctx?.record?.uuid as string);
+      formData.append("uuid", (selectedPolyVersion?.site_id ?? polygonDefault?.site_id) as string);
       formData.append("primary_uuid", polygonSelectedUuid as string);
       let newRequest: any = formData;
 
