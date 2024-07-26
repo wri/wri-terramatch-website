@@ -12,7 +12,8 @@ import {
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  GetV2MODELUUIDFilesResponse
+  GetV2MODELUUIDFilesResponse,
+  useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -526,4 +527,18 @@ const getPolygonColor = (polygonStatus: string) => {
     default:
       return "#000000";
   }
+};
+
+export const getPolygonBbox = (polygon_uuid: any) => {
+  const { data } = useGetV2TerrafundPolygonBboxUuid(
+    {
+      pathParams: { uuid: polygon_uuid }
+    },
+    {
+      enabled: !!polygon_uuid
+    }
+  );
+  const bbox = data?.bbox;
+  console.log(polygon_uuid, "get the data correclty", bbox);
+  return bbox;
 };

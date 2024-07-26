@@ -16,7 +16,7 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
+import { getPolygonBbox, mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
@@ -49,42 +49,18 @@ export interface FormEntry {
   value: any;
 }
 
-// export const useGetFormEntries = (props: GetFormEntriesProps) => {
-//   const t = useT();
-//   const { record } = useShowContext();
-//   const { type } = props;
-//   const entityPolygonData = getEntityPolygonData(record, type);
-
-//   const [bbox, setBbox] = useState<ReturnType<typeof getSiteBbox | typeof getPolygonBbox> | undefined>(undefined);
-
-//   const fetchBbox = async () => {
-//     if (type === "sites") {
-//       const siteBbox = getSiteBbox(record);
-//       setBbox(siteBbox);
-//     } else {
-//       const polygon_uuid = entityPolygonData?.[FORM_POLYGONS]?.[0];
-//       if (polygon_uuid) {
-//         const polygonBbox = await getPolygonBbox(polygon_uuid);
-//         setBbox(polygonBbox);
-//       }
-//     }
-//   };
-//   fetchBbox();
-
-//   const mapFunctions = useMap();
-
-//   return useMemo<any[]>(
-//     () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
-//     [props, t, entityPolygonData, bbox, mapFunctions]
-//   );
-// };
-
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   const { record } = useShowContext();
   const { type } = props;
   const entityPolygonData = getEntityPolygonData(record, type);
-  const bbox = getSiteBbox(record);
+  let bbox;
+  console.log("yse Get form entries");
+  if (type === "sites") {
+    bbox = getSiteBbox(record);
+  } else {
+    bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
+  }
 
   const mapFunctions = useMap();
 
