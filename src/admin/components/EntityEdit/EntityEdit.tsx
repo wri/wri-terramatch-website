@@ -65,7 +65,6 @@ export const EntityEdit = () => {
   if (loadError) {
     return notFound();
   }
-
   return (
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>

@@ -12,12 +12,15 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Entity, SingularEntityName } from "@/types/common";
 
 import { useMap } from "../../Map-mapbox/hooks/useMap";
+import { storePolygonProject } from "../../Map-mapbox/utils";
 
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
   formHook: UseFormReturn;
   captureInterventionTypes?: boolean;
   entity?: Entity;
+  model?: string;
+  uuid?: string;
 }
 
 const RHFMap = ({
@@ -25,9 +28,16 @@ const RHFMap = ({
   onChangeCapture,
   formHook,
   entity,
+  model,
+  uuid,
   ...inputWrapperProps
 }: PropsWithChildren<RHFMapProps>) => {
-  const mapFunctions = useMap();
+  const onSave = (geojson: any) => {
+    if (uuid && model) {
+      storePolygonProject(geojson, uuid, model);
+    }
+  };
+  const mapFunctions = useMap(onSave);
   const t = useT();
   const {
     field: { value, onChange }
@@ -53,8 +63,8 @@ const RHFMap = ({
     const getDataProjectPolygon = async () => {
       const projectPolygon = fetchGetV2TerrafundProjectPolygon({
         queryParams: {
-          entityType: entity?.entityName || "",
-          uuid: entity?.entityUUID || ""
+          entityType: model || "",
+          uuid: uuid || ""
         }
       });
       setProjectPolygonData(projectPolygon);

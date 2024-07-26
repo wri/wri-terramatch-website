@@ -171,7 +171,10 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => [
         `),
         type: FieldType.Map,
         validation: yup.object(),
-        fieldProps: {}
+        fieldProps: {
+          uuid,
+          model: ModelName
+        }
       },
       {
         name: "sustainable_dev_goals",
