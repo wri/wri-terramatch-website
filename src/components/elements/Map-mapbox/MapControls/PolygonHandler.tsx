@@ -103,7 +103,6 @@ export const PolygonHandler = () => {
     }
     hideLoader();
     closeModal(ModalId.ADD_POLYGONS);
-    closeModal(ModalId.CONFIRM_POLYGON_TYPE);
     reloadSiteData?.();
   };
 
