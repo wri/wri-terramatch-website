@@ -71,10 +71,7 @@ const VersionHistory = ({
 
   const getFileType = (file: UploadedFile) => {
     const fileType = file?.file_name.split(".").pop()?.toLowerCase();
-    if (fileType === "geojson") return "geojson";
-    if (fileType === "zip") return "shapefile";
-    if (fileType === "kml") return "kml";
-    return null;
+    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
 
   const uploadFiles = async () => {
