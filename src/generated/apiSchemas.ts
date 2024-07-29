@@ -23097,6 +23097,10 @@ export type V2TerrafundCriteriaData = {
      * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
      */
     valid?: number;
+    /**
+     * Extra information about the polygon validation
+     */
+    extra_info?: Record<string, any>;
   }[];
 };
 
