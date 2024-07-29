@@ -11,13 +11,25 @@ export interface ICriteriaCheckItemProps {
   status: boolean;
   label: string;
   date?: string;
+  extra_info?: string;
 }
+
+const fieldsToValidate: any = {
+  poly_name: "Polygon Name",
+  plantstart: "Plant Start",
+  plantend: "Plant End",
+  practice: "Restoration Practice",
+  target_sys: "Target Land Use System",
+  distr: "Tree Distribution",
+  num_trees: "Number of Trees"
+};
 
 export interface ICriteriaCheckProps {
   menu: ICriteriaCheckItemProps[];
   clickedValidation: (value: boolean) => void;
   status: boolean;
 }
+
 const PolygonValidation = (props: ICriteriaCheckProps) => {
   const { clickedValidation, status, menu } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
@@ -34,6 +46,40 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
       day: "2-digit",
       year: "numeric"
     })}`;
+  };
+
+  const getFormattedExtraInfo = (extraInfo: string | undefined) => {
+    if (!extraInfo) return [];
+
+    try {
+      const infoArray = JSON.parse(extraInfo);
+      return infoArray
+        .map((info: any) => {
+          if (info.exists === false) {
+            return `${fieldsToValidate[info.field]} is missing.`;
+          } else if (info.exists === true && info.error === "target_sys") {
+            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
+              fieldsToValidate[info.field]
+            } because it is not one of [“agroforest”, “natural-forest”, “mangrove”, “peatland”, “riparian-area-or-wetland”, “silvopasture”, “woodlot-or-plantation”, “urban-forest”].`;
+          } else if (info.exists === true && info.error === "distr") {
+            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
+              fieldsToValidate[info.field]
+            } because it is not one of [“single-line”, “partial”, “full”].`;
+          } else if (info.exists === true && info.error === "num_trees") {
+            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
+              fieldsToValidate[info.field]
+            } because it is not an integer.`;
+          } else if (info.exists === true && info.error === "practice") {
+            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
+              fieldsToValidate[info.field]
+            } because it is not one of [“tree-planting”, “direct-seeding“, “assisted-natural-regeneration”].`;
+          }
+          return null;
+        })
+        .filter((message: string | null) => message !== null);
+    } catch {
+      return ["Error parsing extra info."];
+    }
   };
 
   useEffect(() => {
@@ -71,9 +117,20 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
           </Text>
           <div ref={containerRef} className="flex max-h-[168px] flex-col gap-3 overflow-auto">
             {menu.map(item => (
-              <div key={item.id} className="flex items-center gap-2">
-                <Icon name={item.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS} className="h-4 w-4" />
-                <Text variant="text-14-light">{item.label}</Text>
+              <div key={item.id} className="flex flex-col items-start gap-2">
+                <div className="flex items-center gap-2">
+                  <Icon
+                    name={item.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
+                    className="h-4 w-4"
+                  />
+                  <Text variant="text-14-light">{item.label}</Text>
+                </div>
+                {item.extra_info &&
+                  getFormattedExtraInfo(item.extra_info).map((info: any, index: number) => (
+                    <Text key={index} variant="text-14-light">
+                      {info}
+                    </Text>
+                  ))}
               </div>
             ))}
           </div>
