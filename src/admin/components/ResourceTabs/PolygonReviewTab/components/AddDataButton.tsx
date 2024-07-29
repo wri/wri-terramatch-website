@@ -16,7 +16,7 @@ const AddDataButton = (props: AddDataButtonProps) => {
   const addMenuItems = [
     {
       id: "1",
-      render: () => <Text variant="text-12-bold">Create Polygons</Text>,
+      render: () => <Text variant="text-12-bold">Create Polygon</Text>,
       onClick: () => setIsUserDrawingEnabled(true)
     },
     {
