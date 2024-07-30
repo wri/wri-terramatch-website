@@ -93,7 +93,7 @@ const ChecklistInformation = () => {
                 {item.messages &&
                   item.messages.map((info: any, index: number) => (
                     <Text key={index} variant="text-14-light">
-                      {info}
+                      {t(info)}
                     </Text>
                   ))}
               </>
