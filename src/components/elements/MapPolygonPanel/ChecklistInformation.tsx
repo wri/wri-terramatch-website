@@ -53,8 +53,7 @@ const ChecklistInformation = () => {
         id: criteria.criteria_id,
         date: criteria.latest_created_at,
         status: criteria.valid === 1,
-        label: validationLabels[criteria.criteria_id],
-        messages: criteria.messages
+        label: validationLabels[criteria.criteria_id]
       }));
       setPolygonValidationData(transformedData);
       setValidationStatus(true);
@@ -90,8 +89,8 @@ const ChecklistInformation = () => {
                   />
                   {t(item.label)}
                 </Text>
-                {item.messages &&
-                  item.messages.map((info: any, index: number) => (
+                {item.extra_info &&
+                  getFormattedExtraInfo(item.extra_info).map((info: any, index: number) => (
                     <div className="flex items-start gap-[6px] pl-6" key={index}>
                       <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
                         <span className="text-[7px] text-white">&#9679;</span>

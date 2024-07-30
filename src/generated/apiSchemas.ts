@@ -23100,7 +23100,7 @@ export type V2TerrafundCriteriaData = {
     /**
      * Extra information about the polygon validation
      */
-    message?: any[];
+    extra_info?: Record<string, any>;
   }[];
 };
 
