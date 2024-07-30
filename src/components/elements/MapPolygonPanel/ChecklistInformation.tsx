@@ -53,7 +53,8 @@ const ChecklistInformation = () => {
         id: criteria.criteria_id,
         date: criteria.latest_created_at,
         status: criteria.valid === 1,
-        label: validationLabels[criteria.criteria_id]
+        label: validationLabels[criteria.criteria_id],
+        messages: criteria.messages
       }));
       setPolygonValidationData(transformedData);
       setValidationStatus(true);
@@ -81,13 +82,21 @@ const ChecklistInformation = () => {
         <If condition={validationStatus}>
           <Then>
             {polygonValidationData.map((item, index) => (
-              <Text variant="text-14-light" key={index} className="flex items-center gap-2">
-                <Icon
-                  name={item.status ? IconNames.CHECK_PROGRESSBAR : IconNames.IC_ERROR_PANEL}
-                  className={`h-4 w-4 lg:h-5 lg:w-5 ${item.status ? "text-green-400" : ""}`}
-                />
-                {t(item.label)}
-              </Text>
+              <>
+                <Text variant="text-14-light" key={index} className="flex items-center gap-2">
+                  <Icon
+                    name={item.status ? IconNames.CHECK_PROGRESSBAR : IconNames.IC_ERROR_PANEL}
+                    className={`h-4 w-4 lg:h-5 lg:w-5 ${item.status ? "text-green-400" : ""}`}
+                  />
+                  {t(item.label)}
+                </Text>
+                {item.messages &&
+                  item.messages.map((info: any, index: number) => (
+                    <Text key={index} variant="text-14-light">
+                      {info}
+                    </Text>
+                  ))}
+              </>
             ))}
           </Then>
           <Else>

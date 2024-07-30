@@ -41,7 +41,7 @@ export interface ICriteriaCheckItem {
   status: boolean;
   label: string;
   date?: string;
-  extra_info?: string;
+  messages?: string[];
 }
 
 export const ESTIMATED_AREA_CRITERIA_ID = 12;
@@ -126,7 +126,7 @@ const PolygonDrawer = ({
         date: criteria.latest_created_at,
         status: criteria.valid === 1,
         label: validationLabels[criteria.criteria_id],
-        extra_info: criteria.extra_info
+        messages: criteria.messages
       }));
       setPolygonValidationData(transformedData);
       setValidationStatus(true);

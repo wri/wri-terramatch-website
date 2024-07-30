@@ -31153,7 +31153,7 @@ export type PostV2TerrafundValidationPolygonResponse = {
     /**
      * Extra information about the polygon validation
      */
-    extra_info?: Record<string, any>;
+    message?: any[];
   }[];
 };
 
@@ -31231,7 +31231,7 @@ export type GetV2TerrafundValidationCriteriaDataResponse = {
     /**
      * Extra information about the polygon validation
      */
-    extra_info?: Record<string, any>;
+    message?: any[];
   }[];
 };
 
