@@ -92,9 +92,14 @@ const ChecklistInformation = () => {
                 </Text>
                 {item.messages &&
                   item.messages.map((info: any, index: number) => (
-                    <Text key={index} variant="text-14-light">
-                      {t(info)}
-                    </Text>
+                    <div className="flex items-start gap-[6px] pl-6" key={index}>
+                      <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
+                        <span className="text-[7px] text-white">&#9679;</span>
+                      </div>
+                      <Text variant="text-10-light" className="text-white ">
+                        {t(info)}
+                      </Text>
+                    </div>
                   ))}
               </>
             ))}
