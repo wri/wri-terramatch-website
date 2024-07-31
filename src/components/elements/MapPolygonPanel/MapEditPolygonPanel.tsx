@@ -1,6 +1,6 @@
 import { t } from "@transifex/native";
 import classNames from "classnames";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -37,6 +37,9 @@ const MapEditPolygonPanel = ({
   const { setEditPolygon, siteData, setSelectedPolyVersion, setOpenModalConfirmation, setPreviewVersion } =
     useMapAreaContext();
   const { onCancel } = mapFunctions;
+  useEffect(() => {
+    setTabEditPolygon("Attributes");
+  }, []);
   return (
     <>
       <div className="flex items-start justify-between gap-4">
