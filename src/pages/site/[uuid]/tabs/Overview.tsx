@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
 import Button from "@/components/elements/Button/Button";
@@ -37,7 +38,7 @@ import {
   fetchPutV2SitePolygonStatusBulk,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { FileType, UploadedFile } from "@/types/common";
@@ -89,6 +90,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
+  const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
+  const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
     pathParams: {
       site: site.uuid
@@ -110,10 +113,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   const getFileType = (file: UploadedFile) => {
     const fileType = file?.file_name.split(".").pop()?.toLowerCase();
-    if (fileType === "geojson") return "geojson";
-    if (fileType === "zip") return "shapefile";
-    if (fileType === "kml") return "kml";
-    return null;
+    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
 
   const uploadFiles = async () => {
@@ -126,6 +126,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
+      formData.append("polygon_loaded", polygonLoaded.toString());
+      formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
       let newRequest: any = formData;
 
       switch (fileType) {
@@ -143,10 +145,16 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       }
     }
     try {
-      await Promise.all(uploadPromises);
-      setShouldRefetchPolygonData(true);
-      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
-      closeModal(ModalId.UPLOAD_IMAGES);
+      const promise = await Promise.all(uploadPromises);
+      if (polygonLoaded) {
+        openFormModalHandlerIdentifiedPolygons(promise);
+      } else {
+        setShouldRefetchPolygonData(true);
+        displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+        closeModal(ModalId.UPLOAD_IMAGES);
+      }
+      setPolygonLoaded(false);
+      setSubmitPolygonLoaded(false);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
         let errorMessage = error.message as string;
@@ -162,6 +170,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   };
 
   const openFormModalHandlerAddPolygon = () => {
+    setPolygonLoaded(false);
+    setSubmitPolygonLoaded(false);
     openModal(
       ModalId.ADD_POLYGONS,
       <ModalAdd
@@ -206,6 +216,96 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           onClick: () => closeModal(ModalId.UPLOAD_IMAGES)
         }}
       ></ModalAdd>
+    );
+  };
+
+  const openFormModalHandlerAddPolygons = () => {
+    openModal(
+      ModalId.REPLACEMENT_POLYGONS,
+      <ModalAdd
+        title={t("Download All Polygons")}
+        secondTitle={t("Upload All Polygons")}
+        descriptionInput={t("Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.")}
+        descriptionList={
+          <div className="mt-9 flex">
+            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
+            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
+          </div>
+        }
+        onClose={() => {
+          closeModal(ModalId.REPLACEMENT_POLYGONS);
+          setPolygonLoaded(false);
+          setSubmitPolygonLoaded(false);
+        }}
+        content={t(
+          "Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
+        )}
+        secondContent={t(
+          "As a single SHP, KML or GeoJSON, upload all polygons (and make sure to include the Site identifier)."
+        )}
+        primaryButtonText={t("Next")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            setPolygonLoaded(true);
+            setSaveFlags(true);
+          }
+        }}
+        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        setFile={setFiles}
+        allowMultiple={false}
+        btnDownload={true}
+        btnDownloadProps={{
+          onClick: () => {
+            downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
+          }
+        }}
+      />
+    );
+  };
+
+  const openFormModalHandlerIdentifiedPolygons = (polygonsLoaded: SitePolygonsLoadedDataResponse) => {
+    openModal(
+      ModalId.IDENTIFIED_POLYGONS,
+      <ModalIdentified
+        title={t("Polygons Identified")}
+        polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
+        setSubmitPolygonLoaded={setSubmitPolygonLoaded}
+        setSaveFlags={setSaveFlags}
+        setPolygonLoaded={setPolygonLoaded}
+        onClose={() => {
+          closeModal(ModalId.IDENTIFIED_POLYGONS);
+          setPolygonLoaded(false);
+          closeModal(ModalId.REPLACEMENT_POLYGONS);
+        }}
+        content={t(
+          "Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
+        )}
+        primaryButtonText={t("Submit")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            setPolygonLoaded(false);
+            setSubmitPolygonLoaded(true);
+            setSaveFlags(true);
+            closeModal(ModalId.REPLACEMENT_POLYGONS);
+            closeModal(ModalId.IDENTIFIED_POLYGONS);
+          }
+        }}
+        secondaryButtonText={t("Cancel")}
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => {
+            setPolygonLoaded(false);
+            setSubmitPolygonLoaded(false);
+            closeModal(ModalId.IDENTIFIED_POLYGONS);
+            setSaveFlags(false);
+          }
+        }}
+      />
     );
   };
 
@@ -353,6 +453,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       <AddDataButton
                         openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
                         openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                        openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
                       />
                     )}
                     <Button
