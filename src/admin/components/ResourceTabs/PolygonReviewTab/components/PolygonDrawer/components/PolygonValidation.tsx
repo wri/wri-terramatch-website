@@ -83,8 +83,8 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
                   <Text variant="text-14-light">{item.label}</Text>
                 </div>
                 {item.extra_info &&
-                  getFormatedExtraInfo(item.extra_info, item.id).map((info: any, index: number) => (
-                    <div className="flex items-start gap-[6px] pl-6" key={index}>
+                  getFormatedExtraInfo(item.extra_info, item.id).map((info: string) => (
+                    <div className="flex items-start gap-[6px] pl-6" key={info}>
                       <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
                         <span className="text-[7px] text-blueCustom-900 opacity-80">&#9679;</span>
                       </div>
