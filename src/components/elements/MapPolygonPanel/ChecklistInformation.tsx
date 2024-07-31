@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
@@ -22,8 +22,12 @@ export const validationLabels: any = {
   12: "Within Total Area Expected",
   14: "Data Completed"
 };
-
+function useRenderCounter() {
+  const ref = useRef(0);
+  console.log(`Render count: ${++ref.current}`);
+}
 const ChecklistInformation = () => {
+  useRenderCounter();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
