@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Else, If, Then } from "react-if";
 
@@ -87,7 +88,9 @@ const ChecklistInformation = () => {
                 <Text variant="text-14-light" className="flex items-center gap-2">
                   <Icon
                     name={item.status ? IconNames.CHECK_PROGRESSBAR : IconNames.IC_ERROR_PANEL}
-                    className={`h-4 w-4 lg:h-5 lg:w-5 ${item.status ? "text-green-400" : ""}`}
+                    className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
+                      "text-green-400": item.status
+                    })}
                   />
                   {t(item.label)}
                 </Text>
