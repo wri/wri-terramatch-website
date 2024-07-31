@@ -46,8 +46,8 @@ import {
 import {
   PolygonBboxResponse,
   SitePolygon,
-  SitePolygonsChargedDataResponse,
-  SitePolygonsDataResponse
+  SitePolygonsDataResponse,
+  SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
@@ -142,8 +142,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
   const { showLoader, hideLoader } = useLoading();
   const { displayNotification } = useAlertHook();
-  const [polygonCharged, setPolygonCharged] = useState<boolean>(false);
-  const [submitPolygonCharged, setSubmitPolygonCharged] = useState<boolean>(false);
+  const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
+  const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
@@ -269,8 +269,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
-      formData.append("polygon_charged", polygonCharged.toString());
-      formData.append("submit_polygon_charged", submitPolygonCharged.toString());
+      formData.append("polygon_loaded", polygonLoaded.toString());
+      formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
       let newRequest: any = formData;
 
       switch (fileType) {
@@ -289,7 +289,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
     try {
       const promise = await Promise.all(uploadPromises);
-      if (polygonCharged) {
+      if (polygonLoaded) {
         openFormModalHandlerIdentifiedPolygons(promise);
       } else {
         displayNotification(t("Polygon uploaded successfully"), "success", t("Success!"));
@@ -297,8 +297,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       refetch();
       refetchSiteBbox();
       closeModal(ModalId.ADD_POLYGON);
-      setPolygonCharged(false);
-      setSubmitPolygonCharged(false);
+      setPolygonLoaded(false);
+      setSubmitPolygonLoaded(false);
       hideLoader();
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
@@ -319,8 +319,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
   const openFormModalHandlerAddPolygon = () => {
-    setPolygonCharged(false);
-    setSubmitPolygonCharged(false);
+    setPolygonLoaded(false);
+    setSubmitPolygonLoaded(false);
     openModal(
       ModalId.ADD_POLYGON,
       <ModalAdd
@@ -401,28 +401,32 @@ const PolygonReviewTab: FC<IProps> = props => {
     openModal(
       ModalId.REPLACEMENT_POLYGONS,
       <ModalAdd
-        title="Download All Polygons"
-        secondTitle="Upload All Polygons"
-        descriptionInput={`Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.`}
+        title={t("Download All Polygons")}
+        secondTitle={t("Upload All Polygons")}
+        descriptionInput={t("Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.")}
         descriptionList={
           <div className="mt-9 flex">
-            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
-            <Text variant="text-12-light">50 MB per upload</Text>
+            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
+            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
           </div>
         }
         onClose={() => {
           closeModal(ModalId.REPLACEMENT_POLYGONS);
-          setPolygonCharged(false);
-          setSubmitPolygonCharged(false);
+          setPolygonLoaded(false);
+          setSubmitPolygonLoaded(false);
         }}
-        content="Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
-        secondContent="As a single SHP, KML or GeoJSON, upload all polygons (and make sure to include the Site identifier)."
-        primaryButtonText="Next"
+        content={t(
+          "Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
+        )}
+        secondContent={t(
+          "As a single SHP, KML or GeoJSON, upload all polygons (and make sure to include the Site identifier)."
+        )}
+        primaryButtonText={t("Next")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            setPolygonCharged(true);
+            setPolygonLoaded(true);
             setSaveFlags(true);
           }
         }}
@@ -466,39 +470,41 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
-  const openFormModalHandlerIdentifiedPolygons = (polygonsCharged: SitePolygonsChargedDataResponse) => {
+  const openFormModalHandlerIdentifiedPolygons = (polygonsLoaded: SitePolygonsLoadedDataResponse) => {
     openModal(
       ModalId.IDENTIFIED_POLYGONS,
       <ModalIdentified
-        title="Polygons Identified"
-        polygonsList={polygonsCharged[0] as SitePolygonsChargedDataResponse}
-        setSubmitPolygonCharged={setSubmitPolygonCharged}
+        title={t("Polygons Identified")}
+        polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
+        setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
-        setPolygonCharged={setPolygonCharged}
+        setPolygonLoaded={setPolygonLoaded}
         onClose={() => {
           closeModal(ModalId.IDENTIFIED_POLYGONS);
-          setPolygonCharged(false);
+          setPolygonLoaded(false);
         }}
-        content="Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
-        primaryButtonText="Submit"
+        content={t(
+          "Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
+        )}
+        primaryButtonText={t("Submit")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            setPolygonCharged(false);
-            setSubmitPolygonCharged(true);
+            setPolygonLoaded(false);
+            setSubmitPolygonLoaded(true);
             setSaveFlags(true);
             closeModal(ModalId.REPLACEMENT_POLYGONS);
             closeModal(ModalId.IDENTIFIED_POLYGONS);
           }
         }}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t("Cancel")}
         secondaryButtonProps={{
           className: "px-8 py-3",
           variant: "white-page-admin",
           onClick: () => {
-            setPolygonCharged(false);
-            setSubmitPolygonCharged(false);
+            setPolygonLoaded(false);
+            setSubmitPolygonLoaded(false);
             closeModal(ModalId.IDENTIFIED_POLYGONS);
             setSaveFlags(false);
           }

@@ -23827,7 +23827,7 @@ export type ProjectPolygonResponse = {
   uuid?: string;
 };
 
-export type SitePolygonsChargedDataResponse = {
+export type SitePolygonsLoadedDataResponse = {
   id?: number;
   uuid?: string;
   primary_uuid?: string;
@@ -23875,7 +23875,7 @@ export type SitePolygonsChargedDataResponse = {
   is_present?: boolean;
 }[];
 
-export type SitePolygonCharged = {
+export type SitePolygonLoaded = {
   id?: number;
   uuid?: string;
   primary_uuid?: string;

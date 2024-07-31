@@ -1,10 +1,11 @@
+import { useT } from "@transifex/react";
 import { FC } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
-import { SitePolygonsChargedDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
@@ -13,10 +14,10 @@ export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
-  polygonsList?: SitePolygonsChargedDataResponse;
-  setSubmitPolygonCharged?: (value: boolean) => void;
+  polygonsList?: SitePolygonsLoadedDataResponse;
+  setSubmitPolygonLoaded?: (value: boolean) => void;
   setSaveFlags?: (value: boolean) => void;
-  setPolygonCharged?: (value: boolean) => void;
+  setPolygonLoaded?: (value: boolean) => void;
 }
 
 const ModalIdentified: FC<ModalApproveProps> = ({
@@ -31,6 +32,7 @@ const ModalIdentified: FC<ModalApproveProps> = ({
   onClose,
   ...rest
 }) => {
+  const t = useT();
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -56,13 +58,13 @@ const ModalIdentified: FC<ModalApproveProps> = ({
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
-              {"Name"}
+              {t("Name")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-start">
-              {"Identified"}
+              {t("Identified")}
             </Text>
           </header>
-          {(polygonsList as SitePolygonsChargedDataResponse)?.map(item => (
+          {(polygonsList as SitePolygonsLoadedDataResponse)?.map(item => (
             <div key={item.id} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
                 {item.poly_name}
