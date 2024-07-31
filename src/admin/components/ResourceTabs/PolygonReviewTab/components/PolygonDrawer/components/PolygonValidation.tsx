@@ -5,6 +5,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { useMessageValidators } from "@/hooks/useMessageValidations";
 
 export interface ICriteriaCheckItemProps {
   id: string;
@@ -13,16 +14,6 @@ export interface ICriteriaCheckItemProps {
   date?: string;
   extra_info?: string;
 }
-
-const fieldsToValidate: any = {
-  poly_name: "Polygon Name",
-  plantstart: "Plant Start",
-  plantend: "Plant End",
-  practice: "Restoration Practice",
-  target_sys: "Target Land Use System",
-  distr: "Tree Distribution",
-  num_trees: "Number of Trees"
-};
 
 export interface ICriteriaCheckProps {
   menu: ICriteriaCheckItemProps[];
@@ -35,7 +26,7 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const { getFormatedExtraInfo } = useMessageValidators();
   const formattedDate = (dateObject: Date) => {
     const localDate = new Date(dateObject.getTime() - dateObject.getTimezoneOffset() * 60000);
     return `${localDate.toLocaleTimeString("en-US", {
@@ -46,40 +37,6 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
       day: "2-digit",
       year: "numeric"
     })}`;
-  };
-
-  const getFormattedExtraInfo = (extraInfo: string | undefined) => {
-    if (!extraInfo) return [];
-
-    try {
-      const infoArray = JSON.parse(extraInfo);
-      return infoArray
-        .map((info: any) => {
-          if (info.exists === false) {
-            return `${fieldsToValidate[info.field]} is missing.`;
-          } else if (info.exists === true && info.error === "target_sys") {
-            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
-              fieldsToValidate[info.field]
-            } because it is not one of [“agroforest”, “natural-forest”, “mangrove”, “peatland”, “riparian-area-or-wetland”, “silvopasture”, “woodlot-or-plantation”, “urban-forest”].`;
-          } else if (info.exists === true && info.error === "distr") {
-            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
-              fieldsToValidate[info.field]
-            } because it is not one of [“single-line”, “partial”, “full”].`;
-          } else if (info.exists === true && info.error === "num_trees") {
-            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
-              fieldsToValidate[info.field]
-            } because it is not an integer.`;
-          } else if (info.exists === true && info.error === "practice") {
-            return `${fieldsToValidate[info.field]}: ${info.error} is not a valid ${
-              fieldsToValidate[info.field]
-            } because it is not one of [“tree-planting”, “direct-seeding“, “assisted-natural-regeneration”].`;
-          }
-          return null;
-        })
-        .filter((message: string | null) => message !== null);
-    } catch {
-      return ["Error parsing extra info."];
-    }
   };
 
   useEffect(() => {
@@ -126,7 +83,7 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
                   <Text variant="text-14-light">{item.label}</Text>
                 </div>
                 {item.extra_info &&
-                  getFormattedExtraInfo(item.extra_info).map((info: any, index: number) => (
+                  getFormatedExtraInfo(item.extra_info, item.id).map((info: any, index: number) => (
                     <Text key={index} variant="text-14-light">
                       {info}
                     </Text>

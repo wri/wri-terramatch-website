@@ -6,6 +6,7 @@ import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonRevie
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
+import { useMessageValidators } from "@/hooks/useMessageValidations";
 
 import Text from "../Text/Text";
 
@@ -26,7 +27,7 @@ const ChecklistInformation = () => {
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
   const t = useT();
-
+  const { getFormatedExtraInfo } = useMessageValidators();
   const { editPolygon, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
 
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
@@ -90,7 +91,7 @@ const ChecklistInformation = () => {
                   {t(item.label)}
                 </Text>
                 {item.extra_info &&
-                  getFormattedExtraInfo(item.extra_info).map((info: any, index: number) => (
+                  getFormatedExtraInfo(item.extra_info, item.id).map((info: any, index: number) => (
                     <div className="flex items-start gap-[6px] pl-6" key={index}>
                       <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
                         <span className="text-[7px] text-white">&#9679;</span>
