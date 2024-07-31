@@ -29,11 +29,11 @@ export const useMessageValidators = () => {
         return intersectSmaller
           ? t("Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name})", {
               percentage,
-              poly_name: poly_name || "unknown"
+              poly_name: poly_name || "Unnamed Polygon"
             })
           : t("Geometries intersect: approx. {percentage}% of this polygon is intersected by {poly_name}", {
               percentage,
-              poly_name: poly_name || "unknown"
+              poly_name: poly_name || "Unnamed Polygon"
             });
       });
     } catch (error) {
@@ -43,28 +43,41 @@ export const useMessageValidators = () => {
   };
   const getDataMessage = (extraInfo: string | undefined) => {
     if (!extraInfo) return [];
+
     try {
+      const fieldsToValidate: any = {
+        poly_name: "Polygon Name",
+        plantstart: "Plant Start",
+        plantend: "Plant End",
+        practice: "Restoration Practice",
+        target_sys: "Target Land Use System",
+        distr: "Tree Distribution",
+        num_trees: "Number of Trees"
+      };
       const infoArray: ExtraInfoItem[] = JSON.parse(extraInfo);
       return infoArray
         .map(info => {
           if (info.exists === false) {
-            return t("{field} is missing.", { field: info.field });
-          } else if (info.exists === true && info.error === "target_sys") {
+            return t("{field} is missing.", { field: fieldsToValidate[info.field] });
+          } else if (info.exists === true && info.field === "target_sys") {
             return t(
-              "{field}: target_sys is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest'].",
-              { field: info.field }
+              "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest'].",
+              { field: fieldsToValidate[info.field], error: info.error }
             );
-          } else if (info.exists === true && info.error === "distr") {
+          } else if (info.exists === true && info.field === "distr") {
             return t(
-              "{field}: distr is not a valid {field} because it is not one of ['single-line', 'partial', 'full'].",
-              { field: info.field }
+              "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full'].",
+              { field: fieldsToValidate[info.field], error: info.error }
             );
-          } else if (info.exists === true && info.error === "num_trees") {
-            return t("{field}: num_trees is not a valid {field} because it is not an integer.", { field: info.field });
-          } else if (info.exists === true && info.error === "practice") {
+          } else if (info.exists === true && info.field === "num_trees") {
+            return t("{field}: {error} is not a valid {field}.", {
+              field: fieldsToValidate[info.field],
+              error: info.error
+            });
+          } else if (info.exists === true && info.field === "practice") {
             return t(
-              "{field}: practice is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration'].",
-              { field: info.field }
+              "{field}: {error} is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration'].",
+              { field: fieldsToValidate[info.field], error: info.error }
             );
           }
           return null;
@@ -75,15 +88,22 @@ export const useMessageValidators = () => {
     }
   };
 
-  const getProjectGoalMessage = ({ sum_area, percentage, total_area_project }: ProjectGoalInfo) => {
-    return t(
-      "Project Goal: Sum of all project polygons {sum_area} is {percentage}% of total hectares to be restored {total_area_project}",
-      { sum_area, percentage, total_area_project }
-    );
+  const getProjectGoalMessage = (extraInfo: string | undefined) => {
+    if (!extraInfo) return [];
+    try {
+      const infoArray: ProjectGoalInfo = JSON.parse(extraInfo);
+      const { sum_area, percentage, total_area_project } = infoArray;
+      return t(
+        "Project Goal: Sum of all project polygons {sum_area} is {percentage}% of total hectares to be restored {total_area_project}",
+        { sum_area, percentage, total_area_project }
+      );
+    } catch {
+      return [t("Error parsing extra info.")];
+    }
   };
   const getFormatedExtraInfo = (extraInfo: string | undefined, criteria_id: any) => {
     if (criteria_id === 12) {
-      return [getProjectGoalMessage(JSON.parse(extraInfo ?? ""))];
+      return [getProjectGoalMessage(extraInfo)];
     } else if (criteria_id === 3) {
       return getIntersectionMessages(extraInfo);
     } else if (criteria_id === 14) {
