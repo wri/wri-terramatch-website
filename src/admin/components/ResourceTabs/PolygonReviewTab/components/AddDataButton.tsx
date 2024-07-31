@@ -9,10 +9,11 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 export interface AddDataButtonProps {
   openFormModalHandlerAddPolygon: () => void;
   openFormModalHandlerUploadImages: () => void;
+  openFormModalHandlerAddPolygons?: () => void;
   classNameContent?: string;
 }
 const AddDataButton = (props: AddDataButtonProps) => {
-  const { openFormModalHandlerAddPolygon, classNameContent } = props;
+  const { openFormModalHandlerAddPolygon, classNameContent, openFormModalHandlerAddPolygons } = props;
   const context = useMapAreaContext();
   const t = useT();
   const { setIsUserDrawingEnabled } = context;
@@ -26,6 +27,11 @@ const AddDataButton = (props: AddDataButtonProps) => {
       id: "2",
       render: () => <Text variant="text-12-bold">{t("Add Polygon Data")}</Text>,
       onClick: openFormModalHandlerAddPolygon
+    },
+    {
+      id: "3",
+      render: () => <Text variant="text-12-bold">Update All Polygons</Text>,
+      onClick: openFormModalHandlerAddPolygons
     }
   ];
   return (

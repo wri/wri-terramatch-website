@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
-import Button from "@/components/elements/Button/Button";
+import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
 import {
   FileInputVariant,
@@ -30,12 +30,18 @@ export interface ModalAddProps extends ModalProps {
   onClose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
   allowMultiple?: boolean;
+  btnDownload?: boolean;
+  secondTitle?: string;
+  secondContent?: string;
+  btnDownloadProps?: IButtonProps;
 }
 
 const ModalAdd: FC<ModalAddProps> = ({
   iconProps,
   title,
+  secondTitle,
   content,
+  secondContent,
   primaryButtonProps,
   primaryButtonText,
   secondaryButtonProps,
@@ -50,6 +56,8 @@ const ModalAdd: FC<ModalAddProps> = ({
   setFile,
   onClose,
   allowMultiple = true,
+  btnDownload = false,
+  btnDownloadProps,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -87,6 +95,29 @@ const ModalAdd: FC<ModalAddProps> = ({
         <When condition={!!content}>
           <Text variant="text-12-light" className="mt-1 mb-4">
             {content}
+          </Text>
+        </When>
+        <When condition={!!btnDownload}>
+          <Button
+            variant="white-page-admin"
+            className="mb-4 flex-1"
+            iconProps={{
+              className: "w-4 h-4 group-hover-text-primary-500",
+              name: IconNames.DOWNLOAD_PA
+            }}
+            {...btnDownloadProps}
+          >
+            Download
+          </Button>
+        </When>
+        <When condition={!!secondTitle}>
+          <div className="flex items-center justify-between">
+            <Text variant="text-24-bold">{secondTitle}</Text>
+          </div>
+        </When>
+        <When condition={!!secondContent}>
+          <Text variant="text-12-light" className="mt-1 mb-4">
+            {secondContent}
           </Text>
         </When>
         <FileInput
