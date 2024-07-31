@@ -23,8 +23,8 @@ export const useMessageValidators = () => {
   const t = useT();
   const fieldsToValidate: any = {
     poly_name: "Polygon Name",
-    plantstart: "Plant Start",
-    plantend: "Plant End",
+    plantstart: "Plant Start Date",
+    plantend: "Plant End Date",
     practice: "Restoration Practice",
     target_sys: "Target Land Use System",
     distr: "Tree Distribution",
@@ -62,27 +62,27 @@ export const useMessageValidators = () => {
         return infoArray
           .map(info => {
             if (!info.exists) {
-              return t("{field} is missing.", { field: fieldsToValidate[info.field] });
+              return t("{field} is missing", { field: fieldsToValidate[info.field] });
             }
             switch (info.field) {
               case "target_sys":
                 return t(
-                  "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest'].",
+                  "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest']",
                   { field: fieldsToValidate[info.field], error: info.error }
                 );
               case "distr":
                 return t(
-                  "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full'].",
+                  "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full']",
                   { field: fieldsToValidate[info.field], error: info.error }
                 );
               case "num_trees":
-                return t("{field}: {error} is not a valid {field}.", {
+                return t("{field} {error} is not a valid number", {
                   field: fieldsToValidate[info.field],
                   error: info.error
                 });
               case "practice":
                 return t(
-                  "{field}: {error} is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration'].",
+                  "{field}: {error} is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration']",
                   { field: fieldsToValidate[info.field], error: info.error }
                 );
               default:
@@ -105,7 +105,7 @@ export const useMessageValidators = () => {
         const { sum_area, percentage, total_area_project } = infoArray;
         return [
           t(
-            "Project Goal: Sum of all project polygons {sum_area} is {percentage}% of total hectares to be restored {total_area_project}",
+            "Project Goal: The sum of all project polygons {sum_area} ha is {percentage}% of total hectares to be restored ({total_area_project} ha)",
             { sum_area, percentage, total_area_project }
           )
         ];
@@ -117,7 +117,6 @@ export const useMessageValidators = () => {
   );
   const getFormatedExtraInfo = useMemo(
     () => (extraInfo: string | undefined, criteria_id: any) => {
-      console.log("Called get formated extra info", extraInfo, criteria_id);
       if (criteria_id === 12) {
         return getProjectGoalMessage(extraInfo);
       } else if (criteria_id === 3) {
