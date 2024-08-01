@@ -124,6 +124,7 @@ const MapMenuPanelItem = ({
         </Text>
       ),
       onClick: () => {
+        setClickedButton("zoomTo");
         openFormModalHandlerAddCommentary();
       }
     },
