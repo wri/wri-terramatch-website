@@ -35,10 +35,11 @@ const ApplicationOverview = ({ submissions }: ApplicationOverviewProps) => {
 
 const Item = ({ submission }: { submission?: FormSubmissionRead }) => {
   const t = useT();
-
-  const formSteps = getCustomFormSteps(submission?.form!, t);
+  const formSteps = getCustomFormSteps(submission?.form!, t, {
+    entityName: "project-pitch",
+    entityUUID: submission?.project_pitch_uuid ?? ""
+  });
   const values = normalizedFormDefaultValue(submission?.answers, formSteps);
-
   return (
     <div className="flex flex-col gap-6 bg-white p-8">
       <FormSummary steps={formSteps} values={values} />

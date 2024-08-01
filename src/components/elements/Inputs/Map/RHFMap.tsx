@@ -4,19 +4,12 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
-import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2TerrafundPolygonBboxUuid,
-  useGetV2ENTITYUUID,
-  useGetV2TerrafundProjectPolygon
-} from "@/generated/apiComponents";
+import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { singularEntityNameToPlural } from "@/helpers/entity";
-import { useDebounce } from "@/hooks/useDebounce";
-import { Entity, SingularEntityName } from "@/types/common";
+import { Entity } from "@/types/common";
 
 import { useMap } from "../../Map-mapbox/hooks/useMap";
 import { storePolygonProject } from "../../Map-mapbox/utils";
@@ -50,25 +43,10 @@ const RHFMap = ({
   const {
     field: { onChange }
   } = useController(inputWrapperProps);
-  const values = formHook.watch();
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
   const { setSiteData } = useMapAreaContext();
-
-  const { data, refetch } = useGetV2ENTITYUUID(
-    {
-      pathParams: {
-        entity: singularEntityNameToPlural(entity?.entityName as SingularEntityName),
-        uuid: entity?.entityUUID ?? ""
-      }
-    },
-    {
-      enabled: entity?.entityName != null && entity?.entityUUID != null,
-      staleTime: 0,
-      cacheTime: 0
-    }
-  );
 
   const refetchData = () => {
     reloadProjectPolygonData();
@@ -102,6 +80,7 @@ const RHFMap = ({
     }
   };
   useEffect(() => {
+    console.log("This is the data", projectPolygon);
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
@@ -120,26 +99,11 @@ const RHFMap = ({
       setSiteData(entity);
     }
   }, [entity, setSiteData]);
-  const debouncedRefetch = useDebounce(refetch, 500);
-  const entityData: any = data?.data || {};
-
-  const additionalPolygonProperties: AdditionalPolygonProperties = {
-    Framework: entityData.framework_key,
-    Country: entityData.project?.country,
-    Org_Name: entityData.organisation?.name,
-    Plant_Date: entityData.start_date,
-    Project_ID: entityData.project?.ppc_external_id,
-    Project_UUID: entityData.project?.uuid,
-    Site_ID: entityData.ppc_external_id,
-    Site_UUID: entityData.uuid,
-    Project_Name: entityData.project?.name,
-    Site_Name: entityData.name
-  };
 
   const _onChange = (value: any) => {
     onChange(value);
     onChangeCapture?.();
-    refetch();
+    // refetch();
   };
 
   const onError = (hasError: boolean) => {
@@ -152,13 +116,6 @@ const RHFMap = ({
       formHook.clearErrors();
     }
   };
-
-  useEffect(() => {
-    if (entity) {
-      debouncedRefetch();
-    }
-  }, [values, debouncedRefetch, entity]);
-
   return (
     <SitePolygonDataProvider
       sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
@@ -173,7 +130,7 @@ const RHFMap = ({
           onGeojsonChange={_onChange}
           editable
           onError={onError}
-          additionalPolygonProperties={additionalPolygonProperties}
+          // additionalPolygonProperties={additionalPolygonProperties}
           captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
           mapFunctions={mapFunctions}
           showLegend={false}

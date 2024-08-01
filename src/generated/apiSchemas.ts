@@ -6017,6 +6017,7 @@ export type ProjectFullRead = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -6131,6 +6132,7 @@ export type ProjectFullRead = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -7734,6 +7736,7 @@ export type FormSubmissionRead = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -8205,6 +8208,7 @@ export type ApplicationLiteRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8319,6 +8323,7 @@ export type ApplicationLiteRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8450,6 +8455,7 @@ export type ApplicationRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8564,6 +8570,7 @@ export type ApplicationRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
