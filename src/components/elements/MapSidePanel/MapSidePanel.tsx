@@ -111,6 +111,7 @@ const MapSidePanel = ({
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
       setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "", primary_uuid: selected?.primary_uuid ?? "" });
+      flyToPolygonBounds(selected?.poly_id ?? "");
       setClickedButton("");
     }
   }, [clickedButton, selected]);

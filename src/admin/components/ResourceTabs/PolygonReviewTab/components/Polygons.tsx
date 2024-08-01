@@ -143,6 +143,7 @@ const Polygons = (props: IPolygonProps) => {
       ),
       onClick: () => {
         setSelectedPolygon(item);
+        flyToPolygonBounds(item);
         setPolygonFromMap({ isOpen: true, uuid: item.uuid });
         setIsOpenPolygonDrawer(true);
         setIsPolygonStatusOpen(false);
