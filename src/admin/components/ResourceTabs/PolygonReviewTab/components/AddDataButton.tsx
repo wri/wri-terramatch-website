@@ -20,7 +20,7 @@ const AddDataButton = (props: AddDataButtonProps) => {
   const addMenuItems = [
     {
       id: "1",
-      render: () => <Text variant="text-12-bold">{t("Create Polygon")}</Text>,
+      render: () => <Text variant="text-12-bold">{t("Draw Polygon on Map")}</Text>,
       onClick: () => setIsUserDrawingEnabled(true)
     },
     {
@@ -30,7 +30,7 @@ const AddDataButton = (props: AddDataButtonProps) => {
     },
     {
       id: "3",
-      render: () => <Text variant="text-12-bold">Update All Polygons</Text>,
+      render: () => <Text variant="text-12-bold">{t("Update All Polygons")}</Text>,
       onClick: openFormModalHandlerAddPolygons
     }
   ];
