@@ -283,7 +283,10 @@ export const MapContainer = ({
       map?.current?.removeLayer("temp-polygon-source");
       map?.current?.removeSource("temp-polygon-source");
     }
-    addGeometryVersion();
+
+    if (selectedPolyVersion) {
+      addGeometryVersion();
+    }
   }, [selectedPolyVersion]);
 
   return (
