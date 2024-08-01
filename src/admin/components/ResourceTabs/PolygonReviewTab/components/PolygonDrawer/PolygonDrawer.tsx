@@ -269,6 +269,7 @@ const PolygonDrawer = ({
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
                   sitePolygonRefresh={sitePolygonRefresh}
+                  isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
                   refetchPolygonVersions={refetchPolygonVersions}
