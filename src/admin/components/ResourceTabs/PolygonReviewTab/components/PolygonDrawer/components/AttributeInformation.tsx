@@ -108,7 +108,6 @@ const AttributeInformation = ({
     const refreshEntity = async () => {
       if (selectedPolygon?.uuid) {
         await sitePolygonRefresh?.();
-        await refetch();
         setIsLoadingDropdown(false);
       }
     };
