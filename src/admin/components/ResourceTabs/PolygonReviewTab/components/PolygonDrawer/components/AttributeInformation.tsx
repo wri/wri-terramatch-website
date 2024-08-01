@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { useShowContext } from "react-admin";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -78,13 +79,15 @@ const AttributeInformation = ({
   sitePolygonRefresh,
   setSelectedPolygonData,
   setStatusSelectedPolygon,
-  refetchPolygonVersions
+  refetchPolygonVersions,
+  isLoadingVersions
 }: {
   selectedPolygon: SitePolygon;
   sitePolygonRefresh?: () => void;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
+  isLoadingVersions: boolean;
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -96,11 +99,20 @@ const AttributeInformation = ({
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const [isLoadingDropdown, setIsLoadingDropdown] = useState<boolean>(true);
   const { displayNotification } = useAlertHook();
   const t = useT();
   const { refetch } = useShowContext();
 
   useEffect(() => {
+    setIsLoadingDropdown(true);
+    const refreshEntity = async () => {
+      if (selectedPolygon?.uuid) {
+        await sitePolygonRefresh?.();
+        setIsLoadingDropdown(false);
+      }
+    };
+    refreshEntity();
     setPolygonName(selectedPolygon?.poly_name ?? "");
     setPlantStartDate(selectedPolygon?.plantstart ?? "");
     setPlantEndDate(selectedPolygon?.plantend ?? "");
@@ -214,35 +226,37 @@ const AttributeInformation = ({
           onChange={e => setPlantEndDate(e.target.value)}
         />
       </label>
-      <Dropdown
-        label="Restoration Practice"
-        labelClassName="capitalize"
-        labelVariant="text-14-light"
-        placeholder="Select Restoration Practice"
-        multiSelect
-        value={restorationPractice}
-        onChange={e => setRestorationPractice(e as string[])}
-        options={dropdownOptionsRestoration}
-      />
-      <Dropdown
-        label="Target Land Use System"
-        labelClassName="capitalize"
-        labelVariant="text-14-light"
-        placeholder="Select Target Land Use System"
-        options={dropdownOptionsTarget}
-        value={targetLandUseSystem}
-        onChange={e => setTargetLandUseSystem(e as string[])}
-      />
-      <Dropdown
-        multiSelect
-        label="Tree Distribution"
-        labelClassName="capitalize"
-        labelVariant="text-14-light"
-        placeholder="Select Tree Distribution"
-        options={dropdownOptionsTree}
-        value={treeDistribution}
-        onChange={e => setTreeDistribution(e as string[])}
-      />
+      <When condition={!isLoadingVersions && !isLoadingDropdown}>
+        <Dropdown
+          label="Restoration Practice"
+          labelClassName="capitalize"
+          labelVariant="text-14-light"
+          placeholder="Select Restoration Practice"
+          multiSelect
+          value={restorationPractice}
+          onChange={e => setRestorationPractice(e as string[])}
+          options={dropdownOptionsRestoration}
+        />
+        <Dropdown
+          label="Target Land Use System"
+          labelClassName="capitalize"
+          labelVariant="text-14-light"
+          placeholder="Select Target Land Use System"
+          options={dropdownOptionsTarget}
+          value={targetLandUseSystem}
+          onChange={e => setTargetLandUseSystem(e as string[])}
+        />
+        <Dropdown
+          multiSelect
+          label="Tree Distribution"
+          labelClassName="capitalize"
+          labelVariant="text-14-light"
+          placeholder="Select Tree Distribution"
+          options={dropdownOptionsTree}
+          value={treeDistribution}
+          onChange={e => setTreeDistribution(e as string[])}
+        />
+      </When>
       <Input
         label="Trees Planted"
         labelClassName="capitalize"
