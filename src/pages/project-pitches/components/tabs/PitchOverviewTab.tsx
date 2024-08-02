@@ -4,7 +4,9 @@ import { Fragment } from "react";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { getEntityPolygonData, getPolygonBbox } from "@/components/elements/Map-mapbox/utils";
 import SectionBody from "@/components/elements/Section/SectionBody";
 import SectionEntryRow from "@/components/elements/Section/SectionEntryRow";
 import SectionHeader from "@/components/elements/Section/SectionHeader";
@@ -15,6 +17,7 @@ import { getCapacityBuildingNeedOptions } from "@/constants/options/capacityBuil
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { sustainableDevelopmentGoalsOptions } from "@/constants/options/sustainableDevelopmentGoals";
+import { FORM_POLYGONS } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -33,14 +36,13 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
   const { openModal } = useModalContext();
   const { format } = useDate();
   const onEdit = () => openModal("pitchEditModal", <PitchEditModal pitch={pitch} />);
-
-  let projectBoundary: any;
-  try {
-    projectBoundary = JSON.parse(pitch.proj_boundary!);
-  } catch (e) {
-    projectBoundary = undefined;
-  }
-
+  const entityPolygonData: any = getEntityPolygonData(null, "project-pitches", {
+    entityName: "project-pitches",
+    entityUUID: pitch.uuid ?? ""
+  });
+  let bbox: any;
+  bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
+  const mapFunctions = useMap();
   return (
     <TabContainer>
       <Button className="my-8" onClick={onEdit}>
@@ -93,7 +95,17 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
       <Accordion title={t("Proposed Project Area")} defaultOpen className="mb-15 w-full bg-white shadow">
         <SectionBody>
           <Text variant="text-heading-300">{t("Geospatial polygon of your proposed restoration area.")}</Text>
-          <MapContainer geojson={projectBoundary} />
+          {entityPolygonData && Object.keys(entityPolygonData).length !== 0 && (
+            <MapContainer
+              polygonsData={entityPolygonData}
+              bbox={bbox}
+              className="h-[240px] flex-1"
+              hasControls={false}
+              showPopups={false}
+              showLegend={false}
+              mapFunctions={mapFunctions}
+            />
+          )}
 
           <SectionEntryRow title={t("Description of Project Area")} isEmpty={!pitch.proj_area_description}>
             <Text variant="text-heading-100">{pitch.proj_area_description}</Text>

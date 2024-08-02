@@ -80,7 +80,6 @@ const RHFMap = ({
     }
   };
   useEffect(() => {
-    console.log("This is the data", projectPolygon);
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });

@@ -16,14 +16,12 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonBbox, getSiteBbox, mapPolygonData } from "@/components/elements/Map-mapbox/utils";
+import { getEntityPolygonData, getPolygonBbox, getSiteBbox } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
@@ -204,32 +202,6 @@ export const getFormEntries = (
   });
 
   return outputArr;
-};
-const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) => {
-  if (!record && !entity) {
-    return null;
-  }
-
-  const uuid = record?.uuid || entity?.entityUUID;
-  const entityType = entity?.entityName || (type as EntityName);
-  if (entityType === "sites") {
-    const { data: sitePolygonData } = useGetV2SitesSitePolygon({
-      pathParams: {
-        site: uuid
-      }
-    });
-    return sitePolygonData ? mapPolygonData(sitePolygonData) : null;
-  } else if (entityType === "projects" || entityType === "project-pitches") {
-    const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
-      queryParams: {
-        entityType: pluralEntityNameToSingular(entityType) ?? "",
-        uuid: uuid ?? ""
-      }
-    });
-    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
-  }
-
-  return null;
 };
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
