@@ -6,7 +6,6 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { FORM_POLYGONS } from "@/constants/statuses";
 import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
@@ -15,13 +14,9 @@ import {
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
   GetV2MODELUUIDFilesResponse,
   useGetV2SitesSiteBbox,
-  useGetV2SitesSitePolygon,
-  useGetV2TerrafundPolygonBboxUuid,
-  useGetV2TerrafundProjectPolygon
+  useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { Entity, EntityName } from "@/types/common";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
@@ -554,31 +549,4 @@ export const getSiteBbox = (record: any) => {
     { enabled: record?.uuid != null }
   );
   return sitePolygonBbox?.bbox;
-};
-
-export const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) => {
-  if (!record && !entity) {
-    return null;
-  }
-
-  const uuid = record?.uuid || entity?.entityUUID;
-  const entityType = entity?.entityName || (type as EntityName);
-  if (entityType === "sites") {
-    const { data: sitePolygonData } = useGetV2SitesSitePolygon({
-      pathParams: {
-        site: uuid
-      }
-    });
-    return sitePolygonData ? mapPolygonData(sitePolygonData) : null;
-  } else if (entityType === "projects" || entityType === "project-pitches") {
-    const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
-      queryParams: {
-        entityType: pluralEntityNameToSingular(entityType) ?? "",
-        uuid: uuid ?? ""
-      }
-    });
-    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
-  }
-
-  return null;
 };
