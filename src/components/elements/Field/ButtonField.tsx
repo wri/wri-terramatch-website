@@ -1,4 +1,5 @@
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { When } from "react-if";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -26,11 +27,11 @@ const ButtonField: FC<ButtonFieldProps> = ({
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <Text variant="text-bold-subtitle-500">{label}</Text>
-          {subtitle && (
+          <When condition={!!subtitle}>
             <Text variant="text-light-body-300" className={subtitleClassName}>
               {subtitle}
             </Text>
-          )}
+          </When>
         </div>
         <Button {...buttonProps} />
       </div>
