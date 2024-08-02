@@ -9,15 +9,28 @@ export interface ButtonFieldProps extends DetailedHTMLProps<HTMLAttributes<HTMLD
   label: string;
   buttonProps: IButtonProps;
   subtitle?: string;
+  subtitleClassName?: string;
 }
 
-const ButtonField: FC<ButtonFieldProps> = ({ label, subtitle, buttonProps, onClick, className, ...rest }) => {
+const ButtonField: FC<ButtonFieldProps> = ({
+  label,
+  subtitle,
+  buttonProps,
+  onClick,
+  className,
+  subtitleClassName,
+  ...rest
+}) => {
   return (
     <BaseField {...rest} className={className}>
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <Text variant="text-bold-subtitle-500">{label}</Text>
-          {subtitle && <Text variant="text-light-body-300">{subtitle}</Text>}
+          {subtitle && (
+            <Text variant="text-light-body-300" className={subtitleClassName}>
+              {subtitle}
+            </Text>
+          )}
         </div>
         <Button {...buttonProps} />
       </div>
