@@ -24,7 +24,7 @@ import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { EntityName } from "@/types/common";
+import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -35,6 +35,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   step: FormStepSchema;
   index: number;
   nullText?: string;
+  entity?: Entity;
 }
 
 export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
@@ -48,8 +49,8 @@ export interface FormEntry {
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   const { record } = useShowContext();
-  const { type } = props;
-  const entityPolygonData = getEntityPolygonData(record, type);
+  const { type, entity } = props;
+  const entityPolygonData = getEntityPolygonData(record, type, entity);
   let bbox: any;
   if (type === "sites") {
     bbox = getSiteBbox(record);
@@ -204,36 +205,32 @@ export const getFormEntries = (
 
   return outputArr;
 };
-
-const getEntityPolygonData = (record: any, entity_type?: string) => {
-  let result = null;
-  if (!record) {
+const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) => {
+  if (!record && !entity) {
     return null;
   }
-  if (entity_type === "sites") {
+
+  const uuid = record?.uuid || entity?.entityUUID;
+  const entityType = entity?.entityName || (type as EntityName);
+  if (entityType === "sites") {
     const { data: sitePolygonData } = useGetV2SitesSitePolygon({
       pathParams: {
-        site: record.uuid
+        site: uuid
       }
     });
-    if (sitePolygonData) {
-      result = mapPolygonData(sitePolygonData);
-    }
-  } else if (entity_type === "projects") {
+    return sitePolygonData ? mapPolygonData(sitePolygonData) : null;
+  } else if (entityType === "projects" || entityType === "project-pitches") {
     const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
       queryParams: {
-        entityType: pluralEntityNameToSingular(entity_type) ?? "",
-        uuid: record.uuid ?? ""
+        entityType: pluralEntityNameToSingular(entityType) ?? "",
+        uuid: uuid ?? ""
       }
     });
-    if (projectPolygonData) {
-      result = { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] };
-    }
+    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
   }
 
-  return result;
+  return null;
 };
-
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
