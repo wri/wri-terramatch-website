@@ -140,6 +140,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
   const { displayNotification } = useAlertHook();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
@@ -258,6 +259,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [files, saveFlags]);
 
+  useEffect(() => {
+    if (errorMessage) {
+      displayNotification(t(errorMessage), "error", t("Error uploading file"));
+      setErrorMessage(null);
+    }
+  }, [errorMessage]);
+
   const uploadFiles = async () => {
     const uploadPromises = [];
     showLoader();
@@ -337,6 +345,8 @@ const PolygonReviewTab: FC<IProps> = props => {
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        maxFileSize={2 * 1024 * 1024}
+        setErrorMessage={setErrorMessage}
         setFile={setFiles}
       />
     );
