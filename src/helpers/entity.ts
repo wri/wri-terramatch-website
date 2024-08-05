@@ -7,6 +7,7 @@ export const singularEntityNameToPlural = (singular: SingularEntityName) => {
 
 export const pluralEntityNameToSingular = (plural: EntityName) => {
   if (plural === "nurseries") return "nursery";
+  if (plural === "project-pitches") return "project-pitch";
   else return plural.substring(0, plural.length - 1) as SingularEntityName;
 };
 

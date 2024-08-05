@@ -10,6 +10,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressTabProps {
@@ -30,7 +31,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               value={site.self_reported_workday_count}
               className="w-[170px]"
             />
-            <GoalProgressCard label={t("Hectares Restored Goal")} value={site.total_hectares_restored_goal} />
+            <GoalProgressCard
+              frameworksHide={[Framework.PPC]}
+              label={t("Hectares Restored Goal")}
+              value={site.hectares_to_restore_goal}
+            />
 
             <GoalProgressCard
               label={t("Trees restored")}
@@ -71,20 +76,22 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
 
         <PageColumn>
           <PageCard title={t("Other Goals")} gap={4}>
-            <TextField
-              label={t("Natural Regeneration Trees Per Hectare")}
-              value={site?.a_nat_regeneration_trees_per_hectare}
-            />
-            <TextField label={t("Number of Hectares for Natural Regeneration")} value={site.a_nat_regeneration} />
-            <TextField label={t("Trees Grown")} value={site.a_nat_regeneration_hectares} />
+            <ContextCondition frameworksShow={[Framework.PPC]}>
+              <TextField
+                label={t("Natural Regeneration Trees Per Hectare")}
+                value={site?.a_nat_regeneration_trees_per_hectare}
+              />
+              <TextField label={t("Number of Hectares for Natural Regeneration")} value={site.a_nat_regeneration} />
+              <TextField label={t("Number of Mature Trees")} value={site.aim_number_of_mature_trees} />
+              <TextField
+                frameworksShow={[Framework.PPC]}
+                label={t("Year 5 Grown Cover Goal (PPC)")}
+                value={site.aim_year_five_crown_cover}
+              />
+              <TextField label={t("Survival Rate of Planted")} value={site.survival_rate_planted} />
+            </ContextCondition>
             <TextField label={t("Direct Seeding Survival Rate")} value={site.direct_seeding_survival_rate} />
-            <TextField label={t("Survival Rate of Planted Trees")} value={site.survival_rate_planted} />
-            <TextField
-              frameworksShow={[Framework.PPC]}
-              label={t("Year 5 Grown Cover Goal (PPC)")}
-              value={site.aim_year_five_crown_cover}
-            />
-            <GenericField label={t("Tree Species")}>
+            <GenericField label={t("Tree Species")} frameworksHide={[Framework.PPC]}>
               <TreeSpeciesTable modelName="site" modelUUID={site.uuid} variantTable={VARIANT_TABLE_BORDER} />
             </GenericField>
           </PageCard>

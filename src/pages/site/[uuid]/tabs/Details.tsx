@@ -46,19 +46,31 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               selectedValues={site.restoration_strategy}
             />
             <SelectImageListField
-              title={t("Land Tenure Type")}
-              options={landTenuresOptions}
-              selectedValues={site.land_tenures}
-            />
-            <SelectImageListField
               title={t("Land Use Type")}
               options={landUseTypesOptions}
               selectedValues={site.land_use_types}
+            />
+            <LongTextField
+              frameworksShow={[Framework.HBF]}
+              className="capitalize"
+              title={t("Detailed Intervention Types")}
+            >
+              {site.detailed_intervention_types.join(", ").replace(/-/g, " ")}
+            </LongTextField>
+            <SelectImageListField
+              title={t("Land Tenure Type")}
+              options={landTenuresOptions}
+              selectedValues={site.land_tenures}
             />
           </PageCard>
         </PageColumn>
 
         <PageColumn>
+          <PageCard title={t("Site Details")}>
+            <TextField label={t("Site Name")} value={site.name} />
+            <TextField label={t("Restoration Start Date")} value={format(site.start_date)} />
+            <TextField label={t("Restoration End Date")} value={format(site.end_date)} />
+          </PageCard>
           <PageCard title={t("Site Creation")}>
             <TextField label={t("Site Created")} value={format(site.created_at)} />
           </PageCard>
@@ -69,10 +81,19 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
             <PageCard title={t("Invasives")}>
               <InvasiveTable modelName="site" modelUUID={site.uuid} collection="invasive" />
             </PageCard>
-            <PageCard title={t("Additional Information")} gap={4}>
-              <TextField label={t("Mature Trees Count")} value={site.aim_number_of_mature_trees} />
-              <TextField label={t("Soil Condition")} value={site.soil_condition} />
-            </PageCard>
+          </ContextCondition>
+          <PageCard title={t("Additional Information")} gap={4}>
+            <TextField frameworksShow={[Framework.HBF]} label={t("Soil Condition")} value={site.soil_condition} />
+            <ContextCondition frameworksHide={[Framework.PPC]}>
+              <TextField label={t("Siting Strategy")} value={site.siting_strategy} />
+              <TextField label={t("Siting Strategy Description")} value={site.description_siting_strategy} />
+            </ContextCondition>
+            <ContextCondition frameworksShow={[Framework.PPC]}>
+              <TextField label={t("Planting Pattern")} value={site.planting_pattern} />
+              <TextField label={t("Mature trees Count")} value={site.aim_number_of_mature_trees} />
+            </ContextCondition>
+          </PageCard>
+          <ContextCondition frameworksShow={[Framework.PPC]}>
             <Paper>
               <ButtonField
                 label={t("Stratification for Heterogeneity")}
@@ -85,6 +106,20 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
                 }}
               />
             </Paper>
+            <PageCard title={t("Tree Monitoring ")} gap={4}>
+              <ButtonField
+                label={t(
+                  "Tree monitoring must be completed for each site at baseline, 2.5 years and 5 years. Tree monitoring data is used to calculate the number of trees, natural regeneration, and survival rate of planted trees."
+                )}
+                buttonProps={{
+                  as: Link,
+                  variant: "secondary",
+                  children: t("Link"),
+                  download: false,
+                  href: "https://ee.kobotoolbox.org/x/NKctF6KV"
+                }}
+              />
+            </PageCard>
           </ContextCondition>
         </PageColumn>
       </PageRow>
