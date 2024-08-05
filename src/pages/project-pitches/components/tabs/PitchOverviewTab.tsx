@@ -55,7 +55,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
   const setBbboxAndZoom = async () => {
     if (projectPolygon?.project_polygon?.poly_uuid) {
       const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid ?? "" }
+        pathParams: { uuid: projectPolygon.project_polygon.poly_uuid }
       });
       const bounds: any = bbox.bbox;
       setPolygonBbox(bounds);
@@ -64,11 +64,11 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {
-      if (!projectPolygon?.project_polygon) {
-        setPolygonDataMap({ [FORM_POLYGONS]: [] });
-      } else {
+      if (projectPolygon?.project_polygon) {
         setBbboxAndZoom();
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
+      } else {
+        setPolygonDataMap({ [FORM_POLYGONS]: [] });
       }
     };
     getDataProjectPolygon();
