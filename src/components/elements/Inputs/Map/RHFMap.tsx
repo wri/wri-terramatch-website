@@ -102,7 +102,6 @@ const RHFMap = ({
   const _onChange = (value: any) => {
     onChange(value);
     onChangeCapture?.();
-    // refetch();
   };
 
   const onError = (hasError: boolean) => {
@@ -129,7 +128,6 @@ const RHFMap = ({
           onGeojsonChange={_onChange}
           editable
           onError={onError}
-          // additionalPolygonProperties={additionalPolygonProperties}
           captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
           mapFunctions={mapFunctions}
           showLegend={false}
