@@ -158,24 +158,20 @@ export const PolygonHandler = () => {
   return (
     <div className="flex gap-2">
       <Button
-        variant="text"
-        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-primary-200 bg-primary-200 p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
+        variant="white-button-map"
+        className="group  bg-[#E5F9FD] "
         onClick={() => openFormModalHandlerConfirmUpload("Creation")}
       >
-        <span className="flex items-center">
-          <Icon name={IconNames.PLUS_PA} />
+        <Text className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black" variant="text-14">
+          <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
           &nbsp;{t("Create Polygon")}
-        </span>
+        </Text>
       </Button>
-      <Button
-        variant="text"
-        className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border-2 border-white bg-white p-2 text-darkCustom-100 hover:border-primary hover:text-primary"
-        onClick={() => openFormModalHandlerConfirmUpload("Upload")}
-      >
-        <span className="flex items-center">
-          <Icon name={IconNames.DOWNLOAD_PA} />
+      <Button variant="white-button-map" className="group " onClick={() => openFormModalHandlerConfirmUpload("Upload")}>
+        <Text className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black" variant="text-14">
+          <Icon name={IconNames.UPLOAD_PA} className="h-4 w-4" />
           &nbsp; {t("Upload Polygon")}
-        </span>
+        </Text>
       </Button>
     </div>
   );

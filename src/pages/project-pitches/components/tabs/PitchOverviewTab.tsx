@@ -1,9 +1,10 @@
 import { useT } from "@transifex/react";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import SectionBody from "@/components/elements/Section/SectionBody";
 import SectionEntryRow from "@/components/elements/Section/SectionEntryRow";
@@ -15,7 +16,9 @@ import { getCapacityBuildingNeedOptions } from "@/constants/options/capacityBuil
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { sustainableDevelopmentGoalsOptions } from "@/constants/options/sustainableDevelopmentGoals";
+import { FORM_POLYGONS } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
+import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 import PitchEditModal from "@/pages/project-pitches/components/PitchEditModal";
@@ -32,14 +35,44 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
 
   const { openModal } = useModalContext();
   const { format } = useDate();
+  const mapFunctions = useMap();
   const onEdit = () => openModal("pitchEditModal", <PitchEditModal pitch={pitch} />);
+  const [polygonBbox, setPolygonBbox] = useState<any>(null);
+  const [polygonDataMap, setPolygonDataMap] = useState<any>({});
 
-  let projectBoundary: any;
-  try {
-    projectBoundary = JSON.parse(pitch.proj_boundary!);
-  } catch (e) {
-    projectBoundary = undefined;
-  }
+  const { data: projectPolygon } = useGetV2TerrafundProjectPolygon(
+    {
+      queryParams: {
+        entityType: "project-pitch",
+        uuid: pitch.uuid ?? ""
+      }
+    },
+    {
+      enabled: !!pitch.uuid
+    }
+  );
+
+  const setBbboxAndZoom = async () => {
+    if (projectPolygon?.project_polygon?.poly_uuid) {
+      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
+        pathParams: { uuid: projectPolygon.project_polygon.poly_uuid }
+      });
+      const bounds: any = bbox.bbox;
+      setPolygonBbox(bounds);
+    }
+  };
+
+  useEffect(() => {
+    const getDataProjectPolygon = async () => {
+      if (projectPolygon?.project_polygon) {
+        setBbboxAndZoom();
+        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
+      } else {
+        setPolygonDataMap({ [FORM_POLYGONS]: [] });
+      }
+    };
+    getDataProjectPolygon();
+  }, [projectPolygon]);
 
   return (
     <TabContainer>
@@ -93,7 +126,14 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
       <Accordion title={t("Proposed Project Area")} defaultOpen className="mb-15 w-full bg-white shadow">
         <SectionBody>
           <Text variant="text-heading-300">{t("Geospatial polygon of your proposed restoration area.")}</Text>
-          <MapContainer geojson={projectBoundary} />
+          <MapContainer
+            polygonsData={polygonDataMap}
+            bbox={polygonBbox}
+            hasControls={false}
+            showPopups={false}
+            showLegend={false}
+            mapFunctions={mapFunctions}
+          />
 
           <SectionEntryRow title={t("Description of Project Area")} isEmpty={!pitch.proj_area_description}>
             <Text variant="text-heading-100">{pitch.proj_area_description}</Text>

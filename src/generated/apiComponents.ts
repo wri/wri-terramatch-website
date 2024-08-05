@@ -17793,6 +17793,7 @@ export type GetV2ProjectsUUIDResponse = {
          * this is a list of key value pairs eg slug: name
          */
         tags?: string[];
+        project_pitch_uuid?: string;
         updated_by?: string;
         deleted_at?: string;
         created_at?: string;
@@ -17907,6 +17908,7 @@ export type GetV2ProjectsUUIDResponse = {
          * this is a list of key value pairs eg slug: name
          */
         tags?: string[];
+        project_pitch_uuid?: string;
         updated_by?: string;
         deleted_at?: string;
         created_at?: string;
@@ -21121,6 +21123,7 @@ export type GetV2ProjectPitchesUUIDSubmissionsResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -21290,6 +21293,7 @@ export type GetV2AdminFormsSubmissionsUUIDResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -21560,6 +21564,7 @@ export type GetV2AdminFormsSubmissionsResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -21742,6 +21747,7 @@ export type GetV2FormsMySubmissionsResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -24033,6 +24039,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -24194,6 +24201,7 @@ export type PostV2FormsSubmissionsResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -24353,6 +24361,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -24506,6 +24515,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -24711,6 +24721,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -24871,6 +24882,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -25750,6 +25762,7 @@ export type GetV2AdminFormsApplicationsResponse = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -25864,6 +25877,7 @@ export type GetV2AdminFormsApplicationsResponse = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -26063,6 +26077,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -26177,6 +26192,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -27013,6 +27029,7 @@ export type GetV2MyApplicationsResponse = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -27127,6 +27144,7 @@ export type GetV2MyApplicationsResponse = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -27313,6 +27331,7 @@ export type GetV2ApplicationsUUIDResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -27427,6 +27446,7 @@ export type GetV2ApplicationsUUIDResponse = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
