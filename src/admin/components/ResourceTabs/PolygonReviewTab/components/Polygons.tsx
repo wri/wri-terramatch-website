@@ -22,6 +22,7 @@ import {
 } from "@/generated/apiComponents";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
+import PolygonItem from "./PolygonItem";
 
 export interface IPolygonItem {
   id: string;
@@ -41,12 +42,12 @@ export interface IPolygonProps {
   refresh?: () => void;
   mapFunctions: any;
 }
-const statusColor = {
-  draft: "bg-pinkCustom",
-  submitted: "bg-blue",
-  approved: "bg-green",
-  "needs-more-information": "bg-tertiary-600"
-};
+// const statusColor = {
+//   draft: "bg-pinkCustom",
+//   submitted: "bg-blue",
+//   approved: "bg-green",
+//   "needs-more-information": "bg-tertiary-600"
+// };
 
 export const polygonData = [
   { id: "1", name: "Site-polygon001.geojson", status: "We are processing your polygon", isUploaded: false },
@@ -69,6 +70,7 @@ const Polygons = (props: IPolygonProps) => {
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
   const { setIsUserDrawingEnabled, polygonNotificationStatus } = contextMapArea;
+  const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -203,27 +205,41 @@ const Polygons = (props: IPolygonProps) => {
           isOpenPolygonDrawer={isOpenPolygonDrawer}
         />
       </Drawer>
-      <div className="mb-4 flex items-center gap-1">
-        <Text variant="text-16-bold" className="pl-2 text-darkCustom">
+      <div className="mb-4 flex flex-col gap-1">
+        <Text variant="text-16-bold" className="text-darkCustom">
           Polygons
         </Text>
-        <Button variant="text" onClick={() => setIsUserDrawingEnabled?.(true)}>
-          <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button variant="text" onClick={() => setIsUserDrawingEnabled?.(true)}>
+            <Text variant="text-14-semibold" className="flex items-center gap-1">
+              Add Polygon <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
+            </Text>
+          </Button>
+          <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
+            {openCollapseAll ? "SHIRNK" : "EXPAND"}
+          </Button>
+        </div>
       </div>
-      <div ref={containerRef} className="flex max-h-full max-h-screen flex-col overflow-auto">
+      <div ref={containerRef} className="flex max-h-screen flex-col overflow-auto">
         {polygonMenu.map(item => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between rounded-lg px-2 py-2 hover:cursor-pointer hover:bg-primary-200"
-          >
-            <div className="flex items-center gap-2">
-              <div className={`h-4 w-4 rounded-full ${statusColor[item.status]}`} />
-              <Text variant="text-14-light">{item.label}</Text>
-            </div>
-            <Menu container={containerRef.current} menu={polygonMenuItems(item)} placement={MENU_PLACEMENT_LEFT_BOTTOM}>
-              <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
-            </Menu>
+          <div key={item.id}>
+            <PolygonItem
+              uuid={item.uuid}
+              title={item.label}
+              status={item.status}
+              poly_id={item.uuid}
+              menu={
+                <Menu
+                  className="ml-auto"
+                  container={containerRef.current}
+                  menu={polygonMenuItems(item)}
+                  placement={MENU_PLACEMENT_LEFT_BOTTOM}
+                >
+                  <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
+                </Menu>
+              }
+              isCollapsed={openCollapseAll}
+            />
           </div>
         ))}
       </div>
