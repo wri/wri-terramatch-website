@@ -201,6 +201,7 @@ const Polygons = (props: IPolygonProps) => {
           isPolygonStatusOpen={isPolygonStatusOpen}
           refresh={props?.refresh}
           isOpenPolygonDrawer={isOpenPolygonDrawer}
+          setPolygonFromMap={setPolygonFromMap}
         />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">
