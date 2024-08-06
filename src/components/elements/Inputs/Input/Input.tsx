@@ -144,7 +144,18 @@ const Input = forwardRef(
     }
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (inputProps.type === "number" && format === "number") {
+        const value = e.target.value;
+        // Remove leading zeros, but keep a single zero if it's the only digit
+        const formattedValue = value.replace(/^0+(?=\d)/, "");
+        e.target.value = formattedValue;
+      }
 
+      if (inputProps.onChange) {
+        inputProps.onChange(e);
+      }
+    };
     return (
       <InputWrapper
         inputId={id}
@@ -165,6 +176,7 @@ const Input = forwardRef(
           <input
             {...inputProps}
             {...registeredFormProps}
+            onChange={handleChange}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref || ref}
             id={id}
