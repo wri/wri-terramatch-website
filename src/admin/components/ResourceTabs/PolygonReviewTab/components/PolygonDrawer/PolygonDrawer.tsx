@@ -205,7 +205,6 @@ const PolygonDrawer = ({
   }, [isOpenPolygonDrawer]);
 
   useEffect(() => {
-    console.log("Select polygon version", selectPolygonVersion);
     if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
