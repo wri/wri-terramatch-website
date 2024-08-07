@@ -25,7 +25,7 @@ export interface ModalAddProps extends ModalProps {
   descriptionList?: ReactNode;
   variantFileInput?: FileInputVariant;
   descriptionListStatus?: string;
-  acceptedTYpes?: FileType[];
+  acceptedTypes?: FileType[];
   status?: StatusEnum;
   maxFileSize?: number;
   onClose?: () => void;
@@ -51,7 +51,7 @@ const ModalAdd: FC<ModalAddProps> = ({
   descriptionInput,
   descriptionList,
   descriptionListStatus,
-  acceptedTYpes,
+  acceptedTypes,
   maxFileSize = 10485760, // Default to 10MB
   variantFileInput = VARIANT_FILE_INPUT_MODAL_ADD,
   children,
@@ -86,19 +86,14 @@ const ModalAdd: FC<ModalAddProps> = ({
       rawFile: file
     });
 
-    const acceptedFileTypes = acceptedTYpes
-      ? acceptedTYpes
-          .join(",")
-          .split(",")
-          .map(type => type.trim())
-      : [];
+    const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
 
     const filteredFiles = files.filter(file => {
       if (
         acceptedFileTypes.length > 0 &&
         !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
       ) {
-        setErrorMessage?.(`Unsupported file type. Please upload SHP (zipped), KML, or GeoJSON files only`);
+        setErrorMessage?.(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`);
         return false;
       }
       if (file.size > maxFileSize) {
@@ -177,7 +172,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           descriptionList={descriptionList}
           descriptionListStatus={descriptionListStatus}
           variant={variantFileInput}
-          accept={acceptedTYpes}
+          accept={acceptedTypes}
           onDelete={file =>
             setFiles(state => {
               const tmp = [...state];

@@ -148,7 +148,7 @@ export const PolygonHandler = () => {
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
         allowMultiple={false}
       />

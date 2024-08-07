@@ -187,7 +187,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={setFiles}
       ></ModalAdd>
     );
@@ -252,7 +252,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             setSaveFlags(true);
           }
         }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={setFiles}
         allowMultiple={false}
         btnDownload={true}

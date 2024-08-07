@@ -117,7 +117,7 @@ const ValidatePolygonFileShow: FC = () => {
         content="Add a polygon to test validation."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
         allowMultiple={false}
       />

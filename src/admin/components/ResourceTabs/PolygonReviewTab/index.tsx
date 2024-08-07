@@ -344,7 +344,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Start by adding polygons to your site."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         maxFileSize={2 * 1024 * 1024}
         setErrorMessage={setErrorMessage}
         setFile={setFiles}
@@ -440,7 +440,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             setSaveFlags(true);
           }
         }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={setFiles}
         allowMultiple={false}
         btnDownload={true}
