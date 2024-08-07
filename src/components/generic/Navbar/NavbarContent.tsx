@@ -83,7 +83,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
           </NavbarItem>
         </Else>
       </If>
-      <LanguagesDropdown onChange={changeLanguageHandler} className="hidden sm:block" />
+      <LanguagesDropdown isLoggedIn={isLoggedIn} onChange={changeLanguageHandler} className="hidden sm:block" />
     </div>
   );
 };
