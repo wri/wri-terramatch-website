@@ -36,7 +36,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
 
 const MapSidePanel = ({
   title,
-  items,
+  items = [],
   className,
   onSearch,
   onLoadMore,

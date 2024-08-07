@@ -11,42 +11,6 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: args => {
-    const [query] = useState<string>();
-
-    return (
-      <div className="bg-back-map bg-cover">
-        <div className="bg-[#ffffff26] p-4">
-          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
-        </div>
-      </div>
-    );
-  },
-  args: {
-    title: "Project Sites",
-    onSelectItem: console.log
-  }
-};
-
-export const OpenPolygonCheck: Story = {
-  render: args => {
-    const [query] = useState<string>();
-
-    return (
-      <div className="bg-back-map bg-cover">
-        <div className="bg-[#ffffff26] p-4">
-          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
-        </div>
-      </div>
-    );
-  },
-  args: {
-    title: "Project Sites",
-    onSelectItem: console.log
-  }
-};
-
 const items = [
   {
     uuid: "1",
@@ -110,3 +74,39 @@ const items = [
     isCollapsed: false
   }
 ];
+
+export const Default: Story = {
+  render: args => {
+    const [query] = useState<string>();
+
+    return (
+      <div className="bg-back-map bg-cover">
+        <div className="bg-[#ffffff26] p-4">
+          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    title: "Project Sites",
+    onSelectItem: console.log
+  }
+};
+
+export const OpenPolygonCheck: Story = {
+  render: args => {
+    const [query] = useState<string>();
+
+    return (
+      <div className="bg-back-map bg-cover">
+        <div className="bg-[#ffffff26] p-4">
+          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    title: "Project Sites",
+    onSelectItem: console.log
+  }
+};

@@ -33,7 +33,7 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
 
 const MapPolygonPanel = ({
   title,
-  items,
+  items = [],
   className,
   onSelectItem,
   onLoadMore,
