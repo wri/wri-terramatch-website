@@ -254,6 +254,7 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
         labelVariant="text-14-light"
         placeholder={t("Input Trees Planted")}
         type="number"
+        format="number"
         name=""
         value={treesPlanted}
         onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => setTreesPlanted(Number(e.target.value))}
