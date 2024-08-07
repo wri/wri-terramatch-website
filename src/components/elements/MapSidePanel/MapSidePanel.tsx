@@ -57,8 +57,6 @@ const MapSidePanel = ({
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
-  const [openCollapseAll, setOpenCollapseAll] = useState(false);
-
   const { map } = mapFunctions;
 
   const flyToPolygonBounds = async (polygonUuid: string) => {
@@ -161,7 +159,7 @@ const MapSidePanel = ({
   return (
     <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
-      <div className="mb-2 flex items-center justify-between rounded-tl-lg">
+      <div className="mb-4 flex items-center justify-between rounded-tl-lg">
         {isMonitoring ? (
           <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
             <Text variant="text-14-bold" className="flex items-center uppercase ">
@@ -210,9 +208,6 @@ const MapSidePanel = ({
           </div>
         </div>
       </div>
-      <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
-        {openCollapseAll ? "SHIRNK" : "EXPAND"}
-      </Button>
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
@@ -226,7 +221,6 @@ const MapSidePanel = ({
             itemAs={Fragment}
             render={item => (
               <MapMenuPanelItem
-                isCollapsed={openCollapseAll}
                 uuid={item.uuid}
                 title={item.title}
                 subtitle={item.subtitle}

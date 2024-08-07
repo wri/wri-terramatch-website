@@ -33,7 +33,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   type: string;
   poly_name?: string;
   primary_uuid?: string;
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
 }
 
 const MapMenuPanelItem = ({
@@ -68,10 +68,6 @@ const MapMenuPanelItem = ({
       enabled: !!poly_id
     }
   );
-
-  useEffect(() => {
-    setOpenCollapse(isCollapsed);
-  }, [isCollapsed]);
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
