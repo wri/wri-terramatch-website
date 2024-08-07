@@ -254,7 +254,6 @@ export const MapContainer = ({
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           reloadSiteData?.();
-          setShouldRefetchPolygonData?.(true);
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
