@@ -23,7 +23,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   poly_name?: string;
   menu: any;
   primary_uuid?: string;
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
 }
 
 const PolygonItem = ({
@@ -35,7 +35,7 @@ const PolygonItem = ({
   primary_uuid,
   className,
   menu,
-  isCollapsed,
+  isCollapsed = false,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
