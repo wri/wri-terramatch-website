@@ -55,7 +55,8 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
-    type: "sites"
+    type: "sites",
+    isCollapsed: false
   },
   {
     uuid: "2",
@@ -64,7 +65,8 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
-    type: "sites"
+    type: "sites",
+    isCollapsed: false
   },
   {
     uuid: "3",
@@ -73,7 +75,8 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
-    type: "sites"
+    type: "sites",
+    isCollapsed: false
   },
   {
     uuid: "4",
@@ -83,7 +86,8 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
-    type: "sites"
+    type: "sites",
+    isCollapsed: false
   },
   {
     uuid: "5",
@@ -92,7 +96,8 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
-    type: "sites"
+    type: "sites",
+    isCollapsed: false
   },
   {
     uuid: "6",
@@ -101,6 +106,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
-    type: "sites"
+    type: "sites",
+    isCollapsed: false
   }
 ];
