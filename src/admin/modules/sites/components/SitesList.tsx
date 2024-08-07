@@ -28,7 +28,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
-import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
+import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -168,6 +168,13 @@ export const SitesList: FC = () => {
       label="Monitored Data"
       source="monitoring_data"
       choices={monitoringDataChoices}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="polygon"
+      label="Polygon"
+      source="polygon"
+      choices={optionToChoices(getPolygonOptions())}
       className="select-page-admin"
     />
   ];
