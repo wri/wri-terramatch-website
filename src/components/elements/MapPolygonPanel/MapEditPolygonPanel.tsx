@@ -40,6 +40,15 @@ const MapEditPolygonPanel = ({
   useEffect(() => {
     setTabEditPolygon("Attributes");
   }, []);
+  const handleClose = () => {
+    setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
+    setOpenModalConfirmation(false);
+    setSelectedPolyVersion({});
+    setPreviewVersion(false);
+    refreshEntity?.();
+    onCancel(polygonData);
+    recallEntityData?.();
+  };
   return (
     <>
       <div className="flex items-start justify-between gap-4">
@@ -52,19 +61,7 @@ const MapEditPolygonPanel = ({
           </Text>
         </div>
 
-        <Button
-          variant="text"
-          onClick={() => {
-            setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
-            setOpenModalConfirmation(false);
-            setSelectedPolyVersion({});
-            setPreviewVersion(false);
-            refreshEntity?.();
-            onCancel(polygonData);
-            recallEntityData?.();
-          }}
-          className="text-white hover:text-primary"
-        >
+        <Button variant="text" onClick={handleClose} className="text-white hover:text-primary">
           <Icon name={IconNames.CLEAR} className="h-4 w-4" />
         </Button>
       </div>
@@ -110,7 +107,9 @@ const MapEditPolygonPanel = ({
         </button>
       </div>
       <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
-        <When condition={tabEditPolygon === "Attributes"}>{AttributeInformation}</When>
+        <When condition={tabEditPolygon === "Attributes"}>
+          <AttributeInformation handleClose={handleClose} />
+        </When>
         <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
         <When condition={tabEditPolygon === "Version"}>
           <VersionInformation
