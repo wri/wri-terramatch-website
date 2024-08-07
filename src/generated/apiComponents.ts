@@ -35738,6 +35738,44 @@ export const usePutV2SitePolygonUuidMakeActive = (
   );
 };
 
+export type PostV2LocaleLocalePathParams = {
+  /**
+   * locale used could be one of en-US,es-MX,fr-FR,pt-BR
+   */
+  locale: string;
+};
+
+export type PostV2LocaleLocaleError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2LocaleLocaleResponse = {
+  message?: string;
+};
+
+export type PostV2LocaleLocaleVariables = {
+  pathParams: PostV2LocaleLocalePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2LocaleLocale = (variables: PostV2LocaleLocaleVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, undefined, {}, {}, PostV2LocaleLocalePathParams>({
+    url: "/v2/locale/{locale}",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2LocaleLocale = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, PostV2LocaleLocaleVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, PostV2LocaleLocaleVariables>(
+    (variables: PostV2LocaleLocaleVariables) => fetchPostV2LocaleLocale({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
