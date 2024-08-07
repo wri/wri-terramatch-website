@@ -13,10 +13,11 @@ export interface StatusProps {
   className?: string;
   status: StatusEnum;
   textVariant?: TextVariants;
+  variant?: "default" | "small";
 }
 
 const Status = (props: StatusProps) => {
-  const { className, status, textVariant = "text-12-semibold" } = props;
+  const { className, status, textVariant = "text-12-semibold", variant = "default" } = props;
 
   const convertStatusToReadableStatus = (status: string): string => {
     const statusMap: { [key: string]: string } = {
@@ -30,7 +31,18 @@ const Status = (props: StatusProps) => {
       "awaiting-approval": "Awaiting Approval"
     };
 
-    return statusMap[status] ?? "";
+    const statusMapSmall: { [key: string]: string } = {
+      approved: "Approved",
+      submitted: "Submitted",
+      draft: "Draft",
+      started: "Started",
+      "under-review": "Under Review",
+      "needs-more-information": "Needs Info",
+      "restoration-in-progress": "Restoration in Progress",
+      "awaiting-approval": "Awaiting Approval"
+    };
+
+    return variant == "small" ? statusMapSmall[status] ?? "" : statusMap[status] ?? "";
   };
 
   return (

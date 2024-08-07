@@ -219,9 +219,9 @@ const MapMenuPanelItem = ({
             className=" h-11 w-11 rounded-lg bg-neutral-300"
           />
         </div>
-        <div className="flex flex-1 flex-col justify-between overflow-hidden">
+        <div className="flex flex-1 flex-col justify-between gap-2 overflow-hidden">
           <div className="flex flex-1 items-center gap-1">
-            <Text variant="text-14-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
+            <Text variant="text-12-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
               {t(title)}
             </Text>
             <When condition={validationStatus}>
@@ -249,13 +249,15 @@ const MapMenuPanelItem = ({
             </Menu>
           </div>
           <div className="flex items-center justify-between">
-            <Status status={status as StatusEnum} />
+            <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
             <If condition={validationStatus}>
               <Then>
-                <Text variant="text-12">Not Verified</Text>
+                <Text variant="text-10" className="whitespace-nowrap">
+                  Not Verified
+                </Text>
               </Then>
               <Else>
-                <Text variant="text-12" className="text-green">
+                <Text variant="text-10" className="text-green">
                   Verified
                 </Text>
               </Else>

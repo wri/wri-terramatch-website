@@ -33,7 +33,6 @@ const PolygonItem = ({
   status,
   poly_id = "",
   primary_uuid,
-  isSelected,
   className,
   menu,
   isCollapsed,
@@ -80,23 +79,19 @@ const PolygonItem = ({
       {...props}
       className={classNames(
         className,
-        "flex flex-col rounded-lg border-2 border-transparent bg-white p-2 hover:border-primary",
-        {
-          "border-primary-500": isSelected,
-          "border-neutral-500 hover:border-neutral-800": !isSelected
-        }
+        "flex flex-col rounded-lg border-2 border-grey-350 bg-white p-2 hover:border-primary"
       )}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}
             className=" h-11 w-11 rounded-lg bg-neutral-300"
           />
         </div>
-        <div className="flex flex-1 flex-col justify-between overflow-hidden">
+        <div className="flex flex-1 flex-col justify-between gap-2 overflow-hidden">
           <div className="flex flex-1 items-center gap-1">
-            <Text variant="text-14-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
+            <Text variant="text-12-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
               {t(title)}
             </Text>
             <When condition={validationStatus}>
@@ -108,13 +103,15 @@ const PolygonItem = ({
             {menu}
           </div>
           <div className="flex items-center justify-between">
-            <Status status={status as StatusEnum} />
+            <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
             <If condition={validationStatus}>
               <Then>
-                <Text variant="text-12">Not Verified</Text>
+                <Text variant="text-10" className="whitespace-nowrap">
+                  Not Verified
+                </Text>
               </Then>
               <Else>
-                <Text variant="text-12" className="text-green">
+                <Text variant="text-10" className="text-green">
                   Verified
                 </Text>
               </Else>

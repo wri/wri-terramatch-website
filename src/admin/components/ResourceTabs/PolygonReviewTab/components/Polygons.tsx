@@ -42,12 +42,6 @@ export interface IPolygonProps {
   refresh?: () => void;
   mapFunctions: any;
 }
-// const statusColor = {
-//   draft: "bg-pinkCustom",
-//   submitted: "bg-blue",
-//   approved: "bg-green",
-//   "needs-more-information": "bg-tertiary-600"
-// };
 
 export const polygonData = [
   { id: "1", name: "Site-polygon001.geojson", status: "We are processing your polygon", isUploaded: false },
@@ -220,7 +214,7 @@ const Polygons = (props: IPolygonProps) => {
           </Button>
         </div>
       </div>
-      <div ref={containerRef} className="flex max-h-screen flex-col overflow-auto">
+      <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
         {polygonMenu.map(item => (
           <div key={item.id}>
             <PolygonItem

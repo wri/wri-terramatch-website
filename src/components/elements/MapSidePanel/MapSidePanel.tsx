@@ -159,7 +159,7 @@ const MapSidePanel = ({
   ];
 
   return (
-    <div {...props} className={classNames("h-[250px] flex-1", className)}>
+    <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-2 flex items-center justify-between rounded-tl-lg">
         {isMonitoring ? (
@@ -213,13 +213,13 @@ const MapSidePanel = ({
       <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
         {openCollapseAll ? "SHIRNK" : "EXPAND"}
       </Button>
-      <div className="h-[calc(100%-38px)] rounded-bl-lg">
+      <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
             {emptyText || t("No result")}
           </Text>
         )}
-        <div ref={refContainer} className="mr-[-12px] h-full space-y-4 overflow-y-auto pr-3">
+        <div ref={refContainer} className="h-full space-y-4 overflow-y-auto pr-1">
           <List
             as={Fragment}
             items={items}
