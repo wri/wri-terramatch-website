@@ -1,13 +1,12 @@
 import classNames from "classnames";
-import { useState } from "react";
 import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
-import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 
 import { AuditLogEntity, AuditLogEntityEnum } from "../../../AuditLogTab/constants/types";
 import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
@@ -207,17 +206,7 @@ const StatusDisplay = ({
   viewPD
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
-  const [notificationStatus, setNotificationStatus] = useState<{
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  }>({
-    open: false,
-    message: "",
-    type: "success",
-    title: "Success!"
-  });
+  const { openNotification } = useNotificationContext();
 
   const { openModal, closeModal } = useModalContext();
   const removeUnderscore = (title: string) => title.replace("_", " ");
@@ -274,35 +263,14 @@ const StatusDisplay = ({
                 type: "status"
               }
             });
-            setNotificationStatus({
-              open: true,
-              message: "Your Status Update was just saved!",
-              type: "success",
-              title: "Success!"
-            });
-            setTimeout(() => {
-              setNotificationStatus({
-                open: false,
-                message: "",
-                type: "success",
-                title: "Success!"
-              });
-            }, 3000);
+            openNotification("success", "Success!", "Your Status Update was just saved!");
           } catch (e) {
-            setNotificationStatus({
-              open: true,
-              message: "The request encountered an issue, or the comment exceeds 255 characters.",
-              type: "error",
-              title: "Error!"
-            });
-            setTimeout(() => {
-              setNotificationStatus({
-                open: false,
-                message: "",
-                type: "error",
-                title: "Error!"
-              });
-            }, 3000);
+            openNotification(
+              "error",
+              "Error!",
+              "The request encountered an issue, or the comment exceeds 255 characters."
+            );
+
             console.error(e);
           } finally {
             onFinallyRequest();
@@ -332,35 +300,13 @@ const StatusDisplay = ({
                 request_removed: false
               }
             });
-            setNotificationStatus({
-              open: true,
-              message: "Your Change Request was just added!",
-              type: "success",
-              title: "Success!"
-            });
-            setTimeout(() => {
-              setNotificationStatus({
-                open: false,
-                message: "",
-                type: "success",
-                title: "Success!"
-              });
-            }, 3000);
+            openNotification("success", "Success!", "Your Change Request was just added!");
           } catch (e) {
-            setNotificationStatus({
-              open: true,
-              message: "The request encountered an issue, or the comment exceeds 255 characters.",
-              type: "error",
-              title: "Error!"
-            });
-            setTimeout(() => {
-              setNotificationStatus({
-                open: false,
-                message: "",
-                type: "error",
-                title: "Error!"
-              });
-            }, 3000);
+            openNotification(
+              "error",
+              "Error!",
+              "The request encountered an issue, or the comment exceeds 255 characters."
+            );
             console.error(e);
           } finally {
             onFinallyRequest();
@@ -393,7 +339,6 @@ const StatusDisplay = ({
           </Button>
         </div>
       </div>
-      <Notification {...notificationStatus} />
     </>
   );
 };

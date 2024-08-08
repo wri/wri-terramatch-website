@@ -32,7 +32,6 @@ exports[`Storyshots Components/Elements/Notification Error 1`] = `
           >
             <button
               className="float-right text-neutral-400 hover:opacity-60"
-              onClick={[Function]}
             >
               <div
                 style={
@@ -90,7 +89,6 @@ exports[`Storyshots Components/Elements/Notification Success 1`] = `
           >
             <button
               className="float-right text-neutral-400 hover:opacity-60"
-              onClick={[Function]}
             >
               <div
                 style={
@@ -148,7 +146,6 @@ exports[`Storyshots Components/Elements/Notification Warning 1`] = `
           >
             <button
               className="float-right text-neutral-400 hover:opacity-60"
-              onClick={[Function]}
             >
               <div
                 style={
