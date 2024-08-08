@@ -55,7 +55,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               className="capitalize"
               title={t("Detailed Intervention Types")}
             >
-              {site.detailed_intervention_types.join(", ").replace(/-/g, " ")}
+              {site.detailed_intervention_types?.join(", ").replace(/-/g, " ")}
             </LongTextField>
             <SelectImageListField
               title={t("Land Tenure Type")}
