@@ -134,7 +134,9 @@ const handleLayerClick = (
   map: mapboxgl.Map,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
+  type: TooltipType,
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
 ) => {
   removePopups("POLYGON");
   const { lng, lat } = e.lngLat;
@@ -143,7 +145,17 @@ const handleLayerClick = (
   let popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
-  root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, sitePolygonData, type }));
+  root.render(
+    createElement(popupComponent, {
+      feature,
+      popup,
+      setPolygonFromMap,
+      sitePolygonData,
+      type,
+      editPolygon,
+      setEditPolygon
+    })
+  );
 
   popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
 
@@ -288,11 +300,22 @@ export const addPopupsToMap = (
   popupComponent: any,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
+  type: TooltipType,
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
-      addPopupToLayer(map, popupComponent, layer, setPolygonFromMap, sitePolygonData, type);
+      addPopupToLayer(
+        map,
+        popupComponent,
+        layer,
+        setPolygonFromMap,
+        sitePolygonData,
+        type,
+        editPolygon,
+        setEditPolygon
+      );
     });
   }
 };
@@ -303,7 +326,9 @@ export const addPopupToLayer = (
   layer: any,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
+  type: TooltipType,
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -314,7 +339,7 @@ export const addPopupToLayer = (
 
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) =>
-        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData, type)
+        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData, type, editPolygon, setEditPolygon)
       );
     });
   }
