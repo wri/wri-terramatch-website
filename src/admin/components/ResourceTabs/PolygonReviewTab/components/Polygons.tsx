@@ -221,7 +221,6 @@ const Polygons = (props: IPolygonProps) => {
               uuid={item.uuid}
               title={item.label}
               status={item.status}
-              poly_id={item.uuid}
               menu={
                 <Menu
                   className="ml-auto"

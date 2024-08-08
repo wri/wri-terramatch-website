@@ -18,21 +18,19 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   subtitle?: string;
   status: string;
   isSelected?: boolean;
-  poly_id?: string;
-  site_id?: string;
-  poly_name?: string;
+  siteId?: string;
+  polyName?: string;
   menu: any;
-  primary_uuid?: string;
+  primaryUuid?: string;
   isCollapsed?: boolean;
 }
 
 const PolygonItem = ({
-  uuid,
+  uuid = "",
   title,
   subtitle,
   status,
-  poly_id = "",
-  primary_uuid,
+  primaryUuid: primary_uuid,
   className,
   menu,
   isCollapsed = false,
@@ -46,11 +44,11 @@ const PolygonItem = ({
   const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
-        uuid: poly_id
+        uuid: uuid
       }
     },
     {
-      enabled: !!poly_id
+      enabled: !!uuid
     }
   );
 
