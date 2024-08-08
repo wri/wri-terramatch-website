@@ -57,7 +57,7 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
 export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
-      value: "no-polygon",
+      value: "no-polygons",
       title: t("No polygons")
     },
     {
