@@ -201,7 +201,7 @@ const Polygons = (props: IPolygonProps) => {
           isPolygonStatusOpen={isPolygonStatusOpen}
           refresh={props?.refresh}
           isOpenPolygonDrawer={isOpenPolygonDrawer}
-          setSelectedPolygonToDrawer={setSelectedPolygon}
+          setSelectedPolygonToDrawer={setSelectedPolygon as any}
           selectedPolygonIndex={selectedPolygon?.id}
           setPolygonFromMap={setPolygonFromMap}
         />
