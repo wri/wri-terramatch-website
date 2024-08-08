@@ -12,7 +12,7 @@ import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { Entity } from "@/types/common";
 
 import { useMap } from "../../Map-mapbox/hooks/useMap";
-import { storePolygonProject } from "../../Map-mapbox/utils";
+import { storePolygon, storePolygonProject } from "../../Map-mapbox/utils";
 
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
@@ -34,7 +34,12 @@ const RHFMap = ({
 }: PropsWithChildren<RHFMapProps>) => {
   const onSave = (geojson: any) => {
     if (entity?.entityUUID && entity?.entityName) {
-      storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData, setPolygonFromMap);
+      console.log("Entity:", entity);
+      if (entity.entityName === "site") {
+        storePolygon(geojson, { uuid: entity.entityUUID }, refetchData, setPolygonFromMap);
+      } else {
+        storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData, setPolygonFromMap);
+      }
     }
   };
 
