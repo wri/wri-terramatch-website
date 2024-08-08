@@ -46,7 +46,9 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     if (res.data.uuid) {
       closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
       return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
-    } else return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+    } else {
+      return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+    }
   };
 
   return (
