@@ -15,6 +15,7 @@ import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { Entity } from "@/types/common";
 
 const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
@@ -49,12 +50,17 @@ const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
   const t = useT();
   const formSteps = getCustomFormSteps(record?.form!, t);
   const values = normalizedFormDefaultValue(record?.answers, formSteps);
-
+  const currentPitchEntity: Entity = {
+    entityName: "project-pitches",
+    entityUUID: record?.project_pitch_uuid ?? ""
+  };
   return (
     <List
       className="space-y-8"
       items={formSteps}
-      render={(step, index) => <ApplicationTabRow index={index} step={step} values={values} steps={formSteps} />}
+      render={(step, index) => (
+        <ApplicationTabRow index={index} step={step} values={values} steps={formSteps} entity={currentPitchEntity} />
+      )}
     />
   );
 };

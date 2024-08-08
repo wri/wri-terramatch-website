@@ -76,7 +76,7 @@ const dropdownOptionsTree = [
   }
 ];
 
-const AttributeInformation = () => {
+const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const t = useT();
   const { editPolygon, setEditPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
@@ -254,7 +254,8 @@ const AttributeInformation = () => {
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder={t("Input Trees Planted")}
-        type="text"
+        type="number"
+        format="number"
         name=""
         value={treesPlanted}
         onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => setTreesPlanted(Number(e.target.value))}
@@ -270,11 +271,7 @@ const AttributeInformation = () => {
         readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
-        <Button
-          variant="semi-red"
-          className="w-full"
-          onClick={() => setEditPolygon({ isOpen: false, uuid: "", primary_uuid: "" })}
-        >
+        <Button variant="semi-red" className="w-full" onClick={handleClose}>
           {t("Close")}
         </Button>
         <Button

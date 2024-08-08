@@ -132,8 +132,8 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { isUserDrawingEnabled, selectedPolyVersion } = contextMapArea;
   const { openNotification } = useNotificationContext();
+  const { isUserDrawingEnabled, selectedPolyVersion, setShouldRefetchPolygonData } = contextMapArea;
 
   if (!mapFunctions) {
     return null;
@@ -258,6 +258,7 @@ export const MapContainer = ({
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
             openNotification("success", t("Success"), t("Geometry updated successfully."));
+            setShouldRefetchPolygonData(true);
           } else {
             openNotification("error", t("Error"), t("Please try again later."));
           }

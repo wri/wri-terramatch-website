@@ -29,6 +29,7 @@ exports[`Storyshots Components/Elements/Inputs/Input Default 1`] = `
       aria-invalid={false}
       className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
       id=":r11:"
+      onChange={[Function]}
       placeholder="Input placeholder"
       type="text"
     />
@@ -66,6 +67,7 @@ exports[`Storyshots Components/Elements/Inputs/Input Disabled 1`] = `
       className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
       disabled={true}
       id=":r13:"
+      onChange={[Function]}
       placeholder="Input placeholder"
       type="text"
     />
@@ -103,6 +105,7 @@ exports[`Storyshots Components/Elements/Inputs/Input Error 1`] = `
       aria-invalid={true}
       className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-error focus:border-error"
       id=":r12:"
+      onChange={[Function]}
       placeholder="Input placeholder"
       type="text"
     />

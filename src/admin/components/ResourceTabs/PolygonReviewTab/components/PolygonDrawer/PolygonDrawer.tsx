@@ -1,7 +1,7 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
@@ -51,12 +51,14 @@ const PolygonDrawer = ({
   polygonSelected,
   isPolygonStatusOpen,
   refresh,
-  isOpenPolygonDrawer
+  isOpenPolygonDrawer,
+  setPolygonFromMap
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
   refresh?: () => void;
   isOpenPolygonDrawer: boolean;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
@@ -279,6 +281,7 @@ const PolygonDrawer = ({
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
               {selectedPolygonData && (
                 <VersionHistory
+                  setPolygonFromMap={setPolygonFromMap}
                   selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
                   setSelectPolygonVersion={setSelectPolygonVersion}
                   selectPolygonVersion={selectPolygonVersion}

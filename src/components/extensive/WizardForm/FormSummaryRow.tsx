@@ -210,7 +210,7 @@ const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) =
     return null;
   }
 
-  const uuid = record?.uuid || entity?.entityUUID;
+  const uuid = entity?.entityUUID || record?.uuid;
   const entityType = entity?.entityName || (type as EntityName);
   if (entityType === "sites") {
     const { data: sitePolygonData } = useGetV2SitesSitePolygon({

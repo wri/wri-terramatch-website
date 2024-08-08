@@ -37,7 +37,8 @@ const VersionHistory = ({
   isLoadingVersions,
   refetch,
   isLoadingDropdown,
-  setIsLoadingDropdown
+  setIsLoadingDropdown,
+  setPolygonFromMap
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
@@ -51,6 +52,7 @@ const VersionHistory = ({
   refetch: () => void;
   isLoadingDropdown: boolean;
   setIsLoadingDropdown: Dispatch<SetStateAction<boolean>>;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
 }) => {
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -171,6 +173,7 @@ const VersionHistory = ({
 
   const makeActivePolygon = async () => {
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const polygonUuid = selectPolygonVersion?.poly_id ?? selectedPolygon.poly_id;
     const versionActive = (data as SitePolygonsDataResponse)?.find(item => item?.uuid == polygonSelectedUuid);
     if (!versionActive?.is_active) {
       await mutateMakeActive({
@@ -181,6 +184,7 @@ const VersionHistory = ({
       await refreshSiteData?.();
       setSelectedPolygonData(selectPolygonVersion);
       setStatusSelectedPolygon(selectPolygonVersion?.status ?? "");
+      setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "" });
       return;
     }
     openNotification("warning", "Warning!", "Polygon version is already active");

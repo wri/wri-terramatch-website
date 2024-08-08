@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -22,7 +22,8 @@ const OrganizationAssignForm = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { type, form, selectedOrganization } = useOrganizationCreateContext();
-  const searchedTerm = form.watch("name");
+
+  const [searchedTerm, setSearchTerm] = useState<string>("");
 
   const { mutate: createOrganisation, isLoading: organisationCreateLoading } = usePostV2Organisations({
     onSuccess: async (data: any) => {
@@ -122,6 +123,7 @@ const OrganizationAssignForm = () => {
           placeholder={t("Type Organization Name")}
           error={form.formState.errors.name}
           clearable
+          onChange={e => setSearchTerm(e.target.value)}
         />
         <When condition={!type && searchedTerm}>
           <OrganizationAssignPanel searchedTerm={searchedTerm} organizations={data?.data ?? []} loading={loading} />
