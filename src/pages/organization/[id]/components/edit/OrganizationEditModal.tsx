@@ -25,7 +25,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const router = useRouter();
   const uuid = router.query.id as string;
   const t = useT();
-  const { setModalContent } = useModalContext();
+  const { closeModal, openModal } = useModalContext();
 
   const defaultValues = useNormalizedFormDefaultValue(organization, getSteps(t, uuid));
   const formSteps = getSteps(t, uuid);
@@ -43,8 +43,12 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
       pathParams: { uuid }
     });
 
-    if (res.data.uuid) return setModalContent(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
-    return setModalContent(ModalId.ERROR_MODAL, <ErrorModal />);
+    if (res.data.uuid) {
+      closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+      return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+    } else {
+      return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+    }
   };
 
   return (
