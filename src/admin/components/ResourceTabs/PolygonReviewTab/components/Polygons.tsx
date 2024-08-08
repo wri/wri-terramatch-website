@@ -6,7 +6,6 @@ import { formatFileName } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
-import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -68,7 +67,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled, polygonNotificationStatus } = contextMapArea;
+  const { setIsUserDrawingEnabled } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -194,7 +193,6 @@ const Polygons = (props: IPolygonProps) => {
 
   return (
     <div>
-      <Notification {...polygonNotificationStatus} />
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer
           polygonSelected={selectedPolygon?.uuid ?? ""}

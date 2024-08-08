@@ -16,10 +16,8 @@ import {
   mapPolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
-import Notification from "@/components/elements/Notification/Notification";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -30,6 +28,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
@@ -139,13 +138,14 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
-  const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
-  const { displayNotification } = useAlertHook();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
+
+  const { openNotification } = useNotificationContext();
+
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -261,7 +261,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   useEffect(() => {
     if (errorMessage) {
-      displayNotification(t(errorMessage), "error", t("Error uploading file"));
+      openNotification("error", t("Error uploading file"), t(errorMessage));
       setErrorMessage(null);
     }
   }, [errorMessage]);
@@ -300,7 +300,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       if (polygonLoaded) {
         openFormModalHandlerIdentifiedPolygons(promise);
       } else {
-        displayNotification(t("Polygon uploaded successfully"), "success", t("Success!"));
+        openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
       }
       refetch();
       refetchSiteBbox();
@@ -315,9 +315,9 @@ const PolygonReviewTab: FC<IProps> = props => {
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("Error uploadig file"), t("An unknown error occurred"));
       }
     }
   };
@@ -370,11 +370,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                 })
               }
             });
-            setShowApprovalSuccess(true);
+            openNotification("success", "Success, Your Polygons were approved!", "");
             refetch();
-            setTimeout(() => {
-              setShowApprovalSuccess(false);
-            }, 3000);
           } catch (error) {
             console.error(error);
           }
@@ -560,12 +557,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
-        <Notification
-          open={showApprovalSuccess}
-          title={"Success, Your Polygons were approved!"}
-          message={""}
-          type="success"
-        />
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">

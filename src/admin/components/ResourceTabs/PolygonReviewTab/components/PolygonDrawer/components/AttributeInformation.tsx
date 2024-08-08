@@ -6,8 +6,8 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
+import { useNotificationContext } from "@/context/notification.provider";
 import { fetchGetV2SitePolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -100,7 +100,8 @@ const AttributeInformation = ({
   const [formattedArea, setFormattedArea] = useState<string>();
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState<boolean>(true);
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   const t = useT();
   const { refetch } = useShowContext();
 
@@ -176,10 +177,10 @@ const AttributeInformation = ({
               })) as SitePolygon;
               setSelectedPolygonData(response);
               setStatusSelectedPolygon(response?.status ?? "");
-              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+              openNotification("success", t("Success!"), t("Polygon data updated successfully"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+              openNotification("error", t("Error!"), t("Error updating polygon data"));
             }
           }
         );
