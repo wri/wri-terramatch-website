@@ -6,6 +6,7 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -85,10 +86,11 @@ const MapPolygonCheckPanelItem = ({
 
   const openFormModalHandlerConfirm = () => {
     openModal(
+      ModalId.CONFIRM_POLYGON_DELETION,
       <ModalConfirm
         title={t("Confirm Polygon Deletion")}
         content={t("Do you want to delete this polygon?")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_DELETION)}
         onConfirm={() => deletePolygon(uuid)}
       />
     );

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { useModalContext } from "@/context/modal.provider";
@@ -27,6 +28,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
   const { mutate: submitReportingTask } = usePutV2TasksUUIDSubmit({
     onSuccess() {
       openModal(
+        ModalId.REPORTS_SUBMITTED,
         <Modal
           title={t("Reports submitted")}
           content={t(
@@ -41,7 +43,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
           primaryButtonProps={{
             children: "Close",
             onClick: () => {
-              closeModal();
+              closeModal(ModalId.REPORTS_SUBMITTED);
               router.replace(`/project/${project.uuid}?tab=reporting-tasks`);
             }
           }}
@@ -58,7 +60,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
         children: t("Submit Reports"),
         onClick: () => {
           submitReportingTask({ pathParams: { uuid: reportingTask.uuid } });
-          closeModal();
+          closeModal(ModalId.MODALS_MAPPING);
         }
       },
       secondaryButtonProps: {
@@ -74,7 +76,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
       ),
       primaryButtonProps: {
         children: t("Close"),
-        onClick: () => closeModal()
+        onClick: () => closeModal(ModalId.MODALS_MAPPING)
       }
     },
 
@@ -87,7 +89,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
         children: t("Submit Reports"),
         onClick: () => {
           submitReportingTask({ pathParams: { uuid: reportingTask.uuid } });
-          closeModal();
+          closeModal(ModalId.MODALS_MAPPING);
         }
       },
       secondaryButtonProps: {
@@ -105,7 +107,10 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
       modalProps = ModalsMapping.has_outstanding_tasks;
     }
 
-    openModal(<Modal {...modalProps} iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }} />);
+    openModal(
+      ModalId.MODALS_MAPPING,
+      <Modal {...modalProps} iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }} />
+    );
   };
 
   const window = useReportingWindow(reportingTask?.due_at);

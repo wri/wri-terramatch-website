@@ -1,12 +1,13 @@
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { useShowContext } from "react-admin";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
+import { useNotificationContext } from "@/context/notification.provider";
 import { fetchGetV2SitePolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -78,13 +79,15 @@ const AttributeInformation = ({
   sitePolygonRefresh,
   setSelectedPolygonData,
   setStatusSelectedPolygon,
-  refetchPolygonVersions
+  refetchPolygonVersions,
+  isLoadingVersions
 }: {
   selectedPolygon: SitePolygon;
   sitePolygonRefresh?: () => void;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
+  isLoadingVersions: boolean;
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -96,11 +99,21 @@ const AttributeInformation = ({
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
-  const { displayNotification } = useAlertHook();
+  const [isLoadingDropdown, setIsLoadingDropdown] = useState<boolean>(true);
+  const { openNotification } = useNotificationContext();
+
   const t = useT();
   const { refetch } = useShowContext();
 
   useEffect(() => {
+    setIsLoadingDropdown(true);
+    const refreshEntity = async () => {
+      if (selectedPolygon?.uuid) {
+        await sitePolygonRefresh?.();
+        setIsLoadingDropdown(false);
+      }
+    };
+    refreshEntity();
     setPolygonName(selectedPolygon?.poly_name ?? "");
     setPlantStartDate(selectedPolygon?.plantstart ?? "");
     setPlantEndDate(selectedPolygon?.plantend ?? "");
@@ -164,10 +177,10 @@ const AttributeInformation = ({
               })) as SitePolygon;
               setSelectedPolygonData(response);
               setStatusSelectedPolygon(response?.status ?? "");
-              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+              openNotification("success", t("Success!"), t("Polygon data updated successfully"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+              openNotification("error", t("Error!"), t("Error updating polygon data"));
             }
           }
         );
@@ -214,41 +227,43 @@ const AttributeInformation = ({
           onChange={e => setPlantEndDate(e.target.value)}
         />
       </label>
-      <Dropdown
-        label="Restoration Practice"
-        labelClassName="capitalize"
-        labelVariant="text-14-light"
-        placeholder="Select Restoration Practice"
-        multiSelect
-        value={restorationPractice}
-        onChange={e => setRestorationPractice(e as string[])}
-        options={dropdownOptionsRestoration}
-      />
-      <Dropdown
-        label="Target Land Use System"
-        labelClassName="capitalize"
-        labelVariant="text-14-light"
-        placeholder="Select Target Land Use System"
-        options={dropdownOptionsTarget}
-        value={targetLandUseSystem}
-        onChange={e => setTargetLandUseSystem(e as string[])}
-      />
-      <Dropdown
-        multiSelect
-        label="Tree Distribution"
-        labelClassName="capitalize"
-        labelVariant="text-14-light"
-        placeholder="Select Tree Distribution"
-        options={dropdownOptionsTree}
-        value={treeDistribution}
-        onChange={e => setTreeDistribution(e as string[])}
-      />
+      <When condition={!isLoadingVersions && !isLoadingDropdown}>
+        <Dropdown
+          label="Restoration Practice"
+          labelClassName="capitalize"
+          labelVariant="text-14-light"
+          placeholder="Select Restoration Practice"
+          multiSelect
+          value={restorationPractice}
+          onChange={e => setRestorationPractice(e as string[])}
+          options={dropdownOptionsRestoration}
+        />
+        <Dropdown
+          label="Target Land Use System"
+          labelClassName="capitalize"
+          labelVariant="text-14-light"
+          placeholder="Select Target Land Use System"
+          options={dropdownOptionsTarget}
+          value={targetLandUseSystem}
+          onChange={e => setTargetLandUseSystem(e as string[])}
+        />
+        <Dropdown
+          multiSelect
+          label="Tree Distribution"
+          labelClassName="capitalize"
+          labelVariant="text-14-light"
+          placeholder="Select Tree Distribution"
+          options={dropdownOptionsTree}
+          value={treeDistribution}
+          onChange={e => setTreeDistribution(e as string[])}
+        />
+      </When>
       <Input
         label="Trees Planted"
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Trees Planted"
-        type="text"
+        type="number"
         format="number"
         name=""
         value={treesPlanted}

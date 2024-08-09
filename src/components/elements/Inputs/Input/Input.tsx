@@ -119,21 +119,18 @@ const Input = forwardRef(
 
     const clearInput = () => formHook?.setValue(inputWrapperProps.name, "");
     const registeredFormProps = formHook?.register(inputWrapperProps.name, {
-      //transform empty string to null
       setValueAs: value =>
         (inputProps.type === "number" && typeof value === "string" && !value) || typeof value === "undefined"
           ? null
           : value
     });
 
-    //To stop number input value changes on scroll
     useEventListener(id, "wheel", function () {
       //@ts-ignore
       document.activeElement?.blur();
     });
 
     if (!!clearable && !!formHook?.getValues(inputWrapperProps.name)) {
-      //if input is clearable and it's not empty change iconButton to clear button
       iconButtonProps = {
         iconProps: {
           name: IconNames.X_CIRCLE,
@@ -144,7 +141,17 @@ const Input = forwardRef(
     }
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
       ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (inputProps.type === "number" && format === "number") {
+        const value = e.target.value;
+        const formattedValue = value.replace(/^0+(?=\d)/, "");
+        e.target.value = formattedValue;
+      }
 
+      if (inputProps.onChange) {
+        inputProps.onChange(e);
+      }
+    };
     return (
       <InputWrapper
         inputId={id}
@@ -165,6 +172,7 @@ const Input = forwardRef(
           <input
             {...inputProps}
             {...registeredFormProps}
+            onChange={handleChange}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref || ref}
             id={id}

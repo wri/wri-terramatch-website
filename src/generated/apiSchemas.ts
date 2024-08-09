@@ -6017,6 +6017,7 @@ export type ProjectFullRead = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -6131,6 +6132,7 @@ export type ProjectFullRead = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -7734,6 +7736,7 @@ export type FormSubmissionRead = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -8205,6 +8208,7 @@ export type ApplicationLiteRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8319,6 +8323,7 @@ export type ApplicationLiteRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8450,6 +8455,7 @@ export type ApplicationRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8564,6 +8570,7 @@ export type ApplicationRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -23097,6 +23104,10 @@ export type V2TerrafundCriteriaData = {
      * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
      */
     valid?: number;
+    /**
+     * Extra information about the polygon validation
+     */
+    extra_info?: Record<string, any>;
   }[];
 };
 
@@ -23810,4 +23821,111 @@ export type PolygonChangeStatusUpdate = {
     uuid?: string;
     status?: string;
   }[];
+};
+
+export type ProjectPolygonResponse = {
+  /**
+   * @example Project polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created project polygon
+   */
+  uuid?: string;
+};
+
+export type SitePolygonsLoadedDataResponse = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  is_present?: boolean;
+}[];
+
+export type SitePolygonLoaded = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  is_present?: boolean;
 };

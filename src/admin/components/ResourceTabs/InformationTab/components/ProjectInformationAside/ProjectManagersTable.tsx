@@ -4,9 +4,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useT } from "@transifex/react";
 import { Else, If, Then } from "react-if";
 
-import Notification from "@/components/elements/Notification/Notification";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDManagers } from "@/generated/apiComponents";
 import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
@@ -18,10 +18,11 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
   });
 
   const { openModal, closeModal } = useModalContext();
-  const { notificationStatus, deletePartner } = useDeleteAssociate("manager", project, refetch);
+  const { deletePartner } = useDeleteAssociate("manager", project, refetch);
 
   const confirmDelete = (email_address: string, uuid: string) => {
     openModal(
+      ModalId.CONFIRM_DELETE,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={""}
@@ -33,12 +34,12 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
           children: t("Confirm"),
           onClick: () => {
             deletePartner(uuid);
-            closeModal();
+            closeModal(ModalId.CONFIRM_DELETE);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_DELETE)
         }}
       />
     );
@@ -99,7 +100,6 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
           </If>
         </Stack>
       </Card>
-      <Notification {...notificationStatus} />
     </>
   );
 };

@@ -1,25 +1,32 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { format } from "date-fns";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuid,
   fetchGetV2SitePolygonUuidVersions,
+  fetchGetV2TerrafundGeojsonComplete,
   fetchPostV2SitePolygonUuidNewVersion,
+  fetchPostV2TerrafundUploadGeojson,
+  fetchPostV2TerrafundUploadKml,
+  fetchPostV2TerrafundUploadShapefile,
   useDeleteV2TerrafundPolygonUuid,
   usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { FileType, UploadedFile } from "@/types/common";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import Text from "../Text/Text";
-import useAlertHook from "./hooks/useAlertHook";
 
 const VersionInformation = ({
   polygonVersionData,
@@ -31,7 +38,8 @@ const VersionInformation = ({
   recallEntityData?: () => void;
 }) => {
   const { openModal, closeModal } = useModalContext();
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   const {
     editPolygon,
     setSelectedPolyVersion,
@@ -54,32 +62,134 @@ const VersionInformation = ({
         uuid: polygonActive?.poly_id as string,
         primary_uuid: polygonActive?.primary_uuid
       });
-      displayNotification(t("Polygon version deleted successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("Polygon version deleted successfully"));
     },
     onError: () => {
-      displayNotification(t("Error deleting polygon version"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error deleting polygon version"));
     }
   });
 
   const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: async () => {
-      displayNotification(t("Polygon version made active successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("Polygon version made active successfully"));
       await refetchPolygonVersions?.();
       setPreviewVersion(false);
       setOpenModalConfirmation(false);
       setSelectedPolyVersion({});
     },
     onError: () => {
-      displayNotification(t("Error making polygon version active"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error making polygon version active"));
     }
   });
 
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [saveFlags, setSaveFlags] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (files && files.length > 0 && saveFlags) {
+      uploadFiles();
+      setSaveFlags(false);
+    }
+  }, [files, saveFlags]);
+
+  const getFileType = (file: UploadedFile) => {
+    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
+  };
+
+  const uploadFiles = async () => {
+    const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
+    const uploadPromises = [];
+    const polygonSelectedUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
+    for (const file of files) {
+      const fileToUpload = file.rawFile as File;
+      const formData = new FormData();
+      const fileType = getFileType(file);
+      formData.append("file", fileToUpload);
+      formData.append("uuid", (selectedPolyVersion?.site_id ?? polygonDefault?.site_id) as string);
+      formData.append("primary_uuid", polygonSelectedUuid as string);
+      let newRequest: any = formData;
+
+      switch (fileType) {
+        case "geojson":
+          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
+          break;
+        case "shapefile":
+          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
+          break;
+        case "kml":
+          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
+          break;
+        default:
+          break;
+      }
+    }
+    try {
+      await Promise.all(uploadPromises);
+      await refetchPolygonVersions?.();
+      openNotification("success", t("Success!"), t("File uploaded successfully"));
+      closeModal(ModalId.ADD_POLYGON);
+    } catch (error) {
+      if (error && typeof error === "object" && "message" in error) {
+        let errorMessage = error.message as string;
+        const parsedMessage = JSON.parse(errorMessage);
+        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          errorMessage = parsedMessage.message;
+        }
+        openNotification("error", t("Error uploading file"), errorMessage);
+      } else {
+        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
+      }
+    }
+  };
+
+  const openFormModalHandlerAddNewVersion = () => {
+    openModal(
+      ModalId.ADD_POLYGON,
+      <ModalAdd
+        title="Upload Polygon"
+        descriptionInput={`Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.`}
+        descriptionList={
+          <div className="mt-9 flex">
+            <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
+            <Text variant="text-12-light">50 MB per upload</Text>
+          </div>
+        }
+        onClose={() => closeModal(ModalId.ADD_POLYGON)}
+        content="Create a new polygon version."
+        primaryButtonText="Save"
+        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
+        setFile={setFiles}
+        allowMultiple={false}
+      />
+    );
+  };
+
+  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
+    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygonUuid }
+    });
+    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${polygon_name}.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const formatStringName = (name: string) => {
+    return name.replace(/ /g, "_");
+  };
+
   const openFormModalHandlerConfirm = (polyId: string) => {
     openModal(
+      ModalId.CONFIRMATION,
       <ModalConfirm
         title={t("Confirmation")}
         content={t("Do you want to delete this version?")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRMATION)}
         onConfirm={() => {
           deletePolygonVersion(polyId);
         }}
@@ -88,15 +198,16 @@ const VersionInformation = ({
   };
 
   const createNewVersion = async () => {
+    const polygonUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
     try {
       await fetchPostV2SitePolygonUuidNewVersion({
-        pathParams: { uuid: editPolygon.primary_uuid as string }
+        pathParams: { uuid: polygonUuid as string }
       });
       refetchPolygonVersions?.();
       recallEntityData?.();
-      displayNotification(t("New version created successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("New version created successfully"));
     } catch (error) {
-      displayNotification(t("Error creating new version"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error creating new version"));
     }
   };
 
@@ -156,7 +267,7 @@ const VersionInformation = ({
       return;
     }
     await refetchPolygonVersions?.();
-    displayNotification("Polygon version is already active", "warning", "Warning!");
+    openNotification("warning", "Warning!", "Polygon version is already active");
   };
 
   return (
@@ -199,12 +310,34 @@ const VersionInformation = ({
           </div>
         </div>
       ))}
-      <button className="mt-auto text-white hover:text-primary-300" onClick={createNewVersion}>
-        <Text variant="text-14-bold" className="flex items-center uppercase ">
-          <Icon name={IconNames.PLUS_PA} className="h-4 w-6" />
-          &nbsp; {t("Add Polygon")}
-        </Text>
-      </button>
+      <div className="mt-auto flex justify-between">
+        <button className="text-white hover:text-primary-300" onClick={createNewVersion}>
+          <Text variant="text-14-bold" className="flex items-center uppercase ">
+            <Icon name={IconNames.PLUS_CIRCLE_CUSTOM} className="h-4 w-6" />
+            {t("Create")}
+          </Text>
+        </button>
+        <button
+          className="text-white hover:text-primary-300"
+          onClick={() => {
+            const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
+            const polygonUuid = selectedPolyVersion?.poly_id ?? polygonDefault?.poly_id;
+            const polygonName = selectedPolyVersion?.poly_name ?? polygonDefault?.poly_name;
+            downloadGeoJsonPolygon(polygonUuid as string, polygonName ? formatStringName(polygonName) : "polygon");
+          }}
+        >
+          <Text variant="text-14-bold" className="flex items-center uppercase ">
+            <Icon name={IconNames.DOWNLOAD_CUSTOM} className="h-4 w-6" />
+            {t("Download")}
+          </Text>
+        </button>
+        <button className="text-white hover:text-primary-300" onClick={openFormModalHandlerAddNewVersion}>
+          <Text variant="text-14-bold" className="flex items-center uppercase ">
+            <Icon name={IconNames.UPLOAD_CLOUD_CUSTOM} className="h-4 w-6" />
+            {t("Upload")}
+          </Text>
+        </button>
+      </div>
     </div>
   );
 };

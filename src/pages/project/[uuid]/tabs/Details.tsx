@@ -10,18 +10,22 @@ import SelectImageListField from "@/components/elements/Field/SelectImageListFie
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import List from "@/components/extensive/List/List";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { getCountriesOptions } from "@/constants/options/countries";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
 import { ContextCondition } from "@/context/ContextCondition";
-import { ALL_TF } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
+import { useDate } from "@/hooks/useDate";
 import { useGetOptions } from "@/hooks/useGetOptions";
 import InviteMonitoringPartnerModal from "@/pages/project/[uuid]/components/InviteMonitoringPartnerModal";
+import { formatOptionsList } from "@/utils/options";
 
 interface ProjectDetailsTabProps {
   project: any;
@@ -29,6 +33,7 @@ interface ProjectDetailsTabProps {
 
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
+  const { format } = useDate();
   const { openModal } = useModalContext();
 
   const restorationOptions = getRestorationStrategyOptions(t);
@@ -46,7 +51,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   });
 
   const handleInvite = () => {
-    openModal(<InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />);
+    openModal(
+      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />
+    );
   };
 
   return (
@@ -68,58 +76,60 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               options={restorationStrategyOptions}
               selectedValues={project.restoration_strategy}
             />
+            <LongTextField title={t("Detailed Intervention Types")}>{project.history}</LongTextField>
+            <LongTextField title={t("Planting Start Date")}>{format(project.planting_start_date)}</LongTextField>
+            <LongTextField frameworksHide={[Framework.PPC]} title={t("Planting End Date")}>
+              {format(project.planting_end_date)}
+            </LongTextField>
           </PageCard>
 
-          <PageCard frameworksShow={ALL_TF} title={t("Project Objectives")}>
+          <PageCard frameworksShow={ALL_TF.concat([Framework.HBF])} title={t("Project Objectives")}>
             <LongTextField title={t("Objectives")}>{project.objectives}</LongTextField>
             <LongTextField title={t("Environmental Goals")}>{project.environmental_goals}</LongTextField>
             <LongTextField title={t("Socioeconomic Goals")}>{project.socioeconomic_goals}</LongTextField>
-            <SelectImageListField
-              title={t("SDGs Impacted")}
-              options={sdgsImpactedOptions}
-              selectedValues={project.sdgs_impacted}
-            />
-            <LongTextField title={t("Project Partners")}>{project.proj_partner_info}</LongTextField>
-            <LongTextField title={t("Seedlings Source")}>{project.seedlings_source}</LongTextField>
-            <LongTextField title={t("Overview of Siting Strategy")}>
-              {project.siting_strategy_description}
+            <LongTextField frameworksHide={[Framework.HBF]} title={t("Community Engagement Strategy")}>
+              {project.landholder_comm_engage}
             </LongTextField>
-            <LongTextField title={t("Siting Strategy")}>{project.siting_strategy}</LongTextField>
-            <LongTextField title={t("Community Engagement Strategy")}>{project.landholder_comm_engage}</LongTextField>
             <SelectImageListField
               title={t("Land Tenure")}
               options={getLandTenureOptions(t)}
               selectedValues={project.land_tenure_project_area || []}
             />
-            <If condition={!project?.proof_of_land_tenure_mou}>
-              <Then>
-                <Paper className="min-w-[500px]">
-                  <h3>{t("Files not found")}</h3>
-                </Paper>
-              </Then>
-              <Else>
-                <Then>
-                  {project?.proof_of_land_tenure_mou?.map((document: any, index: any) => (
-                    <ButtonField
-                      key={index}
-                      label={t("Land Tenure MOU")}
-                      buttonProps={{
-                        as: Link,
-                        children: t("Download"),
-                        href: document?.url || "",
-                        download: true
-                      }}
-                    />
-                  ))}
-                </Then>
-              </Else>
-            </If>
+            <LongTextField frameworksHide={[Framework.HBF]} title={t("Project Partners")}>
+              {project.proj_partner_info}
+            </LongTextField>
+            <ContextCondition frameworksHide={ALL_TF}>
+              <LongTextField title={t("Biodiversity Impact")}>{project.proj_impact_biodiv}</LongTextField>
+              <LongTextField title={t("Food Security Impact")}>{project.proj_impact_foodsec}</LongTextField>
+            </ContextCondition>
+            <LongTextField title={t("Government Partners")}>{project.proposed_gov_partners}</LongTextField>
+            <SelectImageListField
+              title={t("SDGs Impacted")}
+              options={sdgsImpactedOptions}
+              selectedValues={project.sdgs_impacted}
+            />
+            <LongTextField title={t("Seedlings Source")}>{project.seedlings_source}</LongTextField>
+            <LongTextField title={t("Siting Strategy")}>{project.siting_strategy}</LongTextField>
+            <LongTextField title={t("Siting Strategy Description")}>
+              {project.siting_strategy_description}
+            </LongTextField>
           </PageCard>
         </PageColumn>
 
         <PageColumn>
-          <ContextCondition frameworksShow={ALL_TF}>
-            <Paper className="min-w-[500px]">
+          <PageCard title={t("Project Details")}>
+            <TextField label={t("Project Name")} value={project.name} />
+            <TextField frameworksShow={[Framework.PPC]} label={t("Continent")} value={project.continent} />
+            <TextField label={t("Country")} value={formatOptionsList(getCountriesOptions(t), project.country || [])} />
+            <TextField frameworksShow={[Framework.HBF]} label={t("State")} value={project.states} />
+            <TextField
+              frameworksHide={[Framework.PPC]}
+              label={t("District")}
+              value={project.project_country_district}
+            />
+          </PageCard>
+          <ContextCondition frameworksShow={ALL_TF.concat([Framework.HBF])}>
+            <PageCard title={t("Project Budget")}>
               <TextField label={t("Project Budget")} value={project.budget} />
               <br />
               <ButtonField
@@ -131,18 +141,26 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                   download: true
                 }}
               />
-            </Paper>
-            <Paper className="min-w-[500px]">
-              <If condition={!project.other_additional_documents.length}>
+            </PageCard>
+          </ContextCondition>
+          <PageCard title={t("Files")}>
+            <If
+              condition={
+                !project.file.length || !project.other_additional_documents.length || !project?.proof_of_land_tenure_mou
+              }
+            >
+              <Then>
+                <h3>{t("Files not found")}</h3>
+              </Then>
+              <Else>
                 <Then>
-                  <h3>{t("Files not found")}</h3>
-                </Then>
-                <Else>
-                  <Then>
-                    {project.other_additional_documents?.map((document: any, index: any) => (
+                  <ContextCondition frameworksShow={[Framework.PPC]}>
+                    {project.file?.map((document: any, index: any) => (
                       <ButtonField
                         key={index}
-                        label={t("Additional Document", { title: document })}
+                        label={t("Files")}
+                        subtitle={document?.file_name}
+                        subtitleClassName="break-words whitespace-normal max-w-[450px]"
                         buttonProps={{
                           as: Link,
                           children: t("Download"),
@@ -152,11 +170,42 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                         style={{ marginBottom: "10px" }}
                       />
                     ))}
-                  </Then>
-                </Else>
-              </If>
-            </Paper>
-          </ContextCondition>
+                    {project.other_additional_documents?.map((document: any, index: any) => (
+                      <ButtonField
+                        key={index}
+                        label={t("Other Documents")}
+                        subtitle={document?.file_name}
+                        subtitleClassName="break-words whitespace-normal max-w-[450px]"
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: document?.url || "",
+                          download: true
+                        }}
+                        style={{ marginBottom: "10px" }}
+                      />
+                    ))}
+                  </ContextCondition>
+                  <ContextCondition frameworksShow={[Framework.TF_LANDSCAPES]}>
+                    {project?.proof_of_land_tenure_mou?.map((document: any, index: any) => (
+                      <ButtonField
+                        key={index}
+                        label={t("Land Tenure MOU")}
+                        subtitle={document?.file_name}
+                        subtitleClassName="break-words whitespace-normal max-w-[450px]"
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: document?.url || "",
+                          download: true
+                        }}
+                      />
+                    ))}
+                  </ContextCondition>
+                </Then>
+              </Else>
+            </If>
+          </PageCard>
           <When condition={!!project.application}>
             <Paper className="min-w-[500px]">
               <ButtonField

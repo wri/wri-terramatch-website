@@ -16,10 +16,8 @@ import {
   mapPolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
-import Notification from "@/components/elements/Notification/Notification";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -27,8 +25,10 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
@@ -42,9 +42,15 @@ import {
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
-import { PolygonBboxResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import {
+  PolygonBboxResponse,
+  SitePolygon,
+  SitePolygonsDataResponse,
+  SitePolygonsLoadedDataResponse
+} from "@/generated/apiSchemas";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
+import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
@@ -132,10 +138,14 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
-  const [showApprovalSuccess, setShowApprovalSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
-  const { displayNotification } = useAlertHook();
+  const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
+  const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
+
+  const { openNotification } = useNotificationContext();
+
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -220,7 +230,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           if (map?.current) {
             addSourcesToLayers(map.current, polygonDataMap);
           }
-          closeModal();
+          closeModal(ModalId.DELETE_POLYGON);
         }
       })
       .catch(error => {
@@ -230,10 +240,11 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const openFormModalHandlerConfirmDeletion = (uuid: string) => {
     openModal(
+      ModalId.DELETE_POLYGON,
       <ModalConfirm
         title={"Confirm Polygon Deletion"}
         content="Do you want to delete this polygon?"
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.DELETE_POLYGON)}
         onConfirm={() => {
           deletePolygon(uuid);
         }}
@@ -248,6 +259,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [files, saveFlags]);
 
+  useEffect(() => {
+    if (errorMessage) {
+      openNotification("error", t("Error uploading file"), t(errorMessage));
+      setErrorMessage(null);
+    }
+  }, [errorMessage]);
+
   const uploadFiles = async () => {
     const uploadPromises = [];
     showLoader();
@@ -259,6 +277,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
       formData.append("uuid", site_uuid);
+      formData.append("polygon_loaded", polygonLoaded.toString());
+      formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
       let newRequest: any = formData;
 
       switch (fileType) {
@@ -276,11 +296,17 @@ const PolygonReviewTab: FC<IProps> = props => {
       }
     }
     try {
-      await Promise.all(uploadPromises);
-      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      const promise = await Promise.all(uploadPromises);
+      if (polygonLoaded) {
+        openFormModalHandlerIdentifiedPolygons(promise);
+      } else {
+        openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
+      }
       refetch();
       refetchSiteBbox();
-      closeModal();
+      closeModal(ModalId.ADD_POLYGON);
+      setPolygonLoaded(false);
+      setSubmitPolygonLoaded(false);
       hideLoader();
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
@@ -289,22 +315,22 @@ const PolygonReviewTab: FC<IProps> = props => {
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
       }
     }
   };
 
   const getFileType = (file: UploadedFile) => {
     const fileType = file?.file_name.split(".").pop()?.toLowerCase();
-    if (fileType === "geojson") return "geojson";
-    if (fileType === "zip") return "shapefile";
-    if (fileType === "kml") return "kml";
-    return null;
+    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
   const openFormModalHandlerAddPolygon = () => {
+    setPolygonLoaded(false);
+    setSubmitPolygonLoaded(false);
     openModal(
+      ModalId.ADD_POLYGON,
       <ModalAdd
         title="Add Polygons"
         descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record.name}.`}
@@ -314,24 +340,27 @@ const PolygonReviewTab: FC<IProps> = props => {
             <Text variant="text-12-light">50 MB per upload</Text>
           </div>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.ADD_POLYGON)}
         content="Start by adding polygons to your site."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
+        maxFileSize={2 * 1024 * 1024}
+        setErrorMessage={setErrorMessage}
         setFile={setFiles}
       />
     );
   };
   const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonsDataResponse, recordName: string) => {
     openModal(
+      ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
         title={"Confirm Polygon Approval"}
         content={<ContentForApproval polygonsForApprovals={polygonsForApprovals} recordName={recordName} />}
         commentArea
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_APPROVAL)}
         onConfirm={async data => {
-          closeModal();
+          closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
           try {
             await fetchPutV2SitePolygonStatusBulk({
               body: {
@@ -341,13 +370,10 @@ const PolygonReviewTab: FC<IProps> = props => {
                 })
               }
             });
-            setShowApprovalSuccess(true);
+            openNotification("success", "Success, Your Polygons were approved!", "");
             refetch();
-            setTimeout(() => {
-              setShowApprovalSuccess(false);
-            }, 3000);
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         }}
       />
@@ -356,6 +382,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
+      ModalId.UPLOAD_IMAGES,
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
@@ -365,32 +392,130 @@ const PolygonReviewTab: FC<IProps> = props => {
             Uploaded Files
           </Text>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
         content="Start by adding images for processing."
         primaryButtonText="Save"
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
+        }}
+      />
+    );
+  };
+
+  const openFormModalHandlerAddPolygons = () => {
+    openModal(
+      ModalId.REPLACEMENT_POLYGONS,
+      <ModalAdd
+        title={t("Download All Polygons")}
+        secondTitle={t("Upload All Polygons")}
+        descriptionInput={t("Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.")}
+        descriptionList={
+          <div className="mt-9 flex">
+            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
+            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
+          </div>
+        }
+        onClose={() => {
+          closeModal(ModalId.REPLACEMENT_POLYGONS);
+          setPolygonLoaded(false);
+          setSubmitPolygonLoaded(false);
+        }}
+        content={t(
+          "Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
+        )}
+        secondContent={t(
+          "As a single SHP, KML or GeoJSON, upload all polygons (and make sure to include the Site identifier)."
+        )}
+        primaryButtonText={t("Next")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            setPolygonLoaded(true);
+            setSaveFlags(true);
+          }
+        }}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
+        setFile={setFiles}
+        allowMultiple={false}
+        btnDownload={true}
+        btnDownloadProps={{
+          onClick: () => {
+            downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
+          }
+        }}
       />
     );
   };
 
   const openFormModalHandlerSubmitPolygon = () => {
     openModal(
+      ModalId.APPROVE_POLYGONS,
       <ModalApprove
         title="Approve Polygons"
         site={record}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.APPROVE_POLYGONS)}
         content="Administrators may approve polygons only if all checks pass."
         primaryButtonText="Next"
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: (polygons: unknown) => {
-            closeModal();
+            closeModal(ModalId.APPROVE_POLYGONS);
             openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record.name);
           }
         }}
         secondaryButtonText="Cancel"
-        secondaryButtonProps={{ className: "px-8 py-3", variant: "white-page-admin", onClick: closeModal }}
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
+        }}
+      />
+    );
+  };
+
+  const openFormModalHandlerIdentifiedPolygons = (polygonsLoaded: SitePolygonsLoadedDataResponse) => {
+    openModal(
+      ModalId.IDENTIFIED_POLYGONS,
+      <ModalIdentified
+        title={t("Polygons Identified")}
+        polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
+        setSubmitPolygonLoaded={setSubmitPolygonLoaded}
+        setSaveFlags={setSaveFlags}
+        setPolygonLoaded={setPolygonLoaded}
+        onClose={() => {
+          closeModal(ModalId.IDENTIFIED_POLYGONS);
+          setPolygonLoaded(false);
+        }}
+        content={t(
+          "Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
+        )}
+        primaryButtonText={t("Submit")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            setPolygonLoaded(false);
+            setSubmitPolygonLoaded(true);
+            setSaveFlags(true);
+            closeModal(ModalId.REPLACEMENT_POLYGONS);
+            closeModal(ModalId.IDENTIFIED_POLYGONS);
+          }
+        }}
+        secondaryButtonText={t("Cancel")}
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => {
+            setPolygonLoaded(false);
+            setSubmitPolygonLoaded(false);
+            closeModal(ModalId.IDENTIFIED_POLYGONS);
+            setSaveFlags(false);
+          }
+        }}
       />
     );
   };
@@ -432,12 +557,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
-        <Notification
-          open={showApprovalSuccess}
-          title={"Success, Your Polygons were approved!"}
-          message={""}
-          type="success"
-        />
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
@@ -458,6 +577,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       classNameContent="flex-1"
                       openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
                       openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                      openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
                     />
 
                     <Button

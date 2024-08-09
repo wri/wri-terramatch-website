@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import Button from "@/components/elements/Button/Button";
 import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
@@ -7,22 +9,29 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 export interface AddDataButtonProps {
   openFormModalHandlerAddPolygon: () => void;
   openFormModalHandlerUploadImages: () => void;
+  openFormModalHandlerAddPolygons?: () => void;
   classNameContent?: string;
 }
 const AddDataButton = (props: AddDataButtonProps) => {
-  const { openFormModalHandlerAddPolygon, classNameContent } = props;
+  const { openFormModalHandlerAddPolygon, classNameContent, openFormModalHandlerAddPolygons } = props;
   const context = useMapAreaContext();
+  const t = useT();
   const { setIsUserDrawingEnabled } = context;
   const addMenuItems = [
     {
       id: "1",
-      render: () => <Text variant="text-12-bold">Create Polygons</Text>,
+      render: () => <Text variant="text-12-bold">{t("Draw Polygon on Map")}</Text>,
       onClick: () => setIsUserDrawingEnabled(true)
     },
     {
       id: "2",
-      render: () => <Text variant="text-12-bold">Add Polygon Data</Text>,
+      render: () => <Text variant="text-12-bold">{t("Add Polygon Data")}</Text>,
       onClick: openFormModalHandlerAddPolygon
+    },
+    {
+      id: "3",
+      render: () => <Text variant="text-12-bold">{t("Update All Polygons")}</Text>,
+      onClick: openFormModalHandlerAddPolygons
     }
   ];
   return (

@@ -3,11 +3,12 @@ import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchPostV2TerrafundUploadGeojsonValidate,
   fetchPostV2TerrafundUploadKmlValidate,
@@ -20,7 +21,8 @@ const ValidatePolygonFileShow: FC = () => {
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { showLoader, hideLoader } = useLoading();
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   const t = useT();
   useEffect(() => {
     if (file && saveFlags) {
@@ -65,7 +67,7 @@ const ValidatePolygonFileShow: FC = () => {
       if (uploadPromise) {
         const response = await uploadPromise;
         if (response instanceof Blob) {
-          displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+          openNotification("success", t("Success!"), t("File uploaded successfully"));
           const blob = response;
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
@@ -91,17 +93,18 @@ const ValidatePolygonFileShow: FC = () => {
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
       }
     }
     hideLoader();
-    closeModal();
+    closeModal(ModalId.ADD_POLYGON);
   };
 
   const openFormModalHandlerAddPolygon = () => {
     openModal(
+      ModalId.ADD_POLYGON,
       <ModalAdd
         title="Add Polygon"
         descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML.`}
@@ -111,11 +114,11 @@ const ValidatePolygonFileShow: FC = () => {
             <Text variant="text-12-light">Test polygon</Text>
           </div>
         }
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.ADD_POLYGON)}
         content="Add a polygon to test validation."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
         allowMultiple={false}
       />

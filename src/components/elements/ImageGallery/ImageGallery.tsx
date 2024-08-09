@@ -7,6 +7,7 @@ import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDrop
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/PaginationVariant";
 import { useModalContext } from "@/context/modal.provider";
@@ -75,11 +76,16 @@ const ImageGallery = ({
   };
 
   const onClickGalleryItem = (previewData: ImageGalleryItemData) => {
-    openModal(<ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />, true);
+    openModal(
+      ModalId.IMAGE_GALLERY_PREVIEWER,
+      <ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />,
+      true
+    );
   };
 
   const handleDelete = (id: string) => {
     openModal(
+      ModalId.DELETE_IMAGE,
       <Modal
         title={t("Delete Image")}
         content={t(
@@ -94,13 +100,13 @@ const ImageGallery = ({
         primaryButtonProps={{
           children: t("Confirm Delete"),
           onClick: () => {
-            closeModal();
+            closeModal(ModalId.DELETE_IMAGE);
             onDeleteConfirm(id);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.DELETE_IMAGE)
         }}
       />
     );

@@ -173,6 +173,7 @@ export enum FileType {
   Video = "video/mp4, video/quicktime",
   Csv = "text/csv",
   ShapeFiles = "application/zip, application/x-zip-compressed, .kml, .json, .geojson, .shp, .dbf, .shx, .prj",
+  AcceptedShapefiles = ".zip, .kml, .geojson",
   Document = "application/pdf, application/msword",
   Xlsx = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
   CsvExcel = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
@@ -204,11 +205,11 @@ export type UploadedFile = {
 export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "restoration";
 
 export type EntityName = BaseModelNames | ReportsModelNames;
-export type BaseModelNames = "projects" | "sites" | "nurseries";
+export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
 export type ReportsModelNames = "project-reports" | "site-reports" | "nursery-reports";
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
-export type SingularBaseModelNames = "project" | "site" | "nursery";
+export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";
 export type SingularReportsModelNames = "project-report" | "site-report" | "nursery-report";
 
 export type Entity = {

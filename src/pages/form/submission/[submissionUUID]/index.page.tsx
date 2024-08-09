@@ -36,7 +36,10 @@ const SubmissionPage = () => {
     }
   });
 
-  const formSteps = useGetCustomFormSteps(formData?.data?.form);
+  const formSteps = useGetCustomFormSteps(formData?.data?.form, {
+    entityName: "project-pitch",
+    entityUUID: formData?.data?.project_pitch_uuid ?? ""
+  });
   //@ts-ignore
   const defaultValues = useNormalizedFormDefaultValue(formData?.data?.answers, formSteps);
 

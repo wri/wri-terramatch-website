@@ -5,11 +5,11 @@ import AvatarPlaceholder from "public/images/avatar-placeholder.svg";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Menu from "@/components/elements/Menu/Menu";
-import Notification from "@/components/elements/Notification/Notification";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
@@ -47,10 +47,11 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
 
   const statusProps = statusMapping[status];
   const { openModal, closeModal } = useModalContext();
-  const { notificationStatus, deletePartner } = useDeleteAssociate("partner", project, refetch);
+  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
 
   const ModalConfirmDeletePartner = (email_address: string) => {
     openModal(
+      ModalId.MONITORING_PARTNER,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={""}
@@ -62,12 +63,12 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
           children: t("Confirm"),
           onClick: () => {
             deletePartner(email_address as string);
-            closeModal();
+            closeModal(ModalId.MONITORING_PARTNER);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.MONITORING_PARTNER)
         }}
       />
     );
@@ -110,7 +111,6 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
           </Text>
         </div>
       </div>
-      <Notification {...notificationStatus} />
     </>
   );
 };

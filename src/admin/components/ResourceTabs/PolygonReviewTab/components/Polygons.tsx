@@ -6,11 +6,11 @@ import { formatFileName } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
-import Notification from "@/components/elements/Notification/Notification";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -67,7 +67,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled, polygonNotificationStatus } = contextMapArea;
+  const { setIsUserDrawingEnabled } = contextMapArea;
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -113,16 +113,17 @@ const Polygons = (props: IPolygonProps) => {
     const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
     if (response?.uuid) {
       reloadSiteData?.();
-      closeModal();
+      closeModal(ModalId.CONFIRM_POLYGON_DELETION);
     }
   };
 
   const openFormModalHandlerConfirm = (item: any) => {
     openModal(
+      ModalId.CONFIRM_POLYGON_DELETION,
       <ModalConfirm
         title={"Confirm Polygon Deletion"}
         content="Do you want to delete this polygon?"
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_DELETION)}
         onConfirm={() => {
           deletePolygon(item);
         }}
@@ -141,6 +142,7 @@ const Polygons = (props: IPolygonProps) => {
       ),
       onClick: () => {
         setSelectedPolygon(item);
+        flyToPolygonBounds(item);
         setPolygonFromMap({ isOpen: true, uuid: item.uuid });
         setIsOpenPolygonDrawer(true);
         setIsPolygonStatusOpen(false);
@@ -191,13 +193,13 @@ const Polygons = (props: IPolygonProps) => {
 
   return (
     <div>
-      <Notification {...polygonNotificationStatus} />
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         <PolygonDrawer
           polygonSelected={selectedPolygon?.uuid ?? ""}
           isPolygonStatusOpen={isPolygonStatusOpen}
           refresh={props?.refresh}
           isOpenPolygonDrawer={isOpenPolygonDrawer}
+          setPolygonFromMap={setPolygonFromMap}
         />
       </Drawer>
       <div className="mb-4 flex items-center gap-1">

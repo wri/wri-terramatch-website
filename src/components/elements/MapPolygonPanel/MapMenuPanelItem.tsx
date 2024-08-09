@@ -5,6 +5,7 @@ import { DetailedHTMLProps, HTMLAttributes } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -47,13 +48,14 @@ const MapMenuPanelItem = ({
   const t = useT();
   const openFormModalHandlerConfirm = () => {
     openModal(
+      ModalId.CONFIRM_POLYGON_DELETION,
       <ModalConfirm
         title={t("Confirm Polygon Deletion")}
         content={t("Do you want to delete this polygon?")}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_DELETION)}
         onConfirm={() => {
           setClickedButton("delete");
-          closeModal();
+          closeModal(ModalId.CONFIRM_POLYGON_DELETION);
         }}
       />
     );
@@ -61,13 +63,18 @@ const MapMenuPanelItem = ({
 
   const openFormModalHandlerAddCommentary = () => {
     openModal(
+      ModalId.MODAL_WITH_LOGO,
       <ModalWithLogo
         uuid={uuid}
         title={title}
-        onClose={closeModal}
+        onClose={() => closeModal(ModalId.MODAL_WITH_LOGO)}
         status={status as StatusEnum}
         primaryButtonText={t("Close")}
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: closeModal }}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => closeModal(ModalId.MODAL_WITH_LOGO)
+        }}
       />,
       true
     );
@@ -117,6 +124,7 @@ const MapMenuPanelItem = ({
         </Text>
       ),
       onClick: () => {
+        setClickedButton("zoomTo");
         openFormModalHandlerAddCommentary();
       }
     },
