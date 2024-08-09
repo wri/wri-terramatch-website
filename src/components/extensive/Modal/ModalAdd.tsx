@@ -25,8 +25,9 @@ export interface ModalAddProps extends ModalProps {
   descriptionList?: ReactNode;
   variantFileInput?: FileInputVariant;
   descriptionListStatus?: string;
-  acceptedTYpes?: FileType[];
+  acceptedTypes?: FileType[];
   status?: StatusEnum;
+  maxFileSize?: number;
   onClose?: () => void;
   setFile?: (file: UploadedFile[]) => void;
   allowMultiple?: boolean;
@@ -34,6 +35,7 @@ export interface ModalAddProps extends ModalProps {
   secondTitle?: string;
   secondContent?: string;
   btnDownloadProps?: IButtonProps;
+  setErrorMessage?: (message: string) => void;
 }
 
 const ModalAdd: FC<ModalAddProps> = ({
@@ -49,7 +51,8 @@ const ModalAdd: FC<ModalAddProps> = ({
   descriptionInput,
   descriptionList,
   descriptionListStatus,
-  acceptedTYpes,
+  acceptedTypes,
+  maxFileSize = 10485760, // Default to 10MB
   variantFileInput = VARIANT_FILE_INPUT_MODAL_ADD,
   children,
   status,
@@ -58,6 +61,7 @@ const ModalAdd: FC<ModalAddProps> = ({
   allowMultiple = true,
   btnDownload = false,
   btnDownloadProps,
+  setErrorMessage,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -67,6 +71,49 @@ const ModalAdd: FC<ModalAddProps> = ({
       setFile(files);
     }
   }, [files, setFile]);
+
+  const handleFileChange = (files: File[]) => {
+    const formatFile = (file: File): UploadedFile => ({
+      title: file.name,
+      file_name: file.name,
+      mime_type: file.type,
+      collection_name: "storybook",
+      size: file.size,
+      url: "https://google.com",
+      created_at: "now",
+      uuid: file.name,
+      is_public: true,
+      rawFile: file
+    });
+
+    const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
+
+    const filteredFiles = files.filter(file => {
+      if (
+        acceptedFileTypes.length > 0 &&
+        !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
+      ) {
+        setErrorMessage?.(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`);
+        return false;
+      }
+      if (file.size > maxFileSize) {
+        setErrorMessage?.(`File size exceeds the limit of ${maxFileSize / 1048576} MB`);
+        return false;
+      }
+      return true;
+    });
+
+    if (filteredFiles.length > 0) {
+      setErrorMessage?.("");
+      if (!allowMultiple) {
+        const firstFile = filteredFiles[0];
+        setFiles([formatFile(firstFile)]);
+      } else {
+        setFiles(prevFiles => [...prevFiles, ...filteredFiles.map(formatFile)]);
+      }
+    }
+  };
+
   return (
     <ModalAddBase {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -125,7 +172,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           descriptionList={descriptionList}
           descriptionListStatus={descriptionListStatus}
           variant={variantFileInput}
-          accept={acceptedTYpes}
+          accept={acceptedTypes}
           onDelete={file =>
             setFiles(state => {
               const tmp = [...state];
@@ -133,29 +180,9 @@ const ModalAdd: FC<ModalAddProps> = ({
               return tmp;
             })
           }
-          onChange={(files: File[]) => {
-            const formatFile = (file: File): UploadedFile => ({
-              title: file.name,
-              file_name: file.name,
-              mime_type: file.type,
-              collection_name: "storybook",
-              size: file.size,
-              url: "https://google.com",
-              created_at: "now",
-              uuid: file.name,
-              is_public: true,
-              rawFile: file
-            });
-
-            if (!allowMultiple) {
-              const firstFile = files[0];
-              setFiles([formatFile(firstFile)]);
-            } else {
-              setFiles(prevFiles => [...prevFiles, ...files.map(formatFile)]);
-            }
-          }}
+          onChange={handleFileChange}
           files={files}
-          allowMultiple={false}
+          allowMultiple={allowMultiple}
         />
         {children}
       </div>

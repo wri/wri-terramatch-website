@@ -4,13 +4,13 @@ import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundGeojsonComplete,
@@ -59,7 +59,8 @@ const VersionHistory = ({
   selectedPolygonIndex?: string;
 }) => {
   const t = useT();
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   const { openModal, closeModal } = useModalContext();
   const ctx = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -128,7 +129,7 @@ const VersionHistory = ({
       setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
       setStatusSelectedPolygon(polygonActive?.status ?? "");
       setIsLoadingDropdown(false);
-      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
@@ -137,19 +138,19 @@ const VersionHistory = ({
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
       }
     }
   };
 
   const { mutate: mutateMakeActive, isLoading } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: () => {
-      displayNotification("Polygon version made active successfully", "success", "Success!");
+      openNotification("success", "Success!", "Polygon version made active successfully");
     },
     onError: () => {
-      displayNotification("Error making polygon version active", "error", "Error!");
+      openNotification("error", "Error!", "Error making polygon version active");
     }
   });
 
@@ -164,11 +165,11 @@ const VersionHistory = ({
       const polygonActive = response?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);
       setStatusSelectedPolygon(polygonActive?.status ?? "");
-      displayNotification("Polygon version deleted successfully", "success", "Success!");
+      openNotification("success", "Success!", "Polygon version deleted successfully");
       setIsLoadingDropdown(false);
     },
     onError: () => {
-      displayNotification("Error deleting polygon version", "error", "Error!");
+      openNotification("error", "Error!", "Error deleting polygon version");
     }
   });
   const createNewVersion = async () => {
@@ -191,9 +192,9 @@ const VersionHistory = ({
       setPolygonFromMap({ isOpen: true, uuid: newVersion?.poly_id ?? "" });
       setStatusSelectedPolygon(newVersion?.status ?? "");
       setIsLoadingDropdown(false);
-      displayNotification("New version created successfully", "success", "Success!");
+      openNotification("success", "Success!", "New version created successfully");
     } catch (error) {
-      displayNotification("Error creating new version", "error", "Error!");
+      openNotification("error", "Error!", "Error creating new version");
     }
   };
 
@@ -220,7 +221,7 @@ const VersionHistory = ({
       setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "" });
       return;
     }
-    displayNotification("Polygon version is already active", "warning", "Warning!");
+    openNotification("warning", "Warning!", "Polygon version is already active");
   };
 
   const deletePolygonVersion = async () => {
@@ -260,7 +261,7 @@ const VersionHistory = ({
         content="Create a new polygon version."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={setFiles}
         allowMultiple={false}
       />
@@ -296,7 +297,7 @@ const VersionHistory = ({
                   className="flex cursor-pointer items-center gap-1 text-blue hover:opacity-50"
                   onClick={createNewVersion}
                 >
-                  <button className="border-1 border-blue-500 flex items-center justify-center rounded-md bg-blue text-white">
+                  <button className="border-blue-500 border-1 flex items-center justify-center rounded-md bg-blue text-white">
                     <Icon name={IconNames.PLUS_PA} className="h-2.5 w-2.5 lg:h-2.5 lg:w-2.5" />
                   </button>
                   <Text variant="text-12" className="flex-[2]">
