@@ -5,11 +5,11 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 
 import Text from "../Text/Text";
-import useAlertHook from "./hooks/useAlertHook";
 import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 const dropdownOptionsRestoration = [
@@ -100,7 +100,8 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
   const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   useEffect(() => {
     if (sitePolygonData) {
       setPolygonData(sitePolygonData?.site_polygon);
@@ -167,10 +168,10 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
             onSuccess: () => {
               setShouldRefetchPolygonData(true);
               setEditPolygon({ isOpen: false, uuid: "", primary_uuid: "" });
-              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+              openNotification("success", t("Success!"), t("Polygon data updated successfully"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+              openNotification("error", t("Error!"), t("Error updating polygon data"));
             }
           }
         );

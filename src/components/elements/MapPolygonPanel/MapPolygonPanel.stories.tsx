@@ -11,6 +11,70 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
+const items = [
+  {
+    uuid: "1",
+    title: "Puerto Princesa Subterranean River National Park Forest Corridor",
+    subtitle: "Created 03/12/21",
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites",
+    isCollapsed: false
+  },
+  {
+    uuid: "2",
+    title: "A medium sized project site to see how it looks with 2 lines",
+    subtitle: "Created 03/12/21",
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites",
+    isCollapsed: false
+  },
+  {
+    uuid: "3",
+    title: "A shorter project site",
+    subtitle: "Created 03/12/21",
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites",
+    isCollapsed: false
+  },
+  {
+    uuid: "4",
+    title:
+      "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
+    subtitle: "Created 03/12/21",
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites",
+    isCollapsed: false
+  },
+  {
+    uuid: "5",
+    title: "A shorter project site",
+    subtitle: "Created 03/12/21",
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites",
+    isCollapsed: false
+  },
+  {
+    uuid: "6",
+    title: "A shorter project site",
+    subtitle: "Created 03/12/21",
+    status: "success",
+    refContainer: null,
+    setClickedButton: () => {},
+    type: "sites",
+    isCollapsed: false
+  }
+];
+
 export const Default: Story = {
   render: args => {
     const [query] = useState<string>();
@@ -46,61 +110,3 @@ export const OpenPolygonCheck: Story = {
     onSelectItem: console.log
   }
 };
-
-const items = [
-  {
-    uuid: "1",
-    title: "Puerto Princesa Subterranean River National Park Forest Corridor",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    type: "sites"
-  },
-  {
-    uuid: "2",
-    title: "A medium sized project site to see how it looks with 2 lines",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    type: "sites"
-  },
-  {
-    uuid: "3",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    type: "sites"
-  },
-  {
-    uuid: "4",
-    title:
-      "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    type: "sites"
-  },
-  {
-    uuid: "5",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    type: "sites"
-  },
-  {
-    uuid: "6",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    type: "sites"
-  }
-];
