@@ -36,12 +36,6 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           <PageCard title={t("Site Information")}>
             <LongTextField title={t("Description")}>{site.description}</LongTextField>
             <LongTextField title={t("History")}>{site.history}</LongTextField>
-            <LongTextField frameworksShow={[Framework.PPC]} title={t("Planting Pattern")}>
-              {site.planting_pattern}
-            </LongTextField>
-            <LongTextField title={t("Landscape Community Contribution")}>
-              {site.landscape_community_contribution}
-            </LongTextField>
             <SelectImageListField
               title={t("Restoration Strategy")}
               options={restorationStrategyOptions}
