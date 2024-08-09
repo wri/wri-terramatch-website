@@ -36,12 +36,6 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           <PageCard title={t("Site Information")}>
             <LongTextField title={t("Description")}>{site.description}</LongTextField>
             <LongTextField title={t("History")}>{site.history}</LongTextField>
-            <LongTextField frameworksShow={[Framework.PPC]} title={t("Planting Pattern")}>
-              {site.planting_pattern}
-            </LongTextField>
-            <LongTextField title={t("Landscape Community Contribution")}>
-              {site.landscape_community_contribution}
-            </LongTextField>
             <SelectImageListField
               title={t("Restoration Strategy")}
               options={restorationStrategyOptions}
@@ -90,11 +84,10 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               <TextField label={t("Siting Strategy")} value={site.siting_strategy} />
               <TextField label={t("Siting Strategy Description")} value={site.description_siting_strategy} />
             </ContextCondition>
-            <TextField
-              frameworksShow={[Framework.PPC]}
-              label={t("Mature trees Count")}
-              value={site.aim_number_of_mature_trees}
-            />
+            <ContextCondition frameworksShow={[Framework.PPC]}>
+              <TextField label={t("Planting Pattern")} value={site.planting_pattern} />
+              <TextField label={t("Mature trees Count")} value={site.aim_number_of_mature_trees} />
+            </ContextCondition>
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Paper>
