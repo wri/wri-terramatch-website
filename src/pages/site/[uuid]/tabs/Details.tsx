@@ -36,10 +36,6 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           <PageCard title={t("Site Information")}>
             <LongTextField title={t("Description")}>{site.description}</LongTextField>
             <LongTextField title={t("History")}>{site.history}</LongTextField>
-            <LongTextField title={t("Planting Pattern")}>{site.planting_pattern}</LongTextField>
-            <LongTextField title={t("Landscape Community Contribution")}>
-              {site.landscape_community_contribution}
-            </LongTextField>
             <SelectImageListField
               title={t("Restoration Strategy")}
               options={restorationStrategyOptions}
@@ -55,7 +51,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               className="capitalize"
               title={t("Detailed Intervention Types")}
             >
-              {site.detailed_intervention_types.join(", ").replace(/-/g, " ")}
+              {site.detailed_intervention_types?.join(", ").replace(/-/g, " ")}
             </LongTextField>
             <SelectImageListField
               title={t("Land Tenure Type")}
@@ -88,10 +84,11 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               <TextField label={t("Siting Strategy")} value={site.siting_strategy} />
               <TextField label={t("Siting Strategy Description")} value={site.description_siting_strategy} />
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TextField label={t("Planting Pattern")} value={site.planting_pattern} />
-              <TextField label={t("Mature trees Count")} value={site.aim_number_of_mature_trees} />
-            </ContextCondition>
+            <TextField
+              frameworksShow={[Framework.PPC]}
+              label={t("Mature trees Count")}
+              value={site.aim_number_of_mature_trees}
+            />
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Paper>

@@ -7,12 +7,12 @@ import { Else, If, Then, When } from "react-if";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundValidationPolygon,
@@ -73,28 +73,28 @@ const PolygonDrawer = ({
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
-  const { displayNotification } = useAlertHook();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const { showLoader, hideLoader } = useLoading();
+  const { openNotification } = useNotificationContext();
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
       reloadCriteriaValidation();
       setCheckPolygonValidation(false);
-      displayNotification(
-        t("Please update and re-run if validations fail."),
+      openNotification(
         "success",
-        t("Success! TerraMatch reviewed the polygon")
+        t("Success! TerraMatch reviewed the polygon"),
+        t("Please update and re-run if validations fail.")
       );
       hideLoader();
     },
     onError: () => {
       setCheckPolygonValidation(false);
       hideLoader();
-      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
     }
   });
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;

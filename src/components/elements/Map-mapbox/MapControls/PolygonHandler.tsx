@@ -9,6 +9,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundUploadGeojsonProject,
@@ -18,7 +19,6 @@ import {
 import { FileType, UploadedFile } from "@/types/common";
 
 import Button from "../../Button/Button";
-import useAlertHook from "../../MapPolygonPanel/hooks/useAlertHook";
 
 export const PolygonHandler = () => {
   const t = useT();
@@ -26,9 +26,9 @@ export const PolygonHandler = () => {
   const { setIsUserDrawingEnabled, siteData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
-  const { displayNotification } = useAlertHook();
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
+  const { openNotification } = useNotificationContext();
 
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
@@ -70,7 +70,7 @@ export const PolygonHandler = () => {
       if (uploadPromise) {
         const response = await uploadPromise;
         if (response instanceof Blob) {
-          displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+          openNotification("success", t("Success!"), t("File uploaded successfully"));
           const blob = response;
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
@@ -96,9 +96,9 @@ export const PolygonHandler = () => {
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
       }
     }
     hideLoader();
@@ -148,7 +148,7 @@ export const PolygonHandler = () => {
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={(files: UploadedFile[]) => setFile(files[0])} // Only accept the first file
         allowMultiple={false}
       />
