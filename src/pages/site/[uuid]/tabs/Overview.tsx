@@ -86,6 +86,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
 
@@ -109,6 +110,13 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       setSaveFlags(false);
     }
   }, [files, saveFlags]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      openNotification("error", t("Error uploading file"), t(errorMessage));
+      setErrorMessage(null);
+    }
+  }, [errorMessage]);
 
   const getFileType = (file: UploadedFile) => {
     const fileType = file?.file_name.split(".").pop()?.toLowerCase();
@@ -161,9 +169,9 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        openNotification("error", errorMessage, t("Error uploading file"));
+        openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploadig file"));
+        openNotification("error", t("Error uploadig file"), t("An unknown error occurred"));
       }
     }
   };
@@ -187,6 +195,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
+        maxFileSize={2 * 1024 * 1024}
+        setErrorMessage={setErrorMessage}
         setFile={setFiles}
       ></ModalAdd>
     );
