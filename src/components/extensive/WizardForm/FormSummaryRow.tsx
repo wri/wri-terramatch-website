@@ -16,13 +16,15 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
+import { getPolygonBbox, getSiteBbox, mapPolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
-import { useGetV2SitesSiteBbox, useGetV2SitesSitePolygon } from "@/generated/apiComponents";
-import { EntityName } from "@/types/common";
+import { FORM_POLYGONS } from "@/constants/statuses";
+import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
+import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
@@ -33,6 +35,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   step: FormStepSchema;
   index: number;
   nullText?: string;
+  entity?: Entity;
 }
 
 export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
@@ -46,17 +49,25 @@ export interface FormEntry {
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   const { record } = useShowContext();
-  const siteGeojson = getSitePolygonData(record);
-  const bbox = getSiteBbox(record);
+  const { type, entity } = props;
+  const entityPolygonData = getEntityPolygonData(record, type, entity);
+  let bbox: any;
+  if (type === "sites") {
+    bbox = getSiteBbox(record);
+  } else {
+    bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
+  }
   const mapFunctions = useMap();
-
-  return useMemo<any[]>(() => getFormEntries(props, t, siteGeojson, bbox, mapFunctions), [props, t, siteGeojson, bbox]);
+  return useMemo<any[]>(
+    () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+    [props, t, entityPolygonData, bbox]
+  );
 };
 
 export const getFormEntries = (
-  { step, values, nullText }: GetFormEntriesProps,
+  { step, values, nullText, type }: GetFormEntriesProps,
   t: typeof useT,
-  siteGeojson?: any,
+  entityPolygonData?: any,
   bbox?: any,
   mapFunctions?: any
 ) => {
@@ -98,26 +109,17 @@ export const getFormEntries = (
         outputArr.push({
           title: f.label,
           type: f.type,
-          value:
-            siteGeojson && Object.keys(siteGeojson).length !== 0 ? (
-              <MapContainer
-                polygonsData={siteGeojson}
-                bbox={bbox}
-                className="h-[240px] flex-1"
-                hasControls={false}
-                showPopups
-                showLegend
-                mapFunctions={mapFunctions}
-              />
-            ) : (
-              <MapContainer
-                geojson={values[f.name]}
-                className="h-[240px] flex-1"
-                hasControls={false}
-                showLegend={false}
-                mapFunctions={mapFunctions}
-              />
-            )
+          value: entityPolygonData && Object.keys(entityPolygonData).length !== 0 && (
+            <MapContainer
+              polygonsData={entityPolygonData}
+              bbox={bbox}
+              className="h-[240px] flex-1"
+              hasControls={false}
+              showPopups={type === "sites"}
+              showLegend={type === "sites"}
+              mapFunctions={mapFunctions}
+            />
+          )
         });
         break;
       }
@@ -203,40 +205,35 @@ export const getFormEntries = (
 
   return outputArr;
 };
+const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) => {
+  if (!record && !entity) {
+    return null;
+  }
 
-const getSitePolygonData = (record: any) => {
-  let result = null;
-  if (record) {
+  const uuid = entity?.entityUUID || record?.uuid;
+  const entityType = entity?.entityName || (type as EntityName);
+  if (entityType === "sites") {
     const { data: sitePolygonData } = useGetV2SitesSitePolygon({
       pathParams: {
-        site: record.uuid
+        site: uuid
       }
     });
-    if (sitePolygonData) {
-      result = mapPolygonData(sitePolygonData);
-    }
-  }
-  return result;
-};
-
-const getSiteBbox = (record: any) => {
-  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
-    {
-      pathParams: {
-        site: record?.uuid
+    return sitePolygonData ? mapPolygonData(sitePolygonData) : null;
+  } else if (entityType === "projects" || entityType === "project-pitches") {
+    const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
+      queryParams: {
+        entityType: pluralEntityNameToSingular(entityType) ?? "",
+        uuid: uuid ?? ""
       }
-    },
-    {
-      enabled: record?.uuid != null
-    }
-  );
-  return sitePolygonBbox?.bbox;
-};
+    });
+    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
+  }
 
+  return null;
+};
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
-
   return (
     <Accordion
       variant="secondary"

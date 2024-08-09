@@ -6,6 +6,7 @@ import { Else, If, Then } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -45,6 +46,7 @@ const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
 
   const onDeleteProject = () => {
     openModal(
+      ModalId.CONFIRM_PROJECT_DRAFT_DELETION,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Confirm Project Draft Deletion")}
@@ -55,12 +57,12 @@ const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
           children: t("Yes"),
           onClick: () => {
             deleteProject({ pathParams: { uuid: project.uuid } });
-            closeModal();
+            closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
           }
         }}
         secondaryButtonProps={{
           children: t("No"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION)
         }}
       />
     );

@@ -6,6 +6,7 @@ import * as yup from "yup";
 import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
@@ -60,7 +61,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
   };
 
   const hideModal = () => {
-    closeModal();
+    closeModal(ModalId.INVITE_MONITORING_PSRTNER_MODAL);
     reset();
   };
 

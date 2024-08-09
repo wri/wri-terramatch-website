@@ -5,6 +5,7 @@ import Text from "@/components/elements/Text/Text";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { FormSubmissionRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { Entity } from "@/types/common";
 
 interface ApplicationOverviewProps {
   submissions?: FormSubmissionRead[];
@@ -35,13 +36,15 @@ const ApplicationOverview = ({ submissions }: ApplicationOverviewProps) => {
 
 const Item = ({ submission }: { submission?: FormSubmissionRead }) => {
   const t = useT();
-
-  const formSteps = getCustomFormSteps(submission?.form!, t);
+  const currentPitchEntity: Entity = {
+    entityName: "project-pitches",
+    entityUUID: submission?.project_pitch_uuid ?? ""
+  };
+  const formSteps = getCustomFormSteps(submission?.form!, t, currentPitchEntity);
   const values = normalizedFormDefaultValue(submission?.answers, formSteps);
-
   return (
     <div className="flex flex-col gap-6 bg-white p-8">
-      <FormSummary steps={formSteps} values={values} />
+      <FormSummary steps={formSteps} values={values} entity={currentPitchEntity} />
     </div>
   );
 };

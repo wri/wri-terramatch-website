@@ -76,9 +76,6 @@ exports[`Storyshots Components/Elements/CommentaryBox Default 1`] = `
         className="flex flex-wrap gap-2"
       />
     </div>
-    <div
-      className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
-    />
   </div>
 </div>
 `;

@@ -4,42 +4,20 @@ import { When } from "react-if";
 
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { usePostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
-import Notification from "../../Notification/Notification";
 
 const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSuport: boolean }) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const { editPolygon, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
   const { showLoader, hideLoader } = useLoading();
-  const [notificationStatus, setNotificationStatus] = useState<{
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  }>({
-    open: false,
-    message: "",
-    type: "success",
-    title: "Success!"
-  });
+  const { openNotification } = useNotificationContext();
+
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    setNotificationStatus({
-      open: true,
-      message,
-      type,
-      title
-    });
-    setTimeout(() => {
-      setNotificationStatus({
-        open: false,
-        message: "",
-        type: "success",
-        title: ""
-      });
-    }, 3000);
+    openNotification(type, title, message);
   };
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
@@ -67,7 +45,6 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
 
   return (
     <div className="flex gap-2">
-      <Notification {...notificationStatus} />
       <When condition={viewRequestSuport}>
         <Button
           variant="text"

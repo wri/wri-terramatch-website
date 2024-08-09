@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
 import ConfirmationModal from "@/components/extensive/WizardForm/modals/ConfirmationModal";
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
@@ -24,7 +25,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const router = useRouter();
   const uuid = router.query.id as string;
   const t = useT();
-  const { setModalContent } = useModalContext();
+  const { closeModal, openModal } = useModalContext();
 
   const defaultValues = useNormalizedFormDefaultValue(organization, getSteps(t, uuid));
   const formSteps = getSteps(t, uuid);
@@ -42,8 +43,12 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
       pathParams: { uuid }
     });
 
-    if (res.data.uuid) return setModalContent(<ConfirmationModal />);
-    return setModalContent(<ErrorModal />);
+    if (res.data.uuid) {
+      closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+      return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+    } else {
+      return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+    }
   };
 
   return (

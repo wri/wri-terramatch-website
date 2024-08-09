@@ -7,6 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -48,6 +49,7 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
 
   const onDeleteSite = () => {
     openModal(
+      ModalId.CONFIRM_SITE_DELETION,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Confirm Site Deletion")}
@@ -58,12 +60,12 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
           children: t("Delete"),
           onClick: () => {
             deleteSite({ pathParams: { uuid: site.uuid } });
-            closeModal();
+            closeModal(ModalId.CONFIRM_SITE_DELETION);
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_SITE_DELETION)
         }}
       />
     );

@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2ProjectPitchesUUID } from "@/generated/apiComponents";
 
@@ -19,7 +20,7 @@ const PitchDeleteModal = ({ pitchId, onDelete }: PitchDeleteModalProps) => {
   const { mutateAsync: deletePitch } = useDeleteV2ProjectPitchesUUID({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["v2", "project-pitches"] });
-      closeModal();
+      closeModal(ModalId.PITCH_DELETE_MODAL);
       return onDelete();
     }
   });
@@ -34,7 +35,7 @@ const PitchDeleteModal = ({ pitchId, onDelete }: PitchDeleteModalProps) => {
       }}
       secondaryButtonProps={{
         children: t("Cancel"),
-        onClick: () => closeModal()
+        onClick: () => closeModal(ModalId.PITCH_DELETE_MODAL)
       }}
     />
   );

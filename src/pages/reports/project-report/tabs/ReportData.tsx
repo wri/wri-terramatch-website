@@ -39,7 +39,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
               <LongTextField title={t("Community Engagement Approach")}>{report.local_engagement}</LongTextField>
               <LongTextField title={t("Top 3 Successes")}>{report.top_three_successes}</LongTextField>
-              <LongTextField title={t("Challenges Faced")}>{report.top_three_successes}</LongTextField>
+              <LongTextField title={t("Challenges Faced")}>{report.challenges_faced}</LongTextField>
               <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
               <LongTextField title={t("Maintenance and Monitoring Activities")}>
                 {report.maintenance_and_monitoring_activities}

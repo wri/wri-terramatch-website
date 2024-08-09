@@ -10,6 +10,7 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -44,6 +45,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
 
   const openFormModalHandler = () => {
     openModal(
+      ModalId.FORM_MODAL,
       <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
     );
   };
@@ -55,7 +57,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
       }
       onChange?.([...value, fieldValues]);
       handleCreate?.(fieldValues);
-      closeModal();
+      closeModal(ModalId.FORM_MODAL);
     },
     [generateUuids, value, onChange, handleCreate, closeModal]
   );

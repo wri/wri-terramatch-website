@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 
 import ImageWithPlaceholder from "../ImageWithPlaceholder/ImageWithPlaceholder";
@@ -55,7 +56,7 @@ const ImageGalleryPreviewer: FC<ImageGalleryPreviewerProps> = ({
             height: 32,
             className: "fill-neutral-1000"
           }}
-          onClick={closeModal}
+          onClick={() => closeModal(ModalId.IMAGE_GALLERY_PREVIEWER)}
         />
       </div>
 

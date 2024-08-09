@@ -8,6 +8,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNavbarContext } from "@/context/navbar.provider";
 import { useUserData } from "@/hooks/useUserData";
 
+import { ModalId } from "../Modal/ModalConst";
 import ToolTip from "./Tooltip";
 import WelcomeModal from "./WelcomeModal";
 
@@ -64,7 +65,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
   const handleSkip = useCallback(() => {
     sessionStorage.setItem(TOUR_SKIPPED_STORAGE_KEY, "true");
     setModalInteracted(true);
-    closeModal();
+    closeModal(ModalId.WELCOME_MODAL);
   }, [closeModal, TOUR_SKIPPED_STORAGE_KEY]);
 
   const handleModalConfirm = useCallback(() => {
@@ -73,7 +74,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
     }
     setNavLinksDisabled?.(true);
     setModalInteracted(true);
-    closeModal();
+    closeModal(ModalId.WELCOME_MODAL);
     setTourEnabled(true);
   }, [closeModal, isLg, setIsNavOpen, setNavLinksDisabled]);
 
@@ -82,7 +83,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
       localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
       onDontShowAgain?.();
       setModalInteracted(true);
-      closeModal();
+      closeModal(ModalId.WELCOME_MODAL);
     }
   }, [TOUR_COMPLETED_STORAGE_KEY, closeModal, onDontShowAgain, userData?.id]);
 
@@ -94,6 +95,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
 
       if (hasWelcomeModal && !isSkipped && !isCompleted && !modalInteracted) {
         openModal(
+          ModalId.WELCOME_MODAL,
           <WelcomeModal onSkip={handleSkip} onConfirm={handleModalConfirm} onDontShowAgain={handleDontShowAgain} />,
           true
         );
@@ -113,7 +115,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
 
   return (
     <When condition={tourEnabled}>
-      <Dialog as="div" className="z-20" onClose={closeModal} open>
+      <Dialog as="div" className="z-20" onClose={() => closeModal(ModalId.WELCOME_MODAL)} open>
         <div className="fixed inset-0 z-10 bg-black bg-opacity-25">
           <Joyride
             // Force re-render so tooltip re-focuses on correct place

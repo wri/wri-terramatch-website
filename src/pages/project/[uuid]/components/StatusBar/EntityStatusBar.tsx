@@ -6,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { EntityName, Status } from "@/types/common";
 
@@ -54,6 +55,7 @@ const EntityStatusBar = ({ entityName, entity }: EntityStatusBarProps) => {
     const statusProps = statusPropsMapping?.[entityStatus];
 
     openModal(
+      ModalId.STATUS,
       <Modal
         className="min-w-[500px]"
         iconProps={{ name: statusProps.icon, width: 60, height: 60, className: statusProps.className }}
@@ -66,19 +68,19 @@ const EntityStatusBar = ({ entityName, entity }: EntityStatusBarProps) => {
                 children: t("Provide Feedback"),
                 href: `/entity/${entityName}/edit/${entity.uuid}?mode=provide-feedback-entity`,
                 onClick: () => {
-                  closeModal();
+                  closeModal(ModalId.STATUS);
                 }
               }
             : {
                 children: t("Close"),
-                onClick: closeModal
+                onClick: () => closeModal(ModalId.STATUS)
               }
         }
         secondaryButtonProps={
           needMoreInformation
             ? {
                 children: t("Close"),
-                onClick: closeModal
+                onClick: () => closeModal(ModalId.STATUS)
               }
             : undefined
         }

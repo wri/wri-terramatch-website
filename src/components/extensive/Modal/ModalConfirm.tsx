@@ -101,13 +101,13 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full"
           onClick={() => {
+            onClose();
             if (selectedOption === null && menu?.length > 0) {
               setShowError(true);
               setTimeout(() => setShowError(false), 3000);
               return;
             }
             onConfirm(data, selectedOption ?? [0]);
-            onClose();
           }}
         >
           <Text variant="text-12-bold" className="capitalize">

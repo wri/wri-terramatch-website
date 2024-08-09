@@ -1,18 +1,20 @@
-import React, { Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState } from "react";
+import React, { ReactNode, useContext, useMemo, useState } from "react";
+
+type ModalType = {
+  id: string;
+  content: ReactNode;
+  coverToolbar: boolean;
+};
 
 type ModalContextType = {
-  modalOpen: boolean;
-  modalContent: ReactNode;
-  coverToolbar: boolean;
-  setModalContent: Dispatch<SetStateAction<ReactNode>>;
-  openModal: (content: ReactNode, coverToolbar?: boolean) => void;
-  closeModal: () => void;
+  modals: ModalType[];
+  setModalContent: (id: string, content: ReactNode) => void;
+  openModal: (id: string, content: ReactNode, coverToolbar?: boolean) => void;
+  closeModal: (id: string) => void;
 };
 
 export const ModalContext = React.createContext<ModalContextType>({
-  modalOpen: false,
-  modalContent: undefined,
-  coverToolbar: false,
+  modals: [],
   setModalContent: () => {},
   openModal: () => {},
   closeModal: () => {}
@@ -23,34 +25,30 @@ type ModalProviderProps = {
 };
 
 const ModalProvider = ({ children }: ModalProviderProps) => {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [modalContent, setModalContent] = useState<ReactNode>();
-  const [_coverToolbar, setCoverToolbar] = useState<boolean>(false);
+  const [modals, setModals] = useState<ModalType[]>([]);
 
   /** Opens the modal and sets the content. */
-  const openModal = (content: ReactNode, coverToolbar = false) => {
-    setCoverToolbar(coverToolbar);
-    setModalContent(content);
-    setModalOpen(true);
+  const openModal = (id: string, content: ReactNode, coverToolbar = false) => {
+    setModals(prevModals => [...prevModals, { id, content, coverToolbar }]);
   };
 
   /** Resets and closes the modal. */
-  const closeModal = () => {
-    setModalOpen(false);
+  const closeModal = (id: string) => {
+    setModals(prevModals => prevModals.filter(modal => modal.id !== id));
   };
 
-  // All exported values go here
+  const setModalContent = (id: string, content: ReactNode) => {
+    setModals(prevModals => prevModals.map(modal => (modal.id === id ? { ...modal, content } : modal)));
+  };
+
   const value = useMemo(
     () => ({
-      modalOpen,
-      modalContent,
+      modals,
       setModalContent,
       openModal,
-      closeModal,
-      coverToolbar: _coverToolbar
+      closeModal
     }),
-    // eslint-disable-next-line
-    [modalOpen, modalContent]
+    [modals]
   );
 
   return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;

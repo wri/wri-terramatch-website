@@ -2,6 +2,7 @@ export const DRAFT = "draft";
 export const NEEDS_MORE_INFORMATION = "needs-more-information";
 export const APPROVED = "approved";
 export const SUBMITTED = "submitted";
+export const FORM_POLYGONS = "form-polygons";
 export const STATUSES = [
   {
     label: "Draft",
@@ -18,5 +19,9 @@ export const STATUSES = [
   {
     label: "Approved",
     value: APPROVED
+  },
+  {
+    label: "Form Polygons",
+    value: FORM_POLYGONS
   }
 ];

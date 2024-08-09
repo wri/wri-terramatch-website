@@ -5,12 +5,14 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { useMessageValidators } from "@/hooks/useMessageValidations";
 
 export interface ICriteriaCheckItemProps {
   id: string;
   status: boolean;
   label: string;
   date?: string;
+  extra_info?: string;
 }
 
 export interface ICriteriaCheckProps {
@@ -18,12 +20,13 @@ export interface ICriteriaCheckProps {
   clickedValidation: (value: boolean) => void;
   status: boolean;
 }
+
 const PolygonValidation = (props: ICriteriaCheckProps) => {
   const { clickedValidation, status, menu } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const { getFormatedExtraInfo } = useMessageValidators();
   const formattedDate = (dateObject: Date) => {
     const localDate = new Date(dateObject.getTime() - dateObject.getTimezoneOffset() * 60000);
     return `${localDate.toLocaleTimeString("en-US", {
@@ -71,9 +74,25 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
           </Text>
           <div ref={containerRef} className="flex max-h-[168px] flex-col gap-3 overflow-auto">
             {menu.map(item => (
-              <div key={item.id} className="flex items-center gap-2">
-                <Icon name={item.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS} className="h-4 w-4" />
-                <Text variant="text-14-light">{item.label}</Text>
+              <div key={item.id} className="flex flex-col items-start gap-2">
+                <div className="flex items-center gap-2">
+                  <Icon
+                    name={item.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
+                    className="h-4 w-4"
+                  />
+                  <Text variant="text-14-light">{item.label}</Text>
+                </div>
+                {item.extra_info &&
+                  getFormatedExtraInfo(item.extra_info, item.id).map((info: string) => (
+                    <div className="flex items-start gap-[6px] pl-6" key={info}>
+                      <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
+                        <span className="text-[7px] text-blueCustom-900 opacity-80">&#9679;</span>
+                      </div>
+                      <Text variant="text-10-light" className=" text-blueCustom-900 opacity-80">
+                        {info}
+                      </Text>
+                    </div>
+                  ))}
               </div>
             ))}
           </div>

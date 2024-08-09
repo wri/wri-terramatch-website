@@ -8,14 +8,13 @@ import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchPostV2FileUploadMODELCOLLECTIONUUID,
   PostV2AuditStatusENTITYUUIDRequestBody,
   usePostV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
-
-import Notification from "../Notification/Notification";
 
 export interface CommentaryBoxProps {
   name: string;
@@ -44,10 +43,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
   const onSuccess = async (res: AuditStatusResponse) => {
     const resAuditlog = res as { data: { uuid: string } };
     await Promise.all(files.map(f => processUploadFile(f, resAuditlog.data.uuid)));
-    setShowNotification(true);
-    setTimeout(() => {
-      setShowNotification(false);
-    }, 3000);
+    openNotification("success", "Success!", "Your comment was just added!");
     setComment("");
     setError("");
     setFiles([]);
@@ -62,7 +58,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const { openNotification } = useNotificationContext();
   const [loading, setLoading] = useState<boolean>(false);
 
   const validFileTypes = [
@@ -192,12 +188,6 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
           {loading && <Icon name={IconNames.ELLIPSE_POLYGON} className={"h-6 w-6 animate-spin"} />}
         </Button>
       </When>
-      <Notification
-        title="Success!"
-        message="Your comment was just added!"
-        type="success"
-        open={showNotification}
-      ></Notification>
     </div>
   );
 };

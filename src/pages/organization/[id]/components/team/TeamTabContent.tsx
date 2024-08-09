@@ -5,6 +5,7 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
@@ -45,14 +46,14 @@ const TeamTabContent = () => {
     onSuccess: () => {
       refetchApprovedUsers();
       refetchPendingUsers();
-      closeModal();
+      closeModal(ModalId.CONFIRM_USER);
     }
   });
   const { mutate: rejectUser } = usePutV2OrganisationsRejectUser({
     onSuccess: () => {
       refetchApprovedUsers();
       refetchPendingUsers();
-      closeModal();
+      closeModal(ModalId.CONFIRM_USER);
     }
   });
 
@@ -74,6 +75,7 @@ const TeamTabContent = () => {
           );
 
     return openModal(
+      ModalId.CONFIRM_USER,
       <Modal
         title={title}
         content={content}
@@ -92,7 +94,7 @@ const TeamTabContent = () => {
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: () => closeModal()
+          onClick: () => closeModal(ModalId.CONFIRM_USER)
         }}
       />
     );

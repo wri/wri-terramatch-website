@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
 import ConfirmationModal from "@/components/extensive/WizardForm/modals/ConfirmationModal";
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
@@ -33,8 +34,8 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
       pathParams: { uuid }
     });
 
-    if (res) return setModalContent(<ConfirmationModal />);
-    return setModalContent(<ErrorModal />);
+    if (res) return setModalContent(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+    return setModalContent(ModalId.ERROR_MODAL, <ErrorModal />);
   };
 
   const formSteps = getSteps(t, uuid ?? "");

@@ -7,6 +7,7 @@ import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2UpdateRequestsENTITYUUIDResponse, useDeleteV2UpdateRequestsUUID } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
@@ -56,12 +57,12 @@ const UpdateRequestStatusBar = ({ entityName, entityUUID, updateRequest }: Updat
         children: t("Provide Feedback"),
         href: `/entity/${entityName}/edit/${entityUUID}?mode=provide-feedback-change-request`,
         onClick: () => {
-          closeModal();
+          closeModal(ModalId.CHANGE_REQUEST_STATUS);
         }
       },
       secondaryButtonProps: {
         children: t("Close"),
-        onClick: closeModal
+        onClick: () => closeModal(ModalId.CHANGE_REQUEST_STATUS)
       }
     }
   };
@@ -69,6 +70,7 @@ const UpdateRequestStatusBar = ({ entityName, entityUUID, updateRequest }: Updat
 
   const viewFeedback = () => {
     openModal(
+      ModalId.CHANGE_REQUEST_STATUS,
       <Modal
         iconProps={{ name: statusProps.icon, width: 60, height: 60, className: statusProps.className }}
         title={statusProps.title}
