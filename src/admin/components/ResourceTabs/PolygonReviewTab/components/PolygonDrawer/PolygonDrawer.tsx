@@ -279,6 +279,10 @@ const PolygonDrawer = ({
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
                   refetchPolygonVersions={refetchPolygonVersions}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
+                  setPolygonFromMap={setPolygonFromMap}
+                  setIsLoadingDropdownVersions={setIsLoadingDropdown}
                 />
               )}
             </Accordion>
