@@ -98,7 +98,7 @@ export const PolygonHandler = () => {
         }
         openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploadig file"));
+        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
       }
     }
     hideLoader();
