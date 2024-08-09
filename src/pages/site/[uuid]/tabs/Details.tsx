@@ -84,10 +84,11 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               <TextField label={t("Siting Strategy")} value={site.siting_strategy} />
               <TextField label={t("Siting Strategy Description")} value={site.description_siting_strategy} />
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TextField label={t("Planting Pattern")} value={site.planting_pattern} />
-              <TextField label={t("Mature trees Count")} value={site.aim_number_of_mature_trees} />
-            </ContextCondition>
+            <TextField
+              frameworksShow={[Framework.PPC]}
+              label={t("Mature trees Count")}
+              value={site.aim_number_of_mature_trees}
+            />
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Paper>
