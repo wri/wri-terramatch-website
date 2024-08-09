@@ -138,7 +138,7 @@ const VersionInformation = ({
         }
         openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        openNotification("error", t("Error uploadig file"), t("An unknown error occurred"));
+        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
       }
     }
   };
