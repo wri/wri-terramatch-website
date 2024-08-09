@@ -5,7 +5,6 @@ import AvatarPlaceholder from "public/images/avatar-placeholder.svg";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Menu from "@/components/elements/Menu/Menu";
-import Notification from "@/components/elements/Notification/Notification";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -48,7 +47,7 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
 
   const statusProps = statusMapping[status];
   const { openModal, closeModal } = useModalContext();
-  const { notificationStatus, deletePartner } = useDeleteAssociate("partner", project, refetch);
+  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
 
   const ModalConfirmDeletePartner = (email_address: string) => {
     openModal(
@@ -112,7 +111,6 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
           </Text>
         </div>
       </div>
-      <Notification {...notificationStatus} />
     </>
   );
 };

@@ -14,6 +14,7 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundPolygonGeojsonUuid,
@@ -22,7 +23,6 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
-import useAlertHook from "../MapPolygonPanel/hooks/useAlertHook";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
@@ -132,8 +132,8 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
+  const { openNotification } = useNotificationContext();
   const { isUserDrawingEnabled, selectedPolyVersion, setShouldRefetchPolygonData } = contextMapArea;
-  const { displayNotification } = useAlertHook();
 
   if (!mapFunctions) {
     return null;
@@ -257,10 +257,10 @@ export const MapContainer = ({
           if (response.message == "Geometry updated successfully.") {
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
+            openNotification("success", t("Success"), t("Geometry updated successfully."));
             setShouldRefetchPolygonData(true);
-            displayNotification(t("Geometry updated successfully."), "success", t("Success"));
           } else {
-            displayNotification(t("Please try again later."), "error", t("Error"));
+            openNotification("error", t("Error"), t("Please try again later."));
           }
         }
       }

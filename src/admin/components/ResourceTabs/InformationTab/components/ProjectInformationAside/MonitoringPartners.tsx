@@ -4,7 +4,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useT } from "@transifex/react";
 import { Else, If, Then } from "react-if";
 
-import Notification from "@/components/elements/Notification/Notification";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -19,7 +18,7 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
   });
 
   const { openModal, closeModal } = useModalContext();
-  const { notificationStatus, deletePartner } = useDeleteAssociate("partner", project, refetch);
+  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
 
   const ModalConfirmDeletePartner = (email_address: string) => {
     openModal(
@@ -100,7 +99,6 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
           </If>
         </Stack>
       </Card>
-      <Notification {...notificationStatus} />
     </>
   );
 };
