@@ -161,9 +161,9 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        openNotification("error", errorMessage, t("Error uploading file"));
+        openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploadig file"));
+        openNotification("error", t("Error uploadig file"), t("An unknown error occurred"));
       }
     }
   };
@@ -187,6 +187,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
         acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
+        maxFileSize={2 * 1024 * 1024}
+        setErrorMessage={(message: string) => openNotification("error", t("Error uploading file"), t(message))}
         setFile={setFiles}
       ></ModalAdd>
     );
