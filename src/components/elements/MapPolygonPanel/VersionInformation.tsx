@@ -99,7 +99,7 @@ const VersionInformation = ({
   const uploadFiles = async () => {
     const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
     const uploadPromises = [];
-    const polygonSelectedUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
+    const polygonSelectedUuid = selectedPolyVersion?.uuid ?? polygonDefault?.uuid;
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const formData = new FormData();
@@ -126,6 +126,15 @@ const VersionInformation = ({
     try {
       await Promise.all(uploadPromises);
       await refetchPolygonVersions?.();
+      const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: editPolygon?.primary_uuid as string }
+      })) as SitePolygon[];
+      const polygonActive = polygonVersionData?.find(item => item.is_active);
+      setEditPolygon({
+        isOpen: true,
+        uuid: polygonActive?.poly_id as string,
+        primary_uuid: polygonActive?.primary_uuid
+      });
       displayNotification(t("File uploaded successfully"), "success", t("Success!"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
@@ -197,10 +206,19 @@ const VersionInformation = ({
   };
 
   const createNewVersion = async () => {
-    const polygonUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
+    const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+      pathParams: { uuid: editPolygon.primary_uuid as string }
+    })) as SitePolygon[];
+    const polygonActive = polygonVersionData?.find(item => item.is_active);
+    const polygonUuid = selectedPolyVersion?.uuid ?? polygonActive?.uuid;
     try {
-      await fetchPostV2SitePolygonUuidNewVersion({
+      const newVersion = (await fetchPostV2SitePolygonUuidNewVersion({
         pathParams: { uuid: polygonUuid as string }
+      })) as SitePolygon;
+      setEditPolygon?.({
+        isOpen: true,
+        uuid: newVersion?.poly_id as string,
+        primary_uuid: newVersion?.primary_uuid
       });
       refetchPolygonVersions?.();
       recallEntityData?.();

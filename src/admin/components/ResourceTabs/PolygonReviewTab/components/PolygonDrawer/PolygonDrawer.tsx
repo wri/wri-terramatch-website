@@ -52,6 +52,8 @@ const PolygonDrawer = ({
   isPolygonStatusOpen,
   refresh,
   isOpenPolygonDrawer,
+  setSelectedPolygonToDrawer,
+  selectedPolygonIndex,
   setPolygonFromMap
 }: {
   polygonSelected: string;
@@ -59,6 +61,8 @@ const PolygonDrawer = ({
   refresh?: () => void;
   isOpenPolygonDrawer: boolean;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
+  selectedPolygonIndex?: string;
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
@@ -294,6 +298,8 @@ const PolygonDrawer = ({
                   refetch={refetchPolygonVersions}
                   isLoadingDropdown={isLoadingDropdown}
                   setIsLoadingDropdown={setIsLoadingDropdown}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
                 />
               )}
             </Accordion>

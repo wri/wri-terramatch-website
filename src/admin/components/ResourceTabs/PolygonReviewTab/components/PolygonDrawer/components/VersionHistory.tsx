@@ -38,6 +38,8 @@ const VersionHistory = ({
   refetch,
   isLoadingDropdown,
   setIsLoadingDropdown,
+  setSelectedPolygonToDrawer,
+  selectedPolygonIndex,
   setPolygonFromMap
 }: {
   selectedPolygon: SitePolygon;
@@ -53,6 +55,8 @@ const VersionHistory = ({
   isLoadingDropdown: boolean;
   setIsLoadingDropdown: Dispatch<SetStateAction<boolean>>;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
+  selectedPolygonIndex?: string;
 }) => {
   const t = useT();
   const { displayNotification } = useAlertHook();
@@ -80,6 +84,7 @@ const VersionHistory = ({
   const uploadFiles = async () => {
     const uploadPromises = [];
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    setIsLoadingDropdown(true);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const formData = new FormData();
@@ -104,8 +109,25 @@ const VersionHistory = ({
       }
     }
     try {
+      const polygonSelectedPrimaryUuid = selectPolygonVersion?.primary_uuid ?? selectedPolygon.primary_uuid;
       await Promise.all(uploadPromises);
       await refetch();
+      await refreshSiteData?.();
+      await refreshPolygonList?.();
+      const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: polygonSelectedPrimaryUuid as string }
+      })) as SitePolygon[];
+      const polygonActive = polygonVersionData?.find(item => item.is_active);
+      setSelectedPolygonData(polygonActive);
+      setSelectedPolygonToDrawer?.({
+        id: selectedPolygonIndex as string,
+        status: polygonActive?.status as string,
+        label: polygonActive?.poly_name as string,
+        uuid: polygonActive?.poly_id as string
+      });
+      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
+      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      setIsLoadingDropdown(false);
       displayNotification(t("File uploaded successfully"), "success", t("Success!"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
@@ -152,11 +174,23 @@ const VersionHistory = ({
   const createNewVersion = async () => {
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
     try {
-      await fetchPostV2SitePolygonUuidNewVersion({
+      setIsLoadingDropdown(true);
+      const newVersion = (await fetchPostV2SitePolygonUuidNewVersion({
         pathParams: { uuid: polygonSelectedUuid as string }
+      })) as SitePolygon;
+      await refetch();
+      await refreshSiteData?.();
+      await refreshPolygonList?.();
+      setSelectedPolygonData(newVersion);
+      setSelectedPolygonToDrawer?.({
+        id: selectedPolygonIndex as string,
+        status: newVersion?.status as string,
+        label: newVersion?.poly_name as string,
+        uuid: newVersion?.poly_id as string
       });
-      refetch();
-      refreshSiteData?.();
+      setPolygonFromMap({ isOpen: true, uuid: newVersion?.poly_id ?? "" });
+      setStatusSelectedPolygon(newVersion?.status ?? "");
+      setIsLoadingDropdown(false);
       displayNotification("New version created successfully", "success", "Success!");
     } catch (error) {
       displayNotification("Error creating new version", "error", "Error!");
