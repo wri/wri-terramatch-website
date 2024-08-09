@@ -133,7 +133,13 @@ export const MapContainer = ({
   const { reloadSiteData } = context ?? {};
   const t = useT();
   const { openNotification } = useNotificationContext();
-  const { isUserDrawingEnabled, selectedPolyVersion, setShouldRefetchPolygonData } = contextMapArea;
+  const {
+    isUserDrawingEnabled,
+    selectedPolyVersion,
+    editPolygon: editPolygonSelected,
+    setEditPolygon,
+    setShouldRefetchPolygonData
+  } = contextMapArea;
 
   if (!mapFunctions) {
     return null;
@@ -163,7 +169,15 @@ export const MapContainer = ({
       const currentMap = map.current;
 
       map.current.on("load", () => {
-        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, tooltipType);
+        return addPopupsToMap(
+          currentMap,
+          AdminPopup,
+          setPolygonFromMap,
+          sitePolygonData,
+          tooltipType,
+          editPolygonSelected,
+          setEditPolygon
+        );
       });
     }
   }, [styleLoaded, sitePolygonData]);
