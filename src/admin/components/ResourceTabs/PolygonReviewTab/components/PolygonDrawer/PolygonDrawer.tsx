@@ -214,7 +214,7 @@ const PolygonDrawer = ({
         <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
         <Text variant={"text-20-bold"} className="flex items-center gap-1">
           {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
-          <div className={`h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
+          <div className={`min-h-4 min-w-4 h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
         </Text>
       </div>
       <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
