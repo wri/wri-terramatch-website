@@ -108,7 +108,11 @@ const MapEditPolygonPanel = ({
       </div>
       <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
         <When condition={tabEditPolygon === "Attributes"}>
-          <AttributeInformation handleClose={handleClose} />
+          <AttributeInformation
+            handleClose={handleClose}
+            refetchPolygonVersions={refetchPolygonVersions}
+            recallEntityData={recallEntityData}
+          />
         </When>
         <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
         <When condition={tabEditPolygon === "Version"}>

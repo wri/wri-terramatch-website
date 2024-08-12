@@ -16,6 +16,8 @@ import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
+  fetchGetV2SitePolygonUuidVersions,
+  fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   fetchPutV2TerrafundPolygonUuid,
   GetV2MODELUUIDFilesResponse
@@ -132,7 +134,13 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { isUserDrawingEnabled, selectedPolyVersion, setShouldRefetchPolygonData } = contextMapArea;
+  const {
+    isUserDrawingEnabled,
+    selectedPolyVersion,
+    setShouldRefetchPolygonData,
+    setStatusSelectedPolygon,
+    editPolygon: editPolygonData
+  } = contextMapArea;
   const { displayNotification } = useAlertHook();
 
   if (!mapFunctions) {
@@ -243,22 +251,42 @@ export const MapContainer = ({
     }
   };
 
+  const flyToPolygonBounds = async (poly_id: string) => {
+    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: poly_id } });
+    const bounds: any = bbox.bbox;
+    if (!map.current) {
+      return;
+    }
+    map.current.fitBounds(bounds, {
+      padding: 100,
+      linear: false
+    });
+  };
+
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
       const geojson = draw.current.getAll();
       if (geojson) {
         if (polygonFromMap?.uuid) {
+          onCancelEdit();
           const feature = geojson.features[0];
           const response = await fetchPutV2TerrafundPolygonUuid({
             body: { geometry: JSON.stringify(feature) },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           reloadSiteData?.();
-          if (response.message == "Geometry updated successfully.") {
-            onCancel(polygonsData);
-            addSourcesToLayers(map.current, polygonsData);
+          if (response.message == "Site polygon version created successfully.") {
+            const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
+            const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+              pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+            })) as SitePolygonsDataResponse;
+            const polygonActive = polygonVersionData?.find(item => item.is_active);
             setShouldRefetchPolygonData(true);
-            displayNotification(t("Geometry updated successfully."), "success", t("Success"));
+            setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id ?? editPolygonData?.uuid });
+            setStatusSelectedPolygon?.(polygonActive?.status ?? "");
+            flyToPolygonBounds(polygonActive?.poly_id ?? editPolygonData?.uuid);
+            addSourcesToLayers(map.current, polygonsData);
+            displayNotification(t("Site polygon version created successfully."), "success", t("Success"));
           } else {
             displayNotification(t("Please try again later."), "error", t("Error"));
           }

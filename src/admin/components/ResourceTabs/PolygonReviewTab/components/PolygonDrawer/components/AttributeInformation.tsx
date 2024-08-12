@@ -184,12 +184,7 @@ const AttributeInformation = ({
               await refetchPolygonVersions();
               await sitePolygonRefresh?.();
               await refetch();
-              // const response = (await fetchGetV2SitePolygonUuid({
-              //   pathParams: { uuid: selectedPolygon.uuid as string }
-              // })) as SitePolygon;
-              // setSelectedPolygonData(response);
-              // setStatusSelectedPolygon(response?.status ?? "");
-              // init
+
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primary_uuid as string }
               })) as SitePolygonsDataResponse;
@@ -204,16 +199,15 @@ const AttributeInformation = ({
               setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
               setStatusSelectedPolygon(polygonActive?.status ?? "");
               setIsLoadingDropdownVersions(false);
-              // end
-              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+              displayNotification(t("Polygon version created successfully"), "success", t("Success!"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+              displayNotification(t("Error Polygon version created successfully"), "error", t("Error!"));
             }
           }
         );
       } catch (error) {
-        console.error("Error updating polygon data:", error);
+        console.error("Error creating polygon version:", error);
       }
     }
     const response = (await fetchGetV2SitePolygonUuid({
