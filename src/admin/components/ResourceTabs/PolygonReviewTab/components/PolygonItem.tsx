@@ -3,7 +3,11 @@ import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
@@ -58,9 +62,7 @@ const PolygonItem = ({
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      let isValid = true;
       const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => {
-        isValid = criteria.valid === 1 ? isValid : false;
         return {
           id: criteria.criteria_id,
           date: criteria.latest_created_at,
@@ -70,11 +72,23 @@ const PolygonItem = ({
         };
       });
       setPolygonValidationData(transformedData);
-      setValidationStatus(isValid);
+      setValidationStatus(isValidCriteriaData(criteriaData));
     } else {
       setValidationStatus(undefined);
     }
   }, [criteriaData, setValidationStatus]);
+
+  const isValidCriteriaData = (criteriaData: any) => {
+    if (!criteriaData?.criteria_list?.length) {
+      return true;
+    }
+    return !criteriaData.criteria_list.some(
+      (criteria: any) =>
+        criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
+        criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
+        criteria.valid !== 1
+    );
+  };
 
   return (
     <div
