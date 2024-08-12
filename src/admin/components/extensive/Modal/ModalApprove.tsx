@@ -126,11 +126,11 @@ const ModalApprove: FC<ModalApproveProps> = ({
           <Text variant="text-24-bold">{title}</Text>
         </div>
         <When condition={!!content}>
-          <Text as="div" variant="text-12-light" className="mt-1 mb-4" containHtml>
+          <Text as="div" variant="text-12-light" className="my-1" containHtml>
             {content}
           </Text>
         </When>
-        <Text variant="text-14-bold" className="ml-2">
+        <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
           Select All{" "}
           <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
         </Text>
@@ -176,7 +176,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox
                   name=""
-                  checked={polygonsSelected?.[index]}
+                  checked={!!polygonsSelected?.[index]}
                   disabled={!item.canBeApproved}
                   onClick={() => {
                     setPolygonsSelected(prev => {

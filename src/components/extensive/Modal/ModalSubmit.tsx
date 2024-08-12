@@ -88,15 +88,14 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           <Text variant="text-24-bold">{t(title)}</Text>
         </div>
         <When condition={!!content}>
-          <Text as="div" variant="text-12-light" className="mt-1 mb-4" containHtml>
+          <Text as="div" variant="text-12-light" className="my-1" containHtml>
             {t(content)}
           </Text>
         </When>
-        <Text variant="text-14-bold" className="ml-2">
-          Select All
+        <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
+          Select All{" "}
+          <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
         </Text>
-        <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
-
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
