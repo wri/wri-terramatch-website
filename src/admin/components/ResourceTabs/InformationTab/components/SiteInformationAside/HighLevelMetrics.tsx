@@ -26,6 +26,9 @@ const HighLevelMetrics: FC = () => {
             <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx}>
               <NumberField source="workday_count" emptyText="0" />
             </Labeled>
+            <Labeled label="Workdays Created (Combined - PD View)" sx={inlineLabelSx}>
+              <NumberField source="combined_workday_count" emptyText="0" />
+            </Labeled>
           </ContextCondition>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx} className="label-field-aside">
             <NumberField source="trees_planted_count" emptyText="0" />
