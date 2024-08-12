@@ -54,7 +54,29 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
       title: t("More info requested")
     }
   ] as Option[];
-
+export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) =>
+  [
+    {
+      value: "no-polygons",
+      title: t("No polygons")
+    },
+    {
+      value: "approved",
+      title: t("Approved Polygons")
+    },
+    {
+      value: "submitted",
+      title: t("Submitted Polygons")
+    },
+    {
+      value: "needs-more-information",
+      title: t("Needs More Information Polygons")
+    },
+    {
+      value: "draft",
+      title: t("Draft Polygons")
+    }
+  ] as Option[];
 export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
