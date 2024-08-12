@@ -98,7 +98,7 @@ const SignUpPage = ({
     });
   };
 
-  return <SignUpForm form={form} handleSave={handleSave} loading={isLoading} role={role as string} />;
+  return <SignUpForm form={form} handleSave={handleSave} loading={isLoading} role={role} />;
 };
 
 export default SignUpPage;
