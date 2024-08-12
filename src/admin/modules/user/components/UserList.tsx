@@ -26,7 +26,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
-import { userTypesChoices } from "../const";
+import { userPrimaryRoleChoices } from "../const";
 
 const filters = [
   <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
@@ -78,7 +78,7 @@ const UserDataGrid = () => {
       </ReferenceField>
       <TextField source="email_address" label="Email" />
       <BooleanField source="verified" label="Verified" sortBy="email_address_verified_at" />
-      <SelectField source="user_type" label="Type" choices={userTypesChoices} />
+      <SelectField source="role" label="Type" choices={userPrimaryRoleChoices} />
       <DateField source="last_logged_in_at" label="Last Login" locales="en-GB" />
       <DateField source="created_at" label="Date Added" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
