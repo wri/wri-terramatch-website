@@ -200,7 +200,7 @@ const VersionHistory = ({
 
   const polygonVersionData = (data as SitePolygonsDataResponse)?.map(item => {
     return {
-      title: item.poly_name as string,
+      title: (item?.version_name ?? item.poly_name) as string,
       value: item.uuid as string
     };
   });
