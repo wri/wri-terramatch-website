@@ -17,7 +17,7 @@ const ChecklistErrorsInformation = ({ polygonValidationData }: ChecklistErrorsIn
   const { getFormatedExtraInfo } = useMessageValidators();
 
   return (
-    <div className="mt-3 grid gap-3">
+    <div className="mt-2 grid gap-[6px]">
       {polygonValidationData.map(item => (
         <When condition={!item.status} key={item.id}>
           <Text variant="text-14-light" className="flex items-center gap-2">
