@@ -97,7 +97,17 @@ const ModalApprove: FC<ModalApproveProps> = ({
       })
     );
   }, [polygonList, polygonsCriteriaData]);
-
+  const handleSelectAll = (isChecked: boolean) => {
+    if (displayedPolygons) {
+      const newSelected = displayedPolygons.map((polygon, index) => {
+        if (isChecked) {
+          return polygonsSelected[index] || polygon.canBeApproved;
+        }
+        return false;
+      });
+      setPolygonsSelected(newSelected as boolean[]);
+    }
+  };
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -120,6 +130,11 @@ const ModalApprove: FC<ModalApproveProps> = ({
             {content}
           </Text>
         </When>
+        <Text variant="text-14-bold" className="ml-2">
+          Select All{" "}
+          <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
+        </Text>
+
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
