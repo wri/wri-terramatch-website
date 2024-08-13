@@ -20,8 +20,8 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  fetchPutV2TerrafundPolygonUuid,
-  GetV2MODELUUIDFilesResponse
+  GetV2MODELUUIDFilesResponse,
+  usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -274,6 +274,8 @@ export const MapContainer = ({
     });
   };
 
+  const { mutate, status: statusToRequest } = usePutV2TerrafundPolygonUuid();
+
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
       const geojson = draw.current.getAll();
@@ -281,13 +283,13 @@ export const MapContainer = ({
         if (polygonFromMap?.uuid) {
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
-          const response = await fetchPutV2TerrafundPolygonUuid({
+          await mutate({
             body: { geometry: JSON.stringify(feature) },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
-          reloadSiteData?.();
+          await reloadSiteData?.();
 
-          if (response.status == 200 || response.status == 201) {
+          if (statusToRequest == "success") {
             if (!pdView) {
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({

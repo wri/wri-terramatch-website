@@ -32306,7 +32306,6 @@ export type PutV2TerrafundPolygonUuidResponse = {
    */
   geometry?: Record<string, any>;
   uuid?: string;
-  status?: number;
 };
 
 export type PutV2TerrafundPolygonUuidRequestBody = {
