@@ -282,18 +282,12 @@ export const MapContainer = ({
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
           const response = await fetchPutV2TerrafundPolygonUuid({
-            body: {
-              geometry: JSON.stringify(feature),
-              // @ts-ignore
-              adminUpdate: pdView ? false : true
-            },
+            body: { geometry: JSON.stringify(feature) },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           reloadSiteData?.();
-          if (
-            response.message == "Site polygon version created successfully." ||
-            response.message == "Geometry updated successfully."
-          ) {
+
+          if (response.status == 200 || response.status == 201) {
             if (!pdView) {
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
