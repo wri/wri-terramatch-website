@@ -28,7 +28,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <GoalProgressCard
               frameworksShow={[Framework.PPC]}
               label={t("Workday Count (PPC)")}
-              value={site.self_reported_workday_count}
+              value={site.combined_workday_count}
               className="w-[170px]"
             />
             <GoalProgressCard
