@@ -1,14 +1,5 @@
 import { getCountriesOptions } from "@/constants/options/countries";
 
-export const userTypesChoices = [
-  { name: "Admin", id: "admin" },
-  { name: "User", id: "user" },
-  { name: "Project Developer", id: "project-developer" },
-  { name: "Project Manager", id: "project-manager" },
-  { name: "Funder", id: "funder" },
-  { name: "government", id: "government" }
-];
-
 export const userPrimaryRoleChoices = [
   {
     id: "admin-ppc",
