@@ -204,7 +204,7 @@ const AttributeInformation = ({
               openNotification("success", t("Success!"), t("Polygon version created successfully"));
             },
             onError: error => {
-              openNotification("error", t("Error!"), t("Error updating polygon data"));
+              openNotification("error", t("Error!"), t("Error creating polygon version"));
             }
           }
         );
