@@ -3,18 +3,15 @@ import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import {
-  COMPLETED_DATA_CRITERIA_ID,
-  ESTIMATED_AREA_CRITERIA_ID,
-  ICriteriaCheckItem
-} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
+import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -43,9 +40,10 @@ const PolygonItem = ({
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
+  const { shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
+  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
         uuid: uuid
@@ -57,38 +55,22 @@ const PolygonItem = ({
   );
 
   useEffect(() => {
+    refetch();
+    setShouldRefetchValidation(false);
+  }, [shouldRefetchValidation]);
+
+  useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => {
-        return {
-          id: criteria.criteria_id,
-          date: criteria.latest_created_at,
-          status: criteria.valid === 1,
-          label: validationLabels[criteria.criteria_id],
-          extra_info: criteria.extra_info
-        };
-      });
-      setPolygonValidationData(transformedData);
+      setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(isValidCriteriaData(criteriaData));
     } else {
       setValidationStatus(undefined);
     }
   }, [criteriaData, setValidationStatus]);
-
-  const isValidCriteriaData = (criteriaData: any) => {
-    if (!criteriaData?.criteria_list?.length) {
-      return true;
-    }
-    return !criteriaData.criteria_list.some(
-      (criteria: any) =>
-        criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
-        criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
-        criteria.valid !== 1
-    );
-  };
 
   return (
     <div

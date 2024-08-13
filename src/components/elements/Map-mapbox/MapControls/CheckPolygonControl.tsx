@@ -9,6 +9,7 @@ import {
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useLoading } from "@/context/loaderAdmin.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundValidationSite, usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
@@ -47,6 +48,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const { showLoader, hideLoader } = useLoading();
+  const { setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
@@ -70,6 +72,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       reloadSitePolygonValidation();
       setClickedValidation(false);
       hideLoader();
+      setShouldRefetchValidation(true);
       displayNotification(
         t("Please update and re-run if any polygons fail."),
         "success",
