@@ -14059,6 +14059,62 @@ export const useDeleteV2OrganisationsRetractMyDraft = (
   );
 };
 
+export type GetV2OrganisationsHasPendingApplicationError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2OrganisationsHasPendingApplicationResponse = {
+  has_pending_application?: boolean;
+  message?: string;
+  organisation_name?: string;
+  user_status?: string;
+  organisation_status?: string;
+  organisation_uuid?: string;
+};
+
+export type GetV2OrganisationsHasPendingApplicationVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2OrganisationsHasPendingApplication = (
+  variables: GetV2OrganisationsHasPendingApplicationVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2OrganisationsHasPendingApplicationResponse,
+    GetV2OrganisationsHasPendingApplicationError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/v2/organisations/has-pending-application", method: "get", ...variables, signal });
+
+export const useGetV2OrganisationsHasPendingApplication = <TData = GetV2OrganisationsHasPendingApplicationResponse>(
+  variables: GetV2OrganisationsHasPendingApplicationVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2OrganisationsHasPendingApplicationResponse,
+      GetV2OrganisationsHasPendingApplicationError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2OrganisationsHasPendingApplicationResponse,
+    GetV2OrganisationsHasPendingApplicationError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/organisations/has-pending-application",
+      operationId: "getV2OrganisationsHasPendingApplication",
+      variables
+    }),
+    ({ signal }) => fetchGetV2OrganisationsHasPendingApplication({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2AdminUsersQueryParams = {
   /**
    * search term to use on the collection
@@ -35001,6 +35057,11 @@ export type QueryOperation =
       path: "/v2/organisations/approved-users/{UUID}";
       operationId: "getV2OrganisationsApprovedUsersUUID";
       variables: GetV2OrganisationsApprovedUsersUUIDVariables;
+    }
+  | {
+      path: "/v2/organisations/has-pending-application";
+      operationId: "getV2OrganisationsHasPendingApplication";
+      variables: GetV2OrganisationsHasPendingApplicationVariables;
     }
   | {
       path: "/v2/admin/users";

@@ -2,8 +2,8 @@ import * as Sentry from "@sentry/nextjs";
 import { NextRequest } from "next/server";
 
 import { isAdmin, UserRole } from "@/admin/apiProvider/utils/user";
-import { fetchGetAuthMe } from "@/generated/apiComponents";
-import { UserRead } from "@/generated/apiSchemas";
+import { fetchGetAuthMe, fetchGetV2OrganisationsHasPendingApplication } from "@/generated/apiComponents";
+import { UserPendingOrganisationApplication, UserRead } from "@/generated/apiSchemas";
 import { getMyOrg } from "@/hooks/useMyOrg";
 import { MiddlewareCacheKey, MiddlewareMatcher } from "@/utils/MiddlewareMatcher";
 
@@ -42,6 +42,13 @@ export async function middleware(request: NextRequest) {
           headers: { Authorization: `Bearer ${accessToken}` }
         })) as { data: UserRead };
 
+        const pedingApplicationResponse = (await fetchGetV2OrganisationsHasPendingApplication({
+          headers: { Authorization: `Bearer ${accessToken}` }
+        })) as { data: UserPendingOrganisationApplication };
+
+        console.log("yes", pedingApplicationResponse);
+
+        const pendingApplicationData = pedingApplicationResponse.data;
         const userData = response.data;
 
         matcher.if(
@@ -63,23 +70,50 @@ export async function middleware(request: NextRequest) {
               ?.startWith("/organization/create")
               ?.redirect(`/organization/create/confirm`);
 
-            matcher.when(!myOrg)?.redirect(`/organization/assign`);
-
-            matcher.when(!!myOrg && (!myOrg?.status || myOrg?.status === "draft"))?.redirect(`/organization/create`);
-
+            matcher.when(!myOrg && !pendingApplicationData.has_pending_application)?.redirect(`/organization/assign`);
+            console.log("HERE");
+            console.log(
+              !myOrg &&
+                !!pendingApplicationData.organisation_status &&
+                pendingApplicationData.organisation_status === "draft"
+            );
             matcher
-              .when(!!myOrg && !!myOrg?.users_status && myOrg?.users_status === "requested")
+              .when(
+                !myOrg &&
+                  !!pendingApplicationData.organisation_status &&
+                  pendingApplicationData.organisation_status === "draft"
+              )
+              ?.redirect(`/organization/create`);
+
+            console.log("HERE2");
+            console.log(
+              !myOrg && !!pendingApplicationData?.user_status && pendingApplicationData?.user_status === "requested"
+            );
+            matcher
+              .when(
+                !myOrg && !!pendingApplicationData?.user_status && pendingApplicationData?.user_status === "requested"
+              )
               ?.redirect(`/organization/status/pending`);
 
-            matcher.when(!!myOrg)?.exact("/organization")?.redirect(`/organization/${myOrg?.uuid}`);
+            matcher
+              .when(!myOrg)
+              ?.exact("/organization")
+              ?.redirect(`/organization/${pendingApplicationData.organisation_uuid}`);
 
-            matcher.when(!!myOrg && myOrg?.status === "rejected")?.redirect(`/organization/status/rejected`);
+            matcher
+              .when(!myOrg && pendingApplicationData?.user_status === "rejected")
+              ?.redirect(`/organization/status/rejected`);
 
             matcher.exact("/")?.redirect(`/home`);
 
             matcher.startWith("/auth")?.redirect("/home");
 
-            if (!userIsAdmin && !!myOrg && myOrg.status === "approved" && myOrg?.users_status !== "requested") {
+            if (
+              !userIsAdmin &&
+              !myOrg &&
+              pendingApplicationData.organisation_status === "approved" &&
+              pendingApplicationData.user_status !== "requested"
+            ) {
               //Cache result if user has and approved org
               matcher.next().cache("/home");
             } else {

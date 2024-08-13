@@ -22627,3 +22627,12 @@ export type SitePolygonLoaded = {
   is_present?: boolean;
   version_name?: string;
 };
+
+export type UserPendingOrganisationApplication = {
+  has_pending_application?: boolean;
+  message?: string;
+  organisation_name?: string;
+  user_status?: string;
+  organisation_status?: string;
+  organisation_uuid?: string;
+};

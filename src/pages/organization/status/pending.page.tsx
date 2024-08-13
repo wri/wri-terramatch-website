@@ -5,11 +5,15 @@ import HandsPlantingImage from "public/images/hands-planting.webp";
 import Text from "@/components/elements/Text/Text";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { useMyOrg } from "@/hooks/useMyOrg";
+import { useGetV2OrganisationsHasPendingApplication } from "@/generated/apiComponents";
 
 const OrganizationPendingPage = () => {
   const t = useT();
-  const myOrg = useMyOrg();
+  // const myOrg = useMyOrg();
+  console.log("here is myOrg");
+  const resp = useGetV2OrganisationsHasPendingApplication({});
+
+  console.log(resp);
 
   return (
     <BackgroundLayout>
@@ -23,7 +27,7 @@ const OrganizationPendingPage = () => {
             <Text variant="text-body-1000" className="text-center">
               {t(
                 "You'll receive an email confirmation when your request has been approved. Ask a member of your organization ({organizationName}) to approve your request.",
-                { organizationName: myOrg?.name }
+                { organizationName: "myOrg?.name" }
               )}
             </Text>
           </div>

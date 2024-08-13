@@ -36,8 +36,10 @@ const OrganizationAssignForm = () => {
   // Mutations
   const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
     onSuccess: async () => {
+      console.log("success");
       queryClient.refetchQueries({ queryKey: ["auth", "me"] });
       router.push(`/organization/status/pending`);
+      console.log("redirect");
     }
   });
   // Queries
@@ -76,7 +78,9 @@ const OrganizationAssignForm = () => {
    * Handle Join Organization Button Click
    */
   const handleJoin = async () => {
+    console.log("selectedOrganization", selectedOrganization);
     if (!selectedOrganization?.uuid) return;
+    console.log("before joinOrganisation");
     joinOrganisation({
       body: {
         organisation_uuid: selectedOrganization?.uuid
