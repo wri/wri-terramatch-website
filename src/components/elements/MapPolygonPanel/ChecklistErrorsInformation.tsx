@@ -20,7 +20,7 @@ const ChecklistErrorsInformation = ({ polygonValidationData }: ChecklistErrorsIn
     <div className="mt-2 grid gap-[6px]">
       {polygonValidationData.map(item => (
         <When condition={!item.status} key={item.id}>
-          <Text variant="text-14-light" className="flex items-center gap-2">
+          <Text variant="text-14-light" className="flex items-start gap-2 leading-[normal]">
             <Icon
               name={IconNames.IC_ERROR_PANEL}
               className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
