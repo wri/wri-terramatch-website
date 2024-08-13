@@ -9,6 +9,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuid,
   fetchGetV2SitePolygonUuidVersions,
@@ -26,7 +27,6 @@ import { FileType, UploadedFile } from "@/types/common";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import Text from "../Text/Text";
-import useAlertHook from "./hooks/useAlertHook";
 
 const VersionInformation = ({
   polygonVersionData,
@@ -38,7 +38,8 @@ const VersionInformation = ({
   recallEntityData?: () => void;
 }) => {
   const { openModal, closeModal } = useModalContext();
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   const {
     editPolygon,
     setSelectedPolyVersion,
@@ -61,23 +62,23 @@ const VersionInformation = ({
         uuid: polygonActive?.poly_id as string,
         primary_uuid: polygonActive?.primary_uuid
       });
-      displayNotification(t("Polygon version deleted successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("Polygon version deleted successfully"));
     },
     onError: () => {
-      displayNotification(t("Error deleting polygon version"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error deleting polygon version"));
     }
   });
 
   const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: async () => {
-      displayNotification(t("Polygon version made active successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("Polygon version made active successfully"));
       await refetchPolygonVersions?.();
       setPreviewVersion(false);
       setOpenModalConfirmation(false);
       setSelectedPolyVersion({});
     },
     onError: () => {
-      displayNotification(t("Error making polygon version active"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error making polygon version active"));
     }
   });
 
@@ -99,7 +100,7 @@ const VersionInformation = ({
   const uploadFiles = async () => {
     const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
     const uploadPromises = [];
-    const polygonSelectedUuid = selectedPolyVersion?.uuid ?? polygonDefault?.uuid;
+    const polygonSelectedUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const formData = new FormData();
@@ -135,7 +136,7 @@ const VersionInformation = ({
         uuid: polygonActive?.poly_id as string,
         primary_uuid: polygonActive?.primary_uuid
       });
-      displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
@@ -144,9 +145,9 @@ const VersionInformation = ({
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
       }
     }
   };
@@ -167,7 +168,7 @@ const VersionInformation = ({
         content="Create a new polygon version."
         primaryButtonText="Save"
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={setFiles}
         allowMultiple={false}
       />
@@ -222,9 +223,9 @@ const VersionInformation = ({
       });
       refetchPolygonVersions?.();
       recallEntityData?.();
-      displayNotification(t("New version created successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("New version created successfully"));
     } catch (error) {
-      displayNotification(t("Error creating new version"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error creating new version"));
     }
   };
 
@@ -284,7 +285,7 @@ const VersionInformation = ({
       return;
     }
     await refetchPolygonVersions?.();
-    displayNotification("Polygon version is already active", "warning", "Warning!");
+    openNotification("warning", "Warning!", "Polygon version is already active");
   };
 
   return (
@@ -303,7 +304,7 @@ const VersionInformation = ({
       {polygonVersionData?.map((item: any) => (
         <div key={item.id} className="grid grid-flow-col grid-cols-4 border-b border-[#ffffff1a] py-2 ">
           <Text variant="text-10" className="col-span-1 break-words pr-2 text-white sm:col-span-2">
-            {item.poly_name}
+            {item.version_name ?? item.poly_name}
           </Text>
           <Text variant="text-10" className="text-white">
             {format(new Date(item.created_at), "MMM dd, yy")}

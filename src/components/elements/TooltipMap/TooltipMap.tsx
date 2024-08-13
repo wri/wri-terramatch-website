@@ -110,7 +110,7 @@ const TooltipMap = (props: TooltipMapProps) => {
           <button className="flex items-center justify-center gap-1" onClick={setEditPolygon}>
             <Icon name={IconNames.CLICK} className="h-4 w-4" />
             <Text variant="text-10-light" className="italic text-black">
-              {t("click to see polygon details")}
+              {t("Click to edit polygon")}
             </Text>
           </button>
         </div>

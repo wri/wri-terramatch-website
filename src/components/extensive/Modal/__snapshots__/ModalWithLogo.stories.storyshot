@@ -249,9 +249,6 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
                 </p>
               </span>
             </button>
-            <div
-              className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
-            />
           </div>
         </div>
       </div>

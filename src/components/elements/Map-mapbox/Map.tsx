@@ -14,6 +14,7 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
@@ -24,7 +25,6 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
-import useAlertHook from "../MapPolygonPanel/hooks/useAlertHook";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
@@ -136,9 +136,15 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { isUserDrawingEnabled, selectedPolyVersion, setShouldRefetchPolygonData, setStatusSelectedPolygon } =
-    contextMapArea;
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+  const {
+    isUserDrawingEnabled,
+    selectedPolyVersion,
+    editPolygon: editPolygonSelected,
+    setEditPolygon,
+    setShouldRefetchPolygonData,
+    setStatusSelectedPolygon
+  } = contextMapArea;
 
   if (!mapFunctions) {
     return null;
@@ -168,7 +174,15 @@ export const MapContainer = ({
       const currentMap = map.current;
 
       map.current.on("load", () => {
-        addPopupsToMap(currentMap, AdminPopup, setPolygonFromMap, sitePolygonData, tooltipType);
+        return addPopupsToMap(
+          currentMap,
+          AdminPopup,
+          setPolygonFromMap,
+          sitePolygonData,
+          tooltipType,
+          editPolygonSelected,
+          setEditPolygon
+        );
       });
     }
   }, [styleLoaded, sitePolygonData]);
@@ -293,13 +307,13 @@ export const MapContainer = ({
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
             setShouldRefetchPolygonData(true);
-            displayNotification(
-              pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully."),
+            openNotification(
               "success",
-              t("Success")
+              t("Success"),
+              pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully.")
             );
           } else {
-            displayNotification(t("Please try again later."), "error", t("Error"));
+            openNotification("error", t("Error"), t("Please try again later."));
           }
         }
       }

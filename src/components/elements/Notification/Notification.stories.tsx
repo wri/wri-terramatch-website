@@ -1,18 +1,19 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import Notification, { NotificationProps as Props } from "./Notification";
+import Component, { NotificationProps as Props } from "./Notification";
 
-export default {
+const meta: Meta<typeof Component> = {
   title: "Components/Elements/Notification",
-  component: Notification
-} as Meta;
+  component: Component
+};
 
-type Story = StoryObj<typeof Notification>;
+export default meta;
+type Story = StoryObj<typeof Component>;
 
 export const Success: Story = {
   render: (args: Props) => (
     <div className="p-10">
-      <Notification {...args} />
+      <Component {...args} />
     </div>
   ),
   args: {
@@ -26,7 +27,7 @@ export const Success: Story = {
 export const Error: Story = {
   render: (args: Props) => (
     <div className="p-10">
-      <Notification {...args} />
+      <Component {...args} />
     </div>
   ),
   args: {
@@ -40,7 +41,7 @@ export const Error: Story = {
 export const Warning: Story = {
   render: (args: Props) => (
     <div className="p-10">
-      <Notification {...args} />
+      <Component {...args} />
     </div>
   ),
   args: {
