@@ -119,7 +119,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox
                   name=""
-                  checked={polygonsSelected?.[index]}
+                  checked={!!polygonsSelected?.[index]}
                   onClick={() => {
                     setPolygonsSelected(prev => {
                       const newSelected = [...prev];
