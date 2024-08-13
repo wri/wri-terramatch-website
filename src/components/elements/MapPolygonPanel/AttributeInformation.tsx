@@ -5,12 +5,8 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import {
-  fetchGetV2SitePolygonUuidVersions,
-  useGetV2TerrafundPolygonUuid,
-  usePutV2TerrafundSitePolygonUuid
-} from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
+import { SitePolygon } from "@/generated/apiSchemas";
 
 import Text from "../Text/Text";
 import useAlertHook from "./hooks/useAlertHook";
@@ -80,17 +76,9 @@ const dropdownOptionsTree = [
   }
 ];
 
-const AttributeInformation = ({
-  handleClose,
-  refetchPolygonVersions,
-  recallEntityData
-}: {
-  handleClose: () => void;
-  refetchPolygonVersions?: () => void;
-  recallEntityData?: () => void;
-}) => {
+const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const t = useT();
-  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
+  const { editPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -178,26 +166,15 @@ const AttributeInformation = ({
           {
             onSuccess: async () => {
               setShouldRefetchPolygonData(true);
-              const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-                pathParams: { uuid: polygonData.primary_uuid as string }
-              })) as SitePolygonsDataResponse;
-              const polygonActive = polygonVersionData?.find(item => item.is_active);
-              setEditPolygon({
-                isOpen: false,
-                uuid: polygonActive?.poly_id as string,
-                primary_uuid: polygonActive?.primary_uuid
-              });
-              refetchPolygonVersions?.();
-              recallEntityData?.();
-              displayNotification(t("Polygon version created successfully"), "success", t("Success!"));
+              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
             },
             onError: error => {
-              displayNotification(t("Error creating polygon version"), "error", t("Error!"));
+              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
             }
           }
         );
       } catch (error) {
-        console.error("Error creating polygon version:", error);
+        console.error("Error updating polygon data:", error);
       }
     }
   };

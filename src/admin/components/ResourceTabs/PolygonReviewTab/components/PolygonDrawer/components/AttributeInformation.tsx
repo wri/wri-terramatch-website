@@ -170,7 +170,8 @@ const AttributeInformation = ({
         practice: restorationPracticeToSend,
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
-        num_trees: treesPlanted
+        num_trees: treesPlanted,
+        adminUpdate: true
       };
       try {
         sendSiteData(

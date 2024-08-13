@@ -98,6 +98,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   shouldBboxZoom?: boolean;
   modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
   formMap?: boolean;
+  pdView?: boolean;
 }
 
 export const MapContainer = ({
@@ -124,6 +125,7 @@ export const MapContainer = ({
   polygonsExists = true,
   shouldBboxZoom = true,
   formMap,
+  pdView = false,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -134,13 +136,8 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const {
-    isUserDrawingEnabled,
-    selectedPolyVersion,
-    setShouldRefetchPolygonData,
-    setStatusSelectedPolygon,
-    editPolygon: editPolygonData
-  } = contextMapArea;
+  const { isUserDrawingEnabled, selectedPolyVersion, setShouldRefetchPolygonData, setStatusSelectedPolygon } =
+    contextMapArea;
   const { displayNotification } = useAlertHook();
 
   if (!mapFunctions) {
@@ -268,25 +265,39 @@ export const MapContainer = ({
       const geojson = draw.current.getAll();
       if (geojson) {
         if (polygonFromMap?.uuid) {
-          onCancelEdit();
+          !pdView && onCancelEdit();
           const feature = geojson.features[0];
           const response = await fetchPutV2TerrafundPolygonUuid({
-            body: { geometry: JSON.stringify(feature) },
+            body: {
+              geometry: JSON.stringify(feature),
+              // @ts-ignore
+              adminUpdate: pdView ? false : true
+            },
             pathParams: { uuid: polygonFromMap?.uuid }
           });
           reloadSiteData?.();
-          if (response.message == "Site polygon version created successfully.") {
-            const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
-            const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-              pathParams: { uuid: selectedPolygon?.primary_uuid as string }
-            })) as SitePolygonsDataResponse;
-            const polygonActive = polygonVersionData?.find(item => item.is_active);
-            setShouldRefetchPolygonData(true);
-            setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id ?? editPolygonData?.uuid });
-            setStatusSelectedPolygon?.(polygonActive?.status ?? "");
-            flyToPolygonBounds(polygonActive?.poly_id ?? editPolygonData?.uuid);
+          if (
+            response.message == "Site polygon version created successfully." ||
+            response.message == "Geometry updated successfully."
+          ) {
+            if (!pdView) {
+              const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
+              const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+                pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+              })) as SitePolygonsDataResponse;
+              const polygonActive = polygonVersionData?.find(item => item.is_active);
+              setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
+              setStatusSelectedPolygon?.(polygonActive?.status as string);
+              flyToPolygonBounds(polygonActive?.poly_id as string);
+            }
+            onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
-            displayNotification(t("Site polygon version created successfully."), "success", t("Success"));
+            setShouldRefetchPolygonData(true);
+            displayNotification(
+              pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully."),
+              "success",
+              t("Success")
+            );
           } else {
             displayNotification(t("Please try again later."), "error", t("Error"));
           }

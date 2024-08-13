@@ -212,6 +212,7 @@ const OverviewMapArea = ({
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData?.data}
+        pdView={true}
       />
       <Notification {...polygonNotificationStatus} />
     </>
