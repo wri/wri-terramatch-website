@@ -43,7 +43,7 @@ const AuditLogTable: FC<{
   const columnTitles = isAdmin
     ? ["Date", "User", "Action", "Comments", "Attachments", ""]
     : ["Date", "User", "Action", "Comments", "Attachments"];
-  const gridCold = isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+  const gridColumnSize = isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
   const { openNotification } = useNotificationContext();
   const t = useT();
   const { mutate } = useDeleteV2ENTITYUUIDIDDelete({
@@ -66,7 +66,7 @@ const AuditLogTable: FC<{
   };
   return (
     <>
-      <div className={`grid ${gridCold}`}>
+      <div className={`grid ${gridColumnSize}`}>
         {columnTitles.map(title => (
           <Text key={title} variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
             {title}
@@ -74,7 +74,7 @@ const AuditLogTable: FC<{
         ))}
       </div>
       <div
-        className={`mr-[-7px] grid max-h-[50vh] min-h-[10vh] overflow-auto pr-[7px] ${gridCold}`}
+        className={`mr-[-7px] grid max-h-[50vh] min-h-[10vh] overflow-auto pr-[7px] ${gridColumnSize}`}
         ref={menuOverflowContainerRef}
       >
         {auditLogData?.data?.map((item: AuditStatusResponse, index: number) => (
