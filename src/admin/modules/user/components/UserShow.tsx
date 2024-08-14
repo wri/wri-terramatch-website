@@ -21,7 +21,7 @@ import { UserShowAside } from "./UserShowAside";
 function ManagedProjects() {
   const { isLoading: ctxLoading, record } = useShowContext();
 
-  if (ctxLoading || record.primary_role !== "project-manager") return null;
+  if (ctxLoading || record.role !== "project-manager") return null;
 
   return (
     <Labeled>

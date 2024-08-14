@@ -29,7 +29,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <GoalProgressCard
               frameworksShow={[Framework.PPC]}
               label={t("Workday (PPC)")}
-              value={project.self_reported_workday_count}
+              value={project.combined_workday_count}
             />
             <GoalProgressCard
               frameworksHide={[Framework.PPC]}

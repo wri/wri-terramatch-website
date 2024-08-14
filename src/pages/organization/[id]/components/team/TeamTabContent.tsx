@@ -15,6 +15,7 @@ import {
   usePutV2OrganisationsApproveUser,
   usePutV2OrganisationsRejectUser
 } from "@/generated/apiComponents";
+import { V2PostOrganisationsApproveUserBody } from "@/generated/apiRequestBodies";
 import { UserRead } from "@/generated/apiSchemas";
 
 import TeamMemberCard from "./TeamMemberCard";
@@ -84,9 +85,8 @@ const TeamTabContent = () => {
           onClick: () => {
             const actionBody = {
               organisation_uuid: query.id as string,
-              // @ts-ignore
               user_uuid: user?.uuid
-            };
+            } as V2PostOrganisationsApproveUserBody;
 
             if (type === "approve") approveUser({ body: actionBody });
             else rejectUser({ body: actionBody });

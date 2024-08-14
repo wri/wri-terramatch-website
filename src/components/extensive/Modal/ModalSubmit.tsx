@@ -47,6 +47,20 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
       setPolygonsSelected(polygonList.map(_ => false));
     }
   }, [polygonList]);
+  const handleSelectAll = (isChecked: boolean) => {
+    if (polygonList) {
+      const newSelected = polygonList.map((polygon, index) => {
+        if (isChecked) {
+          return (
+            polygonsSelected[index] ||
+            (polygon.status !== StatusEnum.SUBMITTED && polygon.status !== StatusEnum.APPROVED)
+          );
+        }
+        return false;
+      });
+      setPolygonsSelected(newSelected);
+    }
+  };
 
   return (
     <ModalBaseSubmit {...rest}>
@@ -74,10 +88,14 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           <Text variant="text-24-bold">{t(title)}</Text>
         </div>
         <When condition={!!content}>
-          <Text as="div" variant="text-12-light" className="mt-1 mb-4" containHtml>
+          <Text as="div" variant="text-12-light" className="my-1" containHtml>
             {t(content)}
           </Text>
         </When>
+        <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
+          Select All{" "}
+          <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
+        </Text>
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
@@ -101,7 +119,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox
                   name=""
-                  checked={polygonsSelected?.[index]}
+                  checked={!!polygonsSelected?.[index]}
                   onClick={() => {
                     setPolygonsSelected(prev => {
                       const newSelected = [...prev];

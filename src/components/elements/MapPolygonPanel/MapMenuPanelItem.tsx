@@ -12,13 +12,13 @@ import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
+import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import { StatusEnum } from "../Status/constants/statusMap";
 import Status from "../Status/Status";
 import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
-import { validationLabels } from "./ChecklistInformation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -53,12 +53,12 @@ const MapMenuPanelItem = ({
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
+  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
         uuid: poly_id
@@ -70,20 +70,14 @@ const MapMenuPanelItem = ({
   );
 
   useEffect(() => {
+    refetch();
+    setShouldRefetchValidation(false);
+  }, [shouldRefetchValidation]);
+
+  useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      let isValid = true;
-      const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => {
-        isValid = criteria.valid === 1 ? isValid : false;
-        return {
-          id: criteria.criteria_id,
-          date: criteria.latest_created_at,
-          status: criteria.valid === 1,
-          label: validationLabels[criteria.criteria_id],
-          extra_info: criteria.extra_info
-        };
-      });
-      setPolygonValidationData(transformedData);
-      setValidationStatus(isValid);
+      setPolygonValidationData(parseValidationData(criteriaData));
+      setValidationStatus(isValidCriteriaData(criteriaData));
     } else {
       setValidationStatus(undefined);
     }

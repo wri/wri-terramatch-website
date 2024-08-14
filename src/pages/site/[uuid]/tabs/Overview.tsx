@@ -404,7 +404,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                 <GoalProgressCard
                   frameworksShow={[Framework.PPC]}
                   label={t("Workday Count (PPC)")}
-                  value={site.self_reported_workday_count}
+                  value={site.combined_workday_count}
                 />
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
               </div>
