@@ -163,20 +163,23 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
               )}
             />
           </button>
-          <div className="flex min-h-0 grow flex-col gap-2 overflow-auto">
-            {openCollapse &&
-              sitePolygonCheckData.map(polygon => (
-                <div key={polygon.id} className="flex items-center gap-2">
-                  <Icon
-                    name={polygon.valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                    className="h-4 w-4"
-                  />
-                  <Text variant="text-10-light" className="text-white">
+          {openCollapse && (
+            <div className="flex min-h-0 grow flex-col gap-2 overflow-auto">
+              {sitePolygonCheckData.map(polygon => (
+                <div key={polygon.id} className="flex items-start gap-2">
+                  <div>
+                    <Icon
+                      name={polygon.valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
+                      className="h-4 w-4"
+                    />
+                  </div>
+                  <Text variant="text-10-light" className="mt-[2px] w-fit-content leading-tight text-white lg:mt-0">
                     {`${polygon.label ?? t("Unnamed Polygon")} ${polygon.checked ? "" : t("(not checked yet)")}`}
                   </Text>
                 </div>
               ))}
-          </div>
+            </div>
+          )}
         </div>
       </When>
     </div>
