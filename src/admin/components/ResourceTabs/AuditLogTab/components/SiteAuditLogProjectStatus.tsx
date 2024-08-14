@@ -8,9 +8,10 @@ import AuditLogTable from "./AuditLogTable";
 export interface SiteAuditLogProjectStatusProps {
   record?: ProjectLiteRead | null;
   auditLogData?: { data: AuditStatusResponse[] };
+  auditData?: { entity: string; entity_uuid: string };
 }
 
-const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record, auditLogData }) => (
+const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record, auditLogData, auditData }) => (
   <div className="flex flex-col gap-6">
     <div>
       <Text variant="text-24-bold" className="mb-1">
@@ -21,7 +22,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
       </Text>
     </div>
     <Text variant="text-16-bold">History and Discussion for {record && record?.name}</Text>
-    {auditLogData && <AuditLogTable auditLogData={auditLogData} />}
+    {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} />}
   </div>
 );
 

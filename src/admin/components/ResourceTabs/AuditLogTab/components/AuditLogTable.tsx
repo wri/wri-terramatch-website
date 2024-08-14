@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, Fragment, useRef } from "react";
 import { When } from "react-if";
@@ -6,6 +7,8 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useNotificationContext } from "@/context/notification.provider";
+import { useDeleteV2ENTITYUUIDIDDelete } from "@/generated/apiComponents";
 import { AuditStatusResponse, V2FileRead } from "@/generated/apiSchemas";
 
 const formattedTextStatus = (text: string) => {
@@ -29,7 +32,11 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
 const generateUserName = (first_name?: string, last_name?: string): string =>
   `${first_name ?? ""} ${last_name ?? ""}`.trim() || "Unknown User";
 
-const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ auditLogData }) => {
+const AuditLogTable: FC<{
+  auditLogData: { data: AuditStatusResponse[] };
+  auditData?: { entity: string; entity_uuid: string };
+  refresh?: () => void;
+}> = ({ auditLogData, auditData, refresh }) => {
   const menuOverflowContainerRef = useRef(null);
   const route = useRouter();
   const isAdmin = route.asPath.includes("admin");
@@ -37,7 +44,26 @@ const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ 
     ? ["Date", "User", "Action", "Comments", "Attachments", ""]
     : ["Date", "User", "Action", "Comments", "Attachments"];
   const gridCold = isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
-
+  const { openNotification } = useNotificationContext();
+  const t = useT();
+  const { mutate } = useDeleteV2ENTITYUUIDIDDelete({
+    onSuccess() {
+      refresh?.();
+      openNotification("success", "Success!", t("audit log deleted."));
+    },
+    onError: () => {
+      openNotification("error", "Error!", t("An error occurred while deleting the audit log."));
+    }
+  });
+  const deleteAuditStatus = async (id: string) => {
+    await mutate({
+      pathParams: {
+        entity: auditData?.entity as string,
+        uuid: auditData?.entity_uuid as string,
+        id
+      }
+    });
+  };
   return (
     <>
       <div className={`grid ${gridCold}`}>
@@ -92,7 +118,7 @@ const AuditLogTable: FC<{ auditLogData: { data: AuditStatusResponse[] } }> = ({ 
                         <Text
                           variant="text-14-semibold"
                           className="flex items-center"
-                          onClick={() => console.log("clicked")}
+                          onClick={() => deleteAuditStatus((item.uuid ?? item.id) as string)}
                         >
                           <Icon name={IconNames.TRASH} className="h-4 w-4 lg:h-5 lg:w-5" />
                           &nbsp; Delete

@@ -45,7 +45,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     setSelected,
     auditLogData,
     refetch,
-    checkPolygonsSite
+    checkPolygonsSite,
+    auditData
   } = useAuditLogActions({
     record,
     buttonToggle,
@@ -94,7 +95,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 />
               </When>
               <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
-                <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} />
+                <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} auditData={auditData} />
               </When>
               <When condition={buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity}>
                 <SiteAuditLogEntityStatus
@@ -104,6 +105,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   refresh={refetch}
                   buttonToggle={buttonToggle!}
                   verifyEntity={verifyEntity}
+                  auditData={auditData}
                 />
               </When>
             </Stack>
