@@ -21,6 +21,7 @@ import {
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   GetV2MODELUUIDFilesResponse,
+  usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -274,7 +275,8 @@ export const MapContainer = ({
     });
   };
 
-  const { mutate, status: statusToRequest } = usePutV2TerrafundPolygonUuid();
+  const { mutate: putMutate } = usePutV2TerrafundPolygonUuid();
+  const { mutate: postMutate } = usePostV2GeometryUUIDNewVersion();
 
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
@@ -283,14 +285,13 @@ export const MapContainer = ({
         if (polygonFromMap?.uuid) {
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
-          await mutate({
-            body: { geometry: JSON.stringify(feature) },
-            pathParams: { uuid: polygonFromMap?.uuid }
-          });
-          await reloadSiteData?.();
-
-          if (statusToRequest == "success") {
+          try {
             if (!pdView) {
+              await postMutate({
+                body: { geometry: JSON.stringify(feature) as any },
+                pathParams: { uuid: polygonFromMap?.uuid }
+              });
+              await reloadSiteData?.();
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
@@ -299,6 +300,12 @@ export const MapContainer = ({
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
               flyToPolygonBounds(polygonActive?.poly_id as string);
+            } else {
+              await putMutate({
+                body: { geometry: JSON.stringify(feature) },
+                pathParams: { uuid: polygonFromMap?.uuid }
+              });
+              await reloadSiteData?.();
             }
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData);
@@ -308,7 +315,7 @@ export const MapContainer = ({
               t("Success"),
               pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully.")
             );
-          } else {
+          } catch (e) {
             openNotification("error", t("Error"), t("Please try again later."));
           }
         }

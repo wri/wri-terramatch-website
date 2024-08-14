@@ -11,7 +11,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuid,
   fetchGetV2SitePolygonUuidVersions,
-  usePutV2TerrafundSitePolygonUuid
+  usePostV2TerrafundNewSitePolygonUuidNewVersion
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -110,7 +110,7 @@ const AttributeInformation = ({
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
-  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const { mutate: sendSiteData } = usePostV2TerrafundNewSitePolygonUuidNewVersion();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState<boolean>(true);
   const { openNotification } = useNotificationContext();
 
