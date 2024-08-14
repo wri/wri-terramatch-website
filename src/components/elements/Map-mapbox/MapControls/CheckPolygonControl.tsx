@@ -142,6 +142,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         >
           {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
+        <Button
+          variant="text"
+          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+          onClick={() => {}}
+        >
+          {t("Fix Polygons")}
+        </Button>
       </div>
       <When condition={polygonCheck}>
         <div className="relative flex max-h-[300px] w-[231px] flex-col gap-2 rounded-xl p-3">
