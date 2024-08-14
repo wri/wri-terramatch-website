@@ -95,7 +95,12 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 />
               </When>
               <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
-                <SiteAuditLogProjectStatus record={record} auditLogData={auditLogData} auditData={auditData} />
+                <SiteAuditLogProjectStatus
+                  record={record}
+                  auditLogData={auditLogData}
+                  auditData={auditData}
+                  refresh={refetch}
+                />
               </When>
               <When condition={buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity}>
                 <SiteAuditLogEntityStatus

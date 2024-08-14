@@ -9,9 +9,15 @@ export interface SiteAuditLogProjectStatusProps {
   record?: ProjectLiteRead | null;
   auditLogData?: { data: AuditStatusResponse[] };
   auditData?: { entity: string; entity_uuid: string };
+  refresh?: () => void;
 }
 
-const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record, auditLogData, auditData }) => (
+const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
+  record,
+  auditLogData,
+  auditData,
+  refresh
+}) => (
   <div className="flex flex-col gap-6">
     <div>
       <Text variant="text-24-bold" className="mb-1">
@@ -22,7 +28,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({ record,
       </Text>
     </div>
     <Text variant="text-16-bold">History and Discussion for {record && record?.name}</Text>
-    {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} />}
+    {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refresh} />}
   </div>
 );
 
