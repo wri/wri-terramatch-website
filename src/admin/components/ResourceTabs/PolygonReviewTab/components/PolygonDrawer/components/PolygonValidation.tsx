@@ -56,9 +56,18 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
 
   return (
     <div>
-      <Button variant="orange" className="mb-4 px-10" onClick={() => clickedValidation(true)}>
-        Check Polygon
-      </Button>
+      <div className="flex gap-2">
+        <Button variant="orange" className="mb-4 px-10" onClick={() => clickedValidation(true)}>
+          Check Polygon
+        </Button>
+        <Button
+          variant="text"
+          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+          onClick={() => clickedValidation(true)}
+        >
+          Fix Polygon
+        </Button>
+      </div>
       <If condition={status}>
         <Then>
           <div className="mb-1 flex items-center">
