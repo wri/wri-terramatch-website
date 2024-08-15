@@ -6,7 +6,6 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -22,6 +21,7 @@ import {
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
+import { parseValidationData } from "@/helpers/polygonValidation";
 
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
@@ -129,14 +129,7 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
-      const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
-        id: criteria.criteria_id,
-        date: criteria.latest_created_at,
-        status: criteria.valid === 1,
-        label: validationLabels[criteria.criteria_id],
-        extra_info: criteria.extra_info
-      }));
-      setPolygonValidationData(transformedData);
+      setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(true);
     } else {
       setValidationStatus(false);

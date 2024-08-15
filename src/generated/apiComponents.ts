@@ -34335,6 +34335,46 @@ export const usePutV2ENTITYUUIDStatus = (
   );
 };
 
+export type DeleteV2ENTITYUUIDIDDeletePathParams = {
+  /**
+   * allowed values project/site/site-polygons
+   */
+  entity: string;
+  uuid: string;
+  /**
+   * allowed values uuid/id
+   */
+  id: string;
+};
+
+export type DeleteV2ENTITYUUIDIDDeleteError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2ENTITYUUIDIDDeleteVariables = {
+  pathParams: DeleteV2ENTITYUUIDIDDeletePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2ENTITYUUIDIDDelete = (variables: DeleteV2ENTITYUUIDIDDeleteVariables, signal?: AbortSignal) =>
+  apiFetch<undefined, DeleteV2ENTITYUUIDIDDeleteError, undefined, {}, {}, DeleteV2ENTITYUUIDIDDeletePathParams>({
+    url: "/v2/{entity}/{uuid}/{id}/delete",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+export const useDeleteV2ENTITYUUIDIDDelete = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2ENTITYUUIDIDDeleteError, DeleteV2ENTITYUUIDIDDeleteVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2ENTITYUUIDIDDeleteError, DeleteV2ENTITYUUIDIDDeleteVariables>(
+    (variables: DeleteV2ENTITYUUIDIDDeleteVariables) =>
+      fetchDeleteV2ENTITYUUIDIDDelete({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2ProjectsUUIDSitePolygonsAllPathParams = {
   uuid: string;
 };
