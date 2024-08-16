@@ -34959,6 +34959,128 @@ export const usePutV2SitePolygonUuidMakeActive = (
   );
 };
 
+export type PostV2TerrafundClipPolygonsPolygonUuidPathParams = {
+  /**
+   * The UUID of the polygon to clip polygons for.
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundClipPolygonsPolygonUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundClipPolygonsPolygonUuidResponse = {
+  updated_polygons?: {
+    uuid?: string;
+    poly_name?: string;
+  }[];
+};
+
+export type PostV2TerrafundClipPolygonsPolygonUuidVariables = {
+  pathParams: PostV2TerrafundClipPolygonsPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
+ */
+export const fetchPostV2TerrafundClipPolygonsPolygonUuid = (
+  variables: PostV2TerrafundClipPolygonsPolygonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundClipPolygonsPolygonUuidResponse,
+    PostV2TerrafundClipPolygonsPolygonUuidError,
+    undefined,
+    {},
+    {},
+    PostV2TerrafundClipPolygonsPolygonUuidPathParams
+  >({ url: "/v2/terrafund/clip-polygons/polygon/{uuid}", method: "post", ...variables, signal });
+
+/**
+ * Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
+ */
+export const usePostV2TerrafundClipPolygonsPolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundClipPolygonsPolygonUuidResponse,
+      PostV2TerrafundClipPolygonsPolygonUuidError,
+      PostV2TerrafundClipPolygonsPolygonUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundClipPolygonsPolygonUuidResponse,
+    PostV2TerrafundClipPolygonsPolygonUuidError,
+    PostV2TerrafundClipPolygonsPolygonUuidVariables
+  >(
+    (variables: PostV2TerrafundClipPolygonsPolygonUuidVariables) =>
+      fetchPostV2TerrafundClipPolygonsPolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundClipPolygonsSiteUuidPathParams = {
+  /**
+   * The UUID of the site to clip polygons for.
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundClipPolygonsSiteUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundClipPolygonsSiteUuidResponse = {
+  updated_polygons?: {
+    uuid?: string;
+    poly_name?: string;
+  }[];
+};
+
+export type PostV2TerrafundClipPolygonsSiteUuidVariables = {
+  pathParams: PostV2TerrafundClipPolygonsSiteUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
+ */
+export const fetchPostV2TerrafundClipPolygonsSiteUuid = (
+  variables: PostV2TerrafundClipPolygonsSiteUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundClipPolygonsSiteUuidResponse,
+    PostV2TerrafundClipPolygonsSiteUuidError,
+    undefined,
+    {},
+    {},
+    PostV2TerrafundClipPolygonsSiteUuidPathParams
+  >({ url: "/v2/terrafund/clip-polygons/site/{uuid}", method: "post", ...variables, signal });
+
+/**
+ * Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
+ */
+export const usePostV2TerrafundClipPolygonsSiteUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundClipPolygonsSiteUuidResponse,
+      PostV2TerrafundClipPolygonsSiteUuidError,
+      PostV2TerrafundClipPolygonsSiteUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundClipPolygonsSiteUuidResponse,
+    PostV2TerrafundClipPolygonsSiteUuidError,
+    PostV2TerrafundClipPolygonsSiteUuidVariables
+  >(
+    (variables: PostV2TerrafundClipPolygonsSiteUuidVariables) =>
+      fetchPostV2TerrafundClipPolygonsSiteUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";

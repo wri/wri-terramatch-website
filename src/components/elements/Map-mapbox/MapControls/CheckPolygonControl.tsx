@@ -5,15 +5,23 @@ import { When } from "react-if";
 
 import {
   COMPLETED_DATA_CRITERIA_ID,
-  ESTIMATED_AREA_CRITERIA_ID
+  ESTIMATED_AREA_CRITERIA_ID,
+  OVERLAPPING_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { useGetV2TerrafundValidationSite, usePostV2TerrafundValidationSitePolygons } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import {
+  useGetV2TerrafundValidationSite,
+  usePostV2TerrafundClipPolygonsSiteUuid,
+  usePostV2TerrafundValidationSitePolygons
+} from "@/generated/apiComponents";
+import { ClippedPolygonsResponse, SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -45,10 +53,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [openCollapse, setOpenCollapse] = useState(false);
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
   const [clickedValidation, setClickedValidation] = useState(false);
+  const [hasOverlaps, setHasOverlaps] = useState(false);
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
+  const sitePolygonRefresh = context?.reloadSiteData;
   const { showLoader, hideLoader } = useLoading();
   const { setShouldRefetchValidation } = useMapAreaContext();
+  const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
@@ -86,6 +97,24 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     }
   });
 
+  const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
+    onSuccess: (data: ClippedPolygonsResponse | undefined) => {
+      if (data) {
+        sitePolygonRefresh?.();
+        const updatedPolygonNames = data.updated_polygons
+          ?.map(p => p.poly_name)
+          .filter(Boolean)
+          .join(", ");
+        openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
+      }
+      closeModal(ModalId.FIX_POLYGONS);
+    },
+    onError: error => {
+      console.error("Error clipping polygons:", error);
+      displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
+    }
+  });
+
   const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
     return currentValidationSite.map((checkedPolygon, index) => {
       const matchingPolygon = Array.isArray(sitePolygonData)
@@ -109,8 +138,54 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     });
   };
 
+  const checkHasOverlaps = (currentValidationSite: CheckedPolygon[]) => {
+    for (const record of currentValidationSite) {
+      for (const criteria of record.nonValidCriteria) {
+        if (criteria.criteria_id === OVERLAPPING_CRITERIA_ID && criteria.valid === 0) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  const runFixPolygonOverlaps = () => {
+    if (siteUuid) {
+      clipPolygons({ pathParams: { uuid: siteUuid } });
+    } else {
+      displayNotification(t("Cannot fix polygons: Site UUID is missing."), "error", t("Error"));
+    }
+  };
+
+  const openFormModalHandlerSubmitPolygon = () => {
+    openModal(
+      ModalId.FIX_POLYGONS,
+      <ModalFixOverlaps
+        title="Fix Polygons"
+        site={siteRecord}
+        onClose={() => closeModal(ModalId.FIX_POLYGONS)}
+        content="The following polygons have one or more failed criteria, for which an automated solution may be applied. Click 'Fix Polygons' to correct the issue as a new version."
+        primaryButtonText="Fix Polygons"
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            runFixPolygonOverlaps();
+          }
+        }}
+        secondaryButtonText="Cancel"
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => closeModal(ModalId.FIX_POLYGONS)
+        }}
+      />
+    );
+  };
+
   useEffect(() => {
     if (currentValidationSite) {
+      setHasOverlaps(checkHasOverlaps(currentValidationSite));
       const transformedData = getTransformedData(currentValidationSite);
       setSitePolygonCheckData(transformedData);
     }
@@ -142,13 +217,15 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         >
           {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
-        <Button
-          variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
-          onClick={() => {}}
-        >
-          {t("Fix Polygons")}
-        </Button>
+        <When condition={hasOverlaps}>
+          <Button
+            variant="text"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            onClick={openFormModalHandlerSubmitPolygon}
+          >
+            {t("Fix Polygons")}
+          </Button>
+        </When>
       </div>
       <When condition={polygonCheck}>
         <div className="relative flex max-h-[300px] w-[231px] flex-col gap-2 rounded-xl p-3">

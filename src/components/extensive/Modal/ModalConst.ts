@@ -3,6 +3,7 @@ export const ModalId = {
   ADD_POLYGONS: "addPolygons",
   REPLACEMENT_POLYGONS: "replacementPolygons",
   IDENTIFIED_POLYGONS: "identifiedPolygons",
+  FIX_POLYGONS: "fixPolygons",
   APPLICATION_CLOSED: "ApplicationClosed",
   APPROVE_POLYGONS: "ApprovePolygons",
   CHANGE_REQUEST: "Change Request",

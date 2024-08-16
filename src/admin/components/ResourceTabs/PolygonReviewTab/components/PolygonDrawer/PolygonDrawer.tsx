@@ -14,13 +14,15 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
+  fetchGetV2SitePolygonUuidVersions,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   useGetV2SitePolygonUuidVersions,
   useGetV2TerrafundValidationCriteriaData,
+  usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import { ClippedPolygonsResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
 
 import CommentarySection from "../CommentarySection/CommentarySection";
@@ -46,6 +48,7 @@ export interface ICriteriaCheckItem {
 
 export const ESTIMATED_AREA_CRITERIA_ID = 12;
 export const COMPLETED_DATA_CRITERIA_ID = 14;
+export const OVERLAPPING_CRITERIA_ID = 3;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -114,6 +117,38 @@ const PolygonDrawer = ({
       enabled: !!polygonSelected
     }
   );
+
+  const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
+    onSuccess: async (data: ClippedPolygonsResponse) => {
+      const updatedPolygonNames = data.updated_polygons
+        ?.map(p => p.poly_name)
+        .filter(Boolean)
+        .join(", ");
+      openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
+      await refetchPolygonVersions();
+      await sitePolygonRefresh?.();
+      await refresh?.();
+      const response = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+      })) as SitePolygonsDataResponse;
+      const polygonActive = response?.find(item => item.is_active);
+      setSelectedPolygonData(polygonActive);
+      setSelectedPolygonToDrawer?.({
+        id: selectedPolygonIndex as string,
+        status: polygonActive?.status as string,
+        label: polygonActive?.poly_name as string,
+        uuid: polygonActive?.poly_id as string
+      });
+      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
+      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      setIsLoadingDropdown(false);
+      hideLoader();
+    },
+    onError: error => {
+      console.error("Error clipping polygons:", error);
+      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+    }
+  });
 
   useEffect(() => {
     if (checkPolygonValidation) {
@@ -209,6 +244,16 @@ const PolygonDrawer = ({
     }
   }, [selectPolygonVersion]);
 
+  const runFixPolygonOverlaps = () => {
+    if (polygonSelected) {
+      showLoader();
+      clipPolygons({ pathParams: { uuid: polygonSelected } });
+    } else {
+      console.error("Polygon UUID is missing");
+      openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -261,6 +306,7 @@ const PolygonDrawer = ({
               <PolygonValidation
                 menu={polygonValidationData ?? []}
                 clickedValidation={setCheckPolygonValidation}
+                clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
                 status={validationStatus}
               />
             </Accordion>
