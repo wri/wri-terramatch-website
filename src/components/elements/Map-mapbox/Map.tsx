@@ -275,8 +275,8 @@ export const MapContainer = ({
     });
   };
 
-  const { mutate: putMutate } = usePutV2TerrafundPolygonUuid();
-  const { mutate: postMutate } = usePostV2GeometryUUIDNewVersion();
+  const { mutate: updateGeometry } = usePutV2TerrafundPolygonUuid();
+  const { mutate: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
@@ -287,7 +287,7 @@ export const MapContainer = ({
           const feature = geojson.features[0];
           try {
             if (!pdView) {
-              await postMutate({
+              await createGeometry({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
@@ -301,7 +301,7 @@ export const MapContainer = ({
               setStatusSelectedPolygon?.(polygonActive?.status as string);
               flyToPolygonBounds(polygonActive?.poly_id as string);
             } else {
-              await putMutate({
+              await updateGeometry({
                 body: { geometry: JSON.stringify(feature) },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
