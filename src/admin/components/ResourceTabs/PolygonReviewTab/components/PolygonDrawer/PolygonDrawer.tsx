@@ -54,7 +54,8 @@ const PolygonDrawer = ({
   isOpenPolygonDrawer,
   setSelectedPolygonToDrawer,
   selectedPolygonIndex,
-  setPolygonFromMap
+  setPolygonFromMap,
+  polygonFromMap
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
@@ -63,10 +64,10 @@ const PolygonDrawer = ({
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
+  polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
-  const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
@@ -81,6 +82,7 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const { statusSelectedPolygon, setStatusSelectedPolygon } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
 
@@ -188,7 +190,7 @@ const PolygonDrawer = ({
       pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string }
     },
     {
-      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid
+      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid || !!polygonFromMap?.uuid
     }
   );
 
@@ -272,6 +274,10 @@ const PolygonDrawer = ({
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
                   refetchPolygonVersions={refetchPolygonVersions}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
+                  setPolygonFromMap={setPolygonFromMap}
+                  setIsLoadingDropdownVersions={setIsLoadingDropdown}
                 />
               )}
             </Accordion>
@@ -279,6 +285,7 @@ const PolygonDrawer = ({
               {selectedPolygonData && (
                 <VersionHistory
                   setPolygonFromMap={setPolygonFromMap}
+                  polygonFromMap={polygonFromMap}
                   selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
                   setSelectPolygonVersion={setSelectPolygonVersion}
                   selectPolygonVersion={selectPolygonVersion}

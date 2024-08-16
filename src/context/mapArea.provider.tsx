@@ -37,6 +37,8 @@ type MapAreaType = {
   setOpenModalConfirmation: (value: boolean) => void;
   previewVersion: boolean;
   setPreviewVersion: (value: boolean) => void;
+  statusSelectedPolygon: string;
+  setStatusSelectedPolygon: (value: string) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -67,7 +69,9 @@ const defaultValue: MapAreaType = {
   openModalConfirmation: false,
   setOpenModalConfirmation: () => {},
   previewVersion: false,
-  setPreviewVersion: () => {}
+  setPreviewVersion: () => {},
+  statusSelectedPolygon: "",
+  setStatusSelectedPolygon: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -82,6 +86,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [selectedPolyVersion, setSelectedPolyVersion] = useState<SitePolygon | undefined>();
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
+  const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
@@ -137,7 +142,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setOpenModalConfirmation,
     openModalConfirmation,
     previewVersion,
-    setPreviewVersion
+    setPreviewVersion,
+    setStatusSelectedPolygon,
+    statusSelectedPolygon
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

@@ -30684,38 +30684,8 @@ export type PutV2GeometryUUIDResponse = {
   }[];
 };
 
-export type PutV2GeometryUUIDRequestBody = {
-  geometry?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-        est_area?: number;
-      };
-      geometry?: {
-        type?: "Polygon" | "Point";
-        coordinates?: any[];
-      };
-    }[];
-  };
-};
-
 export type PutV2GeometryUUIDVariables = {
-  body?: PutV2GeometryUUIDRequestBody;
+  body?: RequestBodies.PutV2GeometryBody;
   pathParams: PutV2GeometryUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -30723,7 +30693,7 @@ export const fetchPutV2GeometryUUID = (variables: PutV2GeometryUUIDVariables, si
   apiFetch<
     PutV2GeometryUUIDResponse,
     PutV2GeometryUUIDError,
-    PutV2GeometryUUIDRequestBody,
+    RequestBodies.PutV2GeometryBody,
     {},
     {},
     PutV2GeometryUUIDPathParams
@@ -30738,6 +30708,72 @@ export const usePutV2GeometryUUID = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<PutV2GeometryUUIDResponse, PutV2GeometryUUIDError, PutV2GeometryUUIDVariables>(
     (variables: PutV2GeometryUUIDVariables) => fetchPutV2GeometryUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2GeometryUUIDNewVersionPathParams = {
+  uuid: string;
+};
+
+export type PostV2GeometryUUIDNewVersionError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2GeometryUUIDNewVersionResponse = {
+  errors?: {
+    key?:
+      | "OVERLAPPING_POLYGON"
+      | "SELF_INTERSECTION"
+      | "COORDINATE_SYSTEM"
+      | "SIZE_LIMIT"
+      | "WITHIN_COUNTRY"
+      | "SPIKE"
+      | "GEOMETRY_TYPE"
+      | "TOTAL_AREA_EXPECTED"
+      | "TABLE_SCHEMA"
+      | "DATA_COMPLETED";
+    /**
+     * Human readable string in English to describe the error.
+     */
+    message?: string;
+  }[];
+};
+
+export type PostV2GeometryUUIDNewVersionVariables = {
+  body?: RequestBodies.PutV2GeometryBody;
+  pathParams: PostV2GeometryUUIDNewVersionPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2GeometryUUIDNewVersion = (
+  variables: PostV2GeometryUUIDNewVersionVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2GeometryUUIDNewVersionResponse,
+    PostV2GeometryUUIDNewVersionError,
+    RequestBodies.PutV2GeometryBody,
+    {},
+    {},
+    PostV2GeometryUUIDNewVersionPathParams
+  >({ url: "/v2/geometry/{uuid}/new-version", method: "post", ...variables, signal });
+
+export const usePostV2GeometryUUIDNewVersion = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2GeometryUUIDNewVersionResponse,
+      PostV2GeometryUUIDNewVersionError,
+      PostV2GeometryUUIDNewVersionVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2GeometryUUIDNewVersionResponse,
+    PostV2GeometryUUIDNewVersionError,
+    PostV2GeometryUUIDNewVersionVariables
+  >(
+    (variables: PostV2GeometryUUIDNewVersionVariables) =>
+      fetchPostV2GeometryUUIDNewVersion({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -32170,6 +32206,78 @@ export const usePutV2TerrafundSitePolygonUuid = (
   >(
     (variables: PutV2TerrafundSitePolygonUuidVariables) =>
       fetchPutV2TerrafundSitePolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionPathParams = {
+  /**
+   * The UUID of the site polygon
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionVariables = {
+  body?: RequestBodies.Body;
+  pathParams: PostV2TerrafundNewSitePolygonUuidNewVersionPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundNewSitePolygonUuidNewVersion = (
+  variables: PostV2TerrafundNewSitePolygonUuidNewVersionVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundNewSitePolygonUuidNewVersionResponse,
+    PostV2TerrafundNewSitePolygonUuidNewVersionError,
+    RequestBodies.Body,
+    {},
+    {},
+    PostV2TerrafundNewSitePolygonUuidNewVersionPathParams
+  >({ url: "/v2/terrafund/new-site-polygon/{uuid}/new-version", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundNewSitePolygonUuidNewVersion = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundNewSitePolygonUuidNewVersionResponse,
+      PostV2TerrafundNewSitePolygonUuidNewVersionError,
+      PostV2TerrafundNewSitePolygonUuidNewVersionVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundNewSitePolygonUuidNewVersionResponse,
+    PostV2TerrafundNewSitePolygonUuidNewVersionError,
+    PostV2TerrafundNewSitePolygonUuidNewVersionVariables
+  >(
+    (variables: PostV2TerrafundNewSitePolygonUuidNewVersionVariables) =>
+      fetchPostV2TerrafundNewSitePolygonUuidNewVersion({ ...fetcherOptions, ...variables }),
     options
   );
 };

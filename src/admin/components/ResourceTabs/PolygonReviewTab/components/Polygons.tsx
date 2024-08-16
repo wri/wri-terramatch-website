@@ -198,6 +198,7 @@ const Polygons = (props: IPolygonProps) => {
           setSelectedPolygonToDrawer={setSelectedPolygon as any}
           selectedPolygonIndex={selectedPolygon?.id}
           setPolygonFromMap={setPolygonFromMap}
+          polygonFromMap={polygonFromMap}
         />
       </Drawer>
       <div className="mb-4 flex flex-col gap-1">

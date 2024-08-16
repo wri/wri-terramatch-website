@@ -40,7 +40,8 @@ const VersionHistory = ({
   setIsLoadingDropdown,
   setSelectedPolygonToDrawer,
   selectedPolygonIndex,
-  setPolygonFromMap
+  setPolygonFromMap,
+  polygonFromMap
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
@@ -57,6 +58,7 @@ const VersionHistory = ({
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
+  polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -111,6 +113,7 @@ const VersionHistory = ({
     }
     try {
       const polygonSelectedPrimaryUuid = selectPolygonVersion?.primary_uuid ?? selectedPolygon.primary_uuid;
+
       await Promise.all(uploadPromises);
       await refetch();
       await refreshSiteData?.();
@@ -165,6 +168,7 @@ const VersionHistory = ({
       const polygonActive = response?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);
       setStatusSelectedPolygon(polygonActive?.status ?? "");
+      setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
       openNotification("success", "Success!", "Polygon version deleted successfully");
       setIsLoadingDropdown(false);
     },
@@ -176,6 +180,7 @@ const VersionHistory = ({
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
     try {
       setIsLoadingDropdown(true);
+
       const newVersion = (await fetchPostV2SitePolygonUuidNewVersion({
         pathParams: { uuid: polygonSelectedUuid as string }
       })) as SitePolygon;
@@ -284,6 +289,19 @@ const VersionHistory = ({
   const formatStringName = (name: string) => {
     return name.replace(/ /g, "_");
   };
+
+  useEffect(() => {
+    if (polygonFromMap?.uuid) {
+      setIsLoadingDropdown(true);
+      const reloadVersionList = async () => {
+        await refreshPolygonList?.();
+        await refreshSiteData?.();
+        await refetch();
+        setIsLoadingDropdown(false);
+      };
+      reloadVersionList();
+    }
+  }, [polygonFromMap]);
 
   return (
     <div className="flex flex-col gap-4">
