@@ -22627,3 +22627,10 @@ export type SitePolygonLoaded = {
   is_present?: boolean;
   version_name?: string;
 };
+
+export type ClippedPolygonsResponse = {
+  updated_polygons?: {
+    uuid?: string;
+    poly_name?: string;
+  }[];
+};

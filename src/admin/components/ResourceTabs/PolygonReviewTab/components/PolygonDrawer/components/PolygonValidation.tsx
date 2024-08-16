@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Else, If, Then } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
+
+import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
 
 export interface ICriteriaCheckItemProps {
   id: string;
@@ -18,13 +20,15 @@ export interface ICriteriaCheckItemProps {
 export interface ICriteriaCheckProps {
   menu: ICriteriaCheckItemProps[];
   clickedValidation: (value: boolean) => void;
+  clickedRunFixPolygonOverlaps: (value: boolean) => void;
   status: boolean;
 }
 
 const PolygonValidation = (props: ICriteriaCheckProps) => {
-  const { clickedValidation, status, menu } = props;
+  const { clickedValidation, clickedRunFixPolygonOverlaps, status, menu } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
+  const [hasOverlaps, setHasOverlaps] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { getFormatedExtraInfo } = useMessageValidators();
   const formattedDate = (dateObject: Date) => {
@@ -39,8 +43,18 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
     })}`;
   };
 
+  const checkHasOverlaps = (validationCriteriaList: ICriteriaCheckItemProps[]) => {
+    for (const criteria of validationCriteriaList) {
+      if (Number(criteria.id) === OVERLAPPING_CRITERIA_ID && criteria.status === false) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   useEffect(() => {
     if (menu) {
+      setHasOverlaps(checkHasOverlaps(menu));
       const lastValidationDate = menu.reduce((latestDate, record) => {
         const currentDate = record.date ? new Date(record.date) : null;
         return currentDate && currentDate > latestDate ? currentDate : latestDate;
@@ -56,9 +70,20 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
 
   return (
     <div>
-      <Button variant="orange" className="mb-4 px-10" onClick={() => clickedValidation(true)}>
-        Check Polygon
-      </Button>
+      <div className="grid w-[90%] grid-cols-2 gap-2">
+        <Button variant="orange" className="mb-4 flex w-full justify-center" onClick={() => clickedValidation(true)}>
+          Check Polygon
+        </Button>
+        <When condition={hasOverlaps}>
+          <Button
+            variant="orange"
+            className="mb-4 flex w-full justify-center border border-black bg-white text-darkCustom-100 hover:border-primary"
+            onClick={() => clickedRunFixPolygonOverlaps(true)}
+          >
+            <span className=" text-10-bold h-min text-darkCustom-100">Fix Polygon</span>
+          </Button>
+        </When>
+      </div>
       <If condition={status}>
         <Then>
           <div className="mb-1 flex items-center">
