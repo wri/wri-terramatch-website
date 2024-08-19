@@ -216,3 +216,8 @@ export type Entity = {
   entityName: EntityName | SingularEntityName;
   entityUUID: string;
 };
+
+export type OptionInputType = {
+  id: OptionValue;
+  name: string;
+};

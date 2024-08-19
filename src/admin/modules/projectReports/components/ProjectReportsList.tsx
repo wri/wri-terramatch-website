@@ -24,14 +24,14 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
-import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
+import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 const ProjectReportDataGrid: FC = () => {
-  const frameworkChoices = useFrameworkChoices();
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   const tableMenu = [
     {
@@ -69,7 +69,7 @@ const ProjectReportDataGrid: FC = () => {
         source="framework_key"
         label="Framework"
         render={(record: any) =>
-          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
+          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
           record?.framework_key
         }
         sortable={false}
@@ -86,7 +86,7 @@ const ProjectReportDataGrid: FC = () => {
 };
 
 export const ProjectReportsList: FC = () => {
-  const frameworkChoices = useFrameworkChoices();
+  const frameworkInputChoices = useUserFrameworkChoices();
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
@@ -126,12 +126,15 @@ export const ProjectReportsList: FC = () => {
       key="framework_key"
       label="Framework"
       source="framework_key"
-      choices={frameworkChoices}
+      choices={frameworkInputChoices}
       className="select-page-admin"
     />
   ];
 
-  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("project-reports");
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
+    "project-reports",
+    frameworkInputChoices
+  );
 
   return (
     <>
@@ -141,7 +144,7 @@ export const ProjectReportsList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
         <ProjectReportDataGrid />
       </List>
 

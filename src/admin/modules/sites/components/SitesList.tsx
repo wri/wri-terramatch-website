@@ -26,9 +26,9 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
-import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
+import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -63,7 +63,7 @@ const tableMenu = [
 ];
 
 const SiteDataGrid: FC = () => {
-  const frameworkChoices = useFrameworkChoices();
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
@@ -95,7 +95,7 @@ const SiteDataGrid: FC = () => {
         source="framework_key"
         label="Framework"
         render={(record: any) =>
-          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
+          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
           record?.framework_key
         }
         sortable={false}
@@ -108,7 +108,8 @@ const SiteDataGrid: FC = () => {
 };
 
 export const SitesList: FC = () => {
-  const frameworkChoices = useFrameworkChoices();
+  const frameworkInputChoices = useUserFrameworkChoices();
+
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <SelectInput
@@ -146,7 +147,7 @@ export const SitesList: FC = () => {
       key="framework_key"
       label="Framework"
       source="framework_key"
-      choices={frameworkChoices}
+      choices={frameworkInputChoices}
       className="select-page-admin"
     />,
     <SelectInput
@@ -179,7 +180,7 @@ export const SitesList: FC = () => {
     />
   ];
 
-  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("sites");
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("sites", frameworkInputChoices);
 
   return (
     <>
@@ -189,7 +190,7 @@ export const SitesList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
         <SiteDataGrid />
       </List>
 
