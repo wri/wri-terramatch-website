@@ -158,7 +158,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
                     <div className="h-4 w-4">
                       <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
                     </div>
-                    <Text variant="text-10-light">{"Verified"}</Text>
+                    <Text variant="text-10-light">{"Passed"}</Text>
                   </When>
                   <When condition={!item.canBeApproved}>
                     <div className="h-4 w-4">

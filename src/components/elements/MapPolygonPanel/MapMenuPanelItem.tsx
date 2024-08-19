@@ -218,11 +218,9 @@ const MapMenuPanelItem = ({
             <Text variant="text-12-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
               {t(title)}
             </Text>
-            <When condition={validationStatus === false}>
-              <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
-                <Icon name={IconNames.CHEVRON_DOWN_PA} className="h-3 w-3 text-black" />
-              </button>
-            </When>
+            <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
+              <Icon name={IconNames.CHEVRON_DOWN_PA} className="h-3 w-3 text-black" />
+            </button>
 
             <Menu
               className="ml-auto"
