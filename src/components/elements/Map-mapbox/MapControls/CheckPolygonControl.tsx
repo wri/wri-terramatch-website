@@ -58,7 +58,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const { showLoader, hideLoader } = useLoading();
-  const { setShouldRefetchValidation } = useMapAreaContext();
+  const { setShouldRefetchValidation, setShouldRefetchPolygonData } = useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -101,6 +101,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     onSuccess: (data: ClippedPolygonsResponse | undefined) => {
       if (data) {
         sitePolygonRefresh?.();
+        setShouldRefetchPolygonData(true);
         const updatedPolygonNames = data.updated_polygons
           ?.map(p => p.poly_name)
           .filter(Boolean)
