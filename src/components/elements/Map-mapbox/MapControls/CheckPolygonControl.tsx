@@ -58,7 +58,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const { showLoader, hideLoader } = useLoading();
-  const { setShouldRefetchValidation } = useMapAreaContext();
+  const { setShouldRefetchValidation, setShouldRefetchPolygonData } = useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -98,9 +98,16 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   });
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
-    onSuccess: (data: ClippedPolygonsResponse | undefined) => {
+    onSuccess: (data: ClippedPolygonsResponse) => {
+      if (!data.updated_polygons?.length) {
+        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+        hideLoader();
+        closeModal(ModalId.FIX_POLYGONS);
+        return;
+      }
       if (data) {
         sitePolygonRefresh?.();
+        setShouldRefetchPolygonData(true);
         const updatedPolygonNames = data.updated_polygons
           ?.map(p => p.poly_name)
           .filter(Boolean)

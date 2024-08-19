@@ -120,6 +120,11 @@ const PolygonDrawer = ({
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
     onSuccess: async (data: ClippedPolygonsResponse) => {
+      if (!data.updated_polygons?.length) {
+        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+        hideLoader();
+        return;
+      }
       const updatedPolygonNames = data.updated_polygons
         ?.map(p => p.poly_name)
         .filter(Boolean)
