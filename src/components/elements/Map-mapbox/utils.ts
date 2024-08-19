@@ -145,10 +145,16 @@ const handleLayerClick = (
   let popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
+
+  const newPopup = new mapboxgl.Popup({ className: "popup-map" })
+    .setLngLat([lng, lat])
+    .setDOMContent(popupContent)
+    .addTo(map);
+
   root.render(
     createElement(popupComponent, {
       feature,
-      popup,
+      popup: newPopup,
       setPolygonFromMap,
       sitePolygonData,
       type,
@@ -156,10 +162,7 @@ const handleLayerClick = (
       setEditPolygon
     })
   );
-
-  popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
-
-  popupAttachedMap["POLYGON"].push(popup);
+  popupAttachedMap["POLYGON"].push(newPopup);
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
