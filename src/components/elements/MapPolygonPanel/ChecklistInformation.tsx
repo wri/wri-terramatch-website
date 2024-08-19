@@ -5,7 +5,8 @@ import { Else, If, Then } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 
 import Text from "../Text/Text";
@@ -25,13 +26,32 @@ function useRenderCounter() {
   const ref = useRef(0);
   console.log(`Render count: ${++ref.current}`);
 }
-const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCriteriaData }) => {
+const ChecklistInformation = () => {
   useRenderCounter();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
   const t = useT();
   const { getFormatedExtraInfo } = useMessageValidators();
+  const { editPolygon, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
+
+  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: {
+        uuid: editPolygon?.uuid
+      }
+    },
+    {
+      enabled: !!editPolygon?.uuid
+    }
+  );
+
+  useEffect(() => {
+    if (shouldRefetchValidation) {
+      reloadCriteriaValidation();
+      setShouldRefetchValidation(false);
+    }
+  }, [shouldRefetchValidation]);
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
