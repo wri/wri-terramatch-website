@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -28,7 +28,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     previewVersion,
     setPreviewVersion,
     setEditPolygon,
-    setSelectedPolyVersion
+    setSelectedPolyVersion,
+    shouldRefetchPolygonVersions
   } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
 
@@ -72,6 +73,12 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     }
     openNotification("warning", t("Warning!"), t("Polygon version is already active"));
   };
+
+  useEffect(() => {
+    if (shouldRefetchPolygonVersions) {
+      refetchPolygonVersions();
+    }
+  }, [shouldRefetchPolygonVersions]);
 
   const convertText = (text: string) => {
     return text?.replace(/-/g, " ");
