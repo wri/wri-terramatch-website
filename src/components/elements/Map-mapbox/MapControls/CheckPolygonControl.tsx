@@ -98,7 +98,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   });
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
-    onSuccess: (data: ClippedPolygonsResponse | undefined) => {
+    onSuccess: (data: ClippedPolygonsResponse) => {
+      if (!data.updated_polygons?.length) {
+        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+        hideLoader();
+        closeModal(ModalId.FIX_POLYGONS);
+        return;
+      }
       if (data) {
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
