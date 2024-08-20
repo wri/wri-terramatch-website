@@ -339,7 +339,7 @@ const PolygonDrawer = ({
                 />
               )}
             </Accordion>
-            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
               {selectedPolygonData && (
                 <VersionHistory
                   wrapperRef={wrapperRef}
@@ -363,7 +363,7 @@ const PolygonDrawer = ({
               )}
             </Accordion>
             <Divider />
-            <div className="mt-[79px] lg:mt-[95px] wide:mt-[164px]" />
+            <div className="mt-[89px] lg:mt-[104px] wide:mt-[174px]" />
           </div>
         </Else>
       </If>
