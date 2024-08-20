@@ -83,6 +83,7 @@ interface AuditLogActionsResponse {
   auditLogData: { data: GetV2AuditStatusENTITYUUIDResponse } | undefined;
   refetch: () => void;
   isLoading: boolean;
+  auditData: { entity: string; entity_uuid: string };
 }
 
 const useAuditLogActions = ({
@@ -222,7 +223,8 @@ const useAuditLogActions = ({
     checkPolygonsSite: entityHandlers.checkPolygons,
     auditLogData,
     refetch,
-    isLoading
+    isLoading,
+    auditData: { entity: ReverseButtonStates2[buttonToggle!], entity_uuid: entityHandlers.selectedEntityItem?.uuid }
   };
 };
 

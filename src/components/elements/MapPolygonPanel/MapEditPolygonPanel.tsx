@@ -5,7 +5,8 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
+import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 
 import Button from "../Button/Button";
 import Text from "../Text/Text";
@@ -34,12 +35,67 @@ const MapEditPolygonPanel = ({
   polygonData,
   recallEntityData
 }: MapEditPolygonPanelProps) => {
-  const { setEditPolygon, siteData, setSelectedPolyVersion, setOpenModalConfirmation, setPreviewVersion } =
-    useMapAreaContext();
+  const {
+    editPolygon,
+    setEditPolygon,
+    siteData,
+    setSelectedPolyVersion,
+    setOpenModalConfirmation,
+    setPreviewVersion,
+    shouldRefetchValidation,
+    setShouldRefetchValidation,
+    setHasOverlaps
+  } = useMapAreaContext();
   const { onCancel } = mapFunctions;
   useEffect(() => {
     setTabEditPolygon("Attributes");
   }, []);
+  const handleClose = () => {
+    setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
+    setHasOverlaps(false);
+    setOpenModalConfirmation(false);
+    setSelectedPolyVersion({});
+    setPreviewVersion(false);
+    refreshEntity?.();
+    onCancel(polygonData);
+    recallEntityData?.();
+  };
+
+  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: {
+        uuid: editPolygon?.uuid
+      }
+    },
+    {
+      enabled: !!editPolygon?.uuid
+    }
+  );
+
+  const hasOverlaps = (polygonValidation: V2TerrafundCriteriaData) => {
+    if (polygonValidation.criteria_list) {
+      for (const criteria of polygonValidation.criteria_list) {
+        if (criteria.criteria_id === 3 && criteria.valid === 0) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    if (criteriaData) {
+      setHasOverlaps(hasOverlaps(criteriaData));
+    }
+  }, [criteriaData]);
+
+  useEffect(() => {
+    if (shouldRefetchValidation) {
+      reloadCriteriaValidation();
+      setShouldRefetchValidation(false);
+    }
+  }, [shouldRefetchValidation]);
+
   return (
     <>
       <div className="flex items-start justify-between gap-4">
@@ -52,19 +108,7 @@ const MapEditPolygonPanel = ({
           </Text>
         </div>
 
-        <Button
-          variant="text"
-          onClick={() => {
-            setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
-            setOpenModalConfirmation(false);
-            setSelectedPolyVersion({});
-            setPreviewVersion(false);
-            refreshEntity?.();
-            onCancel(polygonData);
-            recallEntityData?.();
-          }}
-          className="text-white hover:text-primary"
-        >
+        <Button variant="text" onClick={handleClose} className="text-white hover:text-primary">
           <Icon name={IconNames.CLEAR} className="h-4 w-4" />
         </Button>
       </div>
@@ -110,8 +154,12 @@ const MapEditPolygonPanel = ({
         </button>
       </div>
       <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
-        <When condition={tabEditPolygon === "Attributes"}>{AttributeInformation}</When>
-        <When condition={tabEditPolygon === "Checklist"}>{ChecklistInformation}</When>
+        <When condition={tabEditPolygon === "Attributes"}>
+          <AttributeInformation handleClose={handleClose} />
+        </When>
+        <When condition={tabEditPolygon === "Checklist"}>
+          <ChecklistInformation criteriaData={criteriaData ?? {}} />
+        </When>
         <When condition={tabEditPolygon === "Version"}>
           <VersionInformation
             polygonVersionData={polygonVersionData as SitePolygon[]}

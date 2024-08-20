@@ -17,16 +17,16 @@ type SignUpFormProps = {
   form: UseFormReturn<SignUpFormData>;
   handleSave: (data: SignUpFormData) => Promise<any>;
   loading?: boolean;
-  primary_role: string;
+  role: string;
 };
 
-const SignUpForm = ({ form, loading, handleSave, primary_role }: SignUpFormProps) => {
+const SignUpForm = ({ form, loading, handleSave, role }: SignUpFormProps) => {
   const t = useT();
   const errors = form.formState.errors;
 
   useEffect(() => {
-    form.setValue("primary_role", "project-developer");
-  }, [primary_role]);
+    form.setValue("role", "project-developer");
+  }, [role]);
 
   return (
     <LoginLayout>

@@ -19,6 +19,10 @@ type MapAreaType = {
   setShouldRefetchPolygonData: (value: boolean) => void;
   shouldRefetchValidation: boolean;
   setShouldRefetchValidation: (value: boolean) => void;
+  shouldRefetchPolygonVersions: boolean;
+  setShouldRefetchPolygonVersions: (value: boolean) => void;
+  hasOverlaps: boolean;
+  setHasOverlaps: (value: boolean) => void;
   polygonNotificationStatus: {
     open: boolean;
     message: string;
@@ -37,6 +41,8 @@ type MapAreaType = {
   setOpenModalConfirmation: (value: boolean) => void;
   previewVersion: boolean;
   setPreviewVersion: (value: boolean) => void;
+  statusSelectedPolygon: string;
+  setStatusSelectedPolygon: (value: string) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -55,6 +61,10 @@ const defaultValue: MapAreaType = {
   setShouldRefetchPolygonData: () => {},
   shouldRefetchValidation: false,
   setShouldRefetchValidation: () => {},
+  shouldRefetchPolygonVersions: false,
+  setShouldRefetchPolygonVersions: () => {},
+  hasOverlaps: false,
+  setHasOverlaps: () => {},
   polygonNotificationStatus: {
     open: false,
     message: "",
@@ -67,7 +77,9 @@ const defaultValue: MapAreaType = {
   openModalConfirmation: false,
   setOpenModalConfirmation: () => {},
   previewVersion: false,
-  setPreviewVersion: () => {}
+  setPreviewVersion: () => {},
+  statusSelectedPolygon: "",
+  setStatusSelectedPolygon: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -79,9 +91,12 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
+  const [shouldRefetchPolygonVersions, setShouldRefetchPolygonVersions] = useState<boolean>(false);
+  const [hasOverlaps, setHasOverlaps] = useState<boolean>(false);
   const [selectedPolyVersion, setSelectedPolyVersion] = useState<SitePolygon | undefined>();
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
+  const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
@@ -130,6 +145,10 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setShouldRefetchPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
+    shouldRefetchPolygonVersions,
+    setShouldRefetchPolygonVersions,
+    hasOverlaps,
+    setHasOverlaps,
     polygonNotificationStatus,
     setpolygonNotificationStatus,
     setSelectedPolyVersion,
@@ -137,7 +156,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setOpenModalConfirmation,
     openModalConfirmation,
     previewVersion,
-    setPreviewVersion
+    setPreviewVersion,
+    setStatusSelectedPolygon,
+    statusSelectedPolygon
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

@@ -1,7 +1,9 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { When } from "react-if";
 
+import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -9,15 +11,19 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
+import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import { StatusEnum } from "../Status/constants/statusMap";
+import Status from "../Status/Status";
+import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   status: string;
   isSelected?: boolean;
   poly_id?: string;
@@ -27,6 +33,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   type: string;
   poly_name?: string;
   primary_uuid?: string;
+  isCollapsed?: boolean;
 }
 
 const MapMenuPanelItem = ({
@@ -34,18 +41,48 @@ const MapMenuPanelItem = ({
   title,
   subtitle,
   status,
+  poly_id = "",
   primary_uuid,
   isSelected,
   setClickedButton,
   className,
   refContainer,
   type,
+  isCollapsed,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
+  const [openCollapse, setOpenCollapse] = useState(false);
+  const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const t = useT();
+  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: {
+        uuid: poly_id
+      }
+    },
+    {
+      enabled: !!poly_id
+    }
+  );
+
+  useEffect(() => {
+    refetch();
+    setShouldRefetchValidation(false);
+  }, [shouldRefetchValidation]);
+
+  useEffect(() => {
+    if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
+      setPolygonValidationData(parseValidationData(criteriaData));
+      setValidationStatus(isValidCriteriaData(criteriaData));
+    } else {
+      setValidationStatus(undefined);
+    }
+  }, [criteriaData, setValidationStatus]);
+
   const openFormModalHandlerConfirm = () => {
     openModal(
       ModalId.CONFIRM_POLYGON_DELETION,
@@ -156,30 +193,37 @@ const MapMenuPanelItem = ({
       : []),
     ...commonItems
   ];
-
   const itemsPrimaryMenu = isMonitoring ? monitoringItems : nonMonitoringItems;
   return (
-    <div>
-      <div
-        {...props}
-        className={classNames(className, " rounded-lg border-2 border-transparent bg-white p-2 hover:border-primary", {
+    <div
+      {...props}
+      className={classNames(
+        className,
+        "flex flex-col rounded-lg border-2 border-transparent bg-white p-2 hover:border-primary",
+        {
           "border-primary-500": isSelected,
           "border-neutral-500 hover:border-neutral-800": !isSelected
-        })}
-      >
-        <div className="flex items-center gap-2">
+        }
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}
-            className="h-11 w-11 rounded-lg bg-neutral-300"
+            className=" h-11 w-11 rounded-lg bg-neutral-300"
           />
-          <div className="flex flex-1 flex-col">
-            <Text variant="text-14-bold" className="">
+        </div>
+        <div className="flex flex-1 flex-col justify-between gap-2 overflow-hidden">
+          <div className="flex flex-1 items-center gap-1">
+            <Text variant="text-12-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
               {t(title)}
             </Text>
-            <Text variant="text-14-light">{subtitle}</Text>
-          </div>
-          <div className="flex h-full self-start">
+            <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
+              <Icon name={IconNames.CHEVRON_DOWN_PA} className="h-3 w-3 text-black" />
+            </button>
+
             <Menu
+              className="ml-auto"
               container={refContainer?.current}
               placement={MENU_PLACEMENT_RIGHT_BOTTOM}
               menu={itemsPrimaryMenu}
@@ -196,8 +240,32 @@ const MapMenuPanelItem = ({
               />
             </Menu>
           </div>
+          <div className="flex items-center justify-between">
+            <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
+            <When condition={validationStatus == undefined}>
+              <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
+                <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
+                Not Checked
+              </Text>
+            </When>
+            <When condition={validationStatus}>
+              <Text variant="text-10" className="flex items-center gap-1 text-green">
+                <Icon name={IconNames.STATUS_APPROVED} className="h-2 w-2" />
+                Passed
+              </Text>
+            </When>
+            <When condition={validationStatus === false}>
+              <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
+                <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
+                Failed
+              </Text>
+            </When>
+          </div>
         </div>
       </div>
+      <When condition={openCollapse}>
+        <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
+      </When>
     </div>
   );
 };

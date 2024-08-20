@@ -1,15 +1,19 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
-import { fetchGetV2SitePolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import { useNotificationContext } from "@/context/notification.provider";
+import {
+  fetchGetV2SitePolygonUuid,
+  fetchGetV2SitePolygonUuidVersions,
+  usePostV2TerrafundNewSitePolygonUuidNewVersion
+} from "@/generated/apiComponents";
+import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 const dropdownOptionsRestoration = [
   {
@@ -80,7 +84,11 @@ const AttributeInformation = ({
   setSelectedPolygonData,
   setStatusSelectedPolygon,
   refetchPolygonVersions,
-  isLoadingVersions
+  isLoadingVersions,
+  setSelectedPolygonToDrawer,
+  selectedPolygonIndex,
+  setPolygonFromMap,
+  setIsLoadingDropdownVersions
 }: {
   selectedPolygon: SitePolygon;
   sitePolygonRefresh?: () => void;
@@ -88,6 +96,10 @@ const AttributeInformation = ({
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
   isLoadingVersions: boolean;
+  setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
+  selectedPolygonIndex?: string;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -98,9 +110,10 @@ const AttributeInformation = ({
   const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
-  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
+  const { mutate: sendSiteData } = usePostV2TerrafundNewSitePolygonUuidNewVersion();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState<boolean>(true);
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
+
   const t = useT();
   const { refetch } = useShowContext();
 
@@ -158,7 +171,8 @@ const AttributeInformation = ({
         practice: restorationPracticeToSend,
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
-        num_trees: treesPlanted
+        num_trees: treesPlanted,
+        adminUpdate: true
       };
       try {
         sendSiteData(
@@ -168,23 +182,34 @@ const AttributeInformation = ({
           },
           {
             onSuccess: async () => {
+              setIsLoadingDropdownVersions(true);
               await refetchPolygonVersions();
               await sitePolygonRefresh?.();
               await refetch();
-              const response = (await fetchGetV2SitePolygonUuid({
-                pathParams: { uuid: selectedPolygon.uuid as string }
-              })) as SitePolygon;
-              setSelectedPolygonData(response);
-              setStatusSelectedPolygon(response?.status ?? "");
-              displayNotification(t("Polygon data updated successfully"), "success", t("Success!"));
+
+              const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+                pathParams: { uuid: selectedPolygon.primary_uuid as string }
+              })) as SitePolygonsDataResponse;
+              const polygonActive = polygonVersionData?.find(item => item.is_active);
+              setSelectedPolygonData(polygonActive);
+              setSelectedPolygonToDrawer?.({
+                id: selectedPolygonIndex as string,
+                status: polygonActive?.status as string,
+                label: polygonActive?.poly_name as string,
+                uuid: polygonActive?.poly_id as string
+              });
+              setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
+              setStatusSelectedPolygon(polygonActive?.status ?? "");
+              setIsLoadingDropdownVersions(false);
+              openNotification("success", t("Success!"), t("Polygon version created successfully"));
             },
             onError: error => {
-              displayNotification(t("Error updating polygon data"), "error", t("Error!"));
+              openNotification("error", t("Error!"), t("Error creating polygon version"));
             }
           }
         );
       } catch (error) {
-        console.error("Error updating polygon data:", error);
+        console.error("Error creating polygon version:", error);
       }
     }
     const response = (await fetchGetV2SitePolygonUuid({

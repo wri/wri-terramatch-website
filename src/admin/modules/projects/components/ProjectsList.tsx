@@ -27,8 +27,8 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
-import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
+import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -64,7 +64,7 @@ const tableMenu = [
 ];
 
 const ProjectDataGrid = () => {
-  const frameworkChoices = useFrameworkChoices();
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
@@ -92,7 +92,7 @@ const ProjectDataGrid = () => {
         source="framework_key"
         label="Framework"
         render={(record: any) =>
-          frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
+          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
           record?.framework_key
         }
         sortable={false}
@@ -106,7 +106,7 @@ const ProjectDataGrid = () => {
 };
 
 export const ProjectsList: FC = () => {
-  const frameworkChoices = useFrameworkChoices();
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -155,12 +155,15 @@ export const ProjectsList: FC = () => {
       key="framework_key"
       label="Framework"
       source="framework_key"
-      choices={frameworkChoices}
+      choices={frameworkInputChoices}
       className="select-page-admin"
     />
   ];
 
-  const { exporting, openExportDialog, frameworkDialogProps } = useFrameworkExport("projects");
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
+    "projects",
+    frameworkInputChoices
+  );
 
   return (
     <>
@@ -170,7 +173,7 @@ export const ProjectsList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={openExportDialog} />} filters={filters}>
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
         <ProjectDataGrid />
       </List>
 

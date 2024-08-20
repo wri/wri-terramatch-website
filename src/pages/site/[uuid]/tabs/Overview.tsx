@@ -12,10 +12,8 @@ import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
-import Notification from "@/components/elements/Notification/Notification";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -30,6 +28,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchPostV2TerrafundUploadGeojson,
@@ -84,12 +83,12 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const router = useRouter();
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
-  const { displayNotification } = useAlertHook();
   const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-  const [showSubmissionSuccess, setShowSubmissionSuccess] = useState<boolean>(false);
+  const { openNotification } = useNotificationContext();
+
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
@@ -150,7 +149,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         openFormModalHandlerIdentifiedPolygons(promise);
       } else {
         setShouldRefetchPolygonData(true);
-        displayNotification(t("File uploaded successfully"), "success", t("Success!"));
+        openNotification("success", t("Success!"), t("File uploaded successfully"));
         closeModal(ModalId.UPLOAD_IMAGES);
       }
       setPolygonLoaded(false);
@@ -162,9 +161,9 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        displayNotification(t("Error uploading file"), "error", errorMessage);
+        openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        displayNotification(t("Error uploadig file"), "error", t("An unknown error occurred"));
+        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
       }
     }
   };
@@ -187,7 +186,9 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
         primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
+        maxFileSize={2 * 1024 * 1024}
+        setErrorMessage={(message: string) => openNotification("error", t("Error uploading file"), t(message))}
         setFile={setFiles}
       ></ModalAdd>
     );
@@ -252,7 +253,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             setSaveFlags(true);
           }
         }}
-        acceptedTYpes={FileType.ShapeFiles.split(",") as FileType[]}
+        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         setFile={setFiles}
         allowMultiple={false}
         btnDownload={true}
@@ -330,10 +331,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
               }
             });
             setShouldRefetchPolygonData(true);
-            setShowSubmissionSuccess(true);
-            setTimeout(() => {
-              setShowSubmissionSuccess(false);
-            }, 3000);
+            openNotification("success", t("Success! Your polygons were submitted."));
           } catch (error) {
             console.log(error);
           }
@@ -385,7 +383,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
-      <Notification open={showSubmissionSuccess} title={t("Success! Your polygons were submitted.")} type="success" />
       <PageBody>
         <PageRow>
           <PageCard
@@ -407,7 +404,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                 <GoalProgressCard
                   frameworksShow={[Framework.PPC]}
                   label={t("Workday Count (PPC)")}
-                  value={site.self_reported_workday_count}
+                  value={site.combined_workday_count}
                 />
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
               </div>

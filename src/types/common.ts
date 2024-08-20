@@ -173,6 +173,7 @@ export enum FileType {
   Video = "video/mp4, video/quicktime",
   Csv = "text/csv",
   ShapeFiles = "application/zip, application/x-zip-compressed, .kml, .json, .geojson, .shp, .dbf, .shx, .prj",
+  AcceptedShapefiles = ".zip, .kml, .geojson",
   Document = "application/pdf, application/msword",
   Xlsx = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
   CsvExcel = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
@@ -214,4 +215,9 @@ export type SingularReportsModelNames = "project-report" | "site-report" | "nurs
 export type Entity = {
   entityName: EntityName | SingularEntityName;
   entityUUID: string;
+};
+
+export type OptionInputType = {
+  id: OptionValue;
+  name: string;
 };

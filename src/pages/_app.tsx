@@ -16,6 +16,7 @@ import AuthProvider from "@/context/auth.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
+import NotificationProvider from "@/context/notification.provider";
 import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
@@ -38,12 +39,16 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
     return (
       <>
         <WrappedQueryClientProvider>
-          <LoadingProvider>
-            <ModalProvider>
-              <ModalRoot />
-              <Component {...pageProps} />
-            </ModalProvider>
-          </LoadingProvider>
+          <AuthProvider token={accessToken}>
+            <LoadingProvider>
+              <NotificationProvider>
+                <ModalProvider>
+                  <ModalRoot />
+                  <Component {...pageProps} />
+                </ModalProvider>
+              </NotificationProvider>
+            </LoadingProvider>
+          </AuthProvider>
         </WrappedQueryClientProvider>
       </>
     );
@@ -56,16 +61,18 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
               <AuthProvider token={accessToken}>
                 <RouteHistoryProvider>
                   <LoadingProvider>
-                    <ModalProvider>
-                      <NavbarProvider>
-                        <ModalRoot />
-                        <Toast />
-                        <MainLayout isLoggedIn={!!accessToken}>
-                          <Component {...pageProps} accessToken={accessToken} />
-                          <CookieBanner />
-                        </MainLayout>
-                      </NavbarProvider>
-                    </ModalProvider>
+                    <NotificationProvider>
+                      <ModalProvider>
+                        <NavbarProvider>
+                          <ModalRoot />
+                          <Toast />
+                          <MainLayout isLoggedIn={!!accessToken}>
+                            <Component {...pageProps} accessToken={accessToken} />
+                            <CookieBanner />
+                          </MainLayout>
+                        </NavbarProvider>
+                      </ModalProvider>
+                    </NotificationProvider>
                   </LoadingProvider>
                 </RouteHistoryProvider>
               </AuthProvider>

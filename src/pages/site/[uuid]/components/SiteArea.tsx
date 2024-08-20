@@ -1,13 +1,13 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
-import useAlertHook from "@/components/elements/MapPolygonPanel/hooks/useAlertHook";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useGetV2SitePolygonUuidVersions, usePutV2SitePolygonUuidMakeActive } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
@@ -28,13 +28,14 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     previewVersion,
     setPreviewVersion,
     setEditPolygon,
-    setSelectedPolyVersion
+    setSelectedPolyVersion,
+    shouldRefetchPolygonVersions
   } = useMapAreaContext();
-  const { displayNotification } = useAlertHook();
+  const { openNotification } = useNotificationContext();
 
   const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
     onSuccess: async () => {
-      displayNotification(t("Polygon version made active successfully"), "success", t("Success!"));
+      openNotification("success", t("Success!"), t("Polygon version made active successfully"));
       await refetchPolygonVersions();
       setSelectedPolyVersion({});
       setPreviewVersion(false);
@@ -46,7 +47,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
       });
     },
     onError: () => {
-      displayNotification(t("Error making polygon version active"), "error", t("Error!"));
+      openNotification("error", t("Error!"), t("Error making polygon version active"));
     }
   });
 
@@ -70,8 +71,14 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
       await refetchPolygonVersions();
       return;
     }
-    displayNotification(t("Polygon version is already active"), "warning", t("Warning!"));
+    openNotification("warning", t("Warning!"), t("Polygon version is already active"));
   };
+
+  useEffect(() => {
+    if (shouldRefetchPolygonVersions) {
+      refetchPolygonVersions();
+    }
+  }, [shouldRefetchPolygonVersions]);
 
   const convertText = (text: string) => {
     return text?.replace(/-/g, " ");

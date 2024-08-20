@@ -101,7 +101,7 @@ const ChangeRequestRequestMoreInfoModal = ({
           <DialogTitle>{statusTitles[status as IStatus]}</DialogTitle>
         </If>
         <DialogContent>
-          <TextInput source="feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
+          <TextInput source="_feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
           <If condition={status === "moreinfo" && feebdackFields.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"

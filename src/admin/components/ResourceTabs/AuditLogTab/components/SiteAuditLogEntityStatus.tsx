@@ -20,6 +20,7 @@ export interface SiteAuditLogEntityStatusProps {
   buttonToggle: number;
   verifyEntity?: boolean;
   viewPD?: boolean;
+  auditData?: { entity: string; entity_uuid: string };
 }
 
 interface SelectedItem {
@@ -38,7 +39,8 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   refresh,
   buttonToggle,
   verifyEntity,
-  viewPD = false
+  viewPD = false,
+  auditData
 }) => {
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const basename = useBasename();
@@ -79,7 +81,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         )}
       </div>
       <When condition={!!auditLogData}>
-        <AuditLogTable auditLogData={auditLogData!} />
+        <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refresh} />
       </When>
     </div>
   );
