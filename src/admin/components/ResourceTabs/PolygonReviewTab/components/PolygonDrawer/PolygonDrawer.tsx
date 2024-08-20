@@ -85,7 +85,7 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const { statusSelectedPolygon, setStatusSelectedPolygon } = contextMapArea;
+  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
 
@@ -130,6 +130,7 @@ const PolygonDrawer = ({
         .filter(Boolean)
         .join(", ");
       openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
+      setShouldRefetchValidation(true);
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();

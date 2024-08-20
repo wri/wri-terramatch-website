@@ -108,6 +108,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       if (data) {
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
+        setShouldRefetchValidation(true);
         const updatedPolygonNames = data.updated_polygons
           ?.map(p => p.poly_name)
           .filter(Boolean)
