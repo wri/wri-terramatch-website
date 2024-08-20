@@ -212,7 +212,7 @@ const Polygons = (props: IPolygonProps) => {
             </Text>
           </Button>
           <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
-            {openCollapseAll ? "SHIRNK" : "EXPAND"}
+            {openCollapseAll ? "SHRINK" : "EXPAND"}
           </Button>
         </div>
       </div>
