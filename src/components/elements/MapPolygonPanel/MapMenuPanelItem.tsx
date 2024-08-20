@@ -219,7 +219,12 @@ const MapMenuPanelItem = ({
               {t(title)}
             </Text>
             <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
-              <Icon name={IconNames.CHEVRON_DOWN_PA} className="h-3 w-3 text-black" />
+              <Icon
+                name={IconNames.CHEVRON_DOWN_PA}
+                className={`h-3 w-3 text-black transition-transform duration-300 ${
+                  openCollapse ? "rotate-180" : "rotate-0"
+                }`}
+              />
             </button>
 
             <Menu
@@ -245,25 +250,32 @@ const MapMenuPanelItem = ({
             <When condition={validationStatus == undefined}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
-                Not Checked
+                {t("Not Checked")}
               </Text>
             </When>
             <When condition={validationStatus}>
               <Text variant="text-10" className="flex items-center gap-1 text-green">
                 <Icon name={IconNames.STATUS_APPROVED} className="h-2 w-2" />
-                Passed
+                {t("Passed")}
               </Text>
             </When>
             <When condition={validationStatus === false}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
-                Failed
+                {t("Failed")}
               </Text>
             </When>
           </div>
         </div>
       </div>
       <When condition={openCollapse}>
+        <When condition={validationStatus}>
+          <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
+            {t(
+              "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."
+            )}
+          </Text>
+        </When>
         <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
       </When>
     </div>
