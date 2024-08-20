@@ -41,7 +41,8 @@ const VersionHistory = ({
   setSelectedPolygonToDrawer,
   selectedPolygonIndex,
   setPolygonFromMap,
-  polygonFromMap
+  polygonFromMap,
+  wrapperRef
 }: {
   selectedPolygon: SitePolygon;
   setSelectPolygonVersion: any;
@@ -59,6 +60,7 @@ const VersionHistory = ({
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
   polygonFromMap?: { isOpen: boolean; uuid: string };
+  wrapperRef: any;
 }) => {
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -222,6 +224,10 @@ const VersionHistory = ({
       await refreshPolygonList?.();
       await refreshSiteData?.();
       setSelectedPolygonData(selectPolygonVersion);
+      const element = wrapperRef.current as HTMLElement;
+      element.scrollTo({
+        top: 1000000
+      });
       setStatusSelectedPolygon(selectPolygonVersion?.status ?? "");
       setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "" });
       return;
