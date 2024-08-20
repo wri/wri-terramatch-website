@@ -250,19 +250,19 @@ const MapMenuPanelItem = ({
             <When condition={validationStatus == undefined}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
-                Not Checked
+                {t("Not Checked")}
               </Text>
             </When>
             <When condition={validationStatus}>
               <Text variant="text-10" className="flex items-center gap-1 text-green">
                 <Icon name={IconNames.STATUS_APPROVED} className="h-2 w-2" />
-                Passed
+                {t("Passed")}
               </Text>
             </When>
             <When condition={validationStatus === false}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
-                Failed
+                {t("Failed")}
               </Text>
             </When>
           </div>
@@ -271,8 +271,9 @@ const MapMenuPanelItem = ({
       <When condition={openCollapse}>
         <When condition={validationStatus}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
-            This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
-            staff.
+            {t(
+              "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."
+            )}
           </Text>
         </When>
         <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
