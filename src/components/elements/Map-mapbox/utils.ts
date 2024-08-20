@@ -305,7 +305,8 @@ export const addPopupsToMap = (
   sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  draw: MapboxDraw
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -317,7 +318,8 @@ export const addPopupsToMap = (
         sitePolygonData,
         type,
         editPolygon,
-        setEditPolygon
+        setEditPolygon,
+        draw
       );
     });
   }
@@ -331,7 +333,8 @@ export const addPopupToLayer = (
   sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  draw: MapboxDraw
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -341,9 +344,23 @@ export const addPopupToLayer = (
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
 
     targetLayers.forEach(targetLayer => {
-      map.on("click", targetLayer.id, (e: any) =>
-        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData, type, editPolygon, setEditPolygon)
-      );
+      map.on("click", targetLayer.id, (e: any) => {
+        const currentMode = draw?.getMode();
+        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") {
+          return;
+        } else {
+          handleLayerClick(
+            e,
+            popupComponent,
+            map,
+            setPolygonFromMap,
+            sitePolygonData,
+            type,
+            editPolygon,
+            setEditPolygon
+          );
+        }
+      });
     });
   }
 };

@@ -182,7 +182,8 @@ export const MapContainer = ({
           sitePolygonData,
           tooltipType,
           editPolygonSelected,
-          setEditPolygon
+          setEditPolygon,
+          draw.current
         );
       });
     }
