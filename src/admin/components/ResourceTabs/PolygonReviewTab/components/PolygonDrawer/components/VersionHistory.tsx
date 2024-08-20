@@ -355,6 +355,7 @@ const VersionHistory = ({
             labelClassName="capitalize"
             labelVariant="text-14-light"
             options={polygonVersionData ?? []}
+            optionVariant="text-12-light"
             defaultValue={[selectPolygonVersion?.uuid ?? selectedPolygon?.uuid] as string[]}
             onChange={e => {
               const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);
