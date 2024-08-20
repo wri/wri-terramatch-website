@@ -33,7 +33,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
   const isLg = useMediaQuery("(min-width:1024px)");
   const userData = useUserData();
 
-  const TOUR_COMPLETED_STORAGE_KEY = `${tourId}_${TOUR_COMPLETED_KEY}_${userData?.id}`;
+  const TOUR_COMPLETED_STORAGE_KEY = `${tourId}_${TOUR_COMPLETED_KEY}_${userData?.uuid}`;
   const TOUR_SKIPPED_STORAGE_KEY = `${tourId}_${TOUR_SKIPPED_KEY}`;
 
   const floaterProps = useMemo(() => {
@@ -79,16 +79,16 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
   }, [closeModal, isLg, setIsNavOpen, setNavLinksDisabled]);
 
   const handleDontShowAgain = useCallback(() => {
-    if (userData?.id) {
+    if (userData?.uuid) {
       localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
       onDontShowAgain?.();
       setModalInteracted(true);
       closeModal(ModalId.WELCOME_MODAL);
     }
-  }, [TOUR_COMPLETED_STORAGE_KEY, closeModal, onDontShowAgain, userData?.id]);
+  }, [TOUR_COMPLETED_STORAGE_KEY, closeModal, onDontShowAgain, userData?.uuid]);
 
   useEffect(() => {
-    const userId = userData?.id?.toString();
+    const userId = userData?.uuid?.toString();
     if (userId) {
       const isSkipped = sessionStorage.getItem(TOUR_SKIPPED_STORAGE_KEY) === "true";
       const isCompleted = localStorage.getItem(TOUR_COMPLETED_STORAGE_KEY) === "true";
@@ -105,7 +105,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasWelcomeModal, modalInteracted, userData?.id]);
+  }, [hasWelcomeModal, modalInteracted, userData?.uuid]);
 
   useEffect(() => {
     if (tourEnabled) {
@@ -134,7 +134,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
               }
             }}
             callback={data => {
-              if (data.status === "finished" && userData?.id) {
+              if (data.status === "finished" && userData?.uuid) {
                 localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
                 setTourEnabled(false);
                 setNavLinksDisabled?.(false);
