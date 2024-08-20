@@ -37,7 +37,9 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             <ContextCondition frameworksShow={ALL_TF}>
               <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
               <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
-              <LongTextField title={t("Community Engagement Approach")}>{report.local_engagement}</LongTextField>
+              <LongTextField title={t("Community Engagement Approach")}>
+                {report.local_engagement_description}
+              </LongTextField>
               <LongTextField title={t("Top 3 Successes")}>{report.top_three_successes}</LongTextField>
               <LongTextField title={t("Challenges Faced")}>{report.challenges_faced}</LongTextField>
               <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
@@ -45,7 +47,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
                 {report.maintenance_and_monitoring_activities}
               </LongTextField>
               <LongTextField title={t("Significant Change")}>{report.significant_change}</LongTextField>
-              <LongTextField title={t("Survival Rate")}>{report.percentage_survival_to_date}</LongTextField>
+              <LongTextField title={t("Survival Rate")}>{report.pct_survival_to_date}</LongTextField>
               <LongTextField title={t("Survival Calculation")}>{report.survival_calculation}</LongTextField>
               <LongTextField title={t("Survival Comparison")}>{report.survival_comparison}</LongTextField>
               <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
