@@ -219,7 +219,12 @@ const MapMenuPanelItem = ({
               {t(title)}
             </Text>
             <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
-              <Icon name={IconNames.CHEVRON_DOWN_PA} className="h-3 w-3 text-black" />
+              <Icon
+                name={IconNames.CHEVRON_DOWN_PA}
+                className={`h-3 w-3 text-black transition-transform duration-300 ${
+                  openCollapse ? "rotate-180" : "rotate-0"
+                }`}
+              />
             </button>
 
             <Menu
@@ -264,6 +269,12 @@ const MapMenuPanelItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
+        <When condition={validationStatus}>
+          <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
+            This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
+            staff.
+          </Text>
+        </When>
         <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
       </When>
     </div>
