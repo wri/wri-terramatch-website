@@ -12,8 +12,6 @@ import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
-import Menu from "@/components/elements/Menu/Menu";
-import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -367,18 +365,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     );
   };
 
-  const itemsSubmitPolygon = [
-    {
-      id: "2",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          {t("Submit for Review")}
-        </Text>
-      ),
-      onClick: () => openFormModalHandlerSubmitPolygon()
-    }
-  ];
-
   const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.SITE];
 
   return (
@@ -464,11 +450,9 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       &nbsp; {t("Download")}
                     </Button>
                     {isMonitoring && (
-                      <Menu placement={MENU_PLACEMENT_BOTTOM_BOTTOM} menu={itemsSubmitPolygon}>
-                        <Button variant="primary" className="" onChange={() => {}}>
-                          {t("SUBMIT Polygons")}
-                        </Button>
-                      </Menu>
+                      <Button variant="primary" className="" onClick={() => openFormModalHandlerSubmitPolygon()}>
+                        {t("SUBMIT Polygons")}
+                      </Button>
                     )}
                   </div>
                 </div>
