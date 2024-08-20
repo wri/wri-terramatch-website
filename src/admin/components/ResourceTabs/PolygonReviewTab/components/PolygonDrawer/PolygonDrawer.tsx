@@ -356,6 +356,12 @@ const PolygonDrawer = ({
               )}
             </Accordion>
             <Divider />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
           </div>
         </Else>
       </If>
