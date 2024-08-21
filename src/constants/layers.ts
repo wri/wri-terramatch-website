@@ -2,6 +2,8 @@ import mapboxgl from "mapbox-gl";
 
 import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 
+import { DELETED_POLYGONS } from "./statuses";
+
 export const LAYERS_NAMES = {
   WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry",
@@ -121,17 +123,17 @@ export const layersList: LayerType[] = [
     layerName: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
       {
-        metadata: { polygonStatus: "delete-polygons" },
+        metadata: { polygonStatus: DELETED_POLYGONS },
         type: "fill",
         layout: {},
         paint: {
           "fill-color": "#E42222",
-          "fill-opacity": 0.05
+          "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.FillLayer,
       {
-        metadata: { polygonStatus: "delete-polygons" },
+        metadata: { polygonStatus: DELETED_POLYGONS },
         type: "line",
         layout: {},
         paint: {

@@ -13,6 +13,7 @@ import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGro
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -45,6 +46,7 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
+  addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
   addMediaSourceAndLayer,
@@ -251,6 +253,19 @@ export const MapContainer = ({
       );
     }
   }
+
+  useEffect(() => {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
+      const newPolygonData = {
+        [DELETED_POLYGONS]: selectedPolygonsInCheckbox
+      };
+      addDeleteLayer(
+        layersList.find(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES),
+        map.current as mapboxgl.Map,
+        newPolygonData
+      );
+    }
+  }, [selectedPolygonsInCheckbox]);
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");

@@ -3,6 +3,7 @@ export const NEEDS_MORE_INFORMATION = "needs-more-information";
 export const APPROVED = "approved";
 export const SUBMITTED = "submitted";
 export const FORM_POLYGONS = "form-polygons";
+export const DELETED_POLYGONS = "deleted-polygons";
 export const STATUSES = [
   {
     label: "Draft",
