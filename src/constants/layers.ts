@@ -5,7 +5,8 @@ import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 export const LAYERS_NAMES = {
   WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry",
-  MEDIA_IMAGES: "media_images"
+  MEDIA_IMAGES: "media_images",
+  DELETED_GEOMETRIES: "deleted_geometries"
 };
 
 export const layersList: LayerType[] = [
@@ -111,7 +112,12 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer,
+      } as mapboxgl.Style & mapboxgl.LineLayer
+    ]
+  },
+  {
+    name: LAYERS_NAMES.DELETED_GEOMETRIES,
+    styles: [
       {
         metadata: { polygonStatus: "delete-polygons" },
         type: "fill",
