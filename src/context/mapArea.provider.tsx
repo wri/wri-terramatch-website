@@ -23,6 +23,8 @@ type MapAreaType = {
   setShouldRefetchPolygonVersions: (value: boolean) => void;
   hasOverlaps: boolean;
   setHasOverlaps: (value: boolean) => void;
+  selectedPolygonsInCheckbox: string[];
+  setSelectedPolygonsInCheckbox: (value: string[]) => void;
   polygonNotificationStatus: {
     open: boolean;
     message: string;
@@ -65,6 +67,8 @@ const defaultValue: MapAreaType = {
   setShouldRefetchPolygonVersions: () => {},
   hasOverlaps: false,
   setHasOverlaps: () => {},
+  selectedPolygonsInCheckbox: [],
+  setSelectedPolygonsInCheckbox: () => {},
   polygonNotificationStatus: {
     open: false,
     message: "",
@@ -97,6 +101,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
+  const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
@@ -149,6 +154,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setShouldRefetchPolygonVersions,
     hasOverlaps,
     setHasOverlaps,
+    selectedPolygonsInCheckbox,
+    setSelectedPolygonsInCheckbox,
     polygonNotificationStatus,
     setpolygonNotificationStatus,
     setSelectedPolyVersion,

@@ -31,6 +31,7 @@ import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
+import DeleteBulkPolygonsControl from "./MapControls/DeleteBulkPolygonsControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -144,7 +145,8 @@ export const MapContainer = ({
     editPolygon: editPolygonSelected,
     setEditPolygon,
     setShouldRefetchPolygonData,
-    setStatusSelectedPolygon
+    setStatusSelectedPolygon,
+    selectedPolygonsInCheckbox
   } = contextMapArea;
 
   if (!mapFunctions) {
@@ -353,6 +355,11 @@ export const MapContainer = ({
         <When condition={polygonFromMap?.isOpen && !formMap}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
             <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
+          </ControlGroup>
+        </When>
+        <When condition={selectedPolygonsInCheckbox.length}>
+          <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
+            <DeleteBulkPolygonsControl />
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">

@@ -62,7 +62,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled } = contextMapArea;
+  const { setIsUserDrawingEnabled, setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
@@ -187,6 +187,21 @@ const Polygons = (props: IPolygonProps) => {
     }
   ];
 
+  const handleCheckboxChange = (uuid: string, isChecked: boolean) => {
+    const polygonsChecked: any = (prevCheckedUuids: string[]) => {
+      if (isChecked) {
+        return [...prevCheckedUuids, uuid];
+      } else {
+        return prevCheckedUuids.filter((id: string) => id !== uuid);
+      }
+    };
+    setSelectedPolygonsInCheckbox(polygonsChecked);
+  };
+
+  useEffect(() => {
+    console.log("checkedUuids", selectedPolygonsInCheckbox);
+  }, [selectedPolygonsInCheckbox]);
+
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
@@ -223,6 +238,8 @@ const Polygons = (props: IPolygonProps) => {
               uuid={item.uuid}
               title={item.label}
               status={item.status}
+              isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
+              onCheckboxChange={handleCheckboxChange}
               menu={
                 <Menu
                   className="ml-auto"

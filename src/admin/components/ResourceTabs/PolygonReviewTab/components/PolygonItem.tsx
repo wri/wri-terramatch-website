@@ -4,6 +4,7 @@ import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
@@ -35,8 +36,10 @@ const PolygonItem = ({
   className,
   menu,
   isCollapsed = false,
+  isChecked = false,
+  onCheckboxChange,
   ...props
-}: MapMenuPanelItemProps) => {
+}: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
@@ -72,6 +75,10 @@ const PolygonItem = ({
     }
   }, [criteriaData, setValidationStatus]);
 
+  const handleCheckboxClick = () => {
+    onCheckboxChange(uuid, !isChecked);
+  };
+
   return (
     <div
       {...props}
@@ -81,6 +88,7 @@ const PolygonItem = ({
       )}
     >
       <div className="flex items-center justify-between gap-2">
+        <Checkbox name="" checked={isChecked} onClick={handleCheckboxClick} />
         <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}
