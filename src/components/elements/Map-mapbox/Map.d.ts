@@ -7,6 +7,7 @@ export type LayerWithStyle = LayerStyle;
 export interface LayerType {
   name: string;
   styles: LayerWithStyle[];
+  layerName: string;
 }
 
 export type ControlType = Control | IControl;

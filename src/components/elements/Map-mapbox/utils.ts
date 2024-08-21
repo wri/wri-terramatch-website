@@ -78,15 +78,8 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
   map.getCanvas().style.cursor = "auto";
 };
 
-export const addFilterOnLayer = (
-  layer: any,
-  field: string,
-  parsedPolygonData: Record<string, string[]>,
-  map: mapboxgl.Map
-) => {
+export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
   addSourceToLayer(layer, map, parsedPolygonData);
-  const { name, styles } = layer;
-  showPolygons(styles, name, map, field, parsedPolygonData);
 };
 
 const showPolygons = (
@@ -366,7 +359,7 @@ export const addPopupToLayer = (
 };
 
 export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  const { name, styles } = layer;
+  const { name, layerName, styles } = layer;
   if (map) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
@@ -375,7 +368,7 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       map.removeSource(name);
     }
     const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
     map.addSource(name, {
       type: "vector",
       tiles: [URL_GEOSERVER]

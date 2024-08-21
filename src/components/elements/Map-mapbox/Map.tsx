@@ -246,7 +246,6 @@ export const MapContainer = ({
       });
       addFilterOnLayer(
         layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-        "uuid",
         newPolygonData,
         currentMap
       );
