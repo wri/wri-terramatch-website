@@ -199,6 +199,7 @@ const Polygons = (props: IPolygonProps) => {
           selectedPolygonIndex={selectedPolygon?.id}
           setPolygonFromMap={setPolygonFromMap}
           polygonFromMap={polygonFromMap}
+          setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
         />
       </Drawer>
       <div className="mb-4 flex flex-col gap-1">
