@@ -4,6 +4,7 @@ import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -34,6 +35,8 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   poly_name?: string;
   primary_uuid?: string;
   isCollapsed?: boolean;
+  isChecked?: boolean;
+  onCheckboxChange: (uuid: string, isChecked: boolean) => void;
 }
 
 const MapMenuPanelItem = ({
@@ -49,6 +52,8 @@ const MapMenuPanelItem = ({
   refContainer,
   type,
   isCollapsed,
+  isChecked = false,
+  onCheckboxChange,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
@@ -82,6 +87,10 @@ const MapMenuPanelItem = ({
       setValidationStatus(undefined);
     }
   }, [criteriaData, setValidationStatus]);
+
+  const handleCheckboxClick = () => {
+    onCheckboxChange(poly_id, !isChecked);
+  };
 
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -207,6 +216,7 @@ const MapMenuPanelItem = ({
       )}
     >
       <div className="flex items-center gap-2">
+        <Checkbox name="" checked={isChecked} onClick={handleCheckboxClick} />
         <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}

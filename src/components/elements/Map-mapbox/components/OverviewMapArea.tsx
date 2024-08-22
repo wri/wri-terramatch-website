@@ -7,6 +7,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2DashboardCountryCountry,
   GetV2MODELUUIDFilesResponse,
@@ -44,6 +45,8 @@ const OverviewMapArea = ({
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const context = useSitePolygonData();
+  const reloadSiteData = context?.reloadSiteData;
   const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
     useMapAreaContext();
   const handleRefetchPolygon = () => {
@@ -105,6 +108,7 @@ const OverviewMapArea = ({
 
   useEffect(() => {
     if (shouldRefetchPolygonData) {
+      reloadSiteData?.();
       refetch();
     }
   }, [shouldRefetchPolygonData]);

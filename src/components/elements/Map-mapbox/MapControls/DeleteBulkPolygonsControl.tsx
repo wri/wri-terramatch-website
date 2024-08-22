@@ -14,7 +14,8 @@ const DeleteBulkPolygonsControl = () => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const context = useSitePolygonData();
-  const { selectedPolygonsInCheckbox } = useMapAreaContext();
+  const { selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox, setShouldRefetchPolygonData } =
+    useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as Array<SitePolygon>;
 
   const openFormModalHandlerDeleteBulkPolygons = () => {
@@ -40,7 +41,11 @@ const DeleteBulkPolygonsControl = () => {
         }}
         sitePolygonData={sitePolygonData}
         selectedPolygonsInCheckbox={selectedPolygonsInCheckbox}
-        refetch={context?.reloadSiteData}
+        refetch={() => {
+          context?.reloadSiteData();
+          setShouldRefetchPolygonData(true);
+          setSelectedPolygonsInCheckbox([]);
+        }}
       />
     );
   };
