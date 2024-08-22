@@ -19,9 +19,13 @@ export const AdminPopup = (event: any) => {
             setEditPolygon?.({ isOpen: false, uuid: "" });
           }
         }}
-        setEditPolygon={() => {
+        setEditPolygon={(primary_uuid?: string) => {
           setPolygonFromMap?.({ isOpen: true, uuid: uuidPolygon });
-          setEditPolygon?.({ isOpen: true, uuid: uuidPolygon });
+          setEditPolygon?.({
+            isOpen: true,
+            uuid: uuidPolygon,
+            primary_uuid: primary_uuid
+          });
           if (popup) {
             popup.remove();
           }
