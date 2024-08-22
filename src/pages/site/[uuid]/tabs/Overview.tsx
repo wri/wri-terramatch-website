@@ -24,6 +24,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { Framework } from "@/context/framework.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -86,6 +87,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
+  const { showLoader, hideLoader } = useLoading();
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -105,6 +107,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
       setSaveFlags(false);
+      closeModal(ModalId.ADD_POLYGONS);
+      hideLoader();
     }
   }, [files, saveFlags]);
 
@@ -183,7 +187,14 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         onClose={() => closeModal(ModalId.ADD_POLYGONS)}
         content={t("Start by adding polygons to your site.")}
         primaryButtonText={t("Save")}
-        primaryButtonProps={{ className: "px-8 py-3", variant: "primary", onClick: () => setSaveFlags(true) }}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            setSaveFlags(true);
+            showLoader();
+          }
+        }}
         acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         maxFileSize={2 * 1024 * 1024}
         setErrorMessage={(message: string) => openNotification("error", t("Error uploading file"), t(message))}
