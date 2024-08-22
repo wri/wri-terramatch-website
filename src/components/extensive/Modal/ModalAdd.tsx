@@ -104,7 +104,6 @@ const ModalAdd: FC<ModalAddProps> = ({
     });
 
     if (filteredFiles.length > 0) {
-      setErrorMessage?.("");
       if (!allowMultiple) {
         const firstFile = filteredFiles[0];
         setFiles([formatFile(firstFile)]);
