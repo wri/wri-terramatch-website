@@ -15,31 +15,32 @@ const DeleteBulkPolygonsControl = () => {
   const { openModal, closeModal } = useModalContext();
   const context = useSitePolygonData();
   const { selectedPolygonsInCheckbox } = useMapAreaContext();
-  const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
+  const sitePolygonData = context?.sitePolygonData as Array<SitePolygon>;
 
   const openFormModalHandlerDeleteBulkPolygons = () => {
     openModal(
-      ModalId.SUBMIT_POLYGONS,
+      ModalId.DELETE_BULK_POLYGONS,
       <ModalDeleteBulkPolygons
         title={t("Delete Polygons")}
-        onClose={() => closeModal(ModalId.SUBMIT_POLYGONS)}
+        onClose={() => closeModal(ModalId.DELETE_BULK_POLYGONS)}
         content={t("Confirm that the following polygons will be deleted. This operation is not reversible.")}
         primaryButtonText={t("Delete")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            closeModal(ModalId.SUBMIT_POLYGONS);
+            closeModal(ModalId.DELETE_BULK_POLYGONS);
           }
         }}
         secondaryButtonText={t("Cancel")}
         secondaryButtonProps={{
           className: "px-8 py-3",
           variant: "white-page-admin",
-          onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
+          onClick: () => closeModal(ModalId.DELETE_BULK_POLYGONS)
         }}
         sitePolygonData={sitePolygonData}
         selectedPolygonsInCheckbox={selectedPolygonsInCheckbox}
+        refetch={context?.reloadSiteData}
       />
     );
   };

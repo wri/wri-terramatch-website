@@ -22635,39 +22635,25 @@ export type ClippedPolygonsResponse = {
   }[];
 };
 
-export type MeResponse = {
-  uuid?: string;
-  first_name?: string;
-  last_name?: string;
-  email_address?: string;
+export type DeletedPolygonsResponse = {
   /**
-   * @format date-time
+   * Success message
    */
-  email_address_verified_at?: string;
-  role?: string;
-  organisation?: {
+  message?: string;
+  deleted?: {
+    /**
+     * UUID of the deleted polygon geometry
+     */
     uuid?: string;
-    name?: string;
-    status?: string;
-    readable_status?: string;
-    users_status?: string;
-    type?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
-  frameworks?: {
-    name?: string;
-    slug?: string;
   }[];
-};
-
-export type MyOrganisationLite = {
-  uuid?: string;
-  name?: string;
-  status?: string;
-  readable_status?: string;
-  users_status?: string;
-  type?: string;
-  created_at?: string;
-  updated_at?: string;
+  failed?: {
+    /**
+     * UUID of the polygon geometry that failed to delete
+     */
+    uuid?: string;
+    /**
+     * Error message for the failed deletion
+     */
+    error?: string;
+  }[];
 };

@@ -3,11 +3,13 @@ import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
-// import Button from "@/components/elements/Button/Button";
+import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
-import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useLoading } from "@/context/loaderAdmin.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import { useDeleteV2TerrafundProjectPolygons } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -16,11 +18,10 @@ import { ModalBaseSubmit } from "./ModalsBases";
 export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
-  toogleButton?: boolean;
-  status?: StatusEnum;
   onClose?: () => void;
-  sitePolygonData: any;
+  sitePolygonData: SitePolygonsDataResponse;
   selectedPolygonsInCheckbox: string[];
+  refetch?: () => void;
 }
 
 const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
@@ -31,16 +32,18 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   primaryButtonText,
   secondaryButtonProps,
   secondaryButtonText,
-  toogleButton,
   children,
-  status,
   onClose,
   sitePolygonData,
   selectedPolygonsInCheckbox,
+  refetch,
   ...rest
 }) => {
   const t = useT();
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
+  const { showLoader, hideLoader } = useLoading();
+  const { openNotification } = useNotificationContext();
+  const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
 
   useEffect(() => {
     if (sitePolygonData) {
@@ -63,14 +66,38 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
   };
 
+  const handleDelete = () => {
+    showLoader();
+    const selectedUUIDs: any = sitePolygonData
+      .filter((_, index) => polygonsSelected[index])
+      .map(polygon => polygon.poly_id);
+
+    deletePolygons(
+      {
+        body: {
+          uuids: selectedUUIDs
+        }
+      },
+      {
+        onSuccess: () => {
+          onClose?.();
+          refetch?.();
+          hideLoader();
+          openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+        },
+        onError: () => {
+          hideLoader();
+          openNotification("error", t("Error!"), t("Failed to delete polygons"));
+        }
+      }
+    );
+  };
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
-          <When condition={status}>
-            <Status status={status ?? StatusEnum.DRAFT} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
-          </When>
           <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
@@ -116,6 +143,20 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             </div>
           ))}
         </div>
+      </div>
+      <div className="flex w-full justify-end gap-3 px-8 py-4">
+        <When condition={!!secondaryButtonProps}>
+          <Button {...secondaryButtonProps!} variant="white-page-admin">
+            <Text variant="text-14-bold" className="capitalize">
+              {secondaryButtonText}
+            </Text>
+          </Button>
+        </When>
+        <Button {...primaryButtonProps} onClick={handleDelete}>
+          <Text variant="text-14-bold" className="capitalize text-white">
+            {primaryButtonText}
+          </Text>
+        </Button>
       </div>
     </ModalBaseSubmit>
   );
