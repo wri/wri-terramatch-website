@@ -386,7 +386,12 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   const { name, layerName, styles } = layer;
   styles?.forEach((style: LayerWithStyle, index: number) => {
-    addLayerStyle(map, name, name, layerName, style, index);
+    map.addLayer({
+      ...style,
+      id: `${name}-${index}`,
+      source: name,
+      "source-layer": layerName
+    } as mapboxgl.AnyLayer);
   });
   loadLayersInMap(map, polygonsData, layer);
 };
@@ -406,7 +411,15 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
     }
   }
 };
-
+const moveDeleteLayers = (map: mapboxgl.Map) => {
+  const layers = layersList.filter(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES);
+  layers.forEach(layer => {
+    const { name, styles } = layer;
+    styles?.forEach((_: unknown, index: number) => {
+      map?.moveLayer(`${name}-${index}`);
+    });
+  });
+};
 export const addLayerStyle = (
   map: mapboxgl.Map,
   layerName: string,
@@ -428,6 +441,7 @@ export const addLayerStyle = (
     } as mapboxgl.AnyLayer,
     beforeLayer
   );
+  moveDeleteLayers(map);
 };
 
 export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
