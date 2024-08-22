@@ -10,7 +10,7 @@ import { formatPlannedStartDate } from "../Map-mapbox/utils";
 import Text from "../Text/Text";
 export interface TooltipMapProps {
   setTooltipOpen: () => void;
-  setEditPolygon: () => void;
+  setEditPolygon: (value?: string) => void;
   polygon: any;
   type?: TooltipType;
   popup?: any;
@@ -107,10 +107,13 @@ const TooltipMap = (props: TooltipMapProps) => {
       <hr className="my-2 border border-grey-750" />
       {type === "edit" && (
         <div className="flex w-full items-center justify-center">
-          <button className="flex items-center justify-center gap-1" onClick={setEditPolygon}>
+          <button
+            className="flex items-center justify-center gap-1"
+            onClick={() => setEditPolygon(sitePolygonData?.site_polygon?.primary_uuid as string)}
+          >
             <Icon name={IconNames.CLICK} className="h-4 w-4" />
             <Text variant="text-10-light" className="italic text-black">
-              {t("click to see polygon details")}
+              {t("Click to edit polygon")}
             </Text>
           </button>
         </div>

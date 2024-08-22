@@ -1,12 +1,11 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -15,13 +14,16 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
+  fetchGetV2SitePolygonUuidVersions,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   useGetV2SitePolygonUuidVersions,
   useGetV2TerrafundValidationCriteriaData,
+  usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import { ClippedPolygonsResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { parseValidationData } from "@/helpers/polygonValidation";
 
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
@@ -46,23 +48,31 @@ export interface ICriteriaCheckItem {
 
 export const ESTIMATED_AREA_CRITERIA_ID = 12;
 export const COMPLETED_DATA_CRITERIA_ID = 14;
+export const OVERLAPPING_CRITERIA_ID = 3;
 
 const PolygonDrawer = ({
   polygonSelected,
   isPolygonStatusOpen,
   refresh,
   isOpenPolygonDrawer,
-  setPolygonFromMap
+  setSelectedPolygonToDrawer,
+  selectedPolygonIndex,
+  setPolygonFromMap,
+  polygonFromMap,
+  setIsOpenPolygonDrawer
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
   refresh?: () => void;
   isOpenPolygonDrawer: boolean;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
+  selectedPolygonIndex?: string;
+  setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
+  polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
-  const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
@@ -77,8 +87,10 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
+  const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
@@ -109,6 +121,44 @@ const PolygonDrawer = ({
     }
   );
 
+  const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
+    onSuccess: async (data: ClippedPolygonsResponse) => {
+      if (!data.updated_polygons?.length) {
+        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+        hideLoader();
+        return;
+      }
+      const updatedPolygonNames = data.updated_polygons
+        ?.map(p => p.poly_name)
+        .filter(Boolean)
+        .join(", ");
+      openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
+      setShouldRefetchValidation(true);
+      await refetchPolygonVersions();
+      await sitePolygonRefresh?.();
+      await refresh?.();
+      const response = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+      })) as SitePolygonsDataResponse;
+      const polygonActive = response?.find(item => item.is_active);
+      setSelectedPolygonData(polygonActive);
+      setSelectedPolygonToDrawer?.({
+        id: selectedPolygonIndex as string,
+        status: polygonActive?.status as string,
+        label: polygonActive?.poly_name as string,
+        uuid: polygonActive?.poly_id as string
+      });
+      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
+      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      setIsLoadingDropdown(false);
+      hideLoader();
+    },
+    onError: error => {
+      console.error("Error clipping polygons:", error);
+      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+    }
+  });
+
   useEffect(() => {
     if (checkPolygonValidation) {
       showLoader();
@@ -123,14 +173,7 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
-      const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
-        id: criteria.criteria_id,
-        date: criteria.latest_created_at,
-        status: criteria.valid === 1,
-        label: validationLabels[criteria.criteria_id],
-        extra_info: criteria.extra_info
-      }));
-      setPolygonValidationData(transformedData);
+      setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(true);
     } else {
       setValidationStatus(false);
@@ -191,7 +234,7 @@ const PolygonDrawer = ({
       pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string }
     },
     {
-      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid
+      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid || !!polygonFromMap?.uuid
     }
   );
 
@@ -210,14 +253,26 @@ const PolygonDrawer = ({
     }
   }, [selectPolygonVersion]);
 
+  const runFixPolygonOverlaps = () => {
+    if (polygonSelected) {
+      showLoader();
+      clipPolygons({ pathParams: { uuid: polygonSelected } });
+    } else {
+      console.error("Polygon UUID is missing");
+      openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
         <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
-        <Text variant={"text-20-bold"} className="flex items-center gap-1">
-          {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
-          <div className={`h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
-        </Text>
+        <div className="flex items-baseline gap-2">
+          <Text variant={"text-20-bold"} className="flex items-center gap-1 break-all">
+            {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
+          </Text>
+          <div className={`h-4 w-4 min-w-[16px] rounded-full ${statusColor[statusSelectedPolygon]}`} />
+        </div>
       </div>
       <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
         <Button
@@ -257,11 +312,12 @@ const PolygonDrawer = ({
           </div>
         </Then>
         <Else>
-          <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+          <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
               <PolygonValidation
                 menu={polygonValidationData ?? []}
                 clickedValidation={setCheckPolygonValidation}
+                clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
                 status={validationStatus}
               />
             </Accordion>
@@ -275,13 +331,20 @@ const PolygonDrawer = ({
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
                   refetchPolygonVersions={refetchPolygonVersions}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
+                  setPolygonFromMap={setPolygonFromMap}
+                  setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
+                  setIsLoadingDropdownVersions={setIsLoadingDropdown}
                 />
               )}
             </Accordion>
-            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
               {selectedPolygonData && (
                 <VersionHistory
+                  wrapperRef={wrapperRef}
                   setPolygonFromMap={setPolygonFromMap}
+                  polygonFromMap={polygonFromMap}
                   selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
                   setSelectPolygonVersion={setSelectPolygonVersion}
                   selectPolygonVersion={selectPolygonVersion}
@@ -294,10 +357,13 @@ const PolygonDrawer = ({
                   refetch={refetchPolygonVersions}
                   isLoadingDropdown={isLoadingDropdown}
                   setIsLoadingDropdown={setIsLoadingDropdown}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
                 />
               )}
             </Accordion>
             <Divider />
+            <div className="mt-[89px] lg:mt-[104px] wide:mt-[174px]" />
           </div>
         </Else>
       </If>

@@ -36,7 +36,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
 
 const MapSidePanel = ({
   title,
-  items,
+  items = [],
   className,
   onSearch,
   onLoadMore,
@@ -57,7 +57,6 @@ const MapSidePanel = ({
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
-
   const { map } = mapFunctions;
 
   const flyToPolygonBounds = async (polygonUuid: string) => {
@@ -158,9 +157,9 @@ const MapSidePanel = ({
   ];
 
   return (
-    <div {...props} className={classNames("h-[250px] flex-1", className)}>
+    <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
-      <div className="mb-3 flex items-center justify-between rounded-tl-lg">
+      <div className="mb-4 flex items-center justify-between rounded-tl-lg">
         {isMonitoring ? (
           <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
             <Text variant="text-14-bold" className="flex items-center uppercase ">
@@ -209,13 +208,13 @@ const MapSidePanel = ({
           </div>
         </div>
       </div>
-      <div className="h-[calc(100%-38px)] rounded-bl-lg">
+      <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
             {emptyText || t("No result")}
           </Text>
         )}
-        <div ref={refContainer} className="mr-[-12px] h-full space-y-4 overflow-y-auto pr-3">
+        <div ref={refContainer} className="h-full space-y-4 overflow-y-auto pr-1">
           <List
             as={Fragment}
             items={items}
@@ -236,6 +235,7 @@ const MapSidePanel = ({
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
                 type={type}
+                poly_id={item.poly_id}
               />
             )}
           />

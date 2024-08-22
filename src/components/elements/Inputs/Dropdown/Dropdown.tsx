@@ -267,7 +267,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                           <div className="flex items-center gap-2">
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
-                              className={tw("w-[63%] break-words", props.optionTextClassName)}
+                              className={tw(
+                                option.meta ? "w-[63%] break-words" : "break-words",
+                                props.optionTextClassName
+                              )}
                             >
                               {option.title}
                             </Text>

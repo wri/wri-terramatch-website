@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from "react";
+import { useT } from "@transifex/react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -7,7 +8,6 @@ import {
   ESTIMATED_AREA_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
-import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
@@ -17,13 +17,14 @@ import {
   useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
 
-import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
-import { ModalProps } from "../../../../components/extensive/Modal/Modal";
-import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
-export interface ModalApproveProps extends ModalProps {
+import Icon, { IconNames } from "../Icon/Icon";
+import { ModalProps } from "./Modal";
+import { ModalBaseSubmit } from "./ModalsBases";
+
+export interface ModalFixOverlapsProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
-  toogleButton?: boolean;
+  toggleButton?: boolean;
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
@@ -36,22 +37,17 @@ interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
 }
-type ValidationCriteria = GetV2TerrafundValidationSiteResponse[number];
 
-const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
-  if (!criteria.checked) {
-    return false;
-  }
-  if (criteria?.nonValidCriteria?.length === 0) {
-    return true;
-  }
-  const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
-  const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
-  const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-  return failingCriterias?.length === 0;
+type Criteria = GetV2TerrafundValidationSiteResponse[number];
+
+const EXCLUDED_VALIDATION_CRITERIAS = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+
+const getFailingCriterias = (criteria: Criteria): string[] => {
+  const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id) ?? [];
+  return nonValidCriteriasIds.filter(r => !EXCLUDED_VALIDATION_CRITERIAS.includes(r));
 };
 
-const ModalApprove: FC<ModalApproveProps> = ({
+const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   iconProps,
   title,
   content,
@@ -59,7 +55,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
   primaryButtonText,
   secondaryButtonProps,
   secondaryButtonText,
-  toogleButton,
+  toggleButton,
   children,
   status,
   site,
@@ -67,47 +63,48 @@ const ModalApprove: FC<ModalApproveProps> = ({
   ...rest
 }) => {
   const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
-
   const { data: polygonsCriteriaData } = useGetV2TerrafundValidationSite({
     queryParams: { uuid: site.uuid }
   });
+  const t = useT();
+
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
-  const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
+
+  const memoizedCheckValidCriteria = useMemo(
+    () => (criteria: Criteria) => {
+      if (!criteria.checked) return false;
+      if (criteria?.nonValidCriteria?.length === 0) return true;
+      const failingCriterias = getFailingCriterias(criteria);
+      return failingCriterias.length === 0;
+    },
+    []
+  );
 
   useEffect(() => {
-    if (!polygonList || !polygonsCriteriaData) {
-      return;
-    }
-    setPolygonsSelected(polygonList.map(_ => false));
+    if (!polygonList || !polygonsCriteriaData) return;
+
+    const failingPolygons = polygonList.filter(polygon => {
+      const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id);
+      return !memoizedCheckValidCriteria(criteria as Criteria);
+    });
+
     setDisplayedPolygons(
-      polygonList.map(polygon => {
-        const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id);
-        const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
-        const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
-        const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-        const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
+      failingPolygons.map(polygon => {
+        const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id) as Criteria;
+        const failingCriterias = getFailingCriterias(criteria);
+        const approved = memoizedCheckValidCriteria(criteria);
 
         return {
           id: polygon.uuid,
           checked: criteria?.checked,
-          name: polygon.poly_name ?? "Unnamed Polygon",
+          name: polygon.poly_name ?? t("Unnamed Polygon"),
           canBeApproved: approved,
           failingCriterias
         };
       })
     );
-  }, [polygonList, polygonsCriteriaData]);
-  const handleSelectAll = (isChecked: boolean) => {
-    if (displayedPolygons) {
-      const newSelected = displayedPolygons.map((polygon, index) => {
-        if (isChecked) {
-          return polygonsSelected[index] || polygon.canBeApproved;
-        }
-        return false;
-      });
-      setPolygonsSelected(newSelected as boolean[]);
-    }
-  };
+  }, [polygonList, polygonsCriteriaData, t, memoizedCheckValidCriteria]);
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -123,43 +120,30 @@ const ModalApprove: FC<ModalApproveProps> = ({
           />
         </When>
         <div className="flex items-center justify-between">
-          <Text variant="text-24-bold">{title}</Text>
+          <Text variant="text-24-bold">{t(title)}</Text>
         </div>
         <When condition={!!content}>
           <Text as="div" variant="text-12-light" className="my-1" containHtml>
-            {content}
+            {t(content)}
           </Text>
         </When>
-        <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
-          Select All{" "}
-          <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
-        </Text>
 
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
-              {"Name"}
+              {t("Name")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-start">
-              {"Polygon Check"}
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-center">
-              {"Approve"}
+              {t("Polygon Check")}
             </Text>
           </header>
           {displayedPolygons?.map((item, index) => (
-            <div key={item.id} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
+            <div key={item.id ?? index} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
                 {item.name}
               </Text>
               <div className="flex flex-1 items-center justify-center">
                 <div className="flex w-full items-center justify-start gap-2">
-                  <When condition={item.canBeApproved}>
-                    <div className="h-4 w-4">
-                      <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
-                    </div>
-                    <Text variant="text-10-light">{"Passed"}</Text>
-                  </When>
                   <When condition={!item.canBeApproved}>
                     <div className="h-4 w-4">
                       <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
@@ -173,46 +157,19 @@ const ModalApprove: FC<ModalApproveProps> = ({
                   </When>
                 </div>
               </div>
-              <div className="flex flex-1 items-center justify-center">
-                <Checkbox
-                  name=""
-                  checked={!!polygonsSelected?.[index]}
-                  disabled={!item.canBeApproved}
-                  onClick={() => {
-                    setPolygonsSelected(prev => {
-                      const newSelected = [...prev];
-                      newSelected[index] = !prev[index];
-                      return newSelected;
-                    });
-                  }}
-                />
-              </div>
             </div>
           ))}
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
+          <Button {...secondaryButtonProps} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
         </When>
-        <Button
-          {...primaryButtonProps}
-          onClick={() => {
-            const polygons: any = polygonsSelected
-              .map((polygonSelected, index: number) => {
-                if (polygonSelected) {
-                  return polygonList?.[index];
-                }
-                return null;
-              })
-              .filter((polygon: any) => polygon !== null);
-            primaryButtonProps?.onClick?.(polygons);
-          }}
-        >
+        <Button {...primaryButtonProps}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
@@ -222,4 +179,4 @@ const ModalApprove: FC<ModalApproveProps> = ({
   );
 };
 
-export default ModalApprove;
+export default ModalFixOverlaps;

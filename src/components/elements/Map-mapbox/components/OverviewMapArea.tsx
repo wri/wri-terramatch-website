@@ -192,7 +192,7 @@ const OverviewMapArea = ({
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={entityBbox}
-        tooltipType={type === "sites" ? "view" : "goTo"}
+        tooltipType={type === "sites" ? "edit" : "goTo"}
         showPopups
         showLegend
         siteData={true}
@@ -205,6 +205,7 @@ const OverviewMapArea = ({
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData?.data}
+        pdView={true}
       />
     </>
   );

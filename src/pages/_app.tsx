@@ -39,14 +39,16 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
     return (
       <>
         <WrappedQueryClientProvider>
-          <LoadingProvider>
-            <NotificationProvider>
-              <ModalProvider>
-                <ModalRoot />
-                <Component {...pageProps} />
-              </ModalProvider>
-            </NotificationProvider>
-          </LoadingProvider>
+          <AuthProvider token={accessToken}>
+            <LoadingProvider>
+              <NotificationProvider>
+                <ModalProvider>
+                  <ModalRoot />
+                  <Component {...pageProps} />
+                </ModalProvider>
+              </NotificationProvider>
+            </LoadingProvider>
+          </AuthProvider>
         </WrappedQueryClientProvider>
       </>
     );

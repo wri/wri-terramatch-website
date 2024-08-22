@@ -134,7 +134,9 @@ const handleLayerClick = (
   map: mapboxgl.Map,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
+  type: TooltipType,
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
 ) => {
   removePopups("POLYGON");
   const { lng, lat } = e.lngLat;
@@ -143,11 +145,24 @@ const handleLayerClick = (
   let popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
-  root.render(createElement(popupComponent, { feature, popup, setPolygonFromMap, sitePolygonData, type }));
 
-  popup = new mapboxgl.Popup({ className: "popup-map" }).setLngLat([lng, lat]).setDOMContent(popupContent).addTo(map);
+  const newPopup = new mapboxgl.Popup({ className: "popup-map" })
+    .setLngLat([lng, lat])
+    .setDOMContent(popupContent)
+    .addTo(map);
 
-  popupAttachedMap["POLYGON"].push(popup);
+  root.render(
+    createElement(popupComponent, {
+      feature,
+      popup: newPopup,
+      setPolygonFromMap,
+      sitePolygonData,
+      type,
+      editPolygon,
+      setEditPolygon
+    })
+  );
+  popupAttachedMap["POLYGON"].push(newPopup);
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
@@ -288,11 +303,24 @@ export const addPopupsToMap = (
   popupComponent: any,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
+  type: TooltipType,
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  draw: MapboxDraw
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
-      addPopupToLayer(map, popupComponent, layer, setPolygonFromMap, sitePolygonData, type);
+      addPopupToLayer(
+        map,
+        popupComponent,
+        layer,
+        setPolygonFromMap,
+        sitePolygonData,
+        type,
+        editPolygon,
+        setEditPolygon,
+        draw
+      );
     });
   }
 };
@@ -303,7 +331,10 @@ export const addPopupToLayer = (
   layer: any,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
-  type: TooltipType
+  type: TooltipType,
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  draw: MapboxDraw
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -313,9 +344,23 @@ export const addPopupToLayer = (
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
 
     targetLayers.forEach(targetLayer => {
-      map.on("click", targetLayer.id, (e: any) =>
-        handleLayerClick(e, popupComponent, map, setPolygonFromMap, sitePolygonData, type)
-      );
+      map.on("click", targetLayer.id, (e: any) => {
+        const currentMode = draw?.getMode();
+        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") {
+          return;
+        } else {
+          handleLayerClick(
+            e,
+            popupComponent,
+            map,
+            setPolygonFromMap,
+            sitePolygonData,
+            type,
+            editPolygon,
+            setEditPolygon
+          );
+        }
+      });
     });
   }
 };

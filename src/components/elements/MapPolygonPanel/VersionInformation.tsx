@@ -127,6 +127,15 @@ const VersionInformation = ({
     try {
       await Promise.all(uploadPromises);
       await refetchPolygonVersions?.();
+      const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+        pathParams: { uuid: editPolygon?.primary_uuid as string }
+      })) as SitePolygon[];
+      const polygonActive = polygonVersionData?.find(item => item.is_active);
+      setEditPolygon({
+        isOpen: true,
+        uuid: polygonActive?.poly_id as string,
+        primary_uuid: polygonActive?.primary_uuid
+      });
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
@@ -198,10 +207,19 @@ const VersionInformation = ({
   };
 
   const createNewVersion = async () => {
-    const polygonUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
+    const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+      pathParams: { uuid: editPolygon.primary_uuid as string }
+    })) as SitePolygon[];
+    const polygonActive = polygonVersionData?.find(item => item.is_active);
+    const polygonUuid = selectedPolyVersion?.uuid ?? polygonActive?.uuid;
     try {
-      await fetchPostV2SitePolygonUuidNewVersion({
+      const newVersion = (await fetchPostV2SitePolygonUuidNewVersion({
         pathParams: { uuid: polygonUuid as string }
+      })) as SitePolygon;
+      setEditPolygon?.({
+        isOpen: true,
+        uuid: newVersion?.poly_id as string,
+        primary_uuid: newVersion?.primary_uuid
       });
       refetchPolygonVersions?.();
       recallEntityData?.();
@@ -286,7 +304,7 @@ const VersionInformation = ({
       {polygonVersionData?.map((item: any) => (
         <div key={item.id} className="grid grid-flow-col grid-cols-4 border-b border-[#ffffff1a] py-2 ">
           <Text variant="text-10" className="col-span-1 break-words pr-2 text-white sm:col-span-2">
-            {item.poly_name}
+            {item.version_name ?? item.poly_name}
           </Text>
           <Text variant="text-10" className="text-white">
             {format(new Date(item.created_at), "MMM dd, yy")}

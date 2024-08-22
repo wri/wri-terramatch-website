@@ -78,7 +78,7 @@ const dropdownOptionsTree = [
 
 const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const t = useT();
-  const { editPolygon, setEditPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
+  const { editPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -165,9 +165,8 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
             pathParams: { uuid: polygonData.uuid }
           },
           {
-            onSuccess: () => {
+            onSuccess: async () => {
               setShouldRefetchPolygonData(true);
-              setEditPolygon({ isOpen: false, uuid: "", primary_uuid: "" });
               openNotification("success", t("Success!"), t("Polygon data updated successfully"));
             },
             onError: error => {

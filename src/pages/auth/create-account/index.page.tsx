@@ -51,7 +51,7 @@ const Page = () => {
     <LoginLayout>
       {showSignUp ? (
         <SignUpPage
-          primary_role={selected as string}
+          role={selected as string}
           selectedOption={selectedOption as string}
           selectedTitleOption={selectedTitleOption as string}
         />
