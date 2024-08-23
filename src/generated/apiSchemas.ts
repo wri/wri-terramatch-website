@@ -22657,3 +22657,40 @@ export type DeletedPolygonsResponse = {
     error?: string;
   }[];
 };
+
+export type MeResponse = {
+  uuid?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * @format date-time
+   */
+  email_address_verified_at?: string;
+  role?: string;
+  organisation?: {
+    uuid?: string;
+    name?: string;
+    status?: string;
+    readable_status?: string;
+    users_status?: string;
+    type?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
+  frameworks?: {
+    name?: string;
+    slug?: string;
+  }[];
+};
+
+export type MyOrganisationLite = {
+  uuid?: string;
+  name?: string;
+  status?: string;
+  readable_status?: string;
+  users_status?: string;
+  type?: string;
+  created_at?: string;
+  updated_at?: string;
+};
