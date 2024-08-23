@@ -135,7 +135,7 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
           {sitePolygonData?.map((polygon: any, index: number) => (
             <div key={polygon.uuid} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
-                {polygon.poly_name}
+                {polygon.poly_name ?? t("Unnamed Polygon")}
               </Text>
               <div className="flex flex-1 items-center justify-center">
                 <Checkbox name="" checked={polygonsSelected[index]} onChange={() => handleCheckboxChange(index)} />

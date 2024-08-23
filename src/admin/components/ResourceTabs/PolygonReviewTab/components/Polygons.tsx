@@ -142,6 +142,7 @@ const Polygons = (props: IPolygonProps) => {
         setPolygonFromMap({ isOpen: true, uuid: item.uuid });
         setIsOpenPolygonDrawer(true);
         setIsPolygonStatusOpen(false);
+        setSelectedPolygonsInCheckbox([]);
       }
     },
     {
@@ -197,10 +198,6 @@ const Polygons = (props: IPolygonProps) => {
     };
     setSelectedPolygonsInCheckbox(polygonsChecked);
   };
-
-  useEffect(() => {
-    console.log("checkedUuids", selectedPolygonsInCheckbox);
-  }, [selectedPolygonsInCheckbox]);
 
   return (
     <div>
