@@ -99,7 +99,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     draw,
     onCancel,
     initMap,
-    refreshMapPolygon,
     setStyleLoaded,
     setChangeStyle,
     changeStyle,
