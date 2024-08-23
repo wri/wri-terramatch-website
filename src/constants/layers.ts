@@ -14,7 +14,7 @@ export const LAYERS_NAMES = {
 export const layersList: LayerType[] = [
   {
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
-    layerName: LAYERS_NAMES.POLYGON_GEOMETRY,
+    geoserverLayerName: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
       {
         metadata: { polygonStatus: "draft" },
@@ -120,7 +120,7 @@ export const layersList: LayerType[] = [
   },
   {
     name: LAYERS_NAMES.DELETED_GEOMETRIES,
-    layerName: LAYERS_NAMES.POLYGON_GEOMETRY,
+    geoserverLayerName: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
       {
         metadata: { polygonStatus: DELETED_POLYGONS },

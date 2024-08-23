@@ -362,8 +362,12 @@ export const addPopupToLayer = (
   }
 };
 
+const getGeojserverURL = (layerName: string) => {
+  return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+};
 export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  const { name, layerName, styles } = layer;
+  const { name, geoserverLayerName, styles } = layer;
   if (map) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
@@ -371,20 +375,19 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       });
       map.removeSource(name);
     }
-    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+    const URL_GEOSERVER = getGeojserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
       tiles: [URL_GEOSERVER]
     });
     styles?.forEach((style: LayerWithStyle, index: number) => {
-      addLayerStyle(map, name, layerName, style, index);
+      addLayerStyle(map, name, geoserverLayerName, style, index);
     });
     loadLayersInMap(map, polygonsData, layer);
   }
 };
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  const { name, layerName, styles } = layer;
+  const { name, geoserverLayerName, styles } = layer;
   styles?.forEach((style: LayerWithStyle, index: number) => {
     if (map.getLayer(`${name}-${index}`)) {
       map.removeLayer(`${name}-${index}`);
@@ -393,13 +396,13 @@ const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<str
       ...style,
       id: `${name}-${index}`,
       source: name,
-      "source-layer": layerName
+      "source-layer": geoserverLayerName
     } as mapboxgl.AnyLayer);
   });
   loadLayersInMap(map, polygonsData, layer);
 };
 export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  const { name, layerName, styles } = layer;
+  const { name, geoserverLayerName, styles } = layer;
   if (map) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
@@ -407,8 +410,7 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
       });
       map.removeSource(name);
     }
-    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-    &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+    const URL_GEOSERVER = getGeojserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
       tiles: [URL_GEOSERVER]

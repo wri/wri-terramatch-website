@@ -7,7 +7,7 @@ export type LayerWithStyle = LayerStyle;
 export interface LayerType {
   name: string;
   styles: LayerWithStyle[];
-  layerName: string;
+  geoserverLayerName: string;
 }
 
 export type ControlType = Control | IControl;
