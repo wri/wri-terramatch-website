@@ -32047,6 +32047,74 @@ export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
   );
 };
 
+export type DeleteV2TerrafundProjectPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2TerrafundProjectPolygonsResponse = {
+  /**
+   * Success message
+   */
+  message?: string;
+  deleted?: {
+    /**
+     * UUID of the deleted polygon geometry
+     */
+    uuid?: string;
+  }[];
+  failed?: {
+    /**
+     * UUID of the polygon geometry that failed to delete
+     */
+    uuid?: string;
+    /**
+     * Error message for the failed deletion
+     */
+    error?: string;
+  }[];
+};
+
+export type DeleteV2TerrafundProjectPolygonsRequestBody = {
+  uuids?: string[];
+};
+
+export type DeleteV2TerrafundProjectPolygonsVariables = {
+  body?: DeleteV2TerrafundProjectPolygonsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2TerrafundProjectPolygons = (
+  variables: DeleteV2TerrafundProjectPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    DeleteV2TerrafundProjectPolygonsResponse,
+    DeleteV2TerrafundProjectPolygonsError,
+    DeleteV2TerrafundProjectPolygonsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/project-polygons", method: "delete", ...variables, signal });
+
+export const useDeleteV2TerrafundProjectPolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      DeleteV2TerrafundProjectPolygonsResponse,
+      DeleteV2TerrafundProjectPolygonsError,
+      DeleteV2TerrafundProjectPolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    DeleteV2TerrafundProjectPolygonsResponse,
+    DeleteV2TerrafundProjectPolygonsError,
+    DeleteV2TerrafundProjectPolygonsVariables
+  >(
+    (variables: DeleteV2TerrafundProjectPolygonsVariables) =>
+      fetchDeleteV2TerrafundProjectPolygons({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2DashboardJobsCreatedQueryParams = {
   /**
    * Optional. Filter counts and metrics by country.
