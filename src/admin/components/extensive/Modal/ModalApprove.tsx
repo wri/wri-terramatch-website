@@ -8,7 +8,6 @@ import {
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import {
@@ -20,6 +19,7 @@ import {
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
 import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
+import CollapsibleRow from "./CollapsibleRow";
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
@@ -29,12 +29,13 @@ export interface ModalApproveProps extends ModalProps {
   site: any;
 }
 
-interface DisplayedPolygonType {
+export interface DisplayedPolygonType {
   id: string | undefined;
   name: string | undefined;
   checked: boolean | undefined;
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
+  status: StatusEnum | undefined;
 }
 type ValidationCriteria = GetV2TerrafundValidationSiteResponse[number];
 
@@ -86,13 +87,15 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
         const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
+        const status = polygon.status;
 
         return {
           id: polygon.uuid,
           checked: criteria?.checked,
           name: polygon.poly_name ?? "Unnamed Polygon",
           canBeApproved: approved,
-          failingCriterias
+          failingCriterias,
+          status: status as StatusEnum
         };
       })
     );
@@ -141,6 +144,9 @@ const ModalApprove: FC<ModalApproveProps> = ({
               {"Name"}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-start">
+              {"Status"}
+            </Text>
+            <Text variant="text-12" className="flex flex-1 items-center justify-start">
               {"Polygon Check"}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
@@ -148,46 +154,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
             </Text>
           </header>
           {displayedPolygons?.map((item, index) => (
-            <div key={item.id} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
-              <Text variant="text-12" className="flex-[2]">
-                {item.name}
-              </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <div className="flex w-full items-center justify-start gap-2">
-                  <When condition={item.canBeApproved}>
-                    <div className="h-4 w-4">
-                      <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
-                    </div>
-                    <Text variant="text-10-light">{"Passed"}</Text>
-                  </When>
-                  <When condition={!item.canBeApproved}>
-                    <div className="h-4 w-4">
-                      <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
-                    </div>
-                    <Text variant="text-10-light">
-                      <When condition={!item.checked}>{"Run Polygon Check"}</When>
-                      <When condition={!item.canBeApproved}>
-                        {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
-                      </When>
-                    </Text>
-                  </When>
-                </div>
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <Checkbox
-                  name=""
-                  checked={!!polygonsSelected?.[index]}
-                  disabled={!item.canBeApproved}
-                  onClick={() => {
-                    setPolygonsSelected(prev => {
-                      const newSelected = [...prev];
-                      newSelected[index] = !prev[index];
-                      return newSelected;
-                    });
-                  }}
-                />
-              </div>
-            </div>
+            <CollapsibleRow
+              key={item.id}
+              item={item}
+              index={index}
+              polygonsSelected={polygonsSelected}
+              setPolygonsSelected={setPolygonsSelected}
+            />
           ))}
         </div>
       </div>

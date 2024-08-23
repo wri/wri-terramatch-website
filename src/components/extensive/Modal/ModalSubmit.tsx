@@ -11,6 +11,7 @@ import Text from "@/components/elements/Text/Text";
 import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
+import CollapsibleRow from "./components/CollapsibleRow";
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
@@ -105,31 +106,20 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               {t("Status")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
+              {t("Polygon Check")}
+            </Text>
+            <Text variant="text-12" className="flex flex-1 items-center justify-center">
               {t("Submit")}
             </Text>
           </header>
           {polygonList?.map((polygon, index: number) => (
-            <div key={polygon.uuid} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
-              <Text variant="text-12" className="flex-[2]">
-                {polygon.poly_name}
-              </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <Status status={polygon.status as StatusEnum} />
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <Checkbox
-                  name=""
-                  checked={!!polygonsSelected?.[index]}
-                  onClick={() => {
-                    setPolygonsSelected(prev => {
-                      const newSelected = [...prev];
-                      newSelected[index] = !prev[index];
-                      return newSelected;
-                    });
-                  }}
-                />
-              </div>
-            </div>
+            <CollapsibleRow
+              key={polygon.id}
+              index={index}
+              polygon={polygon}
+              polygonsSelected={polygonsSelected}
+              setPolygonsSelected={setPolygonsSelected}
+            />
           ))}
         </div>
       </div>
