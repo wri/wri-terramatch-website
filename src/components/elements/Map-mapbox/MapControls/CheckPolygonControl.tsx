@@ -58,7 +58,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const { showLoader, hideLoader } = useLoading();
-  const { setShouldRefetchValidation, setShouldRefetchPolygonData } = useMapAreaContext();
+  const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
+    useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -221,6 +222,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           onClick={() => {
             setClickedValidation(true);
             setOpenCollapse(true);
+            setSelectedPolygonsInCheckbox([]);
           }}
         >
           {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}

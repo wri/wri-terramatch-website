@@ -82,7 +82,13 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const router = useRouter();
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
-  const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
+  const {
+    isMonitoring,
+    checkIsMonitoringPartner,
+    setSiteData,
+    setShouldRefetchPolygonData,
+    setSelectedPolygonsInCheckbox
+  } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
@@ -454,6 +460,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       variant="white-border"
                       className=""
                       onClick={() => {
+                        setSelectedPolygonsInCheckbox([]);
                         downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
@@ -461,7 +468,14 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       &nbsp; {t("Download")}
                     </Button>
                     {isMonitoring && (
-                      <Button variant="primary" className="" onClick={() => openFormModalHandlerSubmitPolygon()}>
+                      <Button
+                        variant="primary"
+                        className=""
+                        onClick={() => {
+                          openFormModalHandlerSubmitPolygon();
+                          setSelectedPolygonsInCheckbox([]);
+                        }}
+                      >
                         {t("SUBMIT Polygons")}
                       </Button>
                     )}
