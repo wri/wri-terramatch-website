@@ -386,6 +386,9 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   const { name, layerName, styles } = layer;
   styles?.forEach((style: LayerWithStyle, index: number) => {
+    if (map.getLayer(`${name}-${index}`)) {
+      map.removeLayer(`${name}-${index}`);
+    }
     map.addLayer({
       ...style,
       id: `${name}-${index}`,
@@ -396,19 +399,21 @@ const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<str
   loadLayersInMap(map, polygonsData, layer);
 };
 export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  const { name, layerName } = layer;
+  const { name, layerName, styles } = layer;
   if (map) {
     if (map.getSource(name)) {
-      loadDeleteLayer(layer, map, polygonsData);
-    } else {
-      const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
-      map.addSource(name, {
-        type: "vector",
-        tiles: [URL_GEOSERVER]
+      styles?.forEach((_: unknown, index: number) => {
+        map.removeLayer(`${name}-${index}`);
       });
-      loadDeleteLayer(layer, map, polygonsData);
+      map.removeSource(name);
     }
+    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+    &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+    map.addSource(name, {
+      type: "vector",
+      tiles: [URL_GEOSERVER]
+    });
+    loadDeleteLayer(layer, map, polygonsData);
   }
 };
 const moveDeleteLayers = (map: mapboxgl.Map) => {
@@ -416,7 +421,9 @@ const moveDeleteLayers = (map: mapboxgl.Map) => {
   layers.forEach(layer => {
     const { name, styles } = layer;
     styles?.forEach((_: unknown, index: number) => {
-      map?.moveLayer(`${name}-${index}`);
+      if (map?.getLayer(`${name}-${index}`)) {
+        map?.moveLayer(`${name}-${index}`);
+      }
     });
   });
 };
