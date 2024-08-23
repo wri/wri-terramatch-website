@@ -47,8 +47,14 @@ const OverviewMapArea = ({
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
-  const { isMonitoring, editPolygon, shouldRefetchPolygonData, setShouldRefetchPolygonData, setEditPolygon } =
-    useMapAreaContext();
+  const {
+    isMonitoring,
+    editPolygon,
+    shouldRefetchPolygonData,
+    setShouldRefetchPolygonData,
+    setEditPolygon,
+    setSelectedPolygonsInCheckbox
+  } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
   };
@@ -104,6 +110,9 @@ const OverviewMapArea = ({
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
     setPolygonFromMap({ isOpen, uuid });
+    if (isOpen) {
+      setSelectedPolygonsInCheckbox([]);
+    }
   }, [editPolygon]);
 
   useEffect(() => {
