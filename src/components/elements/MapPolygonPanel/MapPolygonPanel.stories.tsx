@@ -19,6 +19,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
+    onCheckboxChange: () => {},
     type: "sites",
     isCollapsed: false
   },
@@ -29,6 +30,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
+    onCheckboxChange: () => {},
     type: "sites",
     isCollapsed: false
   },
@@ -39,6 +41,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
+    onCheckboxChange: () => {},
     type: "sites",
     isCollapsed: false
   },
@@ -50,6 +53,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
+    onCheckboxChange: () => {},
     type: "sites",
     isCollapsed: false
   },
@@ -60,6 +64,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
+    onCheckboxChange: () => {},
     type: "sites",
     isCollapsed: false
   },
@@ -70,6 +75,7 @@ const items = [
     status: "success",
     refContainer: null,
     setClickedButton: () => {},
+    onCheckboxChange: () => {},
     type: "sites",
     isCollapsed: false
   }
