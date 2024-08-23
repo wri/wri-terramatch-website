@@ -362,7 +362,7 @@ export const addPopupToLayer = (
   }
 };
 
-const getGeojserverURL = (layerName: string) => {
+const getGeoserverURL = (layerName: string) => {
   return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
       &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
@@ -375,7 +375,7 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       });
       map.removeSource(name);
     }
-    const GEOSERVER_TILE_URL = getGeojserverURL(geoserverLayerName);
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
       tiles: [GEOSERVER_TILE_URL]
@@ -410,7 +410,7 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
       });
       map.removeSource(name);
     }
-    const GEOSERVER_TILE_URL = getGeojserverURL(geoserverLayerName);
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
       tiles: [GEOSERVER_TILE_URL]
