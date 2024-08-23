@@ -1,14 +1,13 @@
 import { useT } from "@transifex/react";
 
+import Button from "@/components/elements/Button/Button";
+import Text from "@/components/elements/Text/Text";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalDeleteBulkPolygons from "@/components/extensive/Modal/ModalDeleteBulkPolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygon } from "@/generated/apiSchemas";
-
-import Button from "../../Button/Button";
-import Text from "../../Text/Text";
 
 const DeleteBulkPolygonsControl = () => {
   const t = useT();

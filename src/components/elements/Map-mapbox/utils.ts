@@ -375,10 +375,10 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       });
       map.removeSource(name);
     }
-    const URL_GEOSERVER = getGeojserverURL(geoserverLayerName);
+    const GEOSERVER_TILE_URL = getGeojserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
-      tiles: [URL_GEOSERVER]
+      tiles: [GEOSERVER_TILE_URL]
     });
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerStyle(map, name, geoserverLayerName, style, index);
@@ -410,10 +410,10 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
       });
       map.removeSource(name);
     }
-    const URL_GEOSERVER = getGeojserverURL(geoserverLayerName);
+    const GEOSERVER_TILE_URL = getGeojserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
-      tiles: [URL_GEOSERVER]
+      tiles: [GEOSERVER_TILE_URL]
     });
     loadDeleteLayer(layer, map, polygonsData);
   }
