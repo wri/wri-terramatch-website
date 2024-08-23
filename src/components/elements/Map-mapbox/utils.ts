@@ -378,7 +378,7 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       tiles: [URL_GEOSERVER]
     });
     styles?.forEach((style: LayerWithStyle, index: number) => {
-      addLayerStyle(map, name, layerName, layerName, style, index);
+      addLayerStyle(map, name, layerName, style, index);
     });
     loadLayersInMap(map, polygonsData, layer);
   }
@@ -431,7 +431,6 @@ export const addLayerStyle = (
   map: mapboxgl.Map,
   layerName: string,
   sourceName: string,
-  sourceNameLayer: string,
   style: LayerWithStyle,
   index: number
 ) => {
@@ -444,7 +443,7 @@ export const addLayerStyle = (
       ...style,
       id: `${layerName}-${index}`,
       source: sourceName,
-      "source-layer": sourceNameLayer
+      "source-layer": sourceName
     } as mapboxgl.AnyLayer,
     beforeLayer
   );
