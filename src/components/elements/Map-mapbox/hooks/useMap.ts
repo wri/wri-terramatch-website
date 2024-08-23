@@ -7,7 +7,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
-import { addFilterOfPolygonsData, convertToGeoJSON, loadLayersInMap } from "../utils";
+import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const MAP_STYLE = "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu";
 const INITIAL_ZOOM = 2.5;
@@ -40,11 +40,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const handleCreateDraw = (featureCollection: FeatureCollection, record: any) => {
     const geojson = convertToGeoJSON(featureCollection);
     onSave?.(geojson, record);
-  };
-
-  const refreshMapPolygon = (parsedPolygonData: any) => {
-    const currentMap = map.current as mapboxgl.Map;
-    loadLayersInMap(currentMap, parsedPolygonData);
   };
 
   const initMap = () => {
