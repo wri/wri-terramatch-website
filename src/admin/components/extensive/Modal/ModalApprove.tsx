@@ -90,7 +90,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const status = polygon.status;
 
         return {
-          id: polygon.uuid,
+          id: polygon.poly_id,
           checked: criteria?.checked,
           name: polygon.poly_name ?? "Unnamed Polygon",
           canBeApproved: approved,
