@@ -175,31 +175,33 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    if (map?.current && styleLoaded && showPopups) {
-      const currentMap = map.current;
-
-      map.current.on("load", () => {
-        return addPopupsToMap(
-          currentMap,
-          AdminPopup,
-          setPolygonFromMap,
-          sitePolygonData,
-          tooltipType,
-          editPolygonSelected,
-          setEditPolygon,
-          draw.current
-        );
-      });
-    }
-  }, [styleLoaded, sitePolygonData]);
-
-  useEffect(() => {
-    if (map?.current && styleLoaded && !_.isEmpty(polygonsData)) {
+    if (map?.current && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
-      addSourcesToLayers(currentMap, polygonsData);
-      setChangeStyle(true);
+      const setupMap = () => {
+        addSourcesToLayers(currentMap, polygonsData);
+        setChangeStyle(true);
+
+        if (showPopups) {
+          addPopupsToMap(
+            currentMap,
+            AdminPopup,
+            setPolygonFromMap,
+            sitePolygonData,
+            tooltipType,
+            editPolygonSelected,
+            setEditPolygon,
+            draw.current
+          );
+        }
+      };
+
+      if (currentMap.isStyleLoaded()) {
+        setupMap();
+      } else {
+        currentMap.once("styledata", setupMap);
+      }
     }
-  }, [sitePolygonData, styleLoaded, polygonsData]);
+  }, [sitePolygonData, polygonsData, showPopups]);
 
   useEffect(() => {
     if (currentStyle) {
