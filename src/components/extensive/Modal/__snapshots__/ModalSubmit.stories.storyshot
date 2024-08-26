@@ -95,6 +95,12 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
             className="flex flex-1 items-center justify-center text-12"
             data-testid="txt"
           >
+            Polygon Check
+          </p>
+          <p
+            className="flex flex-1 items-center justify-center text-12"
+            data-testid="txt"
+          >
             Submit
           </p>
         </header>
