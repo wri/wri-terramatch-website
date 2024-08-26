@@ -37,15 +37,27 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
   const galeryMenu: MenuItemProps[] = [
     {
       id: "1",
-      render: () => <Text variant="text-12-bold">{t("Edit Attributes")}</Text>
+      render: () => (
+        <Text variant="text-12-bold" className="pr-3">
+          {t("Edit Attributes")}
+        </Text>
+      )
     },
     {
       id: "2",
-      render: () => <Text variant="text-12-bold">{t("Download")}</Text>
+      render: () => (
+        <Text variant="text-12-bold" className="pr-3">
+          {t("Download")}
+        </Text>
+      )
     },
     {
       id: "3",
-      render: () => <Text variant="text-12-bold">{t("Make Cover")}</Text>
+      render: () => (
+        <Text variant="text-12-bold" className="pr-3">
+          {t("Make Cover")}
+        </Text>
+      )
     },
     {
       id: "4",
@@ -54,7 +66,11 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
     },
     {
       id: "5",
-      render: () => <Text variant="text-12-bold">{t("Delete")}</Text>,
+      render: () => (
+        <Text variant="text-12-bold" className="pr-3">
+          {t("Delete")}
+        </Text>
+      ),
       onClick: handleDelete
     }
   ];
