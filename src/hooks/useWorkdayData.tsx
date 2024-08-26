@@ -21,7 +21,10 @@ export default function useWorkdayData(
 
   return useMemo(
     function () {
-      const workdays = response?.data as Workday[];
+      const filteredCollections = response?.data?.filter(workday =>
+        workdayCollection.includes(workday?.collection as string)
+      );
+      const workdays = filteredCollections as Workday[];
 
       const grids =
         workdays == null
