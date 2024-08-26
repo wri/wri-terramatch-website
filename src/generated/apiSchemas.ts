@@ -22635,6 +22635,29 @@ export type ClippedPolygonsResponse = {
   }[];
 };
 
+export type DeletedPolygonsResponse = {
+  /**
+   * Success message
+   */
+  message?: string;
+  deleted?: {
+    /**
+     * UUID of the deleted polygon geometry
+     */
+    uuid?: string;
+  }[];
+  failed?: {
+    /**
+     * UUID of the polygon geometry that failed to delete
+     */
+    uuid?: string;
+    /**
+     * Error message for the failed deletion
+     */
+    error?: string;
+  }[];
+};
+
 export type MeResponse = {
   uuid?: string;
   first_name?: string;

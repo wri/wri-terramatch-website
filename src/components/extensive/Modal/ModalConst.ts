@@ -1,6 +1,7 @@
 export const ModalId = {
   ADD_POLYGON: "addPolygon",
   ADD_POLYGONS: "addPolygons",
+  DELETE_BULK_POLYGONS: "deleteBulkPolygons",
   REPLACEMENT_POLYGONS: "replacementPolygons",
   IDENTIFIED_POLYGONS: "identifiedPolygons",
   FIX_POLYGONS: "fixPolygons",
