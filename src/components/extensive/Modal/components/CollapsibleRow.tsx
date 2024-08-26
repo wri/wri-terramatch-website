@@ -4,36 +4,34 @@ import { When } from "react-if";
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
-import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
 
-import Icon, { IconNames } from "../../Icon/Icon";
-
-interface CollapsibleRowProps {
-  polygon: any;
+interface UnifiedCollapsibleRowProps {
+  type: string;
+  item: any;
   index: number;
   polygonsSelected: boolean[];
   setPolygonsSelected: React.Dispatch<React.SetStateAction<boolean[]>>;
 }
 
-const CollapsibleRow = (props: CollapsibleRowProps) => {
-  const { polygon, index, polygonsSelected, setPolygonsSelected } = props;
+const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
+  const { type, item, index, polygonsSelected, setPolygonsSelected } = props;
   const [openCollapse, setOpenCollapse] = useState(false);
-
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [isChecked, setIsChecked] = useState(false);
 
   const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
-        uuid: polygon.poly_id ?? ""
+        uuid: item.poly_id ?? item.id ?? ""
       }
     },
     {
-      enabled: !!polygon.poly_id
+      enabled: !!(item.poly_id ?? item.id)
     }
   );
 
@@ -42,28 +40,30 @@ const CollapsibleRow = (props: CollapsibleRowProps) => {
       setPolygonValidationData(parseValidationData(criteriaData));
       setIsChecked(true);
     } else {
-      setIsChecked(false);
+      setIsChecked(item.checked ?? false);
     }
-  }, [criteriaData]);
+  }, [criteriaData, item.checked]);
+
+  const canBeApproved = item.canBeApproved ?? isValidCriteriaData(criteriaData);
 
   return (
     <div className="flex flex-col border-b border-grey-750 px-4 py-2 last:border-0">
       <div className="flex items-center ">
         <Text variant="text-12" className="flex-[2]">
-          {polygon.poly_name}
+          {item.name}
         </Text>
         <div className="flex flex-1 items-center justify-center">
-          <Status status={polygon.status as StatusEnum} />
+          <Status status={item.status} />
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="flex w-full items-center justify-start gap-2">
-            <When condition={isValidCriteriaData(criteriaData) && isChecked}>
+            <When condition={canBeApproved && isChecked}>
               <div className="h-4 w-4">
                 <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
               </div>
               <Text variant="text-10-light">{"Passed"}</Text>
             </When>
-            <When condition={!isValidCriteriaData(criteriaData) || !isChecked}>
+            <When condition={!canBeApproved || !isChecked}>
               <div className="h-4 w-4">
                 <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
               </div>
@@ -85,6 +85,7 @@ const CollapsibleRow = (props: CollapsibleRowProps) => {
           <Checkbox
             name=""
             checked={!!polygonsSelected?.[index]}
+            disabled={type === "modalApprove" ? !canBeApproved : false}
             onClick={() => {
               setPolygonsSelected(prev => {
                 const newSelected = [...prev];

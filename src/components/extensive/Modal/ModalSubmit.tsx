@@ -115,8 +115,14 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           {polygonList?.map((polygon, index: number) => (
             <CollapsibleRow
               key={polygon.id}
+              type="modalSubmit"
               index={index}
-              polygon={polygon}
+              item={{
+                id: polygon.poly_id,
+                name: polygon.poly_name,
+                status: polygon.status,
+                poly_id: polygon.poly_id
+              }}
               polygonsSelected={polygonsSelected}
               setPolygonsSelected={setPolygonsSelected}
             />

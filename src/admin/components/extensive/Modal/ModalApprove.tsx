@@ -10,6 +10,7 @@ import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
 import {
   GetV2TerrafundValidationSiteResponse,
   useGetV2SitesSitePolygon,
@@ -19,7 +20,6 @@ import {
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
 import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
-import CollapsibleRow from "./CollapsibleRow";
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
@@ -156,6 +156,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
           {displayedPolygons?.map((item, index) => (
             <CollapsibleRow
               key={item.id}
+              type="modalApprove"
               item={item}
               index={index}
               polygonsSelected={polygonsSelected}
