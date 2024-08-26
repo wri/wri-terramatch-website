@@ -13,6 +13,8 @@ import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/Pa
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
 
+import Button from "../Button/Button";
+import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
 import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from "./ImageGalleryItem";
 import ImageGalleryPreviewer from "./ImageGalleryPreviewer";
 
@@ -49,6 +51,9 @@ const ImageGallery = ({
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const [modelName, setModelName] = useState<string>();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const tabs = ["All Images", "Geotagged", "Not Geotagged"];
 
   const getCanNextPage = () => {
     return pageIndex + 1 < pageCount;
@@ -123,14 +128,35 @@ const ImageGallery = ({
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
-        <When condition={hasFilter}>
-          <FilterDropDown
-            placeholder="Show All"
-            className="w-64"
-            options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
-            onChange={setModelName}
-          />
-        </When>
+        <div className="flex justify-end gap-4">
+          <When condition={!hasFilter}>
+            <FilterDropDown
+              placeholder="Show All"
+              className="w-64"
+              options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
+              onChange={setModelName}
+            />
+          </When>
+          <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
+          <div className="flex rounded-lg bg-neutral-40 p-1 ">
+            {tabs.map((tab, index) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveIndex(index)} // Actualizar el estado al hacer clic en el botón
+                className={classNames(
+                  "hover:stroke-blue-950 hover:text-blue-950 group inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
+                  activeIndex === index && "text-14-bold rounded-md bg-white text-darkCustom drop-shadow",
+                  activeIndex !== index && "text-14-light rounded-lg bg-transparent text-darkCustom-60"
+                )}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <Button>Upload Images</Button>
+        </div>
+
         {/* Images */}
         <div className="grid grid-cols-3 gap-4">
           {data.map(item => (

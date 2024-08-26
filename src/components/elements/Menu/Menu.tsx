@@ -22,6 +22,7 @@ export interface MenuItemProps {
   country_slug?: string | null;
   program?: string | null;
   data?: any;
+  type?: "line";
 }
 export interface MenuProps {
   extraData?: any;
@@ -187,35 +188,41 @@ const Menu = (props: MenuProps) => {
           style={calculateMenuStyle()}
         >
           {menu?.map(item => (
-            <MenuItem
-              MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
-              selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
-              key={item?.id}
-              render={
-                (item?.data?.icon ? (
-                  <div className="flex items-center">
-                    <img
-                      src={`${item?.data?.icon?.toLowerCase()}`}
-                      className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
-                      alt="info"
-                    />
-                    {item?.data?.label}
-                  </div>
-                ) : (
-                  item?.data?.label
-                )) ?? item?.render()
-              }
-              onClick={() => {
-                if (item?.onClick) {
-                  if (item?.is_airtable) {
-                    item?.onClick(extraData);
-                  } else {
-                    item?.onClick();
+            <>
+              {item?.type === "line" ? (
+                <div className="mx-2 border-b border-[#d7dbdc]" />
+              ) : (
+                <MenuItem
+                  MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
+                  selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
+                  key={item?.id}
+                  render={
+                    (item?.data?.icon ? (
+                      <div className="flex items-center">
+                        <img
+                          src={`${item?.data?.icon?.toLowerCase()}`}
+                          className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
+                          alt="info"
+                        />
+                        {item?.data?.label}
+                      </div>
+                    ) : (
+                      item?.data?.label
+                    )) ?? item?.render()
                   }
-                }
-                setSelectedOption?.(item?.country_slug ?? item?.data?.label);
-              }}
-            />
+                  onClick={() => {
+                    if (item?.onClick) {
+                      if (item?.is_airtable) {
+                        item?.onClick(extraData);
+                      } else {
+                        item?.onClick();
+                      }
+                    }
+                    setSelectedOption?.(item?.country_slug ?? item?.data?.label);
+                  }}
+                />
+              )}
+            </>
           ))}
         </div>
       </div>
