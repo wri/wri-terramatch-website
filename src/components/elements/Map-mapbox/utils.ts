@@ -339,7 +339,6 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
-
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) => {
         const currentMode = draw?.getMode();
