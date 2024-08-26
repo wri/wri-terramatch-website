@@ -10,14 +10,15 @@ import Text from "../Text/Text";
 
 interface ChecklistErrorsInformationProps {
   polygonValidationData: ICriteriaCheckItem[];
+  className?: string;
 }
 
-const ChecklistErrorsInformation = ({ polygonValidationData }: ChecklistErrorsInformationProps) => {
+const ChecklistErrorsInformation = ({ polygonValidationData, className }: ChecklistErrorsInformationProps) => {
   const t = useT();
   const { getFormatedExtraInfo } = useMessageValidators();
 
   return (
-    <div className="mt-3 grid gap-3">
+    <div className={classNames("mt-3 grid gap-3", className)}>
       {polygonValidationData.map(item => (
         <When condition={!item.status} key={item.id}>
           <Text variant="text-14-light" className="flex items-center gap-2">
