@@ -4,6 +4,7 @@ import { When } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { TextVariants } from "@/types/common";
 
@@ -33,9 +34,10 @@ const ChecklistErrorsInformation = ({
         <When condition={!item.status} key={item.id}>
           <Text variant={VARIANT_MAP[variant].text as TextVariants} className="flex items-center gap-2">
             <Icon
-              name={IconNames.IC_ERROR_PANEL}
+              name={isCompletedDataOrEstimatedArea(item) ? IconNames.EXCLAMATION_CIRCLE_FILL : IconNames.IC_ERROR_PANEL}
               className={classNames("h-4 w-4", {
-                "text-green-400": item.status
+                "text-green-400": item.status,
+                "text-yellow-700": isCompletedDataOrEstimatedArea(item)
               })}
             />
             {t(item.label)}
