@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -7,7 +8,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 
-import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
+import { COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID, OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
 
 export interface ICriteriaCheckItemProps {
   id: string;
@@ -102,8 +103,18 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
               <div key={item.id} className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-2">
                   <Icon
-                    name={item.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                    className="h-4 w-4"
+                    name={
+                      item.status
+                        ? IconNames.ROUND_GREEN_TICK
+                        : +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID
+                        ? IconNames.EXCLAMATION_CIRCLE_FILL
+                        : IconNames.ROUND_RED_CROSS
+                    }
+                    className={classNames("h-4 w-4", {
+                      "text-yellow-700":
+                        !item.status &&
+                        (+item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID)
+                    })}
                   />
                   <Text variant="text-14-light">{item.label}</Text>
                 </div>

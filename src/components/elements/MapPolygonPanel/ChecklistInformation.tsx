@@ -3,7 +3,11 @@ import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
@@ -71,9 +75,18 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
               <div key={item.id}>
                 <Text variant="text-14-light" className="flex items-center gap-2">
                   <Icon
-                    name={item.status ? IconNames.CHECK_PROGRESSBAR : IconNames.IC_ERROR_PANEL}
+                    name={
+                      item.status
+                        ? IconNames.CHECK_PROGRESSBAR
+                        : +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID
+                        ? IconNames.EXCLAMATION_CIRCLE_FILL
+                        : IconNames.IC_ERROR_PANEL
+                    }
                     className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
-                      "text-green-400": item.status
+                      "text-green-400": item.status,
+                      "text-yellow-700":
+                        !item.status &&
+                        (+item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID)
                     })}
                   />
                   {t(item.label)}

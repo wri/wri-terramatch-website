@@ -2,7 +2,11 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 
@@ -23,9 +27,14 @@ const ChecklistErrorsInformation = ({ polygonValidationData, className }: Checkl
         <When condition={!item.status} key={item.id}>
           <Text variant="text-14-light" className="flex items-center gap-2">
             <Icon
-              name={IconNames.IC_ERROR_PANEL}
+              name={
+                +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID
+                  ? IconNames.EXCLAMATION_CIRCLE_FILL
+                  : IconNames.IC_ERROR_PANEL
+              }
               className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
-                "text-green-400": item.status
+                "text-green-400": item.status,
+                "text-yellow-700": +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID
               })}
             />
             {t(item.label)}
