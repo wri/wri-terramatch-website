@@ -16,7 +16,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         aria-selected={true}
         className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-primary"
         data-headlessui-state="selected"
-        id="headlessui-tabs-tab-:r30:"
+        id="headlessui-tabs-tab-:r2v:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -34,7 +34,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         aria-selected={false}
         className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-transparent"
         data-headlessui-state=""
-        id="headlessui-tabs-tab-:r31:"
+        id="headlessui-tabs-tab-:r30:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -52,7 +52,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         aria-selected={false}
         className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-transparent"
         data-headlessui-state=""
-        id="headlessui-tabs-tab-:r32:"
+        id="headlessui-tabs-tab-:r31:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -71,7 +71,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
   <div>
     <div
       data-headlessui-state="selected"
-      id="headlessui-tabs-panel-:r33:"
+      id="headlessui-tabs-panel-:r32:"
       role="tabpanel"
       tabIndex={0}
     >
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </div>
     </div>
     <span
-      id="headlessui-tabs-panel-:r34:"
+      id="headlessui-tabs-panel-:r33:"
       role="tabpanel"
       style={
         Object {
@@ -100,7 +100,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       tabIndex={-1}
     />
     <span
-      id="headlessui-tabs-panel-:r35:"
+      id="headlessui-tabs-panel-:r34:"
       role="tabpanel"
       style={
         Object {
