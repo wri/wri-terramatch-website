@@ -128,15 +128,17 @@ const ModalApprove: FC<ModalApproveProps> = ({
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
-        <When condition={!!content}>
-          <Text as="div" variant="text-12-light" className="my-1" containHtml>
-            {content}
+        <div className="mb-2 flex items-center">
+          <When condition={!!content}>
+            <Text as="div" variant="text-12-light" className="my-1" containHtml>
+              {content}
+            </Text>
+          </When>
+          <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2 pr-[76px]">
+            Select All
+            <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
           </Text>
-        </When>
-        <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
-          Select All{" "}
-          <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
-        </Text>
+        </div>
 
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">

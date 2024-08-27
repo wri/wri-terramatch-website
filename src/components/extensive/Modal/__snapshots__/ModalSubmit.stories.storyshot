@@ -49,30 +49,33 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
         </p>
       </div>
       <div
-        className="my-1 text-12-light with-inner-html"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "Project Developers may submit one or all polygons for review.",
-          }
-        }
-        data-testid="txt"
-      />
-      <p
-        className="mb-2 flex items-center justify-end gap-1 pr-[50px] text-14-bold"
-        data-testid="txt"
+        className="mb-2 flex items-center"
       >
-        Select All
-         
-        <div>
-          <input
-            className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-            id=":r37:"
-            name="Select All"
-            onClick={[Function]}
-            type="checkbox"
-          />
-        </div>
-      </p>
+        <div
+          className="my-1 text-12-light with-inner-html"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Project Developers may submit one or all polygons for review.",
+            }
+          }
+          data-testid="txt"
+        />
+        <p
+          className=" ml-auto flex items-center justify-end gap-2 pr-[76px] text-14-bold"
+          data-testid="txt"
+        >
+          Select All
+          <div>
+            <input
+              className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
+              id=":r37:"
+              name="Select All"
+              onClick={[Function]}
+              type="checkbox"
+            />
+          </div>
+        </p>
+      </div>
       <div
         className="mb-6 flex flex-col rounded-lg border border-grey-750"
       >
