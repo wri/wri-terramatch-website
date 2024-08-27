@@ -13,8 +13,9 @@ const Toggle = (props: ToggleProps) => {
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
-    if (buttonRefs.current && buttonRefs.current[activeIndex]) {
-      const newWidth = buttonRefs.current[activeIndex].getBoundingClientRect().width;
+    const currentButton = buttonRefs.current[activeIndex];
+    if (currentButton) {
+      const newWidth = currentButton.getBoundingClientRect().width;
       setWidth(newWidth);
     }
   }, [activeIndex]);
