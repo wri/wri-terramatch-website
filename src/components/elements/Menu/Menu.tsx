@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import React from "react";
+import { Else, If, Then } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import { MenuItem } from "../MenuItem/MenuItem";
@@ -188,10 +189,11 @@ const Menu = (props: MenuProps) => {
           style={calculateMenuStyle()}
         >
           {menu?.map(item => (
-            <>
-              {item?.type === "line" ? (
+            <If condition={item?.type === "line"} key={item.id}>
+              <Then>
                 <div className="mx-2 border-b border-[#d7dbdc]" />
-              ) : (
+              </Then>
+              <Else>
                 <MenuItem
                   MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
                   selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
@@ -221,8 +223,8 @@ const Menu = (props: MenuProps) => {
                     setSelectedOption?.(item?.country_slug ?? item?.data?.label);
                   }}
                 />
-              )}
-            </>
+              </Else>
+            </If>
           ))}
         </div>
       </div>

@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
+import Button from "@/components/elements/Button/Button";
 import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDropDown";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -13,7 +14,6 @@ import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/Pa
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
 
-import Button from "../Button/Button";
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
 import Toggle from "../Toggle/Toggle";
 import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from "./ImageGalleryItem";
