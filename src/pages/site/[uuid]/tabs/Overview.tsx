@@ -378,7 +378,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
         }}
         site={site}
-      />
+      />,
+      true
     );
   };
 

@@ -61,13 +61,13 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
               <div className="h-4 w-4">
                 <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
               </div>
-              <Text variant="text-10-light">{"Passed"}</Text>
+              <Text variant="text-12">Passed</Text>
             </When>
             <When condition={!canBeApproved || !isChecked}>
               <div className="h-4 w-4">
-                <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
+                <Icon name={IconNames.IC_ERROR_PANEL} width={16} height={16} className="text-red-500" />
               </div>
-              <Text variant="text-10-light"> {isChecked ? "Failed" : "Run Validation Check"}</Text>
+              <Text variant="text-12"> {isChecked ? "Failed" : "Run Validation Check"}</Text>
             </When>
             <When condition={isChecked}>
               <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
@@ -97,9 +97,13 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
         </div>
       </div>
       <When condition={openCollapse}>
-        <div className="flex items-center">
+        <div className="flex items-center ">
           <div className="flex-[3]" />
-          <ChecklistErrorsInformation polygonValidationData={polygonValidationData} className="flex-[2]" />
+          <ChecklistErrorsInformation
+            polygonValidationData={polygonValidationData}
+            className="flex-[2]"
+            variant="table"
+          />
         </div>
       </When>
     </div>
