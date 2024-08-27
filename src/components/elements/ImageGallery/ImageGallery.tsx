@@ -15,6 +15,7 @@ import { Option } from "@/types/common";
 
 import Button from "../Button/Button";
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
+import Toggle from "../Toggle/Toggle";
 import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from "./ImageGalleryItem";
 import ImageGalleryPreviewer from "./ImageGalleryPreviewer";
 
@@ -139,22 +140,7 @@ const ImageGallery = ({
               />
             </When>
             <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
-            <div className="flex rounded-lg bg-neutral-40 p-1 ">
-              {tabs.map((tab, index) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveIndex(index)} // Actualizar el estado al hacer clic en el botón
-                  className={classNames(
-                    "hover:stroke-blue-950 hover:text-blue-950 group inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
-                    activeIndex === index && "text-14-bold rounded-md bg-white text-darkCustom drop-shadow",
-                    activeIndex !== index && "text-14-light rounded-lg bg-transparent text-darkCustom-60"
-                  )}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+            <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
           </div>
 
           <Button>Upload Images</Button>
