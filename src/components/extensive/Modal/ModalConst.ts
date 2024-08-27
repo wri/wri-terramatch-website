@@ -34,6 +34,7 @@ export const ModalId = {
   MODAL_CONFIRM: "ModalConfirm",
   MODAL_CONFIRM_DELETE_PARTNER: "ModalConfirmDeletePartner",
   MODAL_WITH_LOGO: "ModalWithLogo",
+  MODAL_IMAGE_DETAIL: "ModalImageDetail",
   MODALS_MAPPING: "ModalsMapping",
   ORGANIZATION_EDIT_MODAL: "OrganizationEditModal",
   PITCH_EDIT_MODAL: "pitchEditModal",
