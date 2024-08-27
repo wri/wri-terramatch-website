@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-interface ToggleProps {
+export interface ToggleProps {
   items: string[];
   activeIndex: number;
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -9,15 +9,23 @@ interface ToggleProps {
 
 const Toggle = (props: ToggleProps) => {
   const { items, activeIndex, setActiveIndex } = props;
+  const [width, setWidth] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    if (buttonRefs.current[activeIndex]) {
+      const newWidth = buttonRefs.current[activeIndex].getBoundingClientRect().width;
+      setWidth(newWidth);
+    }
+  }, [activeIndex]);
 
   return (
     <div className="relative flex rounded-lg bg-neutral-40 p-1">
       <div
         className="absolute top-1 h-[calc(100%_-_8px)] rounded-lg bg-white transition-all"
         style={{
-          width: buttonRefs.current[activeIndex]?.getBoundingClientRect().width,
-          transform: `translateX(${buttonRefs.current[activeIndex]?.offsetLeft}px)`
+          width: width,
+          transform: `translateX(calc(${buttonRefs.current[activeIndex]?.offsetLeft}px - 4px))`
         }}
       />
       {items.map((tab, index) => (
