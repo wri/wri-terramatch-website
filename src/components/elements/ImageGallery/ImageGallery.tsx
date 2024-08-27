@@ -128,32 +128,35 @@ const ImageGallery = ({
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
-        <div className="flex justify-end gap-4">
-          <When condition={!hasFilter}>
-            <FilterDropDown
-              placeholder="Show All"
-              className="w-64"
-              options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
-              onChange={setModelName}
-            />
-          </When>
-          <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
-          <div className="flex rounded-lg bg-neutral-40 p-1 ">
-            {tabs.map((tab, index) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveIndex(index)} // Actualizar el estado al hacer clic en el botón
-                className={classNames(
-                  "hover:stroke-blue-950 hover:text-blue-950 group inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
-                  activeIndex === index && "text-14-bold rounded-md bg-white text-darkCustom drop-shadow",
-                  activeIndex !== index && "text-14-light rounded-lg bg-transparent text-darkCustom-60"
-                )}
-              >
-                {tab}
-              </button>
-            ))}
+        <div className="flex justify-between gap-4">
+          <div className="flex gap-4">
+            <When condition={!hasFilter}>
+              <FilterDropDown
+                placeholder="Show All"
+                className="w-64"
+                options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
+                onChange={setModelName}
+              />
+            </When>
+            <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
+            <div className="flex rounded-lg bg-neutral-40 p-1 ">
+              {tabs.map((tab, index) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveIndex(index)} // Actualizar el estado al hacer clic en el botón
+                  className={classNames(
+                    "hover:stroke-blue-950 hover:text-blue-950 group inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
+                    activeIndex === index && "text-14-bold rounded-md bg-white text-darkCustom drop-shadow",
+                    activeIndex !== index && "text-14-light rounded-lg bg-transparent text-darkCustom-60"
+                  )}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
           </div>
+
           <Button>Upload Images</Button>
         </div>
 
