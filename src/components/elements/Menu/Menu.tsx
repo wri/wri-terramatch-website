@@ -177,7 +177,7 @@ const Menu = (props: MenuProps) => {
       {children}
       <div
         className={`absolute z-40 ${placement} ${isOpen ? "visible" : "invisible"}`}
-        style={{ width: `${menuRef.current?.clientWidth}px` }}
+        style={menuRef.current?.clientWidth ? { width: `${menuRef.current.clientWidth}px` } : {}}
       >
         <div
           ref={menuRef}
