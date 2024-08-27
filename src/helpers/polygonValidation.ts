@@ -41,3 +41,7 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: 
       criteria.valid === 0
   );
 };
+
+export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem) => {
+  return +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID;
+};

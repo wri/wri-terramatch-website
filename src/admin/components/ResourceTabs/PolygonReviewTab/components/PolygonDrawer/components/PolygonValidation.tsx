@@ -6,9 +6,10 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 
-import { COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID, OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
+import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
 
 export interface ICriteriaCheckItemProps {
   id: string;
@@ -106,14 +107,12 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
                     name={
                       item.status
                         ? IconNames.ROUND_GREEN_TICK
-                        : +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID
+                        : isCompletedDataOrEstimatedArea(item)
                         ? IconNames.EXCLAMATION_CIRCLE_FILL
                         : IconNames.ROUND_RED_CROSS
                     }
                     className={classNames("h-4 w-4", {
-                      "text-yellow-700":
-                        !item.status &&
-                        (+item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID)
+                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
                     })}
                   />
                   <Text variant="text-14-light">{item.label}</Text>
