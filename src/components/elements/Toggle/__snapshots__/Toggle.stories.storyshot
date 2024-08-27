@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
+<div
+  className="w-fit"
+>
+  <div
+    className="relative flex rounded-lg bg-neutral-40 p-1"
+  >
+    <div
+      className="absolute top-1 h-[calc(100%_-_8px)] rounded-lg bg-white transition-all"
+      style={
+        Object {
+          "transform": "translateX(calc(undefinedpx - 4px))",
+          "width": 0,
+        }
+      }
+    />
+    <button
+      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom"
+      onClick={[Function]}
+      type="button"
+    >
+      Tab 1
+    </button>
+    <button
+      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+      onClick={[Function]}
+      type="button"
+    >
+      Tab 2
+    </button>
+    <button
+      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+      onClick={[Function]}
+      type="button"
+    >
+      Tab 3
+    </button>
+  </div>
+</div>
+`;

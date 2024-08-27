@@ -10,7 +10,7 @@ export interface FilterSearchBoxVariant {
 export const FILTER_SEARCH_BOX_DEFAULT = {
   container: "relative",
   icon: IconNames.SEARCH,
-  iconClassName: "absolute top-[11px] left-4 w-5",
+  iconClassName: "absolute top-[9px] left-4 w-5",
   input:
     "placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
 };

@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
+import Button from "@/components/elements/Button/Button";
 import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDropDown";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -13,6 +14,8 @@ import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/Pa
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
 
+import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
+import Toggle from "../Toggle/Toggle";
 import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from "./ImageGalleryItem";
 import ImageGalleryPreviewer from "./ImageGalleryPreviewer";
 
@@ -49,6 +52,9 @@ const ImageGallery = ({
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const [modelName, setModelName] = useState<string>();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const tabs = ["All Images", "Geotagged", "Not Geotagged"];
 
   const getCanNextPage = () => {
     return pageIndex + 1 < pageCount;
@@ -123,14 +129,23 @@ const ImageGallery = ({
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
-        <When condition={hasFilter}>
-          <FilterDropDown
-            placeholder="Show All"
-            className="w-64"
-            options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
-            onChange={setModelName}
-          />
-        </When>
+        <div className="flex justify-between gap-4">
+          <div className="flex gap-4">
+            <When condition={!hasFilter}>
+              <FilterDropDown
+                placeholder="Show All"
+                className="w-64"
+                options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
+                onChange={setModelName}
+              />
+            </When>
+            <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
+            <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+          </div>
+
+          <Button>Upload Images</Button>
+        </div>
+
         {/* Images */}
         <div className="grid grid-cols-3 gap-4">
           {data.map(item => (
