@@ -8,7 +8,11 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
-import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
+import {
+  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
+  isValidCriteriaData,
+  parseValidationData
+} from "@/helpers/polygonValidation";
 
 interface UnifiedCollapsibleRowProps {
   type: string;
@@ -22,6 +26,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   const { type, item, index, polygonsSelected, setPolygonsSelected } = props;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+  const [showWarning, setShowWarning] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
   const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
@@ -38,6 +43,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
+      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
       setIsChecked(true);
     } else {
       setIsChecked(item.checked ?? false);
@@ -59,7 +65,12 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
           <div className="flex w-full items-center justify-start gap-2">
             <When condition={canBeApproved && isChecked}>
               <div className="h-4 w-4">
-                <Icon name={IconNames.ROUND_GREEN_TICK} width={16} height={16} className="text-green-500" />
+                <Icon
+                  name={showWarning ? IconNames.EXCLAMATION_CIRCLE_FILL : IconNames.ROUND_GREEN_TICK}
+                  width={16}
+                  height={16}
+                  className={showWarning ? "text-yellow-700" : "text-green-500"}
+                />
               </div>
               <Text variant="text-10-light">{"Passed"}</Text>
             </When>
