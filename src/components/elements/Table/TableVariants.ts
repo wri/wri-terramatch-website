@@ -106,3 +106,14 @@ export const VARIANT_TABLE_VERSION = {
   tdBody: "first:rounded-l-lg last:rounded-r-lg text-10-bold text-white",
   thead: "bg-transparent"
 };
+
+export const VARIANT_TABLE_ORGANISATION = {
+  table: "border-collapse w-full",
+  name: "border-airtable text-left",
+  trHeader: "!bg-transparent border-b border-neutral-200",
+  thHeader: "text-10-bold text-black !px-2 !py-2 font-bold",
+  tBody: "",
+  trBody: "bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100",
+  tdBody: "first:rounded-l-lg last:rounded-r-lg text-10-bold text-gray-700 px-2 py-1",
+  thead: "bg-transparent"
+};

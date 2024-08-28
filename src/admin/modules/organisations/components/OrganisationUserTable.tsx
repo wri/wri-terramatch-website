@@ -1,11 +1,12 @@
 import { Typography } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import { useT } from "@transifex/react";
 import { useParams } from "react-router-dom";
 
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_BLUE, MENU_ITEM_VARIANT_DISABLED } from "@/components/elements/MenuItem/MenuItemVariant";
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_ORGANISATION } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -119,94 +120,60 @@ const OrganisationUserTable = () => {
       <Typography variant="h6" component="h3" mb={2}>
         Users
       </Typography>
-      <DataGrid
-        rows={usersList ?? []}
+      <Table
+        variant={VARIANT_TABLE_ORGANISATION}
+        hasPagination={true}
+        classNameWrapper="max-h-[560px]"
+        initialTableState={{
+          pagination: { pageSize: 25, pageIndex: 0 }
+        }}
         columns={[
           {
-            field: "first_name",
-            headerName: "Name",
-            flex: 1,
-            sortable: true,
-            filterable: false,
-            renderCell: (user: any) => `${user.row.first_name} ${user.row.last_name}`,
-            disableColumnMenu: true
+            accessorKey: "first_name",
+            header: "Name",
+            id: "name",
+            cell: user => `${user?.row?.original.first_name} ${user?.row?.original?.last_name as any}`
           },
           {
-            field: "email_address",
-            headerName: "Email",
-            flex: 1,
-            sortable: true,
-            filterable: false,
-            disableColumnMenu: true
+            accessorKey: "email_address",
+            header: "Email",
+            id: "email"
           },
           {
-            field: "last_logged_in_at",
-            headerName: "Last login date",
-            flex: 1,
-            sortable: true,
-            filterable: false,
-            disableColumnMenu: true,
-            renderCell: (user: any) =>
-              user.row.last_logged_in_at ? new Date(user.row.last_logged_in_at).toLocaleDateString("en-GB") : ""
+            accessorKey: "last_logged_in_at",
+            header: "Last login date",
+            id: "last_login",
+            cell: user => {
+              return user?.row?.original.last_logged_in_at
+                ? new Date(user?.row?.original.last_logged_in_at).toLocaleDateString("en-GB")
+                : "";
+            }
           },
           {
-            field: "status",
-            headerName: "Status",
-            flex: 1,
-            sortable: true,
-            filterable: false,
-            disableColumnMenu: true,
-            renderCell: (user: any) => statusMap[user.row.status]
+            accessorKey: "status",
+            header: "Status",
+            id: "status",
+            cell: user => statusMap[user?.row?.original?.status]
           },
           {
-            field: "",
-            headerName: "",
-            sortable: false,
-            filterable: false,
-            align: "center",
-            disableColumnMenu: true,
-            renderCell: params => {
-              return (
-                params.row.status !== "approved" && (
-                  <Menu menu={tableItemMenu(params.row)} placement={MENU_PLACEMENT_RIGHT_BOTTOM}>
-                    <div className="rounded p-1 hover:bg-primary-200">
-                      <Icon
-                        name={IconNames.ELIPSES}
-                        className="roudn h-4 w-4 cursor-pointer rounded-sm text-grey-720 hover:bg-primary-200"
-                      />
-                    </div>
-                  </Menu>
-                )
-              );
-            },
-            disableReorder: true
+            accessorKey: "",
+            header: "actions",
+            id: "actions",
+            cell: params =>
+              params?.row?.original?.status !== "approved" && (
+                <Menu menu={tableItemMenu(params?.row?.original)} placement={MENU_PLACEMENT_RIGHT_BOTTOM}>
+                  <div className="rounded p-1 hover:bg-primary-200">
+                    <Icon
+                      name={IconNames.ELIPSES}
+                      className="roudn h-4 w-4 cursor-pointer rounded-sm text-grey-720 hover:bg-primary-200"
+                    />
+                  </div>
+                </Menu>
+              )
           }
         ]}
-        getRowId={item => item.uuid || item.id || ""}
-        sx={{
-          border: "none",
-          "& .MuiDataGrid-columnHeader": {
-            paddingX: 3
-          },
-          "& .MuiDataGrid-cell": {
-            paddingX: 3
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            display: "none"
-          }
-        }}
-        disableRowSelectionOnClick={true}
-        disableColumnMenu={true}
-        disableColumnSelector={true}
-        disableColumnFilter={true}
-        disableDensitySelector={true}
-        pageSizeOptions={[5, 10, 25, 50]}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 }
-          }
-        }}
-      />
+        data={usersList ?? []}
+      ></Table>
     </div>
   );
 };
