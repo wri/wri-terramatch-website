@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import { useT } from "@transifex/react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Menu from "@/components/elements/Menu/Menu";
@@ -30,7 +31,12 @@ const OrganisationUserTable = () => {
   const { id } = useParams<"id">();
   const t = useT();
   const { openModal, closeModal } = useModalContext();
-  const { data: usersList, refetch } = useGetV2AdminUsersUsersOrganisationListUUID({
+  const [tableKey, setTableKey] = useState(0);
+  const {
+    data: usersList,
+    refetch,
+    isLoading
+  } = useGetV2AdminUsersUsersOrganisationListUUID({
     pathParams: {
       uuid: id as string
     }
@@ -115,6 +121,10 @@ const OrganisationUserTable = () => {
     );
   };
 
+  useEffect(() => {
+    setTableKey(prevKey => prevKey + 1);
+  }, [usersList]);
+
   return (
     <div>
       <Typography variant="h6" component="h3" mb={2}>
@@ -127,13 +137,14 @@ const OrganisationUserTable = () => {
         initialTableState={{
           pagination: { pageSize: 25, pageIndex: 0 }
         }}
+        key={tableKey}
         columns={[
           {
             accessorKey: "first_name",
             header: "Name",
             id: "name",
-            cell: (user: any) => {
-              return user?.row?.original.first_name + " " + user?.row?.original?.last_name;
+            cell: (props: any) => {
+              return props?.row?.original.first_name + " " + props?.row?.original?.last_name;
             }
           },
           {
@@ -161,7 +172,8 @@ const OrganisationUserTable = () => {
             header: "",
             id: "actions",
             cell: params =>
-              params?.row?.original?.status !== "approved" && (
+              params?.row?.original?.status !== "approved" &&
+              !isLoading && (
                 <Menu menu={tableItemMenu(params?.row?.original)} placement={MENU_PLACEMENT_RIGHT_BOTTOM}>
                   <div className="rounded p-1 hover:bg-primary-200">
                     <Icon
