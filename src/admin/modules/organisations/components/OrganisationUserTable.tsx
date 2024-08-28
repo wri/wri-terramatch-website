@@ -13,6 +13,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   useGetV2AdminUsersUsersOrganisationListUUID,
   usePutV2OrganisationsApproveUser,
@@ -31,6 +32,7 @@ const OrganisationUserTable = () => {
   const { id } = useParams<"id">();
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const { openNotification } = useNotificationContext();
   const [tableKey, setTableKey] = useState(0);
   const {
     data: usersList,
@@ -46,12 +48,14 @@ const OrganisationUserTable = () => {
     onSuccess: () => {
       refetch();
       closeModal(ModalId.CONFIRM_USER);
+      openNotification("success", "Success!", "User approved successfully");
     }
   });
   const { mutate: rejectUser } = usePutV2OrganisationsRejectUser({
     onSuccess: () => {
       refetch();
       closeModal(ModalId.CONFIRM_USER);
+      openNotification("success", "Success!", "User rejected successfully");
     }
   });
 
@@ -61,7 +65,7 @@ const OrganisationUserTable = () => {
       render: () => (
         <div className="flex items-center gap-2" onClick={() => {}}>
           <Text variant="text-12-bold" className="pr-3">
-            Accept
+            {t("Accept")}
           </Text>
         </div>
       ),
@@ -74,7 +78,7 @@ const OrganisationUserTable = () => {
       render: () => (
         <div className={`flex items-center gap-2`} onClick={() => {}}>
           <Text variant="text-12-bold" className="pr-3">
-            Reject
+            {t("Reject")}
           </Text>
         </div>
       ),
