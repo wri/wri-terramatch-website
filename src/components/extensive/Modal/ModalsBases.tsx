@@ -37,6 +37,6 @@ export const ModalBaseWithMap = createModalComponent(
 );
 
 export const ModalBaseImageDetail = createModalComponent(
-  commonBaseClasses + " w-[850px] lg:w-[890px] wide:w-[950px]  px-8 py-10 bg-white relative",
+  commonBaseClasses + " w-[850px] lg:w-[890px] wide:w-[950px]  px-8 pt-10 pb-6 bg-white relative",
   "margin-4 z-50"
 );

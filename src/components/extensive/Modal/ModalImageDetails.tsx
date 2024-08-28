@@ -1,9 +1,13 @@
 import { useT } from "@transifex/react";
-import classNames from "classnames";
+import Image from "next/image";
 import React, { FC, useState } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
+import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
+import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
+import Toggle from "@/components/elements/Toggle/Toggle";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
@@ -45,32 +49,145 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
           textVariant="text-12"
         />
       </div>
-
-      <div className="flex w-full gap-14">
-        <div className="flex-1">
-          <Text variant="text-14-bold" className="text-darkCustom">
-            {t("Image Name")}
-          </Text>
-          <Input placeholder="Image Name" className="w-full" name="Image Name" type="text" />
+      <div className="flex w-full gap-12">
+        <div className="grid max-h-[62vh] flex-1 gap-4 overflow-auto pr-2">
+          <Input
+            name="imageName"
+            type="text"
+            label={t("Image Name")}
+            variant={"default"}
+            required={false}
+            placeholder=" "
+            id="imageName"
+            labelClassName="text-14-bold !normal-case"
+          />
+          <div>
+            <Text variant="text-14-bold" className="mb-2">
+              {t("Assign Cover Image")}
+            </Text>
+            <RadioGroup
+              options={[
+                { title: t("Yes"), value: true },
+                { title: t("No"), value: false }
+              ]}
+              onChange={value => {
+                console.log(value);
+              }}
+              contentClassName="flex gap-4 !space-y-0"
+              radioClassName="!p-0 !border-0 text-14-light !gap-2"
+              variantTextRadio="text-14-light"
+              labelRadio="gap-2"
+            />
+          </div>
+          <div>
+            <Text variant="text-14-bold" className="mb-2">
+              {t("Make Public")}
+            </Text>
+            <RadioGroup
+              options={[
+                { title: t("Yes"), value: true },
+                { title: t("No"), value: false }
+              ]}
+              onChange={value => {
+                console.log(value);
+              }}
+              contentClassName="flex gap-4 !space-y-0"
+              radioClassName="!p-0 !border-0 text-14-light !gap-2"
+              variantTextRadio="text-14-light"
+              labelRadio="gap-2"
+            />
+          </div>
+          <Input
+            name="Photographer"
+            type="text"
+            label={t("Photographer")}
+            variant={"default"}
+            required={false}
+            placeholder=" "
+            id="Photographer"
+            labelClassName="text-14-bold !normal-case"
+          />
+          <TextArea
+            name="Description"
+            label={t("Description")}
+            required={false}
+            placeholder=" "
+            id="Description"
+            labelClassName="text-14-bold !normal-case"
+          />
         </div>
-        <div className="flex-1">
-          <div className="flex rounded-lg bg-neutral-40 p-1 ">
-            {tabs.map((tab, index) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveIndex(index)} // Actualizar el estado al hacer clic en el botón
-                className={classNames(
-                  "hover:stroke-blue-950 hover:text-blue-950 group inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
-                  activeIndex === index && "text-14-bold rounded-md bg-white text-darkCustom drop-shadow",
-                  activeIndex !== index && "text-14-light rounded-lg bg-transparent text-darkCustom-60"
-                )}
-              >
-                {tab}
-              </button>
-            ))}
+        <div className="flex max-h-[62vh] flex-1 flex-col gap-4 overflow-auto">
+          <Toggle
+            items={tabs}
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+            textClassName="!w-1/2 flex justify-center py-1"
+          />
+          {activeIndex === 0 ? (
+            <Image
+              src="/images/hands-planting.webp"
+              alt="Hands planting"
+              height="400"
+              width="300"
+              className="h-[202px] w-full rounded-xl lg:h-[220px]"
+            />
+          ) : (
+            <Image
+              src="/images/map-img.png"
+              alt="map"
+              height="400"
+              width="300"
+              className="h-[202px] w-full rounded-xl lg:h-[220px]"
+            />
+          )}
+          <div className="grid grid-cols-2">
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
+              {t("Uploaded By")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
+              {t("George Washington")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
+              {t("Date Captured")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
+              {t("01/02/2024")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
+              {t("Filename")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
+              {t("apex_nursery.png")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
+              {t("File Type")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
+              {t("PNG")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
+              {t("Geotagged")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
+              {t("Yes")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
+              {t("Coordinates")}
+            </Text>
+            <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
+              {t("(31.2156, -29.9553)")}
+            </Text>
           </div>
         </div>
+      </div>
+      <div className="mt-5 flex w-full justify-end gap-3">
+        <Button className="w-1/6 rounded-full border-0 hover:border" variant="semi-red">
+          {t("Delete")}
+        </Button>
+        <Button className="w-1/6 rounded-full" variant="secondary">
+          {t("Cancel")}
+        </Button>
+        <Button className="w-1/6 rounded-full">{t("Continue")}</Button>
       </div>
     </ModalBaseImageDetail>
   );
