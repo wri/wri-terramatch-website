@@ -54,7 +54,7 @@ const OrganisationUserTable = () => {
       id: "1",
       render: () => (
         <div className="flex items-center gap-2" onClick={() => {}}>
-          <Text variant="text-12-bold" className="pr-2">
+          <Text variant="text-12-bold" className="pr-3">
             Accept
           </Text>
         </div>
@@ -67,7 +67,7 @@ const OrganisationUserTable = () => {
       id: "2",
       render: () => (
         <div className={`flex items-center gap-2`} onClick={() => {}}>
-          <Text variant="text-12-bold" className="pr-2">
+          <Text variant="text-12-bold" className="pr-3">
             Reject
           </Text>
         </div>
@@ -138,7 +138,7 @@ const OrganisationUserTable = () => {
           },
           {
             accessorKey: "email_address",
-            header: "Email",
+            header: "Emai address",
             id: "email"
           },
           {
@@ -175,6 +175,7 @@ const OrganisationUserTable = () => {
         ]}
         data={usersList ?? []}
       ></Table>
+      <br />
     </div>
   );
 };
