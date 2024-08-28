@@ -190,6 +190,9 @@ const OrganisationUserTable = () => {
           },
           "& .MuiDataGrid-cell": {
             paddingX: 3
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            display: "none"
           }
         }}
         disableRowSelectionOnClick={true}
