@@ -139,7 +139,7 @@ const OrganisationUserTable = () => {
         hasPagination={true}
         classNameWrapper="max-h-[560px]"
         initialTableState={{
-          pagination: { pageSize: 5, pageIndex: 0 }
+          pagination: { pageSize: 50, pageIndex: 0 }
         }}
         key={tableKey}
         columns={[
