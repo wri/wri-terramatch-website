@@ -233,7 +233,7 @@ export const OrganisationShow = () => (
             <OrganisationApplicationsTable />
           </SimpleShowLayout>
         </Card>
-        <Card sx={{ marginTop: 2, marginBottom: 2 }}>
+        <Card sx={{ marginTop: 2, marginBottom: 2, width: 1300 }}>
           <SimpleShowLayout>
             <OrganisationUserTable />
           </SimpleShowLayout>
