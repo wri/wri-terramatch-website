@@ -5,55 +5,99 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
   className="space-y-8"
 >
   <div
-    className="space-y-2 w-64"
-    data-headlessui-state=""
+    className="flex justify-between gap-4"
   >
     <div
-      className="flex items-center gap-3"
+      className="flex gap-4"
     >
       <div
-        className="relative"
+        className="relative w-64"
       >
         <div
-          aria-expanded={false}
-          aria-haspopup="listbox"
-          className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
-          data-headlessui-state=""
-          disabled={false}
-          id="headlessui-listbox-button-:r7:"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-        >
-          <p
-            className="w-full uppercase line-clamp-1 text-14-bold"
-            data-testid="txt"
-          >
-            Show All
-          </p>
-          <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 20,
-              }
+          style={
+            Object {
+              "height": undefined,
+              "width": 24,
             }
-          />
-        </div>
+          }
+        />
+        <input
+          className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
+          onChange={[Function]}
+          placeholder="Search..."
+          type="search"
+        />
+      </div>
+      <div
+        className="relative flex rounded-lg bg-neutral-40 p-1"
+      >
+        <div
+          className="absolute top-1 h-[calc(100%_-_8px)] rounded-lg bg-white transition-all"
+          style={
+            Object {
+              "transform": "translateX(calc(undefinedpx - 4px))",
+              "width": 0,
+            }
+          }
+        />
+        <button
+          className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom"
+          onClick={[Function]}
+          type="button"
+        >
+          All Images
+        </button>
+        <button
+          className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+          onClick={[Function]}
+          type="button"
+        >
+          Geotagged
+        </button>
+        <button
+          className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+          onClick={[Function]}
+          type="button"
+        >
+          Not Geotagged
+        </button>
       </div>
     </div>
+    <button
+      className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+    >
+      <span
+        className="flex items-center text-bold-caption-200"
+      >
+        Upload Images
+      </span>
+    </button>
   </div>
   <div
     className="grid grid-cols-3 gap-4"
   >
     <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
+      className="relative overflow-hidden rounded-xl bg-background"
     >
       <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="h-[226px] rounded-t-xl relative"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -105,68 +149,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/ZIV07iZ/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Quod distinctio reiciendis maxime enim et quidem.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Quod distinctio reiciendis maxime enim et quidem.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -210,68 +320,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/b1VyWqu/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Blanditiis magnam quae labore vel dicta quasi qui.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Blanditiis magnam quae labore vel dicta quasi qui.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -315,68 +491,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/4HQi7vzT/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Aliquam quidem cupiditate reprehenderit incidunt.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Aliquam quidem cupiditate reprehenderit incidunt.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -428,68 +670,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/TxaYRIBHBd/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Doloremque quisquam hic pariatur in dolores reprehenderit illo.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Doloremque quisquam hic pariatur in dolores reprehenderit illo.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -533,68 +841,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/3RPcmU/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Dignissimos unde tempore modi aut ut.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Dignissimos unde tempore modi aut ut.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -646,68 +1020,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/WkcO32m6ZA/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Fugit quod ullam cum natus expedita reprehenderit.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Fugit quod ullam cum natus expedita reprehenderit.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -751,68 +1191,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/eMjrY/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Sit nobis unde numquam tenetur.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Sit nobis unde numquam tenetur.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -856,68 +1362,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/0YeRnwOeq0/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Dolorum explicabo magnam ad qui ab reprehenderit dolor.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Dolorum explicabo magnam ad qui ab reprehenderit dolor.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -969,68 +1541,134 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/mvuu0/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
-      >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
-        >
-          Rerum hic laboriosam similique quidem molestias.
-          :
-          <p
-            className="text-16-light"
-            data-testid="txt"
-          />
-        </p>
-      </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
-    </div>
-    <div
-      className="relative overflow-hidden rounded-lg border border-neutral-200"
-    >
-      <div
-        className="m-2 h-[211px] w-[calc(100%-16px)] rounded-lg relative"
+        className="p-4"
       >
         <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+          className="flex items-center justify-between gap-1"
+        >
+          <p
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            data-testid="txt"
+          >
+            Rerum hic laboriosam similique quidem molestias.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="relative overflow-hidden rounded-xl bg-background"
+    >
+      <div
+        className="h-[226px] rounded-t-xl relative"
+      >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
+        <div
+          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
           role="presentation"
           style={
@@ -1082,59 +1720,111 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             <div
               className="ml-auto flex items-center"
             >
-              <a
-                className="z-10 mr-2.5"
-                href="https://picsum.photos/seed/i1uDrKPuA/640/480"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onTouchStart={[Function]}
-                target="_blank"
-              >
-                <div
-                  style={
-                    Object {
-                      "height": 32,
-                      "width": 32,
-                    }
-                  }
-                />
-              </a>
-              <button
-                className="flex items-center justify-center rounded-full hover:bg-opacity-60 z-10 hover:opacity-60"
+              <div
+                className="relative w-fit-content"
                 onClick={[Function]}
               >
                 <div
                   style={
                     Object {
-                      "height": 32,
-                      "width": 32,
+                      "height": undefined,
+                      "width": 24,
                     }
                   }
                 />
-              </button>
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        className="px-2 py-4"
+        className="p-4"
       >
-        <p
-          className="flex items-center gap-1 text-16-bold"
-          data-testid="txt"
+        <div
+          className="flex items-center justify-between gap-1"
         >
-          Odit quo ipsam cupiditate laborum qui.
-          :
           <p
-            className="text-16-light"
+            className="flex items-center gap-1 text-darkCustom text-14-bold"
             data-testid="txt"
-          />
-        </p>
+          >
+            Odit quo ipsam cupiditate laborum qui.
+            :
+            <p
+              className="text-14-bold"
+              data-testid="txt"
+            />
+          </p>
+          <div
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </div>
+        </div>
       </div>
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={[Function]}
-      />
     </div>
   </div>
   <div
@@ -1150,11 +1840,11 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         <div
           aria-expanded={false}
           aria-haspopup="listbox"
-          aria-labelledby="headlessui-listbox-label-:r9: headlessui-listbox-button-:r8:"
+          aria-labelledby="headlessui-listbox-label-:r8: headlessui-listbox-button-:r7:"
           className="flex h-10 w-20 items-center justify-center rounded-md shadow"
           data-headlessui-state=""
           disabled={false}
-          id="headlessui-listbox-button-:r8:"
+          id="headlessui-listbox-button-:r7:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -1186,7 +1876,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="text-16-bold"
           data-headlessui-state=""
           data-testid="txt"
-          id="headlessui-listbox-label-:r9:"
+          id="headlessui-listbox-label-:r8:"
           onClick={[Function]}
         >
           Per page

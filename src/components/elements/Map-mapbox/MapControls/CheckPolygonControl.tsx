@@ -45,6 +45,7 @@ interface TransformedData {
   valid: boolean;
   checked: boolean;
   label: string | null;
+  showWarning: boolean;
 }
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
@@ -142,7 +143,10 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         id: index + 1,
         valid: checkedPolygon.checked && isValid,
         checked: checkedPolygon.checked,
-        label: matchingPolygon?.poly_name ?? null
+        label: matchingPolygon?.poly_name ?? null,
+        showWarning:
+          nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
+          nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID)
       };
     });
   };
@@ -263,8 +267,16 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
                 <div key={polygon.id} className="flex items-start gap-2">
                   <div>
                     <Icon
-                      name={polygon.valid ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                      className="h-4 w-4"
+                      name={
+                        polygon.valid
+                          ? polygon.showWarning
+                            ? IconNames.EXCLAMATION_CIRCLE_FILL
+                            : IconNames.ROUND_GREEN_TICK
+                          : IconNames.ROUND_RED_CROSS
+                      }
+                      className={classNames("h-4 w-4", {
+                        "text-yellow-700": polygon.showWarning
+                      })}
                     />
                   </div>
                   <Text variant="text-10-light" className="mt-[2px] w-fit-content leading-tight text-white lg:mt-0">

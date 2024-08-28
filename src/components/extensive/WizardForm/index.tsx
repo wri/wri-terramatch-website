@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
-import Button from "@/components/elements/Button/Button";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
@@ -173,17 +172,12 @@ function WizardForm(props: WizardFormProps) {
       <div className="h-[calc(100vh-287px)] overflow-auto">
         {index === 0 && step.title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
-            <div className="flex gap-4 rounded-lg bg-tertiary-80 p-6">
+            <div className="rounded-lg bg-tertiary-80 p-6">
               <Text variant="text-16-bold" className="text-white">
-                {t(`Note: Project polygons are editable through a new geometry-focused workflow that is accessible by
-                clicking on this link.`)}
+                {t(
+                  `Note: To edit your site polygons, close this form and edit directly on the new map interface located at the bottom of the site landing page.`
+                )}
               </Text>
-              <Button
-                variant="text"
-                className="text-14-bold nowrap whitespace-nowrap rounded-lg border-2 border-transparent bg-[#ffb88891] px-4 py-0 uppercase text-white hover:border-white"
-              >
-                {t("edit polygon")}
-              </Button>
             </div>
           </div>
         )}
