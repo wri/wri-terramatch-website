@@ -60,6 +60,11 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 className="flex-1"
               />
               <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
+              <GoalProgressCard
+                label={t("Hectares Under Restoration")}
+                value={project.total_hectares_restored_sum}
+                limit={project.total_hectares_restored_goal}
+              />
             </div>
             <div>
               <GoalProgressCard
