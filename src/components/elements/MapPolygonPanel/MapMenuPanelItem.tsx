@@ -13,7 +13,11 @@ import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
-import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
+import {
+  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
+  isValidCriteriaData,
+  parseValidationData
+} from "@/helpers/polygonValidation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -61,6 +65,7 @@ const MapMenuPanelItem = ({
   const { isMonitoring, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
+  const [showWarning, setShowWarning] = useState(false);
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
@@ -83,6 +88,7 @@ const MapMenuPanelItem = ({
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(isValidCriteriaData(criteriaData));
+      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
     } else {
       setValidationStatus(undefined);
     }
@@ -264,8 +270,17 @@ const MapMenuPanelItem = ({
               </Text>
             </When>
             <When condition={validationStatus}>
-              <Text variant="text-10" className="flex items-center gap-1 text-green">
-                <Icon name={IconNames.STATUS_APPROVED} className="h-2 w-2" />
+              <Text
+                variant="text-10"
+                className={classNames("flex items-center gap-1 text-green", {
+                  "text-green": validationStatus,
+                  "text-yellow-700": showWarning
+                })}
+              >
+                <Icon
+                  name={showWarning ? IconNames.EXCLAMATION_CIRCLE_FILL : IconNames.STATUS_APPROVED}
+                  className="h-2 w-2"
+                />
                 {t("Passed")}
               </Text>
             </When>
