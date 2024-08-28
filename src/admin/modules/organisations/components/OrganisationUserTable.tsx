@@ -132,7 +132,9 @@ const OrganisationUserTable = () => {
             accessorKey: "first_name",
             header: "Name",
             id: "name",
-            cell: user => `${user?.row?.original.first_name} ${user?.row?.original?.last_name as any}`
+            cell: (user: any) => {
+              return user?.row?.original.first_name + " " + user?.row?.original?.last_name;
+            }
           },
           {
             accessorKey: "email_address",
@@ -144,9 +146,8 @@ const OrganisationUserTable = () => {
             header: "Last login date",
             id: "last_login",
             cell: user => {
-              return user?.row?.original.last_logged_in_at
-                ? new Date(user?.row?.original.last_logged_in_at).toLocaleDateString("en-GB")
-                : "";
+              const lastLoggedIn = user?.row?.original?.last_logged_in_at;
+              return lastLoggedIn ? new Date(lastLoggedIn).toLocaleDateString("en-GB") : "";
             }
           },
           {
@@ -157,7 +158,7 @@ const OrganisationUserTable = () => {
           },
           {
             accessorKey: "",
-            header: "actions",
+            header: "",
             id: "actions",
             cell: params =>
               params?.row?.original?.status !== "approved" && (
