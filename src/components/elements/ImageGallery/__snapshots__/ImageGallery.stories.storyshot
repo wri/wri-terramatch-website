@@ -132,7 +132,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -145,7 +145,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -158,7 +158,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -201,7 +201,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -214,7 +214,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -227,7 +227,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -240,7 +240,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -283,7 +283,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -296,7 +296,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                   onClick={[Function]}
                 >
                   <p
-                    className="flex items-center  text-14-semibold"
+                    className="flex items-center  text-14"
                     data-testid="txt"
                     onClick={[Function]}
                   >
@@ -340,7 +340,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
               onClick={[Function]}
             >
               <p
-                className="flex items-center text-14-semibold"
+                className="flex items-center text-14"
                 data-testid="txt"
                 onClick={[Function]}
               >
@@ -361,7 +361,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
               onClick={[Function]}
             >
               <p
-                className="flex items-center text-14-semibold"
+                className="flex items-center text-14"
                 data-testid="txt"
                 onClick={[Function]}
               >
