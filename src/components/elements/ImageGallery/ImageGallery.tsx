@@ -72,7 +72,7 @@ const ImageGallery = ({
         {
           id: "1",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Projects")}
             </Text>
           )
@@ -80,7 +80,7 @@ const ImageGallery = ({
         {
           id: "2",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Sites")}
             </Text>
           )
@@ -88,7 +88,7 @@ const ImageGallery = ({
         {
           id: "3",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Nurseries")}
             </Text>
           )
@@ -108,7 +108,7 @@ const ImageGallery = ({
         {
           id: "4",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Project")}
             </Text>
           )
@@ -116,7 +116,7 @@ const ImageGallery = ({
         {
           id: "5",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Site")}
             </Text>
           )
@@ -124,7 +124,7 @@ const ImageGallery = ({
         {
           id: "6",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Nursery")}
             </Text>
           )
@@ -132,7 +132,7 @@ const ImageGallery = ({
         {
           id: "7",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Report")}
             </Text>
           )
@@ -152,7 +152,7 @@ const ImageGallery = ({
         {
           id: "8",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Public")}
             </Text>
           )
@@ -160,7 +160,7 @@ const ImageGallery = ({
         {
           id: "9",
           render: () => (
-            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
               &nbsp; {t("Private")}
             </Text>
           )
@@ -172,7 +172,7 @@ const ImageGallery = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => {}}>
+        <Text variant="text-14" className="flex items-center" onClick={() => {}}>
           <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Newest to Oldest")}
         </Text>
@@ -181,7 +181,7 @@ const ImageGallery = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => {}}>
+        <Text variant="text-14" className="flex items-center" onClick={() => {}}>
           <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Oldest to Newest")}
         </Text>
