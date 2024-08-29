@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Else, If, Then } from "react-if";
 
 import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
@@ -411,15 +412,21 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                   value={site.combined_workday_count}
                 />
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
-                {site.framework === Framework.PPC ? (
-                  <GoalProgressCard label={t("Hectares Under Restoration")} value={site.total_hectares_restored_sum} />
-                ) : (
-                  <GoalProgressCard
-                    label={t("Hectares Under Restoration")}
-                    value={site.total_hectares_restored_sum}
-                    limit={site.hectares_to_restore_goal}
-                  />
-                )}
+                <If condition={site.framework === Framework.PPC}>
+                  <Then>
+                    <GoalProgressCard
+                      label={t("Hectares Under Restoration")}
+                      value={site.total_hectares_restored_sum}
+                    />
+                  </Then>
+                  <Else>
+                    <GoalProgressCard
+                      label={t("Hectares Under Restoration")}
+                      value={site.total_hectares_restored_sum}
+                      limit={site.hectares_to_restore_goal}
+                    />
+                  </Else>
+                </If>
               </div>
               <div>
                 <GoalProgressCard
