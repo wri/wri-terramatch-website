@@ -4,8 +4,11 @@ import React from "react";
 import { Else, If, Then } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
+import { MenuItemProps } from "./Menu";
 import {
   MENU_PLACEMENT_BOTTOM_RIGHT,
   MENU_PLACEMENT_LEFT_BOTTOM,
@@ -14,19 +17,7 @@ import {
   MENU_PLACEMENT_RIGHT_TOP
 } from "./MenuVariant";
 
-export interface MenuItemProps {
-  id: string;
-  is_airtable?: boolean;
-  render: () => ReactNode;
-  MenuItemVariant?: string;
-  onClick?: (id?: any) => void;
-  country_slug?: string | null;
-  program?: string | null;
-  data?: any;
-  type?: "line" | "collapse";
-  children?: MenuItemProps[];
-}
-export interface MenuProps {
+export interface MenuCollapseProps {
   extraData?: any;
   menu: MenuItemProps[];
   setSelected?: (id: string) => void;
@@ -42,7 +33,7 @@ export interface MenuProps {
   selectedOption?: string;
 }
 
-const Menu = (props: MenuProps) => {
+const MenuColapse = (props: MenuCollapseProps) => {
   const {
     menu,
     placement = MENU_PLACEMENT_BOTTOM_RIGHT,
@@ -57,7 +48,21 @@ const Menu = (props: MenuProps) => {
     selectedOption,
     extraData
   } = props;
+
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
+  const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({});
+
+  useEffect(() => {
+    const initialOpenItems = menu.reduce((acc, item) => {
+      if (item.type === "collapse") {
+        acc[item.id] = true;
+      }
+      return acc;
+    }, {} as { [key: string]: boolean });
+
+    setOpenItems(initialOpenItems);
+  }, [menu]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuContainerRef.current && !menuContainerRef.current?.contains(event.target as Node)) {
@@ -69,6 +74,7 @@ const Menu = (props: MenuProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +93,13 @@ const Menu = (props: MenuProps) => {
       window.removeEventListener("scroll", hideMenu);
     };
   }, [container]);
+
+  const handleToggleItem = (itemId: string) => {
+    setOpenItems(prevOpenItems => ({
+      ...prevOpenItems,
+      [itemId]: !prevOpenItems[itemId]
+    }));
+  };
 
   const calculateMenuStyleForBottom = () => {
     if (!menuContainerRef.current) {
@@ -195,35 +208,79 @@ const Menu = (props: MenuProps) => {
                 <div className="mx-2 border-b border-[#d7dbdc]" />
               </Then>
               <Else>
-                <MenuItem
-                  MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
-                  selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
-                  key={item?.id}
-                  render={
-                    (item?.data?.icon ? (
-                      <div className="flex items-center">
-                        <img
-                          src={`${item?.data?.icon?.toLowerCase()}`}
-                          className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
-                          alt="info"
+                <If condition={item?.type === "collapse"} key={item.id}>
+                  <Then>
+                    <div>
+                      <button
+                        className="my-1 flex w-full items-center justify-between"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleToggleItem(item.id);
+                        }}
+                      >
+                        {item?.render()}
+                        <Icon
+                          name={IconNames.IC_ARROW_COLLAPSE}
+                          className={tw("mr-2 text-neutral-500", openItems[item.id] && "rotate-180")}
+                          width={12}
                         />
-                        {item?.data?.label}
-                      </div>
-                    ) : (
-                      item?.data?.label
-                    )) ?? item?.render()
-                  }
-                  onClick={() => {
-                    if (item?.onClick) {
-                      if (item?.is_airtable) {
-                        item?.onClick(extraData);
-                      } else {
-                        item?.onClick();
+                      </button>
+                      {openItems[item.id] && (
+                        <div className="pl-1">
+                          {item?.children?.map(itemChildren => (
+                            <MenuItem
+                              MenuItemVariant={itemChildren?.MenuItemVariant ?? menuItemVariant}
+                              selected={setSelectedOption && selectedOption === itemChildren?.country_slug}
+                              key={itemChildren?.id}
+                              render={itemChildren?.data?.label ?? itemChildren?.render()}
+                              onClick={() => {
+                                if (itemChildren?.onClick) {
+                                  if (itemChildren?.is_airtable) {
+                                    itemChildren?.onClick(extraData);
+                                  } else {
+                                    itemChildren?.onClick();
+                                  }
+                                }
+                                setSelectedOption?.(itemChildren?.country_slug);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </Then>
+                  <Else>
+                    <MenuItem
+                      MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
+                      selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
+                      key={item?.id}
+                      render={
+                        (item?.data?.icon ? (
+                          <div className="flex items-center">
+                            <img
+                              src={`${item?.data?.icon?.toLowerCase()}`}
+                              className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
+                              alt="info"
+                            />
+                            {item?.data?.label}
+                          </div>
+                        ) : (
+                          item?.data?.label
+                        )) ?? item?.render()
                       }
-                    }
-                    setSelectedOption?.(item?.country_slug ?? item?.data?.label);
-                  }}
-                />
+                      onClick={() => {
+                        if (item?.onClick) {
+                          if (item?.is_airtable) {
+                            item?.onClick(extraData);
+                          } else {
+                            item?.onClick();
+                          }
+                        }
+                        setSelectedOption?.(item?.country_slug ?? item?.data?.label);
+                      }}
+                    />
+                  </Else>
+                </If>
               </Else>
             </If>
           ))}
@@ -232,4 +289,4 @@ const Menu = (props: MenuProps) => {
     </div>
   );
 };
-export default Menu;
+export default MenuColapse;
