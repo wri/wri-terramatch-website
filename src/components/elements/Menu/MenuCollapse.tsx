@@ -221,7 +221,7 @@ const MenuColapse = (props: MenuCollapseProps) => {
                         {item?.render()}
                         <Icon
                           name={IconNames.IC_ARROW_COLLAPSE}
-                          className={tw("mr-2 text-neutral-500", openItems[item.id] && "rotate-180")}
+                          className={tw("mr-2 text-neutral-500", !openItems[item.id] && "rotate-180")}
                           width={12}
                         />
                       </button>
