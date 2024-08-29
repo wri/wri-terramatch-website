@@ -411,6 +411,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                   value={site.combined_workday_count}
                 />
                 <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
+                <GoalProgressCard
+                  label={t("Hectares Under Restoration")}
+                  value={site.total_hectares_restored_sum}
+                  limit={site.framework === Framework.PPC ? undefined : site.hectares_to_restore_goal}
+                />
               </div>
               <div>
                 <GoalProgressCard
