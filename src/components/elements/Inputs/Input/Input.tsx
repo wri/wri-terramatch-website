@@ -150,6 +150,8 @@ const Input = forwardRef(
 
       if (inputProps.onChange) {
         inputProps.onChange(e);
+      } else {
+        formHook?.setValue(inputWrapperProps.name, e.target.value);
       }
     };
     return (
