@@ -63,15 +63,324 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </button>
       </div>
     </div>
-    <button
-      className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+    <div
+      className="flex gap-4"
     >
-      <span
-        className="flex items-center text-bold-caption-200"
+      <button
+        className="text-primary hover:text-red"
       >
-        Upload Images
-      </span>
-    </button>
+        <p
+          className="text-14-bold"
+          data-testid="txt"
+        >
+          Clear Filters
+        </p>
+      </button>
+      <div
+        className="relative w-fit-content"
+        onClick={[Function]}
+      >
+        <button
+          className="text-14-bold flex w-48 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+          onClick={[Function]}
+        >
+          Filter
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
+        </button>
+        <div
+          className="absolute z-40 top-full mt-[5px] invisible"
+          style={Object {}}
+        >
+          <div
+            className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] !sticky"
+            style={Object {}}
+          >
+            <div>
+              <button
+                className="my-1 flex w-full items-center justify-between"
+                onClick={[Function]}
+              >
+                <p
+                  className="flex items-center  text-14-semibold"
+                  data-testid="txt"
+                  onClick={[Function]}
+                >
+                    
+                  Entity
+                </p>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 12,
+                    }
+                  }
+                />
+              </button>
+              <div
+                className="pl-1"
+              >
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Projects
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Sites
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Nurseries
+                  </p>
+                </button>
+              </div>
+            </div>
+            <div
+              className="mx-2 border-b border-[#d7dbdc]"
+            />
+            <div>
+              <button
+                className="my-1 flex w-full items-center justify-between"
+                onClick={[Function]}
+              >
+                <p
+                  className="flex items-center  text-14-semibold"
+                  data-testid="txt"
+                  onClick={[Function]}
+                >
+                    
+                  Source
+                </p>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 12,
+                    }
+                  }
+                />
+              </button>
+              <div
+                className="pl-1"
+              >
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Project
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Site
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Nursery
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Report
+                  </p>
+                </button>
+              </div>
+            </div>
+            <div
+              className="mx-2 border-b border-[#d7dbdc]"
+            />
+            <div>
+              <button
+                className="my-1 flex w-full items-center justify-between"
+                onClick={[Function]}
+              >
+                <p
+                  className="flex items-center  text-14-semibold"
+                  data-testid="txt"
+                  onClick={[Function]}
+                >
+                    
+                  Privacy
+                </p>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 12,
+                    }
+                  }
+                />
+              </button>
+              <div
+                className="pl-1"
+              >
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Public
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                    onClick={[Function]}
+                  >
+                      
+                    Private
+                  </p>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="relative w-fit-content"
+        onClick={[Function]}
+      >
+        <button
+          className="text-14-bold flex w-32 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+          onClick={[Function]}
+        >
+          Sort
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
+        </button>
+        <div
+          className="absolute z-40 top-full mt-[5px] invisible"
+          style={Object {}}
+        >
+          <div
+            className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] !sticky"
+            style={Object {}}
+          >
+            <button
+              className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+              onClick={[Function]}
+            >
+              <p
+                className="flex items-center text-14"
+                data-testid="txt"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                  
+                Newest to Oldest
+              </p>
+            </button>
+            <button
+              className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+              onClick={[Function]}
+            >
+              <p
+                className="flex items-center text-14"
+                data-testid="txt"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                  
+                Oldest to Newest
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div
     className="grid grid-cols-3 gap-4"

@@ -162,7 +162,9 @@ export enum IconNames {
   IC_ARROW_COLLAPSE = "ic-arrow-collapse",
   IMAGE_ICON = "image-icon",
   DOCUMENT_CIRCLE_HOMEPAGE = "document-circle-home",
-  TREE_CIRCLE_HOMEPAGE = "tree-circle-home"
+  TREE_CIRCLE_HOMEPAGE = "tree-circle-home",
+  IC_A_TO_Z_CUSTOM = "ic-a-to-z-custom",
+  IC_Z_TO_A_CUSTOM = "ic-z-to-a-custom"
 }
 
 export interface IconProps {

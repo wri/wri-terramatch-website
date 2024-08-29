@@ -14159,6 +14159,94 @@ export const useGetV2AdminUsers = <TData = GetV2AdminUsersResponse>(
   );
 };
 
+export type GetV2AdminUsersUsersOrganisationListUUIDPathParams = {
+  uuid: string;
+};
+
+export type GetV2AdminUsersUsersOrganisationListUUIDQueryParams = {
+  /**
+   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name
+   */
+  sort?: string;
+  /**
+   * number of results (per page) to return
+   */
+  per_page?: number;
+  /**
+   * page number you want results from
+   */
+  page?: number;
+};
+
+export type GetV2AdminUsersUsersOrganisationListUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminUsersUsersOrganisationListUUIDResponse = {
+  data?: {
+    uuid?: string;
+    status?: string;
+    readable_status?: string;
+    type?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    job_role?: string;
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+    twitter?: string;
+    whatsapp_phone?: string;
+    date_added?: string;
+  }[];
+};
+
+export type GetV2AdminUsersUsersOrganisationListUUIDVariables = {
+  pathParams: GetV2AdminUsersUsersOrganisationListUUIDPathParams;
+  queryParams?: GetV2AdminUsersUsersOrganisationListUUIDQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminUsersUsersOrganisationListUUID = (
+  variables: GetV2AdminUsersUsersOrganisationListUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2AdminUsersUsersOrganisationListUUIDResponse,
+    GetV2AdminUsersUsersOrganisationListUUIDError,
+    undefined,
+    {},
+    GetV2AdminUsersUsersOrganisationListUUIDQueryParams,
+    GetV2AdminUsersUsersOrganisationListUUIDPathParams
+  >({ url: "/v2/admin/users/users-organisation-list/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2AdminUsersUsersOrganisationListUUID = <TData = GetV2AdminUsersUsersOrganisationListUUIDResponse>(
+  variables: GetV2AdminUsersUsersOrganisationListUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2AdminUsersUsersOrganisationListUUIDResponse,
+      GetV2AdminUsersUsersOrganisationListUUIDError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2AdminUsersUsersOrganisationListUUIDResponse,
+    GetV2AdminUsersUsersOrganisationListUUIDError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/admin/users/users-organisation-list/{UUID}",
+      operationId: "getV2AdminUsersUsersOrganisationListUUID",
+      variables
+    }),
+    ({ signal }) => fetchGetV2AdminUsersUsersOrganisationListUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2AdminUsersUUIDPathParams = {
   uuid: string;
 };
@@ -34891,6 +34979,11 @@ export type QueryOperation =
       path: "/v2/admin/users";
       operationId: "getV2AdminUsers";
       variables: GetV2AdminUsersVariables;
+    }
+  | {
+      path: "/v2/admin/users/users-organisation-list/{UUID}";
+      operationId: "getV2AdminUsersUsersOrganisationListUUID";
+      variables: GetV2AdminUsersUsersOrganisationListUUIDVariables;
     }
   | {
       path: "/v2/admin/users/{UUID}";

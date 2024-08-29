@@ -23,7 +23,8 @@ export interface MenuItemProps {
   country_slug?: string | null;
   program?: string | null;
   data?: any;
-  type?: "line";
+  type?: "line" | "collapse";
+  children?: MenuItemProps[];
 }
 export interface MenuProps {
   extraData?: any;

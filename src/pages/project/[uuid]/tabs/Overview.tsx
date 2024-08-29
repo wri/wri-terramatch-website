@@ -41,7 +41,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           }
         >
           <div className="flex w-full text-darkCustom">
-            <div className="grid w-[50%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
+            <div className="grid w-[55%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
               <GoalProgressCard
                 frameworksShow={[Framework.PPC]}
                 label={t("Workday Count (PPC)")}
@@ -59,7 +59,11 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 limit={project.trees_grown_goal}
                 className="flex-1"
               />
-              <GoalProgressCard label={t("Hectares Restored Goal")} value={project.total_hectares_restored_goal} />
+              <GoalProgressCard
+                label={t("Hectares Under Restoration")}
+                value={project.total_hectares_restored_sum}
+                limit={project.total_hectares_restored_goal}
+              />
             </div>
             <div>
               <GoalProgressCard
