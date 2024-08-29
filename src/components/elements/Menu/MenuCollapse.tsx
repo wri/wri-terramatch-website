@@ -8,6 +8,8 @@ import { MenuItemProps } from "@/components/elements/Menu/Menu";
 import { MenuItem } from "@/components/elements/MenuItem/MenuItem";
 import { MENU_ITEM_VARIANT_BLUE } from "@/components/elements/MenuItem/MenuItemVariant";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import useClickOutside from "@/hooks/useClickOutside";
+import useHideOnScroll from "@/hooks/useHideOnScroll";
 
 import {
   MENU_PLACEMENT_BOTTOM_RIGHT,
@@ -51,7 +53,8 @@ const MenuColapse = (props: MenuCollapseProps) => {
 
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({});
-
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const initialOpenItems = menu.reduce((acc, item) => {
       if (item.type === "collapse") {
@@ -63,36 +66,9 @@ const MenuColapse = (props: MenuCollapseProps) => {
     setOpenItems(initialOpenItems);
   }, [menu]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuContainerRef.current && !menuContainerRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useClickOutside(menuContainerRef, () => setIsOpen(false));
 
-  const menuContainerRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const hideMenu = () => {
-      if (menuContainerRef.current) {
-        setIsOpen(false);
-      }
-    };
-    container?.addEventListener("scroll", hideMenu);
-    window.addEventListener("scroll", hideMenu);
-    hideMenu();
-
-    return () => {
-      container?.removeEventListener("scroll", hideMenu);
-      window.removeEventListener("scroll", hideMenu);
-    };
-  }, [container]);
+  useHideOnScroll(menuContainerRef, container, () => setIsOpen(false));
 
   const handleToggleItem = (itemId: string) => {
     setOpenItems(prevOpenItems => ({
