@@ -51,7 +51,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           </Text>
           <LinearProgressBar
             color="primary"
-            value={progressValue === 0 ? 0.1 : progressValue}
+            value={progressValue}
             className={classNames("mt-2 bg-primary-200", {
               "opacity-0": !limit
             })}
