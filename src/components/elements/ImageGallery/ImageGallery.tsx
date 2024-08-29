@@ -3,10 +3,12 @@ import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import Button from "@/components/elements/Button/Button";
+import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
+import MenuColapse from "@/components/elements/Menu/MenuCollapse";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDropDown";
 import Text from "@/components/elements/Text/Text";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Pagination from "@/components/extensive/Pagination";
@@ -48,6 +50,8 @@ const ImageGallery = ({
   const defaultPageSize = 10;
 
   const { openModal, closeModal } = useModalContext();
+  const [openSort, setOpenSort] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
 
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
@@ -55,6 +59,135 @@ const ImageGallery = ({
   const [activeIndex, setActiveIndex] = useState(0);
 
   const tabs = ["All Images", "Geotagged", "Not Geotagged"];
+  const menuFilter = [
+    {
+      id: "0",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+          &nbsp; {t("Entity")}
+        </Text>
+      ),
+      type: "collapse",
+      children: [
+        {
+          id: "1",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Projects")}
+            </Text>
+          )
+        },
+        {
+          id: "2",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Sites")}
+            </Text>
+          )
+        },
+        {
+          id: "3",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Nurseries")}
+            </Text>
+          )
+        }
+      ]
+    },
+    { id: "2", render: () => {}, type: "line" },
+    {
+      id: "3",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+          &nbsp; {t("Source")}
+        </Text>
+      ),
+      type: "collapse",
+      children: [
+        {
+          id: "4",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Project")}
+            </Text>
+          )
+        },
+        {
+          id: "5",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Site")}
+            </Text>
+          )
+        },
+        {
+          id: "6",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Nursery")}
+            </Text>
+          )
+        },
+        {
+          id: "7",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Report")}
+            </Text>
+          )
+        }
+      ]
+    },
+    { id: "7.5", render: () => {}, type: "line" },
+    {
+      id: "5",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+          &nbsp; {t("Privacy")}
+        </Text>
+      ),
+      type: "collapse",
+      children: [
+        {
+          id: "8",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Public")}
+            </Text>
+          )
+        },
+        {
+          id: "9",
+          render: () => (
+            <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+              &nbsp; {t("Private")}
+            </Text>
+          )
+        }
+      ]
+    }
+  ];
+  const menuSort = [
+    {
+      id: "1",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => {}}>
+          <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Newest to Oldest")}
+        </Text>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <Text variant="text-14-semibold" className="flex items-center" onClick={() => {}}>
+          <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
+          &nbsp; {t("Oldest to Newest")}
+        </Text>
+      )
+    }
+  ];
 
   const getCanNextPage = () => {
     return pageIndex + 1 < pageCount;
@@ -131,19 +264,57 @@ const ImageGallery = ({
       <div {...rest} className={classNames("space-y-8", className)}>
         <div className="flex justify-between gap-4">
           <div className="flex gap-4">
-            <When condition={!hasFilter}>
-              <FilterDropDown
-                placeholder="Show All"
-                className="w-64"
-                options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
-                onChange={setModelName}
-              />
-            </When>
             <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
             <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
           </div>
-
-          <Button>Upload Images</Button>
+          <div className="flex gap-4">
+            <button className="text-primary hover:text-red">
+              <Text variant="text-14-bold">Clear Filters</Text>
+            </button>
+            <When condition={!hasFilter}>
+              <FilterDropDown
+                placeholder="Show All"
+                className="w-48"
+                options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
+                onChange={setModelName}
+                classNameContent="w-48"
+              />
+            </When>
+            <MenuColapse
+              menu={menuFilter as MenuItemProps[]}
+              placement={MENU_PLACEMENT_BOTTOM_BOTTOM}
+              classNameContentMenu="!sticky"
+            >
+              <button
+                className="text-14-bold flex w-48 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                onClick={() => {
+                  setOpenFilter(!openFilter);
+                }}
+              >
+                Filter
+                <Icon
+                  name={IconNames.CHEVRON_DOWN}
+                  className={classNames(" top-3 right-4 fill-neutral-900 transition", openFilter && "rotate-180")}
+                  width={20}
+                />
+              </button>
+            </MenuColapse>
+            <Menu menu={menuSort} placement={MENU_PLACEMENT_BOTTOM_BOTTOM} classNameContentMenu="!sticky">
+              <button
+                className="text-14-bold flex w-32 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                onClick={() => {
+                  setOpenSort(!openSort);
+                }}
+              >
+                Sort
+                <Icon
+                  name={IconNames.CHEVRON_DOWN}
+                  className={classNames(" top-3 right-4 fill-neutral-900 transition", openSort && "rotate-180")}
+                  width={20}
+                />
+              </button>
+            </Menu>
+          </div>
         </div>
 
         {/* Images */}

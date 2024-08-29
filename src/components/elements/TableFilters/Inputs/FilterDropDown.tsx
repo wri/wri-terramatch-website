@@ -20,6 +20,7 @@ export interface FilterDropDownProps {
 
   className?: string;
   onChange: (value: string) => void;
+  classNameContent?: string;
 }
 
 const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
@@ -43,7 +44,10 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
           <div className="relative">
             <Listbox.Button
               as="div"
-              className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+              className={classNames(
+                "pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4",
+                props.classNameContent
+              )}
             >
               <Text variant="text-14-bold" className="w-full uppercase line-clamp-1">
                 {formatOptionsList(props.options, toArray<any>(value)) || props.placeholder}
