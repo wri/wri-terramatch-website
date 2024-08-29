@@ -3,6 +3,9 @@ import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
+import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
+import MenuColapse from "@/components/elements/Menu/MenuCollapse";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDropDown";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -13,9 +16,6 @@ import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/Pa
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
 
-import Menu, { MenuItemProps } from "../Menu/Menu";
-import MenuColapse from "../Menu/MenuCollapse";
-import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
 import Toggle from "../Toggle/Toggle";
 import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from "./ImageGalleryItem";

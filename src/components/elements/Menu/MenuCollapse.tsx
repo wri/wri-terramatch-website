@@ -4,11 +4,11 @@ import React from "react";
 import { Else, If, Then } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
+import { MenuItemProps } from "@/components/elements/Menu/Menu";
+import { MenuItem } from "@/components/elements/MenuItem/MenuItem";
+import { MENU_ITEM_VARIANT_BLUE } from "@/components/elements/MenuItem/MenuItemVariant";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { MenuItem } from "../MenuItem/MenuItem";
-import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
-import { MenuItemProps } from "./Menu";
 import {
   MENU_PLACEMENT_BOTTOM_RIGHT,
   MENU_PLACEMENT_LEFT_BOTTOM,
