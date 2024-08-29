@@ -410,7 +410,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                   label={t("Workday Count (PPC)")}
                   value={site.combined_workday_count}
                 />
-                <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
                 <GoalProgressCard
                   label={t("Hectares Under Restoration")}
                   value={site.total_hectares_restored_sum}

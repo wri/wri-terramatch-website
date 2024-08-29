@@ -35,7 +35,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
           className="h-full bg-primary rounded-full transition-all duration-300"
           style={
             Object {
-              "width": "0%",
+              "width": "0.1%",
             }
           }
         />
