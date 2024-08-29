@@ -114,6 +114,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
             placeholder=" "
             id="Description"
             labelClassName="text-14-bold !normal-case"
+            className="resize-none"
           />
         </div>
         <div className="flex max-h-[62vh] flex-1 flex-col gap-4 overflow-auto">
