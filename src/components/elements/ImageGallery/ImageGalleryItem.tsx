@@ -5,6 +5,9 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { MenuItemProps } from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useModalContext } from "@/context/modal.provider";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
 import Menu from "../Menu/Menu";
@@ -28,10 +31,19 @@ export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<
 }
 
 const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem, onDelete, className, ...rest }) => {
+  const { openModal, closeModal } = useModalContext();
   const t = useT();
 
   const handleDelete = () => {
     onDelete?.(data.uuid);
+  };
+
+  const openMopdalImageDetail = () => {
+    openModal(
+      ModalId.MODAL_IMAGE_DETAIL,
+      <ModalImageDetails title="IMAGE DETAILS" onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />,
+      true
+    );
   };
 
   const galeryMenu: MenuItemProps[] = [
@@ -41,7 +53,8 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
         <Text variant="text-12-bold" className="pr-3">
           {t("Edit Attributes")}
         </Text>
-      )
+      ),
+      onClick: openMopdalImageDetail
     },
     {
       id: "2",
@@ -103,12 +116,15 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
 
       <div className="p-4">
         <div className="flex items-center justify-between gap-1">
-          <Text variant="text-14-bold" className="flex items-center gap-1 text-darkCustom">
-            {data.label.split(":")[0]}:<Text variant="text-14-bold">{data.label.split(":")[1]}</Text>
+          <Text variant="text-16-bold" className="flex items-center gap-1 text-darkCustom">
+            {data.label.split(":")[0]}:<Text variant="text-16-bold">{data.label.split(":")[1]}</Text>
           </Text>
-          <div className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary">
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={openMopdalImageDetail}
+          >
             <Icon name={IconNames.EDIT} height={24} width={24} className="" />
-          </div>
+          </button>
         </div>
 
         {data.subtitle && (

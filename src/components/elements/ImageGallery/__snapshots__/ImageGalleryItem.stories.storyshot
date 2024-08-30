@@ -150,18 +150,19 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] 
         className="flex items-center justify-between gap-1"
       >
         <p
-          className="flex items-center gap-1 text-darkCustom text-14-bold"
+          className="flex items-center gap-1 text-darkCustom text-16-bold"
           data-testid="txt"
         >
           Fugit deleniti hic optio totam beatae.
           :
           <p
-            className="text-14-bold"
+            className="text-16-bold"
             data-testid="txt"
           />
         </p>
-        <div
+        <button
           className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+          onClick={[Function]}
         >
           <div
             style={
@@ -171,7 +172,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] 
               }
             }
           />
-        </div>
+        </button>
       </div>
       <p
         className="flex items-center gap-1 text-darkCustom-60 text-14-light"

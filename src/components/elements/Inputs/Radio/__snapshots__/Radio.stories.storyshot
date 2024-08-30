@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Inputs/Radio Default 1`] = `
 <label
-  className="flex items-center undefined"
+  className="flex items-center"
   htmlFor=":r1b:"
 >
   <p

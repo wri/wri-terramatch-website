@@ -5,6 +5,7 @@ export interface ToggleProps {
   items: string[];
   activeIndex: number;
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+  textClassName?: string;
 }
 
 const Toggle = (props: ToggleProps) => {
@@ -37,6 +38,7 @@ const Toggle = (props: ToggleProps) => {
           onClick={() => setActiveIndex(index)}
           className={classNames(
             "hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
+            props.textClassName,
             {
               "text-14-bold text-darkCustom": activeIndex === index,
               "text-14-bold text-darkCustom-60": activeIndex !== index
