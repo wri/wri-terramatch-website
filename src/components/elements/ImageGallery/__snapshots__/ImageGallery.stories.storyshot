@@ -539,18 +539,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Quod distinctio reiciendis maxime enim et quidem.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -560,7 +561,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -710,18 +711,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Blanditiis magnam quae labore vel dicta quasi qui.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -731,7 +733,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -881,18 +883,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Aliquam quidem cupiditate reprehenderit incidunt.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -902,7 +905,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1060,18 +1063,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Doloremque quisquam hic pariatur in dolores reprehenderit illo.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -1081,7 +1085,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1231,18 +1235,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Dignissimos unde tempore modi aut ut.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -1252,7 +1257,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1410,18 +1415,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Fugit quod ullam cum natus expedita reprehenderit.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -1431,7 +1437,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1581,18 +1587,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Sit nobis unde numquam tenetur.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -1602,7 +1609,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1752,18 +1759,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Dolorum explicabo magnam ad qui ab reprehenderit dolor.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -1773,7 +1781,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1931,18 +1939,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Rerum hic laboriosam similique quidem molestias.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -1952,7 +1961,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -2110,18 +2119,19 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-14-bold"
+            className="flex items-center gap-1 text-darkCustom text-16-bold"
             data-testid="txt"
           >
             Odit quo ipsam cupiditate laborum qui.
             :
             <p
-              className="text-14-bold"
+              className="text-16-bold"
               data-testid="txt"
             />
           </p>
-          <div
+          <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
           >
             <div
               style={
@@ -2131,7 +2141,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
