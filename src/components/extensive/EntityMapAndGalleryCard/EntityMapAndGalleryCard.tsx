@@ -164,6 +164,7 @@ const EntityMapAndGalleryCard = ({
               }}
               filterOptions={filterOptions}
               hasFilter={modelName === "sites" || modelName === "projects" || modelName === "nurseries"}
+              onChangeSearch={() => {}}
             />
           </PageCard>
         </Else>

@@ -18,6 +18,8 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const ctx = useShowContext();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<string>("all");
+  const [searchString, setSearchString] = useState<string>("");
+  const [isGeotagged, setIsGeotagged] = useState<number>(0);
   const resource = entity ?? ctx.resource;
 
   const queryParams: any = {
@@ -29,7 +31,8 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   if (filter !== "all") {
     queryParams["filter[is_public]"] = filter === "public";
   }
-
+  queryParams["search"] = searchString;
+  queryParams["is_geotagged"] = isGeotagged;
   const { data } = useGetV2MODELUUIDFiles(
     {
       // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
@@ -81,6 +84,8 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           onDeleteConfirm={() => {}}
           ItemComponent={GalleryImageItem}
           hasFilter={false}
+          onChangeSearch={setSearchString}
+          onChangeGeotagged={setIsGeotagged}
         />
       </TabbedShowLayout.Tab>
     </When>

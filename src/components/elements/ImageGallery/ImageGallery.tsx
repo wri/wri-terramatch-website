@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, Dispatch, FC, HTMLAttributes, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
@@ -32,6 +32,8 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   hasFilter?: boolean;
   filterOptions?: Option[];
   ItemComponent?: FC<ImageGalleryItemProps>;
+  onChangeSearch: Dispatch<SetStateAction<string>>;
+  onChangeGeotagged: Dispatch<SetStateAction<number>>;
 }
 
 const ImageGallery = ({
@@ -44,6 +46,8 @@ const ImageGallery = ({
   hasFilter = true,
   filterOptions = [],
   ItemComponent = ImageGalleryItem,
+  onChangeSearch,
+  onChangeGeotagged,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -259,12 +263,21 @@ const ImageGallery = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize, modelName]);
 
+  useEffect(() => {
+    onChangeGeotagged(activeIndex);
+  }, [activeIndex]);
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
         <div className="flex justify-between gap-4">
           <div className="flex gap-4">
-            <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
+            <FilterSearchBox
+              onChange={e => {
+                onChangeSearch(e);
+              }}
+              placeholder={"Search..."}
+              className="w-64"
+            />
             <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
           </div>
           <div className="flex gap-4">
