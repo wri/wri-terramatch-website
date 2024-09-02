@@ -7,7 +7,10 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import { usePostV2ExportImage } from "@/generated/apiComponents";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
 import Menu from "../Menu/Menu";
@@ -32,7 +35,10 @@ export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<
 
 const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem, onDelete, className, ...rest }) => {
   const { openModal, closeModal } = useModalContext();
+  const { showLoader, hideLoader } = useLoading();
+  const { openNotification } = useNotificationContext();
   const t = useT();
+  const { mutateAsync } = usePostV2ExportImage();
 
   const handleDelete = () => {
     onDelete?.(data.uuid);
@@ -44,6 +50,40 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
       <ModalImageDetails title="IMAGE DETAILS" onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />,
       true
     );
+  };
+
+  const handleDownload = async (): Promise<void> => {
+    showLoader();
+    try {
+      const response = await mutateAsync({
+        body: {
+          imageUrl: data.fullImageUrl
+        }
+      });
+
+      if (!response) {
+        console.error("No response received from the server.");
+        openNotification("error", t("Error!"), t("No response received from the server."));
+        return;
+      }
+
+      const blob = new Blob([response], { type: "image/jpeg" });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "image.jpg";
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      hideLoader();
+      openNotification("success", t("Success!"), t("Image downloaded successfully"));
+    } catch (error) {
+      console.error("Download error:", error);
+      hideLoader();
+    }
   };
 
   const galeryMenu: MenuItemProps[] = [
@@ -62,7 +102,8 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
         <Text variant="text-12-bold" className="pr-3">
           {t("Download")}
         </Text>
-      )
+      ),
+      onClick: handleDownload
     },
     {
       id: "3",
