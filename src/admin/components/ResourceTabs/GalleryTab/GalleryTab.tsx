@@ -18,6 +18,9 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const ctx = useShowContext();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<string>("all");
+  const [searchString, setSearchString] = useState<string>("");
+  const [isGeotagged, setIsGeotagged] = useState<number>(0);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const resource = entity ?? ctx.resource;
 
   const queryParams: any = {
@@ -29,7 +32,9 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   if (filter !== "all") {
     queryParams["filter[is_public]"] = filter === "public";
   }
-
+  queryParams["search"] = searchString;
+  queryParams["is_geotagged"] = isGeotagged;
+  queryParams["sort_order"] = sortOrder;
   const { data } = useGetV2MODELUUIDFiles(
     {
       // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
@@ -40,7 +45,6 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
       enabled: !!ctx?.record?.uuid
     }
   );
-
   return (
     <When condition={!ctx.isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
@@ -81,6 +85,9 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           onDeleteConfirm={() => {}}
           ItemComponent={GalleryImageItem}
           hasFilter={false}
+          onChangeSearch={setSearchString}
+          onChangeGeotagged={setIsGeotagged}
+          setSortOrder={setSortOrder}
         />
       </TabbedShowLayout.Tab>
     </When>

@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, Dispatch, FC, HTMLAttributes, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
@@ -32,6 +32,9 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   hasFilter?: boolean;
   filterOptions?: Option[];
   ItemComponent?: FC<ImageGalleryItemProps>;
+  onChangeSearch: Dispatch<SetStateAction<string>>;
+  onChangeGeotagged: Dispatch<SetStateAction<number>>;
+  setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
 }
 
 const ImageGallery = ({
@@ -44,6 +47,9 @@ const ImageGallery = ({
   hasFilter = true,
   filterOptions = [],
   ItemComponent = ImageGalleryItem,
+  onChangeSearch,
+  onChangeGeotagged,
+  setSortOrder,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -172,7 +178,7 @@ const ImageGallery = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => {}}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("asc")}>
           <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Newest to Oldest")}
         </Text>
@@ -181,7 +187,7 @@ const ImageGallery = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => {}}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("desc")}>
           <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Oldest to Newest")}
         </Text>
@@ -259,12 +265,21 @@ const ImageGallery = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize, modelName]);
 
+  useEffect(() => {
+    onChangeGeotagged(activeIndex);
+  }, [activeIndex]);
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
         <div className="flex justify-between gap-4">
           <div className="flex gap-4">
-            <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
+            <FilterSearchBox
+              onChange={e => {
+                onChangeSearch(e);
+              }}
+              placeholder={"Search..."}
+              className="w-64"
+            />
             <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
           </div>
           <div className="flex gap-4">
