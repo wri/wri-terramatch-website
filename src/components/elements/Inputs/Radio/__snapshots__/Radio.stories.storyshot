@@ -3,7 +3,7 @@
 exports[`Storyshots Components/Elements/Inputs/Radio Default 1`] = `
 <label
   className="flex items-center"
-  htmlFor=":r1b:"
+  htmlFor=":r1c:"
 >
   <p
     className="text-light-caption-200"
@@ -13,7 +13,7 @@ exports[`Storyshots Components/Elements/Inputs/Radio Default 1`] = `
   </p>
   <input
     checked={true}
-    id=":r1b:"
+    id=":r1c:"
     label="Radio Label"
     type="radio"
   />
