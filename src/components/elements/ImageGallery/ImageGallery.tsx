@@ -32,6 +32,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   hasFilter?: boolean;
   filterOptions?: Option[];
   ItemComponent?: FC<ImageGalleryItemProps>;
+  newFilter?: boolean;
 }
 
 const ImageGallery = ({
@@ -44,6 +45,7 @@ const ImageGallery = ({
   hasFilter = true,
   filterOptions = [],
   ItemComponent = ImageGalleryItem,
+  newFilter = false,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -263,15 +265,19 @@ const ImageGallery = ({
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
         <div className="flex justify-between gap-4">
+          {newFilter && (
+            <div className="flex gap-4">
+              <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
+              <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+            </div>
+          )}
           <div className="flex gap-4">
-            <FilterSearchBox onChange={() => {}} placeholder={"Search..."} className="w-64" />
-            <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
-          </div>
-          <div className="flex gap-4">
-            <button className="text-primary hover:text-red">
-              <Text variant="text-14-bold">Clear Filters</Text>
-            </button>
-            <When condition={!hasFilter}>
+            {newFilter && (
+              <button className="text-primary hover:text-red">
+                <Text variant="text-14-bold">Clear Filters</Text>
+              </button>
+            )}
+            <When condition={hasFilter}>
               <FilterDropDown
                 placeholder="Show All"
                 className="w-48"
@@ -280,40 +286,44 @@ const ImageGallery = ({
                 classNameContent="w-48"
               />
             </When>
-            <MenuColapse
-              menu={menuFilter as MenuItemProps[]}
-              placement={MENU_PLACEMENT_BOTTOM_BOTTOM}
-              classNameContentMenu="!sticky"
-            >
-              <button
-                className="text-14-bold flex w-48 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
-                onClick={() => {
-                  setOpenFilter(!openFilter);
-                }}
-              >
-                Filter
-                <Icon
-                  name={IconNames.CHEVRON_DOWN}
-                  className={classNames(" top-3 right-4 fill-neutral-900 transition", openFilter && "rotate-180")}
-                  width={20}
-                />
-              </button>
-            </MenuColapse>
-            <Menu menu={menuSort} placement={MENU_PLACEMENT_BOTTOM_BOTTOM} classNameContentMenu="!sticky">
-              <button
-                className="text-14-bold flex w-32 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
-                onClick={() => {
-                  setOpenSort(!openSort);
-                }}
-              >
-                Sort
-                <Icon
-                  name={IconNames.CHEVRON_DOWN}
-                  className={classNames(" top-3 right-4 fill-neutral-900 transition", openSort && "rotate-180")}
-                  width={20}
-                />
-              </button>
-            </Menu>
+            {newFilter && (
+              <>
+                <MenuColapse
+                  menu={menuFilter as MenuItemProps[]}
+                  placement={MENU_PLACEMENT_BOTTOM_BOTTOM}
+                  classNameContentMenu="!sticky"
+                >
+                  <button
+                    className="text-14-bold flex w-48 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                    onClick={() => {
+                      setOpenFilter(!openFilter);
+                    }}
+                  >
+                    Filter
+                    <Icon
+                      name={IconNames.CHEVRON_DOWN}
+                      className={classNames(" top-3 right-4 fill-neutral-900 transition", openFilter && "rotate-180")}
+                      width={20}
+                    />
+                  </button>
+                </MenuColapse>
+                <Menu menu={menuSort} placement={MENU_PLACEMENT_BOTTOM_BOTTOM} classNameContentMenu="!sticky">
+                  <button
+                    className="text-14-bold flex w-32 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                    onClick={() => {
+                      setOpenSort(!openSort);
+                    }}
+                  >
+                    Sort
+                    <Icon
+                      name={IconNames.CHEVRON_DOWN}
+                      className={classNames(" top-3 right-4 fill-neutral-900 transition", openSort && "rotate-180")}
+                      width={20}
+                    />
+                  </button>
+                </Menu>
+              </>
+            )}
           </div>
         </div>
 

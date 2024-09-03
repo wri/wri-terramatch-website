@@ -28,9 +28,17 @@ export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<
   data: ImageGalleryItemData;
   onClickGalleryItem?: (data: ImageGalleryItemData) => void;
   onDelete?: (id: string) => void;
+  newFilter?: boolean;
 }
 
-const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem, onDelete, className, ...rest }) => {
+const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
+  data,
+  onClickGalleryItem,
+  onDelete,
+  className,
+  newFilter = false,
+  ...rest
+}) => {
   const { openModal, closeModal } = useModalContext();
   const t = useT();
 
@@ -103,14 +111,16 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           {!data.isPublic && <Icon name={IconNames.LOCK_CIRCLE} height={32} width={32} className="fill-neutral-700" />}
 
           {/* Right */}
-          <div className="ml-auto flex items-center">
-            <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
-              <Icon
-                name={IconNames.ELIPSES}
-                className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"
-              ></Icon>
-            </Menu>
-          </div>
+          {newFilter && (
+            <div className="ml-auto flex items-center">
+              <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
+                <Icon
+                  name={IconNames.ELIPSES}
+                  className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"
+                ></Icon>
+              </Menu>
+            </div>
+          )}
         </div>
       </ImageWithChildren>
 
@@ -119,12 +129,14 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           <Text variant="text-16-bold" className="flex items-center gap-1 text-darkCustom">
             {data.label.split(":")[0]}:<Text variant="text-16-bold">{data.label.split(":")[1]}</Text>
           </Text>
-          <button
-            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-            onClick={openMopdalImageDetail}
-          >
-            <Icon name={IconNames.EDIT} height={24} width={24} className="" />
-          </button>
+          {newFilter && (
+            <button
+              className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+              onClick={openMopdalImageDetail}
+            >
+              <Icon name={IconNames.EDIT} height={24} width={24} className="" />
+            </button>
+          )}
         </div>
 
         {data.subtitle && (
