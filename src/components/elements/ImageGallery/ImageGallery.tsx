@@ -34,6 +34,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   ItemComponent?: FC<ImageGalleryItemProps>;
   onChangeSearch: Dispatch<SetStateAction<string>>;
   onChangeGeotagged: Dispatch<SetStateAction<number>>;
+  setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
 }
 
 const ImageGallery = ({
@@ -48,6 +49,7 @@ const ImageGallery = ({
   ItemComponent = ImageGalleryItem,
   onChangeSearch,
   onChangeGeotagged,
+  setSortOrder,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -176,7 +178,7 @@ const ImageGallery = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => {}}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("asc")}>
           <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Newest to Oldest")}
         </Text>
@@ -185,7 +187,7 @@ const ImageGallery = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => {}}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("desc")}>
           <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Oldest to Newest")}
         </Text>
