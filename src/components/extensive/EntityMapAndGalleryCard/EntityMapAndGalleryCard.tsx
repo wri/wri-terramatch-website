@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { Else, If, Then } from "react-if";
 
-import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -141,7 +140,7 @@ const EntityMapAndGalleryCard = ({
           />
         </Then>
         <Else>
-          <PageCard title={t("All Images")} headerChildren={<Button>Upload Images</Button>}>
+          <PageCard title={t("All Images")}>
             <ImageGallery
               data={
                 data?.data?.map(file => ({
