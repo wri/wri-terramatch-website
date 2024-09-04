@@ -316,7 +316,7 @@ const ImageGallery = ({
             </MenuColapse>
             <Menu menu={menuSort} placement={MENU_PLACEMENT_BOTTOM_BOTTOM} classNameContentMenu="!sticky">
               <button
-                className="text-14-bold flex w-32 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                className="text-14-bold flex w-36 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:w-44"
                 onClick={() => {
                   setOpenSort(!openSort);
                 }}

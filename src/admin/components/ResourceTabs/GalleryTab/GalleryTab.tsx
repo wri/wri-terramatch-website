@@ -1,4 +1,3 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { FC, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
@@ -17,7 +16,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const ctx = useShowContext();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
-  const [filter, setFilter] = useState<string>("all");
+  const [filter] = useState<string>("all");
   const [searchString, setSearchString] = useState<string>("");
   const [isGeotagged, setIsGeotagged] = useState<number>(0);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -48,24 +47,6 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   return (
     <When condition={!ctx.isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
-        <FormControl sx={{ maxWidth: 200 }} margin="dense">
-          <InputLabel id="visibility-label" shrink sx={{ top: -10, fontFamily: "Acumin Pro" }}>
-            Visibility
-          </InputLabel>
-          <Select
-            labelId="visibility-label"
-            id="visibility-select"
-            value={filter}
-            label="Visibility"
-            onChange={e => {
-              setFilter(e.target.value);
-            }}
-          >
-            <MenuItem value="all">All Images</MenuItem>
-            <MenuItem value="public">Public</MenuItem>
-            <MenuItem value="private">Private</MenuItem>
-          </Select>
-        </FormControl>
         <ImageGallery
           data={
             data?.data?.map(file => ({
@@ -84,10 +65,10 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           }}
           onDeleteConfirm={() => {}}
           ItemComponent={GalleryImageItem}
-          hasFilter={false}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}
           setSortOrder={setSortOrder}
+          className="mt-3"
         />
       </TabbedShowLayout.Tab>
     </When>
