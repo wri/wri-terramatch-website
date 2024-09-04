@@ -5,20 +5,6 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
   className="h-[203px] w-full relative"
 >
   <div
-    className="absolute bottom-4 left-4 z-10 flex gap-2"
-  >
-    <div
-      className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
-    >
-      Geotagged
-    </div>
-    <div
-      className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-    >
-      Cover
-    </div>
-  </div>
-  <div
     className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
     placeholder="No Image Available"
     role="presentation"
