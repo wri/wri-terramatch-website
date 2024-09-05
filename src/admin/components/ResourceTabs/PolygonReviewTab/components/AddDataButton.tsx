@@ -16,22 +16,31 @@ const AddDataButton = (props: AddDataButtonProps) => {
   const { openFormModalHandlerAddPolygon, classNameContent, openFormModalHandlerAddPolygons } = props;
   const context = useMapAreaContext();
   const t = useT();
-  const { setIsUserDrawingEnabled } = context;
+  const { setIsUserDrawingEnabled, setSelectedPolygonsInCheckbox } = context;
   const addMenuItems = [
     {
       id: "1",
       render: () => <Text variant="text-12-bold">{t("Draw Polygon on Map")}</Text>,
-      onClick: () => setIsUserDrawingEnabled(true)
+      onClick: () => {
+        setIsUserDrawingEnabled(true);
+        setSelectedPolygonsInCheckbox([]);
+      }
     },
     {
       id: "2",
       render: () => <Text variant="text-12-bold">{t("Add Polygon Data")}</Text>,
-      onClick: openFormModalHandlerAddPolygon
+      onClick: () => {
+        openFormModalHandlerAddPolygon();
+        setSelectedPolygonsInCheckbox([]);
+      }
     },
     {
       id: "3",
       render: () => <Text variant="text-12-bold">{t("Update All Polygons")}</Text>,
-      onClick: openFormModalHandlerAddPolygons
+      onClick: () => {
+        openFormModalHandlerAddPolygons?.();
+        setSelectedPolygonsInCheckbox([]);
+      }
     }
   ];
   return (

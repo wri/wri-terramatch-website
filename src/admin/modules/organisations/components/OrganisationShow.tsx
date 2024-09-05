@@ -233,11 +233,12 @@ export const OrganisationShow = () => (
             <OrganisationApplicationsTable />
           </SimpleShowLayout>
         </Card>
-        <Card sx={{ marginTop: 2, marginBottom: 2 }}>
+        <Card sx={{ marginTop: 2, marginBottom: "180px", overflow: "visible" }}>
           <SimpleShowLayout>
             <OrganisationUserTable />
           </SimpleShowLayout>
         </Card>
+        <br />
       </Box>
     </ShowBase>
   </>

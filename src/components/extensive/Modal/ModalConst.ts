@@ -1,6 +1,7 @@
 export const ModalId = {
   ADD_POLYGON: "addPolygon",
   ADD_POLYGONS: "addPolygons",
+  DELETE_BULK_POLYGONS: "deleteBulkPolygons",
   REPLACEMENT_POLYGONS: "replacementPolygons",
   IDENTIFIED_POLYGONS: "identifiedPolygons",
   FIX_POLYGONS: "fixPolygons",
@@ -33,6 +34,7 @@ export const ModalId = {
   MODAL_CONFIRM: "ModalConfirm",
   MODAL_CONFIRM_DELETE_PARTNER: "ModalConfirmDeletePartner",
   MODAL_WITH_LOGO: "ModalWithLogo",
+  MODAL_IMAGE_DETAIL: "ModalImageDetail",
   MODALS_MAPPING: "ModalsMapping",
   ORGANIZATION_EDIT_MODAL: "OrganizationEditModal",
   PITCH_EDIT_MODAL: "pitchEditModal",

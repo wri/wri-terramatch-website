@@ -82,7 +82,13 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const router = useRouter();
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
-  const { isMonitoring, checkIsMonitoringPartner, setSiteData, setShouldRefetchPolygonData } = contextMapArea;
+  const {
+    isMonitoring,
+    checkIsMonitoringPartner,
+    setSiteData,
+    setShouldRefetchPolygonData,
+    setSelectedPolygonsInCheckbox
+  } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
@@ -372,7 +378,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
         }}
         site={site}
-      />
+      />,
+      true
     );
   };
 
@@ -403,7 +410,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                   label={t("Workday Count (PPC)")}
                   value={site.combined_workday_count}
                 />
-                <GoalProgressCard label={t("Hectares Restored Goal")} value={site.hectares_to_restore_goal} />
+                <GoalProgressCard
+                  label={t("Hectares Under Restoration")}
+                  value={site.total_hectares_restored_sum}
+                  limit={site.framework === Framework.PPC ? undefined : site.hectares_to_restore_goal}
+                />
               </div>
               <div>
                 <GoalProgressCard
@@ -454,6 +465,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       variant="white-border"
                       className=""
                       onClick={() => {
+                        setSelectedPolygonsInCheckbox([]);
                         downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
                       }}
                     >
@@ -461,7 +473,14 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       &nbsp; {t("Download")}
                     </Button>
                     {isMonitoring && (
-                      <Button variant="primary" className="" onClick={() => openFormModalHandlerSubmitPolygon()}>
+                      <Button
+                        variant="primary"
+                        className=""
+                        onClick={() => {
+                          openFormModalHandlerSubmitPolygon();
+                          setSelectedPolygonsInCheckbox([]);
+                        }}
+                      >
                         {t("SUBMIT Polygons")}
                       </Button>
                     )}

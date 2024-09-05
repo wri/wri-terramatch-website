@@ -27,6 +27,7 @@ import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -140,6 +141,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
+  const { setSelectedPolygonsInCheckbox } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
@@ -588,12 +590,19 @@ const PolygonReviewTab: FC<IProps> = props => {
                         name: IconNames.DOWNLOAD_PA
                       }}
                       onClick={() => {
+                        setSelectedPolygonsInCheckbox([]);
                         downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
                       }}
                     >
                       Download
                     </Button>
-                    <Button className="flex-1 px-3" onClick={openFormModalHandlerSubmitPolygon}>
+                    <Button
+                      className="flex-1 px-3"
+                      onClick={() => {
+                        setSelectedPolygonsInCheckbox([]);
+                        openFormModalHandlerSubmitPolygon();
+                      }}
+                    >
                       <Text variant="text-14-bold" className="text-white">
                         approve polygons
                       </Text>

@@ -4,6 +4,7 @@ import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
@@ -11,7 +12,11 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
-import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
+import {
+  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
+  isValidCriteriaData,
+  parseValidationData
+} from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -35,11 +40,14 @@ const PolygonItem = ({
   className,
   menu,
   isCollapsed = false,
+  isChecked = false,
+  onCheckboxChange,
   ...props
-}: MapMenuPanelItemProps) => {
+}: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
+  const [showWarning, setShowWarning] = useState(false);
   const { shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
@@ -67,10 +75,15 @@ const PolygonItem = ({
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(isValidCriteriaData(criteriaData));
+      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
     } else {
       setValidationStatus(undefined);
     }
   }, [criteriaData, setValidationStatus]);
+
+  const handleCheckboxClick = () => {
+    onCheckboxChange(uuid, !isChecked);
+  };
 
   return (
     <div
@@ -81,6 +94,7 @@ const PolygonItem = ({
       )}
     >
       <div className="flex items-center justify-between gap-2">
+        <Checkbox name="" checked={isChecked} onClick={handleCheckboxClick} />
         <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}
@@ -112,8 +126,17 @@ const PolygonItem = ({
               </Text>
             </When>
             <When condition={validationStatus}>
-              <Text variant="text-10" className="flex items-center gap-1 text-green">
-                <Icon name={IconNames.STATUS_APPROVED} className="h-2 w-2" />
+              <Text
+                variant="text-10"
+                className={classNames("flex items-center gap-1 text-green", {
+                  "text-green": validationStatus,
+                  "text-yellow-700": showWarning
+                })}
+              >
+                <Icon
+                  name={showWarning ? IconNames.EXCLAMATION_CIRCLE_FILL : IconNames.STATUS_APPROVED}
+                  className="h-2 w-2"
+                />
                 Passed
               </Text>
             </When>

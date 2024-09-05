@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -5,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 
 import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
@@ -102,8 +104,16 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
               <div key={item.id} className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-2">
                   <Icon
-                    name={item.status ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS}
-                    className="h-4 w-4"
+                    name={
+                      item.status
+                        ? IconNames.ROUND_GREEN_TICK
+                        : isCompletedDataOrEstimatedArea(item)
+                        ? IconNames.EXCLAMATION_CIRCLE_FILL
+                        : IconNames.ROUND_RED_CROSS
+                    }
+                    className={classNames("h-4 w-4", {
+                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
+                    })}
                   />
                   <Text variant="text-14-light">{item.label}</Text>
                 </div>

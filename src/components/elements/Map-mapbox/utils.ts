@@ -78,15 +78,8 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
   map.getCanvas().style.cursor = "auto";
 };
 
-export const addFilterOnLayer = (
-  layer: any,
-  field: string,
-  parsedPolygonData: Record<string, string[]>,
-  map: mapboxgl.Map
-) => {
+export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
   addSourceToLayer(layer, map, parsedPolygonData);
-  const { name, styles } = layer;
-  showPolygons(styles, name, map, field, parsedPolygonData);
 };
 
 const showPolygons = (
@@ -120,12 +113,10 @@ let popupAttachedMap: Record<string, mapboxgl.Popup[]> = {
   MEDIA: []
 };
 
-export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  layersList.forEach((layer: any) => {
-    if (map) {
-      showPolygons(layer.styles, layer.name, map, "uuid", polygonsData);
-    }
-  });
+export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined, layer: any) => {
+  if (map) {
+    showPolygons(layer.styles, layer.name, map, "uuid", polygonsData);
+  }
 };
 
 const handleLayerClick = (
@@ -181,13 +172,19 @@ export const removeMediaLayer = (map: mapboxgl.Map) => {
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   if (map && polygonsData) {
     if (map.isStyleLoaded() || map.loaded()) {
-      loadLayersInMap(map, polygonsData);
+      layersList.forEach((layer: LayerType) => {
+        loadLayersInMap(map, polygonsData, layer);
+      });
     } else {
       map.on("style.load", () => {
-        loadLayersInMap(map, polygonsData);
+        layersList.forEach((layer: LayerType) => {
+          loadLayersInMap(map, polygonsData, layer);
+        });
       });
       map.on("load", () => {
-        loadLayersInMap(map, polygonsData);
+        layersList.forEach((layer: LayerType) => {
+          loadLayersInMap(map, polygonsData, layer);
+        });
       });
     }
   }
@@ -292,7 +289,7 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
 
 export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   layersList.forEach((layer: LayerType) => {
-    if (map) {
+    if (map && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
       addSourceToLayer(layer, map, polygonsData);
     }
   });
@@ -342,7 +339,6 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
-
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) => {
         const currentMode = draw?.getMode();
@@ -365,8 +361,12 @@ export const addPopupToLayer = (
   }
 };
 
+const getGeoserverURL = (layerName: string) => {
+  return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+};
 export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  const { name, styles } = layer;
+  const { name, geoserverLayerName, styles } = layer;
   if (map) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
@@ -374,30 +374,81 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
       });
       map.removeSource(name);
     }
-    const URL_GEOSERVER = `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${name}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
     map.addSource(name, {
       type: "vector",
-      tiles: [URL_GEOSERVER]
+      tiles: [GEOSERVER_TILE_URL]
     });
     styles?.forEach((style: LayerWithStyle, index: number) => {
-      addLayerStyle(map, name, style, index);
+      addLayerStyle(map, name, geoserverLayerName, style, index);
     });
-    loadLayersInMap(map, polygonsData);
+    loadLayersInMap(map, polygonsData, layer);
   }
 };
-
-export const addLayerStyle = (map: mapboxgl.Map, sourceName: string, style: LayerWithStyle, index: number) => {
+const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+  const { name, geoserverLayerName, styles } = layer;
+  styles?.forEach((style: LayerWithStyle, index: number) => {
+    if (map.getLayer(`${name}-${index}`)) {
+      map.removeLayer(`${name}-${index}`);
+    }
+    map.addLayer({
+      ...style,
+      id: `${name}-${index}`,
+      source: name,
+      "source-layer": geoserverLayerName
+    } as mapboxgl.AnyLayer);
+  });
+  loadLayersInMap(map, polygonsData, layer);
+};
+export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+  const { name, geoserverLayerName, styles } = layer;
+  if (map) {
+    if (map.getSource(name)) {
+      styles?.forEach((_: unknown, index: number) => {
+        map.removeLayer(`${name}-${index}`);
+      });
+      map.removeSource(name);
+    }
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
+    map.addSource(name, {
+      type: "vector",
+      tiles: [GEOSERVER_TILE_URL]
+    });
+    loadDeleteLayer(layer, map, polygonsData);
+  }
+};
+const moveDeleteLayers = (map: mapboxgl.Map) => {
+  const layers = layersList.filter(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES);
+  layers.forEach(layer => {
+    const { name, styles } = layer;
+    styles?.forEach((_: unknown, index: number) => {
+      if (map?.getLayer(`${name}-${index}`)) {
+        map?.moveLayer(`${name}-${index}`);
+      }
+    });
+  });
+};
+export const addLayerStyle = (
+  map: mapboxgl.Map,
+  layerName: string,
+  sourceName: string,
+  style: LayerWithStyle,
+  index: number
+) => {
   const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+  if (map.getLayer(`${layerName}-${index}`)) {
+    map.removeLayer(`${layerName}-${index}`);
+  }
   map.addLayer(
     {
       ...style,
-      id: `${sourceName}-${index}`,
+      id: `${layerName}-${index}`,
       source: sourceName,
       "source-layer": sourceName
     } as mapboxgl.AnyLayer,
     beforeLayer
   );
+  moveDeleteLayers(map);
 };
 
 export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {

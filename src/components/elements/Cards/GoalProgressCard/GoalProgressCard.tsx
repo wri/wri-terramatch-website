@@ -53,7 +53,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             color="primary"
             value={progressValue}
             className={classNames("mt-2 bg-primary-200", {
-              "opacity-0": !progressValue
+              "opacity-0": !limit
             })}
           />
         </div>

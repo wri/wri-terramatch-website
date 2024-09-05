@@ -11,6 +11,7 @@ import Text from "@/components/elements/Text/Text";
 import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
+import CollapsibleRow from "./components/CollapsibleRow";
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
@@ -87,15 +88,18 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{t(title)}</Text>
         </div>
-        <When condition={!!content}>
-          <Text as="div" variant="text-12-light" className="my-1" containHtml>
-            {t(content)}
+        <div className="mb-2 flex items-center">
+          <When condition={!!content}>
+            <Text as="div" variant="text-12-light" className="my-1" containHtml>
+              {t(content)}
+            </Text>
+          </When>
+          <Text variant="text-14-bold" className=" ml-auto flex items-center justify-end gap-2 pr-[76px]">
+            Select All
+            <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
           </Text>
-        </When>
-        <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
-          Select All{" "}
-          <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
-        </Text>
+        </div>
+
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
@@ -105,31 +109,26 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               {t("Status")}
             </Text>
             <Text variant="text-12" className="flex flex-1 items-center justify-center">
+              {t("Polygon Check")}
+            </Text>
+            <Text variant="text-12" className="flex flex-1 items-center justify-center">
               {t("Submit")}
             </Text>
           </header>
           {polygonList?.map((polygon, index: number) => (
-            <div key={polygon.uuid} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
-              <Text variant="text-12" className="flex-[2]">
-                {polygon.poly_name}
-              </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <Status status={polygon.status as StatusEnum} />
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <Checkbox
-                  name=""
-                  checked={!!polygonsSelected?.[index]}
-                  onClick={() => {
-                    setPolygonsSelected(prev => {
-                      const newSelected = [...prev];
-                      newSelected[index] = !prev[index];
-                      return newSelected;
-                    });
-                  }}
-                />
-              </div>
-            </div>
+            <CollapsibleRow
+              key={polygon.id}
+              type="modalSubmit"
+              index={index}
+              item={{
+                id: polygon.poly_id,
+                name: polygon.poly_name,
+                status: polygon.status,
+                poly_id: polygon.poly_id
+              }}
+              polygonsSelected={polygonsSelected}
+              setPolygonsSelected={setPolygonsSelected}
+            />
           ))}
         </div>
       </div>

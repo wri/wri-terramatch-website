@@ -91,6 +91,20 @@ export const SiteReportsList: FC = () => {
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
+      key="organisation"
+      source="organisation_uuid"
+      reference={modules.organisation.ResourceName}
+      label="Organisation"
+      sort={{
+        field: "name",
+        order: "ASC"
+      }}
+      perPage={1000}
+      filter={{ status: "approved" }}
+    >
+      <AutocompleteInput optionText="name" label="Organisation" className="select-page-admin" />
+    </ReferenceInput>,
+    <ReferenceInput
       key="project"
       source="project_uuid"
       reference={modules.project.ResourceName}
