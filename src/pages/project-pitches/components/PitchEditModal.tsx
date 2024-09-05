@@ -22,7 +22,7 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
   const router = useRouter();
   const uuid = router.query.id as string;
   const t = useT();
-  const { setModalContent } = useModalContext();
+  const { closeModal, openModal } = useModalContext();
 
   const { mutateAsync: updatePitch, error } = usePatchV2ProjectPitchesUUID({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["v2", "project-pitches"] })
@@ -34,8 +34,12 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
       pathParams: { uuid }
     });
 
-    if (res) return setModalContent(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
-    return setModalContent(ModalId.ERROR_MODAL, <ErrorModal />);
+    if (res) {
+      closeModal(ModalId.PITCH_EDIT_MODAL);
+      return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+    } else {
+      return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+    }
   };
 
   const formSteps = getSteps(t, uuid ?? "");
