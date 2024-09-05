@@ -221,6 +221,10 @@ const AttributeInformation = ({
     setStatusSelectedPolygon(response?.status ?? "");
   };
 
+  const handleCloseDrawer = () => {
+    setIsOpenPolygonDrawer(false);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -308,13 +312,7 @@ const AttributeInformation = ({
         readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
-        <Button
-          variant="semi-red"
-          className="w-full"
-          onClick={() => {
-            setIsOpenPolygonDrawer(false);
-          }}
-        >
+        <Button variant="semi-red" className="w-full" onClick={handleCloseDrawer}>
           {t("Close")}
         </Button>
         <Button
