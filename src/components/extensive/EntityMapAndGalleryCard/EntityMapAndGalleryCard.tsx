@@ -25,10 +25,8 @@ import {
   useGetV2TypeEntity,
   usePostV2FileUploadMODELCOLLECTIONUUID
 } from "@/generated/apiComponents";
-import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
-import { useDate } from "@/hooks/useDate";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-import { EntityName, FileType, SingularEntityName, UploadedFile } from "@/types/common";
+import { EntityName, FileType, UploadedFile } from "@/types/common";
 
 import ModalAdd from "../Modal/ModalAdd";
 import { ModalId } from "../Modal/ModalConst";
@@ -50,14 +48,19 @@ const EntityMapAndGalleryCard = ({
 }: EntityMapAndGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
   const t = useT();
-  const { format } = useDate();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<{ key: string; value: string }>();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlag, setSaveFlag] = useState<boolean>(false);
+  const [searchString, setSearchString] = useState<string>("");
+  const [isGeotagged, setIsGeotagged] = useState<number>(0);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
+    isPublic: undefined,
+    modelType: undefined
+  });
   const { showLoader, hideLoader } = useLoading();
   const mapFunctions = useMap();
-  const { getReadableEntityName } = useGetReadableEntityName();
   const router = useRouter();
   const projectUUID = router.query.uuid as string;
   const queryParams: any = {
@@ -68,6 +71,16 @@ const EntityMapAndGalleryCard = ({
   if (filter) {
     queryParams[filter?.key] = filter?.value;
   }
+
+  if (filters.isPublic !== undefined) {
+    queryParams["filter[is_public]"] = filters.isPublic;
+  }
+  if (filters.modelType) {
+    queryParams["filter[model_type]"] = filters.modelType;
+  }
+  queryParams["search"] = searchString;
+  queryParams["is_geotagged"] = isGeotagged;
+  queryParams["sort_order"] = sortOrder;
 
   const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
     queryParams: {
@@ -229,11 +242,10 @@ const EntityMapAndGalleryCard = ({
                   uuid: file.uuid!,
                   fullImageUrl: file.file_url!,
                   thumbnailImageUrl: file.thumb_url!,
-                  label: t("Uploaded via: {entity}", {
-                    entity: getReadableEntityName(file.model_name as SingularEntityName, true)
-                  }),
-                  subtitle: t("Date uploaded: {date}", { date: format(file.created_date) }),
-                  isPublic: file.is_public!
+                  label: file.model_name!,
+                  isPublic: file.is_public!,
+                  isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+                  raw: file
                 })) || []
               }
               pageCount={data?.meta?.last_page || 1}
@@ -244,7 +256,10 @@ const EntityMapAndGalleryCard = ({
               }}
               filterOptions={filterOptions}
               hasFilter={modelName === "sites" || modelName === "projects" || modelName === "nurseries"}
-              onChangeSearch={() => {}}
+              onChangeSearch={setSearchString}
+              onChangeGeotagged={setIsGeotagged}
+              setSortOrder={setSortOrder}
+              setFilters={setFilters}
             />
           </PageCard>
         </Else>

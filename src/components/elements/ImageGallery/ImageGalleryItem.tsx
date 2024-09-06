@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { format } from "date-fns";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import { MenuItemProps } from "@/components/elements/Menu/Menu";
@@ -11,6 +12,8 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePostV2ExportImage } from "@/generated/apiComponents";
+import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
+import { SingularEntityName } from "@/types/common";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
 import Menu from "../Menu/Menu";
@@ -23,6 +26,7 @@ export type ImageGalleryItemData = {
   downloadUrl?: string;
   label: string;
   subtitle?: string;
+  isGeotagged: boolean;
   isPublic: boolean;
   raw?: Record<any, any>;
 };
@@ -37,6 +41,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
+  const { getReadableEntityName } = useGetReadableEntityName();
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
 
@@ -137,6 +142,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           height: 211,
           width: 1440
         }}
+        isGeotagged={data.isGeotagged}
         className="h-[226px] rounded-t-xl"
       >
         <div className="flex justify-between p-3">
@@ -155,10 +161,13 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
         </div>
       </ImageWithChildren>
 
-      <div className="p-4">
+      <div className="p-4 text-darkCustom">
         <div className="flex items-center justify-between gap-1">
-          <Text variant="text-16-bold" className="flex items-center gap-1 text-darkCustom">
-            {data.label.split(":")[0]}:<Text variant="text-16-bold">{data.label.split(":")[1]}</Text>
+          <Text variant="text-14-bold" className="flex items-center gap-1">
+            Uploaded via:{" "}
+            <Text variant="text-14-light" className="capitalize">
+              {getReadableEntityName(data?.raw?.model_name as SingularEntityName, true)}
+            </Text>
           </Text>
           <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
@@ -167,12 +176,18 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
             <Icon name={IconNames.EDIT} height={24} width={24} className="" />
           </button>
         </div>
-
-        {data.subtitle && (
-          <Text variant="text-14-light" className="flex items-center gap-1 text-darkCustom-60">
-            {data.subtitle.split(":")[0]}:<Text variant="text-14-light">{data.subtitle.split(":")[1]}</Text>
+        <Text variant="text-14-bold" className="flex items-center gap-1">
+          Date uploaded:{" "}
+          <Text variant="text-14-light" className="capitalize">
+            {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")}
           </Text>
-        )}
+        </Text>
+        <Text variant="text-14-bold" className="flex items-center gap-1">
+          Visibility:{" "}
+          <Text variant="text-14-light" className="capitalize">
+            {data.isPublic ? "Public" : "Private"}
+          </Text>
+        </Text>
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onChangeSearch: Dispatch<SetStateAction<string>>;
   onChangeGeotagged: Dispatch<SetStateAction<number>>;
   setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
+  setFilters: Dispatch<SetStateAction<any>>;
 }
 
 const ImageGallery = ({
@@ -50,6 +51,7 @@ const ImageGallery = ({
   onChangeSearch,
   onChangeGeotagged,
   setSortOrder,
+  setFilters,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -63,45 +65,15 @@ const ImageGallery = ({
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const [modelName, setModelName] = useState<string>();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [source, setSource] = useState<string>("");
+  const [privacy, setPrivacy] = useState<boolean>();
+
+  useEffect(() => {
+    setFilters({ isPublic: privacy, modelType: source });
+  }, [privacy, source]);
 
   const tabs = ["All Images", "Geotagged", "Not Geotagged"];
   const menuFilter = [
-    {
-      id: "0",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
-          &nbsp; {t("Entity")}
-        </Text>
-      ),
-      type: "collapse",
-      children: [
-        {
-          id: "1",
-          render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
-              &nbsp; {t("Projects")}
-            </Text>
-          )
-        },
-        {
-          id: "2",
-          render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
-              &nbsp; {t("Sites")}
-            </Text>
-          )
-        },
-        {
-          id: "3",
-          render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
-              &nbsp; {t("Nurseries")}
-            </Text>
-          )
-        }
-      ]
-    },
-    { id: "2", render: () => {}, type: "line" },
     {
       id: "3",
       render: () => (
@@ -114,34 +86,46 @@ const ImageGallery = ({
         {
           id: "4",
           render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center ">
               &nbsp; {t("Project")}
             </Text>
-          )
+          ),
+          onClick: () => {
+            setSource("projects");
+          }
         },
         {
           id: "5",
           render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center ">
               &nbsp; {t("Site")}
             </Text>
-          )
+          ),
+          onClick: () => {
+            setSource("sites");
+          }
         },
         {
           id: "6",
           render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center ">
               &nbsp; {t("Nursery")}
             </Text>
-          )
+          ),
+          onClick: () => {
+            setSource("nurseries");
+          }
         },
         {
           id: "7",
           render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center ">
               &nbsp; {t("Report")}
             </Text>
-          )
+          ),
+          onClick: () => {
+            setSource("reports");
+          }
         }
       ]
     },
@@ -149,7 +133,7 @@ const ImageGallery = ({
     {
       id: "5",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+        <Text variant="text-14-semibold" className="flex items-center ">
           &nbsp; {t("Privacy")}
         </Text>
       ),
@@ -158,18 +142,24 @@ const ImageGallery = ({
         {
           id: "8",
           render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center ">
               &nbsp; {t("Public")}
             </Text>
-          )
+          ),
+          onClick: () => {
+            setPrivacy(true);
+          }
         },
         {
           id: "9",
           render: () => (
-            <Text variant="text-14" className="flex items-center " onClick={() => {}}>
+            <Text variant="text-14" className="flex items-center ">
               &nbsp; {t("Private")}
             </Text>
-          )
+          ),
+          onClick: () => {
+            setPrivacy(false);
+          }
         }
       ]
     }
@@ -178,7 +168,7 @@ const ImageGallery = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("asc")}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("desc")}>
           <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Newest to Oldest")}
         </Text>
@@ -187,7 +177,7 @@ const ImageGallery = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("desc")}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("asc")}>
           <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Oldest to Newest")}
         </Text>
@@ -283,7 +273,14 @@ const ImageGallery = ({
             <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
           </div>
           <div className="flex gap-4">
-            <button className="text-primary hover:text-red">
+            <button
+              className="text-primary hover:text-red"
+              onClick={() => {
+                setPrivacy(undefined);
+                setSource("");
+                setActiveIndex(0);
+              }}
+            >
               <Text variant="text-14-bold">Clear Filters</Text>
             </button>
             <When condition={!hasFilter}>
