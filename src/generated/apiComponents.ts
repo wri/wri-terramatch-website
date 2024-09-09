@@ -28183,6 +28183,7 @@ export type GetAuthMeResponse = {
    */
   email_address_verified_at?: string;
   role?: string;
+  locale?: string;
   organisation?: {
     uuid?: string;
     name?: string;
