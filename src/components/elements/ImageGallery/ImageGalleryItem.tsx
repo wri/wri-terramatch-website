@@ -35,17 +35,9 @@ export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<
   data: ImageGalleryItemData;
   onClickGalleryItem?: (data: ImageGalleryItemData) => void;
   onDelete?: (id: string) => void;
-  newFilter?: boolean;
 }
 
-const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
-  data,
-  onClickGalleryItem,
-  onDelete,
-  className,
-  newFilter = false,
-  ...rest
-}) => {
+const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem, onDelete, className, ...rest }) => {
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
@@ -158,16 +150,15 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           {!data.isPublic && <Icon name={IconNames.LOCK_CIRCLE} height={32} width={32} className="fill-neutral-700" />}
 
           {/* Right */}
-          {newFilter && (
-            <div className="ml-auto flex items-center">
-              <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
-                <Icon
-                  name={IconNames.ELIPSES}
-                  className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"
-                ></Icon>
-              </Menu>
-            </div>
-          )}
+
+          <div className="ml-auto flex items-center">
+            <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
+              <Icon
+                name={IconNames.ELIPSES}
+                className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"
+              ></Icon>
+            </Menu>
+          </div>
         </div>
       </ImageWithChildren>
 
@@ -179,14 +170,12 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
               {getReadableEntityName(data?.raw?.model_name as SingularEntityName, true)}
             </Text>
           </Text>
-          {newFilter && (
-            <button
-              className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-              onClick={openMopdalImageDetail}
-            >
-              <Icon name={IconNames.EDIT} height={24} width={24} className="" />
-            </button>
-          )}
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={openMopdalImageDetail}
+          >
+            <Icon name={IconNames.EDIT} height={24} width={24} className="" />
+          </button>
         </div>
         <Text variant="text-14-bold" className="flex items-center gap-1">
           Date uploaded:{" "}
