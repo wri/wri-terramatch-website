@@ -56,13 +56,7 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
-  const {
-    isMonitoring,
-    setEditPolygon,
-    setIsUserDrawingEnabled,
-    selectedPolygonsInCheckbox,
-    setSelectedPolygonsInCheckbox
-  } = useMapAreaContext();
+  const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
 
   const flyToPolygonBounds = async (polygonUuid: string) => {
@@ -96,17 +90,6 @@ const MapSidePanel = ({
   };
   const formatStringName = (name: string) => {
     return name.replace(/ /g, "_");
-  };
-
-  const handleCheckboxChange = (uuid: string, isChecked: boolean) => {
-    const polygonsChecked: any = (prevCheckedUuids: string[]) => {
-      if (isChecked) {
-        return [...prevCheckedUuids, uuid];
-      } else {
-        return prevCheckedUuids.filter((id: string) => id !== uuid);
-      }
-    };
-    setSelectedPolygonsInCheckbox(polygonsChecked);
   };
 
   useEffect(() => {
@@ -243,8 +226,6 @@ const MapSidePanel = ({
                 title={item.title}
                 subtitle={item.subtitle}
                 status={item.status}
-                isChecked={selectedPolygonsInCheckbox.includes(item.poly_id || "")}
-                onCheckboxChange={handleCheckboxChange}
                 onClick={() => {
                   setSelected(item);
                 }}

@@ -7,7 +7,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
   <label
     className="mr-2 inline uppercase text-bold-body-300"
     data-testid="txt"
-    htmlFor=":r1r:"
+    htmlFor=":r1s:"
   >
     Select Image label 
   </label>
@@ -19,14 +19,14 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
       }
     }
     data-testid="txt"
-    id=":r1r:-description"
+    id=":r1s:-description"
   />
   <div
     className="mx-auto !mt-4 flex max-w-[573px] flex-wrap justify-center gap-4"
   >
     <label
       className="relative flex-row-reverse justify-end gap-3"
-      htmlFor=":r1s:"
+      htmlFor=":r1t:"
     >
       <div
         className="flex flex-col items-center gap-2 cursor-pointer"
@@ -49,49 +49,12 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
       <input
         checked={false}
         className="absolute top-0 opacity-0"
-        id=":r1s:"
-        label={
-          <SelectImageLabel
-            imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
-            isSelected={false}
-            title="Option 1"
-          />
-        }
-        onClick={[Function]}
-        type="radio"
-      />
-    </label>
-    <label
-      className="relative flex-row-reverse justify-end gap-3"
-      htmlFor=":r1t:"
-    >
-      <div
-        className="flex flex-col items-center gap-2 cursor-pointer"
-      >
-        <div
-          className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
-          style={
-            Object {
-              "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
-            }
-          }
-        />
-        <p
-          className="max-w-[96px] text-center leading-4 text-light-body-300"
-          data-testid="txt"
-        >
-          Option 2
-        </p>
-      </div>
-      <input
-        checked={false}
-        className="absolute top-0 opacity-0"
         id=":r1t:"
         label={
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 2"
+            title="Option 1"
           />
         }
         onClick={[Function]}
@@ -117,7 +80,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 3
+          Option 2
         </p>
       </div>
       <input
@@ -128,7 +91,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 3"
+            title="Option 2"
           />
         }
         onClick={[Function]}
@@ -154,7 +117,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 4
+          Option 3
         </p>
       </div>
       <input
@@ -165,7 +128,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 4"
+            title="Option 3"
           />
         }
         onClick={[Function]}
@@ -191,7 +154,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 5
+          Option 4
         </p>
       </div>
       <input
@@ -202,7 +165,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 5"
+            title="Option 4"
           />
         }
         onClick={[Function]}
@@ -228,7 +191,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 6
+          Option 5
         </p>
       </div>
       <input
@@ -239,7 +202,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 6"
+            title="Option 5"
           />
         }
         onClick={[Function]}
@@ -265,7 +228,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 7
+          Option 6
         </p>
       </div>
       <input
@@ -276,7 +239,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 7"
+            title="Option 6"
           />
         }
         onClick={[Function]}
@@ -302,7 +265,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 8
+          Option 7
         </p>
       </div>
       <input
@@ -313,7 +276,7 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
             isSelected={false}
-            title="Option 8"
+            title="Option 7"
           />
         }
         onClick={[Function]}
@@ -339,13 +302,50 @@ exports[`Storyshots Components/Elements/Inputs/SelectImage Default 1`] = `
           className="max-w-[96px] text-center leading-4 text-light-body-300"
           data-testid="txt"
         >
-          Option 9
+          Option 8
         </p>
       </div>
       <input
         checked={false}
         className="absolute top-0 opacity-0"
         id=":r24:"
+        label={
+          <SelectImageLabel
+            imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"
+            isSelected={false}
+            title="Option 8"
+          />
+        }
+        onClick={[Function]}
+        type="radio"
+      />
+    </label>
+    <label
+      className="relative flex-row-reverse justify-end gap-3"
+      htmlFor=":r25:"
+    >
+      <div
+        className="flex flex-col items-center gap-2 cursor-pointer"
+      >
+        <div
+          className="border-4 border-neutral-900 aspect-square h-[6.375rem] rounded-lg bg-cover bg-center transition-all duration-200"
+          style={
+            Object {
+              "backgroundImage": "url('https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg')",
+            }
+          }
+        />
+        <p
+          className="max-w-[96px] text-center leading-4 text-light-body-300"
+          data-testid="txt"
+        >
+          Option 9
+        </p>
+      </div>
+      <input
+        checked={false}
+        className="absolute top-0 opacity-0"
+        id=":r25:"
         label={
           <SelectImageLabel
             imageUrl="https://cdn.britannica.com/98/214598-050-9879F2FA/giant-sequoia-tree-Sequoia-National-Park-California.jpg"

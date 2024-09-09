@@ -235,7 +235,7 @@ const EntityMapAndGalleryCard = ({
         <Else>
           <PageCard
             title={t("All Images")}
-            headerChildren={<Button onClick={openFormModalHandlerUploadImages}>Upload Images</Button>}
+            headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
           >
             <ImageGallery
               data={
