@@ -80,6 +80,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
               raw: file
             })) || []
           }
+          entity={resource}
           pageCount={data?.meta?.last_page || 1}
           onGalleryStateChange={pagination => {
             setPagination(pagination);
@@ -88,6 +89,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ItemComponent={ImageGalleryItem}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}
+          sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           setFilters={setFilters}
           className="mt-3"

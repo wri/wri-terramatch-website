@@ -89,7 +89,11 @@ const EntityMapAndGalleryCard = ({
     }
   });
 
-  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID();
+  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
+    onSuccess() {
+      refetch();
+    }
+  });
 
   const mapBbox = sitePolygonData?.bbox as BBox;
 
@@ -190,8 +194,6 @@ const EntityMapAndGalleryCard = ({
           setSaveFlag(false);
           hideLoader();
           closeModal(ModalId.UPLOAD_IMAGES);
-          // refetch the data here to update the UI
-          // refetch();
         })
         .catch(error => {
           console.error("Error uploading files:", error);
@@ -248,6 +250,7 @@ const EntityMapAndGalleryCard = ({
                   raw: file
                 })) || []
               }
+              entity={modelName}
               pageCount={data?.meta?.last_page || 1}
               onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
               onGalleryStateChange={(pagination, filter) => {
@@ -258,6 +261,7 @@ const EntityMapAndGalleryCard = ({
               hasFilter={modelName === "sites" || modelName === "projects" || modelName === "nurseries"}
               onChangeSearch={setSearchString}
               onChangeGeotagged={setIsGeotagged}
+              sortOrder={sortOrder}
               setSortOrder={setSortOrder}
               setFilters={setFilters}
             />

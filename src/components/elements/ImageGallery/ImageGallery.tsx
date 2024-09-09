@@ -34,8 +34,10 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   ItemComponent?: FC<ImageGalleryItemProps>;
   onChangeSearch: Dispatch<SetStateAction<string>>;
   onChangeGeotagged: Dispatch<SetStateAction<number>>;
+  sortOrder: "asc" | "desc";
   setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
   setFilters: Dispatch<SetStateAction<any>>;
+  entity: string;
 }
 
 const ImageGallery = ({
@@ -50,8 +52,10 @@ const ImageGallery = ({
   ItemComponent = ImageGalleryItem,
   onChangeSearch,
   onChangeGeotagged,
+  sortOrder,
   setSortOrder,
   setFilters,
+  entity,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -66,104 +70,150 @@ const ImageGallery = ({
   const [modelName, setModelName] = useState<string>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [source, setSource] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
   const [privacy, setPrivacy] = useState<boolean>();
+  const [filterLabel, setFilterLabel] = useState<string>("Filter");
+  const [sortLabel, setSortLabel] = useState<string>("Sort");
 
+  const mapSourceLabels: { [key: string]: string } = {
+    projects: t("Project"),
+    sites: t("Site"),
+    nurseries: t("Nursery"),
+    reports: t("Report")
+  };
+
+  console.log("entity", entity);
   useEffect(() => {
     setFilters({ isPublic: privacy, modelType: source });
+    const currentPrivacytLabel = privacy === false ? "Private" : privacy === true ? "Public" : undefined;
+    setFilterLabel(
+      source || currentPrivacytLabel
+        ? t(
+            `${source ? `${mapSourceLabels[source]}${currentPrivacytLabel ? ", " : ""} ` : ""}${
+              currentPrivacytLabel ? t(currentPrivacytLabel) : ""
+            }`
+          )
+        : "Filter"
+    );
   }, [privacy, source]);
 
+  useEffect(() => {
+    setSortLabel(sortOrder === "asc" ? t("Oldest to Newest") : t("Newest to Oldest"));
+  }, [sortOrder]);
+
   const tabs = ["All Images", "Geotagged", "Not Geotagged"];
-  const menuFilter = [
-    {
-      id: "3",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
-          &nbsp; {t("Source")}
-        </Text>
-      ),
-      type: "collapse",
-      children: [
-        {
-          id: "4",
-          render: () => (
-            <Text variant="text-14" className="flex items-center ">
-              &nbsp; {t("Project")}
-            </Text>
-          ),
-          onClick: () => {
-            setSource("projects");
+  const getFilteredMenu = (entity: string) => {
+    return [
+      {
+        id: "3",
+        render: () => (
+          <Text variant="text-14-semibold" className="flex items-center " onClick={() => {}}>
+            &nbsp; {t("Source")}
+          </Text>
+        ),
+        type: "collapse",
+        children: [
+          ...(entity === "projects"
+            ? [
+                {
+                  id: "4",
+                  render: () => (
+                    <Text variant="text-14" className="flex items-center ">
+                      &nbsp; {t("Project")}
+                    </Text>
+                  ),
+                  onClick: () => {
+                    setSource("projects");
+                  }
+                }
+              ]
+            : []),
+          ...(entity === "projects" || entity === "sites"
+            ? [
+                {
+                  id: "5",
+                  render: () => (
+                    <Text variant="text-14" className="flex items-center ">
+                      &nbsp; {t("Site")}
+                    </Text>
+                  ),
+                  onClick: () => {
+                    setSource("sites");
+                  }
+                }
+              ]
+            : []),
+          ...(entity === "projects" || entity === "nurseries"
+            ? [
+                {
+                  id: "6",
+                  render: () => (
+                    <Text variant="text-14" className="flex items-center ">
+                      &nbsp; {t("Nursery")}
+                    </Text>
+                  ),
+                  onClick: () => {
+                    setSource("nurseries");
+                  }
+                }
+              ]
+            : []),
+          ...(entity === "projects" || entity === "sites" || entity === "nurseries"
+            ? [
+                {
+                  id: "7",
+                  render: () => (
+                    <Text variant="text-14" className="flex items-center ">
+                      &nbsp; {t("Report")}
+                    </Text>
+                  ),
+                  onClick: () => {
+                    setSource("reports");
+                  }
+                }
+              ]
+            : [])
+        ]
+      },
+      { id: "7.5", render: () => {}, type: "line" },
+      {
+        id: "5",
+        render: () => (
+          <Text variant="text-14-semibold" className="flex items-center ">
+            &nbsp; {t("Privacy")}
+          </Text>
+        ),
+        type: "collapse",
+        children: [
+          {
+            id: "8",
+            render: () => (
+              <Text variant="text-14" className="flex items-center ">
+                &nbsp; {t("Public")}
+              </Text>
+            ),
+            onClick: () => {
+              setPrivacy(true);
+            }
+          },
+          {
+            id: "9",
+            render: () => (
+              <Text variant="text-14" className="flex items-center ">
+                &nbsp; {t("Private")}
+              </Text>
+            ),
+            onClick: () => {
+              setPrivacy(false);
+            }
           }
-        },
-        {
-          id: "5",
-          render: () => (
-            <Text variant="text-14" className="flex items-center ">
-              &nbsp; {t("Site")}
-            </Text>
-          ),
-          onClick: () => {
-            setSource("sites");
-          }
-        },
-        {
-          id: "6",
-          render: () => (
-            <Text variant="text-14" className="flex items-center ">
-              &nbsp; {t("Nursery")}
-            </Text>
-          ),
-          onClick: () => {
-            setSource("nurseries");
-          }
-        },
-        {
-          id: "7",
-          render: () => (
-            <Text variant="text-14" className="flex items-center ">
-              &nbsp; {t("Report")}
-            </Text>
-          ),
-          onClick: () => {
-            setSource("reports");
-          }
-        }
-      ]
-    },
-    { id: "7.5", render: () => {}, type: "line" },
-    {
-      id: "5",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center ">
-          &nbsp; {t("Privacy")}
-        </Text>
-      ),
-      type: "collapse",
-      children: [
-        {
-          id: "8",
-          render: () => (
-            <Text variant="text-14" className="flex items-center ">
-              &nbsp; {t("Public")}
-            </Text>
-          ),
-          onClick: () => {
-            setPrivacy(true);
-          }
-        },
-        {
-          id: "9",
-          render: () => (
-            <Text variant="text-14" className="flex items-center ">
-              &nbsp; {t("Private")}
-            </Text>
-          ),
-          onClick: () => {
-            setPrivacy(false);
-          }
-        }
-      ]
-    }
-  ];
+        ]
+      }
+    ];
+  };
+
+  const menuFilter = getFilteredMenu(entity);
+
   const menuSort = [
     {
       id: "1",
@@ -218,6 +268,14 @@ const ImageGallery = ({
     );
   };
 
+  const handleClearFilters = () => {
+    setPrivacy(undefined);
+    setSource("");
+    setActiveIndex(0);
+    setSearchText("");
+    onChangeSearch("");
+  };
+
   const handleDelete = (id: string) => {
     openModal(
       ModalId.DELETE_IMAGE,
@@ -264,7 +322,9 @@ const ImageGallery = ({
         <div className="flex justify-between gap-4">
           <div className="flex gap-4">
             <FilterSearchBox
+              value={searchText}
               onChange={e => {
+                setSearchText(e);
                 onChangeSearch(e);
               }}
               placeholder={"Search..."}
@@ -273,15 +333,8 @@ const ImageGallery = ({
             <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
           </div>
           <div className="flex gap-4">
-            <button
-              className="text-primary hover:text-red"
-              onClick={() => {
-                setPrivacy(undefined);
-                setSource("");
-                setActiveIndex(0);
-              }}
-            >
-              <Text variant="text-14-bold">Clear Filters</Text>
+            <button className="text-primary hover:text-red" onClick={handleClearFilters}>
+              <Text variant="text-14-bold">{t("Clear Filters")}</Text>
             </button>
             <When condition={!hasFilter}>
               <FilterDropDown
@@ -303,7 +356,7 @@ const ImageGallery = ({
                   setOpenFilter(!openFilter);
                 }}
               >
-                Filter
+                {filterLabel}
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
                   className={classNames(" top-3 right-4 fill-neutral-900 transition", openFilter && "rotate-180")}
@@ -318,10 +371,10 @@ const ImageGallery = ({
                   setOpenSort(!openSort);
                 }}
               >
-                Sort
+                <span className="text-14-bold overflow-hidden text-ellipsis whitespace-nowrap">{sortLabel}</span>
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
-                  className={classNames(" top-3 right-4 fill-neutral-900 transition", openSort && "rotate-180")}
+                  className={classNames("top-3 right-4 fill-neutral-900 transition", openSort && "rotate-180")}
                   width={20}
                 />
               </button>
