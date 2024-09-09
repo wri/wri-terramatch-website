@@ -88,7 +88,8 @@ const AttributeInformation = ({
   setSelectedPolygonToDrawer,
   selectedPolygonIndex,
   setPolygonFromMap,
-  setIsLoadingDropdownVersions
+  setIsLoadingDropdownVersions,
+  setIsOpenPolygonDrawer
 }: {
   selectedPolygon: SitePolygon;
   sitePolygonRefresh?: () => void;
@@ -100,6 +101,7 @@ const AttributeInformation = ({
   selectedPolygonIndex?: string;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
   setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
+  setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -219,6 +221,10 @@ const AttributeInformation = ({
     setStatusSelectedPolygon(response?.status ?? "");
   };
 
+  const handleCloseDrawer = () => {
+    setIsOpenPolygonDrawer(false);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -306,7 +312,7 @@ const AttributeInformation = ({
         readOnly
       />
       <div className="mt-auto flex items-center justify-end gap-5">
-        <Button variant="semi-red" className="w-full">
+        <Button variant="semi-red" className="w-full" onClick={handleCloseDrawer}>
           {t("Close")}
         </Button>
         <Button

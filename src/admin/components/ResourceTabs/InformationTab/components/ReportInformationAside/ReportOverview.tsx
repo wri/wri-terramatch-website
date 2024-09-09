@@ -1,7 +1,7 @@
 import { Check } from "@mui/icons-material";
 import { Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
-import { Labeled, TextField, useShowContext } from "react-admin";
+import { DateField, Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
@@ -49,6 +49,12 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
                 <TextField source="readable_update_request_status" />
+              </Labeled>
+            </Grid>
+
+            <Grid xs={4} item>
+              <Labeled label="Due Date">
+                <DateField source="due_at" label="Due Date" locales="en-GB" />
               </Labeled>
             </Grid>
           </Grid>

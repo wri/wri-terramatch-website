@@ -9,6 +9,7 @@ export interface ImageWithChildrenProps
   extends PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>> {
   imageSrc: string | StaticImageData;
   childrenContainerClassName?: string;
+  newFilter?: boolean;
 }
 
 /**
@@ -20,18 +21,25 @@ const ImageWithChildren = ({
   className,
   children,
   childrenContainerClassName,
+  newFilter = false,
   ...divProps
 }: ImageWithChildrenProps) => {
   const t = useT();
   return (
     <div {...divProps} className={classNames(className, "relative")}>
+      {newFilter && (
+        <div className="absolute bottom-4 left-4 z-10 flex gap-2">
+          <div className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white">Geotagged</div>
+          <div className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white">Cover</div>
+        </div>
+      )}
       <ImageWithPlaceholder
         imageUrl={imageSrc as string}
         placeholder={t("No Image Available")}
         alt={t("No Image Available")}
         role="presentation"
         style={{ objectFit: "cover" }}
-        className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-lg"
+        className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
       />
       <div className={classNames("absolute top-0 right-0 left-0 bottom-0", childrenContainerClassName)}>{children}</div>
     </div>

@@ -29,3 +29,19 @@ export const isValidCriteriaData = (criteriaData: any) => {
       criteria.valid !== 1
   );
 };
+
+export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: any) => {
+  if (!criteriaData?.criteria_list?.length) {
+    return false;
+  }
+
+  return criteriaData.criteria_list.some(
+    (criteria: any) =>
+      (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID || criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID) &&
+      criteria.valid === 0
+  );
+};
+
+export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem) => {
+  return +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID;
+};

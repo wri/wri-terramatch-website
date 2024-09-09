@@ -16,11 +16,7 @@ exports[`Storyshots Components/Elements/Menu Placement Bottom Left 1`] = `
   </button>
   <div
     className="absolute z-40 right-0 top-full mt-[5px] visible"
-    style={
-      Object {
-        "width": "undefinedpx",
-      }
-    }
+    style={Object {}}
   >
     <div
       className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
@@ -71,11 +67,7 @@ exports[`Storyshots Components/Elements/Menu Placement Bottom Right 1`] = `
   </button>
   <div
     className="absolute z-40 top-full mt-[5px] visible"
-    style={
-      Object {
-        "width": "undefinedpx",
-      }
-    }
+    style={Object {}}
   >
     <div
       className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
@@ -126,11 +118,7 @@ exports[`Storyshots Components/Elements/Menu Placement Left Bottom 1`] = `
   </button>
   <div
     className="absolute z-40 right-full top-0 mr-[5px] visible"
-    style={
-      Object {
-        "width": "undefinedpx",
-      }
-    }
+    style={Object {}}
   >
     <div
       className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
@@ -181,11 +169,7 @@ exports[`Storyshots Components/Elements/Menu Placement Right Top 1`] = `
   </button>
   <div
     className="absolute z-40 left-full bottom-0 ml-[5px] visible"
-    style={
-      Object {
-        "width": "undefinedpx",
-      }
-    }
+    style={Object {}}
   >
     <div
       className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
@@ -236,11 +220,7 @@ exports[`Storyshots Components/Elements/Menu Primary 1`] = `
   </button>
   <div
     className="absolute z-40 top-full mt-[5px] visible"
-    style={
-      Object {
-        "width": "undefinedpx",
-      }
-    }
+    style={Object {}}
   >
     <div
       className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
@@ -291,11 +271,7 @@ exports[`Storyshots Components/Elements/Menu Secondary 1`] = `
   </button>
   <div
     className="absolute z-40 top-full mt-[5px] visible"
-    style={
-      Object {
-        "width": "undefinedpx",
-      }
-    }
+    style={Object {}}
   >
     <div
       className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] border-b-4 border-tertiary"

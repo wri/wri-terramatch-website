@@ -1,7 +1,7 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
@@ -58,7 +58,8 @@ const PolygonDrawer = ({
   setSelectedPolygonToDrawer,
   selectedPolygonIndex,
   setPolygonFromMap,
-  polygonFromMap
+  polygonFromMap,
+  setIsOpenPolygonDrawer
 }: {
   polygonSelected: string;
   isPolygonStatusOpen: any;
@@ -67,6 +68,7 @@ const PolygonDrawer = ({
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
+  setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
   polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
@@ -85,9 +87,10 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const { statusSelectedPolygon, setStatusSelectedPolygon } = contextMapArea;
+  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
+  const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
@@ -130,6 +133,7 @@ const PolygonDrawer = ({
         .filter(Boolean)
         .join(", ");
       openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
+      setShouldRefetchValidation(true);
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
@@ -263,10 +267,12 @@ const PolygonDrawer = ({
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
         <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
-        <Text variant={"text-20-bold"} className="flex items-center gap-1">
-          {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
-          <div className={`h-4 w-4 rounded-full ${statusColor[statusSelectedPolygon]}`} />
-        </Text>
+        <div className="flex items-baseline gap-2">
+          <Text variant={"text-20-bold"} className="flex items-center gap-1 break-all">
+            {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
+          </Text>
+          <div className={`h-4 w-4 min-w-[16px] rounded-full ${statusColor[statusSelectedPolygon]}`} />
+        </div>
       </div>
       <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
         <Button
@@ -306,7 +312,7 @@ const PolygonDrawer = ({
           </div>
         </Then>
         <Else>
-          <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+          <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
               <PolygonValidation
                 menu={polygonValidationData ?? []}
@@ -328,13 +334,15 @@ const PolygonDrawer = ({
                   setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
                   selectedPolygonIndex={selectedPolygonIndex}
                   setPolygonFromMap={setPolygonFromMap}
+                  setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
                   setIsLoadingDropdownVersions={setIsLoadingDropdown}
                 />
               )}
             </Accordion>
-            <Accordion variant="drawer" title={"Version History"} defaultOpen={true}>
+            <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
               {selectedPolygonData && (
                 <VersionHistory
+                  wrapperRef={wrapperRef}
                   setPolygonFromMap={setPolygonFromMap}
                   polygonFromMap={polygonFromMap}
                   selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
@@ -355,6 +363,7 @@ const PolygonDrawer = ({
               )}
             </Accordion>
             <Divider />
+            <div className="mt-[89px] lg:mt-[104px] wide:mt-[174px]" />
           </div>
         </Else>
       </If>

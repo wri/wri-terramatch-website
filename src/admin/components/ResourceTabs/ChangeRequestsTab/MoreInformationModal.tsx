@@ -5,10 +5,11 @@ import {
   DialogActions,
   DialogContent,
   DialogProps,
-  DialogTitle
+  DialogTitle,
+  TextField
 } from "@mui/material";
-import { useMemo } from "react";
-import { AutocompleteArrayInput, Form, TextInput, useNotify } from "react-admin";
+import { useMemo, useState } from "react";
+import { AutocompleteArrayInput, Form, useNotify } from "react-admin";
 import { If } from "react-if";
 import * as yup from "yup";
 
@@ -47,6 +48,7 @@ const ChangeRequestRequestMoreInfoModal = ({
   ...dialogProps
 }: ChangeRequestRequestMoreInfoModalProps) => {
   const notify = useNotify();
+  const [feedbackValue, setFeedbackValue] = useState("");
 
   const questions: Option[] | undefined = useMemo(() => {
     const flat = form?.form_sections
@@ -72,7 +74,7 @@ const ChangeRequestRequestMoreInfoModal = ({
   const handleSave = async (data: any) => {
     if (status) {
       const body: any = {
-        feedback: data.feedback
+        feedback: feedbackValue
       };
 
       if (data.feedback_fields && status === "moreinfo") {
@@ -87,7 +89,7 @@ const ChangeRequestRequestMoreInfoModal = ({
         body
       });
     }
-
+    setFeedbackValue("");
     return handleClose();
   };
 
@@ -101,7 +103,15 @@ const ChangeRequestRequestMoreInfoModal = ({
           <DialogTitle>{statusTitles[status as IStatus]}</DialogTitle>
         </If>
         <DialogContent>
-          <TextInput source="_feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
+          <TextField
+            value={feedbackValue}
+            onChange={e => setFeedbackValue(e.target.value)}
+            label="Feedback"
+            fullWidth
+            multiline
+            margin="dense"
+            helperText={false}
+          />
           <If condition={status === "moreinfo" && feebdackFields.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"

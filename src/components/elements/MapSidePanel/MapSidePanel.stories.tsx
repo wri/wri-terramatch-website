@@ -36,6 +36,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
+    onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
     isCollapsed: false
@@ -46,6 +47,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
+    onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
     isCollapsed: false
@@ -56,6 +58,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
+    onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
     isCollapsed: false
@@ -67,6 +70,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
+    onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
     isCollapsed: false
@@ -77,6 +81,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
+    onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
     isCollapsed: false
@@ -87,6 +92,7 @@ const items = [
     subtitle: "Created 03/12/21",
     status: "submitted",
     setClickedButton: console.log,
+    onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
     isCollapsed: false

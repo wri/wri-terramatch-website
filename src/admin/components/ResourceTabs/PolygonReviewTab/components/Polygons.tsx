@@ -62,7 +62,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled } = contextMapArea;
+  const { setIsUserDrawingEnabled, setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
@@ -142,6 +142,7 @@ const Polygons = (props: IPolygonProps) => {
         setPolygonFromMap({ isOpen: true, uuid: item.uuid });
         setIsOpenPolygonDrawer(true);
         setIsPolygonStatusOpen(false);
+        setSelectedPolygonsInCheckbox([]);
       }
     },
     {
@@ -187,6 +188,17 @@ const Polygons = (props: IPolygonProps) => {
     }
   ];
 
+  const handleCheckboxChange = (uuid: string, isChecked: boolean) => {
+    const polygonsChecked: any = (prevCheckedUuids: string[]) => {
+      if (isChecked) {
+        return [...prevCheckedUuids, uuid];
+      } else {
+        return prevCheckedUuids.filter((id: string) => id !== uuid);
+      }
+    };
+    setSelectedPolygonsInCheckbox(polygonsChecked);
+  };
+
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
@@ -199,6 +211,7 @@ const Polygons = (props: IPolygonProps) => {
           selectedPolygonIndex={selectedPolygon?.id}
           setPolygonFromMap={setPolygonFromMap}
           polygonFromMap={polygonFromMap}
+          setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
         />
       </Drawer>
       <div className="mb-4 flex flex-col gap-1">
@@ -212,7 +225,7 @@ const Polygons = (props: IPolygonProps) => {
             </Text>
           </Button>
           <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
-            {openCollapseAll ? "SHIRNK" : "EXPAND"}
+            {openCollapseAll ? "SHRINK" : "EXPAND"}
           </Button>
         </div>
       </div>
@@ -223,6 +236,8 @@ const Polygons = (props: IPolygonProps) => {
               uuid={item.uuid}
               title={item.label}
               status={item.status}
+              isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
+              onCheckboxChange={handleCheckboxChange}
               menu={
                 <Menu
                   className="ml-auto"

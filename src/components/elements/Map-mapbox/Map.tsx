@@ -13,6 +13,7 @@ import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGro
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -31,6 +32,7 @@ import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
+import DeleteBulkPolygonsControl from "./MapControls/DeleteBulkPolygonsControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -44,6 +46,7 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
+  addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
   addMediaSourceAndLayer,
@@ -144,7 +147,8 @@ export const MapContainer = ({
     editPolygon: editPolygonSelected,
     setEditPolygon,
     setShouldRefetchPolygonData,
-    setStatusSelectedPolygon
+    setStatusSelectedPolygon,
+    selectedPolygonsInCheckbox
   } = contextMapArea;
 
   if (!mapFunctions) {
@@ -171,30 +175,33 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    if (map?.current && styleLoaded && showPopups) {
-      const currentMap = map.current;
-
-      map.current.on("load", () => {
-        return addPopupsToMap(
-          currentMap,
-          AdminPopup,
-          setPolygonFromMap,
-          sitePolygonData,
-          tooltipType,
-          editPolygonSelected,
-          setEditPolygon
-        );
-      });
-    }
-  }, [styleLoaded, sitePolygonData]);
-
-  useEffect(() => {
-    if (map?.current && styleLoaded && !_.isEmpty(polygonsData)) {
+    if (map?.current && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
-      addSourcesToLayers(currentMap, polygonsData);
-      setChangeStyle(true);
+      const setupMap = () => {
+        addSourcesToLayers(currentMap, polygonsData);
+        setChangeStyle(true);
+
+        if (showPopups) {
+          addPopupsToMap(
+            currentMap,
+            AdminPopup,
+            setPolygonFromMap,
+            sitePolygonData,
+            tooltipType,
+            editPolygonSelected,
+            setEditPolygon,
+            draw.current
+          );
+        }
+      };
+
+      if (currentMap.isStyleLoaded()) {
+        setupMap();
+      } else {
+        currentMap.once("styledata", setupMap);
+      }
     }
-  }, [sitePolygonData, styleLoaded, polygonsData]);
+  }, [sitePolygonData, polygonsData, showPopups]);
 
   useEffect(() => {
     if (currentStyle) {
@@ -243,12 +250,24 @@ export const MapContainer = ({
       });
       addFilterOnLayer(
         layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-        "uuid",
         newPolygonData,
         currentMap
       );
     }
   }
+
+  useEffect(() => {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
+      const newPolygonData = {
+        [DELETED_POLYGONS]: selectedPolygonsInCheckbox
+      };
+      addDeleteLayer(
+        layersList.find(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES),
+        map.current as mapboxgl.Map,
+        newPolygonData
+      );
+    }
+  }, [selectedPolygonsInCheckbox]);
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");
@@ -352,6 +371,11 @@ export const MapContainer = ({
         <When condition={polygonFromMap?.isOpen && !formMap}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
             <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
+          </ControlGroup>
+        </When>
+        <When condition={selectedPolygonsInCheckbox.length}>
+          <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
+            <DeleteBulkPolygonsControl />
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">

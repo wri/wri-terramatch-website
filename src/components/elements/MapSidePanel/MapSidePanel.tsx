@@ -91,6 +91,7 @@ const MapSidePanel = ({
   const formatStringName = (name: string) => {
     return name.replace(/ /g, "_");
   };
+
   useEffect(() => {
     if (clickedButton === "site") {
       const siteUrl = `/site/${selected?.site_id}`;

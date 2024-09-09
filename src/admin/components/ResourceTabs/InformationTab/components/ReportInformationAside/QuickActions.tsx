@@ -53,6 +53,24 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
             fullWidth
             label="Back To Project"
           />
+          <When condition={type === "site-reports"}>
+            <Button
+              variant="outlined"
+              component={Link}
+              to={createPath({ resource: modules.site.ResourceName, type: "show", id: record?.site?.uuid })}
+              fullWidth
+              label="Back To Site"
+            />
+          </When>
+          <When condition={type === "nursery-reports"}>
+            <Button
+              variant="outlined"
+              component={Link}
+              to={createPath({ resource: modules.nursery.ResourceName, type: "show", id: record?.nursery?.uuid })}
+              fullWidth
+              label="Back To Nursery"
+            />
+          </When>
           <When condition={type === "project-reports"}>
             <Button variant="outlined" component={Link} to={getReportsPath("siteReport")} label="View Site Reports" />
             <Button
