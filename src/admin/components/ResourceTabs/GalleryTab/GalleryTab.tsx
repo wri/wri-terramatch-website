@@ -93,6 +93,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           setSortOrder={setSortOrder}
           setFilters={setFilters}
           className="mt-3"
+          isAdmin={true}
         />
       </TabbedShowLayout.Tab>
     </When>

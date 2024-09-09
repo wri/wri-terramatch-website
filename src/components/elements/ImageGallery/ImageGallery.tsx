@@ -5,7 +5,7 @@ import { When } from "react-if";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import MenuColapse from "@/components/elements/Menu/MenuCollapse";
-import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "@/components/elements/Menu/MenuVariant";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM, MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDropDown";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -38,6 +38,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
   setFilters: Dispatch<SetStateAction<any>>;
   entity: string;
+  isAdmin?: boolean;
 }
 
 const ImageGallery = ({
@@ -56,6 +57,7 @@ const ImageGallery = ({
   setSortOrder,
   setFilters,
   entity,
+  isAdmin = false,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -364,7 +366,11 @@ const ImageGallery = ({
                 />
               </button>
             </MenuColapse>
-            <Menu menu={menuSort} placement={MENU_PLACEMENT_BOTTOM_BOTTOM} classNameContentMenu="!sticky">
+            <Menu
+              menu={menuSort}
+              placement={isAdmin ? MENU_PLACEMENT_BOTTOM_LEFT : MENU_PLACEMENT_BOTTOM_BOTTOM}
+              classNameContentMenu="!sticky"
+            >
               <button
                 className="text-14-bold flex w-36 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:w-44"
                 onClick={() => {
