@@ -36,6 +36,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   setFilters: Dispatch<SetStateAction<any>>;
   entity: string;
   isAdmin?: boolean;
+  entityData?: any;
 }
 
 const ImageGallery = ({
@@ -53,6 +54,7 @@ const ImageGallery = ({
   setSortOrder,
   setFilters,
   entity,
+  entityData,
   isAdmin = false,
   ...rest
 }: ImageGalleryProps) => {

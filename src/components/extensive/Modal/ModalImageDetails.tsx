@@ -16,6 +16,7 @@ import { ModalBaseImageDetail } from "./ModalsBases";
 
 export interface ModalIamgeDetailProps extends ModalProps {
   onClose?: () => void;
+  data: any;
 }
 
 const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
@@ -26,6 +27,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
   secondaryButtonProps,
   children,
   onClose,
+  data,
   ...rest
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);

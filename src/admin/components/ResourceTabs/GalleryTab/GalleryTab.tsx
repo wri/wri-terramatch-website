@@ -81,6 +81,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
             })) || []
           }
           entity={resource}
+          entityData={ctx.record}
           pageCount={data?.meta?.last_page || 1}
           onGalleryStateChange={pagination => {
             setPagination(pagination);

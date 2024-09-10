@@ -28,6 +28,9 @@ export type ImageGalleryItemData = {
   subtitle?: string;
   isGeotagged?: boolean;
   isPublic: boolean;
+  isCover?: boolean;
+  created_by?: any;
+  photographer?: any;
   raw?: Record<any, any>;
 };
 
@@ -52,7 +55,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
   const openMopdalImageDetail = () => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
-      <ModalImageDetails title="IMAGE DETAILS" onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />,
+      <ModalImageDetails title="IMAGE DETAILS" data={data} onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />,
       true
     );
   };
