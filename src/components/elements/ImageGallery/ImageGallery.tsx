@@ -382,6 +382,7 @@ const ImageGallery = ({
             <ItemComponent
               key={item.uuid}
               data={item}
+              entityData={entityData}
               onClickGalleryItem={onClickGalleryItem}
               onDelete={handleDelete}
             />

@@ -51,7 +51,7 @@ const NurseryDetailPage = () => {
                   modelName="nurseries"
                   modelUUID={nursery.uuid}
                   modelTitle={t("Nursery")}
-                  boundaryGeojson={nursery.boundary_geojson}
+                  entityData={nursery}
                   emptyStateContent={t(
                     "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery."
                   )}

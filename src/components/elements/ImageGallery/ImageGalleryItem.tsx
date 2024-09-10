@@ -36,11 +36,19 @@ export type ImageGalleryItemData = {
 
 export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   data: ImageGalleryItemData;
+  entityData?: any;
   onClickGalleryItem?: (data: ImageGalleryItemData) => void;
   onDelete?: (id: string) => void;
 }
 
-const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem, onDelete, className, ...rest }) => {
+const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
+  data,
+  entityData,
+  onClickGalleryItem,
+  onDelete,
+  className,
+  ...rest
+}) => {
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
@@ -55,7 +63,12 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
   const openMopdalImageDetail = () => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
-      <ModalImageDetails title="IMAGE DETAILS" data={data} onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />,
+      <ModalImageDetails
+        title="IMAGE DETAILS"
+        data={data}
+        entityData={entityData}
+        onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+      />,
       true
     );
   };

@@ -17,6 +17,7 @@ import { ModalBaseImageDetail } from "./ModalsBases";
 export interface ModalIamgeDetailProps extends ModalProps {
   onClose?: () => void;
   data: any;
+  entityData: any;
 }
 
 const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
@@ -28,12 +29,16 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
   children,
   onClose,
   data,
+  entityData,
   ...rest
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const t = useT();
+
+  const { thumbnailImageUrl, label, isGeotagged, raw } = data;
 
   const tabs = ["Image", "Location"];
-  const t = useT();
+
   return (
     <ModalBaseImageDetail {...rest}>
       <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
@@ -42,11 +47,15 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
       <div className="w-full">
         <Text variant="text-24-bold">{title}</Text>
         <PageBreadcrumbs
-          links={[
-            { title: t("Faja Lobi Project"), path: "/#" },
-            { title: t("Iseme Site"), path: "/#" },
-            { title: "Apex Nursery" }
-          ]}
+          links={
+            entityData.project
+              ? [
+                  { title: entityData.project.name, path: "/#" },
+                  { title: entityData.name, path: "/#" },
+                  { title: label }
+                ]
+              : [{ title: entityData.name, path: "/#" }, { title: label }]
+          }
           className="bg-white pt-0"
           textVariant="text-12"
         />
@@ -61,6 +70,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
             required={false}
             placeholder=" "
             id="imageName"
+            value={raw.name}
             labelClassName="text-14-bold !normal-case"
           />
           <div>
@@ -79,6 +89,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
               radioClassName="!p-0 !border-0 text-14-light !gap-2"
               variantTextRadio="text-14-light"
               labelRadio="gap-2"
+              value={raw.is_cover}
             />
           </div>
           <div>
@@ -97,6 +108,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
               radioClassName="!p-0 !border-0 text-14-light !gap-2"
               variantTextRadio="text-14-light"
               labelRadio="gap-2"
+              value={raw.is_public}
             />
           </div>
           <Input
@@ -107,6 +119,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
             required={false}
             placeholder=" "
             id="Photographer"
+            value={raw.photographer || ""}
             labelClassName="text-14-bold !normal-case"
           />
           <TextArea
@@ -115,6 +128,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
             required={false}
             placeholder=" "
             id="Description"
+            value={raw.description}
             labelClassName="text-14-bold !normal-case"
             className="resize-none"
           />
@@ -128,10 +142,10 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
           />
           {activeIndex === 0 ? (
             <Image
-              src="/images/hands-planting.webp"
-              alt="Hands planting"
-              height="400"
-              width="300"
+              src={thumbnailImageUrl}
+              alt={t("Image")}
+              height={400}
+              width={300}
               className="h-[202px] w-full rounded-xl lg:h-[220px]"
             />
           ) : (
@@ -148,37 +162,37 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
               {t("Uploaded By")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {t("George Washington")}
+              {raw?.created_by?.first_name ? `${raw.created_by.first_name} ${raw.created_by.last_name}` : t("Unknown")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Date Captured")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {t("01/02/2024")}
+              {new Date(raw.created_date).toLocaleDateString()}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Filename")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {t("apex_nursery.png")}
+              {raw.file_name}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("File Type")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {t("PNG")}
+              {raw.mime_type.split("/")[1].toUpperCase()}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Geotagged")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {t("Yes")}
+              {isGeotagged ? t("Yes") : t("No")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Coordinates")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {t("(31.2156, -29.9553)")}
+              {isGeotagged ? `(${raw.location.lat.toFixed(4)}, ${raw.location.lng.toFixed(4)})` : "-"}
             </Text>
           </div>
         </div>
@@ -187,10 +201,10 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
         <Button className="w-1/6 rounded-full border-0 hover:border" variant="semi-red">
           {t("Delete")}
         </Button>
-        <Button className="w-1/6 rounded-full" variant="secondary">
+        <Button className="w-1/6 rounded-full" variant="secondary" onClick={onClose}>
           {t("Cancel")}
         </Button>
-        <Button className="w-1/6 rounded-full">{t("Continue")}</Button>
+        <Button className="w-1/6 rounded-full">{t("Save")}</Button>
       </div>
     </ModalBaseImageDetail>
   );

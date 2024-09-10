@@ -35,7 +35,7 @@ export interface EntityMapAndGalleryCardProps {
   modelTitle: string;
   modelName: EntityName;
   modelUUID: string;
-  boundaryGeojson: string;
+  entityData: any;
   emptyStateContent: string;
 }
 
@@ -43,7 +43,7 @@ const EntityMapAndGalleryCard = ({
   modelTitle,
   modelName,
   modelUUID,
-  boundaryGeojson,
+  entityData,
   emptyStateContent
 }: EntityMapAndGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
@@ -251,6 +251,7 @@ const EntityMapAndGalleryCard = ({
                 })) || []
               }
               entity={modelName}
+              entityData={entityData}
               pageCount={data?.meta?.last_page || 1}
               onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
               onGalleryStateChange={(pagination, filter) => {
