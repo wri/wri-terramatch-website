@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
@@ -31,7 +32,10 @@ const mockData: ImageGalleryItemData[] = (() => {
       fullImageUrl: imageUrl,
       label: faker.lorem.sentence({ min: 4, max: 8 }),
       isPublic: faker.datatype.boolean(),
-      isGeotagged: faker.datatype.boolean()
+      isGeotagged: faker.datatype.boolean(),
+      raw: {
+        created_date: faker.date.recent().toISOString()
+      }
     });
   }
   return data;
@@ -48,6 +52,8 @@ const mockQuery = (page: number, pageSize: number) => {
   };
 };
 
+const queryClient = new QueryClient();
+
 export const Default: Story = {
   render: args => {
     const [pagination, setPagination] = useState({ page: 1, pageSize: 5 });
@@ -59,17 +65,22 @@ export const Default: Story = {
     };
 
     return (
-      <ModalProvider>
-        <ModalRoot />
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <ModalRoot />
 
-        <Component
-          {...args}
-          data={data}
-          pageCount={pageCount}
-          onGalleryStateChange={setPagination}
-          onDeleteConfirm={handleImageDelete}
-        />
-      </ModalProvider>
+          <Component
+            {...args}
+            data={data}
+            pageCount={pageCount}
+            onGalleryStateChange={setPagination}
+            onDeleteConfirm={handleImageDelete}
+            setFilters={() => {}}
+            onChangeGeotagged={() => {}}
+            onChangeSearch={() => {}}
+          />
+        </ModalProvider>
+      </QueryClientProvider>
     );
   },
   args: {
