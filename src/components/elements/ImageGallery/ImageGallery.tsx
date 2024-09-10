@@ -84,7 +84,6 @@ const ImageGallery = ({
     reports: t("Report")
   };
 
-  console.log("entity", entity);
   useEffect(() => {
     setFilters({ isPublic: privacy, modelType: source });
     const currentPrivacytLabel = privacy === false ? "Private" : privacy === true ? "Public" : undefined;
