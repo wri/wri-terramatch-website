@@ -27,7 +27,10 @@ export const Default: Story = {
   args: {
     data: {
       uuid: faker.string.uuid(),
-      fullImageUrl: faker.image.urlPicsumPhotos()
+      fullImageUrl: faker.image.urlPicsumPhotos(),
+      label: faker.lorem.sentence({ min: 4, max: 8 }),
+      subtitle: faker.date.anytime().toLocaleDateString("en-GB", { timeZone: "Europe/London" }),
+      isGeotagged: faker.datatype.boolean()
     },
     className: "!absolute",
     backdropClassName: "!absolute"
