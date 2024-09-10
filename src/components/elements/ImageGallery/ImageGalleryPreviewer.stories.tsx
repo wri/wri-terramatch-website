@@ -11,7 +11,7 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-faker.setDefaultRefDate("2023-01-01");
+faker.setDefaultRefDate(new Date("2023-01-01"));
 faker.seed(0);
 
 export const Default: Story = {
