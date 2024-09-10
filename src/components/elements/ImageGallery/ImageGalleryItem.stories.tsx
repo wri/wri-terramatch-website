@@ -31,7 +31,8 @@ export const Default: Story = {
       fullImageUrl: faker.image.urlPicsumPhotos(),
       label: faker.lorem.sentence({ min: 4, max: 8 }),
       subtitle: faker.date.anytime().toLocaleDateString("en-GB", { timeZone: "Europe/London" }),
-      isPublic: faker.datatype.boolean()
+      isPublic: faker.datatype.boolean(),
+      isGeotagged: faker.datatype.boolean()
     }
   }
 };
