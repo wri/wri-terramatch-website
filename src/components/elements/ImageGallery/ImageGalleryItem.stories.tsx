@@ -39,7 +39,7 @@ export const Default: Story = {
       isPublic: faker.datatype.boolean(),
       isGeotagged: faker.datatype.boolean(),
       raw: {
-        created_date: faker.date.recent().toISOString()
+        created_date: new Date("2022-12-31").toISOString()
       }
     }
   }
