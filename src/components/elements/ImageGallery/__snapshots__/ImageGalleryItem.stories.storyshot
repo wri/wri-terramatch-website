@@ -184,7 +184,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Item Default 1`] 
           className="capitalize text-14-light"
           data-testid="txt"
         >
-          31/12/2022
+          01/01/2023
         </p>
       </p>
       <p
