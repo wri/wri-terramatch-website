@@ -258,7 +258,6 @@ const EntityMapAndGalleryCard = ({
                 setFilter(filter);
               }}
               filterOptions={filterOptions}
-              hasFilter={modelName === "sites" || modelName === "projects" || modelName === "nurseries"}
               onChangeSearch={setSearchString}
               onChangeGeotagged={setIsGeotagged}
               sortOrder={sortOrder}

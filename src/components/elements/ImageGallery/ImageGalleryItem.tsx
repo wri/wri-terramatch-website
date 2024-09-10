@@ -26,7 +26,7 @@ export type ImageGalleryItemData = {
   downloadUrl?: string;
   label: string;
   subtitle?: string;
-  isGeotagged: boolean;
+  isGeotagged?: boolean;
   isPublic: boolean;
   raw?: Record<any, any>;
 };
