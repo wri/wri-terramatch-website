@@ -30,8 +30,8 @@ const mockData: ImageGalleryItemData[] = (() => {
       thumbnailImageUrl: imageUrl,
       fullImageUrl: imageUrl,
       label: faker.lorem.sentence({ min: 4, max: 8 }),
-      value: faker.date.anytime().toLocaleDateString("en-GB", { timeZone: "Europe/London" }),
-      isPublic: faker.datatype.boolean()
+      isPublic: faker.datatype.boolean(),
+      isGeotagged: faker.datatype.boolean()
     });
   }
   return data;

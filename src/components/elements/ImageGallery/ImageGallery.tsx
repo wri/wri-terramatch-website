@@ -1,12 +1,10 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, Dispatch, FC, HTMLAttributes, SetStateAction, useEffect, useState } from "react";
-import { When } from "react-if";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import MenuColapse from "@/components/elements/Menu/MenuCollapse";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM, MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
-import FilterDropDown from "@/components/elements/TableFilters/Inputs/FilterDropDown";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -29,7 +27,6 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
     filter?: { key: string; value: string }
   ) => void;
   onDeleteConfirm: (id: string) => void;
-  hasFilter?: boolean;
   filterOptions?: Option[];
   ItemComponent?: FC<ImageGalleryItemProps>;
   onChangeSearch: Dispatch<SetStateAction<string>>;
@@ -48,7 +45,6 @@ const ImageGallery = ({
   onGalleryStateChange,
   onDeleteConfirm,
   className,
-  hasFilter = true,
   filterOptions = [],
   ItemComponent = ImageGalleryItem,
   onChangeSearch,
@@ -69,7 +65,7 @@ const ImageGallery = ({
 
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
-  const [modelName, setModelName] = useState<string>();
+  const [modelName] = useState<string>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [source, setSource] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
@@ -338,15 +334,6 @@ const ImageGallery = ({
             <button className="text-primary hover:text-red" onClick={handleClearFilters}>
               <Text variant="text-14-bold">{t("Clear Filters")}</Text>
             </button>
-            <When condition={!hasFilter}>
-              <FilterDropDown
-                placeholder="Show All"
-                className="w-48"
-                options={[{ title: t("Show All"), value: "-1" }, ...filterOptions]}
-                onChange={setModelName}
-                classNameContent="w-48"
-              />
-            </When>
             <MenuColapse
               menu={menuFilter as MenuItemProps[]}
               placement={MENU_PLACEMENT_BOTTOM_BOTTOM}
