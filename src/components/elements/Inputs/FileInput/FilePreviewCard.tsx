@@ -29,7 +29,7 @@ export interface FilePreviewCardProps {
 
 const FilePreviewCard = ({
   file,
-  fileStatus = true,
+  fileStatus,
   className,
   showPrivateCheckbox,
   onDelete,
@@ -84,7 +84,7 @@ const FilePreviewCard = ({
                 width: 32
               }}
             />
-            <When condition={variant.type === "image"}>
+            <When condition={variant.type === "image" && fileStatus}>
               <div
                 className={classNames("flex items-center justify-center rounded border py-2", {
                   "border-blue": fileStatus,
