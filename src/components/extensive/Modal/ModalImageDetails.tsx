@@ -54,11 +54,20 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     photographer: data.raw.photographer || "",
     description: data.raw.description
   });
+  const [descriptionCharCount, setDescriptionCharCount] = useState(
+    data.raw.description ? data.raw.description.length : 0
+  );
+  const maxDescriptionLength = 500;
   const mapFunctions = useMap();
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUUID();
 
   const handleInputChange = (name: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleDescriptionChange = (value: string) => {
+    setFormData(prev => ({ ...prev, description: value }));
+    setDescriptionCharCount(value.length);
   };
 
   const handleSave = () => {
@@ -208,10 +217,13 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             placeholder=" "
             id="description"
             value={formData.description}
-            onChange={e => handleInputChange("description", e.target.value)}
+            onChange={e => handleDescriptionChange(e.target.value)}
             labelClassName="text-14-bold !normal-case"
             className="resize-none"
           />
+          <div className="text-12 text-right text-darkCustom-60">
+            {`${descriptionCharCount}/${maxDescriptionLength} ${t("characters remaining")}`}
+          </div>
         </div>
         <div className="flex max-h-[62vh] flex-1 flex-col gap-4 overflow-auto">
           <Toggle
