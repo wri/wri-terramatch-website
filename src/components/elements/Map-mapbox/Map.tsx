@@ -162,6 +162,13 @@ export const MapContainer = ({
 
   useEffect(() => {
     initMap();
+    return () => {
+      if (map.current) {
+        setStyleLoaded(false);
+        map.current.remove();
+        map.current = null;
+      }
+    };
   }, []);
 
   useEffect(() => {
