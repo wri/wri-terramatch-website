@@ -29745,6 +29745,100 @@ export const usePostV2ExportImage = (
   );
 };
 
+export type PatchV2MediaUUIDPathParams = {
+  /**
+   * UUID of the media to update
+   */
+  uuid: string;
+};
+
+export type PatchV2MediaUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2MediaUUIDResponse = {
+  id?: number;
+  model_id?: number;
+  model_type?: string;
+  collection_name?: string;
+  name?: string;
+  file_name?: string;
+  mime_type?: string;
+  disk?: string;
+  size?: number;
+  manipulations?: Record<string, any>;
+  custom_properties?: Record<string, any>;
+  responsive_images?: Record<string, any>;
+  order_column?: number;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  description?: string;
+  photographer?: string;
+  is_public?: boolean;
+  is_cover?: boolean;
+};
+
+export type PatchV2MediaUUIDRequestBody = {
+  /**
+   * Name of the media
+   */
+  name?: string;
+  /**
+   * New description for the media
+   */
+  description?: string;
+  /**
+   * Name of the photographer
+   */
+  photographer?: string;
+  /**
+   * Whether the media is public or not
+   */
+  is_public?: boolean;
+  /**
+   * Whether this media should be set as cover
+   */
+  is_cover?: boolean;
+};
+
+export type PatchV2MediaUUIDVariables = {
+  body?: PatchV2MediaUUIDRequestBody;
+  pathParams: PatchV2MediaUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Update description, photographer, is_public, and is_cover attributes of a media item
+ */
+export const fetchPatchV2MediaUUID = (variables: PatchV2MediaUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PatchV2MediaUUIDResponse,
+    PatchV2MediaUUIDError,
+    PatchV2MediaUUIDRequestBody,
+    {},
+    {},
+    PatchV2MediaUUIDPathParams
+  >({ url: "/v2/media/{uuid}", method: "patch", ...variables, signal });
+
+/**
+ * Update description, photographer, is_public, and is_cover attributes of a media item
+ */
+export const usePatchV2MediaUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PatchV2MediaUUIDResponse, PatchV2MediaUUIDError, PatchV2MediaUUIDVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PatchV2MediaUUIDResponse, PatchV2MediaUUIDError, PatchV2MediaUUIDVariables>(
+    (variables: PatchV2MediaUUIDVariables) => fetchPatchV2MediaUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2AdminENTITYExportFRAMEWORKPathParams = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports

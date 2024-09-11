@@ -261,6 +261,7 @@ const EntityMapAndGalleryCard = ({
               filterOptions={filterOptions}
               onChangeSearch={setSearchString}
               onChangeGeotagged={setIsGeotagged}
+              reloadGalleryImages={refetch}
               sortOrder={sortOrder}
               setSortOrder={setSortOrder}
               setFilters={setFilters}

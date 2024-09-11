@@ -39,6 +39,7 @@ export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<
   entityData?: any;
   onClickGalleryItem?: (data: ImageGalleryItemData) => void;
   onDelete?: (id: string) => void;
+  reloadGalleryImages?: () => void;
 }
 
 const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
@@ -47,6 +48,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   onClickGalleryItem,
   onDelete,
   className,
+  reloadGalleryImages,
   ...rest
 }) => {
   const { openModal, closeModal } = useModalContext();
@@ -68,6 +70,8 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         data={data}
         entityData={entityData}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+        reloadGalleryImages={reloadGalleryImages}
+        handleDelete={handleDelete}
       />,
       true
     );
