@@ -1,7 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
 import * as turfHelper from "@turf/helpers";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -645,4 +645,21 @@ export const getSiteBbox = (record: any) => {
     { enabled: record?.uuid != null }
   );
   return sitePolygonBbox?.bbox;
+};
+export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat: number }) => {
+  if (map) {
+    const { lng, lat } = location;
+    const lngLat = new mapboxgl.LngLat(lng, lat);
+    createMarker(lngLat, map);
+    map.setCenter([lng, lat]);
+    map.setZoom(14);
+  }
+};
+
+export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
+  return new mapboxgl.Marker({
+    color: "#c64542"
+  })
+    .setLngLat(lngLat)
+    .addTo(map);
 };

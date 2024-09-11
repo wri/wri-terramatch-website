@@ -6,6 +6,8 @@ import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 
@@ -32,6 +34,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
   entityData,
   ...rest
 }) => {
+  console.log("data", data);
   const [activeIndex, setActiveIndex] = useState(0);
   const t = useT();
 
@@ -39,6 +42,7 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
 
   const tabs = ["Image", "Location"];
 
+  const mapFunctions = useMap();
   return (
     <ModalBaseImageDetail {...rest}>
       <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
@@ -149,12 +153,13 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
               className="h-[202px] w-full rounded-xl lg:h-[220px]"
             />
           ) : (
-            <Image
-              src="/images/map-img.png"
-              alt="map"
-              height="400"
-              width="300"
-              className="h-[202px] w-full rounded-xl lg:h-[220px]"
+            <MapContainer
+              className="h-[240px] flex-1"
+              hasControls={false}
+              showPopups={false}
+              showLegend={false}
+              mapFunctions={mapFunctions}
+              location={data.raw?.location}
             />
           )}
           <div className="grid grid-cols-2">
