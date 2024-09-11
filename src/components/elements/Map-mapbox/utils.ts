@@ -658,7 +658,7 @@ export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat
 
 export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
   return new mapboxgl.Marker({
-    color: "#c64542"
+    color: "#ba5856"
   })
     .setLngLat(lngLat)
     .addTo(map);
