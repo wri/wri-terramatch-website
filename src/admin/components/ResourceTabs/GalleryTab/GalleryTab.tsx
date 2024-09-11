@@ -90,6 +90,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ItemComponent={ImageGalleryItem}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}
+          reloadGalleryImages={refetch}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           setFilters={setFilters}

@@ -10,19 +10,26 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
+import Modal from "@/components/extensive/Modal/Modal";
+import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import { usePatchV2MediaUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
 import { ModalProps } from "./Modal";
+import { ModalId } from "./ModalConst";
 import { ModalBaseImageDetail } from "./ModalsBases";
 
-export interface ModalIamgeDetailProps extends ModalProps {
+export interface ModalImageDetailProps extends ModalProps {
   onClose?: () => void;
+  reloadGalleryImages?: () => void;
+  handleDelete?: (uuid: string) => void;
   data: any;
   entityData: any;
 }
 
-const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
+const ModalImageDetails: FC<ModalImageDetailProps> = ({
   iconProps,
   title,
   content,
@@ -30,19 +37,89 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
   secondaryButtonProps,
   children,
   onClose,
+  reloadGalleryImages,
+  handleDelete: onDeleteConfirm,
   data,
   entityData,
   ...rest
 }) => {
-  console.log("data", data);
-  const [activeIndex, setActiveIndex] = useState(0);
   const t = useT();
+  const { openNotification } = useNotificationContext();
+  const { openModal, closeModal } = useModalContext();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [formData, setFormData] = useState({
+    name: data.raw.name,
+    is_cover: data.raw.is_cover,
+    is_public: data.raw.is_public,
+    photographer: data.raw.photographer || "",
+    description: data.raw.description
+  });
+  const mapFunctions = useMap();
+  const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUUID();
+
+  const handleInputChange = (name: string, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    updateMedia(
+      {
+        pathParams: { uuid: data.uuid },
+        body: {
+          name: formData.name,
+          description: formData.description,
+          photographer: formData.photographer,
+          is_public: formData.is_public,
+          is_cover: formData.is_cover
+        }
+      },
+      {
+        onSuccess: () => {
+          openNotification("success", t("Success!"), t("Image updated successfully"));
+          reloadGalleryImages?.();
+          onClose?.();
+        },
+        onError: error => {
+          openNotification("error", t("Error"), t("Failed to update media"));
+          console.error("Failed to update media:", error);
+        }
+      }
+    );
+  };
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
-
   const tabs = ["Image", "Location"];
 
-  const mapFunctions = useMap();
+  const handleDelete = () => {
+    onClose?.();
+    openModal(
+      ModalId.DELETE_IMAGE,
+      <Modal
+        title={t("Delete Image")}
+        content={t(
+          "Are you sure you want to delete this image? This action cannot be undone, and the image will be permanently removed."
+        )}
+        iconProps={{
+          height: 60,
+          width: 60,
+          className: "fill-error",
+          name: IconNames.TRASH_CIRCLE
+        }}
+        primaryButtonProps={{
+          children: t("Confirm Delete"),
+          onClick: () => {
+            closeModal(ModalId.DELETE_IMAGE);
+            onDeleteConfirm?.(data.uuid);
+          }
+        }}
+        secondaryButtonProps={{
+          children: t("Cancel"),
+          onClick: () => closeModal(ModalId.DELETE_IMAGE)
+        }}
+      />
+    );
+  };
+
   return (
     <ModalBaseImageDetail {...rest}>
       <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
@@ -70,11 +147,12 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
             name="imageName"
             type="text"
             label={t("Image Name")}
-            variant={"default"}
+            variant="default"
             required={false}
             placeholder=" "
             id="imageName"
-            value={raw.name}
+            value={formData.name}
+            onChange={e => handleInputChange("name", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
           <div>
@@ -86,14 +164,12 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
                 { title: t("Yes"), value: true },
                 { title: t("No"), value: false }
               ]}
-              onChange={value => {
-                console.log(value);
-              }}
+              onChange={value => handleInputChange("is_cover", Boolean(value))}
               contentClassName="flex gap-4 !space-y-0"
               radioClassName="!p-0 !border-0 text-14-light !gap-2"
               variantTextRadio="text-14-light"
               labelRadio="gap-2"
-              value={raw.is_cover}
+              value={formData.is_cover}
             />
           </div>
           <div>
@@ -105,34 +181,34 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
                 { title: t("Yes"), value: true },
                 { title: t("No"), value: false }
               ]}
-              onChange={value => {
-                console.log(value);
-              }}
+              onChange={value => handleInputChange("is_public", Boolean(value))}
               contentClassName="flex gap-4 !space-y-0"
               radioClassName="!p-0 !border-0 text-14-light !gap-2"
               variantTextRadio="text-14-light"
               labelRadio="gap-2"
-              value={raw.is_public}
+              value={formData.is_public}
             />
           </div>
           <Input
-            name="Photographer"
+            name="photographer"
             type="text"
             label={t("Photographer")}
-            variant={"default"}
+            variant="default"
             required={false}
             placeholder=" "
-            id="Photographer"
-            value={raw.photographer || ""}
+            id="photographer"
+            value={formData.photographer}
+            onChange={e => handleInputChange("photographer", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
           <TextArea
-            name="Description"
+            name="description"
             label={t("Description")}
             required={false}
             placeholder=" "
-            id="Description"
-            value={raw.description}
+            id="description"
+            value={formData.description}
+            onChange={e => handleInputChange("description", e.target.value)}
             labelClassName="text-14-bold !normal-case"
             className="resize-none"
           />
@@ -203,13 +279,15 @@ const ModalImageDetails: FC<ModalIamgeDetailProps> = ({
         </div>
       </div>
       <div className="mt-5 flex w-full justify-end gap-3">
-        <Button className="w-1/6 rounded-full border-0 hover:border" variant="semi-red">
+        <Button className="w-1/6 rounded-full border-0 hover:border" variant="semi-red" onClick={handleDelete}>
           {t("Delete")}
         </Button>
         <Button className="w-1/6 rounded-full" variant="secondary" onClick={onClose}>
           {t("Cancel")}
         </Button>
-        <Button className="w-1/6 rounded-full">{t("Save")}</Button>
+        <Button className="w-1/6 rounded-full" onClick={handleSave} disabled={isUpdating}>
+          {isUpdating ? t("Saving...") : t("Save")}
+        </Button>
       </div>
     </ModalBaseImageDetail>
   );
