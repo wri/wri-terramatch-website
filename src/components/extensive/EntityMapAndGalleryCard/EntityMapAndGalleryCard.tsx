@@ -247,6 +247,7 @@ const EntityMapAndGalleryCard = ({
                   label: file.model_name!,
                   isPublic: file.is_public!,
                   isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+                  isCover: file.is_cover,
                   raw: file
                 })) || []
               }

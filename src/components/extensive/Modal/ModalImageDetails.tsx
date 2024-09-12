@@ -156,7 +156,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       />
     );
   };
-  console.log("entityData", entityData);
+
   return (
     <ModalBaseImageDetail {...rest}>
       <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
