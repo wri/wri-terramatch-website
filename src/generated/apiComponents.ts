@@ -28183,6 +28183,7 @@ export type GetAuthMeResponse = {
    */
   email_address_verified_at?: string;
   role?: string;
+  locale?: string;
   organisation?: {
     uuid?: string;
     name?: string;
@@ -34692,6 +34693,44 @@ export const usePutV2SitePolygonUuidMakeActive = (
   >(
     (variables: PutV2SitePolygonUuidMakeActiveVariables) =>
       fetchPutV2SitePolygonUuidMakeActive({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PatchV2LocaleLocalePathParams = {
+  /**
+   * locale used could be one of en-US,es-MX,fr-FR,pt-BR
+   */
+  locale: string;
+};
+
+export type PatchV2LocaleLocaleError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2LocaleLocaleResponse = {
+  message?: string;
+};
+
+export type PatchV2LocaleLocaleVariables = {
+  pathParams: PatchV2LocaleLocalePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2LocaleLocale = (variables: PatchV2LocaleLocaleVariables, signal?: AbortSignal) =>
+  apiFetch<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, undefined, {}, {}, PatchV2LocaleLocalePathParams>({
+    url: "/v2/locale/{locale}",
+    method: "patch",
+    ...variables,
+    signal
+  });
+
+export const usePatchV2LocaleLocale = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, PatchV2LocaleLocaleVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, PatchV2LocaleLocaleVariables>(
+    (variables: PatchV2LocaleLocaleVariables) => fetchPatchV2LocaleLocale({ ...fetcherOptions, ...variables }),
     options
   );
 };
