@@ -49,7 +49,11 @@ const HighLevelMetics: FC = () => {
         </Labeled>
         <ContextCondition frameworksShow={[Framework.PPC]}>
           <Labeled label="Trees Restored" sx={inlineLabelSx}>
-            <NumberField source="trees_restored_ppc" emptyText="0" />
+            <NumberField
+              source="trees_restored_ppc"
+              emptyText="0"
+              options={{ minimumFractionDigits: 0, maximumFractionDigits: 0 }}
+            />
           </Labeled>
         </ContextCondition>
       </Stack>
