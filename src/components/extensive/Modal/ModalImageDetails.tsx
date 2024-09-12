@@ -98,7 +98,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
   const tabs = ["Image", "Location"];
-
+  console.log("isgeotagged", isGeotagged);
   const handleDelete = () => {
     onClose?.();
     openModal(
@@ -231,6 +231,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             activeIndex={activeIndex}
             setActiveIndex={setActiveIndex}
             textClassName="!w-1/2 flex justify-center py-1"
+            disabledIndexes={isGeotagged ? [] : [1]}
           />
           {activeIndex === 0 ? (
             <Image
