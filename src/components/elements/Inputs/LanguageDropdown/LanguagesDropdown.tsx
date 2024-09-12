@@ -6,12 +6,14 @@ import { PropsWithChildren, useRef, useState } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+import { fetchPatchV2LocaleLocale } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 
 export interface DropdownProps {
   defaultValue?: OptionValue;
   onChange?: (value: OptionValue) => void;
   className?: string;
+  isLoggedIn?: boolean;
 }
 
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
@@ -30,6 +32,11 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
     setSelected(lang);
     props.onChange?.(lang.value);
     buttonRef.current?.click();
+    if (props.isLoggedIn) {
+      fetchPatchV2LocaleLocale({
+        pathParams: { locale: lang.value as string }
+      });
+    }
   };
 
   return (
