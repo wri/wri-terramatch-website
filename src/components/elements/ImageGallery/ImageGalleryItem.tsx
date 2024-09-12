@@ -11,7 +11,7 @@ import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePostV2ExportImage } from "@/generated/apiComponents";
+import { usePatchV2MediaProjectProjectMediaUuid, usePostV2ExportImage } from "@/generated/apiComponents";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { SingularEntityName } from "@/types/common";
 
@@ -28,31 +28,61 @@ export type ImageGalleryItemData = {
   subtitle?: string;
   isGeotagged?: boolean;
   isPublic: boolean;
+  isCover?: boolean;
+  created_by?: any;
+  photographer?: any;
   raw?: Record<any, any>;
 };
 
 export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   data: ImageGalleryItemData;
+  entityData?: any;
   onClickGalleryItem?: (data: ImageGalleryItemData) => void;
   onDelete?: (id: string) => void;
+  reloadGalleryImages?: () => void;
 }
 
-const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem, onDelete, className, ...rest }) => {
+const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
+  data,
+  entityData,
+  onClickGalleryItem,
+  onDelete,
+  className,
+  reloadGalleryImages,
+  ...rest
+}) => {
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const { getReadableEntityName } = useGetReadableEntityName();
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
-
+  const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
   const handleDelete = () => {
     onDelete?.(data.uuid);
   };
-
-  const openMopdalImageDetail = () => {
+  const setImageCover = async () => {
+    const result = await updateIsCoverAsync({
+      pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
+    });
+    if (result) {
+      openNotification("success", t("Success!"), t("Image set as cover successfully"));
+      reloadGalleryImages?.();
+    } else {
+      openNotification("error", t("Error!"), t("Failed to set image as cover"));
+    }
+  };
+  const openModalImageDetail = () => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
-      <ModalImageDetails title="IMAGE DETAILS" onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />,
+      <ModalImageDetails
+        title="IMAGE DETAILS"
+        data={data}
+        entityData={entityData}
+        onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+        reloadGalleryImages={reloadGalleryImages}
+        handleDelete={handleDelete}
+      />,
       true
     );
   };
@@ -99,7 +129,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           {t("Edit Attributes")}
         </Text>
       ),
-      onClick: openMopdalImageDetail
+      onClick: openModalImageDetail
     },
     {
       id: "2",
@@ -110,14 +140,19 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
       ),
       onClick: handleDownload
     },
-    {
-      id: "3",
-      render: () => (
-        <Text variant="text-12-bold" className="pr-3">
-          {t("Make Cover")}
-        </Text>
-      )
-    },
+    ...(!entityData?.project
+      ? [
+          {
+            id: "3",
+            render: () => (
+              <Text variant="text-12-bold" className="pr-3">
+                {t("Make Cover")}
+              </Text>
+            ),
+            onClick: setImageCover
+          }
+        ]
+      : []),
     {
       id: "4",
       render: () => null,
@@ -143,6 +178,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           width: 1440
         }}
         isGeotagged={data.isGeotagged}
+        isCover={data.isCover}
         className="h-[226px] rounded-t-xl"
       >
         <div className="flex justify-between p-3">
@@ -172,7 +208,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({ data, onClickGalleryItem,
           </Text>
           <button
             className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-            onClick={openMopdalImageDetail}
+            onClick={openModalImageDetail}
           >
             <Icon name={IconNames.EDIT} height={24} width={24} className="" />
           </button>

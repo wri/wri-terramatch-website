@@ -72,7 +72,7 @@ const SiteDetailPage = () => {
                     modelName="sites"
                     modelUUID={site.uuid}
                     modelTitle={t("Site")}
-                    boundaryGeojson={site.boundary_geojson}
+                    entityData={site}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
                     )}

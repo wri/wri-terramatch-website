@@ -35,7 +35,7 @@ export interface EntityMapAndGalleryCardProps {
   modelTitle: string;
   modelName: EntityName;
   modelUUID: string;
-  boundaryGeojson: string;
+  entityData: any;
   emptyStateContent: string;
 }
 
@@ -43,7 +43,7 @@ const EntityMapAndGalleryCard = ({
   modelTitle,
   modelName,
   modelUUID,
-  boundaryGeojson,
+  entityData,
   emptyStateContent
 }: EntityMapAndGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
@@ -247,10 +247,12 @@ const EntityMapAndGalleryCard = ({
                   label: file.model_name!,
                   isPublic: file.is_public!,
                   isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+                  isCover: file.is_cover,
                   raw: file
                 })) || []
               }
               entity={modelName}
+              entityData={entityData}
               pageCount={data?.meta?.last_page || 1}
               onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
               onGalleryStateChange={(pagination, filter) => {
@@ -260,6 +262,7 @@ const EntityMapAndGalleryCard = ({
               filterOptions={filterOptions}
               onChangeSearch={setSearchString}
               onChangeGeotagged={setIsGeotagged}
+              reloadGalleryImages={refetch}
               sortOrder={sortOrder}
               setSortOrder={setSortOrder}
               setFilters={setFilters}

@@ -36,6 +36,8 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   setFilters: Dispatch<SetStateAction<any>>;
   entity: string;
   isAdmin?: boolean;
+  entityData?: any;
+  reloadGalleryImages?: () => void;
 }
 
 const ImageGallery = ({
@@ -53,6 +55,8 @@ const ImageGallery = ({
   setSortOrder,
   setFilters,
   entity,
+  entityData,
+  reloadGalleryImages,
   isAdmin = false,
   ...rest
 }: ImageGalleryProps) => {
@@ -380,8 +384,10 @@ const ImageGallery = ({
             <ItemComponent
               key={item.uuid}
               data={item}
+              entityData={entityData}
               onClickGalleryItem={onClickGalleryItem}
               onDelete={handleDelete}
+              reloadGalleryImages={reloadGalleryImages}
             />
           ))}
         </div>

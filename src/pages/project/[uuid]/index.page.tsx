@@ -81,7 +81,7 @@ const ProjectDetailPage = () => {
                     modelName="projects"
                     modelUUID={project.uuid}
                     modelTitle={t("Project")}
-                    boundaryGeojson={project.boundary_geojson}
+                    entityData={project}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this project, or images added to your sites and reports will also automatically populate this gallery."
                     )}
