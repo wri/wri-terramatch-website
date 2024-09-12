@@ -7,7 +7,7 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "reminder" | undefined>();
 
   const { record } = useShowContext();
   const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.update_request_status);
@@ -74,6 +74,9 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               onClick={() => setStatusModal("approve")}
             >
               Approve
+            </Button>
+            <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
+              Reminder
             </Button>
           </Stack>
         </Stack>

@@ -7836,6 +7836,56 @@ export const usePutV2AdminENTITYUUIDSTATUS = (
   );
 };
 
+export type PostV2AdminENTITYUUIDReminderPathParams = {
+  /**
+   * allowed values are project-reports, site-reports, nursery-reports
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type PostV2AdminENTITYUUIDReminderError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AdminENTITYUUIDReminderRequestBody = {
+  feedback?: string;
+};
+
+export type PostV2AdminENTITYUUIDReminderVariables = {
+  body?: PostV2AdminENTITYUUIDReminderRequestBody;
+  pathParams: PostV2AdminENTITYUUIDReminderPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AdminENTITYUUIDReminder = (
+  variables: PostV2AdminENTITYUUIDReminderVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    PostV2AdminENTITYUUIDReminderError,
+    PostV2AdminENTITYUUIDReminderRequestBody,
+    {},
+    {},
+    PostV2AdminENTITYUUIDReminderPathParams
+  >({ url: "/v2/admin/{entity}/{uuid}/reminder", method: "post", ...variables, signal });
+
+export const usePostV2AdminENTITYUUIDReminder = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PostV2AdminENTITYUUIDReminderError,
+      PostV2AdminENTITYUUIDReminderVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, PostV2AdminENTITYUUIDReminderError, PostV2AdminENTITYUUIDReminderVariables>(
+    (variables: PostV2AdminENTITYUUIDReminderVariables) =>
+      fetchPostV2AdminENTITYUUIDReminder({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2UpdateRequestsUUIDPathParams = {
   uuid: string;
 };
@@ -29712,6 +29762,7 @@ export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUID
     }
   );
 };
+
 
 export type PostV2ExportImageError = Fetcher.ErrorWrapper<undefined>;
 

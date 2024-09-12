@@ -21568,6 +21568,10 @@ export type StatusUpdate = {
   feedback_fields?: string[];
 };
 
+export type EntityReportReminder = {
+  feedback?: string;
+};
+
 export type V2ProjectInviteRead = {
   id?: number;
   uuid?: string;
