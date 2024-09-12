@@ -77,10 +77,12 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
               label: file.model_name!,
               isPublic: file.is_public!,
               isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+              isCover: file.is_cover,
               raw: file
             })) || []
           }
           entity={resource}
+          entityData={ctx.record}
           pageCount={data?.meta?.last_page || 1}
           onGalleryStateChange={pagination => {
             setPagination(pagination);
@@ -89,6 +91,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ItemComponent={ImageGalleryItem}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}
+          reloadGalleryImages={refetch}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           setFilters={setFilters}

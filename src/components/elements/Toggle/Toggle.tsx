@@ -6,10 +6,11 @@ export interface ToggleProps {
   activeIndex: number;
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
   textClassName?: string;
+  disabledIndexes?: number[];
 }
 
 const Toggle = (props: ToggleProps) => {
-  const { items, activeIndex, setActiveIndex } = props;
+  const { items, activeIndex, setActiveIndex, disabledIndexes = [] } = props;
   const [width, setWidth] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -20,6 +21,8 @@ const Toggle = (props: ToggleProps) => {
       setWidth(newWidth);
     }
   }, [activeIndex]);
+
+  const isDisabled = (index: number) => disabledIndexes.includes(index);
 
   return (
     <div className="relative flex rounded-lg bg-neutral-40 p-1">
@@ -36,6 +39,7 @@ const Toggle = (props: ToggleProps) => {
           ref={el => (buttonRefs.current[index] = el)}
           type="button"
           onClick={() => setActiveIndex(index)}
+          disabled={isDisabled(index)}
           className={classNames(
             "hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
             props.textClassName,

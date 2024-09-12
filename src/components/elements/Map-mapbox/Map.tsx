@@ -2,7 +2,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useT } from "@transifex/react";
 import _ from "lodash";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { LngLat } from "mapbox-gl";
 import React, { useEffect } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
@@ -49,6 +49,7 @@ import {
   addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
+  addMarkerAndZoom,
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
@@ -103,6 +104,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
   formMap?: boolean;
   pdView?: boolean;
+  location?: LngLat;
 }
 
 export const MapContainer = ({
@@ -130,6 +132,7 @@ export const MapContainer = ({
   shouldBboxZoom = true,
   formMap,
   pdView = false,
+  location,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -159,8 +162,21 @@ export const MapContainer = ({
 
   useEffect(() => {
     initMap();
+    return () => {
+      if (map.current) {
+        setStyleLoaded(false);
+        map.current.remove();
+        map.current = null;
+      }
+    };
   }, []);
 
+  useEffect(() => {
+    if (!map) return;
+    if (location && location.lat !== 0 && location.lng !== 0) {
+      addMarkerAndZoom(map.current, location);
+    }
+  }, [map, location]);
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {

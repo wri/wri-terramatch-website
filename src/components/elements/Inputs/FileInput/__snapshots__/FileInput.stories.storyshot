@@ -8,7 +8,7 @@ Array [
     <label
       className="mr-2 inline uppercase text-bold-body-300"
       data-testid="txt"
-      htmlFor=":rv:"
+      htmlFor=":rt:"
     >
       Input Label 
     </label>
@@ -20,7 +20,7 @@ Array [
         }
       }
       data-testid="txt"
-      id=":rv:-description"
+      id=":rt:-description"
     />
     <div
       className="bg-white border-dashed-2 relative cursor-pointer rounded-xl p-10"
@@ -38,7 +38,7 @@ Array [
       <input
         accept="image/png, image/jpeg"
         hidden={true}
-        id=":rv:"
+        id=":rt:"
         multiple={true}
         onChange={[Function]}
         onClick={[Function]}
@@ -104,7 +104,7 @@ Array [
     <label
       className="mr-2 inline uppercase text-bold-body-300"
       data-testid="txt"
-      htmlFor=":rt:"
+      htmlFor=":rr:"
     >
       Input Label 
     </label>
@@ -116,7 +116,7 @@ Array [
         }
       }
       data-testid="txt"
-      id=":rt:-description"
+      id=":rr:-description"
     />
     <div
       className="bg-white border-dashed-2 relative cursor-pointer rounded-xl p-10"
@@ -134,7 +134,7 @@ Array [
       <input
         accept="image/png, image/jpeg"
         hidden={true}
-        id=":rt:"
+        id=":rr:"
         onChange={[Function]}
         onClick={[Function]}
         style={
@@ -199,7 +199,7 @@ Array [
     <label
       className="mr-2 inline uppercase text-bold-body-300"
       data-testid="txt"
-      htmlFor=":ru:"
+      htmlFor=":rs:"
     >
       Input Label 
     </label>
@@ -211,7 +211,7 @@ Array [
         }
       }
       data-testid="txt"
-      id=":ru:-description"
+      id=":rs:-description"
     />
     <div
       className="bg-white flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8"
@@ -229,7 +229,7 @@ Array [
       <input
         accept="image/png, image/jpeg"
         hidden={true}
-        id=":ru:"
+        id=":rs:"
         onChange={[Function]}
         onClick={[Function]}
         style={

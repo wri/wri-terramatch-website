@@ -14786,6 +14786,7 @@ export type GetV2MODELUUIDFilesResponse = {
     created_date?: string;
     model_name?: string;
     is_public?: boolean;
+    is_cover?: boolean;
     location?: {
       lat?: number;
       lng?: number;
@@ -29742,6 +29743,182 @@ export const usePostV2ExportImage = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<undefined, PostV2ExportImageError, PostV2ExportImageVariables>(
     (variables: PostV2ExportImageVariables) => fetchPostV2ExportImage({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PatchV2MediaUuidPathParams = {
+  /**
+   * UUID of the media to update
+   */
+  uuid: string;
+};
+
+export type PatchV2MediaUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2MediaUuidResponse = {
+  id?: number;
+  model_id?: number;
+  model_type?: string;
+  collection_name?: string;
+  name?: string;
+  file_name?: string;
+  mime_type?: string;
+  disk?: string;
+  size?: number;
+  manipulations?: Record<string, any>;
+  custom_properties?: Record<string, any>;
+  responsive_images?: Record<string, any>;
+  order_column?: number;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  description?: string;
+  photographer?: string;
+  is_public?: boolean;
+  is_cover?: boolean;
+};
+
+export type PatchV2MediaUuidRequestBody = {
+  /**
+   * Name of the media
+   */
+  name?: string;
+  /**
+   * New description for the media
+   */
+  description?: string;
+  /**
+   * Name of the photographer
+   */
+  photographer?: string;
+  /**
+   * Whether the media is public or not
+   */
+  is_public?: boolean;
+};
+
+export type PatchV2MediaUuidVariables = {
+  body?: PatchV2MediaUuidRequestBody;
+  pathParams: PatchV2MediaUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Update description, photographer, is_public, and is_cover attributes of a media item
+ */
+export const fetchPatchV2MediaUuid = (variables: PatchV2MediaUuidVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PatchV2MediaUuidResponse,
+    PatchV2MediaUuidError,
+    PatchV2MediaUuidRequestBody,
+    {},
+    {},
+    PatchV2MediaUuidPathParams
+  >({ url: "/v2/media/{uuid}", method: "patch", ...variables, signal });
+
+/**
+ * Update description, photographer, is_public, and is_cover attributes of a media item
+ */
+export const usePatchV2MediaUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PatchV2MediaUuidResponse, PatchV2MediaUuidError, PatchV2MediaUuidVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PatchV2MediaUuidResponse, PatchV2MediaUuidError, PatchV2MediaUuidVariables>(
+    (variables: PatchV2MediaUuidVariables) => fetchPatchV2MediaUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PatchV2MediaProjectProjectMediaUuidPathParams = {
+  /**
+   * The ID or UUID of the project.
+   */
+  project: string;
+  /**
+   * The UUID of the media item.
+   */
+  mediaUuid: string;
+};
+
+export type PatchV2MediaProjectProjectMediaUuidError = Fetcher.ErrorWrapper<
+  | {
+      status: 403;
+      payload: {
+        message?: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        message?: string;
+      };
+    }
+>;
+
+export type PatchV2MediaProjectProjectMediaUuidResponse = {
+  message?: string;
+  mediaUuid?: string;
+};
+
+export type PatchV2MediaProjectProjectMediaUuidRequestBody = {
+  /**
+   * This allows PATCH requests via form submissions, used for Laravel.
+   *
+   * @example PATCH
+   */
+  _method?: string;
+};
+
+export type PatchV2MediaProjectProjectMediaUuidVariables = {
+  body?: PatchV2MediaProjectProjectMediaUuidRequestBody;
+  pathParams: PatchV2MediaProjectProjectMediaUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint allows you to update a specific media item's "is_cover" field to true.
+ */
+export const fetchPatchV2MediaProjectProjectMediaUuid = (
+  variables: PatchV2MediaProjectProjectMediaUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PatchV2MediaProjectProjectMediaUuidResponse,
+    PatchV2MediaProjectProjectMediaUuidError,
+    PatchV2MediaProjectProjectMediaUuidRequestBody,
+    {},
+    {},
+    PatchV2MediaProjectProjectMediaUuidPathParams
+  >({ url: "/v2/media/project/{project}/{mediaUuid}", method: "patch", ...variables, signal });
+
+/**
+ * This endpoint allows you to update a specific media item's "is_cover" field to true.
+ */
+export const usePatchV2MediaProjectProjectMediaUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PatchV2MediaProjectProjectMediaUuidResponse,
+      PatchV2MediaProjectProjectMediaUuidError,
+      PatchV2MediaProjectProjectMediaUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PatchV2MediaProjectProjectMediaUuidResponse,
+    PatchV2MediaProjectProjectMediaUuidError,
+    PatchV2MediaProjectProjectMediaUuidVariables
+  >(
+    (variables: PatchV2MediaProjectProjectMediaUuidVariables) =>
+      fetchPatchV2MediaProjectProjectMediaUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };

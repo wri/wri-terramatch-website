@@ -3444,6 +3444,7 @@ export type V2FileGallery = {
   created_date?: string;
   model_name?: string;
   is_public?: boolean;
+  is_cover?: boolean;
   location?: {
     lat?: number;
     lng?: number;
@@ -22694,4 +22695,51 @@ export type MyOrganisationLite = {
   type?: string;
   created_at?: string;
   updated_at?: string;
+};
+
+export type UpdateMediaRequest = {
+  /**
+   * Name of the media
+   */
+  name?: string;
+  /**
+   * New description for the media
+   */
+  description?: string;
+  /**
+   * Name of the photographer
+   */
+  photographer?: string;
+  /**
+   * Whether the media is public or not
+   */
+  is_public?: boolean;
+};
+
+export type FileResource = {
+  id?: number;
+  model_id?: number;
+  model_type?: string;
+  collection_name?: string;
+  name?: string;
+  file_name?: string;
+  mime_type?: string;
+  disk?: string;
+  size?: number;
+  manipulations?: Record<string, any>;
+  custom_properties?: Record<string, any>;
+  responsive_images?: Record<string, any>;
+  order_column?: number;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  description?: string;
+  photographer?: string;
+  is_public?: boolean;
+  is_cover?: boolean;
 };
