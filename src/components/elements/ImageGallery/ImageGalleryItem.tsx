@@ -163,6 +163,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           width: 1440
         }}
         isGeotagged={data.isGeotagged}
+        isCover={data.isCover}
         className="h-[226px] rounded-t-xl"
       >
         <div className="flex justify-between p-3">
