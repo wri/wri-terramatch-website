@@ -6,7 +6,7 @@ import { PropsWithChildren, useRef, useState } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { fetchPostV2LocaleLocale } from "@/generated/apiComponents";
+import { fetchPatchV2LocaleLocale } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 
 export interface DropdownProps {
@@ -33,7 +33,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
     props.onChange?.(lang.value);
     buttonRef.current?.click();
     if (props.isLoggedIn) {
-      fetchPostV2LocaleLocale({
+      fetchPatchV2LocaleLocale({
         pathParams: { locale: lang.value as string }
       });
     }

@@ -29712,40 +29712,6 @@ export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUID
   );
 };
 
-export type PostV2ExportImageError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2ExportImageRequestBody = {
-  /**
-   * The URL of the image to be downloaded.
-   */
-  imageUrl: string;
-};
-
-export type PostV2ExportImageVariables = {
-  body: PostV2ExportImageRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2ExportImage = (variables: PostV2ExportImageVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PostV2ExportImageError, PostV2ExportImageRequestBody, {}, {}, {}>({
-    url: "/v2/export-image",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2ExportImage = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PostV2ExportImageError, PostV2ExportImageVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2ExportImageError, PostV2ExportImageVariables>(
-    (variables: PostV2ExportImageVariables) => fetchPostV2ExportImage({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2AdminENTITYExportFRAMEWORKPathParams = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
@@ -34697,40 +34663,40 @@ export const usePutV2SitePolygonUuidMakeActive = (
   );
 };
 
-export type PostV2LocaleLocalePathParams = {
+export type PatchV2LocaleLocalePathParams = {
   /**
    * locale used could be one of en-US,es-MX,fr-FR,pt-BR
    */
   locale: string;
 };
 
-export type PostV2LocaleLocaleError = Fetcher.ErrorWrapper<undefined>;
+export type PatchV2LocaleLocaleError = Fetcher.ErrorWrapper<undefined>;
 
-export type PostV2LocaleLocaleResponse = {
+export type PatchV2LocaleLocaleResponse = {
   message?: string;
 };
 
-export type PostV2LocaleLocaleVariables = {
-  pathParams: PostV2LocaleLocalePathParams;
+export type PatchV2LocaleLocaleVariables = {
+  pathParams: PatchV2LocaleLocalePathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPostV2LocaleLocale = (variables: PostV2LocaleLocaleVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, undefined, {}, {}, PostV2LocaleLocalePathParams>({
+export const fetchPatchV2LocaleLocale = (variables: PatchV2LocaleLocaleVariables, signal?: AbortSignal) =>
+  apiFetch<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, undefined, {}, {}, PatchV2LocaleLocalePathParams>({
     url: "/v2/locale/{locale}",
-    method: "post",
+    method: "patch",
     ...variables,
     signal
   });
 
-export const usePostV2LocaleLocale = (
+export const usePatchV2LocaleLocale = (
   options?: Omit<
-    reactQuery.UseMutationOptions<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, PostV2LocaleLocaleVariables>,
+    reactQuery.UseMutationOptions<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, PatchV2LocaleLocaleVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, PostV2LocaleLocaleVariables>(
-    (variables: PostV2LocaleLocaleVariables) => fetchPostV2LocaleLocale({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, PatchV2LocaleLocaleVariables>(
+    (variables: PatchV2LocaleLocaleVariables) => fetchPatchV2LocaleLocale({ ...fetcherOptions, ...variables }),
     options
   );
 };
