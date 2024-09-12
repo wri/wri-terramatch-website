@@ -7836,6 +7836,56 @@ export const usePutV2AdminENTITYUUIDSTATUS = (
   );
 };
 
+export type PostV2AdminENTITYUUIDReminderPathParams = {
+  /**
+   * allowed values are project-reports, site-reports, nursery-reports
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type PostV2AdminENTITYUUIDReminderError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AdminENTITYUUIDReminderRequestBody = {
+  feedback?: string;
+};
+
+export type PostV2AdminENTITYUUIDReminderVariables = {
+  body?: PostV2AdminENTITYUUIDReminderRequestBody;
+  pathParams: PostV2AdminENTITYUUIDReminderPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AdminENTITYUUIDReminder = (
+  variables: PostV2AdminENTITYUUIDReminderVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    PostV2AdminENTITYUUIDReminderError,
+    PostV2AdminENTITYUUIDReminderRequestBody,
+    {},
+    {},
+    PostV2AdminENTITYUUIDReminderPathParams
+  >({ url: "/v2/admin/{entity}/{uuid}/reminder", method: "post", ...variables, signal });
+
+export const usePostV2AdminENTITYUUIDReminder = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PostV2AdminENTITYUUIDReminderError,
+      PostV2AdminENTITYUUIDReminderVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, PostV2AdminENTITYUUIDReminderError, PostV2AdminENTITYUUIDReminderVariables>(
+    (variables: PostV2AdminENTITYUUIDReminderVariables) =>
+      fetchPostV2AdminENTITYUUIDReminder({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2UpdateRequestsUUIDPathParams = {
   uuid: string;
 };
@@ -28183,6 +28233,7 @@ export type GetAuthMeResponse = {
    */
   email_address_verified_at?: string;
   role?: string;
+  locale?: string;
   organisation?: {
     uuid?: string;
     name?: string;
@@ -29708,40 +29759,6 @@ export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUID
       ...options,
       ...queryOptions
     }
-  );
-};
-
-export type PostV2ExportImageError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2ExportImageRequestBody = {
-  /**
-   * The URL of the image to be downloaded.
-   */
-  imageUrl: string;
-};
-
-export type PostV2ExportImageVariables = {
-  body: PostV2ExportImageRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2ExportImage = (variables: PostV2ExportImageVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PostV2ExportImageError, PostV2ExportImageRequestBody, {}, {}, {}>({
-    url: "/v2/export-image",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2ExportImage = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PostV2ExportImageError, PostV2ExportImageVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2ExportImageError, PostV2ExportImageVariables>(
-    (variables: PostV2ExportImageVariables) => fetchPostV2ExportImage({ ...fetcherOptions, ...variables }),
-    options
   );
 };
 
@@ -34692,6 +34709,44 @@ export const usePutV2SitePolygonUuidMakeActive = (
   >(
     (variables: PutV2SitePolygonUuidMakeActiveVariables) =>
       fetchPutV2SitePolygonUuidMakeActive({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2LocaleLocalePathParams = {
+  /**
+   * locale used could be one of en-US,es-MX,fr-FR,pt-BR
+   */
+  locale: string;
+};
+
+export type PostV2LocaleLocaleError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2LocaleLocaleResponse = {
+  message?: string;
+};
+
+export type PostV2LocaleLocaleVariables = {
+  pathParams: PostV2LocaleLocalePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2LocaleLocale = (variables: PostV2LocaleLocaleVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, undefined, {}, {}, PostV2LocaleLocalePathParams>({
+    url: "/v2/locale/{locale}",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2LocaleLocale = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, PostV2LocaleLocaleVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PostV2LocaleLocaleResponse, PostV2LocaleLocaleError, PostV2LocaleLocaleVariables>(
+    (variables: PostV2LocaleLocaleVariables) => fetchPostV2LocaleLocale({ ...fetcherOptions, ...variables }),
     options
   );
 };

@@ -21567,6 +21567,10 @@ export type StatusUpdate = {
   feedback_fields?: string[];
 };
 
+export type EntityReportReminder = {
+  feedback?: string;
+};
+
 export type V2ProjectInviteRead = {
   id?: number;
   uuid?: string;
@@ -22668,6 +22672,7 @@ export type MeResponse = {
    */
   email_address_verified_at?: string;
   role?: string;
+  locale?: string;
   organisation?: {
     uuid?: string;
     name?: string;
