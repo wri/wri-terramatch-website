@@ -34930,12 +34930,16 @@ export type PatchV2UsersLocaleResponse = {
   message?: string;
 };
 
+export type PatchV2UsersLocaleRequestBody = {
+  locale?: string;
+};
+
 export type PatchV2UsersLocaleVariables = {
-  body?: Record<string, any>;
+  body?: PatchV2UsersLocaleRequestBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchPatchV2UsersLocale = (variables: PatchV2UsersLocaleVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, Record<string, any>, {}, {}, {}>({
+  apiFetch<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleRequestBody, {}, {}, {}>({
     url: "/v2/users/locale",
     method: "patch",
     ...variables,
