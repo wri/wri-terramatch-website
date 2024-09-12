@@ -61,7 +61,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUUID();
-  const { mutate: updateIsCover, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
+  const { mutateAsync: updateIsCoverAsync, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
 
   useEffect(() => {
     setInitialFormData({ ...formData });
@@ -108,11 +108,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     }
 
     if (formData.is_cover !== initialFormData.is_cover && formData.is_cover) {
-      updatePromises.push(
-        updateIsCover({
-          pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
-        })
-      );
+      const result = updateIsCoverAsync({
+        pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
+      });
+      updatePromises.push(result);
     }
 
     try {
@@ -128,7 +127,6 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
   const tabs = ["Image", "Location"];
-  console.log("isgeotagged", isGeotagged);
   const handleDelete = () => {
     onClose?.();
     openModal(
