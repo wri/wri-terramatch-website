@@ -29763,7 +29763,6 @@ export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUID
   );
 };
 
-
 export type PostV2ExportImageError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2ExportImageRequestBody = {
@@ -34925,40 +34924,37 @@ export const usePutV2SitePolygonUuidMakeActive = (
   );
 };
 
-export type PatchV2LocaleLocalePathParams = {
-  /**
-   * locale used could be one of en-US,es-MX,fr-FR,pt-BR
-   */
-  locale: string;
-};
+export type PatchV2UsersLocaleError = Fetcher.ErrorWrapper<undefined>;
 
-export type PatchV2LocaleLocaleError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2LocaleLocaleResponse = {
+export type PatchV2UsersLocaleResponse = {
   message?: string;
 };
 
-export type PatchV2LocaleLocaleVariables = {
-  pathParams: PatchV2LocaleLocalePathParams;
+export type PatchV2UsersLocaleRequestBody = {
+  locale?: string;
+};
+
+export type PatchV2UsersLocaleVariables = {
+  body?: PatchV2UsersLocaleRequestBody;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPatchV2LocaleLocale = (variables: PatchV2LocaleLocaleVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, undefined, {}, {}, PatchV2LocaleLocalePathParams>({
-    url: "/v2/locale/{locale}",
+export const fetchPatchV2UsersLocale = (variables: PatchV2UsersLocaleVariables, signal?: AbortSignal) =>
+  apiFetch<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleRequestBody, {}, {}, {}>({
+    url: "/v2/users/locale",
     method: "patch",
     ...variables,
     signal
   });
 
-export const usePatchV2LocaleLocale = (
+export const usePatchV2UsersLocale = (
   options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, PatchV2LocaleLocaleVariables>,
+    reactQuery.UseMutationOptions<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2LocaleLocaleResponse, PatchV2LocaleLocaleError, PatchV2LocaleLocaleVariables>(
-    (variables: PatchV2LocaleLocaleVariables) => fetchPatchV2LocaleLocale({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>(
+    (variables: PatchV2UsersLocaleVariables) => fetchPatchV2UsersLocale({ ...fetcherOptions, ...variables }),
     options
   );
 };
