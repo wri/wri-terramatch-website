@@ -13,7 +13,7 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUUID } from "@/generated/apiComponents";
+import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
@@ -60,7 +60,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   );
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
-  const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUUID();
+  const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUuid();
   const { mutateAsync: updateIsCoverAsync, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
 
   useEffect(() => {
