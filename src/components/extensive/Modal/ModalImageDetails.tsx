@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Image from "next/image";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -13,7 +13,7 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePatchV2MediaUUID } from "@/generated/apiComponents";
+import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
@@ -54,12 +54,18 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     photographer: data.raw.photographer || "",
     description: data.raw.description
   });
+  const [initialFormData, setInitialFormData] = useState({ ...formData });
   const [descriptionCharCount, setDescriptionCharCount] = useState(
     data.raw.description ? data.raw.description.length : 0
   );
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUUID();
+  const { mutate: updateIsCover, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
+
+  useEffect(() => {
+    setInitialFormData({ ...formData });
+  }, []);
 
   const handleInputChange = (name: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -70,30 +76,54 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     setDescriptionCharCount(value.length);
   };
 
-  const handleSave = () => {
-    updateMedia(
-      {
-        pathParams: { uuid: data.uuid },
-        body: {
-          name: formData.name,
-          description: formData.description,
-          photographer: formData.photographer,
-          is_public: formData.is_public,
-          is_cover: formData.is_cover
-        }
-      },
-      {
-        onSuccess: () => {
-          openNotification("success", t("Success!"), t("Image updated successfully"));
-          reloadGalleryImages?.();
-          onClose?.();
-        },
-        onError: error => {
-          openNotification("error", t("Error"), t("Failed to update media"));
-          console.error("Failed to update media:", error);
-        }
-      }
-    );
+  const hasChanges = () => {
+    return JSON.stringify(formData) !== JSON.stringify(initialFormData);
+  };
+
+  const handleSave = async () => {
+    if (!hasChanges()) {
+      openNotification("warning", t("No changes"), t("No changes were made to the image details"));
+      return;
+    }
+
+    const updatePromises = [];
+
+    if (
+      formData.name !== initialFormData.name ||
+      formData.description !== initialFormData.description ||
+      formData.photographer !== initialFormData.photographer ||
+      formData.is_public !== initialFormData.is_public
+    ) {
+      updatePromises.push(
+        updateMedia({
+          pathParams: { uuid: data.uuid },
+          body: {
+            name: formData.name,
+            description: formData.description,
+            photographer: formData.photographer,
+            is_public: formData.is_public
+          }
+        })
+      );
+    }
+
+    if (formData.is_cover !== initialFormData.is_cover && formData.is_cover) {
+      updatePromises.push(
+        updateIsCover({
+          pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
+        })
+      );
+    }
+
+    try {
+      await Promise.all(updatePromises);
+      openNotification("success", t("Success!"), t("Image updated successfully"));
+      reloadGalleryImages?.();
+      onClose?.();
+    } catch (error) {
+      openNotification("error", t("Error"), t("Failed to update image details"));
+      console.error("Failed to update image details:", error);
+    }
   };
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
@@ -297,8 +327,12 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         <Button className="w-1/6 rounded-full" variant="secondary" onClick={onClose}>
           {t("Cancel")}
         </Button>
-        <Button className="w-1/6 rounded-full" onClick={handleSave} disabled={isUpdating}>
-          {isUpdating ? t("Saving...") : t("Save")}
+        <Button
+          className="w-1/6 rounded-full"
+          onClick={handleSave}
+          disabled={isUpdating || isUpdatingCover || !hasChanges()}
+        >
+          {isUpdating || isUpdatingCover ? t("Saving...") : t("Save")}
         </Button>
       </div>
     </ModalBaseImageDetail>

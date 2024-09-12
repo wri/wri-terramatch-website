@@ -3444,6 +3444,7 @@ export type V2FileGallery = {
   created_date?: string;
   model_name?: string;
   is_public?: boolean;
+  is_cover?: boolean;
   location?: {
     lat?: number;
     lng?: number;
@@ -22712,10 +22713,6 @@ export type UpdateMediaRequest = {
    * Whether the media is public or not
    */
   is_public?: boolean;
-  /**
-   * Whether this media should be set as cover
-   */
-  is_cover?: boolean;
 };
 
 export type FileResource = {
