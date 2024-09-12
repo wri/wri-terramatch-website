@@ -49,7 +49,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Previewer Default
       className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100"
     >
       <img
-        alt=""
+        alt="Molestiae quod quod esse totam porro dolorum dicta."
         className="object-cover"
         data-nimg="fill"
         decoding="async"
