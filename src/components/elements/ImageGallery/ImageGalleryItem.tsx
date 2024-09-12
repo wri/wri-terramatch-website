@@ -140,15 +140,19 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       ),
       onClick: handleDownload
     },
-    {
-      id: "3",
-      render: () => (
-        <Text variant="text-12-bold" className="pr-3">
-          {t("Make Cover")}
-        </Text>
-      ),
-      onClick: setImageCover
-    },
+    ...(!entityData?.project
+      ? [
+          {
+            id: "3",
+            render: () => (
+              <Text variant="text-12-bold" className="pr-3">
+                {t("Make Cover")}
+              </Text>
+            ),
+            onClick: setImageCover
+          }
+        ]
+      : []),
     {
       id: "4",
       render: () => null,

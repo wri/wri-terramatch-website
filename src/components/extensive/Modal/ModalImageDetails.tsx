@@ -156,7 +156,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       />
     );
   };
-
+  console.log("entityData", entityData);
   return (
     <ModalBaseImageDetail {...rest}>
       <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
@@ -192,23 +192,27 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             onChange={e => handleInputChange("name", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
-          <div>
-            <Text variant="text-14-bold" className="mb-2">
-              {t("Assign Cover Image")}
-            </Text>
-            <RadioGroup
-              options={[
-                { title: t("Yes"), value: true },
-                { title: t("No"), value: false }
-              ]}
-              onChange={value => handleInputChange("is_cover", Boolean(value))}
-              contentClassName="flex gap-4 !space-y-0"
-              radioClassName="!p-0 !border-0 text-14-light !gap-2"
-              variantTextRadio="text-14-light"
-              labelRadio="gap-2"
-              value={formData.is_cover}
-            />
-          </div>
+          {entityData.project ? (
+            <></>
+          ) : (
+            <div>
+              <Text variant="text-14-bold" className="mb-2">
+                {t("Assign Cover Image")}
+              </Text>
+              <RadioGroup
+                options={[
+                  { title: t("Yes"), value: true },
+                  { title: t("No"), value: false }
+                ]}
+                onChange={value => handleInputChange("is_cover", Boolean(value))}
+                contentClassName="flex gap-4 !space-y-0"
+                radioClassName="!p-0 !border-0 text-14-light !gap-2"
+                variantTextRadio="text-14-light"
+                labelRadio="gap-2"
+                value={formData.is_cover}
+              />
+            </div>
+          )}
           <div>
             <Text variant="text-14-bold" className="mb-2">
               {t("Make Public")}
