@@ -117,7 +117,7 @@ export const useMessageValidators = () => {
 
         if (total_area_site === null) {
           messages.push(t("Site Goal: A goal has not been specified."));
-        } else {
+        } else if (sum_area_site !== undefined && percentage_site !== undefined && total_area_site !== undefined) {
           messages.push(
             t(
               "Site Goal: The sum of all site polygons {sum_area_site} ha is {percentage_site}% of total hectares to be restored for this site ({total_area_site} ha)",
@@ -128,7 +128,11 @@ export const useMessageValidators = () => {
 
         if (total_area_project === null) {
           messages.push(t("Project Goal: A goal has not been specified."));
-        } else {
+        } else if (
+          sum_area_project !== undefined &&
+          percentage_project !== undefined &&
+          total_area_project !== undefined
+        ) {
           messages.push(
             t(
               "Project Goal: The sum of all project polygons {sum_area_project} ha is {percentage_project}% of total hectares to be restored ({total_area_project} ha)",
@@ -136,6 +140,7 @@ export const useMessageValidators = () => {
             )
           );
         }
+
         return messages;
       } catch {
         return [t("Error parsing extra info.")];
@@ -143,6 +148,7 @@ export const useMessageValidators = () => {
     },
     [t]
   );
+
   const getFormatedExtraInfo = useMemo(
     () => (extraInfo: string | undefined, criteria_id: any) => {
       if (criteria_id === 12) {
