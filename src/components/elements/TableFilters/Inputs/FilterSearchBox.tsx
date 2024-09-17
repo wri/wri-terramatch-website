@@ -32,6 +32,7 @@ const FilterSearchBox = ({
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         className={variant.input}
+        value={value}
       />
     </div>
   );

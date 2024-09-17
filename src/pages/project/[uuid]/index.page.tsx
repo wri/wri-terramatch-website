@@ -5,8 +5,10 @@ import { useRouter } from "next/router";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import {
   GetV2ReportingFrameworksUUIDResponse,
@@ -34,6 +36,7 @@ const ButtonStates = {
 const ProjectDetailPage = () => {
   const t = useT();
   const router = useRouter();
+  const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
 
   const { data, isLoading, refetch } = useGetV2ProjectsUUID({
@@ -54,6 +57,11 @@ const ProjectDetailPage = () => {
   return (
     <MapAreaProvider>
       <FrameworkProvider frameworkKey={project.framework_key}>
+        {loading && (
+          <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
+            <Loader />
+          </div>
+        )}
         <LoadingContainer loading={isLoading}>
           <Head>
             <title>{t("Project")}</title>
@@ -73,7 +81,7 @@ const ProjectDetailPage = () => {
                     modelName="projects"
                     modelUUID={project.uuid}
                     modelTitle={t("Project")}
-                    boundaryGeojson={project.boundary_geojson}
+                    entityData={project}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this project, or images added to your sites and reports will also automatically populate this gallery."
                     )}
