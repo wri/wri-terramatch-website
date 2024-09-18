@@ -1,9 +1,9 @@
-export type ApiV3FetcherExtraProps = {
+export type UserServiceFetcherExtraProps = {
   /**
    * You can add some extra props to your generated fetchers.
    *
    * Note: You need to re-gen after adding the first property to
-   * have the `ApiV3FetcherExtraProps` injected in `ApiV3Components.ts`
+   * have the `UserServiceFetcherExtraProps` injected in `UserServiceComponents.ts`
    **/
 };
 
@@ -11,7 +11,7 @@ const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export type ErrorWrapper<TError> = TError | { status: "unknown"; payload: string };
 
-export type ApiV3FetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
+export type UserServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
   url: string;
   method: string;
   body?: TBody;
@@ -19,9 +19,9 @@ export type ApiV3FetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
   queryParams?: TQueryParams;
   pathParams?: TPathParams;
   signal?: AbortSignal;
-} & ApiV3FetcherExtraProps;
+} & UserServiceFetcherExtraProps;
 
-export async function apiV3Fetch<
+export async function userServiceFetch<
   TData,
   TError,
   TBody extends {} | FormData | undefined | null,
@@ -36,7 +36,7 @@ export async function apiV3Fetch<
   pathParams,
   queryParams,
   signal
-}: ApiV3FetcherOptions<TBody, THeaders, TQueryParams, TPathParams>): Promise<TData> {
+}: UserServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams>): Promise<TData> {
   try {
     const requestHeaders: HeadersInit = {
       "Content-Type": "application/json",

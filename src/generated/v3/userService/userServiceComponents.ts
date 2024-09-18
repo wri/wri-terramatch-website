@@ -3,9 +3,9 @@
  *
  * @version 1.0
  */
-import type * as Fetcher from "./apiV3Fetcher";
-import { apiV3Fetch } from "./apiV3Fetcher";
-import type * as Schemas from "./apiV3Schemas";
+import type * as Fetcher from "./userServiceFetcher";
+import { userServiceFetch } from "./userServiceFetcher";
+import type * as Schemas from "./userServiceSchemas";
 
 export type AuthControllerLoginError = Fetcher.ErrorWrapper<{
   status: 401;
@@ -30,7 +30,7 @@ export type AuthControllerLoginVariables = {
 };
 
 export const authControllerLogin = (variables: AuthControllerLoginVariables, signal?: AbortSignal) =>
-  apiV3Fetch<AuthControllerLoginResponse, AuthControllerLoginError, Schemas.LoginRequest, {}, {}, {}>({
+  userServiceFetch<AuthControllerLoginResponse, AuthControllerLoginError, Schemas.LoginRequest, {}, {}, {}>({
     url: "/auth/v3/logins",
     method: "post",
     ...variables,
