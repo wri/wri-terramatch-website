@@ -60,9 +60,6 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     }
   });
   useEffect(() => {
-    console.log("is Loadging changed", isLoading);
-  }, [isLoading]);
-  useEffect(() => {
     refetch();
   }, [filters, pagination, searchString, isGeotagged, sortOrder, refetch]);
 
