@@ -11,6 +11,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/PaginationVariant";
+import Loader from "@/components/generic/Loading/Loader";
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
 
@@ -38,6 +39,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   isAdmin?: boolean;
   entityData?: any;
   reloadGalleryImages?: () => void;
+  isLoading?: boolean;
 }
 
 const ImageGallery = ({
@@ -58,6 +60,7 @@ const ImageGallery = ({
   entityData,
   reloadGalleryImages,
   isAdmin = false,
+  isLoading = false,
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
@@ -379,27 +382,34 @@ const ImageGallery = ({
         </div>
 
         {/* Images */}
-        <div className="grid grid-cols-3 gap-4">
-          {data.map(item => (
-            <ItemComponent
-              key={item.uuid}
-              data={item}
-              entityData={entityData}
-              onClickGalleryItem={onClickGalleryItem}
-              onDelete={handleDelete}
-              reloadGalleryImages={reloadGalleryImages}
-            />
-          ))}
-        </div>
-        {data.length === 0 && (
-          <div className="!mb-16">
-            <Text variant="text-bold-subtitle-500" className="mb-2 w-full text-center">
-              {t("No images found.")}
-            </Text>
-            <Text variant="text-light-subtitle-400" className="w-full text-center">
-              {t("Try refining your filter options or add new images.")}
-            </Text>
-          </div>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            {data.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4">
+                {data.map(item => (
+                  <ItemComponent
+                    key={item.uuid}
+                    data={item}
+                    entityData={entityData}
+                    onClickGalleryItem={onClickGalleryItem}
+                    onDelete={handleDelete}
+                    reloadGalleryImages={reloadGalleryImages}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="!mb-16">
+                <Text variant="text-bold-subtitle-500" className="mb-2 w-full text-center">
+                  {t("No images found.")}
+                </Text>
+                <Text variant="text-light-subtitle-400" className="w-full text-center">
+                  {t("Try refining your filter options or add new images.")}
+                </Text>
+              </div>
+            )}
+          </>
         )}
         <Pagination
           variant={VARIANT_PAGINATION_TEXT_16}

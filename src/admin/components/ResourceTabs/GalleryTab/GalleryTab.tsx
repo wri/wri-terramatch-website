@@ -43,7 +43,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   queryParams["search"] = searchString;
   queryParams["is_geotagged"] = isGeotagged;
   queryParams["sort_order"] = sortOrder;
-  const { data, refetch } = useGetV2MODELUUIDFiles(
+  const { data, refetch, isLoading } = useGetV2MODELUUIDFiles(
     {
       // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
       pathParams: { model: resource, uuid: ctx?.record?.uuid },
@@ -59,7 +59,9 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
       refetch();
     }
   });
-
+  useEffect(() => {
+    console.log("is Loadging changed", isLoading);
+  }, [isLoading]);
   useEffect(() => {
     refetch();
   }, [filters, pagination, searchString, isGeotagged, sortOrder, refetch]);
@@ -97,6 +99,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           setFilters={setFilters}
           className="mt-3"
           isAdmin={true}
+          isLoading={isLoading}
         />
       </TabbedShowLayout.Tab>
     </When>

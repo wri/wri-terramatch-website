@@ -99,12 +99,11 @@ const EntityMapAndGalleryCard = ({
 
   const polygonDataMap = mapPolygonData(sitePolygonData?.polygonsData);
 
-  const { data, refetch } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
+  const { data, refetch, isLoading } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
     pathParams: { model: modelName, uuid: modelUUID },
     queryParams
   });
-
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess() {
       refetch();
@@ -266,6 +265,7 @@ const EntityMapAndGalleryCard = ({
               sortOrder={sortOrder}
               setSortOrder={setSortOrder}
               setFilters={setFilters}
+              isLoading={isLoading}
             />
           </PageCard>
         </Else>
