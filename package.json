@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "dev": "next dev",
-    "build": "npm run generate:api && next build",
+    "build": "npm run generate:api && npm run generate:apiv3 && next build",
     "start": "next start",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -16,6 +16,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "generate:api": "npx openapi-codegen gen api",
+    "generate:apiv3": "npx openapi-codegen gen apiV3",
     "tx:push": "eval $(grep '^TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli push --key-generator=hash src/ --token=$TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET",
     "tx:pull": "eval $(grep '^TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
   },
