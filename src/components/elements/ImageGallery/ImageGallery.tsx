@@ -61,7 +61,7 @@ const ImageGallery = ({
   ...rest
 }: ImageGalleryProps) => {
   const t = useT();
-  const defaultPageSize = 10;
+  const defaultPageSize = 6;
 
   const { openModal, closeModal } = useModalContext();
   const [openSort, setOpenSort] = useState(false);
@@ -414,6 +414,7 @@ const ImageGallery = ({
           defaultPageSize={defaultPageSize}
           hasPageSizeSelector
           invertSelect
+          isImageGallery
         />
       </div>
     </>
