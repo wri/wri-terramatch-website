@@ -40,7 +40,7 @@ export default defineConfig({
   userService: {
     from: {
       source: "url",
-      url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-service/api-json`
+      url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-service/documentation/api-json`
     },
     outputDir: "src/generated/v3/userService",
     to: async context => {
