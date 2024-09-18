@@ -24,6 +24,8 @@ const getTextForActionTable = (item: { type: string; status: string; request_rem
     return "Change Request Updated";
   } else if (item.request_removed) {
     return "Change Request Removed";
+  } else if (item.type === "reminder-sent") {
+    return "Reminder Sent";
   } else {
     return "Change Requested";
   }
