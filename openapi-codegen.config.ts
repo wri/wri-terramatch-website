@@ -37,14 +37,14 @@ export default defineConfig({
       });
     }
   },
-  apiV3: {
+  userService: {
     from: {
       source: "url",
       url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-service/api-json`
     },
-    outputDir: "src/generated/v3",
+    outputDir: "src/generated/v3/userService",
     to: async context => {
-      const filenamePrefix = "apiV3";
+      const filenamePrefix = "userService";
       const { schemasFiles } = await generateSchemaTypes(context, {
         filenamePrefix
       });
