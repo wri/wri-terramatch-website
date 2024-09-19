@@ -140,6 +140,7 @@ module.exports = {
       },
       darkCustom: {
         DEFAULT: "#353535",
+        200: "#84959D",
         100: "#637579",
         60: "#35353599",
         50: "#697A7F"
@@ -233,7 +234,8 @@ module.exports = {
       leavesWithOverlay: "url('/images/leaves-with-overlay.webp')",
       treesHeaderWithOverlay:
         "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
-      mapsImg: "url('/images/Maps.svg')"
+      mapsImg: "url('/images/Maps.svg')",
+      dashboardHeader: 'url("/images/dashboard-header.webp")'
     }
   },
   plugins: [

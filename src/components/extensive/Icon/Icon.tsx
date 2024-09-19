@@ -164,7 +164,13 @@ export enum IconNames {
   DOCUMENT_CIRCLE_HOMEPAGE = "document-circle-home",
   TREE_CIRCLE_HOMEPAGE = "tree-circle-home",
   IC_A_TO_Z_CUSTOM = "ic-a-to-z-custom",
-  IC_Z_TO_A_CUSTOM = "ic-z-to-a-custom"
+  IC_Z_TO_A_CUSTOM = "ic-z-to-a-custom",
+  TERRAFUND_lOGO_MINI = "ic-terrafund-mini",
+  DASHBOARDS = "dashboards",
+  PROJECT_PROFILE = "project-profile",
+  DASHBOARD_AIRTABLE = "dashboard-airtable",
+  DASHBOARD_REPORTS = "dashboard-reports",
+  ABOUT_US = "about-us"
 }
 
 export interface IconProps {
