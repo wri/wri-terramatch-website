@@ -8,6 +8,7 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import { Provider as ReduxProvider } from "react-redux";
 
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
@@ -21,6 +22,7 @@ import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { getServerSideTranslations, setClientSideTranslations } from "@/i18n";
+import store from "@/store/store";
 import setupYup from "@/yup.locale";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
@@ -37,7 +39,7 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
 
   if (isAdmin)
     return (
-      <>
+      <ReduxProvider store={store}>
         <WrappedQueryClientProvider>
           <AuthProvider token={accessToken}>
             <LoadingProvider>
@@ -50,11 +52,11 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
             </LoadingProvider>
           </AuthProvider>
         </WrappedQueryClientProvider>
-      </>
+      </ReduxProvider>
     );
   else
     return (
-      <>
+      <ReduxProvider store={store}>
         <ToastProvider>
           <WrappedQueryClientProvider>
             <Hydrate state={pageProps.dehydratedState}>
@@ -80,7 +82,7 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
             <ReactQueryDevtools initialIsOpen={false} />
           </WrappedQueryClientProvider>
         </ToastProvider>
-      </>
+      </ReduxProvider>
     );
 };
 

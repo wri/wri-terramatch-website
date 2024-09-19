@@ -7,7 +7,7 @@ import type * as Fetcher from "./userServiceFetcher";
 import { userServiceFetch } from "./userServiceFetcher";
 import type * as Schemas from "./userServiceSchemas";
 
-export type AuthControllerLoginError = Fetcher.ErrorWrapper<{
+export type AuthLoginError = Fetcher.ErrorWrapper<{
   status: 401;
   payload: {
     /**
@@ -21,16 +21,19 @@ export type AuthControllerLoginError = Fetcher.ErrorWrapper<{
   };
 }>;
 
-export type AuthControllerLoginResponse = {
+export type AuthLoginResponse = {
   data?: Schemas.LoginResponse;
 };
 
-export type AuthControllerLoginVariables = {
+export type AuthLoginVariables = {
   body: Schemas.LoginRequest;
 };
 
-export const authControllerLogin = (variables: AuthControllerLoginVariables, signal?: AbortSignal) =>
-  userServiceFetch<AuthControllerLoginResponse, AuthControllerLoginError, Schemas.LoginRequest, {}, {}, {}>({
+/**
+ * Receive a JWT Token in exchange for login credentials
+ */
+export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =>
+  userServiceFetch<AuthLoginResponse, AuthLoginError, Schemas.LoginRequest, {}, {}, {}>({
     url: "/auth/v3/logins",
     method: "post",
     ...variables,
