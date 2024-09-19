@@ -4,9 +4,12 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { useAuthContext } from "@/context/auth.provider";
+import { loginConnection } from "@/connections/Login";
+// import { useAuthContext } from "@/context/auth.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
+import { useConnection } from "@/hooks/useConnection";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
+import { useValueChanged } from "@/hooks/usePrevious";
 
 import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
@@ -27,35 +30,25 @@ const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
   const router = useRouter();
-  const { login, loginLoading } = useAuthContext();
+  //const { login, loginLoading } = useAuthContext();
+  const [, { isLoggedIn, isLoggingIn, loginFailed, login }] = useConnection(loginConnection);
   const { openToast } = useToastContext();
   const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema(t)),
     mode: "onSubmit"
   });
 
-  /**
-   * Form Submit Handler
-   * @param data LoginFormData
-   * @returns Log in user and redirect to homepage
-   */
-  const handleSave = async (data: LoginFormDataType) => {
-    const res = (await login(
-      {
-        email_address: data.email,
-        password: data.password
-      },
-      () => openToast(t("Incorrect Email or Password"), ToastType.ERROR)
-    )) as { success: boolean };
+  useValueChanged(loginFailed, () => {
+    if (loginFailed) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
+  });
 
-    if (!res?.success) return;
+  const handleSave = (data: LoginFormDataType) => login(data.email, data.password);
 
-    return router.push("/home");
-  };
+  if (isLoggedIn) return router.push("/home");
 
   return (
     <LoginLayout>
-      <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
+      <LoginForm form={form} loading={isLoggingIn} handleSave={handleSave} />
     </LoginLayout>
   );
 };
