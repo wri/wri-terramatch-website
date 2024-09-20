@@ -12,6 +12,7 @@ export interface PaginationProps extends PageSelectorProps {
   setPageSize?: (count: number) => void;
   variant?: VariantPagination;
   invertSelect?: boolean;
+  isImageGallery?: boolean;
 }
 
 function Pagination(props: PaginationProps) {
@@ -21,7 +22,7 @@ function Pagination(props: PaginationProps) {
       {props.hasPageSizeSelector ? (
         <PerPageSelector
           label={t("Per page")}
-          options={[5, 10, 15, 20, 50]}
+          options={props.isImageGallery ? [3, 6, 12, 30, 60] : [5, 10, 15, 20, 50]}
           variantText={props.variant?.VariantPrePageText}
           defaultValue={props.defaultPageSize}
           onChange={props.setPageSize!}
