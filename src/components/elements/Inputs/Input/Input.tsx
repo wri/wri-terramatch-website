@@ -174,7 +174,7 @@ const Input = forwardRef(
           <input
             {...inputProps}
             {...registeredFormProps}
-            onChange={handleChange}
+            {...(inputProps.onChange ? { onChange: handleChange } : {})}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref || ref}
             id={id}
