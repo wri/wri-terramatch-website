@@ -22,7 +22,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const draw = useRef<MapboxDraw | null>(null);
-
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [styleLoaded, setStyleLoaded] = useState(false);
   const [changeStyle, setChangeStyle] = useState(false);

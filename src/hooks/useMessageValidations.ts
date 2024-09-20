@@ -8,9 +8,12 @@ interface IntersectionInfo {
 }
 
 interface ProjectGoalInfo {
-  sum_area: number;
-  percentage: number;
+  sum_area_project: number;
+  percentage_project: number;
   total_area_project: number;
+  sum_area_site: number;
+  percentage_site: number;
+  total_area_site: number;
 }
 
 interface ExtraInfoItem {
@@ -102,19 +105,50 @@ export const useMessageValidators = () => {
       if (!extraInfo) return [];
       try {
         const infoArray: ProjectGoalInfo = JSON.parse(extraInfo);
-        const { sum_area, percentage, total_area_project } = infoArray;
-        return [
-          t(
-            "Project Goal: The sum of all project polygons {sum_area} ha is {percentage}% of total hectares to be restored ({total_area_project} ha)",
-            { sum_area, percentage, total_area_project }
-          )
-        ];
+        const {
+          sum_area_project,
+          percentage_project,
+          total_area_project,
+          sum_area_site,
+          percentage_site,
+          total_area_site
+        } = infoArray;
+        const messages: string[] = [];
+
+        if (total_area_site === null) {
+          messages.push(t("Site Goal: A goal has not been specified."));
+        } else if (sum_area_site !== undefined && percentage_site !== undefined && total_area_site !== undefined) {
+          messages.push(
+            t(
+              "Site Goal: The sum of all site polygons {sum_area_site} ha is {percentage_site}% of total hectares to be restored for this site ({total_area_site} ha)",
+              { sum_area_site, percentage_site, total_area_site }
+            )
+          );
+        }
+
+        if (total_area_project === null) {
+          messages.push(t("Project Goal: A goal has not been specified."));
+        } else if (
+          sum_area_project !== undefined &&
+          percentage_project !== undefined &&
+          total_area_project !== undefined
+        ) {
+          messages.push(
+            t(
+              "Project Goal: The sum of all project polygons {sum_area_project} ha is {percentage_project}% of total hectares to be restored ({total_area_project} ha)",
+              { sum_area_project, percentage_project, total_area_project }
+            )
+          );
+        }
+
+        return messages;
       } catch {
         return [t("Error parsing extra info.")];
       }
     },
     [t]
   );
+
   const getFormatedExtraInfo = useMemo(
     () => (extraInfo: string | undefined, criteria_id: any) => {
       if (criteria_id === 12) {

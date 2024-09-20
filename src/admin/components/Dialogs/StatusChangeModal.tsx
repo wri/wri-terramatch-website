@@ -8,6 +8,7 @@ import {
   DialogTitle,
   TextField
 } from "@mui/material";
+import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 import { AutocompleteArrayInput, Form, useShowContext } from "react-admin";
 import { When } from "react-if";
@@ -15,16 +16,18 @@ import * as yup from "yup";
 
 import modules from "@/admin/modules";
 import { validateForm } from "@/admin/utils/forms";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
+  usePostV2AdminENTITYUUIDReminder,
   usePutV2AdminENTITYUUIDSTATUS
 } from "@/generated/apiComponents";
 import { optionToChoices } from "@/utils/options";
 
 interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
-  status: "approve" | "moreinfo" | "restoration-in-progress" | undefined;
+  status: "approve" | "moreinfo" | "restoration-in-progress" | "reminder" | undefined;
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -38,6 +41,8 @@ const genericValidationSchema = yup.object({
 const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChangeModalProps) => {
   const { record, refetch, resource } = useShowContext();
   const [feedbackValue, setFeedbackValue] = useState("");
+  const { openNotification } = useNotificationContext();
+  const t = useT();
 
   const resourceName = (() => {
     switch (resource as keyof typeof modules) {
@@ -90,6 +95,9 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
       case "restoration-in-progress":
         return `Are you sure you want to mark ${name} as Restoration In Progress?`;
+
+      case "reminder":
+        return `Send a reminder for ${name}`;
     }
   })();
 
@@ -119,6 +127,11 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
       refetch();
     }
   });
+  const { mutateAsync: mutateAsyncReminder, isLoading: isLoadingReminder } = usePostV2AdminENTITYUUIDReminder({
+    onSuccess: () => {
+      openNotification("success", "Success!", t("Reminder sent successfully."));
+    }
+  });
 
   const handleSave = async (data: any) => {
     if (!record || !status) return;
@@ -131,14 +144,24 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
       body.feedback_fields = data.feedback_fields;
     }
 
-    await mutateAsync({
-      pathParams: {
-        uuid: record.id,
-        entity: resourceName,
-        status
-      },
-      body
-    });
+    if (status === "reminder") {
+      await mutateAsyncReminder({
+        pathParams: {
+          uuid: record.id,
+          entity: resourceName
+        },
+        body
+      });
+    } else {
+      await mutateAsync({
+        pathParams: {
+          uuid: record.id,
+          entity: resourceName,
+          status
+        },
+        body
+      });
+    }
     setFeedbackValue("");
     handleClose();
   };
@@ -176,12 +199,22 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" type="submit" disabled={isLoading}>
-            <When condition={isLoading}>
-              <CircularProgress size={18} sx={{ marginRight: 1 }} />
-            </When>
-            Update Status
-          </Button>
+          <When condition={status !== "reminder"}>
+            <Button variant="contained" type="submit" disabled={isLoading}>
+              <When condition={isLoading}>
+                <CircularProgress size={18} sx={{ marginRight: 1 }} />
+              </When>
+              Update Status
+            </Button>
+          </When>
+          <When condition={status === "reminder"}>
+            <Button variant="contained" type="submit" disabled={isLoadingReminder}>
+              <When condition={isLoadingReminder}>
+                <CircularProgress size={18} sx={{ marginRight: 1 }} />
+              </When>
+              Send Reminder
+            </Button>
+          </When>
         </DialogActions>
       </Form>
     </Dialog>

@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
@@ -16,7 +17,8 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-faker.setDefaultRefDate("2023-01-01");
+faker.setDefaultRefDate(new Date("2023-01-01"));
+faker.seed(0);
 
 const mockData: ImageGalleryItemData[] = (() => {
   const data = [];
@@ -30,8 +32,11 @@ const mockData: ImageGalleryItemData[] = (() => {
       thumbnailImageUrl: imageUrl,
       fullImageUrl: imageUrl,
       label: faker.lorem.sentence({ min: 4, max: 8 }),
-      value: faker.date.anytime().toLocaleDateString("en-GB", { timeZone: "Europe/London" }),
-      isPublic: faker.datatype.boolean()
+      isPublic: faker.datatype.boolean(),
+      isGeotagged: faker.datatype.boolean(),
+      raw: {
+        created_date: new Date("2023-01-01T12:00:00").toISOString()
+      }
     });
   }
   return data;
@@ -48,6 +53,8 @@ const mockQuery = (page: number, pageSize: number) => {
   };
 };
 
+const queryClient = new QueryClient();
+
 export const Default: Story = {
   render: args => {
     const [pagination, setPagination] = useState({ page: 1, pageSize: 5 });
@@ -59,17 +66,22 @@ export const Default: Story = {
     };
 
     return (
-      <ModalProvider>
-        <ModalRoot />
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <ModalRoot />
 
-        <Component
-          {...args}
-          data={data}
-          pageCount={pageCount}
-          onGalleryStateChange={setPagination}
-          onDeleteConfirm={handleImageDelete}
-        />
-      </ModalProvider>
+          <Component
+            {...args}
+            data={data}
+            pageCount={pageCount}
+            onGalleryStateChange={setPagination}
+            onDeleteConfirm={handleImageDelete}
+            setFilters={() => {}}
+            onChangeGeotagged={() => {}}
+            onChangeSearch={() => {}}
+          />
+        </ModalProvider>
+      </QueryClientProvider>
     );
   },
   args: {

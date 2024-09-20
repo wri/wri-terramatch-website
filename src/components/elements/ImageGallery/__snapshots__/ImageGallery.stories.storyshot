@@ -11,41 +11,253 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       className="flex gap-4"
     >
       <div
-        className="space-y-2 w-48"
-        data-headlessui-state=""
+        className="relative w-64"
       >
         <div
-          className="flex items-center gap-3"
+          style={
+            Object {
+              "height": undefined,
+              "width": 24,
+            }
+          }
+        />
+        <input
+          className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
+          onChange={[Function]}
+          placeholder="Search..."
+          type="search"
+          value=""
+        />
+      </div>
+      <div
+        className="relative flex rounded-lg bg-neutral-40 p-1"
+      >
+        <div
+          className="absolute top-1 h-[calc(100%_-_8px)] rounded-lg bg-white transition-all"
+          style={
+            Object {
+              "transform": "translateX(calc(undefinedpx - 4px))",
+              "width": 0,
+            }
+          }
+        />
+        <button
+          className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom"
+          onClick={[Function]}
+          type="button"
+        >
+          All Images
+        </button>
+        <button
+          className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+          onClick={[Function]}
+          type="button"
+        >
+          Geotagged
+        </button>
+        <button
+          className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+          onClick={[Function]}
+          type="button"
+        >
+          Not Geotagged
+        </button>
+      </div>
+    </div>
+    <div
+      className="flex gap-4"
+    >
+      <button
+        className="text-primary hover:text-red"
+        onClick={[Function]}
+      >
+        <p
+          className="text-14-bold"
+          data-testid="txt"
+        >
+          Clear Filters
+        </p>
+      </button>
+      <div
+        className="relative w-fit-content"
+        onClick={[Function]}
+      >
+        <button
+          className="text-14-bold flex w-48 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+          onClick={[Function]}
+        >
+          Filter
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
+        </button>
+        <div
+          className="absolute z-40 top-full mt-[5px] invisible"
+          style={Object {}}
         >
           <div
-            className="relative"
+            className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] !sticky"
+            style={Object {}}
           >
-            <div
-              aria-expanded={false}
-              aria-haspopup="listbox"
-              className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 w-48"
-              data-headlessui-state=""
-              disabled={false}
-              id="headlessui-listbox-button-:r7:"
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-            >
-              <p
-                className="w-full uppercase line-clamp-1 text-14-bold"
-                data-testid="txt"
+            <div>
+              <button
+                className="my-1 flex w-full items-center justify-between"
+                onClick={[Function]}
               >
-                Show All
-              </p>
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 20,
+                <p
+                  className="flex items-center  text-14-semibold"
+                  data-testid="txt"
+                  onClick={[Function]}
+                >
+                    
+                  Source
+                </p>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 12,
+                    }
                   }
-                }
+                />
+              </button>
+              <div
+                className="pl-1"
               />
             </div>
+            <div
+              className="mx-2 border-b border-[#d7dbdc]"
+            />
+            <div>
+              <button
+                className="my-1 flex w-full items-center justify-between"
+                onClick={[Function]}
+              >
+                <p
+                  className="flex items-center  text-14-semibold"
+                  data-testid="txt"
+                >
+                    
+                  Privacy
+                </p>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 12,
+                    }
+                  }
+                />
+              </button>
+              <div
+                className="pl-1"
+              >
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                  >
+                      
+                    Public
+                  </p>
+                </button>
+                <button
+                  className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                  onClick={[Function]}
+                >
+                  <p
+                    className="flex items-center  text-14"
+                    data-testid="txt"
+                  >
+                      
+                    Private
+                  </p>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="relative w-fit-content"
+        onClick={[Function]}
+      >
+        <button
+          className="text-14-bold flex w-36 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:w-44"
+          onClick={[Function]}
+        >
+          <span
+            className="text-14-bold overflow-hidden text-ellipsis whitespace-nowrap"
+          >
+            Newest to Oldest
+          </span>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 20,
+              }
+            }
+          />
+        </button>
+        <div
+          className="absolute z-40 top-full mt-[5px] invisible"
+          style={Object {}}
+        >
+          <div
+            className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] !sticky"
+            style={Object {}}
+          >
+            <button
+              className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+              onClick={[Function]}
+            >
+              <p
+                className="flex items-center text-14"
+                data-testid="txt"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                  
+                Newest to Oldest
+              </p>
+            </button>
+            <button
+              className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+              onClick={[Function]}
+            >
+              <p
+                className="flex items-center text-14"
+                data-testid="txt"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                  
+                Oldest to Newest
+              </p>
+            </button>
           </div>
         </div>
       </div>
@@ -60,6 +272,15 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -110,27 +331,140 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Quod distinctio reiciendis maxime enim et quidem.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Private
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -139,6 +473,20 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -180,27 +528,141 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         >
           <div
             className="flex justify-between p-3"
-          />
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Blanditiis magnam quae labore vel dicta quasi qui.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Public
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -209,6 +671,20 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -250,27 +726,141 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         >
           <div
             className="flex justify-between p-3"
-          />
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Aliquam quidem cupiditate reprehenderit incidunt.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Public
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -279,6 +869,15 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -322,34 +921,139 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
-              style={
-                Object {
-                  "height": 32,
-                  "width": 32,
-                }
-              }
-            />
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Doloremque quisquam hic pariatur in dolores reprehenderit illo.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Public
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -358,6 +1062,20 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -399,27 +1117,141 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         >
           <div
             className="flex justify-between p-3"
-          />
+          >
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Dignissimos unde tempore modi aut ut.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Public
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -428,6 +1260,15 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -478,27 +1319,140 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Fugit quod ullam cum natus expedita reprehenderit.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Private
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -507,6 +1461,20 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -548,27 +1516,149 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         >
           <div
             className="flex justify-between p-3"
-          />
+          >
+            <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Sit nobis unde numquam tenetur.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Private
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -577,6 +1667,20 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
+          >
+            Geotagged
+          </div>
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -618,27 +1722,149 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         >
           <div
             className="flex justify-between p-3"
-          />
+          >
+            <div
+              style={
+                Object {
+                  "height": 32,
+                  "width": 32,
+                }
+              }
+            />
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Dolorum explicabo magnam ad qui ab reprehenderit dolor.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Private
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -647,6 +1873,15 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -697,27 +1932,140 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
                 }
               }
             />
+            <div
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Rerum hic laboriosam similique quidem molestias.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Private
+          </p>
+        </p>
       </div>
     </div>
     <div
@@ -726,6 +2074,15 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       <div
         className="h-[226px] rounded-t-xl relative"
       >
+        <div
+          className="absolute bottom-4 left-4 z-10 flex gap-2"
+        >
+          <div
+            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
+          >
+            Cover
+          </div>
+        </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -769,34 +2126,139 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
             className="flex justify-between p-3"
           >
             <div
-              style={
-                Object {
-                  "height": 32,
-                  "width": 32,
-                }
-              }
-            />
+              className="ml-auto flex items-center"
+            >
+              <div
+                className="relative w-fit-content"
+                onClick={[Function]}
+              >
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 24,
+                    }
+                  }
+                />
+                <div
+                  className="absolute z-40 top-full mt-[5px] invisible"
+                  style={Object {}}
+                >
+                  <div
+                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
+                    style={Object {}}
+                  >
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Edit Attributes
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Download
+                      </p>
+                    </button>
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Make Cover
+                      </p>
+                    </button>
+                    <div
+                      className="mx-2 border-b border-[#d7dbdc]"
+                    />
+                    <button
+                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
+                      onClick={[Function]}
+                    >
+                      <p
+                        className="pr-3 text-12-bold"
+                        data-testid="txt"
+                      >
+                        Delete
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        className="p-4"
+        className="p-4 text-darkCustom"
       >
         <div
           className="flex items-center justify-between gap-1"
         >
           <p
-            className="flex items-center gap-1 text-darkCustom text-16-bold"
+            className="flex items-center gap-1 text-14-bold"
             data-testid="txt"
           >
-            Odit quo ipsam cupiditate laborum qui.
-            :
+            Uploaded via:
+             
             <p
-              className="text-16-bold"
+              className="capitalize text-14-light"
               data-testid="txt"
             />
           </p>
+          <button
+            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": 24,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
         </div>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Date uploaded:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            01/01/2023
+          </p>
+        </p>
+        <p
+          className="flex items-center gap-1 text-14-bold"
+          data-testid="txt"
+        >
+          Visibility:
+           
+          <p
+            className="capitalize text-14-light"
+            data-testid="txt"
+          >
+            Public
+          </p>
+        </p>
       </div>
     </div>
   </div>
@@ -813,11 +2275,11 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         <div
           aria-expanded={false}
           aria-haspopup="listbox"
-          aria-labelledby="headlessui-listbox-label-:r9: headlessui-listbox-button-:r8:"
+          aria-labelledby="headlessui-listbox-label-:r8: headlessui-listbox-button-:r7:"
           className="flex h-10 w-20 items-center justify-center rounded-md shadow"
           data-headlessui-state=""
           disabled={false}
-          id="headlessui-listbox-button-:r8:"
+          id="headlessui-listbox-button-:r7:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -849,7 +2311,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           className="text-16-bold"
           data-headlessui-state=""
           data-testid="txt"
-          id="headlessui-listbox-label-:r9:"
+          id="headlessui-listbox-label-:r8:"
           onClick={[Function]}
         >
           Per page

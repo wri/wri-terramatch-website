@@ -85,8 +85,8 @@ const NurseryReportDetailPage = () => {
                   <EntityMapAndGalleryCard
                     modelName="nursery-reports"
                     modelUUID={nurseryReport.uuid}
+                    entityData={nursery}
                     modelTitle={t("Nursery Report")}
-                    boundaryGeojson={nursery?.data?.boundary_geojson}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
                     )}

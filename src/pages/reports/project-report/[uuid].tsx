@@ -79,7 +79,7 @@ const ProjectReportDetailPage = () => {
                   modelUUID={report.uuid}
                   modelTitle={t("Report")}
                   // @ts-ignore incorrect docs
-                  boundaryGeojson={project?.data?.boundary_geojson}
+                  entityData={project}
                   emptyStateContent={t(
                     "Your gallery is currently empty. Add images by using the 'Edit' button on this report."
                   )}
