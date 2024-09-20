@@ -14,11 +14,11 @@ export interface PageCardProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
   title?: string;
-  subtitle?: string;
+  subtitle?: string | ReactNode;
   headerChildren?: ReactNode;
   isEmpty?: boolean;
   emptyStateProps?: EmptyFieldProps;
-  gap?: 4 | 8;
+  gap?: 4 | 6 | 8;
   tooltip?: string;
 }
 
