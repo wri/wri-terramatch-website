@@ -73,12 +73,12 @@ const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken
                           <If condition={isOnDashboards}>
                             <Then>
                               <DashboardLayout>
-                                <Component {...pageProps} accessToken={authToken} />
+                                <Component {...pageProps} />
                               </DashboardLayout>
                             </Then>
                             <Else>
-                              <MainLayout isLoggedIn={!!authToken}>
-                                <Component {...pageProps} accessToken={authToken} />
+                              <MainLayout>
+                                <Component {...pageProps} />
                                 <CookieBanner />
                               </MainLayout>
                             </Else>
