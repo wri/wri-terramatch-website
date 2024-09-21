@@ -1,47 +1,39 @@
 import { createSelector } from "reselect";
 
+import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { authLoginFetchFailed, authLoginIsFetching } from "@/generated/v3/userService/userServicePredicates";
+import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 
 type LoginConnection = {
   isLoggingIn: boolean;
   isLoggedIn: boolean;
   loginFailed: boolean;
-  login: (emailAddress: string, password: string) => void;
+  token?: string;
 };
 
-const login = (emailAddress: string, password: string) => authLogin({ body: { emailAddress, password } });
+export const login = (emailAddress: string, password: string) => authLogin({ body: { emailAddress, password } });
+export const logout = () => {
+  removeAccessToken();
+  ApiSlice.clearApiCache();
+};
+
+const selectFirstLogin = (state: ApiDataStore) => {
+  const values = Object.values(state.logins);
+  return values.length < 1 ? null : values[0];
+};
 
 export const loginConnection: Connection<LoginConnection> = {
-  selector: createSelector([authLoginIsFetching, authLoginFetchFailed], (isLoggingIn, failedLogin) => {
-    return {
-      isLoggingIn,
-      // TODO get from auth token
-      isLoggedIn: false,
-      loginFailed: failedLogin != null,
-
-      login
-    };
-  })
-
-  // selector(state: ApiDataStore): LoginConnection {
-  //   const values = Object.values(state.logins);
-  //   if (values.length > 1) {
-  //     console.error("More than one Login recorded in the store!", state.logins);
-  //   }
-  //
-  //   // TODO We don't actually want the token to be part of the shape in this case, or to come from
-  //   //  the store. The token should always be fetched from local storage so that logins persist.
-  //   const authToken = values[0]?.token;
-  //   return {
-  //     authToken,
-  //     isLoggingIn: authLoginIsFetching(state),
-  //     isLoggedIn: authToken != null,
-  //     loginFailed: authLoginFetchFailed(state) != null,
-  //     login: (emailAddress: string, password: string) => {
-  //       authLogin({ body: { emailAddress, password } });
-  //     }
-  //   };
-  // }
+  selector: createSelector(
+    [authLoginIsFetching, authLoginFetchFailed, selectFirstLogin],
+    (isLoggingIn, failedLogin, firstLogin) => {
+      return {
+        isLoggingIn,
+        isLoggedIn: firstLogin != null,
+        loginFailed: failedLogin != null,
+        token: firstLogin?.token
+      };
+    }
+  )
 };

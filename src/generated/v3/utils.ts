@@ -1,14 +1,4 @@
-import {
-  ApiDataStore,
-  apiFetchFailed,
-  apiFetchStarting,
-  apiFetchSucceeded,
-  isErrorState,
-  isInProgress,
-  Method,
-  PendingErrorState
-} from "@/store/apiSlice";
-import store from "@/store/store";
+import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -63,14 +53,14 @@ export function fetchFailed<TQueryParams extends {}, TPathParams extends {}>({
 
 export async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };
-  store.dispatch(apiFetchStarting(actionPayload));
+  ApiSlice.fetchStarting(actionPayload);
 
   try {
     const response = await window.fetch(url, requestInit);
 
     if (!response.ok) {
       const error = (await response.json()) as ErrorWrapper<TError>;
-      store.dispatch(apiFetchFailed({ ...actionPayload, error: error as PendingErrorState }));
+      ApiSlice.fetchFailed({ ...actionPayload, error: error as PendingErrorState });
       return;
     }
 
@@ -81,13 +71,13 @@ export async function dispatchRequest<TData, TError>(url: string, requestInit: R
 
     const responsePayload = await response.json();
     if (responsePayload.statusCode != null && responsePayload.message != null) {
-      store.dispatch(apiFetchFailed({ ...actionPayload, error: responsePayload }));
+      ApiSlice.fetchFailed({ ...actionPayload, error: responsePayload });
     } else {
-      store.dispatch(apiFetchSucceeded({ ...actionPayload, response: responsePayload }));
+      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
     }
   } catch (e) {
     console.error("Unexpected API fetch failure", e);
     const message = e instanceof Error ? `Network error (${e.message})` : "Network error";
-    store.dispatch(apiFetchFailed({ ...actionPayload, error: { statusCode: -1, message } }));
+    ApiSlice.fetchFailed({ ...actionPayload, error: { statusCode: -1, message } });
   }
 }
