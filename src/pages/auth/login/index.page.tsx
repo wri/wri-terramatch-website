@@ -8,7 +8,7 @@ import { login, loginConnection } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useConnection } from "@/hooks/useConnection";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
-import { useValueChanged } from "@/hooks/usePrevious";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
