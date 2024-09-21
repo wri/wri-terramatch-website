@@ -67,8 +67,8 @@ const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken
                         <NavbarProvider>
                           <ModalRoot />
                           <Toast />
-                          <MainLayout isLoggedIn={!!authToken}>
-                            <Component {...pageProps} accessToken={authToken} />
+                          <MainLayout>
+                            <Component {...pageProps} />
                             <CookieBanner />
                           </MainLayout>
                         </NavbarProvider>
