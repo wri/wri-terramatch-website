@@ -8,7 +8,6 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { Provider as ReduxProvider } from "react-redux";
 
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
@@ -22,14 +21,14 @@ import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { getServerSideTranslations, setClientSideTranslations } from "@/i18n";
-import store from "@/store/store";
+import StoreProvider from "@/store/StoreProvider";
 import setupYup from "@/yup.locale";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
   ssr: false
 });
 
-const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessToken?: string; props: any }) => {
+const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken?: string; props: any }) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
@@ -39,9 +38,9 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
 
   if (isAdmin)
     return (
-      <ReduxProvider store={store}>
+      <StoreProvider {...{ authToken }}>
         <WrappedQueryClientProvider>
-          <AuthProvider token={accessToken}>
+          <AuthProvider token={authToken}>
             <LoadingProvider>
               <NotificationProvider>
                 <ModalProvider>
@@ -52,15 +51,15 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
             </LoadingProvider>
           </AuthProvider>
         </WrappedQueryClientProvider>
-      </ReduxProvider>
+      </StoreProvider>
     );
   else
     return (
-      <ReduxProvider store={store}>
+      <StoreProvider {...{ authToken }}>
         <ToastProvider>
           <WrappedQueryClientProvider>
             <Hydrate state={pageProps.dehydratedState}>
-              <AuthProvider token={accessToken}>
+              <AuthProvider token={authToken}>
                 <RouteHistoryProvider>
                   <LoadingProvider>
                     <NotificationProvider>
@@ -68,8 +67,8 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
                         <NavbarProvider>
                           <ModalRoot />
                           <Toast />
-                          <MainLayout isLoggedIn={!!accessToken}>
-                            <Component {...pageProps} accessToken={accessToken} />
+                          <MainLayout isLoggedIn={!!authToken}>
+                            <Component {...pageProps} accessToken={authToken} />
                             <CookieBanner />
                           </MainLayout>
                         </NavbarProvider>
@@ -82,7 +81,7 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
             <ReactQueryDevtools initialIsOpen={false} />
           </WrappedQueryClientProvider>
         </ToastProvider>
-      </ReduxProvider>
+      </StoreProvider>
     );
 };
 
@@ -95,7 +94,7 @@ _App.getInitialProps = async (context: AppContext) => {
   } catch (err) {
     console.log("Failed to get Serverside Transifex", err);
   }
-  return { ...ctx, props: { ...translationsData }, accessToken: cookies.accessToken };
+  return { ...ctx, props: { ...translationsData }, authToken: cookies.accessToken };
 };
 
 export default _App;

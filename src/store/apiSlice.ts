@@ -1,6 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isArray } from "lodash";
+import { Store } from "redux";
 
+import { setAccessToken } from "@/admin/apiProvider/utils/token";
 import { LoginResponse } from "@/generated/v3/userService/userServiceSchemas";
 
 export type PendingErrorState = {
@@ -16,14 +18,15 @@ export const isInProgress = (pending?: Pending) => pending === true;
 export const isErrorState = (pending?: Pending): pending is PendingErrorState =>
   pending != null && !isInProgress(pending);
 
-export type Method = "GET" | "DELETE" | "POST" | "PUT" | "PATCH";
+const METHODS = ["GET", "DELETE", "POST", "PUT", "PATCH"] as const;
+export type Method = (typeof METHODS)[number];
 
 export type ApiPendingStore = {
   [key in Method]: Record<string, Pending>;
 };
 
-// The list of potential resource types. Each of these resources must be included in ApiDataStore,
-// with a mapping to the response type for that resource.
+// The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
+// be added to this list.
 export const RESOURCES = ["logins"] as const;
 
 export type JsonApiResource = {
@@ -35,41 +38,54 @@ export type JsonApiResponse = {
   data: JsonApiResource[] | JsonApiResource;
 };
 
-export type ApiDataStore = {
+type ApiResources = {
   logins: Record<string, LoginResponse>;
+};
 
+export type ApiDataStore = ApiResources & {
   meta: {
     pending: ApiPendingStore;
   };
 };
 
-const initialState: ApiDataStore = {
-  logins: {},
+const initialState = {
+  ...RESOURCES.reduce((acc: Partial<ApiResources>, resource) => {
+    acc[resource] = {};
+    return acc;
+  }, {}),
 
   meta: {
-    pending: {
-      GET: {},
-      DELETE: {},
-      POST: {},
-      PUT: {},
-      PATCH: {}
-    }
+    pending: METHODS.reduce((acc: Partial<ApiPendingStore>, method) => {
+      acc[method] = {};
+      return acc;
+    }, {}) as ApiPendingStore
   }
+} as ApiDataStore;
+
+type ApiFetchStartingProps = {
+  url: string;
+  method: Method;
+};
+type ApiFetchFailedProps = ApiFetchStartingProps & {
+  error: PendingErrorState;
+};
+type ApiFetchSucceededProps = ApiFetchStartingProps & {
+  response: JsonApiResponse;
 };
 
-const apiSlice = createSlice({
+export const apiSlice = createSlice({
   name: "api",
   initialState,
   reducers: {
-    apiFetchStarting: (state, action: PayloadAction<{ url: string; method: Method }>) => {
+    apiFetchStarting: (state, action: PayloadAction<ApiFetchStartingProps>) => {
       const { url, method } = action.payload;
       state.meta.pending[method][url] = true;
     },
-    apiFetchFailed: (state, action: PayloadAction<{ url: string; method: Method; error: PendingErrorState }>) => {
+    apiFetchFailed: (state, action: PayloadAction<ApiFetchFailedProps>) => {
       const { url, method, error } = action.payload;
       state.meta.pending[method][url] = error;
     },
-    apiFetchSucceeded: (state, action: PayloadAction<{ url: string; method: Method; response: JsonApiResponse }>) => {
+    apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
       const { url, method, response } = action.payload;
       delete state.meta.pending[method][url];
 
@@ -82,9 +98,71 @@ const apiSlice = createSlice({
         // use the dreaded any.
         state[resource.type][resource.id] = resource as any;
       }
+    },
+
+    clearApiCache: state => {
+      for (const resource of RESOURCES) {
+        state[resource] = {};
+      }
+
+      for (const method of METHODS) {
+        state.meta.pending[method] = {};
+      }
+    },
+
+    // only used during app bootup.
+    setInitialAuthToken: (state, action: PayloadAction<{ authToken: string }>) => {
+      const { authToken } = action.payload;
+      // We only ever expect there to be at most one Login in the store, and we never inspect the ID
+      // so we can safely fake a login into the store when we have an authToken already set in a
+      // cookie on app bootup.
+      state.logins["1"] = { id: "id", type: "logins", token: authToken };
     }
   }
 });
 
-export const { apiFetchStarting, apiFetchFailed, apiFetchSucceeded } = apiSlice.actions;
-export const apiReducer = apiSlice.reducer;
+export const authListenerMiddleware = createListenerMiddleware();
+authListenerMiddleware.startListening({
+  actionCreator: apiSlice.actions.apiFetchSucceeded,
+  effect: async (
+    action: PayloadAction<{
+      url: string;
+      method: Method;
+      response: JsonApiResponse;
+    }>
+  ) => {
+    const { url, method, response } = action.payload;
+    if (!url.endsWith("auth/v3/logins") || method !== "POST") return;
+
+    const { data } = response as { data: LoginResponse };
+    setAccessToken(data.token);
+  }
+});
+
+export default class ApiSlice {
+  private static _store: Store;
+
+  static set store(store: Store) {
+    this._store = store;
+  }
+
+  static get store(): Store {
+    return this._store;
+  }
+
+  static fetchStarting(props: ApiFetchStartingProps) {
+    this.store.dispatch(apiSlice.actions.apiFetchStarting(props));
+  }
+
+  static fetchFailed(props: ApiFetchFailedProps) {
+    this.store.dispatch(apiSlice.actions.apiFetchFailed(props));
+  }
+
+  static fetchSucceeded(props: ApiFetchSucceededProps) {
+    this.store.dispatch(apiSlice.actions.apiFetchSucceeded(props));
+  }
+
+  static clearApiCache() {
+    this.store.dispatch(apiSlice.actions.clearApiCache());
+  }
+}

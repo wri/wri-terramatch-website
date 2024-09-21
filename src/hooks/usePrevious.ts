@@ -9,6 +9,11 @@ export function usePrevious<T>(value: T): T | undefined {
 }
 
 export function useValueChanged<T>(value: T, callback: () => void) {
-  const previous = usePrevious(value);
-  if (previous !== value) callback();
+  const ref = useRef<T>();
+  useEffect(() => {
+    if (ref.current !== value) {
+      ref.current = value;
+      callback();
+    }
+  });
 }

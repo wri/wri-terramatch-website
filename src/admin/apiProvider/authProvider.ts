@@ -1,6 +1,5 @@
 import { AuthProvider } from "react-admin";
 
-import { isAdmin } from "@/admin/apiProvider/utils/user";
 import { fetchGetAuthLogout, fetchGetAuthMe, fetchPostAuthLogin } from "@/generated/apiComponents";
 
 import { AdminTokenStorageKey, removeAccessToken, setAccessToken } from "./utils/token";
@@ -31,15 +30,18 @@ export const authProvider: AuthProvider = {
     const token = localStorage.getItem(AdminTokenStorageKey);
     if (!token) return Promise.reject();
 
-    return new Promise((resolve, reject) => {
-      fetchGetAuthMe({})
-        .then(res => {
-          //@ts-ignore
-          if (isAdmin(res.data.role)) resolve();
-          else reject("Only admins are allowed.");
-        })
-        .catch(() => reject());
-    });
+    // TODO (TM-1312) Once we have a connection for the users/me object, we can check the cached
+    //  value without re-fetching on every navigation in the admin UI. The previous implementation
+    //  is included below for reference until that ticket is complete.
+    // return new Promise((resolve, reject) => {
+    //   fetchGetAuthMe({})
+    //     .then(res => {
+    //       //@ts-ignore
+    //       if (isAdmin(res.data.role)) resolve();
+    //       else reject("Only admins are allowed.");
+    //     })
+    //     .catch(() => reject());
+    // });
   },
   // remove local credentials and notify the auth server that the user logged out
   logout: async () => {

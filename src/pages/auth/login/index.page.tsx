@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { loginConnection } from "@/connections/Login";
-// import { useAuthContext } from "@/context/auth.provider";
+import { login, loginConnection } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useConnection } from "@/hooks/useConnection";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
@@ -30,8 +29,7 @@ const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
   const router = useRouter();
-  //const { login, loginLoading } = useAuthContext();
-  const [, { isLoggedIn, isLoggingIn, loginFailed, login }] = useConnection(loginConnection);
+  const [, { isLoggedIn, isLoggingIn, loginFailed }] = useConnection(loginConnection);
   const { openToast } = useToastContext();
   const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema(t)),
@@ -41,14 +39,15 @@ const LoginPage = () => {
   useValueChanged(loginFailed, () => {
     if (loginFailed) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
   });
+  useValueChanged(isLoggedIn, () => {
+    if (isLoggedIn) router.push("/home");
+  });
 
   const handleSave = (data: LoginFormDataType) => login(data.email, data.password);
 
-  if (isLoggedIn) return router.push("/home");
-
   return (
     <LoginLayout>
-      <LoginForm form={form} loading={isLoggingIn} handleSave={handleSave} />
+      <LoginForm form={form} loading={isLoggingIn || isLoggedIn} handleSave={handleSave} />
     </LoginLayout>
   );
 };

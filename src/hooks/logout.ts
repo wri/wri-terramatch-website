@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-import { removeAccessToken } from "@/admin/apiProvider/utils/token";
+import { logout } from "@/connections/Login";
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
@@ -10,7 +10,7 @@ export const useLogout = () => {
   return () => {
     queryClient.getQueryCache().clear();
     queryClient.clear();
-    removeAccessToken();
+    logout();
     router.push("/");
     window.location.replace("/");
   };
