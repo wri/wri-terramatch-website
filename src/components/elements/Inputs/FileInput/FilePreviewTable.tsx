@@ -1,7 +1,8 @@
 import { useT } from "@transifex/react";
-import classNames from "classnames";
+import Lottie from "lottie-react";
 import { Else, If, Then, When } from "react-if";
 
+import SpinnerLottie from "@/assets/animations/spinner.json";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
@@ -43,7 +44,7 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
 
   const data = items.map(item => ({
     id: item.uuid,
-    image: item,
+    image: item.title,
     size: item.size,
     cover: true,
     public: item,
@@ -59,23 +60,7 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
         columns={[
           {
             accessorKey: "image",
-            header: `${t("Image")}`,
-            cell: (props: any) => {
-              const uploadState = props.getValue().uploadState;
-              console.log(uploadState);
-              return (
-                <div
-                  className={classNames({
-                    "bg-green": uploadState?.isSuccess,
-                    "bg-tertiary-80": uploadState?.isLoading,
-                    "bg-red": uploadState?.error,
-                    "bg-primary-500": uploadState?.isDeleting
-                  })}
-                >
-                  {props.getValue().title}
-                </div>
-              );
-            }
+            header: `${t("Image")}`
           },
           {
             accessorKey: "size",
@@ -126,36 +111,43 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
             accessorKey: "elipsis",
             header: "",
             cell: (props: any) => (
-              <Menu
-                menu={[
-                  {
-                    id: "1",
-                    render: () => (
-                      <div className="flex items-center gap-2">
-                        <Icon name={IconNames.EDIT_PA} className="h-3 w-3" />
-                        <Text variant="text-12-bold">Edit</Text>
-                      </div>
-                    ),
-                    onClick: () => {
-                      openModalImageDetail(props.getValue());
-                    }
-                  },
-                  {
-                    id: "2",
-                    render: () => (
-                      <div className="flex items-center gap-2">
-                        <Icon name={IconNames.TRASH_PA} className="h-3 w-3" />
-                        <Text variant="text-12-bold">Delete</Text>
-                      </div>
-                    ),
-                    onClick: () => {
-                      onDelete && onDelete(props.getValue());
-                    }
-                  }
-                ]}
-              >
-                <Icon name={IconNames.ELIPSES} />
-              </Menu>
+              <If condition={props.getValue().uploadState?.isLoading || props.getValue().uploadState?.isDeleting}>
+                <Then>
+                  <Lottie animationData={SpinnerLottie} className="h-6 w-6" />
+                </Then>
+                <Else>
+                  <Menu
+                    menu={[
+                      {
+                        id: "1",
+                        render: () => (
+                          <div className="flex items-center gap-2">
+                            <Icon name={IconNames.EDIT_PA} className="h-3 w-3" />
+                            <Text variant="text-12-bold">Edit</Text>
+                          </div>
+                        ),
+                        onClick: () => {
+                          openModalImageDetail(props.getValue());
+                        }
+                      },
+                      {
+                        id: "2",
+                        render: () => (
+                          <div className="flex items-center gap-2">
+                            <Icon name={IconNames.TRASH_PA} className="h-3 w-3" />
+                            <Text variant="text-12-bold">Delete</Text>
+                          </div>
+                        ),
+                        onClick: () => {
+                          onDelete && onDelete(props.getValue());
+                        }
+                      }
+                    ]}
+                  >
+                    <Icon name={IconNames.ELIPSES} />
+                  </Menu>
+                </Else>
+              </If>
             ),
             meta: { align: "right" },
             enableSorting: false
