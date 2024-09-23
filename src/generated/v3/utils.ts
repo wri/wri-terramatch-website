@@ -1,4 +1,5 @@
 import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
+import Log from "@/utils/log";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -76,7 +77,7 @@ export async function dispatchRequest<TData, TError>(url: string, requestInit: R
       ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
     }
   } catch (e) {
-    console.error("Unexpected API fetch failure", e);
+    Log.error("Unexpected API fetch failure", e);
     const message = e instanceof Error ? `Network error (${e.message})` : "Network error";
     ApiSlice.fetchFailed({ ...actionPayload, error: { statusCode: -1, message } });
   }

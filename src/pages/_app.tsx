@@ -23,6 +23,7 @@ import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { getServerSideTranslations, setClientSideTranslations } from "@/i18n";
 import StoreProvider from "@/store/StoreProvider";
+import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
@@ -99,7 +100,7 @@ _App.getInitialProps = async (context: AppContext) => {
   try {
     translationsData = await getServerSideTranslations(context.ctx);
   } catch (err) {
-    console.log("Failed to get Serverside Transifex", err);
+    Log.warn("Failed to get Serverside Transifex", err);
   }
   return { ...ctx, props: { ...translationsData }, authToken: cookies.accessToken };
 };

@@ -1,6 +1,8 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
+import Log from "@/utils/log";
+
 interface IntersectionInfo {
   intersectSmaller: boolean;
   percentage: number;
@@ -51,7 +53,7 @@ export const useMessageValidators = () => {
                 });
           });
         } catch (error) {
-          console.error(error);
+          Log.error("Failed to get intersection messages", error);
           return [t("Error parsing extra info.")];
         }
       },

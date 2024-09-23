@@ -10,6 +10,7 @@ import {
 } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { FileType } from "@/types/common";
+import Log from "@/utils/log";
 
 import Component, { WizardFormProps as Props } from ".";
 import { FieldType, FormStepSchema } from "./types";
@@ -308,8 +309,8 @@ export const CreateForm: Story = {
   ),
   args: {
     steps: getSteps(false),
-    onStepChange: console.log,
-    onChange: console.log,
+    onStepChange: Log.info,
+    onChange: Log.info,
     nextButtonText: "Save and Continue",
     submitButtonText: "Submit",
     hideBackButton: false,
@@ -326,8 +327,8 @@ export const EditForm = {
   ...CreateForm,
   args: {
     steps: getSteps(true),
-    onStepChange: console.log,
-    onChange: console.log,
+    onStepChange: Log.info,
+    onChange: Log.info,
     nextButtonText: "Save",
     submitButtonText: "Save",
     hideBackButton: true,

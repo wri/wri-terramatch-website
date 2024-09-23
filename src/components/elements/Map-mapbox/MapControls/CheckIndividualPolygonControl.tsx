@@ -11,6 +11,7 @@ import {
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
 
@@ -77,7 +78,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       hideLoader();
     },
     onError: error => {
-      console.error("Error clipping polygons:", error);
+      Log.error("Error clipping polygons:", error);
       openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
     }
   });

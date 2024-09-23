@@ -1,23 +1,14 @@
 import { AuthProvider } from "react-admin";
 
-import { fetchGetAuthLogout, fetchGetAuthMe, fetchPostAuthLogin } from "@/generated/apiComponents";
+import { fetchGetAuthLogout, fetchGetAuthMe } from "@/generated/apiComponents";
+import Log from "@/utils/log";
 
-import { AdminTokenStorageKey, removeAccessToken, setAccessToken } from "./utils/token";
+import { AdminTokenStorageKey, removeAccessToken } from "./utils/token";
 
 export const authProvider: AuthProvider = {
   // send username and password to the auth server and get back credentials
-  login: params => {
-    return fetchPostAuthLogin({ body: { email_address: params.username, password: params.password } })
-      .then(async res => {
-        //@ts-ignore
-        const token = res.data.token;
-
-        setAccessToken(token);
-      })
-      .catch(e => {
-        console.log(e);
-        throw Error("Wrong username or password");
-      });
+  login: async params => {
+    Log.error("Admin app does not support direct login");
   },
 
   // when the dataProvider returns an error, check if this is an authentication error
