@@ -15,14 +15,17 @@ const formattedTextStatus = (text: string) => {
   return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
 };
 
-const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
-  if (item.type === "comment") {
+const getTextForActionTable = (
+  item: { type: string; status: string; request_removed: boolean },
+  entity?: string
+): string => {
+  if (item.type === "comment" && entity == "site-polygon") {
     return "New Comment";
-  } else if (item.type === "status") {
+  } else if (item.type === "status" && entity == "site-polygon") {
     return `New Status: ${formattedTextStatus(item.status)}`;
   } else if (item.type === "change-request-updated") {
     return "Change Request Updated";
-  } else if (item.request_removed) {
+  } else if (item.request_removed && entity == "site-polygon") {
     return "Change Request Removed";
   } else if (item.type === "reminder-sent") {
     return "Reminder Sent";
@@ -108,7 +111,10 @@ const AuditLogTable: FC<{
               </Text>
             </When>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {getTextForActionTable(item as { type: string; status: string; request_removed: boolean })}
+              {getTextForActionTable(
+                item as { type: string; status: string; request_removed: boolean },
+                auditData?.entity
+              )}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2">
               {item.comment ?? "-"}
