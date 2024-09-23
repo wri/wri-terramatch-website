@@ -9,11 +9,13 @@ import {
   usePostV2FileUploadMODELCOLLECTIONUUID,
   usePutV2FilesUUID
 } from "@/generated/apiComponents";
+import { getCurrentPathEntity } from "@/helpers/entity";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
 
 import FileInput, { FileInputProps } from "./FileInput";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
 
 export interface RHFFileInputProps
   extends Omit<FileInputProps, "files" | "loading" | "onChange" | "onDelete">,
@@ -24,6 +26,7 @@ export interface RHFFileInputProps
   formHook?: UseFormReturn;
   showPrivateCheckbox?: boolean;
   onChangeCapture?: () => void;
+  isPhotosAndVideo?: boolean;
 }
 
 /**
@@ -37,6 +40,7 @@ const RHFFileInput = ({
   uuid,
   showPrivateCheckbox,
   onChangeCapture,
+  isPhotosAndVideo = false,
   ...fileInputProps
 }: RHFFileInputProps) => {
   const t = useT();
@@ -44,7 +48,6 @@ const RHFFileInput = ({
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
   const [files, setFiles] = useState<Partial<UploadedFile>[]>(toArray(value));
-
   const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
     onSuccess(data, variables) {
       //@ts-ignore swagger issue
@@ -227,8 +230,13 @@ const RHFFileInput = ({
 
   return (
     <FileInput
-      {...fileInputProps}
       files={files}
+      {...(isPhotosAndVideo && {
+        previewAsTable: true,
+        descriptionInput: "drag and drop or browse your device",
+        description: `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`,
+        variant: VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP
+      })}
       onDelete={onDeleteFile}
       onChange={files => files.forEach(onSelectFile)}
       onPrivateChange={handleFileUpdate}

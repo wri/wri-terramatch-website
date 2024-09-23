@@ -11,7 +11,6 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
-import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
@@ -25,6 +24,7 @@ import {
   useGetV2TypeEntity,
   usePostV2FileUploadMODELCOLLECTIONUUID
 } from "@/generated/apiComponents";
+import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 
@@ -144,18 +144,12 @@ const EntityMapAndGalleryCard = ({
     openModal(
       ModalId.UPLOAD_IMAGES,
       <ModalAdd
-        title={t("Upload Images")}
+        title={t("Upload Media")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput={t(
-          "Drag and drop a geotagged or non-geotagged PNG or JPEG for your site Tannous/Brayton Road."
-        )}
-        descriptionList={
-          <Text variant="text-12-bold" className="mt-9">
-            {t("Uploaded Files")}
-          </Text>
-        }
+        previewAsTable
+        descriptionInput="drag and drop or browse your device"
         onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
-        content={t("Start by adding images for processing.")}
+        content={`if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`}
         acceptedTypes={FileType.Image.split(",") as FileType[]}
         primaryButtonText={t("Save")}
         primaryButtonProps={{

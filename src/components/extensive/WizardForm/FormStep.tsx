@@ -33,6 +33,7 @@ export const FormStep = ({
   useEffect(() => {
     formHook.clearErrors();
   }, [fields, formHook, title]);
+  const isPhotosAndVideo = title === "Photos and Videos";
 
   return (
     <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-15", className)}>
@@ -52,7 +53,9 @@ export const FormStep = ({
           items={fields!}
           uniqueId="name"
           itemClassName="mt-8"
-          render={field => <FieldMapper field={field} formHook={formHook} onChange={onChange} />}
+          render={field => (
+            <FieldMapper field={field} formHook={formHook} onChange={onChange} isPhotosAndVideo={isPhotosAndVideo} />
+          )}
         />
       </When>
       {children}

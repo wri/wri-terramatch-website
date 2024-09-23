@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { ChangeEvent, Fragment, ReactNode, useId, useMemo, useRef } from "react";
 import { useDropzone } from "react-dropzone";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
@@ -14,11 +14,12 @@ import Text from "../../Text/Text";
 import InputWrapper, { InputWrapperProps } from "../InputElements/InputWrapper";
 import { FileInputVariant, VARIANT_FILE_INPUT_DEFAULT } from "./FileInputVariants";
 import FilePreviewCard from "./FilePreviewCard";
+import FilePreviewTable from "./FilePreviewTable";
 
 export type FileInputProps = InputWrapperProps & {
   accept?: FileType[];
   files: Partial<UploadedFile>[];
-
+  previewAsTable?: boolean;
   allowMultiple?: boolean;
   maxFileSize?: number; // in MB
   showPrivateCheckbox?: boolean;
@@ -26,7 +27,6 @@ export type FileInputProps = InputWrapperProps & {
   descriptionInput?: string;
   descriptionList?: ReactNode;
   descriptionListStatus?: string;
-
   onChange?: (file: File[]) => any;
   onDelete?: (file: Partial<UploadedFile>) => void;
   onPrivateChange?: (uuid: Partial<UploadedFile>, checked: boolean) => void;
@@ -160,22 +160,29 @@ const FileInput = (props: FileInputProps) => {
           </Text>
         </div>
       </When>
-      <List
-        as="div"
-        itemAs={Fragment}
-        className={variant.listPreview}
-        items={props.files}
-        render={item => (
-          <FilePreviewCard
-            variant={variant.filePreviewVariant}
-            fileStatus={item.status}
-            file={item}
-            onDelete={file => props.onDelete?.(file)}
-            onPrivateChange={props.onPrivateChange}
-            showPrivateCheckbox={props.showPrivateCheckbox}
+      <If condition={props.previewAsTable}>
+        <Then>
+          <FilePreviewTable items={props.files} onDelete={props.onDelete} onPrivateChange={props.onPrivateChange} />
+        </Then>
+        <Else>
+          <List
+            as="div"
+            itemAs={Fragment}
+            className={variant.listPreview}
+            items={props.files}
+            render={item => (
+              <FilePreviewCard
+                variant={variant.filePreviewVariant}
+                fileStatus={item.status}
+                file={item}
+                onDelete={file => props.onDelete?.(file)}
+                onPrivateChange={props.onPrivateChange}
+                showPrivateCheckbox={props.showPrivateCheckbox}
+              />
+            )}
           />
-        )}
-      />
+        </Else>
+      </If>
     </Fragment>
   );
 };
