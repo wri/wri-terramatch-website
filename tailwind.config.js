@@ -72,6 +72,7 @@ module.exports = {
       },
       secondary: {
         DEFAULT: "#8CC63F",
+        600: "#7BBD31",
         500: "#8CC63F",
         400: "#BFE372",
         300: "#DFF5B0",
@@ -170,8 +171,8 @@ module.exports = {
       },
       green: {
         DEFAULT: "#72D961",
-        400: "#1BA631",
         500: "#198E2B",
+        400: "#1BA631",
         100: "#28C499",
         50: "rgba(40, 196, 153, 0.10)",
         30: "#EAFAF5"

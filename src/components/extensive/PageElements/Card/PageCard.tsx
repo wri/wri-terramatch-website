@@ -7,6 +7,7 @@ import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import { withFrameworkShow } from "@/context/framework.provider";
+import { TextVariants } from "@/types/common";
 
 import Icon, { IconNames } from "../../Icon/Icon";
 
@@ -14,12 +15,14 @@ export interface PageCardProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
   title?: string;
-  subtitle?: string | ReactNode;
+  subtitle?: string;
   headerChildren?: ReactNode;
   isEmpty?: boolean;
   emptyStateProps?: EmptyFieldProps;
   gap?: 4 | 6 | 8;
   tooltip?: string;
+  classNameSubTitle?: string;
+  variantSubTitle?: TextVariants;
 }
 
 const PageCard = ({
@@ -30,6 +33,8 @@ const PageCard = ({
   emptyStateProps,
   isEmpty,
   gap = 8,
+  classNameSubTitle,
+  variantSubTitle,
   tooltip,
   ...props
 }: PageCardProps) => (
@@ -51,7 +56,10 @@ const PageCard = ({
       </div>
     </When>
     <When condition={!!subtitle}>
-      <Text variant="text-light-subtitle-400" className="mt-3 text-darkCustom">
+      <Text
+        variant={variantSubTitle ? variantSubTitle : "text-light-subtitle-400"}
+        className={classNames("mt-3 text-darkCustom", classNameSubTitle)}
+      >
         {subtitle}
       </Text>
     </When>
