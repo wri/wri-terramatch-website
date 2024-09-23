@@ -14,7 +14,6 @@ import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
-import AuthProvider from "@/context/auth.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
@@ -43,16 +42,14 @@ const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken
     return (
       <StoreProvider {...{ authToken }}>
         <WrappedQueryClientProvider>
-          <AuthProvider token={authToken}>
-            <LoadingProvider>
-              <NotificationProvider>
-                <ModalProvider>
-                  <ModalRoot />
-                  <Component {...pageProps} />
-                </ModalProvider>
-              </NotificationProvider>
-            </LoadingProvider>
-          </AuthProvider>
+          <LoadingProvider>
+            <NotificationProvider>
+              <ModalProvider>
+                <ModalRoot />
+                <Component {...pageProps} />
+              </ModalProvider>
+            </NotificationProvider>
+          </LoadingProvider>
         </WrappedQueryClientProvider>
       </StoreProvider>
     );
@@ -62,33 +59,31 @@ const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken
         <ToastProvider>
           <WrappedQueryClientProvider>
             <Hydrate state={pageProps.dehydratedState}>
-              <AuthProvider token={authToken}>
-                <RouteHistoryProvider>
-                  <LoadingProvider>
-                    <NotificationProvider>
-                      <ModalProvider>
-                        <NavbarProvider>
-                          <ModalRoot />
-                          <Toast />
-                          <If condition={isOnDashboards}>
-                            <Then>
-                              <DashboardLayout>
-                                <Component {...pageProps} />
-                              </DashboardLayout>
-                            </Then>
-                            <Else>
-                              <MainLayout>
-                                <Component {...pageProps} />
-                                <CookieBanner />
-                              </MainLayout>
-                            </Else>
-                          </If>
-                        </NavbarProvider>
-                      </ModalProvider>
-                    </NotificationProvider>
-                  </LoadingProvider>
-                </RouteHistoryProvider>
-              </AuthProvider>
+              <RouteHistoryProvider>
+                <LoadingProvider>
+                  <NotificationProvider>
+                    <ModalProvider>
+                      <NavbarProvider>
+                        <ModalRoot />
+                        <Toast />
+                        <If condition={isOnDashboards}>
+                          <Then>
+                            <DashboardLayout>
+                              <Component {...pageProps} />
+                            </DashboardLayout>
+                          </Then>
+                          <Else>
+                            <MainLayout>
+                              <Component {...pageProps} />
+                              <CookieBanner />
+                            </MainLayout>
+                          </Else>
+                        </If>
+                      </NavbarProvider>
+                    </ModalProvider>
+                  </NotificationProvider>
+                </LoadingProvider>
+              </RouteHistoryProvider>
             </Hydrate>
             <ReactQueryDevtools initialIsOpen={false} />
           </WrappedQueryClientProvider>
