@@ -47,22 +47,29 @@ const AuditLogTable: FC<{
   const menuOverflowContainerRef = useRef(null);
   const route = useRouter();
   const isAdmin = route.asPath.includes("admin");
-  const columnTitlesPolygons = isAdmin
-    ? ["Date", "User", "Action", "Comments", "Attachments", ""]
-    : ["Date", "User", "Action", "Comments", "Attachments"];
-  const gridColumnSizePolygons = isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
-  const columnTitles =
-    auditData?.entity == "site-polygon"
-      ? columnTitlesPolygons
-      : isAdmin
-      ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
-      : ["Date", "User", "Status", "Change Request", "Comments", "Attachments"];
-  const gridColumnSize =
-    auditData?.entity == "site-polygon"
-      ? gridColumnSizePolygons
-      : isAdmin
-      ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]"
-      : "grid-cols-[14%_10%_10%_15%_30%_21%]";
+
+  const getColumnTitles = (entity: string, isAdmin: boolean) => {
+    if (entity === "site-polygon") {
+      return isAdmin
+        ? ["Date", "User", "Action", "Comments", "Attachments", ""]
+        : ["Date", "User", "Action", "Comments", "Attachments"];
+    } else {
+      return isAdmin
+        ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
+        : ["Date", "User", "Status", "Change Request", "Comments", "Attachments"];
+    }
+  };
+
+  const getGridColumnSize = (entity: string, isAdmin: boolean) => {
+    if (entity === "site-polygon") {
+      return isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+    } else {
+      return isAdmin ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]" : "grid-cols-[14%_10%_10%_15%_30%_21%]";
+    }
+  };
+
+  const columnTitles = getColumnTitles(auditData?.entity as string, isAdmin);
+  const gridColumnSize = getGridColumnSize(auditData?.entity as string, isAdmin);
 
   const { openNotification } = useNotificationContext();
   const t = useT();
