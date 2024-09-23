@@ -1,6 +1,7 @@
 import { AdminTokenStorageKey } from "../admin/apiProvider/utils/token";
 import { ApiContext } from "./apiContext";
 import FormData from "form-data";
+import Log from "@/utils/log";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
 
@@ -86,9 +87,7 @@ export async function apiFetch<
           ...(await response.json())
         };
       } catch (e) {
-        if (process.env.NODE_ENV === "development") {
-          console.log("apiFetch", e);
-        }
+        Log.error("v1/2 API Fetch error", e);
         error = {
           statusCode: -1
         };
@@ -104,9 +103,7 @@ export async function apiFetch<
       return (await response.blob()) as unknown as TData;
     }
   } catch (e) {
-    if (process.env.NODE_ENV === "development") {
-      console.log("apiFetch", e);
-    }
+    Log.error("v1/2 API Fetch error", e);
     error = {
       statusCode: response?.status || -1,
       //@ts-ignore

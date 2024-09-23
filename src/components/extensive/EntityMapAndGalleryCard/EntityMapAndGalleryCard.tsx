@@ -27,6 +27,7 @@ import {
 } from "@/generated/apiComponents";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
+import Log from "@/utils/log";
 
 import ModalAdd from "../Modal/ModalAdd";
 import { ModalId } from "../Modal/ModalConst";
@@ -196,7 +197,7 @@ const EntityMapAndGalleryCard = ({
           closeModal(ModalId.UPLOAD_IMAGES);
         })
         .catch(error => {
-          console.error("Error uploading files:", error);
+          Log.error("Error uploading files:", error);
           hideLoader();
         });
     }

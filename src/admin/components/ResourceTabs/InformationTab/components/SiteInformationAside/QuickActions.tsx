@@ -4,6 +4,7 @@ import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } fro
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
+import Log from "@/utils/log";
 import { downloadFileBlob } from "@/utils/network";
 const QuickActions: FC = () => {
   const { record } = useShowContext();
@@ -35,7 +36,7 @@ const QuickActions: FC = () => {
         downloadFileBlob(record.boundary_geojson, `${record.name}_shapefile.geojson`);
       }
     } catch (error) {
-      console.error("Error downloading shapefile:", error);
+      Log.error("Error downloading shapefile:", error);
     }
   };
 
