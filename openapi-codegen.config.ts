@@ -151,8 +151,8 @@ const generatePendingPredicates = async (context: Context, config: ConfigBase) =
   await context.writeFile(
     filename + ".ts",
     printNodes([
-      createNamedImport(["ApiDataStore"], "@/types/connection"),
-      createNamedImport(["isFetching", "apiFetchFailed"], `../utils`),
+      createNamedImport(["isFetching", "fetchFailed"], `../utils`),
+      createNamedImport(["ApiDataStore"], "@/store/apiSlice"),
       ...(componentImports.length == 0
         ? []
         : [createNamedImport(componentImports, `./${formatFilename(filenamePrefix + "-components")}`)]),
@@ -190,7 +190,7 @@ const createPredicateNodes = ({
   );
 
   nodes.push(
-    ...["isFetching", "apiFetchFailed"].map(fnName =>
+    ...["isFetching", "fetchFailed"].map(fnName =>
       f.createVariableStatement(
         [f.createModifier(ts.SyntaxKind.ExportKeyword)],
         f.createVariableDeclarationList(
