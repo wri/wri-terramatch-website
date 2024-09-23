@@ -59,6 +59,11 @@ When adding a new **resource** to the v3 API, a couple of steps are needed to in
   added to the `ApiResource` type in `apiSlice.ts`. This allows us to have strongly typed results
   coming from the redux APi store.
 
+### Connections
+Connections are a **declarative** way for components to get access to the data from the cached API
+layer that they need. This system is under development, and the current documentation about it is 
+[available in Confluence](https://gfw.atlassian.net/wiki/spaces/TerraMatch/pages/1423147024/Connections)
+
 ## Translation ([Transifex Native SDK](https://developers.transifex.com/docs/native)).
 
 Transifex native sdk provides a simple solution for internationalization.
