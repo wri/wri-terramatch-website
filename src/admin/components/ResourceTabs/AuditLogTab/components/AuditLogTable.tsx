@@ -44,10 +44,23 @@ const AuditLogTable: FC<{
   const menuOverflowContainerRef = useRef(null);
   const route = useRouter();
   const isAdmin = route.asPath.includes("admin");
-  const columnTitles = isAdmin
-    ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
-    : ["Date", "User", "Status", "Change Request", "Comments", "Attachments"];
-  const gridColumnSize = isAdmin ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]" : "grid-cols-[14%_10%_10%_15%_30%_21%]";
+  const columnTitlesPolygons = isAdmin
+    ? ["Date", "User", "Action", "Comments", "Attachments", ""]
+    : ["Date", "User", "Action", "Comments", "Attachments"];
+  const gridColumnSizePolygons = isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+  const columnTitles =
+    auditData?.entity == "site-polygon"
+      ? columnTitlesPolygons
+      : isAdmin
+      ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
+      : ["Date", "User", "Status", "Change Request", "Comments", "Attachments"];
+  const gridColumnSize =
+    auditData?.entity == "site-polygon"
+      ? gridColumnSizePolygons
+      : isAdmin
+      ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]"
+      : "grid-cols-[14%_10%_10%_15%_30%_21%]";
+
   const { openNotification } = useNotificationContext();
   const t = useT();
   const { mutate } = useDeleteV2ENTITYUUIDIDDelete({
@@ -89,9 +102,11 @@ const AuditLogTable: FC<{
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {generateUserName(item.first_name, item.last_name)}
             </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {formattedTextStatus(item.status as string) ?? "-"}
-            </Text>
+            <When condition={auditData?.entity !== "site-polygon"}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {formattedTextStatus(item.status as string) ?? "-"}
+              </Text>
+            </When>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {getTextForActionTable(item as { type: string; status: string; request_removed: boolean })}
             </Text>
