@@ -16,6 +16,8 @@ type LoginConnection = {
 export const login = (emailAddress: string, password: string) => authLogin({ body: { emailAddress, password } });
 export const logout = () => {
   removeAccessToken();
+  // When we log out, remove all cached API resources so that when we log in again, these resources
+  // are freshly fetched from the BE.
   ApiSlice.clearApiCache();
 };
 

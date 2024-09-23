@@ -9,7 +9,7 @@ export const makeStore = (authToken?: string) => {
       api: apiSlice.reducer
     },
     middleware: getDefaultMiddleware => {
-      if (process.env.NODE_ENV === "production") {
+      if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
         return getDefaultMiddleware().prepend(authListenerMiddleware.middleware);
       } else {
         return getDefaultMiddleware().prepend(authListenerMiddleware.middleware).concat(logger);
