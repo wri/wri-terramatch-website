@@ -12,7 +12,6 @@ import nookies from "nookies";
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import MainLayout from "@/components/generic/Layout/MainLayout";
-import AuthProvider from "@/context/auth.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
@@ -40,16 +39,14 @@ const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken
     return (
       <StoreProvider {...{ authToken }}>
         <WrappedQueryClientProvider>
-          <AuthProvider token={authToken}>
-            <LoadingProvider>
-              <NotificationProvider>
-                <ModalProvider>
-                  <ModalRoot />
-                  <Component {...pageProps} />
-                </ModalProvider>
-              </NotificationProvider>
-            </LoadingProvider>
-          </AuthProvider>
+          <LoadingProvider>
+            <NotificationProvider>
+              <ModalProvider>
+                <ModalRoot />
+                <Component {...pageProps} />
+              </ModalProvider>
+            </NotificationProvider>
+          </LoadingProvider>
         </WrappedQueryClientProvider>
       </StoreProvider>
     );
@@ -59,24 +56,22 @@ const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken
         <ToastProvider>
           <WrappedQueryClientProvider>
             <Hydrate state={pageProps.dehydratedState}>
-              <AuthProvider token={authToken}>
-                <RouteHistoryProvider>
-                  <LoadingProvider>
-                    <NotificationProvider>
-                      <ModalProvider>
-                        <NavbarProvider>
-                          <ModalRoot />
-                          <Toast />
-                          <MainLayout>
-                            <Component {...pageProps} />
-                            <CookieBanner />
-                          </MainLayout>
-                        </NavbarProvider>
-                      </ModalProvider>
-                    </NotificationProvider>
-                  </LoadingProvider>
-                </RouteHistoryProvider>
-              </AuthProvider>
+              <RouteHistoryProvider>
+                <LoadingProvider>
+                  <NotificationProvider>
+                    <ModalProvider>
+                      <NavbarProvider>
+                        <ModalRoot />
+                        <Toast />
+                        <MainLayout>
+                          <Component {...pageProps} />
+                          <CookieBanner />
+                        </MainLayout>
+                      </NavbarProvider>
+                    </ModalProvider>
+                  </NotificationProvider>
+                </LoadingProvider>
+              </RouteHistoryProvider>
             </Hydrate>
             <ReactQueryDevtools initialIsOpen={false} />
           </WrappedQueryClientProvider>
