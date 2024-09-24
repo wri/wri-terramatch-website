@@ -28,11 +28,21 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
   const { openModal, closeModal } = useModalContext();
 
   const openModalImageDetail = (item: any) => {
+    const data = {
+      uuid: item.uuid!,
+      fullImageUrl: item.url!,
+      thumbnailImageUrl: item.thumb_url!,
+      label: item.model_name ?? "test",
+      isPublic: item.is_public!,
+      isGeotagged: item?.lat !== 0 && item?.lng !== 0,
+      isCover: item.is_cover,
+      raw: { ...item, location: { lat: item.lat, lng: item.lng }, name: item.title }
+    };
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
       <ModalImageDetails
         title="IMAGE DETAILS"
-        data={item}
+        data={data}
         entityData={[]}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
         reloadGalleryImages={() => {}}
@@ -41,7 +51,7 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
       true
     );
   };
-
+  console.log("items", items);
   const data = items.map(item => ({
     id: item.uuid,
     image: item.title,
@@ -127,6 +137,7 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
                           </div>
                         ),
                         onClick: () => {
+                          console.log("values ", props, props.getValue());
                           openModalImageDetail(props.getValue());
                         }
                       },
