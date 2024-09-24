@@ -234,43 +234,44 @@ const EntityMapAndGalleryCard = ({
           />
         </Then>
         <Else>
-          <PageCard
-            ref={imageGalleryRef}
-            title={t("All Images")}
-            headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
-          >
-            <ImageGallery
-              data={
-                data?.data?.map(file => ({
-                  //@ts-ignore
-                  uuid: file.uuid!,
-                  fullImageUrl: file.file_url!,
-                  thumbnailImageUrl: file.thumb_url!,
-                  label: file.model_name!,
-                  isPublic: file.is_public!,
-                  isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
-                  isCover: file.is_cover,
-                  raw: file
-                })) || []
-              }
-              entity={modelName}
-              entityData={entityData}
-              pageCount={data?.meta?.last_page || 1}
-              onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
-              onGalleryStateChange={(pagination, filter) => {
-                setPagination(pagination);
-                setFilter(filter);
-              }}
-              filterOptions={filterOptions}
-              onChangeSearch={setSearchString}
-              onChangeGeotagged={setIsGeotagged}
-              reloadGalleryImages={refetch}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-              setFilters={setFilters}
-              isLoading={isLoading}
-            />
-          </PageCard>
+          <div ref={imageGalleryRef}>
+            <PageCard
+              title={t("All Images")}
+              headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
+            >
+              <ImageGallery
+                data={
+                  data?.data?.map(file => ({
+                    //@ts-ignore
+                    uuid: file.uuid!,
+                    fullImageUrl: file.file_url!,
+                    thumbnailImageUrl: file.thumb_url!,
+                    label: file.model_name!,
+                    isPublic: file.is_public!,
+                    isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+                    isCover: file.is_cover,
+                    raw: file
+                  })) || []
+                }
+                entity={modelName}
+                entityData={entityData}
+                pageCount={data?.meta?.last_page || 1}
+                onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+                onGalleryStateChange={(pagination, filter) => {
+                  setPagination(pagination);
+                  setFilter(filter);
+                }}
+                filterOptions={filterOptions}
+                onChangeSearch={setSearchString}
+                onChangeGeotagged={setIsGeotagged}
+                reloadGalleryImages={refetch}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+                setFilters={setFilters}
+                isLoading={isLoading}
+              />
+            </PageCard>
+          </div>
         </Else>
       </If>
     </>

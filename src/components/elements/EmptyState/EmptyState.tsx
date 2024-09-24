@@ -14,7 +14,7 @@ export interface EmptyStateProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   ctaProps?: IButtonProps;
 }
 
-const EmptyState = ({ title, iconProps, subtitle, ctaProps, className, ref, ...props }: EmptyStateProps) => {
+const EmptyState = ({ title, iconProps, subtitle, ctaProps, className, ...props }: EmptyStateProps) => {
   return (
     <Paper {...props} className={classNames(className, "p-15")}>
       <When condition={!!iconProps}>

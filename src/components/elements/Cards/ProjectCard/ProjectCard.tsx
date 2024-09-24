@@ -37,7 +37,7 @@ const FrameworkName = () => {
   );
 };
 
-const ProjectCard = ({ project, onDelete, title, children, className, ref, ...rest }: ProjectCardProps) => {
+const ProjectCard = ({ project, onDelete, title, children, className, ...rest }: ProjectCardProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const status = getEntityCombinedStatus(project);

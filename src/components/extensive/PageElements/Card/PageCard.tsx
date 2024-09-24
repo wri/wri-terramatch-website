@@ -1,12 +1,12 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, forwardRef, HTMLAttributes, PropsWithChildren, ReactNode } from "react";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode, useRef } from "react";
 import { When } from "react-if";
 
 import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import { withFrameworkShowRef } from "@/context/framework.provider";
+import { withFrameworkShow } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../../Icon/Icon";
 
@@ -22,9 +22,21 @@ export interface PageCardProps
   tooltip?: string;
 }
 
-const PageCard = forwardRef<HTMLDivElement, PageCardProps>(
-  ({ title, subtitle, children, headerChildren, emptyStateProps, isEmpty, gap = 8, tooltip, ...props }, ref) => (
-    <Paper {...props} ref={ref}>
+const PageCard = ({
+  title,
+  subtitle,
+  children,
+  headerChildren,
+  emptyStateProps,
+  isEmpty,
+  gap = 8,
+  tooltip,
+  ...props
+}: PageCardProps) => {
+  const localRef = useRef<HTMLDivElement>(null); // Create a local ref
+
+  return (
+    <Paper {...props} ref={localRef}>
       <When condition={!!title || !!headerChildren}>
         <div className="flex flex-wrap justify-between">
           <When condition={!!title}>
@@ -52,6 +64,7 @@ const PageCard = forwardRef<HTMLDivElement, PageCardProps>(
         </div>
       </When>
     </Paper>
-  )
-);
-export default withFrameworkShowRef(PageCard);
+  );
+};
+
+export default withFrameworkShow(PageCard);

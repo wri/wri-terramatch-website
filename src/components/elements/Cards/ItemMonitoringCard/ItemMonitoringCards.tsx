@@ -44,7 +44,6 @@ const ItemMonitoringCards = ({
   item,
   legends,
   key,
-  ref,
   ...props
 }: ItemMonitoringCardsProps) => {
   const t = useT();
