@@ -22,7 +22,7 @@ export function useConnection<TSelected, TProps extends OptionalProps = undefine
     const connected = selector(store.getState().api, props);
     const loadingDone = isLoaded == null || isLoaded(connected, props);
     return { loadingDone, connected };
-  }, [isLoaded, props, selector]);
+  }, [store, isLoaded, props, selector]);
 
   const [connected, setConnected] = useState(() => {
     const { loadingDone, connected } = getConnected();

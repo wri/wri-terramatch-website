@@ -1,9 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { Store } from "redux";
 import { logger } from "redux-logger";
 
-import ApiSlice, { apiSlice, authListenerMiddleware } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, apiSlice, authListenerMiddleware } from "@/store/apiSlice";
 
-export const makeStore = (authToken?: string) => {
+export type AppStore = {
+  api: ApiDataStore;
+};
+
+export const makeStore = (authToken?: string): Store<AppStore> => {
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer
@@ -25,6 +30,3 @@ export const makeStore = (authToken?: string) => {
 
   return store;
 };
-
-// Infer the type of makeStore
-export type AppStore = ReturnType<typeof makeStore>;
