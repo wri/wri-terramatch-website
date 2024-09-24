@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import Lottie from "lottie-react";
+import { UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 
 import SpinnerLottie from "@/assets/animations/spinner.json";
@@ -20,13 +21,13 @@ export interface FilePreviewTableProps {
   className?: string;
   onDelete?: (file: Partial<UploadedFile>) => void;
   onPrivateChange?: (file: Partial<UploadedFile>, checked: boolean) => void;
+  formHook?: UseFormReturn;
 }
 
-const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FilePreviewTableProps) => {
+const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHook }: FilePreviewTableProps) => {
   const t = useT();
 
   const { openModal, closeModal } = useModalContext();
-
   const openModalImageDetail = (item: any) => {
     const data = {
       uuid: item.uuid!,
@@ -47,6 +48,13 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange }: FileP
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
         reloadGalleryImages={() => {}}
         handleDelete={() => {}}
+        updateValuesInForm={updatedItem => {
+          console.log("updatedItem", updatedItem, items);
+          formHook?.setValue(
+            "4986a3cd-91a5-4ba7-b7c9-503e3fb03837",
+            items.map(item => (item.uuid === updatedItem.uuid ? updatedItem : item))
+          );
+        }}
       />,
       true
     );

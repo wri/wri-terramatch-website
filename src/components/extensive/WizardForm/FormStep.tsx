@@ -34,7 +34,7 @@ export const FormStep = ({
     formHook.clearErrors();
   }, [fields, formHook, title]);
   const isPhotosAndVideo = title === "Photos and Videos";
-
+  // console.log("fields NO TIENE VALUE", fields);
   return (
     <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-15", className)}>
       <div className="flex items-center justify-between">

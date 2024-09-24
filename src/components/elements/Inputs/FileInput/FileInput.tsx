@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { ChangeEvent, Fragment, ReactNode, useId, useMemo, useRef } from "react";
 import { useDropzone } from "react-dropzone";
+import { UseFormReturn } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -30,6 +31,7 @@ export type FileInputProps = InputWrapperProps & {
   onChange?: (file: File[]) => any;
   onDelete?: (file: Partial<UploadedFile>) => void;
   onPrivateChange?: (uuid: Partial<UploadedFile>, checked: boolean) => void;
+  formHook?: UseFormReturn;
 };
 
 export interface FileStatus {
@@ -162,7 +164,12 @@ const FileInput = (props: FileInputProps) => {
       </When>
       <If condition={props.previewAsTable}>
         <Then>
-          <FilePreviewTable items={props.files} onDelete={props.onDelete} onPrivateChange={props.onPrivateChange} />
+          <FilePreviewTable
+            items={props.files}
+            onDelete={props.onDelete}
+            onPrivateChange={props.onPrivateChange}
+            formHook={props.formHook}
+          />
         </Then>
         <Else>
           <List

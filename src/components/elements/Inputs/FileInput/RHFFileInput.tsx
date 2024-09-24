@@ -44,7 +44,10 @@ const RHFFileInput = ({
   ...fileInputProps
 }: RHFFileInputProps) => {
   const t = useT();
+
+  console.log("fileInputProps", fileInputProps);
   const { field } = useController(fileInputProps);
+  console.log("fileInputProps", useController(fileInputProps), field);
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
   const [files, setFiles] = useState<Partial<UploadedFile>[]>(toArray(value));
@@ -241,6 +244,7 @@ const RHFFileInput = ({
       onChange={files => files.forEach(onSelectFile)}
       onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
+      formHook={formHook}
     />
   );
 };
