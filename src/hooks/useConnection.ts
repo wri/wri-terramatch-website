@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { useStore } from "react-redux";
 
-import ApiSlice from "@/store/apiSlice";
+import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps } from "@/types/connection";
 
 /**
@@ -15,9 +16,10 @@ export function useConnection<TSelected, TProps extends OptionalProps = undefine
   props: TProps | Record<any, never> = {}
 ): Connected<TSelected> {
   const { selector, isLoaded, load } = connection;
+  const store = useStore<AppStore>();
 
   const getConnected = useCallback(() => {
-    const connected = selector(ApiSlice.store.getState().api, props);
+    const connected = selector(store.getState().api, props);
     const loadingDone = isLoaded == null || isLoaded(connected, props);
     return { loadingDone, connected };
   }, [isLoaded, props, selector]);
@@ -40,7 +42,7 @@ export function useConnection<TSelected, TProps extends OptionalProps = undefine
         }
       }
 
-      const subscription = ApiSlice.store.subscribe(checkState);
+      const subscription = store.subscribe(checkState);
       checkState();
       return subscription;
     },
