@@ -13,21 +13,24 @@ type Story = StoryObj<typeof Component>;
 const client = new QueryClient();
 
 export const LoggedIn: Story = {
+  parameters: {
+    storeProviderProps: { authToken: "fakeauthtoken" }
+  },
   decorators: [
     Story => (
       <QueryClientProvider client={client}>
         <Story />
       </QueryClientProvider>
     )
-  ],
-  args: {
-    isLoggedIn: true
-  }
+  ]
 };
 
 export const LoggedOut: Story = {
-  ...LoggedIn,
-  args: {
-    isLoggedIn: false
-  }
+  decorators: [
+    Story => (
+      <QueryClientProvider client={client}>
+        <Story />
+      </QueryClientProvider>
+    )
+  ]
 };
