@@ -14,6 +14,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
@@ -121,7 +122,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       onClose?.();
     } catch (error) {
       openNotification("error", t("Error"), t("Failed to update image details"));
-      console.error("Failed to update image details:", error);
+      Log.error("Failed to update image details:", error);
     }
   };
 

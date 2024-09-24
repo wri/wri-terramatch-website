@@ -4,9 +4,11 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { useAuthContext } from "@/context/auth.provider";
+import { login, loginConnection } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
+import { useConnection } from "@/hooks/useConnection";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 import LoginLayout from "../layout";
 import LoginForm from "./components/LoginForm";
@@ -27,35 +29,25 @@ const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
   const router = useRouter();
-  const { login, loginLoading } = useAuthContext();
+  const [, { isLoggedIn, isLoggingIn, loginFailed }] = useConnection(loginConnection);
   const { openToast } = useToastContext();
   const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema(t)),
     mode: "onSubmit"
   });
 
-  /**
-   * Form Submit Handler
-   * @param data LoginFormData
-   * @returns Log in user and redirect to homepage
-   */
-  const handleSave = async (data: LoginFormDataType) => {
-    const res = (await login(
-      {
-        email_address: data.email,
-        password: data.password
-      },
-      () => openToast(t("Incorrect Email or Password"), ToastType.ERROR)
-    )) as { success: boolean };
+  useValueChanged(loginFailed, () => {
+    if (loginFailed) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
+  });
+  useValueChanged(isLoggedIn, () => {
+    if (isLoggedIn) router.push("/home");
+  });
 
-    if (!res?.success) return;
-
-    return router.push("/home");
-  };
+  const handleSave = (data: LoginFormDataType) => login(data.email, data.password);
 
   return (
     <LoginLayout>
-      <LoginForm form={form} loading={loginLoading} handleSave={handleSave} />
+      <LoginForm form={form} loading={isLoggingIn || isLoggedIn} handleSave={handleSave} />
     </LoginLayout>
   );
 };

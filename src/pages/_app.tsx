@@ -12,7 +12,6 @@ import nookies from "nookies";
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import MainLayout from "@/components/generic/Layout/MainLayout";
-import AuthProvider from "@/context/auth.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
@@ -21,13 +20,15 @@ import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { getServerSideTranslations, setClientSideTranslations } from "@/i18n";
+import StoreProvider from "@/store/StoreProvider";
+import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
   ssr: false
 });
 
-const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessToken?: string; props: any }) => {
+const _App = ({ Component, pageProps, props, authToken }: AppProps & { authToken?: string; props: any }) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
@@ -37,50 +38,46 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
 
   if (isAdmin)
     return (
-      <>
+      <StoreProvider {...{ authToken }}>
         <WrappedQueryClientProvider>
-          <AuthProvider token={accessToken}>
-            <LoadingProvider>
-              <NotificationProvider>
-                <ModalProvider>
-                  <ModalRoot />
-                  <Component {...pageProps} />
-                </ModalProvider>
-              </NotificationProvider>
-            </LoadingProvider>
-          </AuthProvider>
+          <LoadingProvider>
+            <NotificationProvider>
+              <ModalProvider>
+                <ModalRoot />
+                <Component {...pageProps} />
+              </ModalProvider>
+            </NotificationProvider>
+          </LoadingProvider>
         </WrappedQueryClientProvider>
-      </>
+      </StoreProvider>
     );
   else
     return (
-      <>
+      <StoreProvider {...{ authToken }}>
         <ToastProvider>
           <WrappedQueryClientProvider>
             <Hydrate state={pageProps.dehydratedState}>
-              <AuthProvider token={accessToken}>
-                <RouteHistoryProvider>
-                  <LoadingProvider>
-                    <NotificationProvider>
-                      <ModalProvider>
-                        <NavbarProvider>
-                          <ModalRoot />
-                          <Toast />
-                          <MainLayout isLoggedIn={!!accessToken}>
-                            <Component {...pageProps} accessToken={accessToken} />
-                            <CookieBanner />
-                          </MainLayout>
-                        </NavbarProvider>
-                      </ModalProvider>
-                    </NotificationProvider>
-                  </LoadingProvider>
-                </RouteHistoryProvider>
-              </AuthProvider>
+              <RouteHistoryProvider>
+                <LoadingProvider>
+                  <NotificationProvider>
+                    <ModalProvider>
+                      <NavbarProvider>
+                        <ModalRoot />
+                        <Toast />
+                        <MainLayout>
+                          <Component {...pageProps} />
+                          <CookieBanner />
+                        </MainLayout>
+                      </NavbarProvider>
+                    </ModalProvider>
+                  </NotificationProvider>
+                </LoadingProvider>
+              </RouteHistoryProvider>
             </Hydrate>
             <ReactQueryDevtools initialIsOpen={false} />
           </WrappedQueryClientProvider>
         </ToastProvider>
-      </>
+      </StoreProvider>
     );
 };
 
@@ -91,9 +88,9 @@ _App.getInitialProps = async (context: AppContext) => {
   try {
     translationsData = await getServerSideTranslations(context.ctx);
   } catch (err) {
-    console.log("Failed to get Serverside Transifex", err);
+    Log.warn("Failed to get Serverside Transifex", err);
   }
-  return { ...ctx, props: { ...translationsData }, accessToken: cookies.accessToken };
+  return { ...ctx, props: { ...translationsData }, authToken: cookies.accessToken };
 };
 
 export default _App;

@@ -18,7 +18,7 @@ To generate Api types/queries/fetchers/hooks, this repo uses:
 
 #### Usage
 
-In order to generate from the api (whenever there is some backend endpoint/type change) please use this command:
+In order to generate from the v1/2 api (whenever there is some backend endpoint/type change) please use this command:
 
 ```
 yarn generate:api
@@ -34,6 +34,35 @@ We can customize the `baseUrl` of where we are fetching from by changing the `co
 `apiContext.ts` will NOT change everytime we re-generate the api, and its responsible to set the global context of api requests.
 This is super useful if we want to globally set some headers for each request (such as Authorization header).
 It exposes a component hook so we can use other hooks (such as Auth hook or context) to get the logged in token for example and inject it in the global request context.
+
+##### v3 API
+The V3 API has a different API layer, but the generation is similar: 
+```
+yarn generate:services
+```
+
+When adding a new **service** app to the v3 API, a few steps are needed to integrate it:
+* In `openapi-codegen.config.ts`, add the new service name to the `SERVICES` array (e.g. `foo-service`). 
+* This will generate a new target, which needs to be added to `package.json`:
+  * Under scripts, add `"generate:fooService": "npm run generate:fooService"`
+  * Under the `"generate:services"` script, add the new service: `"generate:services": "npm run generate:userService && npm run generate:fooService`
+* After running `yarn generate:fooService` the first time, open the generated `fooServiceFetcher.ts` and 
+  modify it to match `userServiceFetcher.ts`. 
+  * This file does not get regenerated after the first time, and so it can utilize the same utilities 
+    for interfacing with the redux API layer / connection system that the other v3 services use.
+
+When adding a new **resource** to the v3 API, a couple of steps are needed to integrate it:
+* The resource needs to be specified in shape of the redux API store. In `apiSlice.ts`, add the new 
+  resource plural name (the `type` returned in the API responses) to the store by adding it to the 
+  `RESOURCES` const. This will make sure it's listed in the type of the ApiStore so that resources that match that type are seamlessly folded into the store cache structure.
+* The shape of the resource should be specified by the auto-generated API. This type needs to be 
+  added to the `ApiResource` type in `apiSlice.ts`. This allows us to have strongly typed results
+  coming from the redux APi store.
+
+### Connections
+Connections are a **declarative** way for components to get access to the data from the cached API
+layer that they need. This system is under development, and the current documentation about it is 
+[available in Confluence](https://gfw.atlassian.net/wiki/spaces/TerraMatch/pages/1423147024/Connections)
 
 ## Translation ([Transifex Native SDK](https://developers.transifex.com/docs/native)).
 

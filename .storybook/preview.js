@@ -1,5 +1,6 @@
 import "src/styles/globals.css";
 import * as NextImage from "next/image";
+import StoreProvider from "../src/store/StoreProvider";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -24,3 +25,18 @@ Object.defineProperty(NextImage, "default", {
     />
   )
 });
+
+export const decorators = [
+  (Story, options) => {
+    const { parameters } = options;
+
+    let storeProviderProps = {};
+    if (parameters.storeProviderProps != null) {
+      storeProviderProps = parameters.storeProviderProps;
+    }
+
+    return <StoreProvider {...storeProviderProps}>
+      <Story {...options} />
+    </StoreProvider>;
+  },
+];
