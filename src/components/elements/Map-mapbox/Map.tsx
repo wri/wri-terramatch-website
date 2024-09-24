@@ -3,6 +3,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
@@ -12,9 +13,14 @@ import { ValidationError } from "yup";
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -22,11 +28,14 @@ import {
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   GetV2MODELUUIDFilesResponse,
+  usePatchV2MediaProjectProjectMediaUuid,
+  usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
@@ -143,6 +152,11 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
+  const { mutateAsync } = usePostV2ExportImage();
+  const { showLoader, hideLoader } = useLoading();
+  const router = useRouter();
+  const { openModal, closeModal } = useModalContext();
+  const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
   const { openNotification } = useNotificationContext();
   const {
     isUserDrawingEnabled,
@@ -238,9 +252,112 @@ export const MapContainer = ({
   }, [bbox]);
 
   useEffect(() => {
+    const projectUUID = router.query.uuid as string;
+
+    const handleDelete = (id: string) => {
+      openModal(
+        ModalId.DELETE_IMAGE,
+        <Modal
+          title={t("Delete Image")}
+          content={t(
+            "Are you sure you want to delete this image? This action cannot be undone, and the image will be permanently removed."
+          )}
+          iconProps={{
+            height: 60,
+            width: 60,
+            className: "fill-error",
+            name: IconNames.TRASH_CIRCLE
+          }}
+          primaryButtonProps={{
+            children: t("Confirm Delete"),
+            onClick: () => {
+              closeModal(ModalId.DELETE_IMAGE);
+              // onDeleteConfirm(id);
+            }
+          }}
+          secondaryButtonProps={{
+            children: t("Cancel"),
+            onClick: () => closeModal(ModalId.DELETE_IMAGE)
+          }}
+        />
+      );
+    };
+
+    const openModalImageDetail = (data: ImageGalleryItemData | any) => {
+      const dataImage = {
+        raw: { ...data, location: JSON.parse(data.location) },
+        thumbnailImageUrl: data.file_url,
+        isGeotagged: true
+      };
+      openModal(
+        ModalId.MODAL_IMAGE_DETAIL,
+        <ModalImageDetails
+          title="IMAGE DETAILS"
+          data={dataImage}
+          entityData={projectUUID}
+          onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+          // reloadGalleryImages={reloadGalleryImages}
+          handleDelete={handleDelete}
+        />,
+        true
+      );
+    };
+
+    const setImageCover = async (uuid: string) => {
+      const result = await updateIsCoverAsync({
+        pathParams: { project: projectUUID, mediaUuid: uuid }
+      });
+      if (result) {
+        openNotification("success", t("Success!"), t("Image set as cover successfully"));
+      } else {
+        openNotification("error", t("Error!"), t("Failed to set image as cover"));
+      }
+    };
+
+    const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
+      showLoader();
+      try {
+        const response = await mutateAsync({
+          body: {
+            uuid: uuid
+          }
+        });
+
+        if (!response) {
+          console.error("No response received from the server.");
+          openNotification("error", t("Error!"), t("No response received from the server."));
+          return;
+        }
+
+        const blob = new Blob([response], { type: "image/jpeg" });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file_name || "image.jpg";
+        document.body.appendChild(link);
+        link.click();
+
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        hideLoader();
+        openNotification("success", t("Success!"), t("Image downloaded successfully"));
+      } catch (error) {
+        console.error("Download error:", error);
+        hideLoader();
+      }
+    };
+
     if (map?.current && styleLoaded && props?.modelFilesData) {
       if (showMediaPopups) {
-        addMediaSourceAndLayer(map.current, props?.modelFilesData);
+        addMediaSourceAndLayer(
+          map.current,
+          props?.modelFilesData,
+          setImageCover,
+          handleDownload,
+          handleDelete,
+          openModalImageDetail
+        );
       } else {
         removePopups("MEDIA");
         removeMediaLayer(map.current);

@@ -14844,6 +14844,8 @@ export type GetV2MODELUUIDFilesResponse = {
     mime_type?: string;
     file_size?: number;
     collection_name?: string;
+    description?: string;
+    photographer?: string;
   }[];
   links?: {
     first?: string;
