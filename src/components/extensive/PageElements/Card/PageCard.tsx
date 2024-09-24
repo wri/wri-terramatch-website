@@ -6,7 +6,7 @@ import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyFi
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import { withFrameworkShow } from "@/context/framework.provider";
+import { withFrameworkShowRef } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../../Icon/Icon";
 
@@ -54,4 +54,4 @@ const PageCard = forwardRef<HTMLDivElement, PageCardProps>(
     </Paper>
   )
 );
-export default withFrameworkShow(PageCard);
+export default withFrameworkShowRef(PageCard);

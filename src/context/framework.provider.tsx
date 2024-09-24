@@ -52,14 +52,29 @@ export const useFrameworkShowHide = ({ frameworksShow, frameworksHide }: ShowHid
   return true;
 };
 
-export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
+export function withFrameworkShowRef<T>(WrappedComponent: ComponentType<T>) {
   const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
-  const FrameworkShowHide = forwardRef<HTMLDivElement, T & ShowHideProps>((props, ref) => {
+
+  const FrameworkShowHide = forwardRef<HTMLDivElement, T & ShowHideProps>((props, ref?: Ref<HTMLDivElement>) => {
     const { frameworksShow, frameworksHide, ...rest } = props;
+
     if (!useFrameworkShowHide({ frameworksShow, frameworksHide })) return null;
 
     return <WrappedComponent {...(rest as T & JSX.IntrinsicAttributes)} ref={ref} />;
   });
+
+  FrameworkShowHide.displayName = `withFrameworkShow(${displayName})`;
+  return FrameworkShowHide;
+}
+
+export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
+  const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
+  const FrameworkShowHide = (props: T & ShowHideProps) => {
+    const { frameworksShow, frameworksHide, ...rest } = props;
+    if (!useFrameworkShowHide({ frameworksShow, frameworksHide })) return null;
+
+    return <WrappedComponent {...(rest as T & JSX.IntrinsicAttributes)} />;
+  };
   FrameworkShowHide.displayName = `withFrameworkShow(${displayName})`;
   return FrameworkShowHide;
 }
