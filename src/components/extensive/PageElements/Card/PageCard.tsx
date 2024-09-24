@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode, useRef } from "react";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode } from "react";
 import { When } from "react-if";
 
 import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyField";
@@ -33,10 +33,8 @@ const PageCard = ({
   tooltip,
   ...props
 }: PageCardProps) => {
-  const localRef = useRef<HTMLDivElement>(null); // Create a local ref
-
   return (
-    <Paper {...props} ref={localRef}>
+    <Paper {...props}>
       <When condition={!!title || !!headerChildren}>
         <div className="flex flex-wrap justify-between">
           <When condition={!!title}>
