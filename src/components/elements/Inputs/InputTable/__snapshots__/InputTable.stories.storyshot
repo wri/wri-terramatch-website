@@ -57,10 +57,10 @@ exports[`Storyshots Components/Elements/Inputs/InputTable Default 1`] = `
                 className="relative"
               >
                 <input
-                  aria-describedby=":r11:-description"
+                  aria-describedby=":r18:-description"
                   aria-invalid={false}
                   className="text-heading-100 text-center w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
-                  id=":r11:"
+                  id=":r18:"
                   name="full-time-jobs"
                   onChange={[Function]}
                   onKeyDown={[Function]}
@@ -93,10 +93,10 @@ exports[`Storyshots Components/Elements/Inputs/InputTable Default 1`] = `
                 className="relative"
               >
                 <input
-                  aria-describedby=":r12:-description"
+                  aria-describedby=":r19:-description"
                   aria-invalid={false}
                   className="text-heading-100 text-center w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
-                  id=":r12:"
+                  id=":r19:"
                   name="part-time-jobs"
                   onChange={[Function]}
                   onKeyDown={[Function]}
@@ -129,10 +129,10 @@ exports[`Storyshots Components/Elements/Inputs/InputTable Default 1`] = `
                 className="relative"
               >
                 <input
-                  aria-describedby=":r13:-description"
+                  aria-describedby=":r1a:-description"
                   aria-invalid={false}
                   className="text-heading-100 text-center w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
-                  id=":r13:"
+                  id=":r1a:"
                   name="women-employees"
                   onChange={[Function]}
                   onKeyDown={[Function]}

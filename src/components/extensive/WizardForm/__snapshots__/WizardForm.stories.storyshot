@@ -47,7 +47,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
       className="mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0"
     >
       <div
-        className="flex h-full w-full shadow"
+        className="flex h-full w-full rounded-2xl shadow"
       >
         <div
           aria-orientation="vertical"
@@ -60,7 +60,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3o:"
+            id="headlessui-tabs-tab-:r3g:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -83,7 +83,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3p:"
+            id="headlessui-tabs-tab-:r3h:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -106,7 +106,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
-            id="headlessui-tabs-tab-:r3q:"
+            id="headlessui-tabs-tab-:r3i:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -129,7 +129,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3r:"
+            id="headlessui-tabs-tab-:r3j:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -152,7 +152,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3s:"
+            id="headlessui-tabs-tab-:r3k:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -175,7 +175,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3t:"
+            id="headlessui-tabs-tab-:r3l:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -198,7 +198,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3u:"
+            id="headlessui-tabs-tab-:r3m:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -221,7 +221,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r3v:"
+            id="headlessui-tabs-tab-:r3n:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -284,7 +284,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r40:"
+                      htmlFor=":r3o:"
                     >
                       Select component *
                     </label>
@@ -293,7 +293,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                     >
                       <label
                         className="flex items-center flex-row-reverse justify-end gap-3"
-                        htmlFor=":r41:"
+                        htmlFor=":r3p:"
                       >
                         <p
                           className="text-light-caption-200"
@@ -304,7 +304,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                         <input
                           checked={false}
                           className="flex-row-reverse justify-end gap-3"
-                          id=":r41:"
+                          id=":r3p:"
                           label="Option 1"
                           onClick={[Function]}
                           type="radio"
@@ -312,7 +312,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                       </label>
                       <label
                         className="flex items-center flex-row-reverse justify-end gap-3"
-                        htmlFor=":r42:"
+                        htmlFor=":r3q:"
                       >
                         <p
                           className="text-light-caption-200"
@@ -323,7 +323,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                         <input
                           checked={false}
                           className="flex-row-reverse justify-end gap-3"
-                          id=":r42:"
+                          id=":r3q:"
                           label="Option 2"
                           onClick={[Function]}
                           type="radio"
@@ -331,7 +331,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                       </label>
                       <label
                         className="flex items-center flex-row-reverse justify-end gap-3"
-                        htmlFor=":r43:"
+                        htmlFor=":r3r:"
                       >
                         <p
                           className="text-light-caption-200"
@@ -342,7 +342,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                         <input
                           checked={false}
                           className="flex-row-reverse justify-end gap-3"
-                          id=":r43:"
+                          id=":r3r:"
                           label="Option 3"
                           onClick={[Function]}
                           type="radio"
@@ -360,7 +360,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r44:"
+                      htmlFor=":r3s:"
                     >
                       Multi-Select component *
                     </label>
@@ -372,7 +372,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r45:"
+                          htmlFor=":r3t:"
                         >
                           <label
                             className="max-w-[365px] undefined text-body-600 with-inner-html"
@@ -382,13 +382,13 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                               }
                             }
                             data-testid="txt"
-                            htmlFor=":r45:"
+                            htmlFor=":r3t:"
                           />
                         </label>
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-                          id=":r45:"
+                          id=":r3t:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -399,7 +399,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r46:"
+                          htmlFor=":r3u:"
                         >
                           <label
                             className="max-w-[365px] undefined text-body-600 with-inner-html"
@@ -409,13 +409,13 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                               }
                             }
                             data-testid="txt"
-                            htmlFor=":r46:"
+                            htmlFor=":r3u:"
                           />
                         </label>
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-                          id=":r46:"
+                          id=":r3u:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -426,7 +426,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r47:"
+                          htmlFor=":r3v:"
                         >
                           <label
                             className="max-w-[365px] undefined text-body-600 with-inner-html"
@@ -436,13 +436,13 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                               }
                             }
                             data-testid="txt"
-                            htmlFor=":r47:"
+                            htmlFor=":r3v:"
                           />
                         </label>
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-                          id=":r47:"
+                          id=":r3v:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -453,7 +453,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r48:"
+                          htmlFor=":r40:"
                         >
                           <label
                             className="max-w-[365px] undefined text-body-600 with-inner-html"
@@ -463,13 +463,13 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
                               }
                             }
                             data-testid="txt"
-                            htmlFor=":r48:"
+                            htmlFor=":r40:"
                           />
                         </label>
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-                          id=":r48:"
+                          id=":r40:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -526,7 +526,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
       className="mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0"
     >
       <div
-        className="flex h-full w-full shadow"
+        className="flex h-full w-full rounded-2xl shadow"
       >
         <div
           aria-orientation="vertical"
@@ -539,7 +539,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
-            id="headlessui-tabs-tab-:r49:"
+            id="headlessui-tabs-tab-:r41:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -562,7 +562,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4a:"
+            id="headlessui-tabs-tab-:r42:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -585,7 +585,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4b:"
+            id="headlessui-tabs-tab-:r43:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -608,7 +608,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4c:"
+            id="headlessui-tabs-tab-:r44:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -631,7 +631,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4d:"
+            id="headlessui-tabs-tab-:r45:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -654,7 +654,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4e:"
+            id="headlessui-tabs-tab-:r46:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -677,7 +677,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4f:"
+            id="headlessui-tabs-tab-:r47:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -700,7 +700,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
-            id="headlessui-tabs-tab-:r4g:"
+            id="headlessui-tabs-tab-:r48:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -763,7 +763,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r4h:"
+                      htmlFor=":r49:"
                     >
                       Simple text field *
                     </label>
@@ -771,10 +771,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
                       className="relative"
                     >
                       <input
-                        aria-describedby=":r4h:-description"
+                        aria-describedby=":r49:-description"
                         aria-invalid={false}
                         className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
-                        id=":r4h:"
+                        id=":r49:"
                         name="text_field"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -794,7 +794,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r4i:"
+                      htmlFor=":r4a:"
                     >
                       Simple number field *
                     </label>
@@ -802,10 +802,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
                       className="relative"
                     >
                       <input
-                        aria-describedby=":r4i:-description"
+                        aria-describedby=":r4a:-description"
                         aria-invalid={false}
                         className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
-                        id=":r4i:"
+                        id=":r4a:"
                         name="number_field"
                         onBlur={[Function]}
                         onChange={[Function]}

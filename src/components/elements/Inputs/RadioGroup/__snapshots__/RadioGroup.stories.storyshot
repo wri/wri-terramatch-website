@@ -12,14 +12,14 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
   </label>
   <div
     className="space-y-2"
-    id="headlessui-radiogroup-:r1a:"
+    id="headlessui-radiogroup-:r1h:"
     onKeyDown={[Function]}
     role="radiogroup"
   >
     <div
       aria-checked="false"
       data-headlessui-state=""
-      id="headlessui-radiogroup-option-:r1b:"
+      id="headlessui-radiogroup-option-:r1i:"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -31,7 +31,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
       >
         <label
           className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
-          htmlFor=":r1c:"
+          htmlFor=":r1j:"
         >
           <p
             className="text-light-caption-200"
@@ -42,7 +42,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
           <input
             checked={false}
             className="flex flex-row-reverse items-center justify-end gap-3 "
-            id=":r1c:"
+            id=":r1j:"
             label="Yes"
             onChange={[Function]}
             type="radio"
@@ -53,7 +53,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
     <div
       aria-checked="false"
       data-headlessui-state=""
-      id="headlessui-radiogroup-option-:r1d:"
+      id="headlessui-radiogroup-option-:r1k:"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -65,7 +65,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
       >
         <label
           className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
-          htmlFor=":r1e:"
+          htmlFor=":r1l:"
         >
           <p
             className="text-light-caption-200"
@@ -76,7 +76,7 @@ exports[`Storyshots Components/Elements/Inputs/RadioGroup Default 1`] = `
           <input
             checked={false}
             className="flex flex-row-reverse items-center justify-end gap-3 "
-            id=":r1e:"
+            id=":r1l:"
             label="No"
             onChange={[Function]}
             type="radio"

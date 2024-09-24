@@ -47,7 +47,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
       className="mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0"
     >
       <div
-        className="flex h-full w-full shadow"
+        className="flex h-full w-full rounded-2xl shadow"
       >
         <div
           aria-orientation="vertical"
@@ -60,7 +60,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
-            id="headlessui-tabs-tab-:r4j:"
+            id="headlessui-tabs-tab-:r4b:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onMouseDown={[Function]}
@@ -83,7 +83,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r4k:"
+            id="headlessui-tabs-tab-:r4c:"
             role="option"
             tabIndex={-1}
           >
@@ -103,7 +103,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r4l:"
+            id="headlessui-tabs-tab-:r4d:"
             role="option"
             tabIndex={-1}
           >
@@ -123,7 +123,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r4m:"
+            id="headlessui-tabs-tab-:r4e:"
             role="option"
             tabIndex={-1}
           >
@@ -143,7 +143,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r4n:"
+            id="headlessui-tabs-tab-:r4f:"
             role="option"
             tabIndex={-1}
           >
@@ -163,7 +163,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
-            id="headlessui-tabs-tab-:r4o:"
+            id="headlessui-tabs-tab-:r4g:"
             role="option"
             tabIndex={-1}
           >
@@ -220,23 +220,27 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                   <div
                     className="space-y-2"
                   >
-                    <label
-                      className="mr-2 inline uppercase text-bold-body-300"
+                    <div
+                      className="flex items-baseline gap-1"
                       data-headlessui-state=""
-                      data-testid="txt"
-                      id="headlessui-listbox-label-:r4p:"
+                      id="headlessui-listbox-label-:r4h:"
                       onClick={[Function]}
                     >
-                      Headquarters address Country 
-                    </label>
+                      <label
+                        className="mr-2 inline uppercase text-bold-body-300"
+                        data-testid="txt"
+                      >
+                        Headquarters address Country 
+                      </label>
+                    </div>
                     <div
                       aria-expanded={false}
                       aria-haspopup="listbox"
-                      aria-labelledby="headlessui-listbox-label-:r4p: headlessui-listbox-button-:r4q:"
+                      aria-labelledby="headlessui-listbox-label-:r4h: headlessui-listbox-button-:r4i:"
                       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
                       data-headlessui-state=""
                       disabled={false}
-                      id="headlessui-listbox-button-:r4q:"
+                      id="headlessui-listbox-button-:r4i:"
                       onClick={[Function]}
                       onKeyDown={[Function]}
                       onKeyUp={[Function]}
@@ -266,15 +270,19 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                   <div
                     className="space-y-2"
                   >
-                    <label
-                      className="mr-2 inline uppercase text-bold-body-300"
+                    <div
+                      className="flex items-baseline gap-1"
                       data-headlessui-state=""
-                      data-testid="txt"
-                      id="headlessui-listbox-label-:r4r:"
+                      id="headlessui-listbox-label-:r4j:"
                       onClick={[Function]}
                     >
-                      What Countries is your organisation legally registered in? 
-                    </label>
+                      <label
+                        className="mr-2 inline uppercase text-bold-body-300"
+                        data-testid="txt"
+                      >
+                        What Countries is your organisation legally registered in? 
+                      </label>
+                    </div>
                     <p
                       className="text-body-400 with-inner-html"
                       dangerouslySetInnerHTML={
@@ -287,11 +295,11 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <div
                       aria-expanded={false}
                       aria-haspopup="listbox"
-                      aria-labelledby="headlessui-listbox-label-:r4r: headlessui-listbox-button-:r4s:"
+                      aria-labelledby="headlessui-listbox-label-:r4j: headlessui-listbox-button-:r4k:"
                       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
                       data-headlessui-state=""
                       disabled={false}
-                      id="headlessui-listbox-button-:r4s:"
+                      id="headlessui-listbox-button-:r4k:"
                       onClick={[Function]}
                       onKeyDown={[Function]}
                       onKeyUp={[Function]}
@@ -324,7 +332,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r4t:"
+                      htmlFor=":r4l:"
                     >
                       Organization Mission *
                     </label>
@@ -336,11 +344,11 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         }
                       }
                       data-testid="txt"
-                      id=":r4t:-description"
+                      id=":r4l:-description"
                     />
                     <textarea
                       className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-light "
-                      id=":r4t:"
+                      id=":r4l:"
                       maxLength={300}
                       name="d64877a6-fc33-4bd8-9f75-43e77a5112ab"
                       onBlur={[Function]}
@@ -358,7 +366,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r4u:"
+                      htmlFor=":r4m:"
                     >
                       On what date was your organisation founded? 
                     </label>
@@ -366,10 +374,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       className="relative"
                     >
                       <input
-                        aria-describedby=":r4u:-description"
+                        aria-describedby=":r4m:-description"
                         aria-invalid={false}
                         className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
-                        id=":r4u:"
+                        id=":r4m:"
                         name="ced1d792-2f5f-40b0-8686-86e048c98406"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -385,15 +393,19 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                   <div
                     className="space-y-2"
                   >
-                    <label
-                      className="mr-2 inline uppercase text-bold-body-300"
+                    <div
+                      className="flex items-baseline gap-1"
                       data-headlessui-state=""
-                      data-testid="txt"
-                      id="headlessui-listbox-label-:r4v:"
+                      id="headlessui-listbox-label-:r4n:"
                       onClick={[Function]}
                     >
-                      In what languages can your organisation communicate? *
-                    </label>
+                      <label
+                        className="mr-2 inline uppercase text-bold-body-300"
+                        data-testid="txt"
+                      >
+                        In what languages can your organisation communicate? *
+                      </label>
+                    </div>
                     <p
                       className="text-body-400 with-inner-html"
                       dangerouslySetInnerHTML={
@@ -406,11 +418,11 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <div
                       aria-expanded={false}
                       aria-haspopup="listbox"
-                      aria-labelledby="headlessui-listbox-label-:r4v: headlessui-listbox-button-:r50:"
+                      aria-labelledby="headlessui-listbox-label-:r4n: headlessui-listbox-button-:r4o:"
                       className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
                       data-headlessui-state=""
                       disabled={false}
-                      id="headlessui-listbox-button-:r50:"
+                      id="headlessui-listbox-button-:r4o:"
                       onClick={[Function]}
                       onKeyDown={[Function]}
                       onKeyUp={[Function]}
@@ -446,7 +458,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r51:"
+                      htmlFor=":r4p:"
                     >
                       What interventions do you intend to use to restore land? 
                     </label>
@@ -458,7 +470,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         }
                       }
                       data-testid="txt"
-                      id=":r51:-description"
+                      id=":r4p:-description"
                     />
                     <div
                       className="mx-auto !mt-4 flex max-w-[573px] flex-wrap justify-center gap-4"
@@ -468,7 +480,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r52:"
+                          htmlFor=":r4q:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -492,7 +504,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r52:"
+                          id=":r4q:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -503,7 +515,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r53:"
+                          htmlFor=":r4r:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -527,7 +539,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r53:"
+                          id=":r4r:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -538,7 +550,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r54:"
+                          htmlFor=":r4s:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -562,7 +574,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r54:"
+                          id=":r4s:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -573,7 +585,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r55:"
+                          htmlFor=":r4t:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -597,7 +609,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r55:"
+                          id=":r4t:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -608,7 +620,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r56:"
+                          htmlFor=":r4u:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -632,7 +644,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r56:"
+                          id=":r4u:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -643,7 +655,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r57:"
+                          htmlFor=":r4v:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -667,7 +679,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r57:"
+                          id=":r4v:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -678,7 +690,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r58:"
+                          htmlFor=":r50:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -702,7 +714,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r58:"
+                          id=":r50:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -713,7 +725,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r59:"
+                          htmlFor=":r51:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -737,7 +749,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r59:"
+                          id=":r51:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -748,7 +760,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       >
                         <label
                           className="w-full"
-                          htmlFor=":r5a:"
+                          htmlFor=":r52:"
                         >
                           <div
                             className="flex flex-col items-center gap-2 cursor-pointer"
@@ -772,7 +784,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         <input
                           checked={false}
                           className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5 absolute opacity-0"
-                          id=":r5a:"
+                          id=":r52:"
                           name=""
                           onClick={[Function]}
                           type="checkbox"
@@ -790,7 +802,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r5b:"
+                      htmlFor=":r53:"
                     >
                       Please provide at least two letters of reference 
                     </label>
@@ -802,7 +814,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         }
                       }
                       data-testid="txt"
-                      id=":r5b:-description"
+                      id=":r53:-description"
                     />
                     <div
                       className="bg-white border-dashed-2 relative cursor-pointer rounded-xl p-10"
@@ -820,7 +832,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       <input
                         accept="application/pdf"
                         hidden={true}
-                        id=":r5b:"
+                        id=":r53:"
                         multiple={true}
                         onChange={[Function]}
                         onClick={[Function]}
@@ -885,7 +897,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r5c:"
+                      htmlFor=":r54:"
                     >
                       Organization Twitter URL(optional) 
                     </label>
@@ -893,10 +905,10 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       className="relative"
                     >
                       <input
-                        aria-describedby=":r5c:-description"
+                        aria-describedby=":r54:-description"
                         aria-invalid={false}
                         className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
-                        id=":r5c:"
+                        id=":r54:"
                         name="981edb54-739e-4971-b078-4e2a971d9ffd"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -915,7 +927,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                     <label
                       className="mr-2 inline uppercase text-bold-body-300"
                       data-testid="txt"
-                      htmlFor=":r5d:"
+                      htmlFor=":r55:"
                     >
                       List the people who have a ownership stake in your company 
                     </label>
@@ -927,11 +939,11 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         }
                       }
                       data-testid="txt"
-                      id=":r5d:-description"
+                      id=":r55:-description"
                     />
                     <textarea
                       className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-light "
-                      id=":r5d:"
+                      id=":r55:"
                       name="4388ff23-a5e7-486a-9b37-7ad41cce5e77"
                       onBlur={[Function]}
                       onChange={[Function]}

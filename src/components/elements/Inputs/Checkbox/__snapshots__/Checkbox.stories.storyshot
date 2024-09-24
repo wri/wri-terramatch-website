@@ -4,7 +4,7 @@ exports[`Storyshots Components/Elements/Inputs/Checkbox Checked 1`] = `
 <div>
   <label
     className="w-full"
-    htmlFor=":rg:"
+    htmlFor=":ri:"
   >
     <label
       className="max-w-[365px] undefined text-body-600 with-inner-html"
@@ -14,13 +14,13 @@ exports[`Storyshots Components/Elements/Inputs/Checkbox Checked 1`] = `
         }
       }
       data-testid="txt"
-      htmlFor=":rg:"
+      htmlFor=":ri:"
     />
   </label>
   <input
     checked={true}
     className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-    id=":rg:"
+    id=":ri:"
     type="checkbox"
   />
 </div>
@@ -30,7 +30,7 @@ exports[`Storyshots Components/Elements/Inputs/Checkbox Unchecked 1`] = `
 <div>
   <label
     className="w-full"
-    htmlFor=":rf:"
+    htmlFor=":rh:"
   >
     <label
       className="max-w-[365px] undefined text-body-600 with-inner-html"
@@ -40,12 +40,12 @@ exports[`Storyshots Components/Elements/Inputs/Checkbox Unchecked 1`] = `
         }
       }
       data-testid="txt"
-      htmlFor=":rf:"
+      htmlFor=":rh:"
     />
   </label>
   <input
     className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-    id=":rf:"
+    id=":rh:"
     type="checkbox"
   />
 </div>

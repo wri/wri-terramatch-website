@@ -43,6 +43,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         />
         <button
           className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom"
+          disabled={false}
           onClick={[Function]}
           type="button"
         >
@@ -50,6 +51,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </button>
         <button
           className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+          disabled={false}
           onClick={[Function]}
           type="button"
         >
@@ -57,6 +59,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </button>
         <button
           className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+          disabled={false}
           onClick={[Function]}
           type="button"
         >
@@ -274,13 +277,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       >
         <div
           className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
+        />
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -481,11 +478,6 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           >
             Geotagged
           </div>
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
         </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
@@ -679,11 +671,6 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           >
             Geotagged
           </div>
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
         </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
@@ -871,13 +858,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       >
         <div
           className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
+        />
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -1070,11 +1051,6 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
           >
             Geotagged
           </div>
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
         </div>
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
@@ -1262,13 +1238,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
       >
         <div
           className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
+        />
         <div
           className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
           placeholder="No Image Available"
@@ -1455,812 +1425,6 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         </p>
       </div>
     </div>
-    <div
-      className="relative overflow-hidden rounded-xl bg-background"
-    >
-      <div
-        className="h-[226px] rounded-t-xl relative"
-      >
-        <div
-          className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
-          >
-            Geotagged
-          </div>
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
-        <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
-          placeholder="No Image Available"
-          role="presentation"
-          style={
-            Object {
-              "objectFit": "cover",
-            }
-          }
-        >
-          <img
-            alt="No Image Available"
-            className="object-cover"
-            data-nimg="fill"
-            decoding="async"
-            loading="lazy"
-            onError={[Function]}
-            onLoad={[Function]}
-            referrerPolicy="no-referrer"
-            src="https://picsum.photos/seed/eMjrY/640/480"
-            style={
-              Object {
-                "bottom": 0,
-                "color": "transparent",
-                "height": "100%",
-                "left": 0,
-                "objectFit": undefined,
-                "objectPosition": undefined,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-                "width": "100%",
-              }
-            }
-          />
-        </div>
-        <div
-          className="absolute top-0 right-0 left-0 bottom-0"
-        >
-          <div
-            className="flex justify-between p-3"
-          >
-            <div
-              style={
-                Object {
-                  "height": 32,
-                  "width": 32,
-                }
-              }
-            />
-            <div
-              className="ml-auto flex items-center"
-            >
-              <div
-                className="relative w-fit-content"
-                onClick={[Function]}
-              >
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 24,
-                    }
-                  }
-                />
-                <div
-                  className="absolute z-40 top-full mt-[5px] invisible"
-                  style={Object {}}
-                >
-                  <div
-                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
-                    style={Object {}}
-                  >
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Edit Attributes
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Download
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Make Cover
-                      </p>
-                    </button>
-                    <div
-                      className="mx-2 border-b border-[#d7dbdc]"
-                    />
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Delete
-                      </p>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-4 text-darkCustom"
-      >
-        <div
-          className="flex items-center justify-between gap-1"
-        >
-          <p
-            className="flex items-center gap-1 text-14-bold"
-            data-testid="txt"
-          >
-            Uploaded via:
-             
-            <p
-              className="capitalize text-14-light"
-              data-testid="txt"
-            />
-          </p>
-          <button
-            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-            onClick={[Function]}
-          >
-            <div
-              style={
-                Object {
-                  "height": 24,
-                  "width": 24,
-                }
-              }
-            />
-          </button>
-        </div>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Date uploaded:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            01/01/2023
-          </p>
-        </p>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Visibility:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            Private
-          </p>
-        </p>
-      </div>
-    </div>
-    <div
-      className="relative overflow-hidden rounded-xl bg-background"
-    >
-      <div
-        className="h-[226px] rounded-t-xl relative"
-      >
-        <div
-          className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white"
-          >
-            Geotagged
-          </div>
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
-        <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
-          placeholder="No Image Available"
-          role="presentation"
-          style={
-            Object {
-              "objectFit": "cover",
-            }
-          }
-        >
-          <img
-            alt="No Image Available"
-            className="object-cover"
-            data-nimg="fill"
-            decoding="async"
-            loading="lazy"
-            onError={[Function]}
-            onLoad={[Function]}
-            referrerPolicy="no-referrer"
-            src="https://picsum.photos/seed/0YeRnwOeq0/640/480"
-            style={
-              Object {
-                "bottom": 0,
-                "color": "transparent",
-                "height": "100%",
-                "left": 0,
-                "objectFit": undefined,
-                "objectPosition": undefined,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-                "width": "100%",
-              }
-            }
-          />
-        </div>
-        <div
-          className="absolute top-0 right-0 left-0 bottom-0"
-        >
-          <div
-            className="flex justify-between p-3"
-          >
-            <div
-              style={
-                Object {
-                  "height": 32,
-                  "width": 32,
-                }
-              }
-            />
-            <div
-              className="ml-auto flex items-center"
-            >
-              <div
-                className="relative w-fit-content"
-                onClick={[Function]}
-              >
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 24,
-                    }
-                  }
-                />
-                <div
-                  className="absolute z-40 top-full mt-[5px] invisible"
-                  style={Object {}}
-                >
-                  <div
-                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
-                    style={Object {}}
-                  >
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Edit Attributes
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Download
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Make Cover
-                      </p>
-                    </button>
-                    <div
-                      className="mx-2 border-b border-[#d7dbdc]"
-                    />
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Delete
-                      </p>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-4 text-darkCustom"
-      >
-        <div
-          className="flex items-center justify-between gap-1"
-        >
-          <p
-            className="flex items-center gap-1 text-14-bold"
-            data-testid="txt"
-          >
-            Uploaded via:
-             
-            <p
-              className="capitalize text-14-light"
-              data-testid="txt"
-            />
-          </p>
-          <button
-            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-            onClick={[Function]}
-          >
-            <div
-              style={
-                Object {
-                  "height": 24,
-                  "width": 24,
-                }
-              }
-            />
-          </button>
-        </div>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Date uploaded:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            01/01/2023
-          </p>
-        </p>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Visibility:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            Private
-          </p>
-        </p>
-      </div>
-    </div>
-    <div
-      className="relative overflow-hidden rounded-xl bg-background"
-    >
-      <div
-        className="h-[226px] rounded-t-xl relative"
-      >
-        <div
-          className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
-        <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
-          placeholder="No Image Available"
-          role="presentation"
-          style={
-            Object {
-              "objectFit": "cover",
-            }
-          }
-        >
-          <img
-            alt="No Image Available"
-            className="object-cover"
-            data-nimg="fill"
-            decoding="async"
-            loading="lazy"
-            onError={[Function]}
-            onLoad={[Function]}
-            referrerPolicy="no-referrer"
-            src="https://picsum.photos/seed/mvuu0/640/480"
-            style={
-              Object {
-                "bottom": 0,
-                "color": "transparent",
-                "height": "100%",
-                "left": 0,
-                "objectFit": undefined,
-                "objectPosition": undefined,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-                "width": "100%",
-              }
-            }
-          />
-        </div>
-        <div
-          className="absolute top-0 right-0 left-0 bottom-0"
-        >
-          <div
-            className="flex justify-between p-3"
-          >
-            <div
-              style={
-                Object {
-                  "height": 32,
-                  "width": 32,
-                }
-              }
-            />
-            <div
-              className="ml-auto flex items-center"
-            >
-              <div
-                className="relative w-fit-content"
-                onClick={[Function]}
-              >
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 24,
-                    }
-                  }
-                />
-                <div
-                  className="absolute z-40 top-full mt-[5px] invisible"
-                  style={Object {}}
-                >
-                  <div
-                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
-                    style={Object {}}
-                  >
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Edit Attributes
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Download
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Make Cover
-                      </p>
-                    </button>
-                    <div
-                      className="mx-2 border-b border-[#d7dbdc]"
-                    />
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Delete
-                      </p>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-4 text-darkCustom"
-      >
-        <div
-          className="flex items-center justify-between gap-1"
-        >
-          <p
-            className="flex items-center gap-1 text-14-bold"
-            data-testid="txt"
-          >
-            Uploaded via:
-             
-            <p
-              className="capitalize text-14-light"
-              data-testid="txt"
-            />
-          </p>
-          <button
-            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-            onClick={[Function]}
-          >
-            <div
-              style={
-                Object {
-                  "height": 24,
-                  "width": 24,
-                }
-              }
-            />
-          </button>
-        </div>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Date uploaded:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            01/01/2023
-          </p>
-        </p>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Visibility:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            Private
-          </p>
-        </p>
-      </div>
-    </div>
-    <div
-      className="relative overflow-hidden rounded-xl bg-background"
-    >
-      <div
-        className="h-[226px] rounded-t-xl relative"
-      >
-        <div
-          className="absolute bottom-4 left-4 z-10 flex gap-2"
-        >
-          <div
-            className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white"
-          >
-            Cover
-          </div>
-        </div>
-        <div
-          className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
-          placeholder="No Image Available"
-          role="presentation"
-          style={
-            Object {
-              "objectFit": "cover",
-            }
-          }
-        >
-          <img
-            alt="No Image Available"
-            className="object-cover"
-            data-nimg="fill"
-            decoding="async"
-            loading="lazy"
-            onError={[Function]}
-            onLoad={[Function]}
-            referrerPolicy="no-referrer"
-            src="https://picsum.photos/seed/i1uDrKPuA/640/480"
-            style={
-              Object {
-                "bottom": 0,
-                "color": "transparent",
-                "height": "100%",
-                "left": 0,
-                "objectFit": undefined,
-                "objectPosition": undefined,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-                "width": "100%",
-              }
-            }
-          />
-        </div>
-        <div
-          className="absolute top-0 right-0 left-0 bottom-0"
-        >
-          <div
-            className="flex justify-between p-3"
-          >
-            <div
-              className="ml-auto flex items-center"
-            >
-              <div
-                className="relative w-fit-content"
-                onClick={[Function]}
-              >
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 24,
-                    }
-                  }
-                />
-                <div
-                  className="absolute z-40 top-full mt-[5px] invisible"
-                  style={Object {}}
-                >
-                  <div
-                    className="fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]"
-                    style={Object {}}
-                  >
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Edit Attributes
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Download
-                      </p>
-                    </button>
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Make Cover
-                      </p>
-                    </button>
-                    <div
-                      className="mx-2 border-b border-[#d7dbdc]"
-                    />
-                    <button
-                      className="shadow-shadow-select flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-primary-200 w-full hover:text-primary-500 whitespace-nowrap"
-                      onClick={[Function]}
-                    >
-                      <p
-                        className="pr-3 text-12-bold"
-                        data-testid="txt"
-                      >
-                        Delete
-                      </p>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-4 text-darkCustom"
-      >
-        <div
-          className="flex items-center justify-between gap-1"
-        >
-          <p
-            className="flex items-center gap-1 text-14-bold"
-            data-testid="txt"
-          >
-            Uploaded via:
-             
-            <p
-              className="capitalize text-14-light"
-              data-testid="txt"
-            />
-          </p>
-          <button
-            className="rounded-lg p-1 text-darkCustom hover:bg-grey-800 hover:text-primary"
-            onClick={[Function]}
-          >
-            <div
-              style={
-                Object {
-                  "height": 24,
-                  "width": 24,
-                }
-              }
-            />
-          </button>
-        </div>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Date uploaded:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            01/01/2023
-          </p>
-        </p>
-        <p
-          className="flex items-center gap-1 text-14-bold"
-          data-testid="txt"
-        >
-          Visibility:
-           
-          <p
-            className="capitalize text-14-light"
-            data-testid="txt"
-          >
-            Public
-          </p>
-        </p>
-      </div>
-    </div>
   </div>
   <div
     className="flex items-center justify-between"
@@ -2291,7 +1455,7 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
               className="w-fit uppercase line-clamp-1 text-16-bold"
               data-testid="txt"
             >
-              10
+              6
             </p>
           </div>
           <div
@@ -2320,9 +1484,10 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
     </div>
     <div
       className="flex items-center justify-center gap-5"
-      defaultPageSize={10}
+      defaultPageSize={6}
       hasPageSizeSelector={true}
       invertSelect={true}
+      isImageGallery={true}
       setPageSize={[Function]}
       variant={
         Object {
@@ -2362,6 +1527,24 @@ exports[`Storyshots Components/Elements/ImageGallery Default 1`] = `
         role="button"
       >
         2
+      </p>
+      <p
+        className="text-neutral-600 text-16-bold"
+        data-testid="txt"
+        disabled={false}
+        onClick={[Function]}
+        role="button"
+      >
+        3
+      </p>
+      <p
+        className="text-neutral-600 text-16-bold"
+        data-testid="txt"
+        disabled={false}
+        onClick={[Function]}
+        role="button"
+      >
+        4
       </p>
       <button
         className="flex items-center justify-center rounded-full hover:bg-opacity-60"

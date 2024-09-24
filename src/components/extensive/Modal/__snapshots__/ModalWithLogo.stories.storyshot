@@ -190,7 +190,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               >
                 <textarea
                   className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent max-h-72 !min-h-0 resize-none border-none !p-0 text-xs border-light "
-                  id=":r36:"
+                  id=":r3d:"
                   name=""
                   onChange={[Function]}
                   placeholder="Add a comment"
