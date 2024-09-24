@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -60,6 +60,7 @@ const EntityMapAndGalleryCard = ({
     modelType: undefined
   });
   const { showLoader, hideLoader } = useLoading();
+  const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const mapFunctions = useMap();
   const router = useRouter();
   const projectUUID = router.query.uuid as string;
@@ -216,6 +217,7 @@ const EntityMapAndGalleryCard = ({
           hasControls
           showPopups
           modelFilesData={data?.data}
+          imageGalleryRef={imageGalleryRef}
         />
       </PageCard>
       <If
@@ -233,6 +235,7 @@ const EntityMapAndGalleryCard = ({
         </Then>
         <Else>
           <PageCard
+            ref={imageGalleryRef}
             title={t("All Images")}
             headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
           >

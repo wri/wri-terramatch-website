@@ -1,4 +1,4 @@
-import { ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
+import { ComponentType, createContext, forwardRef, ReactNode, useContext, useMemo } from "react";
 
 export enum Framework {
   PPC = "ppc",
@@ -54,12 +54,12 @@ export const useFrameworkShowHide = ({ frameworksShow, frameworksHide }: ShowHid
 
 export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
   const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
-  const FrameworkShowHide = (props: T & ShowHideProps) => {
+  const FrameworkShowHide = forwardRef<HTMLDivElement, T & ShowHideProps>((props, ref) => {
     const { frameworksShow, frameworksHide, ...rest } = props;
     if (!useFrameworkShowHide({ frameworksShow, frameworksHide })) return null;
 
-    return <WrappedComponent {...(rest as T & JSX.IntrinsicAttributes)} />;
-  };
+    return <WrappedComponent {...(rest as T & JSX.IntrinsicAttributes)} ref={ref} />;
+  });
   FrameworkShowHide.displayName = `withFrameworkShow(${displayName})`;
   return FrameworkShowHide;
 }

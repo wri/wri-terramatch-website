@@ -1,63 +1,60 @@
 import { t } from "@transifex/native";
-import { useMemo, useState } from "react";
+import { useEffect } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalImageGallery, { TabImagesItem } from "@/components/extensive/Modal/ModalImageGallery";
-import { GetV2MODELUUIDFilesResponse } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
-const ViewImageCarousel = ({ modelFilesData }: { modelFilesData: GetV2MODELUUIDFilesResponse["data"] }) => {
-  const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
-    const modelFilesGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
-    const modelFilesNonGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
-    modelFilesData?.forEach(modelFile => {
-      if (modelFile.location?.lat && modelFile.location?.lng) {
-        modelFilesGeolocalized.push(modelFile);
-      } else {
-        modelFilesNonGeolocalized.push(modelFile);
+const ViewImageCarousel = ({ imageGalleryRef }: { imageGalleryRef?: React.RefObject<HTMLDivElement> }) => {
+  const scrollToElement = () => {
+    if (window.location.href.includes("admin")) {
+      if (window.location.hash.includes("show")) {
+        const newUrl = window.location.hash.replace(/show\/\d+/, "show/2");
+        window.location.hash = newUrl;
       }
-    });
-    return [
-      {
-        id: "1",
-        title: t("Non-Geotagged Images"),
-        images: modelFilesNonGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.file_url!,
-          title: modelFile.file_name!,
-          dateCreated: modelFile.created_date!,
-          geoTag: t("Not Geo-Referenced")
-        }))
-      },
-      {
-        id: "2",
-        title: t("GeoTagged Images"),
-        images: modelFilesGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.file_url!,
-          title: modelFile.file_name!,
-          dateCreated: modelFile.created_date!,
-          geoTag: t("Geo-Referenced")
-        }))
-      }
-    ];
-  }, [modelFilesData]);
+      return;
+    }
+    if (window.location.href.includes("tab=overview")) {
+      const newUrl = window.location.href.replace("tab=overview", "tab=gallery");
 
-  const [openModal, setOpenModal] = useState(false);
+      sessionStorage.setItem("scrollToElement", "true");
+      window.location.href = newUrl;
+    }
+
+    scrollToGalleryElement();
+  };
+
+  const scrollToGalleryElement = () => {
+    if (imageGalleryRef?.current) {
+      const element = imageGalleryRef.current;
+      const topPosition = element.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({
+        top: topPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (sessionStorage.getItem("scrollToElement") === "true") {
+      scrollToGalleryElement();
+      sessionStorage.removeItem("scrollToElement");
+    }
+  }, []);
+
   return (
     <div className="relative">
-      <Button variant="white-button-map" className="flex items-center gap-2" onClick={() => setOpenModal(!openModal)}>
+      <Button
+        variant="white-button-map"
+        className="flex items-center gap-2"
+        onClick={() => {
+          scrollToElement();
+        }}
+      >
         <Icon name={IconNames.IMAGE_ICON} className="h-4 w-4" />
         <Text variant="text-12-bold"> {t("View Gallery")}</Text>
       </Button>
-      <ModalImageGallery
-        onClose={() => setOpenModal(false)}
-        tabItems={modelFilesTabItems}
-        title={""}
-        WrapperClassName={openModal ? "" : "hidden"}
-      />
     </div>
   );
 };
