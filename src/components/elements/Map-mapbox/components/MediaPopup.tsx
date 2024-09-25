@@ -21,7 +21,8 @@ export const MediaPopup = ({
   handleDownload,
   coverImage,
   handleDelete,
-  openModalImageDetail
+  openModalImageDetail,
+  isProjectPath
 }: {
   uuid: string;
   name: string;
@@ -32,6 +33,7 @@ export const MediaPopup = ({
   coverImage: () => void;
   handleDelete: () => void;
   openModalImageDetail: () => void;
+  isProjectPath: boolean;
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const t = useT();
@@ -47,11 +49,16 @@ export const MediaPopup = ({
       render: () => <Text variant="text-12-bold">{t("Dowload")}</Text>,
       onClick: handleDownload
     },
-    {
-      id: "3",
-      render: () => <Text variant="text-12-bold">{t("Make Cover")}</Text>,
-      onClick: coverImage
-    },
+    ...(isProjectPath
+      ? [
+          {
+            id: "3",
+            render: () => <Text variant="text-12-bold">{t("Make Cover")}</Text>,
+            onClick: coverImage
+          }
+        ]
+      : []),
+
     {
       id: "3.5",
       type: "line" as const,

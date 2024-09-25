@@ -222,7 +222,8 @@ export const addMediaSourceAndLayer = (
   setImageCover: Function,
   handleDownload: Function,
   handleDelete: Function,
-  openModalImageDetail: Function
+  openModalImageDetail: Function,
+  isProjectPath: boolean
 ) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
@@ -309,7 +310,8 @@ export const addMediaSourceAndLayer = (
           handleDownload: handleDownloadFunction,
           coverImage: coverImage,
           handleDelete: handleDeleteFunction,
-          openModalImageDetail: openModalImageDetailFunction
+          openModalImageDetail: openModalImageDetailFunction,
+          isProjectPath: isProjectPath
         })
       );
       popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })

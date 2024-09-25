@@ -253,6 +253,7 @@ export const MapContainer = ({
 
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
+    const isProjectPath = router.isReady && router.asPath.includes("project");
 
     const handleDelete = (id: string) => {
       openModal(
@@ -356,7 +357,8 @@ export const MapContainer = ({
           setImageCover,
           handleDownload,
           handleDelete,
-          openModalImageDetail
+          openModalImageDetail,
+          isProjectPath
         );
       } else {
         removePopups("MEDIA");
