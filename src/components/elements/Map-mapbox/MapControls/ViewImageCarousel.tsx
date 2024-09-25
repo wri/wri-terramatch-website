@@ -8,7 +8,7 @@ import Text from "../../Text/Text";
 
 const ViewImageCarousel = ({ imageGalleryRef }: { imageGalleryRef?: React.RefObject<HTMLDivElement> }) => {
   const scrollToElement = () => {
-    const route = window.location.href;
+    let route = window.location.href;
     if (route.includes("admin")) {
       if (window.location.hash.includes("show")) {
         const newUrl = window.location.hash.replace(/show\/\d+/, "show/2");
@@ -17,8 +17,9 @@ const ViewImageCarousel = ({ imageGalleryRef }: { imageGalleryRef?: React.RefObj
       return;
     }
 
-    if ((route.includes("site") || route.includes("project")) && !route.includes("tab=")) {
+    if ((route.includes("site/") || route.includes("project/")) && !route.includes("tab=")) {
       const newUrl = `${route}?tab=overview`;
+      route = newUrl;
       window.history.replaceState(null, "", newUrl);
     }
 
