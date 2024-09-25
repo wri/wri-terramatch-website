@@ -2441,7 +2441,7 @@
     lodash.isequal "^4.2.0"
     xtend "^4.0.1"
 
-"@mapbox/mapbox-gl-draw@^1.4.2":
+"@mapbox/mapbox-gl-draw@1.4.2":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@mapbox/mapbox-gl-draw/-/mapbox-gl-draw-1.4.2.tgz#3ec71d496f056313707c67e62728945563336a85"
   integrity sha512-Zvl5YN+tIuYZlzPmuzOgkoJsZX6sHMQsnFI+O3ox8EwYkpLO2w0U2FvVhQuVnq1Yys12x6UnF+0IPoEdBy2UfA==
@@ -4870,7 +4870,7 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/mapbox__mapbox-gl-draw@^1.4.1":
+"@types/mapbox__mapbox-gl-draw@1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@types/mapbox__mapbox-gl-draw/-/mapbox__mapbox-gl-draw-1.4.1.tgz#c558563d03d35ef374a4b7561e6e24e4461aa48a"
   integrity sha512-Xm2xZaK/QGR6ry0nJeolpsIsCUP4+atOdJd5nooVIVlC2Sa9ewdKyFzjuj3PDpmf3BEdR9uiWYOa4bWCgNbhBw==
