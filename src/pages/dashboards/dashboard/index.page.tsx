@@ -16,7 +16,8 @@ const Dashboard = () => {
       <PageRow className="w-3/5 gap-4 p-0">
         <PageCard
           className="border-0 px-4 py-6"
-          gap={6}
+          classNameSubTitle="mt-4"
+          gap={8}
           title={t("TREES RESTORED")}
           variantSubTitle="text-14-light"
           subtitle={t(`The numbers and reports below display data related to Indicator 1: Trees Restored described in TerraFund’s
@@ -34,7 +35,8 @@ const Dashboard = () => {
         </PageCard>
         <PageCard
           className="border-0 px-4 py-6"
-          gap={6}
+          classNameSubTitle="mt-4"
+          gap={8}
           title={t("HECTARES UNDER RESTORATION")}
           variantSubTitle="text-14-light"
           subtitle={t(`The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in
@@ -51,7 +53,8 @@ const Dashboard = () => {
         </PageCard>
         <PageCard
           className="border-0 px-4 py-6"
-          gap={6}
+          classNameSubTitle="mt-4"
+          gap={8}
           title={t("JOBS CREATED")}
           variantSubTitle="text-14-light"
           subtitle={t(`The numbers and reports below display data related to Indicator 3: Jobs Created described in TerraFund’s
