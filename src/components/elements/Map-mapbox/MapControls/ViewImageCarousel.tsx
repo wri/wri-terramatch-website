@@ -8,15 +8,22 @@ import Text from "../../Text/Text";
 
 const ViewImageCarousel = ({ imageGalleryRef }: { imageGalleryRef?: React.RefObject<HTMLDivElement> }) => {
   const scrollToElement = () => {
-    if (window.location.href.includes("admin")) {
+    const route = window.location.href;
+    if (route.includes("admin")) {
       if (window.location.hash.includes("show")) {
         const newUrl = window.location.hash.replace(/show\/\d+/, "show/2");
         window.location.hash = newUrl;
       }
       return;
     }
-    if (window.location.href.includes("tab=overview")) {
-      const newUrl = window.location.href.replace("tab=overview", "tab=gallery");
+
+    if ((route.includes("site") || route.includes("project")) && !route.includes("tab=")) {
+      const newUrl = `${route}?tab=overview`;
+      window.history.replaceState(null, "", newUrl);
+    }
+
+    if (route.includes("tab=overview")) {
+      const newUrl = route.replace("tab=overview", "tab=gallery");
 
       sessionStorage.setItem("scrollToElement", "true");
       window.location.href = newUrl;
