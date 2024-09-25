@@ -131,6 +131,8 @@ export enum IconNames {
   REQUEST = "request",
   COMMENT = "comment",
   CHEVRON_DOWN_PA = "chevron-down-pa",
+  CHEVRON_DOWN_DASH = "chevron-down-dash",
+  FRAMEWORK_PROGRAMME = "framework-programme",
   PAPER_CLIP = "paper-clip",
   CHECK_PROGRESSBAR_NULL = "check-progressbar-null",
   UPLOAD_CLOUD = "upload-cloud",

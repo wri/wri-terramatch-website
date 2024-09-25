@@ -19,6 +19,8 @@ import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { formatOptionsList, statusColor } from "@/utils/options";
 
+import { DropdownVariant, VARIANT_DROPDOWN_DEFAULT } from "./DropdownVariant";
+
 export interface DropdownProps {
   customName?: string;
   label?: string;
@@ -41,6 +43,8 @@ export interface DropdownProps {
   defaultValue?: OptionValue[];
   required?: boolean;
   error?: FieldError;
+  prefix?: React.ReactNode;
+  variant?: DropdownVariant;
   multiSelect?: boolean;
   hasOtherOptions?: boolean;
   optionsFilter?: string;
@@ -70,6 +74,7 @@ const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOther
  */
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
+  const { variant = VARIANT_DROPDOWN_DEFAULT } = props;
   const [selected, setSelected] = useState<OptionValue[]>(() =>
     getDefaultDropDownValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
@@ -157,7 +162,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   };
 
   return (
-    <div className={tw("space-y-2", props.containerClassName)}>
+    <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
         {({ open, value }) => (
           <>
@@ -183,14 +188,17 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             </When>
             <Listbox.Button
               as="div"
-              className={classNames(
+              className={tw(
                 "flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer",
                 !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
-                props.className
+                props.className,
+                variant.className
               )}
             >
-              <div className="flex items-center gap-2">
+              <When condition={!!props.prefix}>{props.prefix}</When>
+
+              <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
                 <When condition={options?.[0]?.meta != null}>
                   <div
                     className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
@@ -198,15 +206,18 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     )}`}
                   />
                 </When>
-                <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">
+                <Text
+                  variant={props.inputVariant ?? "text-14-light"}
+                  className={tw("w-full", variant.titleClassname)}
+                  title={formatOptionsList(options, toArray<any>(value))}
+                >
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>
 
               <Icon
-                name={props.iconName || IconNames.CHEVRON_DOWN}
-                className={classNames("fill-neutral-900 transition", open && "rotate-180")}
-                width={16}
+                name={variant.iconName || IconNames.CHEVRON_DOWN}
+                className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
               />
             </Listbox.Button>
             <Transition
