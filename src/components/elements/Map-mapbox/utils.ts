@@ -251,8 +251,8 @@ export const addMediaSourceAndLayer = (
       },
       is_cover: modelFile.is_cover,
       is_public: modelFile.is_public,
-      photographer: modelFile.photographer || null,
-      description: modelFile.description || null,
+      photographer: (modelFile as any).photographer || null,
+      description: (modelFile as any).description || null,
       mime_type: modelFile.mime_type,
       file_name: modelFile.file_name
     }
