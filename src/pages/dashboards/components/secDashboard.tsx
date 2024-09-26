@@ -40,7 +40,7 @@ const SecDashboard = ({
             {secondOptionsData &&
               secondOptionsData.map((item: any, index: number) => (
                 <div key={index} className="flex items-center gap-1">
-                  <div className={classNames("h-2 w-2 rounded-full", `bg-${item.color}`)} />
+                  <div className={classNames("h-2 w-2 rounded-full", item.color)} />
                   <Text variant="text-10" className="text-darkCustom">
                     {item.label}
                   </Text>
