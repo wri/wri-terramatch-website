@@ -13,6 +13,7 @@ import {
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   RESTORATION_STRATEGIES_REPRESENTED,
+  TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOTAL_HECTARES_UNDER_RESTORATION,
   TOTAL_NUMBER_OF_SITES,
   TOTAL_VOLUNTEERS,
@@ -20,11 +21,19 @@ import {
   VOLUNTEERS_CREATED_BY_GENDER
 } from "../mockedData/dashboard";
 
+export interface DashboardTableDataProps {
+  label: string;
+  valueText: string;
+  value: number;
+}
+
 export interface DashboardDataProps {
   value?: string;
   unit?: string;
   secondValue?: string;
   graphic?: string;
+  tableData?: DashboardTableDataProps[];
+  maxValue?: number;
 }
 
 const Dashboard = () => {
@@ -61,6 +70,7 @@ const Dashboard = () => {
             title="Top 10 Projects With The Most Planted Trees"
             type="toggle"
             secondOptionsData={dataToggleGraphic}
+            data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
           />
         </PageCard>
         <PageCard
@@ -87,7 +97,7 @@ const Dashboard = () => {
             />
           </div>
           <SecDashboard title="Restoration Strategies Represented" data={RESTORATION_STRATEGIES_REPRESENTED} />
-          <SecDashboard title="TARGET LAND USE TYPES REPRESENTED" />
+          <SecDashboard title="TARGET LAND USE TYPES REPRESENTED" data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES} />
         </PageCard>
         <PageCard
           className="border-0 px-4 py-6"

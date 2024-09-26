@@ -1,31 +1,11 @@
 export const LABEL_LEGEND = [
   {
     label: "Non-Profit",
-    color: "secondary-600"
+    color: "bg-green-45"
   },
   {
     label: "Enterprise",
-    color: "primary"
-  }
-];
-
-export const TREES_RESTORED = [
-  {
-    title: "Number of trees planted",
-    type: "legend",
-    secondOptionsData: LABEL_LEGEND,
-    value: 12.2
-  },
-  {
-    title: "Number of Trees Planted by Year",
-    type: "toggle",
-    secondOptionsData: ["Absolute", "Relative"],
-    value: "/images/graphic-1.png"
-  },
-  {
-    title: "Top 10 Projects With The Most Planted Trees",
-    type: "toggle",
-    secondOptionsData: ["Table", "Graphic"]
+    color: "bg-green-40"
   }
 ];
 
@@ -36,6 +16,37 @@ export const NUMBER_OF_TREES_PLANTED = {
 
 export const NUMBER_OF_TREES_PLANTED_BY_YEAR = {
   graphic: "/images/graphic-1.png"
+};
+
+export const TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES = {
+  tableData: [
+    {
+      label: "Aerobic Agroforestry",
+      valueText: "1,515,000",
+      value: 1515000
+    },
+    {
+      label: "Wells for Zoe",
+      valueText: "952789",
+      value: 952789
+    },
+    {
+      label: "Trees for the Future",
+      valueText: "646,247",
+      value: 646247
+    },
+    {
+      label: "KIJABE FOREST TRUST",
+      valueText: "549,995",
+      value: 549995
+    },
+    {
+      label: "Kijani Forestry",
+      valueText: "500,005",
+      value: 500005
+    }
+  ],
+  maxValue: 1889396.551724138
 };
 
 export const TOTAL_HECTARES_UNDER_RESTORATION = {
