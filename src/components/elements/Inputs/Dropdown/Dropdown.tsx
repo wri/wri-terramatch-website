@@ -266,6 +266,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             name=""
                             checked={isSelected}
                             label={option.title}
+                            textClassName={variant.optionLabelClassName}
+                            inputClassName={variant.optionCheckboxClassName}
                             className="flex flex-row-reverse items-center gap-3"
                             onChange={() => {
                               !isSelected

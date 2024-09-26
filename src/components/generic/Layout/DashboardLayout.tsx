@@ -4,7 +4,6 @@ import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useState } from "
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { OptionValue } from "@/types/common";
 
 import Sidebar from "../Sidebar/Sidebar";
@@ -15,56 +14,99 @@ interface DashboardLayoutProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivE
 
 const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const dropdwonOptions = [
+    {
+      title: "Tree Planting",
+      value: "1"
+    },
+    {
+      title: "Direct Seeding",
+      value: "2"
+    },
+    {
+      title: "Natural Regeneration",
+      value: "3"
+    }
+  ];
+
+  const [filterValues, setFilterValues] = useState<{
+    dropdown1: OptionValue[];
+    dropdown2: OptionValue[];
+    dropdown3: OptionValue[];
+    dropdown4: OptionValue[];
+  }>({
+    dropdown1: [],
+    dropdown2: [],
+    dropdown3: [],
+    dropdown4: []
+  });
+
+  const resetValues = () => {
+    setFilterValues({
+      dropdown1: [],
+      dropdown2: [],
+      dropdown3: [],
+      dropdown4: []
+    });
+  };
+
+  const handleChange = (selectName: string, value: OptionValue[]) => {
+    setFilterValues(prevValues => ({
+      ...prevValues,
+      [selectName]: value
+    }));
+  };
+
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex max-h-screen min-h-screen w-full">
       <Sidebar />
       <main className={`flex flex-[1_1_0] flex-col ${props.className}`}>
         <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
           <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
-            <Text variant={"text-28-bold"} className={classNames("text-white", { "w-full": isHeaderCollapsed })}>
+            <Text
+              variant={"text-28-bold"}
+              className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
+            >
               TerraMatch Insights
             </Text>
             <div className="flex items-center gap-3">
-              <div className="relative rounded-lg border border-[#989E97]">
-                <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
-                <Dropdown
-                  prefix={
-                    <div className="flex items-center gap-1">
-                      <Icon name={IconNames.FRAMEWORK_PROGRAMME} className="w-5" />
-                      <Text variant="text-14-light" className="leading-none">
-                        Programme
-                      </Text>
-                    </div>
-                  }
-                  inputVariant="text-14-semibold"
-                  containerClassName="relative z-10"
-                  className="gap-2 text-white"
-                  placeholder="Top 100"
-                  options={[]}
-                  onChange={function (value: OptionValue[]): void {
-                    throw new Error("Function not implemented.");
-                  }}
-                />
-              </div>
-              <div className="relative rounded-lg border border-[#989E97]">
+              <div className="relative max-w-[192px]  rounded-lg border border-[#989E97]">
                 <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
                 <Dropdown
                   prefix={
                     <Text variant="text-14-light" className="leading-none">
-                      Sub-Region:
+                      Programme:
                     </Text>
                   }
                   inputVariant="text-14-semibold"
-                  containerClassName="relative z-10"
-                  className="gap-2 text-white"
-                  placeholder="Top 100"
-                  options={[]}
-                  onChange={function (value: OptionValue[]): void {
-                    throw new Error("Function not implemented.");
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  value={filterValues.dropdown1}
+                  placeholder="Top100"
+                  onChange={value => {
+                    handleChange("dropdown1", value);
                   }}
+                  options={dropdwonOptions}
                 />
               </div>
-              <div className="relative rounded-lg border border-[#989E97]">
+              <div className="relative max-w-[192px]  rounded-lg border border-[#989E97]">
+                <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
+                <Dropdown
+                  prefix={
+                    <Text variant="text-14-light" className="leading-none">
+                      Landscape:
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  placeholder="Top100"
+                  value={filterValues.dropdown2}
+                  onChange={value => {
+                    handleChange("dropdown2", value);
+                  }}
+                  options={dropdwonOptions}
+                />
+              </div>
+              <div className="relative max-w-[192px]  rounded-lg border border-[#989E97]">
                 <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
                 <Dropdown
                   prefix={
@@ -72,12 +114,14 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                       Country:
                     </Text>
                   }
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
                   placeholder="Global"
-                  options={[]}
-                  containerClassName="relative z-10"
-                  onChange={function (value: OptionValue[]): void {
-                    throw new Error("Function not implemented.");
+                  value={filterValues.dropdown3}
+                  onChange={value => {
+                    handleChange("dropdown3", value);
                   }}
+                  options={dropdwonOptions}
                 />
               </div>
               <div className="relative max-w-[192px] rounded-lg border border-[#989E97]">
@@ -92,34 +136,16 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
                   placeholder="Private"
+                  value={filterValues.dropdown4}
                   onChange={value => {
-                    console.log(value);
+                    handleChange("dropdown4", value);
                   }}
-                  options={[
-                    {
-                      title: "Aerobic Agroforestry",
-                      value: "1"
-                    },
-                    {
-                      title: "Mexico_FONCET_ANP_FRAILESCAN",
-                      value: "2"
-                    },
-                    {
-                      title: "Philippines_CI_Philippines",
-                      value: "3"
-                    },
-                    {
-                      title: "Portugal_ReForest_Action_(Proenca-a-Nova)",
-                      value: "4"
-                    },
-                    {
-                      title: "Spain_ReForest_Action_(Palencia)",
-                      value: "5"
-                    }
-                  ]}
+                  options={dropdwonOptions}
                 />
               </div>
-              <button className="text-14-semibold p-1 text-white">Clear Filters</button>
+              <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
+                Clear Filters
+              </button>
             </div>
           </div>
           <div className="relative h-fit">

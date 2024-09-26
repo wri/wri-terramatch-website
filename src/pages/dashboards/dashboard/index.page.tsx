@@ -33,8 +33,8 @@ const Dashboard = () => {
   const dataToggleGraphic = ["Table", "Graphic"];
 
   return (
-    <div className="flex gap-4 bg-neutral-70 p-4">
-      <PageRow className="w-3/5 gap-4 p-0">
+    <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
+      <PageRow className="w-3/5 gap-4 overflow-auto p-0">
         <PageCard
           className="border-0 px-4 py-6"
           classNameSubTitle="mt-4"
