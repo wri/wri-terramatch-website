@@ -30,5 +30,5 @@ export const VARIANT_DROPDOWN_HEADER: DropdownVariant = {
   titleContainerClassName: "flex-1 overflow-hidden",
   titleClassname: "leading-none text-ellipsis whitespace-nowrap overflow-hidden",
   optionCheckboxClassName: "checked:text-blueCustom-700",
-  optionLabelClassName: ""
+  optionLabelClassName: "text-14-semibold"
 };
