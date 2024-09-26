@@ -8,7 +8,7 @@ import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import ImageGalleryItem from "@/components/elements/ImageGallery/ImageGalleryItem";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Text from "@/components/elements/Text/Text";
-import ModalAdd from "@/components/extensive/Modal/ModalAdd";
+import ModalAddImages from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2FilesUUID, useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
@@ -75,7 +75,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
-      <ModalAdd
+      <ModalAddImages
         title={t("Upload Media")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
         previewAsTable
@@ -87,9 +87,17 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
-          onClick: () => {}
+          onClick: () => {
+            refetch();
+            closeModal(ModalId.UPLOAD_IMAGES);
+          }
         }}
-        setFile={() => {}}
+        model={resource}
+        collection="media"
+        uuid={ctx?.record?.uuid}
+        setErrorMessage={message => {
+          console.error(message);
+        }}
       />
     );
   };
