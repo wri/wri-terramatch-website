@@ -61,6 +61,10 @@ export const RESTORATION_STRATEGIES_REPRESENTED = {
   graphic: "/images/graphic-2.png"
 };
 
+export const TARGET_LAND_USE_TYPES_REPRESENTED = {
+  graphic: "/images/graphic-7.png"
+};
+
 export const NEW_PART_TIME_JOBS = {
   value: "22,000"
 };

@@ -15,6 +15,7 @@ import {
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   RESTORATION_STRATEGIES_REPRESENTED,
+  TARGET_LAND_USE_TYPES_REPRESENTED,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOTAL_HECTARES_UNDER_RESTORATION,
   TOTAL_NUMBER_OF_SITES,
@@ -44,6 +45,7 @@ const Dashboard = () => {
   const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
 
+  console.log("TARGET_LAND_USE_TYPES_REPRESENTED", TARGET_LAND_USE_TYPES_REPRESENTED);
   return (
     <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
       <div ref={sharedRef} className="w-3/5 overflow-auto ">
@@ -101,10 +103,7 @@ const Dashboard = () => {
               />
             </div>
             <SecDashboard title="Restoration Strategies Represented" data={RESTORATION_STRATEGIES_REPRESENTED} />
-            <SecDashboard
-              title="TARGET LAND USE TYPES REPRESENTED"
-              data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
-            />
+            <SecDashboard title="TARGET LAND USE TYPES REPRESENTED" data={TARGET_LAND_USE_TYPES_REPRESENTED} />
           </PageCard>
           <PageCard
             className="border-0 px-4 py-6"
