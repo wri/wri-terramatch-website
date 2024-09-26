@@ -91,7 +91,7 @@ const ItemMonitoringCards = ({
         <When condition={!!img}>
           <div className="relative">
             <When condition={!!type && type === "graph-button"}>
-              <div className="absolute top-[40%] left-[40%] flex flex-col rounded-lg bg-white p-1 shadow">
+              <div className="absolute left-[40%] top-[40%] flex flex-col rounded-lg bg-white p-1 shadow">
                 <div className="flex items-center gap-1">
                   <div className="h-[10px] w-[10px] rounded-full bg-primary" />
                   <Text variant="text-12-light" className="text-grey-700">
