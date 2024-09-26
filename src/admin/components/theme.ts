@@ -14,7 +14,7 @@ export const theme = _.merge<RaThemeOptions, RaThemeOptions>(defaultTheme, {
     },
     MuiTypography: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: ({ theme }: { theme: any }) => ({
           a: {
             color: theme.palette.primary.main
           }
@@ -48,7 +48,7 @@ export const theme = _.merge<RaThemeOptions, RaThemeOptions>(defaultTheme, {
     },
     MuiFormControl: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: ({ theme }: { theme: any }) => ({
           "& .RaArrayInput-label span": {
             ...theme.typography.h5,
             color: theme.palette.text.primary
@@ -68,7 +68,7 @@ export const theme = _.merge<RaThemeOptions, RaThemeOptions>(defaultTheme, {
     },
     MuiAccordionSummary: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: ({ theme }: { theme: any }) => ({
           "& .MuiAccordionSummary-content button": {
             ...theme.typography.body1,
             textAlign: "left"
