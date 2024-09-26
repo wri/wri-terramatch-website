@@ -58,7 +58,7 @@ const MapPolygonPanel = ({
 
   return (
     <div {...props} className={classNames(className)}>
-      <div className="left-0·top-0 absolute -z-10 h-full w-full backdrop-blur-md" />
+      <div className="absolute left-0 top-0 -z-10 h-full w-full backdrop-blur-md" />
 
       <If condition={!!editPolygon.isOpen}>
         <Then>
