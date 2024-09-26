@@ -15,19 +15,24 @@ const formattedTextStatus = (text: string) => {
   return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
 };
 
-const getTextForActionTable = (item: { type: string; status: string; request_removed: boolean }): string => {
-  if (item.type === "comment") {
+const getTextForActionTable = (
+  item: { type: string; status: string; request_removed: boolean },
+  entity?: string
+): string => {
+  if (item.type === "comment" && entity == "site-polygon") {
     return "New Comment";
-  } else if (item.type === "status") {
+  } else if (item.type === "status" && entity == "site-polygon") {
     return `New Status: ${formattedTextStatus(item.status)}`;
   } else if (item.type === "change-request-updated") {
     return "Change Request Updated";
-  } else if (item.request_removed) {
+  } else if (item.request_removed && entity == "site-polygon") {
     return "Change Request Removed";
   } else if (item.type === "reminder-sent") {
     return "Reminder Sent";
-  } else {
+  } else if (item.type === "change-request") {
     return "Change Requested";
+  } else {
+    return "-";
   }
 };
 
@@ -42,10 +47,30 @@ const AuditLogTable: FC<{
   const menuOverflowContainerRef = useRef(null);
   const route = useRouter();
   const isAdmin = route.asPath.includes("admin");
-  const columnTitles = isAdmin
-    ? ["Date", "User", "Action", "Comments", "Attachments", ""]
-    : ["Date", "User", "Action", "Comments", "Attachments"];
-  const gridColumnSize = isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+
+  const getColumnTitles = (entity: string, isAdmin: boolean) => {
+    if (entity === "site-polygon") {
+      return isAdmin
+        ? ["Date", "User", "Action", "Comments", "Attachments", ""]
+        : ["Date", "User", "Action", "Comments", "Attachments"];
+    } else {
+      return isAdmin
+        ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
+        : ["Date", "User", "Status", "Change Request", "Comments", "Attachments"];
+    }
+  };
+
+  const getGridColumnSize = (entity: string, isAdmin: boolean) => {
+    if (entity === "site-polygon") {
+      return isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+    } else {
+      return isAdmin ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]" : "grid-cols-[14%_10%_10%_15%_30%_21%]";
+    }
+  };
+
+  const columnTitles = getColumnTitles(auditData?.entity as string, isAdmin);
+  const gridColumnSize = getGridColumnSize(auditData?.entity as string, isAdmin);
+
   const { openNotification } = useNotificationContext();
   const t = useT();
   const { mutate } = useDeleteV2ENTITYUUIDIDDelete({
@@ -87,8 +112,16 @@ const AuditLogTable: FC<{
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {generateUserName(item.first_name, item.last_name)}
             </Text>
+            <When condition={auditData?.entity !== "site-polygon"}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                {formattedTextStatus(item.status as string) ?? "-"}
+              </Text>
+            </When>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-              {getTextForActionTable(item as { type: string; status: string; request_removed: boolean })}
+              {getTextForActionTable(
+                item as { type: string; status: string; request_removed: boolean },
+                auditData?.entity
+              )}
             </Text>
             <Text variant="text-12" className="border-b border-b-grey-750 py-2">
               {item.comment ?? "-"}

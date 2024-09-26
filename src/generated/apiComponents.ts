@@ -29769,7 +29769,7 @@ export type PostV2ExportImageRequestBody = {
   /**
    * The URL of the image to be downloaded.
    */
-  imageUrl: string;
+  uuid: string;
 };
 
 export type PostV2ExportImageVariables = {
