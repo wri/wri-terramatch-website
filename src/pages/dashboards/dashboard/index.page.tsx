@@ -74,8 +74,17 @@ const Dashboard = () => {
             sourced and verified.`)}
         >
           <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
-            <SecDashboard title="Total HECTARES UNDER RESTORATION" data={TOTAL_HECTARES_UNDER_RESTORATION} />
-            <SecDashboard title="TOTAL NUMBER OF SITES" data={TOTAL_NUMBER_OF_SITES} className="pl-12" />
+            <SecDashboard
+              title="Total HECTARES UNDER RESTORATION"
+              data={TOTAL_HECTARES_UNDER_RESTORATION}
+              classNameBody="w-full place-content-center !justify-center"
+            />
+            <SecDashboard
+              title="TOTAL NUMBER OF SITES"
+              data={TOTAL_NUMBER_OF_SITES}
+              className="pl-12"
+              classNameBody="w-full place-content-center !justify-center"
+            />
           </div>
           <SecDashboard title="Restoration Strategies Represented" data={RESTORATION_STRATEGIES_REPRESENTED} />
           <SecDashboard title="TARGET LAND USE TYPES REPRESENTED" />
@@ -94,18 +103,47 @@ const Dashboard = () => {
             verify employment. Please refer to the linked MRV framework for additional details on how these numbers
             are sourced and verified.`)}
         >
-          <div className="grid grid-cols-2">
-            <SecDashboard title="New Part-Time Jobs" data={NEW_PART_TIME_JOBS} />
-            <SecDashboard title="New Full-Time Jobs" data={NEW_FULL_TIME_JOBS} />
+          <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
+            <SecDashboard
+              title="New Part-Time Jobs"
+              data={NEW_PART_TIME_JOBS}
+              classNameBody="w-full place-content-center !justify-center"
+            />
+            <SecDashboard
+              title="New Full-Time Jobs"
+              data={NEW_FULL_TIME_JOBS}
+              className="pl-12"
+              classNameBody="w-full place-content-center !justify-center"
+            />
           </div>
-          <div className="grid grid-cols-2">
-            <SecDashboard title="Jobs Created by Gender" data={JOBS_CREATED_BY_GENDER} />
-            <SecDashboard title="JOBS CREATED BY AGE" data={JOBS_CREATED_BY_AGE} />
+          <div className="grid w-11/12 grid-cols-2 gap-12">
+            <SecDashboard
+              title="Jobs Created by Gender"
+              data={JOBS_CREATED_BY_GENDER}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center"
+            />
+            <SecDashboard
+              title="JOBS CREATED BY AGE"
+              data={JOBS_CREATED_BY_AGE}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center"
+            />
           </div>
           <SecDashboard title="Total VOLUNTEERS" data={TOTAL_VOLUNTEERS} />
-          <div className="grid grid-cols-2">
-            <SecDashboard title="VOLUNTEERS CREATED BY GENDER" data={VOLUNTEERS_CREATED_BY_GENDER} />
-            <SecDashboard title="VOLUNTEERS CREATED BY AGE" data={VOLUNTEERS_CREATED_BY_AGE} />
+          <div className="grid w-11/12 grid-cols-2 gap-12">
+            <SecDashboard
+              title="VOLUNTEERS CREATED BY GENDER"
+              data={VOLUNTEERS_CREATED_BY_GENDER}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center"
+            />
+            <SecDashboard
+              title="VOLUNTEERS CREATED BY AGE"
+              data={VOLUNTEERS_CREATED_BY_AGE}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center"
+            />
           </div>
         </PageCard>
       </PageRow>

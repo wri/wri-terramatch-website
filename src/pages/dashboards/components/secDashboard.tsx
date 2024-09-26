@@ -14,17 +14,21 @@ const SecDashboard = ({
   type,
   secondOptionsData,
   className,
+  classNameBody,
+  classNameHeader,
   data
 }: {
   title: string;
   type?: "legend" | "toggle";
   secondOptionsData?: any;
   className?: string;
+  classNameBody?: string;
+  classNameHeader?: string;
   data?: DashboardDataProps;
 }) => {
   return (
     <div className={className}>
-      <div className={classNames("flex items-center justify-between")}>
+      <div className={classNames("flex items-center justify-between", classNameHeader)}>
         <Text variant="text-14" className="flex items-center gap-1 uppercase text-darkCustom">
           {title}
           <ToolTip content={title} placement="top" width="w-56">
@@ -48,7 +52,7 @@ const SecDashboard = ({
           <Toggle items={secondOptionsData} activeIndex={0} setActiveIndex={() => {}} />
         </When>
       </div>
-      <div className="mt-3 flex items-center justify-between">
+      <div className={classNames("mt-3 flex items-center justify-between", classNameBody)}>
         {data && data.value ? <ValueNumberDashboard value={data.value} unit={data.unit} /> : <></>}
         <When condition={data && data.value && data.unit}>
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
