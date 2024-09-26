@@ -46,6 +46,10 @@ export const TOTAL_NUMBER_OF_SITES = {
   value: "345"
 };
 
+export const RESTORATION_STRATEGIES_REPRESENTED = {
+  graphic: "/images/graphic-2.png"
+};
+
 export const NEW_PART_TIME_JOBS = {
   value: "22,000"
 };
@@ -54,6 +58,22 @@ export const NEW_FULL_TIME_JOBS = {
   value: "1,000"
 };
 
+export const JOBS_CREATED_BY_GENDER = {
+  graphic: "/images/graphic-3.png"
+};
+
+export const JOBS_CREATED_BY_AGE = {
+  graphic: "/images/graphic-4.png"
+};
+
 export const TOTAL_VOLUNTEERS = {
   value: "23,000"
+};
+
+export const VOLUNTEERS_CREATED_BY_GENDER = {
+  graphic: "/images/graphic-5.png"
+};
+
+export const VOLUNTEERS_CREATED_BY_AGE = {
+  graphic: "/images/graphic-6.png"
 };

@@ -13,16 +13,18 @@ const SecDashboard = ({
   title,
   type,
   secondOptionsData,
+  className,
   data
 }: {
   title: string;
   type?: "legend" | "toggle";
   secondOptionsData?: any;
+  className?: string;
   data?: DashboardDataProps;
 }) => {
   return (
-    <div>
-      <div className="flex items-center justify-between">
+    <div className={className}>
+      <div className={classNames("flex items-center justify-between")}>
         <Text variant="text-14" className="flex items-center gap-1 uppercase text-darkCustom">
           {title}
           <ToolTip content={title} placement="top" width="w-56">
@@ -52,7 +54,7 @@ const SecDashboard = ({
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
         </When>
         <When condition={data && data.graphic}>
-          <img src={data?.graphic} alt="graphic" className="w-full" />
+          <img src={data?.graphic} alt={data?.graphic} className="w-full" />
         </When>
       </div>
     </div>
