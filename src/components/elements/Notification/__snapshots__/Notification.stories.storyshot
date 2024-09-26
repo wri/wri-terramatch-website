@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/Notification Error 1`] = `
   className="p-10"
 >
   <div
-    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
+    className="fixed right-[1.5vw] top-[86px] z-[1000000] flex w-[28vw] shadow-black"
   >
     <div
       className="flex items-start rounded-lg font-bold w-full tracking-tighter leading-16 p-4 bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-error-600"
@@ -62,7 +62,7 @@ exports[`Storyshots Components/Elements/Notification Success 1`] = `
   className="p-10"
 >
   <div
-    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
+    className="fixed right-[1.5vw] top-[86px] z-[1000000] flex w-[28vw] shadow-black"
   >
     <div
       className="flex items-start rounded-lg font-bold w-full tracking-tighter leading-16 p-4 bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-success-600"
@@ -119,7 +119,7 @@ exports[`Storyshots Components/Elements/Notification Warning 1`] = `
   className="p-10"
 >
   <div
-    className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black"
+    className="fixed right-[1.5vw] top-[86px] z-[1000000] flex w-[28vw] shadow-black"
   >
     <div
       className="flex items-start rounded-lg font-bold w-full tracking-tighter leading-16 p-4 bg-white shadow-[0_0_5px_0_rgba(0,0,0,0.2)] text-bold-body-300 group:text-tertiary-600"

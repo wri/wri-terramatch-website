@@ -35,7 +35,7 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
         }
       />
       <div
-        className="absolute top-3 right-3"
+        className="absolute right-3 top-3"
       >
         <div
           className="relative w-fit-content"
@@ -78,7 +78,7 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard Default 1`] = `
       className="mt-4 space-y-2 px-3"
     >
       <div
-        className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 my-4 mt-4 w-fit"
+        className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 my-4 mt-4 w-fit"
       >
         <div
           style={
@@ -154,7 +154,7 @@ exports[`Storyshots Components/Elements/Cards/UserProfileCard No Image 1`] = `
         }
       />
       <div
-        className="absolute top-3 right-3"
+        className="absolute right-3 top-3"
       >
         <div
           className="relative w-fit-content"

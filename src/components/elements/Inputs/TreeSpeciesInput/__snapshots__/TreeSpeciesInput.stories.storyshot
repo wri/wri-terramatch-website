@@ -23,7 +23,7 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
   />
   <div>
     <div
-      className="mt-8 mb-2 flex justify-between"
+      className="mb-2 mt-8 flex justify-between"
     >
       <p
         className="uppercase text-body-900"
@@ -120,7 +120,7 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
   />
   <div>
     <div
-      className="mt-8 mb-2 flex justify-between"
+      className="mb-2 mt-8 flex justify-between"
     >
       <p
         className="uppercase text-body-900"

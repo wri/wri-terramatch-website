@@ -31,7 +31,7 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
           className="hidden items-center sm:flex sm:gap-4 lg:gap-8"
         >
           <div
-            className="absolute top-4 left-[50%] translate-x-[-50%]"
+            className="absolute left-[50%] top-4 translate-x-[-50%]"
           >
             <div
               className="block sm:hidden relative w-fit"

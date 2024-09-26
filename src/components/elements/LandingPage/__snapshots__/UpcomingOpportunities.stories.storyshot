@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Default 1`] = `
 <div
-  className="pb-9 pt-9 md:pt-24 md:pb-29 flex flex-col items-center"
+  className="pb-9 pt-9 md:pb-29 md:pt-24 flex flex-col items-center"
 >
   <p
     className="text-center underline text-heading-700"
@@ -21,7 +21,7 @@ exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Defaul
       className="relative flex h-[178px] w-[308px] flex-col items-start justify-end gap-4 bg-cover bg-no-repeat px-7 py-4 bg-landAcceleratorAfricaThumb"
     >
       <p
-        className="absolute top-2 right-4 text-white text-body-500"
+        className="absolute right-4 top-2 text-white text-body-500"
         data-testid="txt"
       >
         Support
@@ -50,7 +50,7 @@ exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Defaul
       className="relative flex h-[178px] w-[308px] flex-col items-start justify-end gap-4 bg-cover bg-no-repeat px-7 py-4 bg-terrafundRFPThumb"
     >
       <p
-        className="absolute top-2 right-4 text-white text-body-500"
+        className="absolute right-4 top-2 text-white text-body-500"
         data-testid="txt"
       >
         Support
@@ -79,7 +79,7 @@ exports[`Storyshots Components/Elements/LandingPage/UpcomingOpportunities Defaul
       className="relative flex h-[178px] w-[308px] flex-col items-start justify-end gap-4 bg-cover bg-no-repeat px-7 py-4 bg-landAcceleratorThumb"
     >
       <p
-        className="absolute top-2 right-4 text-white text-body-500"
+        className="absolute right-4 top-2 text-white text-body-500"
         data-testid="txt"
       >
         Support

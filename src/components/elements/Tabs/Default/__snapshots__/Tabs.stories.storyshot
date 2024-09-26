@@ -12,7 +12,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="true"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+      className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
       data-headlessui-state="selected"
       id="headlessui-tabs-tab-:r30:"
       onClick={[Function]}
@@ -22,7 +22,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
       tabIndex={0}
     >
       <p
-        className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+        className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
         dangerouslySetInnerHTML={
           Object {
             "__html": "Organization Details",
@@ -34,7 +34,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="false"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+      className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
       data-headlessui-state=""
       id="headlessui-tabs-tab-:r31:"
       onClick={[Function]}
@@ -44,7 +44,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
       tabIndex={-1}
     >
       <p
-        className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+        className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
         dangerouslySetInnerHTML={
           Object {
             "__html": "Social Media Presence",
@@ -56,7 +56,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="false"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+      className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
       data-headlessui-state=""
       id="headlessui-tabs-tab-:r32:"
       onClick={[Function]}
@@ -66,7 +66,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
       tabIndex={-1}
     >
       <p
-        className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+        className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
         dangerouslySetInnerHTML={
           Object {
             "__html": "This is a very long tab title too long to fit into one line",
@@ -78,7 +78,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="false"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+      className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
       data-headlessui-state=""
       id="headlessui-tabs-tab-:r33:"
       onClick={[Function]}
@@ -88,7 +88,7 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
       tabIndex={-1}
     >
       <p
-        className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+        className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
         dangerouslySetInnerHTML={
           Object {
             "__html": "Additional Information",

@@ -8,7 +8,7 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
     className="absolute bottom-4 left-4 z-10 flex gap-2"
   />
   <div
-    className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
+    className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 absolute bottom-0 left-0 right-0 top-0 h-full w-full rounded-t-xl"
     placeholder="No Image Available"
     role="presentation"
     style={
@@ -44,7 +44,7 @@ exports[`Storyshots Components/Elements/ImageWithChildren Primary 1`] = `
     />
   </div>
   <div
-    className="absolute top-0 right-0 left-0 bottom-0"
+    className="absolute bottom-0 left-0 right-0 top-0"
   >
     <div
       className="m-auto flex h-full w-full max-w-7xl flex-col items-start justify-between p-10 text-white"

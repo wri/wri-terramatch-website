@@ -10,7 +10,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
   title="TerraFund for AFR100: Landscapes - Non Profits"
 >
   <div
-    className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+    className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6"
   >
     <div
       className="mb-1 flex items-start gap-3"
@@ -22,7 +22,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
         TerraFund for AFR100: Landscapes - Non Profits
       </p>
       <div
-        className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+        className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200"
       >
         <div
           style={

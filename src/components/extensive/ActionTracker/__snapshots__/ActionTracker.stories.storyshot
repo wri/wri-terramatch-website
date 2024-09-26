@@ -31,7 +31,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 1"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -43,7 +43,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 1
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200"
             >
               <div
                 style={
@@ -101,7 +101,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 2"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -113,7 +113,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 2
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200"
             >
               <div
                 style={
@@ -171,7 +171,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 3"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -183,7 +183,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 3
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200"
             >
               <div
                 style={
@@ -241,7 +241,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 4"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -253,7 +253,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 4
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200"
             >
               <div
                 style={
@@ -311,7 +311,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 5"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6"
         >
           <div
             className="mb-1 flex items-start gap-3"
@@ -323,7 +323,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 5
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200"
             >
               <div
                 style={

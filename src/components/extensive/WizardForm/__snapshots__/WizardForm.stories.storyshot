@@ -57,7 +57,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3g:"
@@ -68,7 +68,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 1<br/> <p className=\\"text-14-light\\">Simple Inputs </p>",
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3h:"
@@ -91,7 +91,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 2<br/> <p className=\\"text-14-light\\">Dropdown Inputs </p>",
@@ -103,7 +103,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="true"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
             id="headlessui-tabs-tab-:r3i:"
@@ -114,7 +114,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={0}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 3<br/> <p className=\\"text-14-light\\">Select Inputs </p>",
@@ -126,7 +126,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3j:"
@@ -137,7 +137,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 4<br/> <p className=\\"text-14-light\\">File Uploader </p>",
@@ -149,7 +149,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3k:"
@@ -160,7 +160,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 5<br/> <p className=\\"text-14-light\\">Tree species input </p>",
@@ -172,7 +172,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3l:"
@@ -183,7 +183,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 6<br/> <p className=\\"text-14-light\\">Funding Sources </p>",
@@ -195,7 +195,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3m:"
@@ -206,7 +206,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 7<br/> <p className=\\"text-14-light\\">Info of proposed projects </p>",
@@ -218,7 +218,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r3n:"
@@ -229,7 +229,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 8<br/> <p className=\\"text-14-light\\">Map </p>",
@@ -249,7 +249,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
             className="h-[calc(100vh-287px)] overflow-auto"
           >
             <div
-              className="flex-1 bg-white px-16 pt-8 pb-15"
+              className="flex-1 bg-white px-16 pb-15 pt-8"
               id="step"
             >
               <div
@@ -536,7 +536,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="true"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
             id="headlessui-tabs-tab-:r41:"
@@ -547,7 +547,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={0}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Simple Inputs",
@@ -559,7 +559,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r42:"
@@ -570,7 +570,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Dropdown Inputs",
@@ -582,7 +582,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r43:"
@@ -593,7 +593,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Select Inputs",
@@ -605,7 +605,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r44:"
@@ -616,7 +616,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "File Uploader",
@@ -628,7 +628,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r45:"
@@ -639,7 +639,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Tree species input",
@@ -651,7 +651,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r46:"
@@ -662,7 +662,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "What are your funding sources?*",
@@ -674,7 +674,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r47:"
@@ -685,7 +685,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Section subtitle",
@@ -697,7 +697,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={false}
             id="headlessui-tabs-tab-:r48:"
@@ -708,7 +708,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Draw on Map",
@@ -728,7 +728,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
             className="h-[calc(100vh-287px)] overflow-auto"
           >
             <div
-              className="flex-1 bg-white px-16 pt-8 pb-15"
+              className="flex-1 bg-white px-16 pb-15 pt-8"
               id="step"
             >
               <div

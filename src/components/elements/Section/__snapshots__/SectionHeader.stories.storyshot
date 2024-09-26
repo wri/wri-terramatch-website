@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Section/Header Default 1`] = `
 <div
-  className="flex items-center justify-between border-b border-neutral-400 pt-5 pb-4 pr-6"
+  className="flex items-center justify-between border-b border-neutral-400 pb-4 pr-6 pt-5"
 >
   <p
     className="text-heading-700"

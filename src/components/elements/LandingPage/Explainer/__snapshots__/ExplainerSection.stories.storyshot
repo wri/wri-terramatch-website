@@ -16,7 +16,7 @@ exports[`Storyshots Components/Elements/LandingPage/ExplainerSection Default 1`]
       }
     />
     <p
-      className="mt-6 mb-[10px] md:mb-5 text-heading-200"
+      className="mb-[10px] mt-6 md:mb-5 text-heading-200"
       data-testid="txt"
     >
       1. Apply for Funding
@@ -43,7 +43,7 @@ exports[`Storyshots Components/Elements/LandingPage/ExplainerSection Default 1`]
       }
     />
     <p
-      className="mt-6 mb-[10px] md:mb-5 text-heading-200"
+      className="mb-[10px] mt-6 md:mb-5 text-heading-200"
       data-testid="txt"
     >
       2. Find Support
@@ -70,7 +70,7 @@ exports[`Storyshots Components/Elements/LandingPage/ExplainerSection Default 1`]
       }
     />
     <p
-      className="mt-6 mb-[10px] md:mb-5 text-heading-200"
+      className="mb-[10px] mt-6 md:mb-5 text-heading-200"
       data-testid="txt"
     >
       3. Report + Monitor

@@ -66,7 +66,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -253,7 +253,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -312,7 +312,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -371,7 +371,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -430,7 +430,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -489,7 +489,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -548,7 +548,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -607,7 +607,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -666,7 +666,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -725,7 +725,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -784,7 +784,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -890,7 +890,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -1077,7 +1077,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -1136,7 +1136,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -1195,7 +1195,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -1254,7 +1254,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -1313,7 +1313,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -1372,7 +1372,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -1431,7 +1431,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -1490,7 +1490,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -1549,7 +1549,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -1608,7 +1608,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -1714,7 +1714,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -1901,7 +1901,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -1960,7 +1960,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -2019,7 +2019,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -2078,7 +2078,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -2137,7 +2137,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -2196,7 +2196,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -2255,7 +2255,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -2314,7 +2314,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -2373,7 +2373,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -2432,7 +2432,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               className="text-normal-subtitle-400 first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -2538,7 +2538,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -2725,7 +2725,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -2784,7 +2784,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -2843,7 +2843,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -2902,7 +2902,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -2961,7 +2961,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -3020,7 +3020,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -3079,7 +3079,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -3138,7 +3138,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -3197,7 +3197,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -3256,7 +3256,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               className="text-normal-subtitle-400 text-16-light px-6 py-3"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -3362,7 +3362,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -3549,7 +3549,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -3608,7 +3608,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -3667,7 +3667,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -3726,7 +3726,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -3785,7 +3785,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -3844,7 +3844,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -3903,7 +3903,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -3962,7 +3962,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -4021,7 +4021,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -4080,7 +4080,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -4186,7 +4186,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -4373,7 +4373,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -4432,7 +4432,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -4491,7 +4491,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -4550,7 +4550,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -4609,7 +4609,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -4668,7 +4668,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -4727,7 +4727,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -4786,7 +4786,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -4845,7 +4845,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -4904,7 +4904,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               className="text-normal-subtitle-400 border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -5010,7 +5010,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
                   onKeyUp={[Function]}
                 >
                   <p
-                    className="w-full uppercase line-clamp-1 text-14-bold"
+                    className="line-clamp-1 w-full uppercase text-14-bold"
                     data-testid="txt"
                   >
                     Show All
@@ -5199,7 +5199,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -5258,7 +5258,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -5317,7 +5317,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -5376,7 +5376,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -5435,7 +5435,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
               >
                 <div
                   style={
@@ -5494,7 +5494,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -5553,7 +5553,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
               >
                 <div
                   style={
@@ -5612,7 +5612,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
               >
                 <div
                   style={
@@ -5671,7 +5671,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
               >
                 <div
                   style={
@@ -5730,7 +5730,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
             >
               <div
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
               >
                 <div
                   style={
@@ -5839,7 +5839,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                     onKeyUp={[Function]}
                   >
                     <p
-                      className="w-full uppercase line-clamp-1 text-14-bold"
+                      className="line-clamp-1 w-full uppercase text-14-bold"
                       data-testid="txt"
                     >
                       Show All
@@ -6026,7 +6026,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
                 >
                   <div
                     style={
@@ -6085,7 +6085,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
                 >
                   <div
                     style={
@@ -6144,7 +6144,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
                 >
                   <div
                     style={
@@ -6203,7 +6203,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
                 >
                   <div
                     style={
@@ -6262,7 +6262,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200 w-fit"
                 >
                   <div
                     style={
@@ -6321,7 +6321,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
                 >
                   <div
                     style={
@@ -6380,7 +6380,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200 w-fit"
                 >
                   <div
                     style={
@@ -6439,7 +6439,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200 w-fit"
                 >
                   <div
                     style={
@@ -6498,7 +6498,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200 w-fit"
                 >
                   <div
                     style={
@@ -6557,7 +6557,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-10-bold text-white"
               >
                 <div
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200 w-fit"
                 >
                   <div
                     style={

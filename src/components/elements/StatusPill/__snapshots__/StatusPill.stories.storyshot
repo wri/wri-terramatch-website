@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/StatusPill Awaiting 1`] = `
   className="flex items-start justify-start"
 >
   <div
-    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200"
   >
     <div
       style={
@@ -30,7 +30,7 @@ exports[`Storyshots Components/Elements/StatusPill Default 1`] = `
   className="flex items-start justify-start"
 >
   <div
-    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200"
   >
     <div
       style={
@@ -55,7 +55,7 @@ exports[`Storyshots Components/Elements/StatusPill Error 1`] = `
   className="flex items-start justify-start"
 >
   <div
-    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200"
   >
     <div
       style={
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Elements/StatusPill Success 1`] = `
   className="flex items-start justify-start"
 >
   <div
-    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200"
   >
     <div
       style={
@@ -105,7 +105,7 @@ exports[`Storyshots Components/Elements/StatusPill Warning 1`] = `
   className="flex items-start justify-start"
 >
   <div
-    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200"
   >
     <div
       style={

@@ -33,7 +33,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:rq: headlessui-listbox-button-:rr:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:rr:"
@@ -45,7 +45,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="line-clamp-1 w-full text-14-light"
           data-testid="txt"
         >
           placeholder
@@ -97,7 +97,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:ru: headlessui-listbox-button-:rv:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:rv:"
@@ -109,7 +109,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="line-clamp-1 w-full text-14-light"
           data-testid="txt"
         >
           placeholder
@@ -161,7 +161,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:ro: headlessui-listbox-button-:rp:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:rp:"
@@ -173,7 +173,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="line-clamp-1 w-full text-14-light"
           data-testid="txt"
         >
           placeholder
@@ -213,7 +213,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="headlessui-listbox-label-:r10: headlessui-listbox-button-:r11:"
-    className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
     data-headlessui-state=""
     disabled={false}
     id="headlessui-listbox-button-:r11:"
@@ -228,7 +228,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
         className="min-h-[8px] min-w-[8px] rounded-full "
       />
       <p
-        className="w-full line-clamp-1 text-14-light"
+        className="line-clamp-1 w-full text-14-light"
         data-testid="txt"
       >
         Aerobic Agroforestry
@@ -279,7 +279,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:rs: headlessui-listbox-button-:rt:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:rt:"
@@ -291,7 +291,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="line-clamp-1 w-full text-14-light"
           data-testid="txt"
         >
           placeholder

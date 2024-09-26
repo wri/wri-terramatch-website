@@ -57,7 +57,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="true"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
             data-headlessui-state="selected"
             disabled={false}
             id="headlessui-tabs-tab-:r4b:"
@@ -68,7 +68,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={0}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 1<br/> <p className=\\"text-14-light\\">Organizational Information: Governance   </p>",
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
             id="headlessui-tabs-tab-:r4c:"
@@ -88,7 +88,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 2<br/> <p className=\\"text-14-light\\">Organizational Information: Past Community Engagement Experience </p>",
@@ -100,7 +100,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
             id="headlessui-tabs-tab-:r4d:"
@@ -108,7 +108,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 3<br/> <p className=\\"text-14-light\\">Organizational Information: Financial History  </p>",
@@ -120,7 +120,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
             id="headlessui-tabs-tab-:r4e:"
@@ -128,7 +128,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 4<br/> <p className=\\"text-14-light\\">Organizational Information: Past Restoration Experience  </p>",
@@ -140,7 +140,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
             id="headlessui-tabs-tab-:r4f:"
@@ -148,7 +148,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 5<br/> <p className=\\"text-14-light\\">Proposed Project Information </p>",
@@ -160,7 +160,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
           <button
             aria-checked="false"
             aria-selected="false"
-            className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+            className="flex min-h-[70px] w-full items-center justify-start px-6 py-4 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
             data-headlessui-state=""
             disabled={true}
             id="headlessui-tabs-tab-:r4g:"
@@ -168,7 +168,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             tabIndex={-1}
           >
             <p
-              className="w-full text-left line-clamp-2 md:pr-6 text-14-bold with-inner-html"
+              className="line-clamp-2 w-full text-left md:pr-6 text-14-bold with-inner-html"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Step 6<br/> <p className=\\"text-14-light\\">Additional Information  </p>",
@@ -188,7 +188,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
             className="h-[calc(100vh-287px)] overflow-auto"
           >
             <div
-              className="flex-1 bg-white px-16 pt-8 pb-15"
+              className="flex-1 bg-white px-16 pb-15 pt-8"
               id="step"
             >
               <div
@@ -237,7 +237,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       aria-expanded={false}
                       aria-haspopup="listbox"
                       aria-labelledby="headlessui-listbox-label-:r4h: headlessui-listbox-button-:r4i:"
-                      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+                      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
                       data-headlessui-state=""
                       disabled={false}
                       id="headlessui-listbox-button-:r4i:"
@@ -249,7 +249,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         className="flex items-center gap-2"
                       >
                         <p
-                          className="w-full line-clamp-1 text-14-light"
+                          className="line-clamp-1 w-full text-14-light"
                           data-testid="txt"
                         />
                       </div>
@@ -296,7 +296,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       aria-expanded={false}
                       aria-haspopup="listbox"
                       aria-labelledby="headlessui-listbox-label-:r4j: headlessui-listbox-button-:r4k:"
-                      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+                      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
                       data-headlessui-state=""
                       disabled={false}
                       id="headlessui-listbox-button-:r4k:"
@@ -308,7 +308,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                         className="flex items-center gap-2"
                       >
                         <p
-                          className="w-full line-clamp-1 text-14-light"
+                          className="line-clamp-1 w-full text-14-light"
                           data-testid="txt"
                         />
                       </div>
@@ -419,7 +419,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                       aria-expanded={false}
                       aria-haspopup="listbox"
                       aria-labelledby="headlessui-listbox-label-:r4n: headlessui-listbox-button-:r4o:"
-                      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+                      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
                       data-headlessui-state=""
                       disabled={false}
                       id="headlessui-listbox-button-:r4o:"
@@ -434,7 +434,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard With Get Form Step Hook 1`]
                           className="min-h-[8px] min-w-[8px] rounded-full "
                         />
                         <p
-                          className="w-full line-clamp-1 text-14-light"
+                          className="line-clamp-1 w-full text-14-light"
                           data-testid="txt"
                         />
                       </div>

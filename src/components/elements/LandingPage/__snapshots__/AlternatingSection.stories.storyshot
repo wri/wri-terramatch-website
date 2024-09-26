@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/LandingPage/AlternatingSection Left 1`] 
   className="w-full md:flex flex-row-reverse"
 >
   <div
-    className="flex items-center justify-center py-9 px-12 md:w-[50%]"
+    className="flex items-center justify-center px-12 py-9 md:w-[50%]"
   >
     <div
       className="flex max-w-[400px] flex-col items-start gap-4"
@@ -83,7 +83,7 @@ exports[`Storyshots Components/Elements/LandingPage/AlternatingSection Right 1`]
   className="w-full md:flex"
 >
   <div
-    className="flex items-center justify-center py-9 px-12 md:w-[50%]"
+    className="flex items-center justify-center px-12 py-9 md:w-[50%]"
   >
     <div
       className="flex max-w-[400px] flex-col items-start gap-4"

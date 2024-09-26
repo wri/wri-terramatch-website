@@ -28,7 +28,7 @@ exports[`Storyshots Components/Elements/Cards/GenericCard Default 1`] = `
         />
       </button>
       <div
-        className="flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
+        className="flex items-center justify-center rounded-2xl px-3 py-0.5 first-letter:uppercase"
       >
         <p
           className="text-black flex h-fit items-center text-bold-caption-200"
@@ -39,7 +39,7 @@ exports[`Storyshots Components/Elements/Cards/GenericCard Default 1`] = `
       </div>
     </div>
     <div
-      className="absolute bottom-0 right-0 left-0 flex gap-2 px-6 py-2 bg-black items-center"
+      className="absolute bottom-0 left-0 right-0 flex gap-2 px-6 py-2 bg-black items-center"
     >
       <p
         className="text-white text-body-400"

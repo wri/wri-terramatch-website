@@ -19,7 +19,7 @@ exports[`Storyshots Components/Elements/FilePreview Default 1`] = `
       className="flex flex-1 flex-col items-start gap-1"
     >
       <p
-        className=" capitalize line-clamp-1 text-body-900"
+        className=" line-clamp-1 capitalize text-body-900"
         data-testid="txt"
       >
         file title

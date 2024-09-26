@@ -43,7 +43,7 @@ exports[`Storyshots Components/Extensive/BuildStrongerProfile Neutral 150 1`] = 
     >
       <li>
         <div
-          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white px-4 py-5 shadow"
         >
           <p
             className="text-heading-200"
@@ -61,7 +61,7 @@ exports[`Storyshots Components/Extensive/BuildStrongerProfile Neutral 150 1`] = 
       </li>
       <li>
         <div
-          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white px-4 py-5 shadow"
         >
           <p
             className="text-heading-200"
@@ -125,7 +125,7 @@ exports[`Storyshots Components/Extensive/BuildStrongerProfile White 1`] = `
     >
       <li>
         <div
-          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white px-4 py-5 shadow"
         >
           <p
             className="text-heading-200"
@@ -143,7 +143,7 @@ exports[`Storyshots Components/Extensive/BuildStrongerProfile White 1`] = `
       </li>
       <li>
         <div
-          className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow"
+          className="flex flex-col justify-between gap-2 rounded-xl bg-white px-4 py-5 shadow"
         >
           <p
             className="text-heading-200"

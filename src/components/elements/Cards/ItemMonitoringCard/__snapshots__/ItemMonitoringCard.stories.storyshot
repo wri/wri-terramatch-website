@@ -26,7 +26,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
               className="shadow-lg absolute bottom-full z-10 mb-1 hidden rounded bg-darkCustom p-2 text-center text-white group-hover:inline-block lg:p-3 w-56 top"
             >
               <div
-                className="absolute bottom-0 left-1/2 ml-[-4px] mb-[-9px] hidden border-[5px] border-darkCustom border-r-transparent border-b-transparent border-l-transparent group-hover:block "
+                className="absolute bottom-0 left-1/2 mb-[-9px] ml-[-4px] hidden border-[5px] border-darkCustom border-b-transparent border-l-transparent border-r-transparent group-hover:block "
               />
               <p
                 className="text-12-semibold"
@@ -87,7 +87,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
               className="shadow-lg absolute bottom-full z-10 mb-1 hidden rounded bg-darkCustom p-2 text-center text-white group-hover:inline-block lg:p-3 w-56 top"
             >
               <div
-                className="absolute bottom-0 left-1/2 ml-[-4px] mb-[-9px] hidden border-[5px] border-darkCustom border-r-transparent border-b-transparent border-l-transparent group-hover:block "
+                className="absolute bottom-0 left-1/2 mb-[-9px] ml-[-4px] hidden border-[5px] border-darkCustom border-b-transparent border-l-transparent border-r-transparent group-hover:block "
               />
               <p
                 className="text-12-semibold"
@@ -178,7 +178,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
               className="shadow-lg absolute bottom-full z-10 mb-1 hidden rounded bg-darkCustom p-2 text-center text-white group-hover:inline-block lg:p-3 w-56 top"
             >
               <div
-                className="absolute bottom-0 left-1/2 ml-[-4px] mb-[-9px] hidden border-[5px] border-darkCustom border-r-transparent border-b-transparent border-l-transparent group-hover:block "
+                className="absolute bottom-0 left-1/2 mb-[-9px] ml-[-4px] hidden border-[5px] border-darkCustom border-b-transparent border-l-transparent border-r-transparent group-hover:block "
               />
               <p
                 className="text-12-semibold"
@@ -237,7 +237,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
         className="relative"
       >
         <div
-          className="absolute top-[40%] left-[40%] flex flex-col rounded-lg bg-white p-1 shadow"
+          className="absolute left-[40%] top-[40%] flex flex-col rounded-lg bg-white p-1 shadow"
         >
           <div
             className="flex items-center gap-1"

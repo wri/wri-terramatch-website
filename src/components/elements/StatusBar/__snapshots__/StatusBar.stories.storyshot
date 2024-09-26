@@ -14,7 +14,7 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
         className="flex flex-1 items-center"
       >
         <div
-          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
+          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-primary-200"
         >
           <div
             style={
@@ -91,7 +91,7 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
         className="flex flex-1 items-center"
       >
         <div
-          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
+          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-secondary-200"
         >
           <div
             style={
@@ -168,7 +168,7 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
         className="flex flex-1 items-center"
       >
         <div
-          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-neutral-200"
         >
           <div
             style={
@@ -245,7 +245,7 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
         className="flex flex-1 items-center"
       >
         <div
-          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
+          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-error-200"
         >
           <div
             style={
@@ -322,7 +322,7 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
         className="flex flex-1 items-center"
       >
         <div
-          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+          className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3 bg-tertiary-200"
         >
           <div
             style={

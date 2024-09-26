@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/LandingPage/TwoByOneSection Primary 1`] 
   className="w-full md:flex md:flex-row-reverse bg-black"
 >
   <div
-    className="md:w-[50%] md:py-16 md:px-20"
+    className="md:w-[50%] md:px-20 md:py-16"
   >
     <div
       className="h-[292px] bg-neutral-300"
@@ -20,7 +20,7 @@ exports[`Storyshots Components/Elements/LandingPage/TwoByOneSection Primary 1`] 
       className="flex flex-col items-start gap-4"
     >
       <div
-        className="flex max-w-[515px] flex-col items-start justify-center gap-8 py-9 px-12"
+        className="flex max-w-[515px] flex-col items-start justify-center gap-8 px-12 py-9"
       >
         <p
           className="text-white text-heading-700"

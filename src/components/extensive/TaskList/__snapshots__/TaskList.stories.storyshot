@@ -24,10 +24,10 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
     </p>
   </div>
   <div
-    className="flex flex-col gap-8 bg-no-repeat pt-8 pb-10"
+    className="flex flex-col gap-8 bg-no-repeat pb-10 pt-8"
   >
     <div
-      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-12  border-neutral-200 bg-white"
+      className="flex items-center justify-between gap-6 rounded-xl border px-12 py-6  border-neutral-200 bg-white"
     >
       <div
         className="flex min-w-0 items-center gap-4"
@@ -74,7 +74,7 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
       </div>
     </div>
     <div
-      className="flex items-center justify-between gap-6 rounded-xl border py-6 px-12  border-neutral-200 bg-white"
+      className="flex items-center justify-between gap-6 rounded-xl border px-12 py-6  border-neutral-200 bg-white"
     >
       <div
         className="flex min-w-0 items-center gap-4"
