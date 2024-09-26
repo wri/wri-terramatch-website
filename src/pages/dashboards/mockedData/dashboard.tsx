@@ -23,52 +23,27 @@ export const TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES = {
     {
       label: "Aerobic Agroforestry",
       valueText: "1,515,000",
-      value: 1515.0
+      value: 1515000
     },
     {
       label: "Wells for Zoe",
-      valueText: "952,789",
-      value: 952.789
+      valueText: "952789",
+      value: 952789
     },
     {
       label: "Trees for the Future",
-      valueText: "850,000",
-      value: 850.0
+      valueText: "646,247",
+      value: 646247
     },
     {
-      label: "Trees for the Future",
-      valueText: "800,000",
-      value: 800.0
+      label: "KIJABE FOREST TRUST",
+      valueText: "549,995",
+      value: 549995
     },
     {
-      label: "Eden Reforestation Projects",
-      valueText: "750,000",
-      value: 750.0
-    },
-    {
-      label: "One Tree Planted",
-      valueText: "700,000",
-      value: 700.0
-    },
-    {
-      label: "Plant With Purpose",
-      valueText: "650,000",
-      value: 650.0
-    },
-    {
-      label: "The Green Belt Movement",
-      valueText: "600,000",
-      value: 600.0
-    },
-    {
-      label: "Trees, Water & People",
-      valueText: "550,000",
-      value: 550.0
-    },
-    {
-      label: "WeForest",
-      valueText: "500,000",
-      value: 500.0
+      label: "Kijani Forestry",
+      valueText: "500,005",
+      value: 500005
     }
   ],
   maxValue: 1889396.551724138

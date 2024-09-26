@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -7,6 +8,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { DashboardDataProps } from "../dashboard/index.page";
+import GraphicDashboard from "./graphicDashboard";
 import ValueNumberDashboard from "./valueNumberDashboard";
 
 const SecDashboard = ({
@@ -24,8 +26,16 @@ const SecDashboard = ({
   className?: string;
   classNameBody?: string;
   classNameHeader?: string;
-  data?: DashboardDataProps;
+  data: DashboardDataProps;
 }) => {
+  const [toggleValue, setToggleValue] = useState(0);
+
+  useEffect(() => {
+    if (data.tableData) {
+      setToggleValue(1);
+    }
+  }, []);
+
   return (
     <div className={className}>
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
@@ -49,16 +59,27 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={type === "toggle"}>
-          <Toggle items={secondOptionsData} activeIndex={0} setActiveIndex={() => {}} />
+          <Toggle
+            items={secondOptionsData}
+            activeIndex={toggleValue}
+            setActiveIndex={() => {
+              setToggleValue(toggleValue === 0 ? 1 : 0);
+            }}
+          />
         </When>
       </div>
       <div className={classNames("mt-3 flex items-center justify-between", classNameBody)}>
-        {data && data.value ? <ValueNumberDashboard value={data.value} unit={data.unit} /> : <></>}
-        <When condition={data && data.value && data.unit}>
+        {data.value ? <ValueNumberDashboard value={data.value} unit={data.unit} /> : <></>}
+        <When condition={data.value && data.unit}>
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
         </When>
-        <When condition={data && data.graphic}>
+        <When condition={data.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
+        </When>
+        <When condition={!!data.tableData}>
+          <When condition={toggleValue === 1}>
+            {data.tableData && <GraphicDashboard data={data.tableData} maxValue={data.maxValue ?? 0} />}
+          </When>
         </When>
       </div>
     </div>
