@@ -92,7 +92,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
       <IconButton
         iconProps={{ name: IconNames.TRASH, width: 24, height: 24 }}
         onClick={openDeleteConfirmation}
-        className="rounded-t-none rounded-b-lg p-[10px]"
+        className="rounded-b-lg rounded-t-none p-[10px]"
         aria-label={t("Delete Polygon")}
       />
     </ControlButtonsGroup>

@@ -78,7 +78,6 @@ export const pitchDataProvider: PitchDataProvider = {
           "total_hectares",
           "total_trees"
         ]),
-        // @ts-expect-error
         pathParams: { uuid: params.id }
       });
 

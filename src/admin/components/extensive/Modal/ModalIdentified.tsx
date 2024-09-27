@@ -51,7 +51,7 @@ const ModalIdentified: FC<ModalApproveProps> = ({
           <Text variant="text-24-bold">{title}</Text>
         </div>
         <When condition={!!content}>
-          <Text as="div" variant="text-12-light" className="mt-1 mb-4" containHtml>
+          <Text as="div" variant="text-12-light" className="mb-4 mt-1" containHtml>
             {content}
           </Text>
         </When>

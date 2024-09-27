@@ -36,7 +36,7 @@ export const siteDataProvider: DataProvider = {
       const response = await fetchGetV2ENTITYUUID({
         pathParams: {
           entity: "sites",
-          uuid: params.id
+          uuid: params.id as string
         }
       });
 
