@@ -1,4 +1,5 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer";
 import { isArray } from "lodash";
 import { Store } from "redux";
 
@@ -37,11 +38,13 @@ type Relationship = {
 };
 
 export type Relationships = {
-  [key: string]: Relationship | Relationship[];
+  [key: string]: Relationship[];
 };
 
 export type StoreResource<AttributeType> = {
   attributes: AttributeType;
+  // We do a bit of munging on the shape from the API, removing the intermediate "data" member, and
+  // ensuring there's always an array, to make consuming the data clientside a little smoother.
   relationships?: Relationships;
 };
 
@@ -61,7 +64,7 @@ export type JsonApiResource = {
   type: (typeof RESOURCES)[number];
   id: string;
   attributes: Attributes;
-  relationships?: Relationship | Relationship[];
+  relationships?: { [key: string]: { data: Relationship | Relationship[] } };
 };
 
 export type JsonApiResponse = {
@@ -104,6 +107,19 @@ type ApiFetchSucceededProps = ApiFetchStartingProps & {
   response: JsonApiResponse;
 };
 
+const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
+  for (const resource of RESOURCES) {
+    state[resource] = {};
+  }
+
+  for (const method of METHODS) {
+    state.meta.pending[method] = {};
+  }
+};
+
+const isLogin = ({ url, method }: { url: string; method: Method }) =>
+  url.endsWith("auth/v3/logins") && method === "POST";
+
 export const apiSlice = createSlice({
   name: "api",
   initialState,
@@ -118,38 +134,43 @@ export const apiSlice = createSlice({
     },
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
       const { url, method, response } = action.payload;
-      delete state.meta.pending[method][url];
+      if (isLogin(action.payload)) {
+        // After a successful login, clear the entire cache; we want all mounted components to
+        // re-fetch their data with the new login credentials.
+        clearApiCache(state);
+      } else {
+        delete state.meta.pending[method][url];
+      }
 
       // All response objects from the v3 api conform to JsonApiResponse
-      let { data } = response;
+      let { data, included } = response;
       if (!isArray(data)) data = [data];
-      if (response.included != null) {
+      if (included != null) {
         // For the purposes of this reducer, data and included are the same: they both get merged
         // into the data cache.
-        data = [...data, ...response.included];
+        data = [...data, ...included];
       }
       for (const resource of data) {
         // The data resource type is expected to match what is declared above in ApiDataStore, but
         // there isn't a way to enforce that with TS against this dynamic data structure, so we
         // use the dreaded any.
-        const { type, id, ...rest } = resource;
-        state[type][id] = rest as StoreResource<any>;
+        const { type, id, attributes, relationships: responseRelationships } = resource;
+        const storeResource: StoreResource<any> = { attributes };
+        if (responseRelationships != null) {
+          storeResource.relationships = {};
+          for (const [key, { data }] of Object.entries(responseRelationships)) {
+            storeResource.relationships[key] = Array.isArray(data) ? data : [data];
+          }
+        }
+        state[type][id] = storeResource;
       }
 
-      if (url.endsWith("/users/me") && method === "GET") {
+      if (url.endsWith("users/v3/users/me") && method === "GET") {
         state.meta.meUserId = (response.data as JsonApiResource).id;
       }
     },
 
-    clearApiCache: state => {
-      for (const resource of RESOURCES) {
-        state[resource] = {};
-      }
-
-      for (const method of METHODS) {
-        state.meta.pending[method] = {};
-      }
-    },
+    clearApiCache,
 
     // only used during app bootup.
     setInitialAuthToken: (state, action: PayloadAction<{ authToken: string }>) => {
@@ -172,10 +193,8 @@ authListenerMiddleware.startListening({
       response: JsonApiResponse;
     }>
   ) => {
-    const { url, method, response } = action.payload;
-    if (!url.endsWith("auth/v3/logins") || method !== "POST") return;
-
-    const { token } = (response.data as JsonApiResource).attributes as LoginDto;
+    if (!isLogin(action.payload)) return;
+    const { token } = (action.payload.response.data as JsonApiResource).attributes as LoginDto;
     setAccessToken(token);
   }
 });
