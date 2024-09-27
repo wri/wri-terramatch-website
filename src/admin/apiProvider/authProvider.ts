@@ -1,13 +1,13 @@
 import { AuthProvider } from "react-admin";
 
-import { fetchGetAuthLogout, fetchGetAuthMe } from "@/generated/apiComponents";
+import { fetchGetAuthLogout } from "@/generated/apiComponents";
 import Log from "@/utils/log";
 
 import { AdminTokenStorageKey, removeAccessToken } from "./utils/token";
 
 export const authProvider: AuthProvider = {
   // send username and password to the auth server and get back credentials
-  login: async params => {
+  login: async () => {
     Log.error("Admin app does not support direct login");
   },
 
@@ -17,7 +17,7 @@ export const authProvider: AuthProvider = {
   },
 
   // when the user navigates, make sure that their credentials are still valid
-  checkAuth: async params => {
+  checkAuth: async () => {
     const token = localStorage.getItem(AdminTokenStorageKey);
     if (!token) return Promise.reject();
 
@@ -47,27 +47,6 @@ export const authProvider: AuthProvider = {
         })
         .catch(() => {
           resolve();
-        });
-    });
-  },
-
-  // get the user's profile
-  getIdentity: async () => {
-    const token = localStorage.getItem(AdminTokenStorageKey);
-    if (!token) return Promise.reject();
-
-    return new Promise((resolve, reject) => {
-      fetchGetAuthMe({})
-        .then(response => {
-          //@ts-ignore
-          const userData = response.data;
-          resolve({
-            ...userData,
-            fullName: `${userData.first_name} ${userData.last_name}`
-          });
-        })
-        .catch(() => {
-          reject();
         });
     });
   },
