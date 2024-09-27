@@ -10,11 +10,11 @@ export default {
 export const Primary = {
   render: () => (
     <TwoByOneSection.Container className="bg-black">
-      <TwoByOneSection.Top className="md:py-16 md:px-20">
+      <TwoByOneSection.Top className="md:px-20 md:py-16">
         <div className="h-[292px] bg-neutral-300">Video placeholder</div>
       </TwoByOneSection.Top>
       <TwoByOneSection.Bottom>
-        <div className="flex max-w-[515px] flex-col items-start justify-center gap-8 py-9 px-12">
+        <div className="flex max-w-[515px] flex-col items-start justify-center gap-8 px-12 py-9">
           <Text variant="text-heading-700" className="text-white">
             Access Support Today
           </Text>
