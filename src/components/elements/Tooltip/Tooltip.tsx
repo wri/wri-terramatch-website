@@ -17,7 +17,7 @@ const ToolTip = ({ children, content, width, placement, className, title }: Tool
     <div className={`group relative flex flex-col items-center ${className}`}>
       <div
         className={tw(
-          "shadow-lg text-12 absolute bottom-full z-10 mb-1 hidden w-fit rounded bg-darkCustom p-2 text-center text-white group-hover:inline-block lg:p-3",
+          "shadow-lg text-12 absolute bottom-full z-10 mb-1 hidden w-fit rounded bg-darkCustom p-1 text-center text-white group-hover:inline-block lg:p-2",
           width,
           placement
         )}

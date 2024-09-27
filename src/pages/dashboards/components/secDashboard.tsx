@@ -6,6 +6,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
+import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -79,6 +80,7 @@ const SecDashboard = ({
             setActiveIndex={() => {
               setToggleValue(toggleValue === 0 ? 1 : 0);
             }}
+            variant={VARIANT_TOGGLE_DASHBOARD}
           />
         </When>
       </div>

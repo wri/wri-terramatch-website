@@ -1,6 +1,9 @@
 import { useT } from "@transifex/react";
 import { useContext } from "react";
 
+import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
@@ -53,20 +56,54 @@ const Dashboard = () => {
   const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
 
-  console.log("TARGET_LAND_USE_TYPES_REPRESENTED", TARGET_LAND_USE_TYPES_REPRESENTED);
+  const dashboardHeader = [
+    {
+      label: "Trees Planted",
+      value: "12.2M"
+    },
+    {
+      label: "Hectares Under Restoration",
+      value: "5,220 ha"
+    },
+    {
+      label: "Jobs Created",
+      value: "23,000"
+    }
+  ];
+
   return (
     <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
-      <div ref={sharedRef} className="w-3/5 overflow-auto ">
+      <div ref={sharedRef} className="w-3/5 overflow-auto pr-2 ">
         <PageRow className="gap-4 p-0">
+          <div className="grid w-full grid-cols-3 gap-4">
+            {dashboardHeader.map((item, index) => (
+              <div key={index} className="rounded-lg bg-white px-5 py-4.5">
+                <Text variant="text-10-light" className="text-darkCustom opacity-60">
+                  {item.label}
+                </Text>
+
+                <div className="flex items-center gap-2">
+                  <Text variant="text-20" className="text-darkCustom" as="span">
+                    {item.value}
+                  </Text>
+                  <ToolTip content={item.label} placement="top" width="w-56">
+                    <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+                  </ToolTip>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <PageCard
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
             gap={8}
+            subtitleMore={true}
             title={t("TREES RESTORED")}
             variantSubTitle="text-14-light"
-            subtitle={t(`The numbers and reports below display data related to Indicator 1: Trees Restored described in TerraFund’s
-            MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and
-            verified.`)}
+            subtitle={t(
+              `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund’s  MRV framework </span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+            )}
           >
             <SecDashboard
               title="Number of trees planted"
@@ -91,11 +128,12 @@ const Dashboard = () => {
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
             gap={8}
+            subtitleMore={true}
             title={t("HECTARES UNDER RESTORATION")}
             variantSubTitle="text-14-light"
-            subtitle={t(`The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in
-            TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are
-            sourced and verified.`)}
+            subtitle={t(
+              `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+            )}
           >
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
@@ -119,13 +157,10 @@ const Dashboard = () => {
             gap={8}
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
-            subtitle={t(`The numbers and reports below display data related to Indicator 3: Jobs Created described in TerraFund’s
-            MRV framework. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or
-            over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created
-            category are disaggregated by number of women, number of men, and number of youths. Restoration Champions
-            are required to report on jobs and volunteers every 6 months and provide additional documentation to
-            verify employment. Please refer to the linked MRV framework for additional details on how these numbers
-            are sourced and verified.`)}
+            subtitleMore={true}
+            subtitle={t(
+              `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund’s MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
+            )}
           >
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
