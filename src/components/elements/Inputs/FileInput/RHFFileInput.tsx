@@ -175,7 +175,7 @@ const RHFFileInput = ({
     try {
       const location = await exifr.gps(file);
 
-      if (location) {
+      if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
         body.append("lat", location.latitude.toString());
         body.append("lng", location.longitude.toString());
       }
