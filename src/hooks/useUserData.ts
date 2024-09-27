@@ -2,7 +2,7 @@ import { loginConnection } from "@/connections/Login";
 import { myUserConnection } from "@/connections/User";
 import { useGetAuthMe } from "@/generated/apiComponents";
 import { MeResponse } from "@/generated/apiSchemas";
-import { useConnection } from "@/hooks/useConnection";
+import { useConnections } from "@/hooks/useConnection";
 import Log from "@/utils/log";
 
 /**
@@ -13,9 +13,8 @@ import Log from "@/utils/log";
  *   every 5 minutes for every component that uses this hook.
  */
 export const useUserData = () => {
-  const [, { token }] = useConnection(loginConnection);
-  const [myUserLoading, myUserResult] = useConnection(myUserConnection);
-  Log.debug("myUserConnection", myUserLoading, myUserResult);
+  const [loaded, [{ token }, myUserResult]] = useConnections([loginConnection, myUserConnection]);
+  Log.debug("myUserConnection", loaded, myUserResult);
   const { data: authMe } = useGetAuthMe<{ data: MeResponse }>(
     {},
     {
