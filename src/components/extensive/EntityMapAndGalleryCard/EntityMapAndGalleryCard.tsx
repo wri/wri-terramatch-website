@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -61,6 +61,7 @@ const EntityMapAndGalleryCard = ({
   });
   const { showLoader, hideLoader } = useLoading();
   const mapFunctions = useMap();
+  const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const projectUUID = router.query.uuid as string;
   const queryParams: any = {
@@ -216,6 +217,7 @@ const EntityMapAndGalleryCard = ({
           hasControls
           showPopups
           modelFilesData={data?.data}
+          imageGalleryRef={imageGalleryRef}
         />
       </PageCard>
       <If
@@ -232,42 +234,44 @@ const EntityMapAndGalleryCard = ({
           />
         </Then>
         <Else>
-          <PageCard
-            title={t("All Images")}
-            headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
-          >
-            <ImageGallery
-              data={
-                data?.data?.map(file => ({
-                  //@ts-ignore
-                  uuid: file.uuid!,
-                  fullImageUrl: file.file_url!,
-                  thumbnailImageUrl: file.thumb_url!,
-                  label: file.model_name!,
-                  isPublic: file.is_public!,
-                  isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
-                  isCover: file.is_cover,
-                  raw: file
-                })) || []
-              }
-              entity={modelName}
-              entityData={entityData}
-              pageCount={data?.meta?.last_page || 1}
-              onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
-              onGalleryStateChange={(pagination, filter) => {
-                setPagination(pagination);
-                setFilter(filter);
-              }}
-              filterOptions={filterOptions}
-              onChangeSearch={setSearchString}
-              onChangeGeotagged={setIsGeotagged}
-              reloadGalleryImages={refetch}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-              setFilters={setFilters}
-              isLoading={isLoading}
-            />
-          </PageCard>
+          <div ref={imageGalleryRef}>
+            <PageCard
+              title={t("All Images")}
+              headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
+            >
+              <ImageGallery
+                data={
+                  data?.data?.map(file => ({
+                    //@ts-ignore
+                    uuid: file.uuid!,
+                    fullImageUrl: file.file_url!,
+                    thumbnailImageUrl: file.thumb_url!,
+                    label: file.model_name!,
+                    isPublic: file.is_public!,
+                    isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+                    isCover: file.is_cover,
+                    raw: file
+                  })) || []
+                }
+                entity={modelName}
+                entityData={entityData}
+                pageCount={data?.meta?.last_page || 1}
+                onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+                onGalleryStateChange={(pagination, filter) => {
+                  setPagination(pagination);
+                  setFilter(filter);
+                }}
+                filterOptions={filterOptions}
+                onChangeSearch={setSearchString}
+                onChangeGeotagged={setIsGeotagged}
+                reloadGalleryImages={refetch}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+                setFilters={setFilters}
+                isLoading={isLoading}
+              />
+            </PageCard>
+          </div>
         </Else>
       </If>
     </>
