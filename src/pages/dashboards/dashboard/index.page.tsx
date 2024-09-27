@@ -1,6 +1,8 @@
 import { useT } from "@transifex/react";
 import { useContext } from "react";
 
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -10,6 +12,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import SecDashboard from "../components/secDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
+  ACTIVE_COUNTRIES,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -68,6 +71,29 @@ const Dashboard = () => {
     {
       label: "Jobs Created",
       value: "23,000"
+    }
+  ];
+
+  const columnsActiveCountries = [
+    {
+      header: "Country",
+      accessorKey: "country"
+    },
+    {
+      header: "Projest",
+      accessorKey: "project"
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted"
+    },
+    {
+      header: "Hectares Restoration",
+      accessorKey: "hectaresRestoration"
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated"
     }
   ];
 
@@ -208,7 +234,25 @@ const Dashboard = () => {
         </PageRow>
       </div>
 
-      <div className="w-2/5">Map</div>
+      <div className="w-2/5">
+        <PageRow className="gap-4 p-0">
+          <PageCard
+            className="border-0 px-4 py-6"
+            classNameSubTitle="mt-4"
+            gap={8}
+            title={t("ACTIVE COUNTRIES")}
+            headerChildren={<button>Expand</button>}
+          >
+            <div className="w-full">
+              <Table
+                columns={columnsActiveCountries}
+                data={ACTIVE_COUNTRIES}
+                variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+              />
+            </div>
+          </PageCard>
+        </PageRow>
+      </div>
     </div>
   );
 };

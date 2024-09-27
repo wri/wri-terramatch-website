@@ -186,3 +186,20 @@ export const VOLUNTEERS_CREATED_BY_AGE = {
     }
   ]
 };
+
+export const ACTIVE_COUNTRIES = [
+  {
+    country: "Angola",
+    project: "32",
+    treesPlanted: "2,234",
+    hectaresRestoration: "2,234",
+    jobsCreated: "1306"
+  },
+  {
+    country: "Liberia",
+    project: "14",
+    treesPlanted: "760",
+    hectaresRestoration: "760",
+    jobsCreated: "430"
+  }
+];
