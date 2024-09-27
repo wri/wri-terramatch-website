@@ -1,8 +1,10 @@
 import { loginConnection } from "@/connections/Login";
+import { organisationConnection } from "@/connections/Organisation";
 import { myUserConnection } from "@/connections/User";
 import { useGetAuthMe } from "@/generated/apiComponents";
 import { MeResponse } from "@/generated/apiSchemas";
-import { useConnections } from "@/hooks/useConnection";
+import { useConnection } from "@/hooks/useConnection";
+import { useConnections } from "@/hooks/useConnections";
 import Log from "@/utils/log";
 
 /**
@@ -14,7 +16,9 @@ import Log from "@/utils/log";
  */
 export const useUserData = () => {
   const [loaded, [{ token }, myUserResult]] = useConnections([loginConnection, myUserConnection]);
-  Log.debug("myUserConnection", loaded, myUserResult);
+  const organisationId = myUserResult?.userRelationships?.org?.[0]?.id;
+  const [, organisationResult] = useConnection(organisationConnection, { organisationId });
+  Log.debug("myUserConnection", loaded, myUserResult, organisationResult);
   const { data: authMe } = useGetAuthMe<{ data: MeResponse }>(
     {},
     {
