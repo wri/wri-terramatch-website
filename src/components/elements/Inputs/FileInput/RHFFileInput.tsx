@@ -51,27 +51,32 @@ const RHFFileInput = ({
       addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
     },
     onError(err, variables: any) {
+      const file = variables.file;
+      let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
+
       if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
         const error = err?.errors[0];
         const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
         formHook?.setError(fileInputProps.name, formError);
-
-        const file = variables.file;
-
-        addFileToValue({
-          collection_name: variables.pathParams.collection,
-          size: file?.size,
-          file_name: file?.name,
-          title: file?.name,
-          mime_type: file?.type,
-          rawFile: file,
-          uploadState: {
-            isLoading: false,
-            isSuccess: false,
-            error: formError.message
-          }
-        });
+        errorMessage = formError.message;
+      } else if (err?.statusCode === 413 || err?.statusCode === -1) {
+        errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
+        formHook?.setError(fileInputProps.name, { type: "manual", message: errorMessage });
       }
+
+      addFileToValue({
+        collection_name: variables.pathParams.collection,
+        size: file?.size,
+        file_name: file?.name,
+        title: file?.name,
+        mime_type: file?.type,
+        rawFile: file,
+        uploadState: {
+          isLoading: false,
+          isSuccess: false,
+          error: errorMessage
+        }
+      });
     }
   });
 
@@ -170,7 +175,7 @@ const RHFFileInput = ({
     try {
       const location = await exifr.gps(file);
 
-      if (location) {
+      if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
         body.append("lat", location.latitude.toString());
         body.append("lng", location.longitude.toString());
       }

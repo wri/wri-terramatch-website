@@ -66,7 +66,7 @@ const StatusPill = ({ status, children, className, ...props }: StatusPillProps) 
     <div
       {...props}
       className={twMerge(
-        "flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5",
+        "flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3",
         classNames,
         className
       )}

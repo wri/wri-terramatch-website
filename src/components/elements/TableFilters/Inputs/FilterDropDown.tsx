@@ -54,7 +54,7 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
               </Text>
               <Icon
                 name={IconNames.CHEVRON_DOWN}
-                className={classNames(" top-3 right-4 fill-neutral-900 transition", open && "rotate-180")}
+                className={classNames(" right-4 top-3 fill-neutral-900 transition", open && "rotate-180")}
                 width={20}
               />
             </Listbox.Button>
@@ -70,7 +70,7 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
             >
               <Listbox.Options
                 as="div"
-                className="absolute top-0 left-0 right-0 z-50 mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
+                className="absolute left-0 right-0 top-0 z-50 mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow"
               >
                 {props.options.map(option => {
                   let isSelected = selected === option.value;
