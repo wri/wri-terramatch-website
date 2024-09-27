@@ -19,6 +19,7 @@ const mockData = (() => {
   for (let i = 1; i <= 7; i++) {
     faker.seed(i);
     data.push({
+      id: `${i}`,
       url: faker.image.urlPicsumPhotos(),
       title: faker.lorem.sentence({ min: 4, max: 8 }),
       date: faker.date.anytime().toLocaleDateString("en-GB", { timeZone: "Europe/London" })

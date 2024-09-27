@@ -4,6 +4,7 @@ import { useModalContext } from "@/context/modal.provider";
 
 import { IconNames } from "../../Icon/Icon";
 import Modal from "../../Modal/Modal";
+import { ModalId } from "../../Modal/ModalConst";
 
 const ErrorModal = () => {
   const { closeModal } = useModalContext();
@@ -19,7 +20,7 @@ const ErrorModal = () => {
       }}
       primaryButtonProps={{
         children: t("Continue"),
-        onClick: () => closeModal()
+        onClick: () => closeModal(ModalId.ERROR_MODAL)
       }}
     />
   );

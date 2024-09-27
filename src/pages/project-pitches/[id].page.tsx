@@ -7,6 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import BannerCard from "@/components/extensive/Banner/BannerCard";
 import OverviewBanner from "@/components/extensive/Banner/Overview/OverviewBanner";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { useGetV2OrganisationsUUID, useGetV2ProjectPitchesUUID } from "@/generated/apiComponents";
 import { ProjectPitchRead, V2OrganisationRead } from "@/generated/apiSchemas";
@@ -91,6 +92,7 @@ const ProjectPitchPage: NextPage<InferGetServerSidePropsType<typeof getServerSid
           }
         ]}
       />
+      <PageFooter />
     </div>
   );
 };

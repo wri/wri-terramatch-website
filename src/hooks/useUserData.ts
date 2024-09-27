@@ -1,14 +1,14 @@
 import { useAuthContext } from "@/context/auth.provider";
 import { useGetAuthMe } from "@/generated/apiComponents";
-import { UserRead } from "@/generated/apiSchemas";
+import { MeResponse } from "@/generated/apiSchemas";
 
 /**
  * To easily access user data
- * @returns UserRead
+ * @returns MeResponse
  */
 export const useUserData = () => {
   const { token } = useAuthContext();
-  const { data: authMe } = useGetAuthMe<{ data: UserRead }>(
+  const { data: authMe } = useGetAuthMe<{ data: MeResponse }>(
     {},
     {
       enabled: !!token,

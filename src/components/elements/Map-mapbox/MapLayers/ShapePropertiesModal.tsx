@@ -13,7 +13,8 @@ import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { getFeatureProperties } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
-import { ModalBase } from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { getDistributionOptions } from "@/constants/options/distribution";
 import { getLandUseTypeOptions } from "@/constants/options/landUseType";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
@@ -152,7 +153,7 @@ export const ShapePropertiesModal = ({
         />
         <div className="flex w-full flex-row-reverse justify-between gap-3">
           <Button type="submit">Save</Button>
-          <Button type="button" variant="secondary" onClick={closeModal}>
+          <Button type="button" variant="secondary" onClick={() => closeModal(ModalId.SHAPE_PROPERTIES_MODAL)}>
             Cancel
           </Button>
         </div>

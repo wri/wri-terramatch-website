@@ -17,7 +17,7 @@ const FundingCarouselList = (props: FundingCarouselListProps) => {
   return (
     <div className={props.className}>
       <When condition={props.title}>
-        <Text variant="text-bold-headline-1000" className="mx-auto mb-4 max-w-7xl">
+        <Text variant="text-36-bold" className="mx-auto mb-4 max-w-[82vw] text-center">
           {props.title}
         </Text>
       </When>

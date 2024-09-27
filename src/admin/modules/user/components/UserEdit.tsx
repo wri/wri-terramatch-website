@@ -2,7 +2,7 @@ import { AutocompleteInput, Edit, ReferenceInput, SelectInput, SimpleForm, TextI
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
-import { userPrimaryRoleChoices } from "@/admin/modules/user/const";
+import { countriesChoices, frameworkChoices, userPrimaryRoleChoices } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
 
 import modules from "../..";
@@ -19,7 +19,7 @@ const UserEdit = () => {
     organisation: yup.object()
   };
 
-  if (isSuperAdmin) schemaObject.primary_role = yup.string().required();
+  if (isSuperAdmin) schemaObject.role = yup.string().required();
 
   return (
     <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false}>
@@ -38,7 +38,9 @@ const UserEdit = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isSuperAdmin && <SelectInput source="primary_role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        {isSuperAdmin && <SelectInput source="role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
+        <SelectInput source="country" label="Country" choices={countriesChoices} fullWidth />
       </SimpleForm>
     </Edit>
   );

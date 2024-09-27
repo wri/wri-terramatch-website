@@ -6,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -20,7 +21,7 @@ const ProjectsTabContent = () => {
   const { data: projectsData } = useGetV2MyProjects<{ data: GetV2MyProjectsResponse }>({});
 
   return (
-    <Container className="py-15 px-8">
+    <Container className="px-8 py-15">
       <If condition={(projectsData?.data?.length ?? 0) > 0}>
         <Then>
           <div className="mb-8 flex">
@@ -33,6 +34,7 @@ const ProjectsTabContent = () => {
           </div>
           <div className="rounded-xl p-8 shadow">
             <Table<GetV2MyProjectsResponse[0]>
+              variant={VARIANT_TABLE_BORDER_ALL}
               columns={[
                 { header: t("Title"), accessorKey: "name" },
                 {

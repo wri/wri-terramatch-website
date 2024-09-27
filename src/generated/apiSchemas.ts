@@ -42,9 +42,9 @@ export type TreeSpeciesReadAll = {
   collection?: string;
 }[];
 
-export type MonitoringUserRead = {
+export type AssociatedUserRead = {
   uuid?: string;
-  user_type?: string;
+  role?: string;
   job_role?: string;
   first_name?: string;
   last_name?: string;
@@ -95,9 +95,15 @@ export type EntityFormRead = {
 
 export type UserRead = {
   id?: number;
-  organisation_id?: number;
-  organisation_name?: string;
-  my_organisation?: {
+  uuid?: string;
+  role?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  phone_number?: string;
+  whatsapp_phone?: string;
+  organisation?: {
     uuid?: string;
     status?: string;
     readable_status?: string;
@@ -542,228 +548,41 @@ export type UserRead = {
     created_at?: string;
     updated_at?: string;
   };
-  my_monitoring_organisations?: {
-    uuid?: string;
-    status?: string;
-    users_status?: string;
-    readable_status?: string;
-    type?: string;
-    private?: boolean;
-    name?: string;
-    phone?: string;
-    founding_date?: string;
-    description?: string;
-    countries?: string[];
-    languages?: string[];
-    tree_species?: {
-      uuid?: string;
-      name?: string;
-      amount?: number;
-      type?: string;
-      collection?: string;
-    }[];
-    web_url?: string;
-    facebook_url?: string;
-    instagram_url?: string;
-    linkedin_url?: string;
-    twitter_url?: string;
-    hq_street_1?: string;
-    hq_street_2?: string;
-    hq_city?: string;
-    hq_state?: string;
-    hq_zipcode?: string;
-    hq_country?: string;
-    fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
-    ha_restored_total?: number;
-    /**
-     * @format float
-     */
-    ha_restored_3year?: number;
-    relevant_experience_years?: number;
-    trees_grown_total?: number;
-    trees_grown_3year?: number;
-    tree_care_approach?: string;
-    logo?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    };
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    };
-    reference?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    additional?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_2year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_last_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_this_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_next_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    legal_registration?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  first_name?: string;
-  last_name?: string;
-  email_address?: string;
-  /**
-   * @format date-time
-   */
-  email_address_verified_at?: string;
-  role?: string;
   /**
    * @format date-time
    */
   last_logged_in_at?: string;
-  job_role?: string;
-  facebook?: string;
-  twitter?: string;
-  instagram?: string;
-  linkedin?: string;
-  avatar?: string;
-  phone_number?: string;
-  whatsapp_phone?: string;
-  has_ppc_projects?: boolean;
-  has_terrafund_projects?: boolean;
+  /**
+   * @format date-time
+   */
+  email_address_verified_at?: string;
+  verified?: boolean;
+  /**
+   * @format date-time
+   */
+  date_added?: string;
+  banners?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
 };
 
 export type UserReadAll = {
   id?: number;
-  organisation_id?: number;
-  organisation_name?: string;
-  my_organisation?: {
+  uuid?: string;
+  role?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  phone_number?: string;
+  whatsapp_phone?: string;
+  organisation?: {
     uuid?: string;
     status?: string;
     readable_status?: string;
@@ -1208,221 +1027,28 @@ export type UserReadAll = {
     created_at?: string;
     updated_at?: string;
   };
-  my_monitoring_organisations?: {
-    uuid?: string;
-    status?: string;
-    users_status?: string;
-    readable_status?: string;
-    type?: string;
-    private?: boolean;
-    name?: string;
-    phone?: string;
-    founding_date?: string;
-    description?: string;
-    countries?: string[];
-    languages?: string[];
-    tree_species?: {
-      uuid?: string;
-      name?: string;
-      amount?: number;
-      type?: string;
-      collection?: string;
-    }[];
-    web_url?: string;
-    facebook_url?: string;
-    instagram_url?: string;
-    linkedin_url?: string;
-    twitter_url?: string;
-    hq_street_1?: string;
-    hq_street_2?: string;
-    hq_city?: string;
-    hq_state?: string;
-    hq_zipcode?: string;
-    hq_country?: string;
-    fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
-    ha_restored_total?: number;
-    /**
-     * @format float
-     */
-    ha_restored_3year?: number;
-    relevant_experience_years?: number;
-    trees_grown_total?: number;
-    trees_grown_3year?: number;
-    tree_care_approach?: string;
-    logo?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    };
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    };
-    reference?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    additional?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_2year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_last_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_this_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_next_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    legal_registration?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      created_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  first_name?: string;
-  last_name?: string;
-  email_address?: string;
-  /**
-   * @format date-time
-   */
-  email_address_verified_at?: string;
-  role?: string;
   /**
    * @format date-time
    */
   last_logged_in_at?: string;
-  job_role?: string;
-  facebook?: string;
-  twitter?: string;
-  instagram?: string;
-  linkedin?: string;
-  avatar?: string;
-  phone_number?: string;
-  whatsapp_phone?: string;
-  has_ppc_projects?: boolean;
-  has_terrafund_projects?: boolean;
+  /**
+   * @format date-time
+   */
+  email_address_verified_at?: string;
+  verified?: boolean;
+  /**
+   * @format date-time
+   */
+  date_added?: string;
+  banners?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
 }[];
 
 export type FundingProgramme = {
@@ -3592,6 +3218,7 @@ export type V2AdminUserUpdate = {
   last_name?: string;
   email_address?: string;
   password?: string;
+  role?: string;
   job_role?: string;
   facebook?: string;
   instagram?: string;
@@ -3817,6 +3444,7 @@ export type V2FileGallery = {
   created_date?: string;
   model_name?: string;
   is_public?: boolean;
+  is_cover?: boolean;
   location?: {
     lat?: number;
     lng?: number;
@@ -4851,18 +4479,6 @@ export type V2StrataRead = {
   extent?: number;
 };
 
-export type V2StrataCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  description?: string;
-  extent?: number;
-};
-
-export type V2StrataUpdate = {
-  description?: string;
-  extent?: number;
-};
-
 export type V2StrataPaginated = {
   data?: {
     uuid?: string;
@@ -4886,22 +4502,6 @@ export type V2StrataPaginated = {
 
 export type V2SeedingRead = {
   uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingCreate = {
-  model_type?: string;
-  model_uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingUpdate = {
   name?: string;
   weight_of_sample?: number;
   seeds_in_sample?: number;
@@ -4950,21 +4550,6 @@ export type V2DisturbanceRead = {
   extent?: string;
 };
 
-export type V2DisturbanceCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  description?: string;
-  intensity?: string;
-  extent?: string;
-  collection?: string;
-};
-
-export type V2DisturbanceUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
-};
-
 export type V2DisturbancePaginated = {
   data?: {
     uuid?: string;
@@ -4991,20 +4576,6 @@ export type V2InvasiveRead = {
   uuid?: string;
   name?: string;
   type?: number;
-};
-
-export type V2InvasiveCreate = {
-  model_type?: string;
-  model_uuid?: number;
-  name?: string;
-  type?: string;
-  collection?: string;
-};
-
-export type V2InvasiveUpdate = {
-  description?: string;
-  intensity?: number;
-  collection?: string;
 };
 
 export type V2InvasivePaginated = {
@@ -6074,6 +5645,7 @@ export type ProjectFullRead = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -6188,6 +5760,7 @@ export type ProjectFullRead = {
        * this is a list of key value pairs eg slug: name
        */
       tags?: string[];
+      project_pitch_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -7791,6 +7364,7 @@ export type FormSubmissionRead = {
    * this is a list of key value pairs eg slug: name
    */
   tags?: string[];
+  project_pitch_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -8262,6 +7836,7 @@ export type ApplicationLiteRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8376,6 +7951,7 @@ export type ApplicationLiteRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8507,6 +8083,7 @@ export type ApplicationRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -8621,6 +8198,7 @@ export type ApplicationRead = {
      * this is a list of key value pairs eg slug: name
      */
     tags?: string[];
+    project_pitch_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -17405,9 +16983,15 @@ export type NurseryReportRead = {
   shared_drive_link?: string;
   created_by?: {
     id?: number;
-    organisation_id?: number;
-    organisation_name?: string;
-    my_organisation?: {
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
       uuid?: string;
       status?: string;
       readable_status?: string;
@@ -17852,227 +17436,40 @@ export type NurseryReportRead = {
       created_at?: string;
       updated_at?: string;
     };
-    my_monitoring_organisations?: {
-      uuid?: string;
-      status?: string;
-      users_status?: string;
-      readable_status?: string;
-      type?: string;
-      private?: boolean;
-      name?: string;
-      phone?: string;
-      founding_date?: string;
-      description?: string;
-      countries?: string[];
-      languages?: string[];
-      tree_species?: {
-        uuid?: string;
-        name?: string;
-        amount?: number;
-        type?: string;
-        collection?: string;
-      }[];
-      web_url?: string;
-      facebook_url?: string;
-      instagram_url?: string;
-      linkedin_url?: string;
-      twitter_url?: string;
-      hq_street_1?: string;
-      hq_street_2?: string;
-      hq_city?: string;
-      hq_state?: string;
-      hq_zipcode?: string;
-      hq_country?: string;
-      fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
-      ha_restored_total?: number;
-      /**
-       * @format float
-       */
-      ha_restored_3year?: number;
-      relevant_experience_years?: number;
-      trees_grown_total?: number;
-      trees_grown_3year?: number;
-      tree_care_approach?: string;
-      logo?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      cover?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      reference?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      additional?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_2year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_last_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_this_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_next_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      legal_registration?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    first_name?: string;
-    last_name?: string;
-    email_address?: string;
-    /**
-     * @format date-time
-     */
-    email_address_verified_at?: string;
-    role?: string;
     /**
      * @format date-time
      */
     last_logged_in_at?: string;
-    job_role?: string;
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    avatar?: string;
-    phone_number?: string;
-    whatsapp_phone?: string;
-    has_ppc_projects?: boolean;
-    has_terrafund_projects?: boolean;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
   };
   approved_by?: {
     id?: number;
-    organisation_id?: number;
-    organisation_name?: string;
-    my_organisation?: {
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
       uuid?: string;
       status?: string;
       readable_status?: string;
@@ -18517,221 +17914,28 @@ export type NurseryReportRead = {
       created_at?: string;
       updated_at?: string;
     };
-    my_monitoring_organisations?: {
-      uuid?: string;
-      status?: string;
-      users_status?: string;
-      readable_status?: string;
-      type?: string;
-      private?: boolean;
-      name?: string;
-      phone?: string;
-      founding_date?: string;
-      description?: string;
-      countries?: string[];
-      languages?: string[];
-      tree_species?: {
-        uuid?: string;
-        name?: string;
-        amount?: number;
-        type?: string;
-        collection?: string;
-      }[];
-      web_url?: string;
-      facebook_url?: string;
-      instagram_url?: string;
-      linkedin_url?: string;
-      twitter_url?: string;
-      hq_street_1?: string;
-      hq_street_2?: string;
-      hq_city?: string;
-      hq_state?: string;
-      hq_zipcode?: string;
-      hq_country?: string;
-      fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
-      ha_restored_total?: number;
-      /**
-       * @format float
-       */
-      ha_restored_3year?: number;
-      relevant_experience_years?: number;
-      trees_grown_total?: number;
-      trees_grown_3year?: number;
-      tree_care_approach?: string;
-      logo?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      cover?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      reference?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      additional?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_2year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_last_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_this_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_next_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      legal_registration?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    first_name?: string;
-    last_name?: string;
-    email_address?: string;
-    /**
-     * @format date-time
-     */
-    email_address_verified_at?: string;
-    role?: string;
     /**
      * @format date-time
      */
     last_logged_in_at?: string;
-    job_role?: string;
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    avatar?: string;
-    phone_number?: string;
-    whatsapp_phone?: string;
-    has_ppc_projects?: boolean;
-    has_terrafund_projects?: boolean;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
   };
   organisation?: {
     uuid?: string;
@@ -19685,9 +18889,15 @@ export type SiteReportRead = {
   approved_at?: string;
   created_by?: {
     id?: number;
-    organisation_id?: number;
-    organisation_name?: string;
-    my_organisation?: {
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
       uuid?: string;
       status?: string;
       readable_status?: string;
@@ -20132,227 +19342,40 @@ export type SiteReportRead = {
       created_at?: string;
       updated_at?: string;
     };
-    my_monitoring_organisations?: {
-      uuid?: string;
-      status?: string;
-      users_status?: string;
-      readable_status?: string;
-      type?: string;
-      private?: boolean;
-      name?: string;
-      phone?: string;
-      founding_date?: string;
-      description?: string;
-      countries?: string[];
-      languages?: string[];
-      tree_species?: {
-        uuid?: string;
-        name?: string;
-        amount?: number;
-        type?: string;
-        collection?: string;
-      }[];
-      web_url?: string;
-      facebook_url?: string;
-      instagram_url?: string;
-      linkedin_url?: string;
-      twitter_url?: string;
-      hq_street_1?: string;
-      hq_street_2?: string;
-      hq_city?: string;
-      hq_state?: string;
-      hq_zipcode?: string;
-      hq_country?: string;
-      fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
-      ha_restored_total?: number;
-      /**
-       * @format float
-       */
-      ha_restored_3year?: number;
-      relevant_experience_years?: number;
-      trees_grown_total?: number;
-      trees_grown_3year?: number;
-      tree_care_approach?: string;
-      logo?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      cover?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      reference?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      additional?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_2year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_last_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_this_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_next_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      legal_registration?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    first_name?: string;
-    last_name?: string;
-    email_address?: string;
-    /**
-     * @format date-time
-     */
-    email_address_verified_at?: string;
-    role?: string;
     /**
      * @format date-time
      */
     last_logged_in_at?: string;
-    job_role?: string;
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    avatar?: string;
-    phone_number?: string;
-    whatsapp_phone?: string;
-    has_ppc_projects?: boolean;
-    has_terrafund_projects?: boolean;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
   };
   approved_by?: {
     id?: number;
-    organisation_id?: number;
-    organisation_name?: string;
-    my_organisation?: {
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
       uuid?: string;
       status?: string;
       readable_status?: string;
@@ -20797,221 +19820,28 @@ export type SiteReportRead = {
       created_at?: string;
       updated_at?: string;
     };
-    my_monitoring_organisations?: {
-      uuid?: string;
-      status?: string;
-      users_status?: string;
-      readable_status?: string;
-      type?: string;
-      private?: boolean;
-      name?: string;
-      phone?: string;
-      founding_date?: string;
-      description?: string;
-      countries?: string[];
-      languages?: string[];
-      tree_species?: {
-        uuid?: string;
-        name?: string;
-        amount?: number;
-        type?: string;
-        collection?: string;
-      }[];
-      web_url?: string;
-      facebook_url?: string;
-      instagram_url?: string;
-      linkedin_url?: string;
-      twitter_url?: string;
-      hq_street_1?: string;
-      hq_street_2?: string;
-      hq_city?: string;
-      hq_state?: string;
-      hq_zipcode?: string;
-      hq_country?: string;
-      fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
-      ha_restored_total?: number;
-      /**
-       * @format float
-       */
-      ha_restored_3year?: number;
-      relevant_experience_years?: number;
-      trees_grown_total?: number;
-      trees_grown_3year?: number;
-      tree_care_approach?: string;
-      logo?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      cover?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      reference?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      additional?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_2year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_last_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_this_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_next_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      legal_registration?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    first_name?: string;
-    last_name?: string;
-    email_address?: string;
-    /**
-     * @format date-time
-     */
-    email_address_verified_at?: string;
-    role?: string;
     /**
      * @format date-time
      */
     last_logged_in_at?: string;
-    job_role?: string;
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    avatar?: string;
-    phone_number?: string;
-    whatsapp_phone?: string;
-    has_ppc_projects?: boolean;
-    has_terrafund_projects?: boolean;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
   };
   workdays_volunteer?: number;
   technical_narrative?: string;
@@ -22145,9 +20975,15 @@ export type ProjectReportRead = {
   submitted_at?: string;
   created_by?: {
     id?: number;
-    organisation_id?: number;
-    organisation_name?: string;
-    my_organisation?: {
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
       uuid?: string;
       status?: string;
       readable_status?: string;
@@ -22592,221 +21428,28 @@ export type ProjectReportRead = {
       created_at?: string;
       updated_at?: string;
     };
-    my_monitoring_organisations?: {
-      uuid?: string;
-      status?: string;
-      users_status?: string;
-      readable_status?: string;
-      type?: string;
-      private?: boolean;
-      name?: string;
-      phone?: string;
-      founding_date?: string;
-      description?: string;
-      countries?: string[];
-      languages?: string[];
-      tree_species?: {
-        uuid?: string;
-        name?: string;
-        amount?: number;
-        type?: string;
-        collection?: string;
-      }[];
-      web_url?: string;
-      facebook_url?: string;
-      instagram_url?: string;
-      linkedin_url?: string;
-      twitter_url?: string;
-      hq_street_1?: string;
-      hq_street_2?: string;
-      hq_city?: string;
-      hq_state?: string;
-      hq_zipcode?: string;
-      hq_country?: string;
-      fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
-      ha_restored_total?: number;
-      /**
-       * @format float
-       */
-      ha_restored_3year?: number;
-      relevant_experience_years?: number;
-      trees_grown_total?: number;
-      trees_grown_3year?: number;
-      tree_care_approach?: string;
-      logo?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      cover?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      };
-      reference?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      additional?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_2year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_last_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_this_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      op_budget_next_year?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      legal_registration?: {
-        uuid?: string;
-        url?: string;
-        thumb_url?: string;
-        collection_name?: string;
-        title?: string;
-        file_name?: string;
-        mime_type?: string;
-        size?: number;
-        lat?: number;
-        lng?: number;
-        is_public?: boolean;
-        created_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    first_name?: string;
-    last_name?: string;
-    email_address?: string;
-    /**
-     * @format date-time
-     */
-    email_address_verified_at?: string;
-    role?: string;
     /**
      * @format date-time
      */
     last_logged_in_at?: string;
-    job_role?: string;
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    avatar?: string;
-    phone_number?: string;
-    whatsapp_phone?: string;
-    has_ppc_projects?: boolean;
-    has_terrafund_projects?: boolean;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
   };
   seedlings_grown?: number;
 };
@@ -22824,6 +21467,9 @@ export type UserCreate = {
   phone_number?: string;
   whatsapp_phone?: string;
   callback_url?: string;
+  role?: string;
+  country?: string;
+  program?: string;
 };
 
 export type UpdateRequestsPaginated = {
@@ -22922,6 +21568,10 @@ export type StatusUpdate = {
   feedback_fields?: string[];
 };
 
+export type EntityReportReminder = {
+  feedback?: string;
+};
+
 export type V2ProjectInviteRead = {
   id?: number;
   uuid?: string;
@@ -22946,4 +21596,1154 @@ export type WorkdayDemographic = {
   subtype?: string;
   name?: string;
   amount?: number;
+};
+
+export type GeoJSON = {
+  type?: "FeatureCollection";
+  features?: {
+    type?: "Feature";
+    properties?: {
+      poly_name?: string;
+      /**
+       * @format date
+       */
+      plantstart?: string;
+      /**
+       * @format date
+       */
+      plantend?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+      site_id?: string;
+      est_area?: number;
+    };
+    geometry?: {
+      type?: "Polygon" | "Point";
+      coordinates?: any[];
+    };
+  }[];
+};
+
+export type GeometryPost = {
+  /**
+   * The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
+   * always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
+   * there were Points in the request payload at this index, and the order will be the same.
+   */
+  polygon_uuids?: string[];
+  /**
+   * Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+   */
+  errors?: {
+    [key: string]: {
+      key?:
+        | "OVERLAPPING_POLYGON"
+        | "SELF_INTERSECTION"
+        | "COORDINATE_SYSTEM"
+        | "SIZE_LIMIT"
+        | "WITHIN_COUNTRY"
+        | "SPIKE"
+        | "GEOMETRY_TYPE"
+        | "TOTAL_AREA_EXPECTED"
+        | "TABLE_SCHEMA"
+        | "DATA_COMPLETED";
+      /**
+       * Human readable string in English to describe the error.
+       */
+      message?: string;
+    }[];
+  };
+}[];
+
+export type DashboardVolunteersSurvivalRateResponse = {
+  data?: {
+    /**
+     * Total number of volunteers.
+     */
+    total_volunteers?: number;
+    /**
+     * Total number of male volunteers.
+     */
+    men_volunteers?: number;
+    /**
+     * Total number of female volunteers.
+     */
+    women_volunteers?: number;
+    /**
+     * Total number of youth volunteers.
+     */
+    youth_volunteers?: number;
+    /**
+     * Total number of non-youth volunteers.
+     */
+    non_youth_volunteers?: number;
+    /**
+     * Survival rate for non-profit entities.
+     */
+    non_profit_survival_rate?: number;
+    /**
+     * Survival rate for enterprise entities.
+     */
+    enterprise_survival_rate?: number;
+    /**
+     * number of sites.
+     */
+    number_of_sites?: number;
+    /**
+     * number of nurseries.
+     */
+    number_of_nurseries?: number;
+  };
+};
+
+export type DashboardVolundteersSurvivalRateData = {
+  /**
+   * Total number of volunteers.
+   */
+  total_volunteers?: number;
+  /**
+   * Total number of male volunteers.
+   */
+  men_volunteers?: number;
+  /**
+   * Total number of female volunteers.
+   */
+  women_volunteers?: number;
+  /**
+   * Total number of youth volunteers.
+   */
+  youth_volunteers?: number;
+  /**
+   * Total number of non-youth volunteers.
+   */
+  non_youth_volunteers?: number;
+  /**
+   * Survival rate for non-profit entities.
+   */
+  non_profit_survival_rate?: number;
+  /**
+   * Survival rate for enterprise entities.
+   */
+  enterprise_survival_rate?: number;
+  /**
+   * number of sites.
+   */
+  number_of_sites?: number;
+  /**
+   * number of nurseries.
+   */
+  number_of_nurseries?: number;
+};
+
+export type AuditStatusCreateRequest = {
+  status?: string;
+  comment?: string;
+  type?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type AuditStatusResponse = {
+  id?: string;
+  uuid?: string;
+  entity_name?: string;
+  status?: string;
+  comment?: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
+  is_submitted?: boolean;
+  is_active?: boolean;
+  request_removed?: boolean;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  attachments?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    created_at?: string;
+  }[];
+};
+
+export type V2TerrafundCriteriaData = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+    /**
+     * Extra information about the polygon validation
+     */
+    extra_info?: Record<string, any>;
+  }[];
+};
+
+export type V2TerrafundCriteriaSite = {
+  /**
+   * The UUID of the polygon.
+   */
+  uuid?: string;
+  /**
+   * Indicates if the polygon is valid or not.
+   */
+  valid?: boolean;
+  /**
+   * Indicates if the polygon has been checked before or not.
+   */
+  checked?: boolean;
+  /**
+   * List of criteria that are not valid.
+   */
+  nonValidCriteria?: Record<string, any>[];
+}[];
+
+export type SitePolygon = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  version_name?: string;
+};
+
+export type GeometryString = {
+  geometry?: string;
+};
+
+export type SitePolygonsDataResponse = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  version_name?: string;
+}[];
+
+export type SitePolygonsBboxResponse = {
+  bbox?: number[];
+};
+
+export type SitePolygonResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type SitePolygonCreateResponse = {
+  /**
+   * @example Site polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created site polygon
+   */
+  uuid?: string;
+  /**
+   * Calculated area in hectares
+   *
+   * @format double
+   */
+  area?: number;
+};
+
+export type GeoJSONResponse = {
+  type?: string;
+  features?: {
+    type?: string;
+    geometry?: {
+      type?: string;
+      coordinates?: any[];
+    };
+    properties?: {
+      poly_name?: string;
+      plantstart?: string;
+      plantend?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+    };
+  }[];
+};
+
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type PolygonBboxResponse = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonResponse = {
+  uuid?: string;
+};
+
+export type DashboardJobsCreatedResponse = {
+  data?: {
+    totalJobsCreated?: number;
+    forProfitJobsCreated?: number;
+    nonProfitJobsCreated?: number;
+    total_ft?: number;
+    total_pt?: number;
+    total_men?: number;
+    total_pt_men?: number;
+    total_ft_men?: number;
+    total_women?: number;
+    total_pt_women?: number;
+    total_ft_women?: number;
+    total_youth?: number;
+    total_pt_youth?: number;
+    total_ft_youth?: number;
+    total_non_youth?: number;
+    total_pt_non_youth?: number;
+    total_ft_non_youth?: number;
+  };
+};
+
+export type DashboardJobsCreatedData = {
+  totalJobsCreated?: number;
+  forProfitJobsCreated?: number;
+  nonProfitJobsCreated?: number;
+  total_ft?: number;
+  total_pt?: number;
+  total_men?: number;
+  total_pt_men?: number;
+  total_ft_men?: number;
+  total_women?: number;
+  total_pt_women?: number;
+  total_ft_women?: number;
+  total_youth?: number;
+  total_pt_youth?: number;
+  total_ft_youth?: number;
+  total_non_youth?: number;
+  total_pt_non_youth?: number;
+  total_ft_non_youth?: number;
+};
+
+export type DashboardRestorationStrategyResponse = {
+  restorationStrategies?: {
+    ["direct-seeding"]?: number;
+    ["tree-planting"]?: number;
+    ["assisted-natural-regeneration"]?: number;
+  };
+  landUseTypes?: {
+    agroforest?: number;
+    ["open-natural-ecosystem"]?: number;
+    mangrove?: number;
+    ["natural-forest"]?: number;
+    peatland?: number;
+    ["riparian-area-or-wetland"]?: number;
+    silvopasture?: number;
+    ["urban-forest"]?: number;
+    ["woodlot-or-plantation"]?: number;
+  };
+  landTenures?: {
+    communal?: number;
+    indigenous?: number;
+    national_protected_area?: number;
+    other?: number;
+    private?: number;
+    public?: number;
+  };
+};
+
+export type DashboardTreeRestorationGoalResponse = {
+  forProfitTreeCount?: number;
+  nonProfitTreeCount?: number;
+  totalTreesGrownGoal?: number;
+  treesUnderRestorationActualTotal?: {
+    /**
+     * @format date
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+    treeSpeciesPercentage?: number;
+  }[];
+  treesUnderRestorationActualForProfit?: {
+    /**
+     * @format date
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+    treeSpeciesPercentage?: number;
+  }[];
+  treesUnderRestorationActualNonProfit?: {
+    /**
+     * @format date
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+    treeSpeciesPercentage?: number;
+  }[];
+  averageSurvivalRateTotal?: number;
+  averageSurvivalRateForProfit?: number;
+  averageSurvivalRateNonProfit?: number;
+};
+
+export type DashboardTreesUnderRestorationActual = {
+  /**
+   * @format date
+   */
+  dueDate?: string;
+  treeSpeciesAmount?: number;
+  treeSpeciesPercentage?: number;
+};
+
+export type DashboardGetProjectsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    /**
+     * @format double
+     */
+    lat?: number;
+    /**
+     * @format double
+     */
+    long?: number;
+  }[];
+};
+
+export type DashboardGetProjectsData = {
+  uuid?: string;
+  name?: string;
+  /**
+   * @format double
+   */
+  lat?: number;
+  /**
+   * @format double
+   */
+  long?: number;
+};
+
+export type DashboardGetPolygonStatusResponse = {
+  data?: any[];
+};
+
+export type DashboardBBOXProject = {
+  bbox?: number[];
+};
+
+export type DashboardBBOXCountry = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonData = {
+  data?: {
+    /**
+     * Title of the data field
+     */
+    title?: string;
+    /**
+     * Value of the data field
+     */
+    value?: string;
+    /**
+     * Key of the data field
+     */
+    key?: string;
+  }[];
+};
+
+export type DashboardActiveProjectsListViewResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    organisation?: string;
+    trees_under_restoration?: number;
+    jobs_created?: number;
+    volunteers?: number;
+    beneficiaries?: number;
+    survival_rate?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+    project_country?: string;
+    country_slug?: string;
+    number_of_trees_goal?: number;
+    date_added?: string;
+  }[];
+  current_page?: number;
+  per_page?: number;
+  total?: number;
+  last_page?: number;
+};
+
+export type DashboardTotalSectionHeaderResponse = {
+  data?: {
+    /**
+     * Total number of non profit projects.
+     */
+    total_non_profit_count?: number;
+    /**
+     * Total number of enterprise projects.
+     */
+    total_enterprise_count?: number;
+    /**
+     * Total number of jobs created.
+     */
+    total_entries?: number;
+    /**
+     * Total number of hectares restored.
+     */
+    total_hectares_restored?: number;
+    /**
+     * Total number of hectares restored goal.
+     */
+    total_hectares_restored_goal?: number;
+    /**
+     * Total number of trees restored.
+     */
+    total_trees_restored?: number;
+    /**
+     * Total number of trees restored goal.
+     */
+    total_trees_restored_goal?: number;
+  };
+};
+
+export type DashboardActiveCountriesResponse = {
+  data?: {
+    country_slug?: string;
+    country?: string;
+    number_of_projects?: number;
+    total_trees_planted?: number;
+    total_jobs_created?: number;
+    number_of_sites?: number;
+    number_of_nurseries?: number;
+  }[];
+};
+
+export type DashboardCountriesResponse = {
+  data?: {
+    id?: number;
+    country_slug?: string;
+    data?: {
+      label?: string;
+      icon?: string;
+    };
+  }[];
+};
+
+export type DashboardCountryData = {
+  id?: number;
+  country_slug?: string;
+  data?: {
+    label?: string;
+    icon?: string;
+  };
+};
+
+export type DashboardCountryInfo = {
+  label?: string;
+  icon?: string;
+};
+
+export type DashboardProjectProfileResponse = {
+  data?: {
+    name?: string;
+    descriptionObjetive?: string;
+    country?: string;
+    organisation?: string;
+    survivalRate?: number;
+    countrySlug?: string;
+    restorationStrategy?: {
+      data?: string[];
+    };
+    targetLandUse?: {
+      data?: string[];
+    };
+    landTenure?: {
+      data?: string[];
+    };
+  };
+};
+
+export type DashboardProjectProfileData = {
+  name?: string;
+  descriptionObjetive?: string;
+  country?: string;
+  organisation?: string;
+  survivalRate?: number;
+  countrySlug?: string;
+  restorationStrategy?: {
+    data?: string[];
+  };
+  targetLandUse?: {
+    data?: string[];
+  };
+  landTenure?: {
+    data?: string[];
+  };
+};
+
+export type DashboardTopProjectsResponse = {
+  data?: {
+    top_projects_most_planted_trees?: {
+      project?: string;
+      uuid?: string;
+      trees_planted?: number;
+    }[];
+    top_tree_species_planted?: {
+      name?: string;
+      amount?: number;
+    }[];
+  };
+};
+
+export type DashboardTopPlantedTree = {
+  project?: string;
+  uuid?: string;
+  trees_planted?: number;
+};
+
+export type DashboardTopTreeSpecies = {
+  name?: string;
+  amount?: number;
+};
+
+export type ProjectPipeline = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    submitted_by?: string;
+    program?: string;
+    cohort?: string;
+    publish_for?: string;
+    url?: string;
+    /**
+     * @format date
+     */
+    created_at?: string;
+    /**
+     * @format date
+     */
+    updated_at?: string;
+  };
+};
+
+export type ProjectPipelinePost = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string;
+  publish_for?: string;
+  url?: string;
+};
+
+export type GeojsonData = {
+  /**
+   * The GeoJSON representation of the polygon geometry.
+   */
+  geojson?: Record<string, any>;
+};
+
+export type EntityTypeResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    is_active?: boolean;
+    version_name?: string;
+  }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: number[];
+};
+
+export type AuditStatusUpdateRequest = {
+  type?: string;
+  comment?: string;
+  status?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type SitePolygonResource = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date-time
+   */
+  date_created?: string;
+  created_by?: string;
+};
+
+export type SiteCheckApproveResponse = {
+  can_approve?: boolean;
+};
+
+export type DashboardProjectViewResponse = {
+  data?: {
+    allowed?: boolean;
+  };
+};
+
+export type PolygonChangeStatus = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  version_name?: string;
+}[];
+
+export type PolygonChangeStatusUpdate = {
+  comment?: string;
+  updatePolygons?: {
+    uuid?: string;
+    status?: string;
+  }[];
+};
+
+export type ProjectPolygonResponse = {
+  /**
+   * @example Project polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created project polygon
+   */
+  uuid?: string;
+};
+
+export type SitePolygonsLoadedDataResponse = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  is_present?: boolean;
+  version_name?: string;
+}[];
+
+export type SitePolygonLoaded = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  is_present?: boolean;
+  version_name?: string;
+};
+
+export type ClippedPolygonsResponse = {
+  updated_polygons?: {
+    uuid?: string;
+    poly_name?: string;
+  }[];
+};
+
+export type DeletedPolygonsResponse = {
+  /**
+   * Success message
+   */
+  message?: string;
+  deleted?: {
+    /**
+     * UUID of the deleted polygon geometry
+     */
+    uuid?: string;
+  }[];
+  failed?: {
+    /**
+     * UUID of the polygon geometry that failed to delete
+     */
+    uuid?: string;
+    /**
+     * Error message for the failed deletion
+     */
+    error?: string;
+  }[];
+};
+
+export type MeResponse = {
+  uuid?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * @format date-time
+   */
+  email_address_verified_at?: string;
+  role?: string;
+  locale?: string;
+  organisation?: {
+    uuid?: string;
+    name?: string;
+    status?: string;
+    readable_status?: string;
+    users_status?: string;
+    type?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
+  frameworks?: {
+    name?: string;
+    slug?: string;
+  }[];
+};
+
+export type MyOrganisationLite = {
+  uuid?: string;
+  name?: string;
+  status?: string;
+  readable_status?: string;
+  users_status?: string;
+  type?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type UpdateMediaRequest = {
+  /**
+   * Name of the media
+   */
+  name?: string;
+  /**
+   * New description for the media
+   */
+  description?: string;
+  /**
+   * Name of the photographer
+   */
+  photographer?: string;
+  /**
+   * Whether the media is public or not
+   */
+  is_public?: boolean;
+};
+
+export type FileResource = {
+  id?: number;
+  model_id?: number;
+  model_type?: string;
+  collection_name?: string;
+  name?: string;
+  file_name?: string;
+  mime_type?: string;
+  disk?: string;
+  size?: number;
+  manipulations?: Record<string, any>;
+  custom_properties?: Record<string, any>;
+  responsive_images?: Record<string, any>;
+  order_column?: number;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  description?: string;
+  photographer?: string;
+  is_public?: boolean;
+  is_cover?: boolean;
 };

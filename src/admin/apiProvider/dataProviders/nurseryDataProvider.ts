@@ -35,7 +35,7 @@ export const nurseryDataProvider: DataProvider = {
       const response = await fetchGetV2ENTITYUUID({
         pathParams: {
           entity: "nurseries",
-          uuid: params.id
+          uuid: params.id as string
         }
       });
 

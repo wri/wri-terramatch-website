@@ -36,7 +36,7 @@ const Image = ({ imageUrl, children, className, ...rest }: ImageProps) => {
       {...rest}
       className={classNames(
         className,
-        "relative flex aspect-[5/3] min-h-[180px] items-start justify-between bg-cover bg-center bg-no-repeat p-4"
+        "relative flex aspect-[5/3] min-h-[180px] items-start justify-between bg-cover bg-center bg-no-repeat p-4 wide:p-6"
       )}
       style={{ backgroundImage: `url(${imageUrl})` }}
     >
@@ -53,7 +53,7 @@ const ImageFooter = ({ children, className, ...rest }: ImageFooterProps) => {
   return (
     <div
       {...rest}
-      className={classNames(className, "absolute bottom-0 right-0 left-0 flex gap-2 px-6 py-2", {
+      className={classNames(className, "absolute bottom-0 left-0 right-0 flex gap-2 px-6 py-2", {
         "bg-black": !className?.includes("bg-"),
         "items-center": !className?.includes("items-")
       })}

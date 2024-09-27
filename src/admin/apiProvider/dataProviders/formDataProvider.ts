@@ -50,7 +50,7 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
             upload(payloadOption.image.rawFile, {
               collection: "image",
               model: "form-question-option",
-              uuid: option.uuid
+              uuid: option.id
             })
           );
         }
@@ -134,7 +134,7 @@ export const formDataProvider: FormDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2FormsUUID({
-        pathParams: { uuid: params.id }
+        pathParams: { uuid: params.id as string }
       });
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as GetOneResult;

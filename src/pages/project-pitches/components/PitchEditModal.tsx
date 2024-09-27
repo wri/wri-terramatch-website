@@ -2,7 +2,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
-import { EditModalBase } from "@/components/extensive/Modal/EditModalBase";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
 import ConfirmationModal from "@/components/extensive/WizardForm/modals/ConfirmationModal";
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
@@ -21,7 +22,7 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
   const router = useRouter();
   const uuid = router.query.id as string;
   const t = useT();
-  const { setModalContent } = useModalContext();
+  const { closeModal, openModal } = useModalContext();
 
   const { mutateAsync: updatePitch, error } = usePatchV2ProjectPitchesUUID({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["v2", "project-pitches"] })
@@ -33,8 +34,12 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
       pathParams: { uuid }
     });
 
-    if (res) return setModalContent(<ConfirmationModal />);
-    return setModalContent(<ErrorModal />);
+    if (res) {
+      closeModal(ModalId.PITCH_EDIT_MODAL);
+      return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+    } else {
+      return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+    }
   };
 
   const formSteps = getSteps(t, uuid ?? "");

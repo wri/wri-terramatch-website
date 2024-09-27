@@ -72,14 +72,14 @@ const LandingPage = () => {
               description: t(
                 "TerraMatch is committed to support the growth of locally led restoration project developers. We  host the application process for cohort-based accelerator programs for champions who are looking to level up their operations. We also offer guidance and support for those who do not match with our existing programs."
               ),
-              iconName: IconNames.DOCUMENT_CIRCLE
+              iconName: IconNames.DOCUMENT_CIRCLE_HOMEPAGE
             },
             {
               title: t("3. Report + Monitor"),
               description: t(
                 "Funders who are looking to invest in growing trees the right way rely on TerraMatch’s monitoring and reporting capabilities. The platform combines the best in field-collected data with cutting-edge satellite insights to track how investment in restoration impacts communities and ecosystems."
               ),
-              iconName: IconNames.TREE_CIRCLE
+              iconName: IconNames.TREE_CIRCLE_HOMEPAGE
             }
           ]}
         />
@@ -140,7 +140,7 @@ const LandingPage = () => {
         }}
       />
       <TwoByOneSection.Container className="bg-black">
-        <TwoByOneSection.Top className="md:py-16 md:px-20">
+        <TwoByOneSection.Top className="md:px-20 md:py-16">
           <div className="relative">
             <Image
               alt="support"
@@ -152,7 +152,7 @@ const LandingPage = () => {
           </div>
         </TwoByOneSection.Top>
         <TwoByOneSection.Bottom>
-          <div className="box-content flex max-w-[514px] flex-col items-start justify-center gap-3 py-9 px-12 md:gap-8">
+          <div className="box-content flex max-w-[514px] flex-col items-start justify-center gap-3 px-12 py-9 md:gap-8">
             <Text variant="text-heading-700" className="text-white">
               {t("Access Support Today")}
             </Text>

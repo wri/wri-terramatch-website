@@ -5,6 +5,7 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useModalContext } from "@/context/modal.provider";
 import { V2FileRead, V2OrganisationRead } from "@/generated/apiSchemas";
@@ -99,7 +100,9 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
           subtitle={t(
             "Organizational Profiles with overview information are more likely to be successful in Funding Applications."
           )}
-          onEdit={() => openModal(<OrganizationEditModal organization={organization} />)}
+          onEdit={() =>
+            openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
+          }
         />
       </When>
     </Container>

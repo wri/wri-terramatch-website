@@ -1,7 +1,8 @@
 import { AccessorKeyColumnDef, ColumnDef, RowData } from "@tanstack/react-table";
 import _ from "lodash";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { When } from "react-if";
+import { v4 as uuidv4 } from "uuid";
 
 import Button from "@/components/elements/Button/Button";
 import IconButton from "@/components/elements/IconButton/IconButton";
@@ -9,6 +10,7 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -19,6 +21,8 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];
   onChange?: (values: any) => void;
+  generateUuids?: boolean;
+  additionalValues?: any;
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
@@ -26,28 +30,48 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
   const { openModal, closeModal } = useModalContext();
-  const { fields, addButtonCaption, tableColumns, value, onChange, handleCreate, handleDelete, ...inputWrapperProps } =
-    props;
+  const {
+    fields,
+    addButtonCaption,
+    tableColumns,
+    value,
+    onChange,
+    handleCreate,
+    handleDelete,
+    generateUuids = false,
+    additionalValues = {},
+    ...inputWrapperProps
+  } = props;
 
   const openFormModalHandler = () => {
     openModal(
+      ModalId.FORM_MODAL,
       <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
     );
   };
 
-  const onAddNewEntry = (fieldValues: any) => {
-    onChange?.([...value, fieldValues]);
-    handleCreate?.(fieldValues);
-    closeModal();
-  };
+  const onAddNewEntry = useCallback(
+    (fieldValues: any) => {
+      if (generateUuids) {
+        fieldValues = { ...fieldValues, ...additionalValues, uuid: uuidv4() };
+      }
+      onChange?.([...value, fieldValues]);
+      handleCreate?.(fieldValues);
+      closeModal(ModalId.FORM_MODAL);
+    },
+    [generateUuids, value, onChange, handleCreate, closeModal]
+  );
 
-  const onDeleteEntry = (uuid: string) => {
-    const _tmp = [...value];
-    _.remove(_tmp, item => item.uuid === uuid);
-    //@ts-ignore
-    handleDelete?.(uuid);
-    onChange?.(_tmp);
-  };
+  const onDeleteEntry = useCallback(
+    (uuid: string) => {
+      const _tmp = [...value];
+      _.remove(_tmp, item => item.uuid === uuid);
+      //@ts-ignore
+      handleDelete?.(uuid);
+      onChange?.(_tmp);
+    },
+    [value, handleDelete, onChange]
+  );
 
   const headers = useMemo<ColumnDef<TData>[]>(() => {
     return [

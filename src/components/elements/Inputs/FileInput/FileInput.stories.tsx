@@ -7,6 +7,7 @@ import { FileType, UploadedFile } from "@/types/common";
 
 import Toast from "../../Toast/Toast";
 import Component, { FileInputProps as Props } from "./FileInput";
+import { VARIANT_FILE_INPUT_MODAL_ADD } from "./FileInputVariants";
 
 const meta: Meta<typeof Component> = {
   title: "Components/Elements/Inputs/File",
@@ -72,6 +73,25 @@ export const SingleUpload: Story = {
     label: "Input Label",
     description: "Input description",
     accept: [FileType.Image]
+  }
+};
+
+export const VariantForModal: Story = {
+  render: (args: Props) => {
+    return (
+      <ToastProvider>
+        <Toast />
+
+        <SingleUploadChildren args={args} />
+      </ToastProvider>
+    );
+  },
+  args: {
+    label: "Input Label",
+    description: "Input description",
+    descriptionInput: "drag and drop",
+    accept: [FileType.Image],
+    variant: VARIANT_FILE_INPUT_MODAL_ADD
   }
 };
 

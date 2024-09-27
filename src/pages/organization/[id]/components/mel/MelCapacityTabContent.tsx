@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 
 import Text from "@/components/elements/Text/Text";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useModalContext } from "@/context/modal.provider";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
@@ -23,7 +24,7 @@ const MelCapacityTabContent = ({ organization }: MelCapacityTabContentProps) => 
         subtitle={t(
           "Organizational Profiles with Monitoring and Learning (MEL) Capacity information are more likely to be successful in Funding Applications."
         )}
-        onEdit={() => openModal(<OrganizationEditModal organization={organization} />)}
+        onEdit={() => openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)}
         steps={[
           {
             showWhen: true,

@@ -16,7 +16,7 @@ const SectionHeader = ({ title, ctaProps, className, ...divProps }: SectionHeade
   return (
     <div
       {...divProps}
-      className={classNames(className, "flex items-center justify-between border-b border-neutral-400 pt-5 pb-4 pr-6")}
+      className={classNames(className, "flex items-center justify-between border-b border-neutral-400 pb-4 pr-6 pt-5")}
     >
       <Text variant="text-heading-700">{title}</Text>
       <When condition={!!ctaProps}>

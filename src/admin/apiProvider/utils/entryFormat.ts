@@ -26,14 +26,16 @@ const isDateType = (value: any) => {
   return isValid(parseISO(value));
 };
 
-const convertDateFormat = (value: any) => {
+export const convertDateFormat = (value: any) => {
   if (typeof value === "string") {
     const dateObject = new Date(value);
     const formattedDay = dateObject.getUTCDate().toString().padStart(2, "0");
     const formattedMonth = (dateObject.getUTCMonth() + 1).toString().padStart(2, "0");
     const formattedYear = dateObject.getUTCFullYear();
-    const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear}`;
+    const formattedHours = dateObject.getUTCHours().toString().padStart(2, "0");
+    const formattedMinutes = dateObject.getUTCMinutes().toString().padStart(2, "0");
+    const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
     return formattedDate;
   }
-  return format(new Date(value), "dd/MM/yyyy");
+  return format(new Date(value), "dd/MM/yyyy HH:mm");
 };

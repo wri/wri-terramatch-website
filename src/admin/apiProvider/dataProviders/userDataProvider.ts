@@ -28,8 +28,7 @@ const normalizeUserObject = (item: V2AdminUserRead) => ({
   ...item,
   id: item.uuid as Identifier,
   //@ts-ignore
-  primary_role: item.role,
-  role: "",
+  role: item.role,
   //@ts-ignore
   monitoring_organisations: item?.monitoring_organisations?.map(item => item.uuid)
 });
@@ -57,7 +56,7 @@ export const userDataProvider: UserDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2AdminUsersUUID({
-        pathParams: { uuid: params.id }
+        pathParams: { uuid: params.id as string }
       });
       //@ts-ignore
       return { data: normalizeUserObject(response.data) };
@@ -124,8 +123,7 @@ export const userDataProvider: UserDataProvider = {
       body.organisation = null;
     }
 
-    delete body.role;
-    if (!body.primary_role) delete body.primary_role;
+    if (!body.role) delete body.role;
 
     try {
       const resp = await fetchPutV2AdminUsersUUID({ pathParams: { uuid }, body });

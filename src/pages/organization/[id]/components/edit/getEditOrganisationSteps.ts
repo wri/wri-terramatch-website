@@ -600,8 +600,6 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
           fieldProps: {
             title: t("Tree Species"),
             buttonCaptionSuffix: t("Species"),
-            uuid,
-            model: ModelName,
             withNumbers: false
           }
         },

@@ -9,6 +9,7 @@ import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
 import {
@@ -71,7 +72,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         window.location.reload();
       }
 
-      closeModal();
+      closeModal(ModalId.CONFIRM_DELETE);
     },
     onError() {
       openToast(t("Error Deleting Draft"));
@@ -96,6 +97,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             onClick: () => {
               if (fundingProgrammeStatus === "disabled") {
                 openModal(
+                  ModalId.APPLICATION_CLOSED,
                   <Modal
                     title={t("Application Closed")}
                     content={t(
@@ -103,7 +105,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
                     )}
                     primaryButtonProps={{
                       children: t("Close"),
-                      onClick: closeModal
+                      onClick: () => closeModal(ModalId.APPLICATION_CLOSED)
                     }}
                   />
                 );
@@ -113,6 +115,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           secondaryAction: {
             onClick: () => {
               openModal(
+                ModalId.CONFIRM_DELETE,
                 <Modal
                   title={t("Are you sure you want to delete this {stageName} draft?", {
                     stageName: currentStage?.name
@@ -135,7 +138,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
                   }}
                   secondaryButtonProps={{
                     children: "Cancel",
-                    onClick: closeModal
+                    onClick: () => closeModal(ModalId.CONFIRM_DELETE)
                   }}
                 />
               );

@@ -48,6 +48,13 @@ const StatusPill = ({ status, children, className, ...props }: StatusPillProps) 
         name: IconNames.WARNING,
         classNames: "fill-tertiary"
       }
+    },
+    restoration: {
+      classNames: "bg-green-30",
+      iconProps: {
+        name: IconNames.CLOCK,
+        classNames: "fill-green-100"
+      }
     }
   };
 
@@ -59,12 +66,12 @@ const StatusPill = ({ status, children, className, ...props }: StatusPillProps) 
     <div
       {...props}
       className={twMerge(
-        "flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5",
+        "flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pl-1.5 pr-3",
         classNames,
         className
       )}
     >
-      <Icon {...iconProps} className={classnames(iconProps.classNames, "h-4 w-auto")} />
+      <Icon {...iconProps} className={classnames(iconProps.classNames, "h-4 w-auto lg:h-5")} />
       {children}
     </div>
   );

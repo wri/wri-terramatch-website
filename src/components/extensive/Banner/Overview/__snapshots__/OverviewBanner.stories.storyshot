@@ -10,7 +10,7 @@ exports[`Storyshots Components/Extensive/Banner/OverviewBanner Default 1`] = `
   }
 >
   <div
-    className="flex w-full max-w-[1218px] items-center justify-between gap-8"
+    className="flex w-full max-w-[82vw] items-center justify-between gap-8"
   >
     <div
       className="flex flex-col gap-3 text-white"
@@ -19,7 +19,7 @@ exports[`Storyshots Components/Extensive/Banner/OverviewBanner Default 1`] = `
         className="w-[75px] bg-tertiary flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
       >
         <p
-          className="text-black mt-[3px] text-bold-caption-200"
+          className="text-black flex h-fit items-center text-bold-caption-200"
           data-testid="txt"
         >
           Pitch

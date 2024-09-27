@@ -22,6 +22,7 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import RHFWorkdaysTable from "@/components/elements/Inputs/WorkdaysInput/RHFWorkdaysTable";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 
 import { FieldType, FormField } from "./types";
 
@@ -40,7 +41,6 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
     description: field.description,
     feedbackRequired: field.feedbackRequired
   };
-
   switch (field.type) {
     case FieldType.Input:
       return <Input {...field.fieldProps} {...sharedProps} formHook={formHook} onChangeCapture={onChange} ref={null} />;
@@ -91,7 +91,6 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           error={sharedProps.error as any}
           formHook={formHook}
           control={formHook.control}
-          onChangeCapture={onChange}
         />
       );
 
@@ -179,40 +178,25 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
       );
 
     case FieldType.InvasiveDataTable:
-      return (
-        <RHFInvasiveTable
-          {...field.fieldProps}
-          {...sharedProps}
-          control={formHook.control}
-          onChangeCapture={onChange}
-        />
-      );
+      return <RHFInvasiveTable {...field.fieldProps} {...sharedProps} control={formHook.control} />;
 
     case FieldType.SeedingsDataTable:
-      return (
-        <RHFSeedingTable {...field.fieldProps} {...sharedProps} control={formHook.control} onChangeCapture={onChange} />
-      );
+      return <RHFSeedingTable {...field.fieldProps} {...sharedProps} control={formHook.control} />;
 
     case FieldType.InputTable:
-      return (
-        <RHFInputTable
-          {...field.fieldProps}
-          {...sharedProps}
-          control={formHook.control}
-          formHook={formHook}
-          onChangeCapture={onChange}
-        />
-      );
+      return <RHFInputTable {...field.fieldProps} {...sharedProps} control={formHook.control} formHook={formHook} />;
 
     case FieldType.Map:
       return (
-        <RHFMap
-          {...field.fieldProps}
-          {...sharedProps}
-          formHook={formHook}
-          control={formHook.control}
-          onChangeCapture={onChange}
-        />
+        <MapAreaProvider>
+          <RHFMap
+            {...field.fieldProps}
+            {...sharedProps}
+            formHook={formHook}
+            control={formHook.control}
+            onChangeCapture={onChange}
+          />
+        </MapAreaProvider>
       );
 
     case FieldType.Conditional:

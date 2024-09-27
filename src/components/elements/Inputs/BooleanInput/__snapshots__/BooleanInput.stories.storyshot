@@ -11,7 +11,7 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
     Input Label 
   </label>
   <p
-    className="text-light-body-300 with-inner-html"
+    className="text-body-400 with-inner-html"
     dangerouslySetInnerHTML={
       Object {
         "__html": "Input description",
@@ -21,14 +21,14 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
   />
   <div
     className="space-y-2"
-    id="headlessui-radiogroup-:rc:"
+    id="headlessui-radiogroup-:ra:"
     onKeyDown={[Function]}
     role="radiogroup"
   >
     <div
       aria-checked="false"
       data-headlessui-state=""
-      id="headlessui-radiogroup-option-:rd:"
+      id="headlessui-radiogroup-option-:rb:"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -36,11 +36,11 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
       tabIndex={0}
     >
       <div
-        className="rounded-lg border border-neutral-400 py-2 px-3"
+        className="rounded-lg border border-neutral-400 px-3 py-2"
       >
         <label
           className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
-          htmlFor=":re:"
+          htmlFor=":rc:"
         >
           <p
             className="text-light-caption-200"
@@ -51,8 +51,9 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
           <input
             checked={false}
             className="flex flex-row-reverse items-center justify-end gap-3 "
-            id=":re:"
+            id=":rc:"
             label="Yes"
+            onChange={[Function]}
             type="radio"
           />
         </label>
@@ -61,7 +62,7 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
     <div
       aria-checked="false"
       data-headlessui-state=""
-      id="headlessui-radiogroup-option-:rf:"
+      id="headlessui-radiogroup-option-:rd:"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -69,11 +70,11 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
       tabIndex={-1}
     >
       <div
-        className="rounded-lg border border-neutral-400 py-2 px-3"
+        className="rounded-lg border border-neutral-400 px-3 py-2"
       >
         <label
           className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
-          htmlFor=":rg:"
+          htmlFor=":re:"
         >
           <p
             className="text-light-caption-200"
@@ -84,8 +85,9 @@ exports[`Storyshots Components/Elements/Inputs/BooleanInput Default 1`] = `
           <input
             checked={false}
             className="flex flex-row-reverse items-center justify-end gap-3 "
-            id=":rg:"
+            id=":re:"
             label="No"
+            onChange={[Function]}
             type="radio"
           />
         </label>

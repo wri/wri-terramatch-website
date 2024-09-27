@@ -19,6 +19,8 @@ import {
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
+import { ModalId } from "../Modal/ModalConst";
+
 interface NurseriesTableProps {
   project: any;
   hasAddButton?: boolean;
@@ -55,6 +57,7 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
 
   const handleDeleteNursery = (uuid: string) => {
     openModal(
+      ModalId.CONFIRM_NURSERY_DELETION,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Confirm Nursery Deletion")}
@@ -65,12 +68,12 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
           children: t("Yes"),
           onClick: () => {
             deleteNursery({ pathParams: { uuid } });
-            closeModal();
+            closeModal(ModalId.CONFIRM_NURSERY_DELETION);
           }
         }}
         secondaryButtonProps={{
           children: t("No"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.CONFIRM_NURSERY_DELETION)
         }}
       />
     );

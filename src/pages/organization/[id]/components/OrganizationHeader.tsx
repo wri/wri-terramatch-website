@@ -6,6 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocial from "@/components/extensive/Icon/IconSocial";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
@@ -26,7 +27,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const { openModal } = useModalContext();
 
   const showEditOrgModal = () => {
-    return openModal(<OrganizationEditModal organization={organization} />);
+    return openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />);
   };
 
   useEffect(() => {
@@ -49,33 +50,35 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
             }}
           />
           {/* Content Container */}
-          <div className="tranform translate-y-[-70px]">
-            <Text variant="text-heading-2000" className="mb-3">
-              {organization?.name}
-            </Text>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-start gap-1">
-                <Icon name={IconNames.MAP_PIN} width={13} className="mt-[2px]" />
-                <Text variant="text-body-900">
-                  {formatOptionsList(getCountriesOptions(t), organization?.hq_country ?? [])}
-                </Text>
-              </div>
-              <Text variant="text-body-900">
-                {formatOptionsList(getOrganisationTypeOptions(t), organization?.type!) || ""}
-              </Text>
-              <Text variant="text-body-900">{organization?.description}</Text>
-            </div>
-          </div>
-          <div className="flex translate-y-[-30px] transform gap-6">
-            <IconSocial name={IconNames.SOCIAL_FACEBOOK} url={organization?.facebook_url} />
-            <IconSocial name={IconNames.SOCIAL_INSTAGRAM} url={organization?.instagram_url} />
-            <IconSocial name={IconNames.SOCIAL_LINKEDIN} url={organization?.linkedin_url} />
-            <IconSocial name={IconNames.SOCIAL_TWITTER} url={organization?.twitter_url} />
-            <IconSocial name={IconNames.EARTH} url={organization?.web_url} />
-          </div>
         </section>
         <div className="mt-8">
           <Button onClick={showEditOrgModal}>{t("Edit Profile")}</Button>
+        </div>
+      </Container>
+      <Container className="mb-6">
+        <div className="tranform translate-y-[-70px]">
+          <Text variant="text-heading-2000" className="mb-3">
+            {organization?.name}
+          </Text>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.MAP_PIN} width={13} height={18} />
+              <Text variant="text-body-900">
+                {formatOptionsList(getCountriesOptions(t), organization?.hq_country ?? [])}
+              </Text>
+            </div>
+            <Text variant="text-body-900">
+              {formatOptionsList(getOrganisationTypeOptions(t), organization?.type!) ?? ""}
+            </Text>
+            <Text variant="text-body-400">{organization?.description}</Text>
+          </div>
+        </div>
+        <div className="flex translate-y-[-30px] transform gap-6">
+          <IconSocial name={IconNames.SOCIAL_FACEBOOK} url={organization?.facebook_url} />
+          <IconSocial name={IconNames.SOCIAL_INSTAGRAM} url={organization?.instagram_url} />
+          <IconSocial name={IconNames.SOCIAL_LINKEDIN} url={organization?.linkedin_url} />
+          <IconSocial name={IconNames.SOCIAL_TWITTER} url={organization?.twitter_url} />
+          <IconSocial name={IconNames.EARTH} url={organization?.web_url} />
         </div>
       </Container>
     </div>

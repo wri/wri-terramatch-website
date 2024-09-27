@@ -1,17 +1,20 @@
 import { Button, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { Labeled, NumberField, useShowContext } from "react-admin";
-import { When } from "react-if";
 import { useNavigate } from "react-router";
 
+import { AddManagerDialog } from "@/admin/components/Dialogs/AddManagerDialog";
 import { InviteMonitoringPartnerDialog } from "@/admin/components/Dialogs/InviteMonitoringPartnerDialog";
 import modules from "@/admin/modules";
+import { ContextCondition } from "@/context/ContextCondition";
+import { Framework } from "@/context/framework.provider";
 import { fetchGetV2ProjectsUUIDENTITYExport } from "@/generated/apiComponents";
 import { downloadFileBlob } from "@/utils/network";
 
 const QuickActions: FC = () => {
   const { record } = useShowContext();
   const [invitePartnerDialogOpen, setInvitePartnerDialogOpen] = useState(false);
+  const [addManagerDialogOpen, setAddManagerDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleExport = (entity: "project-reports" | "sites" | "nurseries" | "shapefiles") => {
@@ -75,7 +78,7 @@ const QuickActions: FC = () => {
         <Divider sx={{ marginBottom: 2 }} />
       </Stack>
 
-      <When condition={record?.framework_key !== "ppc"}>
+      <ContextCondition frameworksHide={[Framework.PPC]}>
         <Stack gap={3}>
           <Labeled label="Total Nurseries" sx={inlineLabelSx}>
             <NumberField source="total_nurseries" />
@@ -88,7 +91,7 @@ const QuickActions: FC = () => {
           </Button>
           <Divider sx={{ marginBottom: 2 }} />
         </Stack>
-      </When>
+      </ContextCondition>
 
       <Stack gap={3}>
         <Labeled label="Total Project Reports" sx={inlineLabelSx}>
@@ -109,11 +112,15 @@ const QuickActions: FC = () => {
         <Button variant="outlined" onClick={() => setInvitePartnerDialogOpen(true)}>
           Add Monitoring partner
         </Button>
+        <Button variant="outlined" onClick={() => setAddManagerDialogOpen(true)}>
+          Add Project Manager
+        </Button>
       </Stack>
       <InviteMonitoringPartnerDialog
         open={invitePartnerDialogOpen}
         handleClose={() => setInvitePartnerDialogOpen(false)}
       />
+      <AddManagerDialog open={addManagerDialogOpen} handleClose={() => setAddManagerDialogOpen(false)} />
     </Card>
   );
 };

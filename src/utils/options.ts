@@ -8,6 +8,16 @@ import { toArray } from "@/utils/array";
  * @param values an string array or string of selected items from list
  * @returns Comma separated values as string.
  */
+
+export const statusColor = (options: Option[], values?: string | string[]): string => {
+  if (!values) return "";
+  if (options.length === 0) return toArray(values).join(",");
+
+  return toArray(values)
+    .map(c => options.find(o => o.value === c)?.meta)
+    .join();
+};
+
 export const formatOptionsList = (options: Option[], values?: string | string[]): string => {
   if (!values) return "";
   if (options.length === 0) return toArray(values).join(",");

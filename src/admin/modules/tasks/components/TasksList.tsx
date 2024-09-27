@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -13,22 +13,13 @@ import {
 
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
+import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 const TaskDataGrid: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-  const fetchData = async () => {
-    try {
-      setFrameworkChoices(await useFrameworkChoices());
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   return (
     <Datagrid rowClick="show" bulkActionButtons={false}>
@@ -39,7 +30,7 @@ const TaskDataGrid: FC = () => {
         source="project.framework_key"
         label="Framework"
         render={(record: any) =>
-          frameworkChoices.find((framework: any) => framework.id === record?.project?.framework_key)?.name ||
+          frameworkInputChoices.find((framework: any) => framework.id === record?.project?.framework_key)?.name ||
           record?.project?.framework_key
         }
         sortable={false}
@@ -51,18 +42,7 @@ const TaskDataGrid: FC = () => {
 };
 
 export const TasksList: FC = () => {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
-
-  const fetchData = async () => {
-    try {
-      setFrameworkChoices(await useFrameworkChoices());
-    } catch (error) {
-      console.error("Error fetching framework choices:", error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const frameworkChoices = useFrameworkChoices();
 
   const filters = [
     <ReferenceInput

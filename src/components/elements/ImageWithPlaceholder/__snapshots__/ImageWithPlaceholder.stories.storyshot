@@ -15,6 +15,7 @@ exports[`Storyshots Components/Elements/ImageWithPlaceholder Default 1`] = `
       loading="lazy"
       onError={[Function]}
       onLoad={[Function]}
+      referrerPolicy="no-referrer"
       src="https://headshots-inc.com/wp-content/uploads/2020/11/Professional-Headshot-Poses-Blog-Post.jpg"
       style={
         Object {
@@ -42,11 +43,28 @@ exports[`Storyshots Components/Elements/ImageWithPlaceholder No Image 1`] = `
   <div
     className="relative flex h-full w-full items-center justify-center overflow-hidden bg-primary-100 h-full"
   >
-    <div
+    <img
+      alt="Some Alt"
+      className="object-cover"
+      data-nimg="fill"
+      decoding="async"
+      loading="lazy"
+      onError={[Function]}
+      onLoad={[Function]}
+      referrerPolicy="no-referrer"
+      src="/img.jpg"
       style={
         Object {
-          "height": 64,
-          "width": 64,
+          "bottom": 0,
+          "color": "transparent",
+          "height": "100%",
+          "left": 0,
+          "objectFit": undefined,
+          "objectPosition": undefined,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+          "width": "100%",
         }
       }
     />

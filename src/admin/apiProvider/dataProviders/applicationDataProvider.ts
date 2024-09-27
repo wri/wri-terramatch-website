@@ -90,7 +90,7 @@ export const applicationDataProvider: ApplicationDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2AdminFormsApplicationsUUID({
-        pathParams: { uuid: params.id }
+        pathParams: { uuid: params.id as string }
       });
 
       // @ts-ignore

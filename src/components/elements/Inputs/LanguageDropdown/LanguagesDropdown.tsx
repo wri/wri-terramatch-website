@@ -6,12 +6,14 @@ import { PropsWithChildren, useRef, useState } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+import { fetchPatchV2UsersLocale } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 
 export interface DropdownProps {
   defaultValue?: OptionValue;
   onChange?: (value: OptionValue) => void;
   className?: string;
+  isLoggedIn?: boolean;
 }
 
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
@@ -30,17 +32,24 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
     setSelected(lang);
     props.onChange?.(lang.value);
     buttonRef.current?.click();
+    if (props.isLoggedIn) {
+      fetchPatchV2UsersLocale({
+        body: { locale: lang.value as string }
+      });
+    }
   };
 
   return (
     <Popover className={classNames(props.className, "relative w-fit")}>
       <Popover.Button ref={buttonRef} className="flex items-center justify-between p-2">
         <Icon name={IconNames.EARTH} width={16} className="mr-2 fill-neutral-700" />
-        <span className="mr-2 whitespace-nowrap text-sm uppercase text-neutral-900">{selected?.title}</span>
+        <span className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom">
+          {selected?.title}
+        </span>
         <Icon
           name={IconNames.TRIANGLE_DOWN}
           width={8}
-          className="fill-neutral-900 transition ui-open:rotate-180 ui-open:transform"
+          className="fill-neutral-700 transition ui-open:rotate-180 ui-open:transform"
         />
       </Popover.Button>
 

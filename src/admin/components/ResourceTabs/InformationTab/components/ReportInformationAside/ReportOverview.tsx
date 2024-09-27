@@ -1,13 +1,13 @@
 import { Check } from "@mui/icons-material";
 import { Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
-import { Labeled, TextField, useShowContext } from "react-admin";
+import { DateField, Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "reminder" | undefined>();
 
   const { record } = useShowContext();
   const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.update_request_status);
@@ -51,6 +51,12 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
                 <TextField source="readable_update_request_status" />
               </Labeled>
             </Grid>
+
+            <Grid xs={4} item>
+              <Labeled label="Due Date">
+                <DateField source="due_at" label="Due Date" locales="en-GB" />
+              </Labeled>
+            </Grid>
           </Grid>
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
@@ -68,6 +74,9 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               onClick={() => setStatusModal("approve")}
             >
               Approve
+            </Button>
+            <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
+              Reminder
             </Button>
           </Stack>
         </Stack>

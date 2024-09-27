@@ -11,7 +11,7 @@ export const StatusTableCell = ({ statusProps }: StatusTableCellProps) => {
 
   return (
     <StatusPill status={statusProps.status!} className="w-fit">
-      <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
+      <Text variant="text-12-semibold">{statusProps.statusText}</Text>
     </StatusPill>
   );
 };

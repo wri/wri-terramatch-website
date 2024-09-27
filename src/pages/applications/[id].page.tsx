@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2ApplicationsUUID } from "@/generated/apiComponents";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
@@ -33,20 +34,23 @@ const ApplicationPage = () => {
   const applicationStatus = currentSubmission?.status;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Head>
-        <title>{t("Application details")}</title>
-      </Head>
-      <LoadingContainer loading={applicationLoading || applicationFetching}>
-        <ApplicationHeader name={applicationName} status={applicationStatus} uuid={uuid} />
+    <>
+      <div className="min-h-screen bg-background">
+        <Head>
+          <title>{t("Application details")}</title>
+        </Head>
+        <LoadingContainer loading={applicationLoading || applicationFetching}>
+          <ApplicationHeader name={applicationName} status={applicationStatus} uuid={uuid} />
 
-        <div className="m-auto flex max-w-7xl flex-col gap-15 p-15">
-          <ApplicationStatus application={application!} />
-          <ApplicationTimeline application={application} />
-          <ApplicationOverview submissions={application?.form_submissions} />
-        </div>
-      </LoadingContainer>
-    </div>
+          <div className="m-auto flex max-w-[82vw] flex-col gap-15 py-15">
+            <ApplicationStatus application={application!} />
+            <ApplicationTimeline application={application} />
+            <ApplicationOverview submissions={application?.form_submissions} />
+          </div>
+        </LoadingContainer>
+      </div>
+      <PageFooter />
+    </>
   );
 };
 

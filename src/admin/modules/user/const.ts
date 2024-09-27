@@ -1,7 +1,4 @@
-export const userTypesChoices = [
-  { name: "Admin", id: "admin" },
-  { name: "User", id: "user" }
-];
+import { getCountriesOptions } from "@/constants/options/countries";
 
 export const userPrimaryRoleChoices = [
   {
@@ -23,5 +20,33 @@ export const userPrimaryRoleChoices = [
   {
     id: "project-developer",
     name: "Project Developer"
+  },
+  {
+    id: "project-manager",
+    name: "Project Manager"
+  },
+  {
+    id: "funder",
+    name: "Funder"
+  },
+  {
+    id: "government",
+    name: "Government"
+  }
+];
+
+export const countriesChoices = getCountriesOptions().map(item => ({
+  id: item.value,
+  name: item.title
+}));
+
+export const frameworkChoices = [
+  {
+    id: "ppc",
+    name: "PPC"
+  },
+  {
+    id: "terrafund",
+    name: "TerraFund"
   }
 ];

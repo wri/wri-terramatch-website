@@ -5,6 +5,7 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useModalContext } from "@/context/modal.provider";
@@ -14,6 +15,7 @@ import {
   usePutV2OrganisationsApproveUser,
   usePutV2OrganisationsRejectUser
 } from "@/generated/apiComponents";
+import { V2PostOrganisationsApproveUserBody } from "@/generated/apiRequestBodies";
 import { UserRead } from "@/generated/apiSchemas";
 
 import TeamMemberCard from "./TeamMemberCard";
@@ -45,14 +47,14 @@ const TeamTabContent = () => {
     onSuccess: () => {
       refetchApprovedUsers();
       refetchPendingUsers();
-      closeModal();
+      closeModal(ModalId.CONFIRM_USER);
     }
   });
   const { mutate: rejectUser } = usePutV2OrganisationsRejectUser({
     onSuccess: () => {
       refetchApprovedUsers();
       refetchPendingUsers();
-      closeModal();
+      closeModal(ModalId.CONFIRM_USER);
     }
   });
 
@@ -74,6 +76,7 @@ const TeamTabContent = () => {
           );
 
     return openModal(
+      ModalId.CONFIRM_USER,
       <Modal
         title={title}
         content={content}
@@ -82,9 +85,8 @@ const TeamTabContent = () => {
           onClick: () => {
             const actionBody = {
               organisation_uuid: query.id as string,
-              // @ts-ignore
               user_uuid: user?.uuid
-            };
+            } as V2PostOrganisationsApproveUserBody;
 
             if (type === "approve") approveUser({ body: actionBody });
             else rejectUser({ body: actionBody });
@@ -92,7 +94,7 @@ const TeamTabContent = () => {
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: () => closeModal()
+          onClick: () => closeModal(ModalId.CONFIRM_USER)
         }}
       />
     );
@@ -104,7 +106,7 @@ const TeamTabContent = () => {
         <Text variant="text-heading-2000">{t("Meet the Team")}</Text>
 
         <When condition={!!approvedUsers?.data.length}>
-          <div className="mt-12 bg-neutral-150 py-8 px-14">
+          <div className="mt-12 rounded-lg bg-neutral-150 px-14 py-8">
             <Text variant="text-heading-200">
               {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.data.length })}
             </Text>
@@ -116,7 +118,7 @@ const TeamTabContent = () => {
           </div>
         </When>
         <When condition={!!pendingUsers?.data.length}>
-          <div className="mt-12 bg-neutral-150 py-8 px-14">
+          <div className="mt-12 rounded-lg bg-neutral-150 px-14 py-8">
             <Text variant="text-heading-200">
               {t("Requests to Join Organization ({n})", { n: pendingUsers?.data.length })}
             </Text>

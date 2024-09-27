@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Component from "./UserProfileCard";
 
@@ -10,12 +11,16 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
+const client = new QueryClient();
+
 export const Default: Story = {
   decorators: [
     Story => {
       return (
         <div className="w-[200px]">
-          <Story />
+          <QueryClientProvider client={client}>
+            <Story />
+          </QueryClientProvider>
         </div>
       );
     }
@@ -34,7 +39,9 @@ export const NoImage: Story = {
     Story => {
       return (
         <div className="w-[200px]">
-          <Story />
+          <QueryClientProvider client={client}>
+            <Story />
+          </QueryClientProvider>
         </div>
       );
     }

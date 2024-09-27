@@ -5,7 +5,6 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
-import { useDeleteV2StratasUUID, usePostV2Stratas } from "@/generated/apiComponents";
 import { Entity } from "@/types/common";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -25,45 +24,16 @@ export const getStrataTableColumns = (t: typeof useT | Function = (t: string) =>
 
 const RHFStrataTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFStrataTableProps>) => {
   const t = useT();
-  const { field } = useController(props);
-  const value = field?.value || [];
-
-  const { mutate: createStrata } = usePostV2Stratas({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-    }
-  });
-
-  const { mutate: removeStrata } = useDeleteV2StratasUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
+  const {
+    field: { value, onChange }
+  } = useController(props);
 
   return (
     <DataTable
       {...props}
-      value={value}
-      handleCreate={data => {
-        createStrata({
-          body: {
-            ...data,
-            model_type: entity?.entityName,
-            //@ts-ignore
-            model_uuid: entity?.entityUUID
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeStrata({ pathParams: { uuid } });
-        }
-      }}
+      value={value ?? []}
+      onChange={onChange}
+      generateUuids={true}
       addButtonCaption={t("Add Strata")}
       tableColumns={getStrataTableColumns(t)}
       fields={[

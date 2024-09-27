@@ -12,7 +12,7 @@ Array [
       Input Label 
     </label>
     <p
-      className="text-light-body-300 with-inner-html"
+      className="text-body-400 with-inner-html"
       dangerouslySetInnerHTML={
         Object {
           "__html": "Input description",
@@ -22,14 +22,14 @@ Array [
     />
     <div
       className="space-y-2"
-      id="headlessui-radiogroup-:rj:"
+      id="headlessui-radiogroup-:rk:"
       onKeyDown={[Function]}
       role="radiogroup"
     >
       <div
         aria-checked="false"
         data-headlessui-state=""
-        id="headlessui-radiogroup-option-:rk:"
+        id="headlessui-radiogroup-option-:rl:"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -41,7 +41,7 @@ Array [
         >
           <label
             className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
-            htmlFor=":rl:"
+            htmlFor=":rm:"
           >
             <p
               className="text-light-caption-200"
@@ -52,8 +52,9 @@ Array [
             <input
               checked={false}
               className="flex flex-row-reverse items-center justify-end gap-3 "
-              id=":rl:"
+              id=":rm:"
               label="Yes"
+              onChange={[Function]}
               type="radio"
             />
           </label>
@@ -62,7 +63,7 @@ Array [
       <div
         aria-checked="false"
         data-headlessui-state=""
-        id="headlessui-radiogroup-option-:rm:"
+        id="headlessui-radiogroup-option-:rn:"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -74,7 +75,7 @@ Array [
         >
           <label
             className="flex items-center flex flex-row-reverse items-center justify-end gap-3 "
-            htmlFor=":rn:"
+            htmlFor=":ro:"
           >
             <p
               className="text-light-caption-200"
@@ -85,8 +86,9 @@ Array [
             <input
               checked={false}
               className="flex flex-row-reverse items-center justify-end gap-3 "
-              id=":rn:"
+              id=":ro:"
               label="No"
+              onChange={[Function]}
               type="radio"
             />
           </label>

@@ -4,14 +4,12 @@ import HighLevelMetics from "./HighLevelMetrics";
 import ProjectOverview from "./ProjectOverview";
 import QuickActions from "./QuickActions";
 
-const ProjectInformationAside = () => {
-  return (
-    <Stack gap={2}>
-      <ProjectOverview />
-      <QuickActions />
-      <HighLevelMetics />
-    </Stack>
-  );
-};
+const ProjectInformationAside = () => (
+  <Stack gap={2}>
+    <ProjectOverview />
+    <QuickActions />
+    <HighLevelMetics />
+  </Stack>
+);
 
 export default ProjectInformationAside;

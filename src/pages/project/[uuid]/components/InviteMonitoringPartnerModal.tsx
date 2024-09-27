@@ -6,7 +6,8 @@ import * as yup from "yup";
 import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
-import { ModalBase } from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
 import { usePostV2ProjectsUUIDInvite } from "@/generated/apiComponents";
@@ -54,13 +55,13 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
       pathParams: { uuid: projectUUID },
       queryParams: {
         email_address: data.email,
-        callback_url: window.location.origin + `/auth/signup`
+        callback_url: `${window.location.origin}/auth/reset-password`
       }
     });
   };
 
   const hideModal = () => {
-    closeModal();
+    closeModal(ModalId.INVITE_MONITORING_PSRTNER_MODAL);
     reset();
   };
 

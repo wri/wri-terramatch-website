@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
 import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -51,7 +52,7 @@ const CreateOrganisationForm = () => {
     async onSuccess() {
       await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
       router.push("/assign");
-      closeModal();
+      closeModal(ModalId.WARNING);
     }
   });
 
@@ -60,6 +61,7 @@ const CreateOrganisationForm = () => {
 
   const onBackFirstStep = () => {
     openModal(
+      ModalId.WARNING,
       <Modal
         title={t("Warning")}
         content={t("Leaving this page will cause you to lose your progress. Are you sure?")}
@@ -69,7 +71,7 @@ const CreateOrganisationForm = () => {
         }}
         secondaryButtonProps={{
           children: t("No"),
-          onClick: closeModal
+          onClick: () => closeModal(ModalId.WARNING)
         }}
       />
     );

@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Cards/ExpandedCard Default 1`] = `
 <div
-  className="rounded-lg bg-primary-50"
+  className="rounded-lg bg-neutral-40"
 >
   <div
     className="flex items-center gap-4 px-5 py-4"

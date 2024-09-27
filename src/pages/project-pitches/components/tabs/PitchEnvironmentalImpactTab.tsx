@@ -22,7 +22,7 @@ const PitchEnvironmentalImpactTab = ({ pitch }: PitchEnvironmentalImpactTabProps
   const t = useT();
   const { openModal } = useModalContext();
 
-  const onEdit = () => openModal(<PitchEditModal pitch={pitch} />);
+  const onEdit = () => openModal("pitchEditModal", <PitchEditModal pitch={pitch} />, true);
 
   return (
     <TabContainer>

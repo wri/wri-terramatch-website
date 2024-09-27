@@ -8,13 +8,13 @@ exports[`Storyshots Components/Elements/Fields/TextField Default 1`] = `
     className="flex items-center justify-between"
   >
     <p
-      className="text-bold-subtitle-500"
+      className="text-16-bold"
       data-testid="txt"
     >
       Metric
     </p>
     <p
-      className="text-light-subtitle-400"
+      className="text-16-light"
       data-testid="txt"
     >
       1,000

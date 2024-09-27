@@ -5,6 +5,7 @@ import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement } from "react
 
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 export interface SecondaryTabsProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   tabItems: TabItem[];
@@ -16,12 +17,26 @@ export interface TabItem {
   body: ReactElement;
   disabled?: boolean;
   key?: string;
-  hidden?: boolean;
+
+  // The tab will only be shown if one of the given frameworks is active.
+  show?: Framework[];
+  // The tab will only be shown if one of the given frameworks is not active. `hide` will be ignored
+  // `show` is also included
+  hide?: Framework[];
 }
 
 const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...divProps }: SecondaryTabsProps) => {
   const router = useRouter();
-  const tabItems = _tabItems.filter(item => !item.hidden);
+  const { framework } = useFrameworkContext();
+  const tabItems = _tabItems.filter(item => {
+    if (item.show != null) {
+      return item.show.includes(framework);
+    } else if (item.hide != null) {
+      return !item.hide.includes(framework);
+    }
+
+    return true;
+  });
   //Default to zero
   const _defaultIndex = Math.max(
     tabItems.findIndex(item => item.key === router.query.tab),
@@ -39,12 +54,13 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
 
   return (
     <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
-      <HTab.List {...divProps} className={classNames(className, "h-12 w-full border-b border-neutral-400 bg-white")}>
+      {/* @ts-ignore */}
+      <HTab.List {...divProps} className={classNames(className, "h-max w-full border-b-2 border-neutral-200 bg-white")}>
         <List
           as="div"
           className={classNames(
             containerClassName,
-            tabItems.length <= 5 ? "justify-between lg:justify-center lg:gap-30" : "justify-between",
+            tabItems.length <= 5 ? "justify-between lg:justify-start lg:gap-30" : "justify-between",
             "m-auto flex h-full items-center"
           )}
           itemAs={Fragment}
@@ -53,15 +69,15 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
             <HTab as={Fragment}>
               {({ selected }) => (
                 <button
-                  className={classNames("h-full border-b-[3px] px-4 pt-[3px] outline-none", {
+                  className={classNames("mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none", {
                     "border-primary": selected,
                     "border-transparent": !selected
                   })}
                   disabled={item.disabled}
                 >
                   <Text
-                    variant="text-heading-200"
-                    className={classNames("whitespace-nowrap", selected ? "text-black" : "text-neutral-700")}
+                    variant={selected ? "text-16-bold" : "text-16-light"}
+                    className={classNames("whitespace-nowrap", "text-black")}
                   >
                     {item.title}
                   </Text>

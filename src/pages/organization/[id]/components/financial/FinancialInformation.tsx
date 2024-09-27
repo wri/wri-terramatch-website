@@ -22,7 +22,7 @@ const FinancialInformation = ({ organization }: FinancialInformationProps) => {
   ];
 
   return (
-    <section className="my-10 bg-neutral-150 p-8">
+    <section className="my-10 rounded-lg bg-neutral-150 p-8">
       <List
         className="flex flex-col gap-3"
         items={budgetRows}

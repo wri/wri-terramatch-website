@@ -21,14 +21,14 @@ const BuildStrongerProfile = ({ subtitle, steps, onEdit }: BuildStrongerProfileP
   const t = useT();
 
   return (
-    <section className="my-10 bg-neutral-150 p-8">
+    <section className="my-10 rounded-lg bg-neutral-150 p-8">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <Text variant="text-heading-2000">{t("Build a Stronger Profile")}</Text>
           <Button onClick={onEdit}>{t("Edit Profile")}</Button>
         </div>
         <Text variant="text-body-800">{subtitle}</Text>
-        <div className="mt-10 mb-4">
+        <div className="mb-4 mt-10">
           <Text variant="text-heading-300">{t("Adding these items would make your profile stronger:")}</Text>
         </div>
         <List
