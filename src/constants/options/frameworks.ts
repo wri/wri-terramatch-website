@@ -11,7 +11,8 @@ async function getFrameworkChoices() {
     },
     sort: {
       field: "",
-      order: "ASC"
+      // @ts-ignore
+      order: ""
     },
     filter: {}
   };

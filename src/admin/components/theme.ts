@@ -51,6 +51,7 @@ export const theme = _.merge<RaThemeOptions, RaThemeOptions>(defaultTheme, {
         root: ({ theme }: { theme: any }) => ({
           "& .RaArrayInput-label span": {
             ...theme.typography.h5,
+
             color: theme.palette.text.primary
           },
           "& .RaArrayInput-label": {

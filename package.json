@@ -11,6 +11,8 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci",
     "lint": "eslint --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path .gitignore",
+    "nextlint": "next lint",
+    "nextlint:fix": "next lint --fix",
     "format": "prettier --write",
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
