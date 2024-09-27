@@ -56,7 +56,7 @@ const SecDashboard = ({
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
         <Text variant="text-14" className="flex items-center gap-1 uppercase text-darkCustom">
           {title}
-          <ToolTip content={title} placement="top" width="w-56">
+          <ToolTip content={title} placement="top" width="w-44">
             <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
           </ToolTip>
         </Text>

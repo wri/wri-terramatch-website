@@ -201,5 +201,75 @@ export const ACTIVE_COUNTRIES = [
     treesPlanted: "760",
     hectaresRestoration: "760",
     jobsCreated: "430"
+  },
+  {
+    country: "Kenya",
+    project: "25",
+    treesPlanted: "787",
+    hectaresRestoration: "787",
+    jobsCreated: "636"
+  },
+  {
+    country: "Mozambique",
+    project: "8",
+    treesPlanted: "1,838",
+    hectaresRestoration: "1,838",
+    jobsCreated: "1,767"
+  },
+  {
+    country: "Sierra Leone",
+    project: "19",
+    treesPlanted: "2,058",
+    hectaresRestoration: "2,058",
+    jobsCreated: "1,213"
+  },
+  {
+    country: "Tanzania",
+    project: "5",
+    treesPlanted: "3,816",
+    hectaresRestoration: "3,816",
+    jobsCreated: "3,720"
+  },
+  {
+    country: "Angola",
+    project: "32",
+    treesPlanted: "2,234",
+    hectaresRestoration: "2,234",
+    jobsCreated: "1306"
+  },
+  {
+    country: "Liberia",
+    project: "14",
+    treesPlanted: "760",
+    hectaresRestoration: "760",
+    jobsCreated: "430"
+  },
+  {
+    country: "Kenya",
+    project: "25",
+    treesPlanted: "787",
+    hectaresRestoration: "787",
+    jobsCreated: "636"
+  },
+  {
+    country: "Mozambique",
+    project: "8",
+    treesPlanted: "1,838",
+    hectaresRestoration: "1,838",
+    jobsCreated: "1,767"
+  },
+  {
+    country: "Sierra Leone",
+    project: "19",
+    treesPlanted: "2,058",
+    hectaresRestoration: "2,058",
+    jobsCreated: "1,213"
+  },
+  {
+    country: "Tanzania",
+    project: "5",
+    treesPlanted: "3,816",
+    hectaresRestoration: "3,816",
+    jobsCreated: "3,720"
   }
 ];

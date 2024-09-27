@@ -1,8 +1,9 @@
 import { useT } from "@transifex/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
+import { VARIANT_TABLE_DASHBOARD_COUNTRIES } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -58,6 +59,7 @@ const Dashboard = () => {
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
+  const [collapseMap, setCollapseMap] = useState(false);
 
   const dashboardHeader = [
     {
@@ -236,18 +238,29 @@ const Dashboard = () => {
 
       <div className="w-2/5">
         <PageRow className="gap-4 p-0">
+          <div className="h-[48vh] w-full">
+            <img src="/images/map-img.png" alt="map" className="h-full w-full" />
+          </div>
           <PageCard
             className="border-0 px-4 py-6"
-            classNameSubTitle="mt-4"
             gap={8}
             title={t("ACTIVE COUNTRIES")}
-            headerChildren={<button>Expand</button>}
+            headerChildren={
+              <Button
+                variant="white-border"
+                onClick={() => {
+                  setCollapseMap(!collapseMap);
+                }}
+              >
+                {collapseMap ? "Collapse" : "Expand"}
+              </Button>
+            }
           >
             <div className="w-full">
               <Table
                 columns={columnsActiveCountries}
                 data={ACTIVE_COUNTRIES}
-                variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
               />
             </div>
           </PageCard>
