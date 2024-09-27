@@ -79,7 +79,7 @@ const FundingCard = (props: FundingCardProps) => {
           subtitle={location!}
         />
       </When>
-      <Text variant="text-light-caption-200" className="mt-3 line-clamp-5 flex-1">
+      <Text variant="text-light-caption-200" className="mt-3 flex-1 line-clamp-5">
         {description}
       </Text>
 

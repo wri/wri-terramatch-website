@@ -49,7 +49,7 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
                 props.classNameContent
               )}
             >
-              <Text variant="text-14-bold" className="line-clamp-1 w-full uppercase">
+              <Text variant="text-14-bold" className="w-full uppercase line-clamp-1">
                 {formatOptionsList(props.options, toArray<any>(value)) || props.placeholder}
               </Text>
               <Icon

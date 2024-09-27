@@ -198,7 +198,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     )}`}
                   />
                 </When>
-                <Text variant={props.inputVariant ?? "text-14-light"} className="line-clamp-1 w-full">
+                <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>

@@ -65,7 +65,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
       <Accordion className="w-full" expanded={expandAccordion}>
         <AccordionSummary expandIcon={<ExpandMore onClick={() => setExpandAccordion(e => !e)} />}>
           <button
-            className="line-clamp-1 flex-1"
+            className="flex-1 line-clamp-1"
             title={props.summaryTitle}
             type="button"
             onClick={() => setExpandAccordion(e => !e)}
