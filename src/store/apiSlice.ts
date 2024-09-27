@@ -4,6 +4,7 @@ import { isArray } from "lodash";
 import { Store } from "redux";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
+import { usersFind } from "@/generated/v3/userService/userServiceComponents";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 export type PendingErrorState = {
@@ -115,10 +116,14 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
   for (const method of METHODS) {
     state.meta.pending[method] = {};
   }
+
+  reloadMe();
 };
 
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
+
+const reloadMe = () => setTimeout(() => usersFind({ pathParams: { id: "me" } }), 0);
 
 export const apiSlice = createSlice({
   name: "api",
@@ -179,6 +184,7 @@ export const apiSlice = createSlice({
       // so we can safely fake a login into the store when we have an authToken already set in a
       // cookie on app bootup.
       state.logins["1"] = { attributes: { token: authToken } };
+      reloadMe();
     }
   }
 });

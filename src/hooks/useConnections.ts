@@ -16,7 +16,10 @@ export function useConnections<
   P1 extends OptionalProps,
   P2 extends OptionalProps,
   P3 extends OptionalProps
->(connections: [Connection<S1, P1>, Connection<S2, P2>], props?: P1 & P2 & P3): readonly [boolean, [S1, S2, S3]];
+>(
+  connections: [Connection<S1, P1>, Connection<S2, P2>, Connection<S3, P3>],
+  props?: P1 & P2 & P3
+): readonly [boolean, [S1, S2, S3]];
 export function useConnections<
   S1,
   S2,

@@ -5,9 +5,10 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import * as yup from "yup";
 
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useDeleteV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
-import { useMyOrg } from "@/hooks/useMyOrg";
+import { useConnection } from "@/hooks/useConnection";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -88,8 +89,7 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
   const { field } = useController(props);
   const value = field?.value || [];
 
-  const myOrg = useMyOrg();
-  const organisationId = myOrg?.uuid;
+  const [, { organisationId }] = useConnection(myOrganisationConnection);
 
   const { mutate: createTeamMember } = usePostV2FundingType({
     onSuccess(data) {
