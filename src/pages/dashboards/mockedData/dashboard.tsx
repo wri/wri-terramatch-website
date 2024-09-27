@@ -62,7 +62,53 @@ export const RESTORATION_STRATEGIES_REPRESENTED = {
 };
 
 export const TARGET_LAND_USE_TYPES_REPRESENTED = {
-  graphic: "/images/graphic-7.png"
+  graphicTargetLandUseTypes: [
+    {
+      label: "Agroforest",
+      value: 60,
+      valueText: "212 ha 60%"
+    },
+    {
+      label: "Natural Forest",
+      value: 25,
+      valueText: "205 ha 30%"
+    },
+    {
+      label: "Mangrove",
+      value: 2,
+      valueText: "158 ha 2%"
+    },
+    {
+      label: "Woodlot / Plantation",
+      value: 6,
+      valueText: "127 ha 5%"
+    },
+    {
+      label: "Open Natural Ecosystem",
+      value: 3,
+      valueText: "89 ha 3%"
+    },
+    {
+      label: "Riparian Area / Wetland",
+      value: 1,
+      valueText: "76 ha <1%"
+    },
+    {
+      label: "Urban Forest",
+      value: 1,
+      valueText: "43 ha <1%"
+    },
+    {
+      label: "Silvopasture",
+      value: 1,
+      valueText: "34 ha <1%"
+    },
+    {
+      label: "Peatland",
+      value: 1,
+      valueText: "11 ha <1%"
+    }
+  ]
 };
 
 export const NEW_PART_TIME_JOBS = {
@@ -74,11 +120,35 @@ export const NEW_FULL_TIME_JOBS = {
 };
 
 export const JOBS_CREATED_BY_GENDER = {
-  graphic: "/images/graphic-3.png"
+  graphic: "/images/graphic-3.png",
+  graphicLegend: [
+    {
+      label: "Women",
+      value: "20,500 (15.4%)",
+      color: "bg-pinkCustom-300"
+    },
+    {
+      label: "Men",
+      value: "20,500 (15.4%)",
+      color: "bg-purpleCustom"
+    }
+  ]
 };
 
 export const JOBS_CREATED_BY_AGE = {
-  graphic: "/images/graphic-4.png"
+  graphic: "/images/graphic-4.png",
+  graphicLegend: [
+    {
+      label: "Youth",
+      value: "20,500 (15.4%)",
+      color: "bg-green-40"
+    },
+    {
+      label: "Non-Youth",
+      value: "20,500 (15.4%)",
+      color: "bg-green-45"
+    }
+  ]
 };
 
 export const TOTAL_VOLUNTEERS = {
@@ -86,9 +156,33 @@ export const TOTAL_VOLUNTEERS = {
 };
 
 export const VOLUNTEERS_CREATED_BY_GENDER = {
-  graphic: "/images/graphic-5.png"
+  graphic: "/images/graphic-5.png",
+  graphicLegend: [
+    {
+      label: "Women",
+      value: "20,500 (15.4%)",
+      color: "bg-pinkCustom-300"
+    },
+    {
+      label: "Men",
+      value: "20,500 (15.4%)",
+      color: "bg-purpleCustom"
+    }
+  ]
 };
 
 export const VOLUNTEERS_CREATED_BY_AGE = {
-  graphic: "/images/graphic-6.png"
+  graphic: "/images/graphic-6.png",
+  graphicLegend: [
+    {
+      label: "Youth",
+      value: "20,500 (15.4%)",
+      color: "bg-green-40"
+    },
+    {
+      label: "Non-Youth",
+      value: "20,500 (15.4%)",
+      color: "bg-green-45"
+    }
+  ]
 };

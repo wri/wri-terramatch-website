@@ -30,6 +30,12 @@ export interface DashboardTableDataProps {
   value: number;
 }
 
+export interface GraphicLegendProps {
+  label: string;
+  value: string;
+  color: string;
+}
+
 export interface DashboardDataProps {
   value?: string;
   unit?: string;
@@ -37,6 +43,8 @@ export interface DashboardDataProps {
   graphic?: string;
   tableData?: DashboardTableDataProps[];
   maxValue?: number;
+  graphicLegend?: GraphicLegendProps[];
+  graphicTargetLandUseTypes?: DashboardTableDataProps[];
 }
 
 const Dashboard = () => {
@@ -137,13 +145,13 @@ const Dashboard = () => {
                 title="Jobs Created by Gender"
                 data={JOBS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
                 title="JOBS CREATED BY AGE"
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
             <SecDashboard title="Total VOLUNTEERS" data={TOTAL_VOLUNTEERS} />
@@ -152,13 +160,13 @@ const Dashboard = () => {
                 title="VOLUNTEERS CREATED BY GENDER"
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
                 title="VOLUNTEERS CREATED BY AGE"
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
           </PageCard>

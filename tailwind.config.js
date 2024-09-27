@@ -109,6 +109,7 @@ module.exports = {
       },
       tertiary: {
         DEFAULT: "#F0AB00",
+        800: "#C8662F",
         650: "#FF8838",
         600: "#FF8938",
         550: "#FFA160",
@@ -138,6 +139,7 @@ module.exports = {
         200: "#E6E9EC",
         100: "#cfe6f4",
         50: "#f1fafd",
+        30: "#ebf0f4",
         10: "#eaf7fc"
       },
       darkCustom: {
@@ -149,7 +151,12 @@ module.exports = {
       },
       pinkCustom: {
         DEFAULT: "#E468EF",
+        300: "#BF7589",
         200: "#FDF0FE"
+      },
+      purpleCustom: {
+        DEFAULT: "#5674C5",
+        500: "#6B137A"
       },
       grey: {
         200: "#F0F2F2",
@@ -174,7 +181,10 @@ module.exports = {
         DEFAULT: "#72D961",
         500: "#198E2B",
         400: "#1BA631",
+        350: "#4E4C18",
+        300: "#597C0F",
         100: "#28C499",
+        60: "#0D614D",
         50: "rgba(40, 196, 153, 0.10)",
         45: "#34675C",
         40: "#A3CCAB",
@@ -183,13 +193,16 @@ module.exports = {
       yellow: {
         DEFAULT: "#FCFBE8",
         700: "#F4B059",
+        600: "#C8A62F",
         500: "#F3EFB0",
         300: "#FEF8EF"
       },
       red: {
         DEFAULT: "#FF6464",
         100: "#CBC8D2",
-        200: "#E42222"
+        200: "#E42222",
+        900: "#8D2D0E",
+        1000: "#632424"
       }
     },
     boxShadow: {

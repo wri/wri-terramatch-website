@@ -11,6 +11,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { DashboardDataProps } from "../dashboard/index.page";
 import GraphicDashboard from "./graphicDashboard";
+import GraphicIconDashoard from "./graphicIconDashoard";
 import ValueNumberDashboard from "./valueNumberDashboard";
 
 const SecDashboard = ({
@@ -88,6 +89,25 @@ const SecDashboard = ({
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
+          <div>
+            <When condition={!!data?.graphicLegend}>
+              <div className="flex gap-3">
+                {data?.graphicLegend?.map((item, index) => (
+                  <div key={index} className="flex items-baseline gap-1">
+                    <div className={classNames("h-2 w-2 rounded-full lg:h-3 lg:w-3", item.color)} />
+                    <div>
+                      <Text variant="text-12-light" className="text-darkCustom">
+                        {item.label}
+                      </Text>
+                      <Text variant="text-12-light" className="text-darkCustom opacity-60">
+                        {item.value}
+                      </Text>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </When>
+          </div>
         </When>
         <When condition={!!data?.tableData}>
           <When condition={toggleValue === 1}>
@@ -105,6 +125,9 @@ const SecDashboard = ({
               )}
             </div>
           </When>
+        </When>
+        <When condition={!!data?.graphicTargetLandUseTypes}>
+          <GraphicIconDashoard data={data?.graphicTargetLandUseTypes ?? []} />
         </When>
       </div>
     </div>
