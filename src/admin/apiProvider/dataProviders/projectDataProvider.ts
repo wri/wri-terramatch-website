@@ -36,7 +36,7 @@ export const projectDataProvider: DataProvider = {
       const response = await fetchGetV2ENTITYUUID({
         pathParams: {
           entity: "projects",
-          uuid: params.id
+          uuid: params.id as string
         }
       });
 
