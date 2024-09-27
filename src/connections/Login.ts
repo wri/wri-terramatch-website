@@ -21,7 +21,7 @@ export const logout = () => {
   ApiSlice.clearApiCache();
 };
 
-const selectFirstLogin = (state: ApiDataStore) => Object.values(state.logins)?.[0]?.attributes;
+const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
 
 export const loginConnection: Connection<LoginConnection> = {
   selector: createSelector(

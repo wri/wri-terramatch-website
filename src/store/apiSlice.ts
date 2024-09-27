@@ -36,11 +36,13 @@ type Relationship = {
   meta?: Attributes;
 };
 
-type StoreResource<AttributeType> = {
+export type Relationships = {
+  [key: string]: Relationship | Relationship[];
+};
+
+export type StoreResource<AttributeType> = {
   attributes: AttributeType;
-  relationships?: {
-    [key: string]: Relationship | Relationship[];
-  };
+  relationships?: Relationships;
 };
 
 type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeType>>;
@@ -121,12 +123,21 @@ export const apiSlice = createSlice({
       // All response objects from the v3 api conform to JsonApiResponse
       let { data } = response;
       if (!isArray(data)) data = [data];
+      if (response.included != null) {
+        // For the purposes of this reducer, data and included are the same: they both get merged
+        // into the data cache.
+        data = [...data, ...response.included];
+      }
       for (const resource of data) {
         // The data resource type is expected to match what is declared above in ApiDataStore, but
         // there isn't a way to enforce that with TS against this dynamic data structure, so we
         // use the dreaded any.
         const { type, id, ...rest } = resource;
         state[type][id] = rest as StoreResource<any>;
+      }
+
+      if (url.endsWith("/users/me") && method === "GET") {
+        state.meta.meUserId = (response.data as JsonApiResource).id;
       }
     },
 
@@ -170,29 +181,33 @@ authListenerMiddleware.startListening({
 });
 
 export default class ApiSlice {
-  private static _store: Store;
+  private static _redux: Store;
 
-  static set store(store: Store) {
-    this._store = store;
+  static set redux(store: Store) {
+    this._redux = store;
   }
 
-  static get store(): Store {
-    return this._store;
+  static get redux(): Store {
+    return this._redux;
+  }
+
+  static get apiDataStore(): ApiDataStore {
+    return this.redux.getState().api;
   }
 
   static fetchStarting(props: ApiFetchStartingProps) {
-    this.store.dispatch(apiSlice.actions.apiFetchStarting(props));
+    this.redux.dispatch(apiSlice.actions.apiFetchStarting(props));
   }
 
   static fetchFailed(props: ApiFetchFailedProps) {
-    this.store.dispatch(apiSlice.actions.apiFetchFailed(props));
+    this.redux.dispatch(apiSlice.actions.apiFetchFailed(props));
   }
 
   static fetchSucceeded(props: ApiFetchSucceededProps) {
-    this.store.dispatch(apiSlice.actions.apiFetchSucceeded(props));
+    this.redux.dispatch(apiSlice.actions.apiFetchSucceeded(props));
   }
 
   static clearApiCache() {
-    this.store.dispatch(apiSlice.actions.clearApiCache());
+    this.redux.dispatch(apiSlice.actions.clearApiCache());
   }
 }

@@ -3,7 +3,7 @@ import { AuthProvider } from "react-admin";
 import { fetchGetAuthLogout } from "@/generated/apiComponents";
 import Log from "@/utils/log";
 
-import { AdminTokenStorageKey, removeAccessToken } from "./utils/token";
+import { getAccessToken, removeAccessToken } from "./utils/token";
 
 export const authProvider: AuthProvider = {
   // send username and password to the auth server and get back credentials
@@ -18,7 +18,7 @@ export const authProvider: AuthProvider = {
 
   // when the user navigates, make sure that their credentials are still valid
   checkAuth: async () => {
-    const token = localStorage.getItem(AdminTokenStorageKey);
+    const token = getAccessToken();
     if (!token) return Promise.reject();
 
     // TODO (TM-1312) Once we have a connection for the users/me object, we can check the cached
@@ -36,7 +36,7 @@ export const authProvider: AuthProvider = {
   },
   // remove local credentials and notify the auth server that the user logged out
   logout: async () => {
-    const token = localStorage.getItem(AdminTokenStorageKey);
+    const token = getAccessToken();
     if (!token) return Promise.resolve();
 
     return new Promise(resolve => {

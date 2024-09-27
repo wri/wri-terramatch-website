@@ -26,7 +26,7 @@ export const makeStore = (authToken?: string): Store<AppStore> => {
     store.dispatch(apiSlice.actions.setInitialAuthToken({ authToken }));
   }
 
-  ApiSlice.store = store;
+  ApiSlice.redux = store;
 
   return store;
 };
