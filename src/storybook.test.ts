@@ -2,7 +2,7 @@ import initStoryShots, { multiSnapshotWithOptions } from "@storybook/addon-story
 
 import { render } from "./utils/test-utils";
 
-// jest.mock("next/router", () => require("next-router-mock"));
+jest.mock("next/router", () => require("next-router-mock"));
 
 initStoryShots({
   framework: "react",
