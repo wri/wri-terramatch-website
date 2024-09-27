@@ -14,14 +14,15 @@ import TaskList from "@/components/extensive/TaskList/TaskList";
 import { useGetHomeTourItems } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { useGetV2FundingProgramme } from "@/generated/apiComponents";
+import { useConnection } from "@/hooks/useConnection";
 import { useAcceptInvitation } from "@/hooks/useInviteToken";
-import { useMyOrg } from "@/hooks/useMyOrg";
 import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const HomePage = () => {
   const t = useT();
-  const myOrg = useMyOrg();
+  const [, { organisation, organisationId }] = useConnection(myOrganisationConnection);
   const route = useRouter();
   const tourSteps = useGetHomeTourItems();
   useAcceptInvitation();
@@ -47,7 +48,7 @@ const HomePage = () => {
       <PageSection>
         <ActionTracker />
       </PageSection>
-      <When condition={!!myOrg && myOrg.status === "approved"}>
+      <When condition={organisation?.status === "approved"}>
         <LoadingContainer loading={loadingFundingProgrammes}>
           <PageSection hasCarousel>
             <FundingCarouselList
@@ -60,12 +61,10 @@ const HomePage = () => {
               }
             />
           </PageSection>
-          <When condition={myOrg?.status === "approved"}>
-            <WelcomeTour tourId="home" tourSteps={tourSteps} />
-          </When>
+          <WelcomeTour tourId="home" tourSteps={tourSteps} />
         </LoadingContainer>
       </When>
-      <When condition={!!myOrg}>
+      <When condition={organisationId != null}>
         <PageSection className="flex justify-center bg-white pb-10" hasFull>
           <TaskList
             title={t(`Get Ready for <br> Funding Opportunities`)}
@@ -75,7 +74,7 @@ const HomePage = () => {
                 title: t("Organizational Information"),
                 subtitle: t("Keep your profile updated to have more chances of having a successful application. "),
                 actionText: t("View"),
-                actionUrl: `/organization/${myOrg?.uuid}`,
+                actionUrl: `/organization/${organisationId}`,
                 iconProps: {
                   name: IconNames.BRANCH_CIRCLE,
                   className: "fill-success"
@@ -87,7 +86,7 @@ const HomePage = () => {
                   'Start a pitch or edit your pitches to apply for funding opportunities. To go to create a pitch, manage your pitches/funding applications, tap on "view".'
                 ),
                 actionText: t("View"),
-                actionUrl: `/organization/${myOrg?.uuid}?tab=pitches`,
+                actionUrl: `/organization/${organisationId}?tab=pitches`,
                 iconProps: {
                   name: IconNames.LIGHT_BULB_CIRCLE,
                   className: "fill-success"

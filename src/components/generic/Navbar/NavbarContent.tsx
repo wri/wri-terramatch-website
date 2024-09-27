@@ -8,10 +8,10 @@ import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/Lan
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { loginConnection } from "@/connections/Login";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { useNavbarContext } from "@/context/navbar.provider";
 import { useLogout } from "@/hooks/logout";
 import { useConnection } from "@/hooks/useConnection";
-import { useMyOrg } from "@/hooks/useMyOrg";
 import { OptionValue } from "@/types/common";
 
 import NavbarItem from "./NavbarItem";
@@ -25,7 +25,7 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
   const [, { isLoggedIn }] = useConnection(loginConnection);
   const router = useRouter();
   const t = useT();
-  const myOrg = useMyOrg();
+  const [, myOrg] = useConnection(myOrganisationConnection);
   const logout = useLogout();
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
 

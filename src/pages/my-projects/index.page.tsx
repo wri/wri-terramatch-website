@@ -15,13 +15,14 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { GetV2MyProjectsResponse, useDeleteV2ProjectsUUID, useGetV2MyProjects } from "@/generated/apiComponents";
-import { useMyOrg } from "@/hooks/useMyOrg";
+import { useConnection } from "@/hooks/useConnection";
 
 const MyProjectsPage = () => {
   const t = useT();
-  const myOrg = useMyOrg();
+  const [, { organisation }] = useConnection(myOrganisationConnection);
   const { openToast } = useToastContext();
 
   const { data: projectsData, isLoading, refetch } = useGetV2MyProjects<{ data: GetV2MyProjectsResponse }>({});
@@ -51,7 +52,7 @@ const MyProjectsPage = () => {
       </PageHeader>
 
       <PageBody>
-        <If condition={myOrg?.status === "approved"}>
+        <If condition={organisation?.status === "approved"}>
           <Then>
             <LoadingContainer loading={isLoading}>
               <If condition={projects.length > 0}>

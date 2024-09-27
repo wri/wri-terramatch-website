@@ -7,6 +7,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
 import {
   useDeleteV2OrganisationsRetractMyDraft,
@@ -15,19 +16,19 @@ import {
   usePutV2OrganisationsUUID
 } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { useConnection } from "@/hooks/useConnection";
 import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
-import { useMyOrg } from "@/hooks/useMyOrg";
 
 import { getSteps } from "./getCreateOrganisationSteps";
 
 const CreateOrganisationForm = () => {
   const t = useT();
   const router = useRouter();
-  const myOrg = useMyOrg();
+  const [, { organisationId }] = useConnection(myOrganisationConnection);
   const { openModal, closeModal } = useModalContext();
   const queryClient = useQueryClient();
 
-  const uuid = (myOrg?.uuid || router?.query?.uuid) as string;
+  const uuid = (organisationId || router?.query?.uuid) as string;
 
   const { mutate: updateOrganisation, isLoading, isSuccess } = usePutV2OrganisationsUUID({});
 

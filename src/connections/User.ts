@@ -14,7 +14,9 @@ type UserConnection = {
 
 const selectMeId = (store: ApiDataStore) => store.meta.meUserId;
 const selectUsers = (store: ApiDataStore) => store.users;
-const selectMe = createSelector([selectMeId, selectUsers], (meId, users) => (meId == null ? undefined : users?.[meId]));
+export const selectMe = createSelector([selectMeId, selectUsers], (meId, users) =>
+  meId == null ? undefined : users?.[meId]
+);
 
 const FIND_ME: UsersFindVariables = { pathParams: { id: "me" } };
 

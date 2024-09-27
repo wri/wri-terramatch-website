@@ -6,11 +6,12 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { zendeskSupportLink } from "@/constants/links";
-import { useMyOrg } from "@/hooks/useMyOrg";
+import { useConnection } from "@/hooks/useConnection";
 
 const OrganizationRejectedPage = () => {
-  const myOrg = useMyOrg();
+  const [, { organisation }] = useConnection(myOrganisationConnection);
   const t = useT();
 
   return (
@@ -25,7 +26,7 @@ const OrganizationRejectedPage = () => {
             <Text variant="text-body-1000" className="text-center">
               {t(
                 "Your request to create/join the organization ({ organizationName }) has been rejected. You have been locked out of the platform and your account has been rejected.",
-                { organizationName: myOrg?.name }
+                { organizationName: organisation?.name }
               )}
             </Text>
           </div>

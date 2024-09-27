@@ -18,14 +18,15 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import ApplicationsTable from "@/components/extensive/Tables/ApplicationsTable";
 import PitchesTable from "@/components/extensive/Tables/PitchesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { myOrganisationConnection } from "@/connections/Organisation";
 import { useGetV2FundingProgramme, useGetV2MyApplications } from "@/generated/apiComponents";
-import { useMyOrg } from "@/hooks/useMyOrg";
+import { useConnection } from "@/hooks/useConnection";
 import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const OpportunitiesPage = () => {
   const t = useT();
   const route = useRouter();
-  const myOrg = useMyOrg();
+  const [, { organisation, organisationId }] = useConnection(myOrganisationConnection);
   const [pitchesCount, setPitchesCount] = useState<number>();
 
   const { data: fundingProgrammes, isLoading: loadingFundingProgrammes } = useGetV2FundingProgramme({
@@ -50,7 +51,7 @@ const OpportunitiesPage = () => {
       </Head>
       <PageHeader className="h-[203px]" title="Opportunities" />
       <PageBody>
-        <If condition={myOrg?.status === "approved"}>
+        <If condition={organisation?.status === "approved"}>
           <Then>
             <LoadingContainer loading={loadingFundingProgrammes}>
               <PageSection hasCarousel>
@@ -104,13 +105,15 @@ const OpportunitiesPage = () => {
                       "You can use pitches to apply for funding opportunities. By creating a pitch, you will have a ready-to-use resource that can be used to submit applications when funding opportunities are announced."
                     )}
                     headerChildren={
-                      <Button as={Link} href={`/organization/${myOrg?.uuid}/project-pitch/create/intro`}>
+                      <Button as={Link} href={`/organization/${organisationId}/project-pitch/create/intro`}>
                         {t("Create Project Pitch")}
                       </Button>
                     }
                   >
-                    {/* @ts-ignore missing total field in docs */}
-                    <PitchesTable organisationUUID={myOrg?.uuid!} onFetch={data => setPitchesCount(data.meta?.total)} />
+                    <PitchesTable
+                      organisationUUID={organisationId!}
+                      onFetch={data => setPitchesCount((data.meta as any)?.total)}
+                    />
                   </PageCard>
                 </Then>
                 <Else>
@@ -126,7 +129,7 @@ const OpportunitiesPage = () => {
                       iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
                       ctaProps={{
                         as: Link,
-                        href: `/organization/${myOrg?.uuid}/project-pitch/create/intro`,
+                        href: `/organization/${organisationId}/project-pitch/create/intro`,
                         children: t("Create Pitch")
                       }}
                     />

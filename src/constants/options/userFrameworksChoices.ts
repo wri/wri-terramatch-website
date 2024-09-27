@@ -1,14 +1,15 @@
 import { useMemo } from "react";
 
-import { useUserData } from "@/hooks/useUserData";
+import { myUserConnection } from "@/connections/User";
+import { useConnection } from "@/hooks/useConnection";
 import { OptionInputType } from "@/types/common";
 
 export const useUserFrameworkChoices = (): OptionInputType[] => {
-  const userData = useUserData();
+  const [, { user }] = useConnection(myUserConnection);
 
-  const frameworkChoices = useMemo(() => {
+  return useMemo(() => {
     return (
-      userData?.frameworks?.map(
+      user?.frameworks?.map(
         f =>
           ({
             name: f.name,
@@ -16,7 +17,5 @@ export const useUserFrameworkChoices = (): OptionInputType[] => {
           } as OptionInputType)
       ) ?? []
     );
-  }, [userData]);
-
-  return frameworkChoices;
+  }, [user]);
 };

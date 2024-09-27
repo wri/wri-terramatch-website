@@ -29,6 +29,7 @@ export type UserFramework = {
 };
 
 export type UserDto = {
+  uuid: string;
   firstName: string;
   lastName: string;
   /**
