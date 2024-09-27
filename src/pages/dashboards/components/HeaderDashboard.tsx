@@ -75,7 +75,7 @@ const HeaderDashboard = () => {
   }, [sharedRef]);
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}

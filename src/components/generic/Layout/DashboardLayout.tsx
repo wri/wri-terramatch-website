@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
 
 import HeaderDashboard from "@/pages/dashboards/components/HeaderDashboard";
-import { RefProvider } from "@/pages/dashboards/context/ScrollContext.provider";
+import RefProvider from "@/pages/dashboards/context/ScrollContext.provider";
 
 import Sidebar from "../Sidebar/Sidebar";
 

@@ -11,7 +11,7 @@ const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[];
         return (
           <div key={index} className={`${index + 1 !== data.length && "border-b"} border-grey-350 py-2`}>
             <div className="relative h-4 rounded bg-blueCustom lg:h-5" style={{ width: `${widthBar}%` }}>
-              <Text variant="text-14" className="absolute left-[102%] bottom-0 leading-[normal] text-darkCustom">
+              <Text variant="text-14" className="absolute bottom-0 left-[102%] leading-[normal] text-darkCustom">
                 {item.valueText}
               </Text>
             </div>

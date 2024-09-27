@@ -10,7 +10,7 @@ const Sidebar = () => {
 
   return (
     <div className="flex flex-col items-center gap-8 bg-blueCustom-700 p-3 text-darkCustom-200">
-      <a className="mt-4 mb-10 cursor-pointer" href="/dashboards">
+      <a className="mb-10 mt-4 cursor-pointer" href="/dashboards">
         <Icon name={IconNames.TERRAFUND_lOGO_MINI} />
       </a>
       <a
