@@ -30,10 +30,9 @@ interface FieldMapperProps {
   field: FormField;
   formHook: UseFormReturn<FieldValues, any>;
   onChange: () => void;
-  isPhotosAndVideo?: boolean;
 }
 
-export const FieldMapper = ({ field, formHook, onChange, isPhotosAndVideo = false }: FieldMapperProps) => {
+export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => {
   const sharedProps = {
     error: formHook.formState.errors?.[field.name] as FieldError,
     name: field.name,
@@ -81,7 +80,7 @@ export const FieldMapper = ({ field, formHook, onChange, isPhotosAndVideo = fals
           control={formHook.control}
           onChangeCapture={onChange}
           maxFileSize={10}
-          isPhotosAndVideo={isPhotosAndVideo}
+          isPhotosAndVideo={field.fieldProps.collection === "photos" || field.fieldProps.collection === "videos"}
         />
       );
 
