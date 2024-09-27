@@ -32,7 +32,6 @@ import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
-import DeleteBulkPolygonsControl from "./MapControls/DeleteBulkPolygonsControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -41,6 +40,7 @@ import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { PolygonHandler } from "./MapControls/PolygonHandler";
 import PolygonModifier from "./MapControls/PolygonModifier";
+import ProcessBulkPolygonsControl from "./MapControls/ProcessBulkPolygonsControl";
 import { StyleControl } from "./MapControls/StyleControl";
 import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
@@ -393,7 +393,7 @@ export const MapContainer = ({
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
-            <DeleteBulkPolygonsControl />
+            <ProcessBulkPolygonsControl />
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">

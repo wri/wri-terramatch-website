@@ -24,7 +24,7 @@ export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   refetch?: () => void;
 }
 
-const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
+const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   iconProps,
   title,
   content,
@@ -162,4 +162,4 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   );
 };
 
-export default ModalDeleteBulkPolygons;
+export default ModalProcessBulkPolygons;
