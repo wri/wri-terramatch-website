@@ -16,7 +16,7 @@ export default function Custom500() {
 
   return (
     <PageBody className="flex flex-col items-center justify-center px-4 sx:px-15">
-      <div className="w-full max-w-3xl rounded-lg border-neutral-100 bg-white py-15 px-8 sx:px-15">
+      <div className="w-full max-w-3xl rounded-lg border-neutral-100 bg-white px-8 py-15 sx:px-15">
         <Text as="h1" variant="text-bold-headline-1000" className="text-center">
           500
         </Text>

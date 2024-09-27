@@ -54,7 +54,7 @@ const BuildStrongerProfile = ({
           className="space-y-8"
           render={step => (
             <When condition={step.visible}>
-              <div className="flex flex-col justify-between gap-2 rounded-xl bg-white py-5 px-4 shadow">
+              <div className="flex flex-col justify-between gap-2 rounded-xl bg-white px-4 py-5 shadow">
                 <Text variant="text-heading-200">{step.title}</Text>
                 <Text variant="text-body-600">{step.subtitle}</Text>
               </div>

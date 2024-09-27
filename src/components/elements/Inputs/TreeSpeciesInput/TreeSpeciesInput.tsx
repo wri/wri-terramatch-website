@@ -95,7 +95,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       feedbackRequired={props.feedbackRequired}
     >
       <div>
-        <div className="mt-8 mb-2 flex justify-between">
+        <div className="mb-2 mt-8 flex justify-between">
           <Text variant="text-body-900" className="uppercase">
             {props.title} ({props.value.length})
           </Text>

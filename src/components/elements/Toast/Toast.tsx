@@ -23,7 +23,7 @@ const Toast: FC<IProps> = ({ className, ...rest }) => {
       leave="transition-all ease-in duration-300 transform"
       leaveFrom="-translate-y-0"
       leaveTo="translate-y-full"
-      className="fixed left-0 bottom-8 right-0 z-20 px-15"
+      className="fixed bottom-8 left-0 right-0 z-20 px-15"
     >
       <PageSection>
         <div

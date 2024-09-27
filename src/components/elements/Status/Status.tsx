@@ -46,7 +46,7 @@ const Status = (props: StatusProps) => {
   };
 
   return (
-    <div className={tw("flex items-center justify-center rounded-xl py-1 px-[6px]", COLOR_BG_MAP[status], className)}>
+    <div className={tw("flex items-center justify-center rounded-xl px-[6px] py-1", COLOR_BG_MAP[status], className)}>
       <Text
         variant={textVariant}
         className={`flex w-fit items-center justify-center gap-[6px] text-center ${COLOR_TEXT_MAP[status]}`}

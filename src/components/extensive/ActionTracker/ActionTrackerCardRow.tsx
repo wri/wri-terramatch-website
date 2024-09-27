@@ -35,7 +35,7 @@ const ActionTrackerCardRow = ({
       className={classnames("group flex cursor-pointer flex-col  rounded-md p-0 shadow", className)}
       onClick={onClick}
     >
-      <div className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5">
+      <div className="mx-3 mb-2 mt-3 wide:mx-6 wide:mb-5 wide:mt-6">
         <div className="mb-1 flex items-start gap-3">
           <Text variant="text-body-500" className="flex-1">
             {title}
