@@ -223,6 +223,13 @@ const RHFFileInput = ({
     }
   };
 
+  const updateFileInValue = (updatedFile: Partial<UploadedFile>) => {
+    setFiles(prevFiles => {
+      const updatedFiles = prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file));
+      return updatedFiles;
+    });
+  };
+
   useEffect(() => {
     const tmp = toArray(files)
       //Only store uploaded files into form state.
@@ -245,6 +252,8 @@ const RHFFileInput = ({
       onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
       formHook={formHook}
+      updateFile={updateFileInValue}
+      entityData={{ model, collection, uuid }}
     />
   );
 };

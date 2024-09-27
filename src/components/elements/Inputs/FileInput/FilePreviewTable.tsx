@@ -7,7 +7,9 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 
 import Menu from "../../Menu/Menu";
@@ -22,51 +24,113 @@ export interface FilePreviewTableProps {
   onDelete?: (file: Partial<UploadedFile>) => void;
   onPrivateChange?: (file: Partial<UploadedFile>, checked: boolean) => void;
   formHook?: UseFormReturn;
+  updateFile?: (file: Partial<UploadedFile>) => void;
+  entityData?: any;
 }
 
-const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHook }: FilePreviewTableProps) => {
+const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePreviewTableProps) => {
   const t = useT();
-
   const { openModal, closeModal } = useModalContext();
+  const { showLoader, hideLoader } = useLoading();
+
+  const { mutate: updateMedia } = usePatchV2MediaUuid();
+  const { mutateAsync: updateIsCover } = usePatchV2MediaProjectProjectMediaUuid();
+
   const openModalImageDetail = (item: any) => {
     const data = {
       uuid: item.uuid!,
       fullImageUrl: item.url!,
       thumbnailImageUrl: item.thumb_url!,
-      label: item.model_name ?? "test",
+      label: item.model_name,
       isPublic: item.is_public!,
       isGeotagged: item?.lat !== 0 && item?.lng !== 0,
       isCover: item.is_cover,
-      raw: { ...item, location: { lat: item.lat, lng: item.lng }, name: item.title }
+      raw: { ...item, location: { lat: item.lat, lng: item.lng }, name: item.title, created_date: item.created_at }
     };
+
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
       <ModalImageDetails
         title="IMAGE DETAILS"
         data={data}
-        entityData={[]}
+        entityData={entityData}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
         reloadGalleryImages={() => {}}
         handleDelete={() => {}}
         updateValuesInForm={updatedItem => {
-          console.log("updatedItem", updatedItem, items);
-          formHook?.setValue(
-            "4986a3cd-91a5-4ba7-b7c9-503e3fb03837",
-            items.map(item => (item.uuid === updatedItem.uuid ? updatedItem : item))
-          );
+          if (updatedItem.is_cover) {
+            items.forEach(item => {
+              if (item.uuid !== updatedItem.uuid && item.is_cover) {
+                updateFile?.({ ...item, is_cover: false });
+              }
+            });
+          }
+          updateFile?.(updatedItem);
         }}
       />,
       true
     );
   };
-  console.log("items", items);
+
+  const handleUpdateIsCover = async (selectedItem: Partial<UploadedFile>, checked: boolean) => {
+    showLoader();
+
+    try {
+      const updatedItems = items.map(item => ({
+        ...item,
+        is_cover: item.uuid === selectedItem.uuid ? checked : false
+      }));
+
+      updatedItems.forEach(item => updateFile?.(item));
+
+      if (checked) {
+        await updateIsCover({
+          pathParams: { project: entityData.uuid, mediaUuid: selectedItem.uuid! }
+        });
+      }
+    } catch (error) {
+      console.error("Error updating cover status:", error);
+    } finally {
+      hideLoader();
+    }
+  };
+
+  const handleUpdateIsPublic = async (item: Partial<UploadedFile>, checked: boolean) => {
+    showLoader();
+    try {
+      await updateMedia({
+        pathParams: { uuid: item.uuid! },
+        body: { is_public: checked }
+      });
+      updateFile?.({ ...item, is_public: checked });
+    } catch (error) {
+      console.error("Error updating public status:", error);
+    } finally {
+      hideLoader();
+    }
+  };
+
+  const formatFileSize = (sizeInBytes: number) => {
+    if (sizeInBytes < 1024) return `${sizeInBytes} B`;
+    const units = ["kB", "MB", "GB", "TB"];
+    let size = sizeInBytes / 1024;
+    let unitIndex = 0;
+
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+
+    return `${size.toFixed(1)} ${units[unitIndex]}`;
+  };
+
   const data = items.map(item => ({
     id: item.uuid,
     image: item.title,
-    size: item.size,
-    cover: true,
+    size: formatFileSize(item.size ?? 0),
+    cover: item,
     public: item,
-    geoCoded: false,
+    geoCoded: item?.lat !== 0 && item?.lng !== 0,
     elipsis: item
   }));
 
@@ -86,7 +150,15 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHoo
           },
           {
             accessorKey: "cover",
-            cell: (props: any) => <Checkbox value={props.getValue()} name={""}></Checkbox>,
+            cell: (props: any) => (
+              <Checkbox
+                checked={props.getValue().is_cover}
+                name={""}
+                onChange={e => {
+                  handleUpdateIsCover(props.getValue(), e.target.checked);
+                }}
+              />
+            ),
             header: `${t("Cover")}`,
             meta: { align: "center" }
           },
@@ -94,10 +166,12 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHoo
             accessorKey: "public",
             cell: (props: any) => (
               <Checkbox
-                value={props.getValue().is_public}
+                checked={props.getValue().is_public}
                 name={""}
-                onChange={e => onPrivateChange && onPrivateChange(props.getValue(), e.target.checked)}
-              ></Checkbox>
+                onChange={e => {
+                  handleUpdateIsPublic(props.getValue(), e.target.checked);
+                }}
+              />
             ),
             header: `${t("Public")}`,
             meta: { align: "center" }
@@ -110,14 +184,14 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHoo
                 <Then>
                   <div className="w-fit rounded bg-secondary-200 py-1 px-2">
                     <Text variant="text-12-bold" className="text-green">
-                      Verified
+                      {t("Yes")}
                     </Text>
                   </div>
                 </Then>
                 <Else>
                   <div className="w-fit rounded bg-grey-100 py-1 px-2">
                     <Text variant="text-12-semibold" className="text-neutral-600">
-                      Not Verified
+                      {t("No")}
                     </Text>
                   </div>
                 </Else>
@@ -141,11 +215,10 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHoo
                         render: () => (
                           <div className="flex items-center gap-2">
                             <Icon name={IconNames.EDIT_PA} className="h-3 w-3" />
-                            <Text variant="text-12-bold">Edit</Text>
+                            <Text variant="text-12-bold">{t("Edit")}</Text>
                           </div>
                         ),
                         onClick: () => {
-                          console.log("values ", props, props.getValue());
                           openModalImageDetail(props.getValue());
                         }
                       },
@@ -154,7 +227,7 @@ const FilePreviewTable = ({ items, className, onDelete, onPrivateChange, formHoo
                         render: () => (
                           <div className="flex items-center gap-2">
                             <Icon name={IconNames.TRASH_PA} className="h-3 w-3" />
-                            <Text variant="text-12-bold">Delete</Text>
+                            <Text variant="text-12-bold">{t("Delete")}</Text>
                           </div>
                         ),
                         onClick: () => {

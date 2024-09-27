@@ -106,8 +106,6 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         }
       });
 
-      console.log("mediaUpdate result:", mediaUpdate);
-
       updatePromises.push(mediaUpdate);
     }
 
@@ -119,11 +117,23 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     }
 
     try {
-      const updatedItem = await Promise.all(updatePromises);
+      await Promise.all(updatePromises);
       openNotification("success", t("Success!"), t("Image updated successfully"));
       reloadGalleryImages?.();
-      console.log("updatedIccccctem", updatedItem);
-      updateValuesInForm?.(updatedItem);
+
+      const updatedData = {
+        ...data.raw,
+        name: formData.name,
+        title: formData.name,
+        description: formData.description,
+        photographer: formData.photographer,
+        is_public: formData.is_public,
+        is_cover: formData.is_cover,
+        uuid: data.uuid
+      };
+      console.log("updatedData", updatedData);
+      updateValuesInForm?.(updatedData);
+
       onClose?.();
     } catch (error) {
       openNotification("error", t("Error"), t("Failed to update image details"));

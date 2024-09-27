@@ -32,6 +32,8 @@ export type FileInputProps = InputWrapperProps & {
   onDelete?: (file: Partial<UploadedFile>) => void;
   onPrivateChange?: (uuid: Partial<UploadedFile>, checked: boolean) => void;
   formHook?: UseFormReturn;
+  updateFile?: (file: Partial<UploadedFile>) => void;
+  entityData?: any;
 };
 
 export interface FileStatus {
@@ -169,6 +171,8 @@ const FileInput = (props: FileInputProps) => {
             onDelete={props.onDelete}
             onPrivateChange={props.onPrivateChange}
             formHook={props.formHook}
+            updateFile={props.updateFile}
+            entityData={props.entityData}
           />
         </Then>
         <Else>

@@ -40,7 +40,7 @@ export interface ModalAddProps extends ModalProps {
   previewAsTable?: boolean;
   model: string;
   collection: string;
-  uuid: string;
+  entityData: any;
 }
 
 const ModalAddImages: FC<ModalAddProps> = ({
@@ -70,7 +70,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
   previewAsTable,
   model,
   collection,
-  uuid,
+  entityData,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -93,6 +93,8 @@ const ModalAddImages: FC<ModalAddProps> = ({
           file_name: file?.name,
           title: file?.name,
           mime_type: file?.type,
+          is_cover: false,
+          is_public: true,
           rawFile: file,
           uploadState: {
             isLoading: false,
@@ -215,7 +217,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
       }
 
       uploadFile?.({
-        pathParams: { model, collection, uuid },
+        pathParams: { model, collection, uuid: entityData.uuid },
         file: file,
         //@ts-ignore swagger issue
         body
@@ -236,6 +238,13 @@ const ModalAddImages: FC<ModalAddProps> = ({
     deleteAllFiles();
     onClose?.();
   }, [deleteAllFiles, onClose]);
+
+  const updateFileInValue = (updatedFile: Partial<UploadedFile>) => {
+    setFiles(prevFiles => {
+      const updatedFiles = prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file));
+      return updatedFiles;
+    });
+  };
 
   return (
     <ModalAddBase {...rest}>
@@ -301,6 +310,8 @@ const ModalAddImages: FC<ModalAddProps> = ({
           onChange={handleFileChange}
           files={files}
           allowMultiple={allowMultiple}
+          updateFile={updateFileInValue}
+          entityData={entityData}
         />
         {children}
       </div>

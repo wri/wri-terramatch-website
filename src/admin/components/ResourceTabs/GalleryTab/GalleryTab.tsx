@@ -94,7 +94,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
         }}
         model={resource}
         collection="media"
-        uuid={ctx?.record?.uuid}
+        entityData={ctx?.record}
         setErrorMessage={message => {
           console.error(message);
         }}

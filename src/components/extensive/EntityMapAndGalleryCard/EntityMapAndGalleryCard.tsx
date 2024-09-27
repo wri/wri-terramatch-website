@@ -151,7 +151,7 @@ const EntityMapAndGalleryCard = ({
         }}
         model={modelName}
         collection="media"
-        uuid={modelUUID}
+        entityData={entityData}
         setErrorMessage={message => {
           console.error(message);
         }}
