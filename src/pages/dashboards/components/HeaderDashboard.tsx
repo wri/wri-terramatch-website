@@ -7,6 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import { OptionValue } from "@/types/common";
 
 import { RefContext } from "../context/ScrollContext.provider";
+import BlurContainer from "./BlurContainer";
 
 const HeaderDashboard = () => {
   const sharedRef = useContext(RefContext);
@@ -83,8 +84,7 @@ const HeaderDashboard = () => {
           TerraMatch Insights
         </Text>
         <div className="flex items-center gap-3">
-          <div className="relative max-w-[192px]  rounded-lg border border-[#989E97]">
-            <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
+          <BlurContainer isCollapse={isHeaderCollapsed}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -95,14 +95,13 @@ const HeaderDashboard = () => {
               variant={VARIANT_DROPDOWN_HEADER}
               value={filterValues.dropdown1}
               placeholder="Top100"
-              onChange={value => {
+              onChange={(value: OptionValue[]) => {
                 handleChange("dropdown1", value);
               }}
               options={dropdwonOptions}
             />
-          </div>
-          <div className="relative max-w-[192px]  rounded-lg border border-[#989E97]">
-            <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
+          </BlurContainer>
+          <BlurContainer isCollapse={isHeaderCollapsed}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -118,9 +117,8 @@ const HeaderDashboard = () => {
               }}
               options={dropdwonOptions}
             />
-          </div>
-          <div className="relative max-w-[192px]  rounded-lg border border-[#989E97]">
-            <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
+          </BlurContainer>
+          <BlurContainer isCollapse={isHeaderCollapsed}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -136,9 +134,8 @@ const HeaderDashboard = () => {
               }}
               options={dropdwonOptions}
             />
-          </div>
-          <div className="relative max-w-[192px] rounded-lg border border-[#989E97]">
-            <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
+          </BlurContainer>
+          <BlurContainer isCollapse={isHeaderCollapsed}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -155,7 +152,7 @@ const HeaderDashboard = () => {
               }}
               options={dropdwonOptions}
             />
-          </div>
+          </BlurContainer>
           <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
             Clear Filters
           </button>
