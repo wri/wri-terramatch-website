@@ -1,10 +1,9 @@
 import { useT } from "@transifex/react";
-import React, { useContext } from "react";
+import { useContext } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import Icon from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
@@ -29,12 +28,34 @@ import {
   VOLUNTEERS_CREATED_BY_GENDER
 } from "../mockedData/dashboard";
 
-const Country = () => {
+export interface DashboardTableDataProps {
+  label: string;
+  valueText: string;
+  value: number;
+}
+
+export interface GraphicLegendProps {
+  label: string;
+  value: string;
+  color: string;
+}
+
+export interface DashboardDataProps {
+  value?: string;
+  unit?: string;
+  secondValue?: string;
+  graphic?: string;
+  tableData?: DashboardTableDataProps[];
+  maxValue?: number;
+  graphicLegend?: GraphicLegendProps[];
+  graphicTargetLandUseTypes?: DashboardTableDataProps[];
+}
+
+const Dashboard = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
-
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -192,4 +213,4 @@ const Country = () => {
   );
 };
 
-export default Country;
+export default Dashboard;

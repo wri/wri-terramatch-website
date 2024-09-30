@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import Text from "@/components/elements/Text/Text";
 
-import { DashboardTableDataProps } from "../dashboard/index.page";
+import { DashboardTableDataProps } from "../index.page";
 
 const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
   const colorIconLabel = (label: string) => {
