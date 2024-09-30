@@ -73,7 +73,6 @@ const ModalAdd: FC<ModalAddProps> = ({
   }, [files, setFile]);
 
   const handleFileChange = (files: File[]) => {
-    console.log("hello test");
     const formatFile = (file: File): UploadedFile => ({
       title: file.name,
       file_name: file.name,
@@ -120,7 +119,7 @@ const ModalAdd: FC<ModalAddProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
           <When condition={status}>
-            <Status status={status ?? StatusEnum.DRAFT} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
+            <Status status={status ?? StatusEnum.DRAFT} className="rounded py-[2px] px-2" textVariant="text-14-bold" />
           </When>
           <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
@@ -140,7 +139,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           <Text variant="text-24-bold">{title}</Text>
         </div>
         <When condition={!!content}>
-          <Text variant="text-12-light" className="mb-4 mt-1">
+          <Text variant="text-12-light" className="mt-1 mb-4">
             {content}
           </Text>
         </When>
@@ -163,7 +162,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           </div>
         </When>
         <When condition={!!secondContent}>
-          <Text variant="text-12-light" className="mb-4 mt-1">
+          <Text variant="text-12-light" className="mt-1 mb-4">
             {secondContent}
           </Text>
         </When>
