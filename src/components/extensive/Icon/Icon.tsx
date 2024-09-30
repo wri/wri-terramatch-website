@@ -172,7 +172,9 @@ export enum IconNames {
   PROJECT_PROFILE = "project-profile",
   DASHBOARD_AIRTABLE = "dashboard-airtable",
   DASHBOARD_REPORTS = "dashboard-reports",
-  ABOUT_US = "about-us"
+  ABOUT_US = "about-us",
+  EXPAND = "expand",
+  COLLAPSE = "collapse"
 }
 
 export interface IconProps {
