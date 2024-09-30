@@ -10,23 +10,23 @@ const Sidebar = () => {
 
   return (
     <div className="flex flex-col items-center gap-8 bg-blueCustom-700 p-3 text-darkCustom-200">
-      <a className="mb-10 mt-4 cursor-pointer" href="/dashboards">
+      <a className="mb-10 mt-4 cursor-pointer" href="/home">
         <Icon name={IconNames.TERRAFUND_lOGO_MINI} />
       </a>
       <a
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
-          "text-white": router.asPath === "/dashboards" || router.asPath.includes("/dashboards/dashboard")
+          "text-white": router.asPath === "/dashboard" || router.asPath.includes("/dashboard/")
         })}
-        href="/dashboards/dashboard"
+        href="/dashboard"
       >
         <Icon name={IconNames.DASHBOARDS} className="h-8 w-8" />
         <Text variant={"text-8"}>DASHBOARDS</Text>
       </a>
       <a
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
-          "text-white": router.asPath.includes("/dashboards/project-profile")
+          "text-white": router.asPath.includes("/dashboard/project-profile")
         })}
-        href="/dashboards/project-profile"
+        href="/dashboard/project-profile"
       >
         <Icon name={IconNames.PROJECT_PROFILE} className="h-8 w-8" />
         <Text variant={"text-8"}>
@@ -35,27 +35,27 @@ const Sidebar = () => {
       </a>
       <a
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
-          "text-white": router.asPath.includes("/dashboards/airtable")
+          "text-white": router.asPath.includes("/dashboard/airtable")
         })}
-        href="/dashboards/airtable"
+        href="/dashboard/airtable"
       >
         <Icon name={IconNames.DASHBOARD_AIRTABLE} className="h-8 w-8" />
         <Text variant={"text-8"}>AIRTABLE</Text>
       </a>
       <a
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
-          "text-white": router.asPath.includes("/dashboards/reports")
+          "text-white": router.asPath.includes("/dashboard/reports")
         })}
-        href="/dashboards/reports"
+        href="/dashboard/reports"
       >
         <Icon name={IconNames.DASHBOARD_REPORTS} className="h-8 w-8" />
         <Text variant={"text-8"}>REPORTS</Text>
       </a>
       <a
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
-          "text-white": router.asPath.includes("/dashboards/about-us")
+          "text-white": router.asPath.includes("/dashboard/about-us")
         })}
-        href="/dashboards/about-us"
+        href="/dashboard/about-us"
       >
         <Icon name={IconNames.ABOUT_US} className="h-8 w-8" />
         <Text variant={"text-8"}>ABOUT US</Text>

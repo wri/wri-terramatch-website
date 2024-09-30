@@ -33,7 +33,7 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
-  const isOnDashboards = router.asPath.includes("/dashboards");
+  const isOnDashboards = router.asPath.includes("/dashboard");
 
   setClientSideTranslations(props);
   setupYup(t);

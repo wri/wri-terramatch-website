@@ -12,12 +12,11 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Input from "@/components/elements/Inputs/Input/Input";
 import InputDescription from "@/components/elements/Inputs/InputElements/InputDescription";
 import InputLabel from "@/components/elements/Inputs/InputElements/InputLabel";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { formatOptionsList, statusColor } from "@/utils/options";
+import { formatOptionsList, getMetaData } from "@/utils/options";
 
 import { DropdownVariant, VARIANT_DROPDOWN_DEFAULT } from "./DropdownVariant";
 
@@ -142,24 +141,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherIsSelected, otherValue, t]);
 
-  const getColorStatus = (option: string): string => {
-    const colorMap: { [key: string]: string } = {
-      approved: "bg-secondary",
-      submitted: "bg-blue",
-      draft: "bg-pinkCustom",
-      started: "bg-pinkCustom",
-      "Under Review": "bg-tertiary-600",
-      "needs-more-information": "bg-tertiary-600",
-      "restoration-in-progress": "bg-blue",
-      "awaiting-approval": "bg-tertiary-600"
-    };
-
-    return colorMap[option] ?? "";
-  };
-
   const verifyDisableOption = (title: string) => {
     return props?.disableOptionTitles?.includes(title);
   };
+  console.log(options);
 
   return (
     <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
@@ -197,15 +182,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               )}
             >
               <When condition={!!props.prefix}>{props.prefix}</When>
-
               <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
-                <When condition={options?.[0]?.meta != null}>
-                  <div
-                    className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
-                      statusColor(options, toArray<any>(value)) ?? ""
-                    )}`}
-                  />
-                </When>
+                {getMetaData(options, toArray<any>(value))}
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname)}
@@ -214,7 +192,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>
-
               <Icon
                 name={variant.iconName || IconNames.CHEVRON_DOWN}
                 className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
@@ -278,6 +255,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
+                            <When condition={option.meta}>{option.meta}</When>
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
                               className={tw(
@@ -287,9 +265,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             >
                               {option.title}
                             </Text>
-                            <When condition={option.meta}>
-                              <Status className="w-[35%]" status={option.meta} />
-                            </When>
                           </div>
                         </Else>
                       </If>
