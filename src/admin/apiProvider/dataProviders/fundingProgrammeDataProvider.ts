@@ -55,7 +55,7 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2AdminFundingProgrammeUUID({
-        pathParams: { uuid: params.id as string }
+        pathParams: { uuid: params.id }
       });
 
       return {

@@ -85,7 +85,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
               <Text variant="text-24-bold">{t(title)}</Text>
             </div>
             <When condition={!!content}>
-              <Text as="div" variant="text-12-bold" className="mb-8 mt-1" containHtml>
+              <Text as="div" variant="text-12-bold" className="mt-1 mb-8" containHtml>
                 {t(content)}
               </Text>
             </When>
@@ -101,7 +101,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
               placeholder="Insert my comment"
               rows={4}
             />
-            <Text variant="text-12-light" className="mb-2 mt-6">
+            <Text variant="text-12-light" className="mt-6 mb-2">
               {t("Attachments")}
             </Text>
             <FileInput

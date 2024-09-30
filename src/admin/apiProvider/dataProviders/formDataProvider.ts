@@ -134,7 +134,7 @@ export const formDataProvider: FormDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2FormsUUID({
-        pathParams: { uuid: params.id as string }
+        pathParams: { uuid: params.id }
       });
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as GetOneResult;

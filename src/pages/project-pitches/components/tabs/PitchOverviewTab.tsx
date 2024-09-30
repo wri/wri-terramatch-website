@@ -104,7 +104,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
           </SectionEntryRow>
         </SectionBody>
 
-        <SectionHeader title={t("Potential Environmental impact:")} className="mb-8 mt-20" />
+        <SectionHeader title={t("Potential Environmental impact:")} className="mt-20 mb-8" />
         <SectionBody>
           <SectionEntryRow title={t("Proposed number of hectares to be restored")} isEmpty={!pitch.total_hectares}>
             <Text variant="text-heading-100">{`${pitch.total_hectares} ha.`}</Text>
@@ -115,7 +115,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
           </SectionEntryRow>
         </SectionBody>
 
-        <SectionHeader title={t("Potential Social impact:")} className="mb-8 mt-20" />
+        <SectionHeader title={t("Potential Social impact:")} className="mt-20 mb-8" />
         <SectionBody>
           <SectionEntryRow title={t("Total expected new jobs")} isEmpty={!pitch.num_jobs_created}>
             <Text variant="text-heading-100">{pitch.num_jobs_created}</Text>

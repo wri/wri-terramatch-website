@@ -159,7 +159,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
 
   return (
     <ModalBaseImageDetail {...rest}>
-      <button onClick={onClose} className="absolute right-8 top-8 ml-2 rounded p-1 hover:bg-grey-800">
+      <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
         <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
       </button>
       <div className="w-full">

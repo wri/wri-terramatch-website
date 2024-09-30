@@ -159,7 +159,7 @@ const MapSidePanel = ({
 
   return (
     <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
-      <div className="absolute left-0 top-0 -z-10 h-full w-full backdrop-blur-md" />
+      <div className="absolute top-0 left-0 -z-10 h-full w-full backdrop-blur-md" />
       <div className="mb-4 flex items-center justify-between rounded-tl-lg">
         {isMonitoring ? (
           <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>

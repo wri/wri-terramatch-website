@@ -28,7 +28,7 @@ const BuildStrongerProfile = ({ subtitle, steps, onEdit }: BuildStrongerProfileP
           <Button onClick={onEdit}>{t("Edit Profile")}</Button>
         </div>
         <Text variant="text-body-800">{subtitle}</Text>
-        <div className="mb-4 mt-10">
+        <div className="mt-10 mb-4">
           <Text variant="text-heading-300">{t("Adding these items would make your profile stronger:")}</Text>
         </div>
         <List
