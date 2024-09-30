@@ -9,7 +9,7 @@ export type AppStore = {
   api: ApiDataStore;
 };
 
-const makeStore: MakeStore<Store<AppStore>> = context => {
+const makeStore: MakeStore<Store<AppStore>> = () => {
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer

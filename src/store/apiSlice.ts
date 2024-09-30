@@ -146,6 +146,8 @@ export const apiSlice = createSlice({
         // After a successful login, clear the entire cache; we want all mounted components to
         // re-fetch their data with the new login credentials.
         clearApiCache(state);
+        // TODO: this will no longer be needed once we have connection chaining, as the my org
+        //  connection will force the my user connection to load.
         reloadMe();
       } else {
         delete state.meta.pending[method][url];
@@ -188,7 +190,6 @@ export const apiSlice = createSlice({
       // so we can safely fake a login into the store when we have an authToken already set in a
       // cookie on app bootup.
       state.logins["1"] = { attributes: { token: authToken } };
-      reloadMe();
     }
   },
 
