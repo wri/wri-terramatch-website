@@ -9,6 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconProps } from "../Icon/Icon";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+// @ts-ignore
 export interface ModalProps extends ModalBaseProps {
   title: string;
   iconProps?: IconProps;

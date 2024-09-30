@@ -75,7 +75,7 @@ const Tabs = (props: TabsProps) => {
                 <TabButton
                   index={index}
                   className={classNames(
-                    "flex min-h-[70px] w-full items-center justify-start py-4 px-6",
+                    "flex min-h-[70px] w-full items-center justify-start px-6 py-4",
                     props.rounded && "first:rounded-tl-2xl"
                   )}
                   item={item}

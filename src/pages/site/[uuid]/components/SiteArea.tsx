@@ -88,7 +88,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     <div className="flex h-[500px] rounded-lg text-darkCustom wide:h-[700px]">
       <div className="relative h-auto w-auto">
         <When condition={!!selectedPolyVersion && openModalConfirmation}>
-          <div className="absolute top-5 left-[43vw] z-20 text-center">
+          <div className="absolute left-[43vw] top-5 z-20 text-center">
             <Button variant="primary" className="" onClick={makeActivePolygon}>
               {t("Confirm Version")}
             </Button>
@@ -110,7 +110,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
         </When>
         <When condition={!!previewVersion}>
           <div className="absolute bottom-8 left-[54vw] z-20 w-[22vw] rounded bg-white p-3">
-            <button className="absolute top-3 right-4 hover:opacity-60" onClick={() => setPreviewVersion?.(false)}>
+            <button className="absolute right-4 top-3 hover:opacity-60" onClick={() => setPreviewVersion?.(false)}>
               <Icon name={IconNames.CLEAR} className="h-3 w-3 wide:h-4 wide:w-4" />
             </button>
             <Text variant="text-10-bold" className="mb-4 text-center">

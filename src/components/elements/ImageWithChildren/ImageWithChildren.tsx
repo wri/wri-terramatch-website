@@ -35,13 +35,12 @@ const ImageWithChildren = ({
       </div>
       <ImageWithPlaceholder
         imageUrl={imageSrc as string}
-        placeholder={t("No Image Available")}
         alt={t("No Image Available")}
         role="presentation"
         style={{ objectFit: "cover" }}
-        className="absolute top-0 bottom-0 left-0 right-0 h-full w-full rounded-t-xl"
+        className="absolute bottom-0 left-0 right-0 top-0 h-full w-full rounded-t-xl"
       />
-      <div className={classNames("absolute top-0 right-0 left-0 bottom-0", childrenContainerClassName)}>{children}</div>
+      <div className={classNames("absolute bottom-0 left-0 right-0 top-0", childrenContainerClassName)}>{children}</div>
     </div>
   );
 };

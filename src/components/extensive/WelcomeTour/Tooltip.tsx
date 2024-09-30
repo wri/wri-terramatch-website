@@ -38,7 +38,7 @@ const ToolTip: FC<TooltipRenderProps> = ({
         </div>
       </div>
       {/* Arrow */}
-      <div className="absolute top-[-27px] left-[50%] z-10 h-[54px] w-[54px] translate-x-[-50%] rotate-45 rounded bg-primary-400"></div>
+      <div className="absolute left-[50%] top-[-27px] z-10 h-[54px] w-[54px] translate-x-[-50%] rotate-45 rounded bg-primary-400"></div>
     </div>
   );
 };

@@ -81,7 +81,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
               <Text variant="text-12"> {isChecked ? "Failed" : "Run Validation Check"}</Text>
             </When>
             <When condition={isChecked}>
-              <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
+              <button className="min-h-3 min-w-3" onClick={() => setOpenCollapse(!openCollapse)}>
                 <Icon
                   name={IconNames.CHEVRON_DOWN_PA}
                   className={`h-3 w-3 text-black transition-transform duration-300 ${

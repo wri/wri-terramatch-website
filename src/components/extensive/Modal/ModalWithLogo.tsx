@@ -76,93 +76,96 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   }, [auditLogData]);
 
   return (
-    <ModalBaseWithLogo {...rest}>
-      <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
-        <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
-        <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
-          <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
-        </button>
-      </header>
-      <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
-          <Icon
-            {...iconProps!}
-            width={iconProps?.width ?? 40}
-            className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
-          />
-        </When>
-        <div className="mb-8 flex items-center justify-between">
-          <Text variant="text-24-bold">{title}</Text>
-          <When condition={toogleButton}>
-            <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
-              <Button
-                variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
-                onClick={() => setButtonToogle(!buttonToogle)}
-                className="w-[111px]"
-              >
-                <Text variant="text-14-semibold">{t("Comments")}</Text>
-              </Button>
-              <Button
-                variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
-                onClick={() => setButtonToogle(!buttonToogle)}
-                className="w-[111px]"
-              >
-                <Text variant="text-14-semibold">{t("History")}</Text>
-              </Button>
-            </div>
-          </When>
-        </div>
-        <div>
-          <div className="mb-[72px] px-20">
-            <StepProgressbar
-              value={valuesForStatus(status as StatusEnum)}
-              labels={statusLabels}
-              classNameLabels="min-w-[111px]"
+    <>
+      {/* @ts-ignore */}
+      <ModalBaseWithLogo {...rest}>
+        <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
+          <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
+          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
+            <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
+          </button>
+        </header>
+        <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
+          <When condition={!!iconProps}>
+            <Icon
+              {...iconProps!}
+              width={iconProps?.width ?? 40}
+              className={twMerge("mb-8", iconProps?.className)}
+              style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
             />
+          </When>
+          <div className="mb-8 flex items-center justify-between">
+            <Text variant="text-24-bold">{title}</Text>
+            <When condition={toogleButton}>
+              <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
+                <Button
+                  variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
+                  onClick={() => setButtonToogle(!buttonToogle)}
+                  className="w-[111px]"
+                >
+                  <Text variant="text-14-semibold">{t("Comments")}</Text>
+                </Button>
+                <Button
+                  variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
+                  onClick={() => setButtonToogle(!buttonToogle)}
+                  className="w-[111px]"
+                >
+                  <Text variant="text-14-semibold">{t("History")}</Text>
+                </Button>
+              </div>
+            </When>
           </div>
-          <When condition={buttonToogle}>
-            <div className="flex flex-col gap-4">
-              <CommentaryBox
-                name={authMe?.data?.first_name!}
-                lastName={authMe?.data?.last_name!}
-                entity={AuditLogEntityEnum.Polygon}
-                record={{ uuid, status }}
-                refresh={refetch}
+          <div>
+            <div className="mb-[72px] px-20">
+              <StepProgressbar
+                value={valuesForStatus(status as StatusEnum)}
+                labels={statusLabels}
+                classNameLabels="min-w-[111px]"
               />
-              {commentsAuditLogData.map(item => (
-                <Commentary
-                  key={item.id}
-                  name={item.first_name!}
-                  lastName={item.last_name!}
-                  date={formatCommentaryDate(new Date(item.date_created!))}
-                  commentary={item.comment!}
-                  files={item.attachments}
-                  status={item.status}
-                />
-              ))}
             </div>
-          </When>
-          <When condition={!buttonToogle}>
-            <AuditLogTable auditLogData={{ data: restAuditLogData }} />
-          </When>
+            <When condition={buttonToogle}>
+              <div className="flex flex-col gap-4">
+                <CommentaryBox
+                  name={authMe?.data?.first_name!}
+                  lastName={authMe?.data?.last_name!}
+                  entity={AuditLogEntityEnum.Polygon}
+                  record={{ uuid, status }}
+                  refresh={refetch}
+                />
+                {commentsAuditLogData.map(item => (
+                  <Commentary
+                    key={item.id}
+                    name={item.first_name!}
+                    lastName={item.last_name!}
+                    date={formatCommentaryDate(new Date(item.date_created!))}
+                    commentary={item.comment!}
+                    files={item.attachments}
+                    status={item.status}
+                  />
+                ))}
+              </div>
+            </When>
+            <When condition={!buttonToogle}>
+              <AuditLogTable auditLogData={{ data: restAuditLogData }} />
+            </When>
+          </div>
         </div>
-      </div>
-      <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
-            <Text variant="text-14-bold" className="capitalize">
-              {secondaryButtonText}
+        <div className="flex w-full justify-end gap-3 px-8 py-4">
+          <When condition={!!secondaryButtonProps}>
+            <Button {...secondaryButtonProps!} variant="white-page-admin">
+              <Text variant="text-14-bold" className="capitalize">
+                {secondaryButtonText}
+              </Text>
+            </Button>
+          </When>
+          <Button {...primaryButtonProps}>
+            <Text variant="text-14-bold" className="capitalize text-white">
+              {primaryButtonText}
             </Text>
           </Button>
-        </When>
-        <Button {...primaryButtonProps}>
-          <Text variant="text-14-bold" className="capitalize text-white">
-            {primaryButtonText}
-          </Text>
-        </Button>
-      </div>
-    </ModalBaseWithLogo>
+        </div>
+      </ModalBaseWithLogo>
+    </>
   );
 };
 

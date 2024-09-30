@@ -49,7 +49,7 @@ const NavbarContent = ({ isLoggedIn, handleClose, ...rest }: NavbarContentProps)
 
   return (
     <div {...rest}>
-      <div className="absolute top-4 left-[50%] translate-x-[-50%]">
+      <div className="absolute left-[50%] top-4 translate-x-[-50%]">
         <LanguagesDropdown onChange={changeLanguageHandler} className="block sm:hidden" />
       </div>
       <List

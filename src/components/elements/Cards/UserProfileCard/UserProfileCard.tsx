@@ -89,7 +89,7 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
       <div {...rest} className={classNames("rounded-xl border border-neutral-200 pb-4", className)}>
         <div className="relative flex aspect-square w-full items-center justify-center">
           <Image src={imageUrl} alt={username} fill className="object-contain object-top" />
-          <div className="absolute top-3 right-3">
+          <div className="absolute right-3 top-3">
             <Menu menu={tableMenu} placement={MENU_PLACEMENT_RIGHT_TOP} classNameContentMenu="p-1">
               <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
             </Menu>

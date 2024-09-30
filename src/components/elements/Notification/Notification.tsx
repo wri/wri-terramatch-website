@@ -64,7 +64,7 @@ const Notification: FC<NotificationProps> = ({
   }, [closeNotification, open]);
 
   return (
-    <div className="fixed top-[86px] right-[1.5vw] z-[1000000] flex w-[28vw] shadow-black">
+    <div className="fixed right-[1.5vw] top-[86px] z-[1000000] flex w-[28vw] shadow-black">
       <div {...rest} className={classNames(notificationClasses)}>
         <div className="mr-2">
           <When condition={type === "success"}>
