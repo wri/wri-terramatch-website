@@ -1,6 +1,6 @@
 import Text from "@/components/elements/Text/Text";
 
-import { DashboardTableDataProps } from "../dashboard/index.page";
+import { DashboardTableDataProps } from "../index.page";
 
 const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[]; maxValue: number }) => {
   return (
