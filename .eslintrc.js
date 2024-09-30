@@ -29,7 +29,6 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended",
     "plugin:storybook/recommended"
   ],
   overrides: [
@@ -40,7 +39,7 @@ module.exports = {
       }
     }
   ],
-  plugins: ["simple-import-sort", "prettier", "react-hooks", "@typescript-eslint"],
+  plugins: ["simple-import-sort", "react-hooks", "@typescript-eslint"],
   rules: {
     "react/display-name": "off",
     "jsx-a11y/click-events-have-key-events": "off",
@@ -54,13 +53,6 @@ module.exports = {
     ],
     "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "prettier/prettier": [
-      "error",
-      {},
-      {
-        usePrettierrc: true
-      }
-    ],
     "react/react-in-jsx-scope": "off",
     "jsx-a11y/accessible-emoji": "off",
     "react/prop-types": "off",
