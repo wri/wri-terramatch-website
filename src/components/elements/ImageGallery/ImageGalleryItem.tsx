@@ -92,7 +92,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     try {
       const response = await mutateAsync({
         body: {
-          imageUrl: data.fullImageUrl
+          uuid: data.uuid
         }
       });
 
