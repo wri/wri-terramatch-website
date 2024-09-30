@@ -13,10 +13,9 @@ import Form from "@/components/extensive/Form/Form";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { myOrganisationConnection } from "@/connections/Organisation";
+import { useMyOrg } from "@/connections/Organisation";
 import { useGetV2FormsUUID, useGetV2ProjectPitches, usePostV2FormsSubmissions } from "@/generated/apiComponents";
 import { FormRead } from "@/generated/apiSchemas";
-import { useConnection } from "@/hooks/useConnection";
 import { useDate } from "@/hooks/useDate";
 
 const schema = yup.object({
@@ -30,7 +29,7 @@ const FormIntroPage = () => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
-  const [, { organisationId }] = useConnection(myOrganisationConnection);
+  const [, { organisationId }] = useMyOrg();
 
   const formUUID = router.query.id as string;
 

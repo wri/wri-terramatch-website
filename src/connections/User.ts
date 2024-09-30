@@ -5,6 +5,7 @@ import { usersFindFetchFailed } from "@/generated/v3/userService/userServicePred
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 import { ApiDataStore, Relationships } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
+import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
 type UserConnection = {
   user?: UserDto;
@@ -20,7 +21,7 @@ export const selectMe = createSelector([selectMeId, selectUsers], (meId, users) 
 
 const FIND_ME: UsersFindVariables = { pathParams: { id: "me" } };
 
-export const myUserConnection: Connection<UserConnection> = {
+const myUserConnection: Connection<UserConnection> = {
   load: ({ user }) => {
     if (user == null) usersFind(FIND_ME);
   },
@@ -33,3 +34,5 @@ export const myUserConnection: Connection<UserConnection> = {
     userLoadFailed: userLoadFailure != null
   }))
 };
+export const useMyUser = connectionHook(myUserConnection);
+export const loadMyUser = connectionLoader(myUserConnection);

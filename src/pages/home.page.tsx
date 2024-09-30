@@ -14,15 +14,14 @@ import TaskList from "@/components/extensive/TaskList/TaskList";
 import { useGetHomeTourItems } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { myOrganisationConnection } from "@/connections/Organisation";
+import { useMyOrg } from "@/connections/Organisation";
 import { useGetV2FundingProgramme } from "@/generated/apiComponents";
-import { useConnection } from "@/hooks/useConnection";
 import { useAcceptInvitation } from "@/hooks/useInviteToken";
 import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const HomePage = () => {
   const t = useT();
-  const [, { organisation, organisationId }] = useConnection(myOrganisationConnection);
+  const [, { organisation, organisationId }] = useMyOrg();
   const route = useRouter();
   const tourSteps = useGetHomeTourItems();
   useAcceptInvitation();

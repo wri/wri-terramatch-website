@@ -5,6 +5,7 @@ import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { authLoginFetchFailed, authLoginIsFetching } from "@/generated/v3/userService/userServicePredicates";
 import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
+import { connectionHook, connectionLoader, connectionSelector } from "@/utils/connectionShortcuts";
 
 type LoginConnection = {
   isLoggingIn: boolean;
@@ -23,7 +24,7 @@ export const logout = () => {
 
 const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
 
-export const loginConnection: Connection<LoginConnection> = {
+const loginConnection: Connection<LoginConnection> = {
   selector: createSelector(
     [authLoginIsFetching, authLoginFetchFailed, selectFirstLogin],
     (isLoggingIn, failedLogin, firstLogin) => {
@@ -36,3 +37,6 @@ export const loginConnection: Connection<LoginConnection> = {
     }
   )
 };
+export const useLogin = connectionHook(loginConnection);
+export const loadLogin = connectionLoader(loginConnection);
+export const selectLogin = connectionSelector(loginConnection);

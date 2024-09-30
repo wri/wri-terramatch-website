@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 
-import { myUserConnection } from "@/connections/User";
-import { useConnection } from "@/hooks/useConnection";
+import { useMyUser } from "@/connections/User";
 import { OptionInputType } from "@/types/common";
 
 export const useUserFrameworkChoices = (): OptionInputType[] => {
-  const [, { user }] = useConnection(myUserConnection);
+  const [, { user }] = useMyUser();
 
   return useMemo(() => {
     return (

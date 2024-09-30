@@ -13,4 +13,4 @@ export type Connection<SelectedType, PropsType extends OptionalProps = undefined
   load?: (selected: SelectedType, props: PropsType) => void;
 };
 
-export type Connected<SelectedType> = readonly [boolean, SelectedType | Record<any, never>];
+export type Connected<SelectedType> = readonly [true, SelectedType] | readonly [false, Record<any, never>];

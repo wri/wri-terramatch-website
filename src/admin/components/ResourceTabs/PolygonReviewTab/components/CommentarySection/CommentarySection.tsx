@@ -3,8 +3,7 @@ import { When } from "react-if";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
-import { myUserConnection } from "@/connections/User";
-import { useConnection } from "@/hooks/useConnection";
+import { useMyUser } from "@/connections/User";
 
 import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
 
@@ -21,7 +20,7 @@ const CommentarySection = ({
   viewCommentsList?: boolean;
   loading?: boolean;
 }) => {
-  const [, { user }] = useConnection(myUserConnection);
+  const [, { user }] = useMyUser();
 
   return (
     <div className="flex flex-col gap-4">

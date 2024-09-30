@@ -1,7 +1,6 @@
 import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
 import Log from "@/utils/log";
-import { loginConnection } from "@/connections/Login";
-import { Connection, OptionalProps } from "@/types/connection";
+import { selectLogin } from "@/connections/Login";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -55,13 +54,6 @@ export function fetchFailed<TQueryParams extends {}, TPathParams extends {}>({
 }
 
 const isPending = (method: Method, fullUrl: string) => ApiSlice.apiDataStore.meta.pending[method][fullUrl] != null;
-
-// We might want this utility more generally available. I'm hoping to avoid the need more widely, but I'm not totally
-// opposed to this living in utils/ if we end up having a legitimate need for it.
-const selectConnection = <S, P extends OptionalProps = undefined>(
-  connection: Connection<S, P>,
-  props: P | Record<any, never> = {}
-) => connection.selector(ApiSlice.apiDataStore, props);
 
 async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };
@@ -138,7 +130,7 @@ export function serviceFetch<
   // store, which means that the next connections that kick off right away don't have access to
   // the token through the getAccessToken method. So, we grab it from the store instead, which is
   // more reliable in this case.
-  const { token } = selectConnection(loginConnection);
+  const { token } = selectLogin();
   if (!requestHeaders?.Authorization && token != null) {
     // Always include the JWT access token if we have one.
     requestHeaders.Authorization = `Bearer ${token}`;

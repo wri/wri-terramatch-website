@@ -14,10 +14,9 @@ import { formatCommentaryDate } from "@/components/elements/Map-mapbox/utils";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
-import { myUserConnection } from "@/connections/User";
+import { useMyUser } from "@/connections/User";
 import { GetV2AuditStatusENTITYUUIDResponse, useGetV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
-import { useConnection } from "@/hooks/useConnection";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -57,7 +56,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
     }
   });
 
-  const [, { user }] = useConnection(myUserConnection);
+  const [, { user }] = useMyUser();
 
   const [commentsAuditLogData, restAuditLogData] = useMemo(() => {
     const commentsAuditLog: GetV2AuditStatusENTITYUUIDResponse = [];

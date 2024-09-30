@@ -6,15 +6,14 @@ import { dataProvider } from "@/admin/apiProvider/dataProviders";
 import { AppLayout } from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { myUserConnection } from "@/connections/User";
+import { useMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
-import { useConnection } from "@/hooks/useConnection";
 import LoginPage from "@/pages/auth/login/index.page";
 
 import modules from "../modules";
 
 const App = () => {
-  const [, { user }] = useConnection(myUserConnection);
+  const [, { user }] = useMyUser();
   if (user == null) return null;
 
   const canCreate = user.primaryRole === "admin-super";
