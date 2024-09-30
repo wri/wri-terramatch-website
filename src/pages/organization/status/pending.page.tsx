@@ -5,12 +5,11 @@ import HandsPlantingImage from "public/images/hands-planting.webp";
 import Text from "@/components/elements/Text/Text";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { myOrganisationConnection } from "@/connections/Organisation";
-import { useConnection } from "@/hooks/useConnection";
+import { useMyOrg } from "@/connections/Organisation";
 
 const OrganizationPendingPage = () => {
   const t = useT();
-  const [, { organisation }] = useConnection(myOrganisationConnection);
+  const [, { organisation }] = useMyOrg();
 
   return (
     <BackgroundLayout>

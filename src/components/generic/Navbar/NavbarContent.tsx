@@ -7,11 +7,10 @@ import { Else, If, Then, When } from "react-if";
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { loginConnection } from "@/connections/Login";
-import { myOrganisationConnection } from "@/connections/Organisation";
+import { useLogin } from "@/connections/Login";
+import { useMyOrg } from "@/connections/Organisation";
 import { useNavbarContext } from "@/context/navbar.provider";
 import { useLogout } from "@/hooks/logout";
-import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
 import NavbarItem from "./NavbarItem";
@@ -22,10 +21,10 @@ interface NavbarContentProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivEle
 }
 
 const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
-  const [, { isLoggedIn }] = useConnection(loginConnection);
+  const [, { isLoggedIn }] = useLogin();
   const router = useRouter();
   const t = useT();
-  const [, myOrg] = useConnection(myOrganisationConnection);
+  const [, myOrg] = useMyOrg();
   const logout = useLogout();
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
 

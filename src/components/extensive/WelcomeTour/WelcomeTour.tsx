@@ -4,10 +4,9 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 import Joyride, { Step } from "react-joyride";
 
-import { myUserConnection } from "@/connections/User";
+import { useMyUser } from "@/connections/User";
 import { useModalContext } from "@/context/modal.provider";
 import { useNavbarContext } from "@/context/navbar.provider";
-import { useConnection } from "@/hooks/useConnection";
 
 import { ModalId } from "../Modal/ModalConst";
 import ToolTip from "./Tooltip";
@@ -32,7 +31,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
   const { setIsOpen: setIsNavOpen, setLinksDisabled: setNavLinksDisabled } = useNavbarContext();
 
   const isLg = useMediaQuery("(min-width:1024px)");
-  const [, { user }] = useConnection(myUserConnection);
+  const [, { user }] = useMyUser();
 
   const TOUR_COMPLETED_STORAGE_KEY = `${tourId}_${TOUR_COMPLETED_KEY}_${user?.uuid}`;
   const TOUR_SKIPPED_STORAGE_KEY = `${tourId}_${TOUR_SKIPPED_KEY}`;

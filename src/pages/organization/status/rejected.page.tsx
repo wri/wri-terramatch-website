@@ -6,12 +6,11 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { myOrganisationConnection } from "@/connections/Organisation";
+import { useMyOrg } from "@/connections/Organisation";
 import { zendeskSupportLink } from "@/constants/links";
-import { useConnection } from "@/hooks/useConnection";
 
 const OrganizationRejectedPage = () => {
-  const [, { organisation }] = useConnection(myOrganisationConnection);
+  const [, { organisation }] = useMyOrg();
   const t = useT();
 
   return (

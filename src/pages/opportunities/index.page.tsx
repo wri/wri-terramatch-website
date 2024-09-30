@@ -18,15 +18,14 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import ApplicationsTable from "@/components/extensive/Tables/ApplicationsTable";
 import PitchesTable from "@/components/extensive/Tables/PitchesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { myOrganisationConnection } from "@/connections/Organisation";
+import { useMyOrg } from "@/connections/Organisation";
 import { useGetV2FundingProgramme, useGetV2MyApplications } from "@/generated/apiComponents";
-import { useConnection } from "@/hooks/useConnection";
 import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const OpportunitiesPage = () => {
   const t = useT();
   const route = useRouter();
-  const [, { organisation, organisationId }] = useConnection(myOrganisationConnection);
+  const [, { organisation, organisationId }] = useMyOrg();
   const [pitchesCount, setPitchesCount] = useState<number>();
 
   const { data: fundingProgrammes, isLoading: loadingFundingProgrammes } = useGetV2FundingProgramme({

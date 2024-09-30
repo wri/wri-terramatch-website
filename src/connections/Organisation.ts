@@ -4,6 +4,7 @@ import { selectMe } from "@/connections/User";
 import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
+import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 type OrganisationConnection = {
@@ -27,7 +28,7 @@ const organisationSelector = (organisationId?: string) => (store: ApiDataStore) 
 // TODO: This doesn't get a load/isLoaded until we have a v3 organisation get endpoint. For now we
 //  have to rely on the data that is already in the store. We might not even end up needing this
 //  connection, but it does illustrate nicely how to create a connection that takes props, so I'm
-//  leaving it in for now.
+//  leaving it in for now. Exported just to keep the linter happy since it's not currently used.
 export const organisationConnection: Connection<OrganisationConnection, OrganisationConnectionProps> = {
   selector: selectorCache(
     ({ organisationId }) => organisationId ?? "",
@@ -42,7 +43,7 @@ export const organisationConnection: Connection<OrganisationConnection, Organisa
 //   point. I'd like to create a system for explicit connection dependencies, but haven't had time
 //   yet. For one thing, there's no clean way to indicate that this connection isn't "loaded" when
 //   the user load failed.
-export const myOrganisationConnection: Connection<MyOrganisationConnection> = {
+const myOrganisationConnection: Connection<MyOrganisationConnection> = {
   selector: createSelector([selectMe, selectOrganisations], (user, orgs) => {
     const { id, meta } = user?.relationships?.org?.[0] ?? {};
     if (id == null) return {};
@@ -54,3 +55,4 @@ export const myOrganisationConnection: Connection<MyOrganisationConnection> = {
     };
   })
 };
+export const useMyOrg = connectionHook(myOrganisationConnection);

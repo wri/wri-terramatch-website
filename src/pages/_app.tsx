@@ -13,8 +13,8 @@ import { Provider as ReduxProvider } from "react-redux";
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import MainLayout from "@/components/generic/Layout/MainLayout";
-import { loginConnection } from "@/connections/Login";
-import { myUserConnection } from "@/connections/User";
+import { loadLogin } from "@/connections/Login";
+import { loadMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
@@ -25,7 +25,6 @@ import ToastProvider from "@/context/toast.provider";
 import { getServerSideTranslations, setClientSideTranslations } from "@/i18n";
 import { apiSlice } from "@/store/apiSlice";
 import { wrapper } from "@/store/store";
-import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
 
@@ -90,9 +89,9 @@ const _App = ({ Component, ...rest }: AppProps) => {
 
 _App.getInitialProps = wrapper.getInitialAppProps(store => async (context: AppContext) => {
   const authToken = nookies.get(context.ctx).accessToken;
-  if (authToken != null && (await loadConnection(loginConnection)).token !== authToken) {
+  if (authToken != null && (await loadLogin()).token !== authToken) {
     store.dispatch(apiSlice.actions.setInitialAuthToken({ authToken }));
-    await loadConnection(myUserConnection);
+    await loadMyUser();
   }
 
   const ctx = await App.getInitialProps(context);
