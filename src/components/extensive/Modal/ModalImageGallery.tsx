@@ -53,6 +53,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
 
   return ReactDOM.createPortal(
     <div className={tw("fixed left-0 top-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
+      {/* @ts-ignore */}
       <ModalBaseImageGallery {...rest}>
         <header className="mb-6 flex w-full items-center justify-between">
           <div className="flex items-center gap-7">

@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 
+import ErrorBoundary from "@/admin/modules/ErrorBoundary";
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import MainLayout from "@/components/generic/Layout/MainLayout";
@@ -37,24 +38,27 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
 
   if (isAdmin)
     return (
-      <>
+      <ErrorBoundary fallback={<p>Something went wrong admin</p>}>
         <WrappedQueryClientProvider>
           <AuthProvider token={accessToken}>
             <LoadingProvider>
               <NotificationProvider>
                 <ModalProvider>
                   <ModalRoot />
-                  <Component {...pageProps} />
+                  <ErrorBoundary fallback={<p>Something went wrong admin body</p>}>
+                    {/* @ts-ignore */}
+                    <Component {...pageProps} />
+                  </ErrorBoundary>
                 </ModalProvider>
               </NotificationProvider>
             </LoadingProvider>
           </AuthProvider>
         </WrappedQueryClientProvider>
-      </>
+      </ErrorBoundary>
     );
   else
     return (
-      <>
+      <ErrorBoundary fallback={<p>Something went wrong user</p>}>
         <ToastProvider>
           <WrappedQueryClientProvider>
             <Hydrate state={pageProps.dehydratedState}>
@@ -80,7 +84,7 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
             <ReactQueryDevtools initialIsOpen={false} />
           </WrappedQueryClientProvider>
         </ToastProvider>
-      </>
+      </ErrorBoundary>
     );
 };
 
