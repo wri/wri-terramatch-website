@@ -89,6 +89,7 @@ const ModalAdd: FC<ModalAddProps> = ({
     const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
 
     const filteredFiles = files.filter(file => {
+      console.log("TESTING");
       if (
         acceptedFileTypes.length > 0 &&
         !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
