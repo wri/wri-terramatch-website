@@ -1,6 +1,7 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer";
 import { isArray } from "lodash";
+import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
@@ -117,7 +118,7 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
     state.meta.pending[method] = {};
   }
 
-  reloadMe();
+  delete state.meta.meUserId;
 };
 
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
@@ -127,7 +128,9 @@ const reloadMe = () => setTimeout(() => usersFind({ pathParams: { id: "me" } }),
 
 export const apiSlice = createSlice({
   name: "api",
+
   initialState,
+
   reducers: {
     apiFetchStarting: (state, action: PayloadAction<ApiFetchStartingProps>) => {
       const { url, method } = action.payload;
@@ -143,6 +146,7 @@ export const apiSlice = createSlice({
         // After a successful login, clear the entire cache; we want all mounted components to
         // re-fetch their data with the new login credentials.
         clearApiCache(state);
+        reloadMe();
       } else {
         delete state.meta.pending[method][url];
       }
@@ -186,6 +190,26 @@ export const apiSlice = createSlice({
       state.logins["1"] = { attributes: { token: authToken } };
       reloadMe();
     }
+  },
+
+  extraReducers: builder => {
+    builder.addCase(HYDRATE, (state, action) => {
+      clearApiCache(state);
+
+      const { payload } = action as unknown as PayloadAction<{ api: ApiDataStore }>;
+
+      for (const resource of RESOURCES) {
+        state[resource] = payload.api[resource] as any;
+      }
+
+      for (const method of METHODS) {
+        state.meta.pending[method] = payload.api.meta.pending[method];
+      }
+
+      if (payload.api.meta.meUserId != null) {
+        state.meta.meUserId = payload.api.meta.meUserId;
+      }
+    });
   }
 });
 

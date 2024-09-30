@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { createWrapper, MakeStore } from "next-redux-wrapper";
 import { Store } from "redux";
 import { createLogger } from "redux-logger";
 
@@ -8,23 +9,16 @@ export type AppStore = {
   api: ApiDataStore;
 };
 
-let store: Store<AppStore>;
-
-export const makeStore = (authToken?: string): Store<AppStore> => {
-  if (store != null) return store;
-
-  store = configureStore({
+const makeStore: MakeStore<Store<AppStore>> = context => {
+  const store = configureStore({
     reducer: {
       api: apiSlice.reducer
     },
     middleware: getDefaultMiddleware => {
-      if (
-        process.env.NEXT_RUNTIME === "nodejs" ||
-        process.env.NODE_ENV === "production" ||
-        process.env.NODE_ENV === "test"
-      ) {
-        return getDefaultMiddleware().prepend(authListenerMiddleware.middleware);
-      } else {
+      const includeLogger =
+        typeof window !== "undefined" && process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test";
+
+      if (includeLogger) {
         // Most of our actions include a URL, and it's useful to have that in the top level visible
         // log when it's present.
         const logger = createLogger({
@@ -34,15 +28,15 @@ export const makeStore = (authToken?: string): Store<AppStore> => {
           }
         });
         return getDefaultMiddleware().prepend(authListenerMiddleware.middleware).concat(logger);
+      } else {
+        return getDefaultMiddleware().prepend(authListenerMiddleware.middleware);
       }
     }
   });
 
   ApiSlice.redux = store;
 
-  if (authToken != null) {
-    store.dispatch(apiSlice.actions.setInitialAuthToken({ authToken }));
-  }
-
   return store;
 };
+
+export const wrapper = createWrapper<Store<AppStore>>(makeStore);
