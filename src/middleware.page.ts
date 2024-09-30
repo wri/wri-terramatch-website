@@ -2,10 +2,8 @@ import * as Sentry from "@sentry/nextjs";
 import { NextRequest } from "next/server";
 
 import { isAdmin, UserRole } from "@/admin/apiProvider/utils/user";
-import { myOrganisationConnection } from "@/connections/Organisation";
-import { myUserConnection } from "@/connections/User";
-import { makeStore } from "@/store/store";
-import { loadConnection } from "@/utils/loadConnection";
+import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
+import { resolveUrl } from "@/generated/v3/utils";
 import { MiddlewareCacheKey, MiddlewareMatcher } from "@/utils/MiddlewareMatcher";
 
 //Todo: refactor this logic somewhere down the line as there are lot's of if/else nested!
@@ -38,11 +36,23 @@ export async function middleware(request: NextRequest) {
         matcher.redirect("/auth/login");
       },
       async () => {
-        // Set up the redux store.
-        makeStore(accessToken);
+        // The redux store isn't available yet at this point, so we do a quick manual users/me fetch
+        // to get the data we need to resolve routing.
+        const result = await fetch(resolveUrl("/users/v3/users/me"), {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        const json = await result.json();
 
-        const { user } = await loadConnection(myUserConnection);
-        const { organisationId, organisation, userStatus } = await loadConnection(myOrganisationConnection);
+        const user = json.data.attributes as UserDto;
+        const {
+          id: organisationId,
+          meta: { userStatus }
+        } = json.data.relationships.org.data;
+        const organisation = json.included[0];
 
         matcher.if(
           !user?.emailAddressVerifiedAt,
