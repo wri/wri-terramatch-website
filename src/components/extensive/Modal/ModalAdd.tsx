@@ -89,6 +89,7 @@ const ModalAdd: FC<ModalAddProps> = ({
     const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
 
     const filteredFiles = files.filter(file => {
+      console.log("file", file);
       if (
         acceptedFileTypes.length > 0 &&
         !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
@@ -139,7 +140,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           <Text variant="text-24-bold">{title}</Text>
         </div>
         <When condition={!!content}>
-          <Text variant="text-12-light" className="mt-1 mb-4">
+          <Text variant="text-12-light" className="mb-4 mt-1">
             {content}
           </Text>
         </When>
@@ -162,7 +163,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           </div>
         </When>
         <When condition={!!secondContent}>
-          <Text variant="text-12-light" className="mt-1 mb-4">
+          <Text variant="text-12-light" className="mb-4 mt-1">
             {secondContent}
           </Text>
         </When>
