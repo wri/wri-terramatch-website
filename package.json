@@ -148,5 +148,8 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">= 1.19.1"
+  },
+  "resolutions": {
+    "@mui/x-data-grid": "https://registry.npmjs.org/@mui/x-data-grid/-/x-data-grid-6.16.1.tgz"
   }
 }
