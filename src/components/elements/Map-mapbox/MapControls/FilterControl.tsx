@@ -26,7 +26,7 @@ export const FilterControl = () => {
               <Button
                 key={index}
                 variant="text"
-                className="text-12-bold h-fit w-full !justify-start text-nowrap rounded-lg bg-white p-2"
+                className="text-12-bold text-nowrap h-fit w-full !justify-start rounded-lg bg-white p-2"
                 onClick={() => {}}
               >
                 <div className="text-12-semibold flex items-center">

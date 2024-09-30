@@ -93,7 +93,7 @@ export const stageDataProvider: StageDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2FundingProgrammeStageUUID({
-        pathParams: { uuid: params.id as string }
+        pathParams: { uuid: params.id }
       });
       //@ts-ignore
       return { data: { ...response.data, id: response.data.uuid } };

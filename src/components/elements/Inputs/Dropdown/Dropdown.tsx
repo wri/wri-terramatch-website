@@ -184,7 +184,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             <Listbox.Button
               as="div"
               className={classNames(
-                "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
+                "flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer",
                 !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
                 props.className
@@ -198,7 +198,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     )}`}
                   />
                 </When>
-                <Text variant={props.inputVariant ?? "text-14-light"} className="line-clamp-1 w-full">
+                <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>

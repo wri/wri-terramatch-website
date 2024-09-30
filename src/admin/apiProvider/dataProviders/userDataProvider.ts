@@ -56,7 +56,7 @@ export const userDataProvider: UserDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2AdminUsersUUID({
-        pathParams: { uuid: params.id as string }
+        pathParams: { uuid: params.id }
       });
       //@ts-ignore
       return { data: normalizeUserObject(response.data) };

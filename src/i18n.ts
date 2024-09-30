@@ -23,18 +23,13 @@ export async function getServerSideTranslations({ locale, locales }: any) {
   await tx.fetchTranslations(txLocale);
 
   // bind a helper object in the Native instance for auto-refresh
-  // @ts-ignore
   tx._autorefresh = tx._autorefresh || {};
-  // @ts-ignore
   if (!tx._autorefresh[txLocale]) {
-    // @ts-ignore
     tx._autorefresh[txLocale] = Date.now();
   }
 
   // check for stale content in the background
-  // @ts-ignore
   if (Date.now() - tx._autorefresh[txLocale] > TRANSLATIONS_TTL_SEC * 1000) {
-    // @ts-ignore
     tx._autorefresh[txLocale] = Date.now();
     tx.fetchTranslations(txLocale, { refresh: true });
   }

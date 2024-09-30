@@ -57,7 +57,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
   async getOne(_, params) {
     try {
       const response = await fetchGetV2AdminOrganisationsUUID({
-        pathParams: { uuid: params.id as string }
+        pathParams: { uuid: params.id }
       });
 
       return normalizeOrganisationObject(response);
