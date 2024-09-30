@@ -99,7 +99,7 @@ const App = () => {
               name={modules.form.ResourceName}
               list={modules.form.List}
               edit={modules.form.Edit}
-              icon={() => <Icon className="h-8 w-8" name={IconNames.FORMS} />}
+              icon={() => <Icon className="h-8 w-4" name={IconNames.FORMS} />}
               create={modules.form.Create}
             />
           </>
