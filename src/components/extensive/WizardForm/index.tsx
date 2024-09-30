@@ -70,7 +70,6 @@ function WizardForm(props: WizardFormProps) {
   const selectedStep = props.steps?.[selectedStepIndex];
   const selectedValidationSchema = selectedStep ? getSchema(selectedStep.fields) : undefined;
   const lastIndex = props.summaryOptions ? props.steps.length : props.steps.length - 1;
-  console.log("selected validation schema", props, selectedValidationSchema);
   const formHook = useForm(
     selectedValidationSchema
       ? {

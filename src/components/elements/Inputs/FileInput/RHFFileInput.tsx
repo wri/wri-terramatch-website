@@ -45,9 +45,7 @@ const RHFFileInput = ({
 }: RHFFileInputProps) => {
   const t = useT();
 
-  console.log("fileInputProps", fileInputProps);
   const { field } = useController(fileInputProps);
-  console.log("fileInputProps", useController(fileInputProps), field);
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
   const [files, setFiles] = useState<Partial<UploadedFile>[]>(toArray(value));

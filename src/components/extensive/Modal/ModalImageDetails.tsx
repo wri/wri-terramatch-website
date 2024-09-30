@@ -131,7 +131,6 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         is_cover: formData.is_cover,
         uuid: data.uuid
       };
-      console.log("updatedData", updatedData);
       updateValuesInForm?.(updatedData);
 
       onClose?.();

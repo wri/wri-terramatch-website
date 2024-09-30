@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import {
@@ -84,9 +84,6 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     };
   }, [formSteps, mode]);
 
-  useEffect(() => {
-    console.log("formSteps", formSteps);
-  }, [formSteps]);
   return (
     <WizardForm
       steps={formSteps!}
