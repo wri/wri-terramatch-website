@@ -24,7 +24,7 @@ export interface WizardFormProps {
   steps: FormStepSchema[];
   defaultValues?: any;
   onStepChange?: (values: any, step: FormStepSchema) => void;
-  onChange?: (values: any) => void;
+  onChange?: (values: any, isCloseAndSave?: boolean) => void;
   onSubmit?: (values: any) => void;
   onBackFirstStep: () => void;
   onCloseForm?: () => void;
@@ -115,7 +115,7 @@ function WizardForm(props: WizardFormProps) {
   };
 
   const onClickSaveAndClose = () => {
-    props.onChange?.(formHook.getValues());
+    props.onChange?.(formHook.getValues(), true);
     modal.openModal(
       ModalId.SAVE_AND_CLOSE_MODAL,
       <SaveAndCloseModal
