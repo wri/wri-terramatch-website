@@ -1,18 +1,17 @@
 import { useT } from "@transifex/react";
 import { useContext } from "react";
 
+import Breadcrumbs from "@/components/elements/Breadcrumbs/Breadcrumbs";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-import ContentOverview from "./components/ContentOverview";
-import SecDashboard from "./components/SecDashboard";
-import { RefContext } from "./context/ScrollContext.provider";
+import ContentOverviewProject from "../components/ContentOverviewProject";
+import SecDashboard from "../components/SecDashboard";
+import { RefContext } from "../context/ScrollContext.provider";
 import {
-  COLUMN_ACTIVE_PROGRAMME,
-  DATA_ACTIVE_PROGRAMME,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -20,6 +19,7 @@ import {
   NEW_PART_TIME_JOBS,
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
+  OBJETIVE,
   RESTORATION_STRATEGIES_REPRESENTED,
   TARGET_LAND_USE_TYPES_REPRESENTED,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
@@ -28,7 +28,7 @@ import {
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
-} from "./mockedData/dashboard";
+} from "../mockedData/dashboard";
 
 export interface DashboardTableDataProps {
   label: string;
@@ -56,7 +56,7 @@ export interface DashboardDataProps {
   landTenure?: string;
 }
 
-const Dashboard = () => {
+const ProjectView = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
@@ -80,6 +80,18 @@ const Dashboard = () => {
     <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
       <div ref={sharedRef} className="w-3/5 overflow-auto pr-2 ">
         <PageRow className="gap-4 p-0">
+          <div>
+            <Breadcrumbs
+              links={[
+                { title: t("TerraFund Top100"), path: "/#" },
+                { title: t("Niger"), path: "/#" },
+                { title: t("Restoration of Degraded Forest Lands in Ghana - PADO") }
+              ]}
+              className="pt-0 "
+              textVariant="text-14"
+            />
+          </div>
+
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-5 py-4.5">
@@ -98,6 +110,29 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+
+          <PageCard className="border-0 px-4 py-6" gap={8}>
+            <div className="flex items-center">
+              <img src="/images/_AJL2963.jpg" alt="tree" className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover" />
+              <div>
+                <Text variant="text-20-bold">{t("Restoration of Degraded Forest Lands in Ghana - PADO")}</Text>
+                <Text variant="text-14-light" className="text-darkCustom">
+                  {t("Operations: Niger")}
+                  <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                  {t("Registration: Niger")}
+                  <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                  {t(" Organization: Non-Profit")}
+                </Text>
+              </div>
+            </div>
+            <SecDashboard
+              title={t("Objective")}
+              classNameTitle="capitalize"
+              type="legend"
+              data={OBJETIVE}
+              variantTitle="text-18-semibold"
+            />
+          </PageCard>
 
           <PageCard
             className="border-0 px-4 py-6"
@@ -214,9 +249,9 @@ const Dashboard = () => {
         </PageRow>
       </div>
 
-      <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
+      <ContentOverviewProject />
     </div>
   );
 };
 
-export default Dashboard;
+export default ProjectView;
