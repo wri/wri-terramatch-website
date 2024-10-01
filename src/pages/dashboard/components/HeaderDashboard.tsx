@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -37,7 +38,7 @@ const HeaderDashboard = () => {
   const dropdwonCountryOptions = [
     {
       title: "Global",
-      value: null,
+      value: "global",
       meta: undefined
     },
     ...(dashboardCountries?.data?.map((country: any) => ({
@@ -46,6 +47,8 @@ const HeaderDashboard = () => {
       meta: <img src={country.data.icon} alt="flag" className="h-4" />
     })) || [])
   ];
+
+  const router = useRouter();
 
   const [filterValues, setFilterValues] = useState<{
     dropdown1: OptionValue[];
@@ -94,8 +97,26 @@ const HeaderDashboard = () => {
     };
   }, [sharedRef]);
 
+  const handleChangeCountry = (value: OptionValue[]) => {
+    if (value[0] === "global") {
+      router.push(`/dashboard/programme`);
+      return;
+    }
+    setFilterValues(prevValues => ({
+      ...prevValues,
+      dropdown3: value
+    }));
+    const selectedCountry = dashboardCountries?.data.find((country: { id: OptionValue }) => {
+      if (country.id === value[0]) {
+        return country;
+      }
+    });
+
+    router.push(`/dashboard/country/${selectedCountry?.country_slug}`);
+  };
+
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
@@ -150,7 +171,7 @@ const HeaderDashboard = () => {
               placeholder="Global"
               value={filterValues.dropdown3}
               onChange={value => {
-                handleChange("dropdown3", value);
+                handleChangeCountry(value);
               }}
               options={dropdwonCountryOptions}
             />

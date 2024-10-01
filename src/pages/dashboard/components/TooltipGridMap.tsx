@@ -43,7 +43,7 @@ const TooltipGridMap = (props: TooltipGridProps) => {
 
   return (
     <div className="absolute left-[35%] top-[20%] w-auto rounded bg-white p-2">
-      <div className="max-w-52 min-w-40 flex flex-col gap-1">
+      <div className="flex min-w-40 max-w-52 flex-col gap-1">
         <div className="mb-1 flex items-center gap-2">
           <img src="/flags/ao.svg" alt="flag" className="h-4 w-6 object-cover" />
           <Text className="text-start text-darkCustom" variant="text-12-bold">
