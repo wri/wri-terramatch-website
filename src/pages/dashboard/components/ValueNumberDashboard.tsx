@@ -14,10 +14,10 @@ const ValueNumberDashboard = ({ value, unit }: ValueNumberDashboardProps) => {
   return (
     <div className="flex items-baseline">
       <Text variant="text-32-bold" className="text-blueCustom">
-        {value}
+        {t(value)}
       </Text>
       <Text variant="text-32-bold" className="text-blueCustom">
-        {unit}
+        {t(unit)}
       </Text>
       <When condition={unit}>
         <Text variant="text-20" className="ml-2 text-darkCustom opacity-50">

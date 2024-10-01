@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -13,8 +14,9 @@ export interface TooltipGridProps {
   learnMore?: boolean;
 }
 
-export const TooltipGridMap = (props: TooltipGridProps) => {
+const TooltipGridMap = (props: TooltipGridProps) => {
   const { label, learnMore } = props;
+  const t = useT();
 
   const items = [
     {
@@ -41,21 +43,21 @@ export const TooltipGridMap = (props: TooltipGridProps) => {
 
   return (
     <div className="absolute left-[35%] top-[20%] w-auto rounded bg-white p-2">
-      <div className="max-w-52 min-w-40 flex flex-col gap-1">
+      <div className="flex min-w-40 max-w-52 flex-col gap-1">
         <div className="mb-1 flex items-center gap-2">
           <img src="/flags/ao.svg" alt="flag" className="h-4 w-6 object-cover" />
           <Text className="text-start text-darkCustom" variant="text-12-bold">
-            {label}
+            {t(label)}
           </Text>
         </div>
         <div>
           {items.map(item => (
             <div className="flex gap-10" key={item.id}>
               <Text className="flex-1 text-start text-darkCustom" variant="text-12-light">
-                {item.title}
+                {t(item.title)}
               </Text>
               <Text className="text-end text-darkCustom" variant="text-12-bold">
-                {item.value}
+                {t(item.value)}
               </Text>
             </div>
           ))}
@@ -63,10 +65,12 @@ export const TooltipGridMap = (props: TooltipGridProps) => {
 
         <When condition={learnMore}>
           <Text className="mt-1 text-start text-primary underline" variant="text-12-bold">
-            Learn More
+            {t("Learn More")}
           </Text>
         </When>
       </div>
     </div>
   );
 };
+
+export default TooltipGridMap;
