@@ -81,12 +81,12 @@ const Dashboard = () => {
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-5 py-4.5">
                 <Text variant="text-10-light" className="text-darkCustom opacity-60">
-                  {item.label}
+                  {t(item.label)}
                 </Text>
 
                 <div className="flex items-center gap-2">
                   <Text variant="text-20" className="text-darkCustom" as="span">
-                    {item.value}
+                    {t(item.value)}
                   </Text>
                   <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
@@ -114,14 +114,14 @@ const Dashboard = () => {
               data={NUMBER_OF_TREES_PLANTED}
             />
             <SecDashboard
-              title="Number of Trees Planted by Year"
+              title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
               tooltipGraphic={true}
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
             />
             <SecDashboard
-              title="Top 10 Projects With The Most Planted Trees"
+              title={t("Top 10 Projects With The Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
@@ -140,19 +140,19 @@ const Dashboard = () => {
           >
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
-                title="Total HECTARES UNDER RESTORATION"
+                title={t("Total HECTARES UNDER RESTORATION")}
                 data={TOTAL_HECTARES_UNDER_RESTORATION}
                 classNameBody="w-full place-content-center !justify-center"
               />
               <SecDashboard
-                title="TOTAL NUMBER OF SITES"
+                title={t("TOTAL NUMBER OF SITES")}
                 data={TOTAL_NUMBER_OF_SITES}
                 className="pl-12"
                 classNameBody="w-full place-content-center !justify-center"
               />
             </div>
-            <SecDashboard title="Restoration Strategies Represented" data={RESTORATION_STRATEGIES_REPRESENTED} />
-            <SecDashboard title="TARGET LAND USE TYPES REPRESENTED" data={TARGET_LAND_USE_TYPES_REPRESENTED} />
+            <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
+            <SecDashboard title={t("TARGET LAND USE TYPES REPRESENTED")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
           </PageCard>
           <PageCard
             className="border-0 px-4 py-6"
@@ -167,12 +167,12 @@ const Dashboard = () => {
           >
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
-                title="New Part-Time Jobs"
+                title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
                 classNameBody="w-full place-content-center !justify-center"
               />
               <SecDashboard
-                title="New Full-Time Jobs"
+                title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
                 classNameBody="w-full place-content-center !justify-center"
@@ -180,28 +180,28 @@ const Dashboard = () => {
             </div>
             <div className="grid w-11/12 grid-cols-2 gap-12">
               <SecDashboard
-                title="Jobs Created by Gender"
+                title={t("Jobs Created by Gender")}
                 data={JOBS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title="JOBS CREATED BY AGE"
+                title={t("JOBS CREATED BY AGE")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title="Total VOLUNTEERS" data={TOTAL_VOLUNTEERS} />
+            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
             <div className="grid w-11/12 grid-cols-2 gap-12">
               <SecDashboard
-                title="VOLUNTEERS CREATED BY GENDER"
+                title={t("VOLUNTEERS CREATED BY GENDER")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title="VOLUNTEERS CREATED BY AGE"
+                title={t("VOLUNTEERS CREATED BY AGE")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
