@@ -36,6 +36,7 @@ export interface ModalAddProps extends ModalProps {
   secondContent?: string;
   btnDownloadProps?: IButtonProps;
   setErrorMessage?: (message: string) => void;
+  previewAsTable?: boolean;
 }
 
 const ModalAdd: FC<ModalAddProps> = ({
@@ -62,6 +63,7 @@ const ModalAdd: FC<ModalAddProps> = ({
   btnDownload = false,
   btnDownloadProps,
   setErrorMessage,
+  previewAsTable,
   ...rest
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -167,6 +169,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           </Text>
         </When>
         <FileInput
+          previewAsTable={previewAsTable}
           descriptionInput={descriptionInput}
           descriptionList={descriptionList}
           descriptionListStatus={descriptionListStatus}

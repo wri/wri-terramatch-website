@@ -45,3 +45,11 @@ export const getEntityCombinedStatus = (entity: any): string => {
     ? entity.update_request_status
     : entity.status;
 };
+
+export const getCurrentPathEntity = () => {
+  const currentRoute = window.location.href + window.location.hash;
+  if (currentRoute?.includes("nursery")) return "nursery";
+  if (currentRoute?.includes("site")) return "site";
+  if (currentRoute?.includes("project")) return "project";
+  return "";
+};

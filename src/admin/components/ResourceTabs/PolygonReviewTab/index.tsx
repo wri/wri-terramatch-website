@@ -312,14 +312,21 @@ const PolygonReviewTab: FC<IProps> = props => {
       hideLoader();
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message as string;
-        const parsedMessage = JSON.parse(errorMessage);
-        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          errorMessage = parsedMessage.message;
+        let errorMessage = error.message;
+        if (typeof errorMessage === "string") {
+          const parsedMessage = JSON.parse(errorMessage);
+          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+            errorMessage = parsedMessage.message;
+          }
+        }
+        if (errorMessage && typeof errorMessage === "object" && "message" in errorMessage) {
+          errorMessage = errorMessage.message;
         }
         openNotification("error", t("Error uploading file"), errorMessage);
+        hideLoader();
       } else {
         openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
+        hideLoader();
       }
     }
   };

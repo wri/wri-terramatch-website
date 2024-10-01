@@ -115,6 +115,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   pdView?: boolean;
   location?: LngLat;
   entityData?: any;
+  imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const MapContainer = ({
@@ -144,6 +145,7 @@ export const MapContainer = ({
   pdView = false,
   location,
   entityData,
+  imageGalleryRef,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -560,7 +562,7 @@ export const MapContainer = ({
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-            <ViewImageCarousel modelFilesData={props?.modelFilesData} />
+            <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
           </ControlGroup>
         </When>
       </When>

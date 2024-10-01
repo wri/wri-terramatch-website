@@ -66,12 +66,15 @@ module.exports = {
         DEFAULT: "#27A9E0",
         500: "#27A9E0",
         400: "#4EBBEA",
+        350: "#6BBFCC",
         300: "#98CEED",
+        250: "#C5FCFF",
         200: "#E5F8FF",
         100: "#F2FAFD"
       },
       secondary: {
         DEFAULT: "#8CC63F",
+        600: "#7BBD31",
         500: "#8CC63F",
         400: "#BFE372",
         300: "#DFF5B0",
@@ -102,11 +105,13 @@ module.exports = {
         200: "#E3E3E3",
         150: "#F5F7F9",
         100: "#F2F2F2",
+        70: "#eeeff0",
         50: "#FAFAFA",
         40: "#f2f4f5"
       },
       tertiary: {
         DEFAULT: "#F0AB00",
+        800: "#795305",
         650: "#FF8838",
         600: "#FF8938",
         550: "#FFA160",
@@ -136,19 +141,28 @@ module.exports = {
         200: "#E6E9EC",
         100: "#cfe6f4",
         50: "#f1fafd",
+        30: "#ebf0f4",
         10: "#eaf7fc"
       },
       darkCustom: {
         DEFAULT: "#353535",
+        200: "#84959D",
         100: "#637579",
         60: "#35353599",
-        50: "#697A7F"
+        50: "#697A7F",
+        40: "#919EAB"
       },
       pinkCustom: {
         DEFAULT: "#E468EF",
+        300: "#BF7589",
         200: "#FDF0FE"
       },
+      purpleCustom: {
+        DEFAULT: "#5674C5",
+        100: "#8096D3"
+      },
       grey: {
+        100: "#F4F4F4",
         200: "#F0F2F2",
         350: "#E6E6E6",
         500: "#676D71",
@@ -159,35 +173,45 @@ module.exports = {
         740: "#E0E0E0",
         750: "#E6EAEB",
         800: "#E9EDF0",
-        900: "#F6FAFD"
+        900: "#F6FAFD",
+        1000: "#DFE3E8"
       },
       blue: {
         DEFAULT: "#2398D8",
+        50:"#0079FF",
         100: "#1B59F8",
         200: "#E9F5FC"
       },
       green: {
         DEFAULT: "#72D961",
-        400: "#1BA631",
         500: "#198E2B",
+        400: "#1BA631",
+        300: "#4FB967",
         100: "#28C499",
+        60: "#0D614D",
         50: "rgba(40, 196, 153, 0.10)",
+        40: "#A2DCB3",
         30: "#EAFAF5"
       },
       yellow: {
         DEFAULT: "#FCFBE8",
         700: "#F4B059",
+        600: "#BB881E",
+        550: "#F8CE7B",
         500: "#F3EFB0",
         300: "#FEF8EF"
       },
       red: {
         DEFAULT: "#FF6464",
         100: "#CBC8D2",
-        200: "#E42222"
+        200: "#E42222",
+        900: "#8D2D0E",
+        1000: "#632424"
       }
     },
     boxShadow: {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
+      all: "0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 4px rgba(0, 0, 0, 0.06)",
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
       none: "0 0 #0000"
     },
@@ -233,7 +257,8 @@ module.exports = {
       leavesWithOverlay: "url('/images/leaves-with-overlay.webp')",
       treesHeaderWithOverlay:
         "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
-      mapsImg: "url('/images/Maps.svg')"
+      mapsImg: "url('/images/Maps.svg')",
+      dashboardHeader: 'url("/images/dashboard-header.webp")'
     }
   },
   plugins: [
