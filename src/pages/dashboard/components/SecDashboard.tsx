@@ -10,10 +10,12 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { TextVariants } from "@/types/common";
 
-import { DashboardDataProps } from "../index.page";
+import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashoard from "./GraphicIconDashoard";
+import ObjectiveSec from "./ObjectiveSec";
 import TooltipGraphicDashboard from "./TooltipGraphicDashboard";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
@@ -24,7 +26,9 @@ const SecDashboard = ({
   className,
   classNameBody,
   classNameHeader,
+  classNameTitle,
   tooltipGraphic = false,
+  variantTitle,
   data
 }: {
   title: string;
@@ -33,7 +37,9 @@ const SecDashboard = ({
   className?: string;
   classNameBody?: string;
   classNameHeader?: string;
+  classNameTitle?: string;
   tooltipGraphic?: boolean;
+  variantTitle?: TextVariants;
   data: DashboardDataProps;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
@@ -60,7 +66,7 @@ const SecDashboard = ({
     <div className={className}>
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
         <div className="flex items-center gap-1">
-          <Text variant="text-14" className="uppercase text-darkCustom">
+          <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
           </Text>
           <ToolTip content={t(title)} placement="top" width="w-44">
@@ -140,6 +146,9 @@ const SecDashboard = ({
         </When>
         <When condition={!!data?.graphicTargetLandUseTypes}>
           <GraphicIconDashoard data={data?.graphicTargetLandUseTypes ?? []} />
+        </When>
+        <When condition={!!data?.objetiveText}>
+          <ObjectiveSec data={data} />
         </When>
       </div>
     </div>
