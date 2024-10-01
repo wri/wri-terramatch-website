@@ -103,6 +103,7 @@ function Table<TData extends RowData>({
       setSorting(sorting);
       onTableStateChange?.({ sorting, filters });
     },
+    getRowId: (row: any) => row.uuid,
     debugTable: process.env.NODE_ENV === "development"
   });
 

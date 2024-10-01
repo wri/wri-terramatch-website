@@ -1,5 +1,6 @@
-import { remove } from "lodash";
-import React, { FC, ReactNode, useEffect, useState } from "react";
+import { useT } from "@transifex/react";
+import exifr from "exifr";
+import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -12,6 +13,7 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useDeleteV2FilesUUID, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -37,9 +39,12 @@ export interface ModalAddProps extends ModalProps {
   btnDownloadProps?: IButtonProps;
   setErrorMessage?: (message: string) => void;
   previewAsTable?: boolean;
+  model: string;
+  collection: string;
+  entityData: any;
 }
 
-const ModalAdd: FC<ModalAddProps> = ({
+const ModalAddImages: FC<ModalAddProps> = ({
   iconProps,
   title,
   secondTitle,
@@ -64,55 +69,179 @@ const ModalAdd: FC<ModalAddProps> = ({
   btnDownloadProps,
   setErrorMessage,
   previewAsTable,
+  model,
+  collection,
+  entityData,
   ...rest
 }) => {
+  const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
+  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
+    onSuccess(data, variables) {
+      //@ts-ignore swagger issue
+      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+    },
+    onError(err, variables: any) {
+      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+        const file = variables.file;
+
+        addFileToValue({
+          collection_name: variables.pathParams.collection,
+          size: file?.size,
+          file_name: file?.name,
+          title: file?.name,
+          mime_type: file?.type,
+          is_cover: false,
+          is_public: true,
+          rawFile: file,
+          uploadState: {
+            isLoading: false,
+            isSuccess: false
+          }
+        });
+      }
+    }
+  });
+
+  const { mutate: deleteFile } = useDeleteV2FilesUUID({
+    onSuccess(data) {
+      //@ts-ignore swagger issue
+      removeFileFromValue(data.data);
+    },
+    onError(err) {
+      setErrorMessage?.(`Error deleting file: ${err}`);
+    }
+  });
+
   useEffect(() => {
-    if (setFile && files) {
+    if (setFile) {
       setFile(files);
     }
   }, [files, setFile]);
 
-  const handleFileChange = (files: File[]) => {
-    const formatFile = (file: File): UploadedFile => ({
-      title: file.name,
-      file_name: file.name,
-      mime_type: file.type,
-      collection_name: "storybook",
-      size: file.size,
-      url: "https://google.com",
-      created_at: "now",
-      uuid: file.name,
-      is_public: true,
-      rawFile: file
-    });
+  const addFileToValue = (file: Partial<UploadedFile>) => {
+    setFiles(value => {
+      if (Array.isArray(value) && allowMultiple) {
+        const tmp = [...value];
+        const index = tmp.findIndex(item => {
+          if (!!file.uuid && file.uuid === item.uuid) {
+            return true;
+          } else if (!!file.rawFile && item.rawFile === file.rawFile) {
+            return true;
+          } else {
+            return false;
+          }
+        });
 
+        if (index === -1) {
+          return [...tmp, file as UploadedFile];
+        } else {
+          tmp.splice(index, 1, file as UploadedFile);
+          return tmp;
+        }
+      } else {
+        return [file as UploadedFile];
+      }
+    });
+  };
+
+  const removeFileFromValue = (file: Partial<UploadedFile>) => {
+    setFiles(value => {
+      if (Array.isArray(value)) {
+        return value.filter(v => v.uuid !== file.uuid);
+      } else {
+        return [];
+      }
+    });
+  };
+
+  const handleDeleteFile = (file: Partial<UploadedFile>) => {
+    if (file.uuid) {
+      addFileToValue({
+        ...file,
+        uploadState: {
+          isLoading: false,
+          isSuccess: false,
+          isDeleting: true
+        }
+      });
+      deleteFile({ pathParams: { uuid: file.uuid } });
+    } else {
+      removeFileFromValue(file);
+    }
+  };
+
+  const handleFileChange = async (newFiles: File[]) => {
     const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
 
-    const filteredFiles = files.filter(file => {
+    for (const file of newFiles) {
       if (
         acceptedFileTypes.length > 0 &&
         !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
       ) {
-        setErrorMessage?.(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`);
-        return false;
+        setErrorMessage?.(t(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`));
+        continue;
       }
       if (file.size > maxFileSize) {
-        setErrorMessage?.(`File size exceeds the limit of ${maxFileSize / 1048576} MB`);
-        return false;
+        setErrorMessage?.(t(`File size exceeds the limit of ${maxFileSize / 1048576} MB`));
+        continue;
       }
-      return true;
-    });
 
-    if (filteredFiles.length > 0) {
-      if (!allowMultiple) {
-        const firstFile = filteredFiles[0];
-        setFiles([formatFile(firstFile)]);
-      } else {
-        setFiles(prevFiles => [...prevFiles, ...filteredFiles.map(formatFile)]);
+      addFileToValue({
+        collection_name: collection,
+        size: file.size,
+        file_name: file.name,
+        title: file.name,
+        mime_type: file.type,
+        rawFile: file,
+        uploadState: {
+          isLoading: true
+        }
+      });
+
+      const body = new FormData();
+      body.append("upload_file", file);
+
+      try {
+        const location = await exifr.gps(file);
+
+        if (location) {
+          body.append("lat", location.latitude.toString());
+          body.append("lng", location.longitude.toString());
+        }
+      } catch (e) {
+        console.log(e);
       }
+
+      uploadFile?.({
+        pathParams: { model, collection, uuid: entityData.uuid },
+        file: file,
+        //@ts-ignore swagger issue
+        body
+      });
     }
+  };
+
+  const deleteAllFiles = useCallback(() => {
+    files.forEach(file => {
+      if (file.uuid) {
+        deleteFile({ pathParams: { uuid: file.uuid } });
+      }
+    });
+    setFiles([]);
+  }, [files, deleteFile]);
+
+  const handleClose = useCallback(() => {
+    deleteAllFiles();
+    onClose?.();
+  }, [deleteAllFiles, onClose]);
+
+  const updateFileInValue = (updatedFile: Partial<UploadedFile>) => {
+    setFiles(prevFiles => {
+      const updatedFiles = prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file));
+      return updatedFiles;
+    });
   };
 
   return (
@@ -123,7 +252,7 @@ const ModalAdd: FC<ModalAddProps> = ({
           <When condition={status}>
             <Status status={status ?? StatusEnum.DRAFT} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
           </When>
-          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={handleClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>
@@ -155,7 +284,7 @@ const ModalAdd: FC<ModalAddProps> = ({
             }}
             {...btnDownloadProps}
           >
-            Download
+            {t("Download")}
           </Button>
         </When>
         <When condition={!!secondTitle}>
@@ -175,16 +304,12 @@ const ModalAdd: FC<ModalAddProps> = ({
           descriptionListStatus={descriptionListStatus}
           variant={variantFileInput}
           accept={acceptedTypes}
-          onDelete={file =>
-            setFiles(state => {
-              const tmp = [...state];
-              remove(tmp, f => f.uuid === file.uuid);
-              return tmp;
-            })
-          }
+          onDelete={handleDeleteFile}
           onChange={handleFileChange}
           files={files}
           allowMultiple={allowMultiple}
+          updateFile={updateFileInValue}
+          entityData={entityData}
         />
         {children}
       </div>
@@ -206,4 +331,4 @@ const ModalAdd: FC<ModalAddProps> = ({
   );
 };
 
-export default ModalAdd;
+export default ModalAddImages;
