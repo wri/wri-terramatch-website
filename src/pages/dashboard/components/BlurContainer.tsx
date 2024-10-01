@@ -4,6 +4,7 @@ interface BlurContainerProps {
   isCollapse?: boolean;
   children: React.ReactNode;
 }
+
 const BlurContainer = (props: BlurContainerProps) => {
   const { isCollapse, children } = props;
   return (
