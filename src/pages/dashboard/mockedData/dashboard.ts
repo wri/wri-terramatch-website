@@ -1,11 +1,11 @@
 export const LABEL_LEGEND = [
   {
     label: "Non-Profit",
-    color: "bg-green-45"
+    color: "bg-secondary-600"
   },
   {
     label: "Enterprise",
-    color: "bg-green-40"
+    color: "bg-primary"
   }
 ];
 
@@ -141,12 +141,12 @@ export const JOBS_CREATED_BY_AGE = {
     {
       label: "Youth",
       value: "20,500 (15.4%)",
-      color: "bg-green-40"
+      color: "bg-primary"
     },
     {
       label: "Non-Youth",
       value: "20,500 (15.4%)",
-      color: "bg-green-45"
+      color: "bg-secondary-600"
     }
   ]
 };
@@ -177,12 +177,12 @@ export const VOLUNTEERS_CREATED_BY_AGE = {
     {
       label: "Youth",
       value: "20,500 (15.4%)",
-      color: "bg-green-40"
+      color: "bg-primary"
     },
     {
       label: "Non-Youth",
       value: "20,500 (15.4%)",
-      color: "bg-green-45"
+      color: "bg-secondary-600"
     }
   ]
 };
