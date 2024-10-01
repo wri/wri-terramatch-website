@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import exifr from "exifr";
 import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
@@ -73,6 +74,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
   entityData,
   ...rest
 }) => {
+  const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
   const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
@@ -82,9 +84,6 @@ const ModalAddImages: FC<ModalAddProps> = ({
     },
     onError(err, variables: any) {
       if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        // const error = err?.errors[0];
-        setErrorMessage?.("error.message");
-
         const file = variables.file;
 
         addFileToValue({
@@ -98,8 +97,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
           rawFile: file,
           uploadState: {
             isLoading: false,
-            isSuccess: false,
-            error: "error.message"
+            isSuccess: false
           }
         });
       }
@@ -182,11 +180,11 @@ const ModalAddImages: FC<ModalAddProps> = ({
         acceptedFileTypes.length > 0 &&
         !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
       ) {
-        setErrorMessage?.(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`);
+        setErrorMessage?.(t(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`));
         continue;
       }
       if (file.size > maxFileSize) {
-        setErrorMessage?.(`File size exceeds the limit of ${maxFileSize / 1048576} MB`);
+        setErrorMessage?.(t(`File size exceeds the limit of ${maxFileSize / 1048576} MB`));
         continue;
       }
 
@@ -286,7 +284,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
             }}
             {...btnDownloadProps}
           >
-            Download
+            {t("Download")}
           </Button>
         </When>
         <When condition={!!secondTitle}>

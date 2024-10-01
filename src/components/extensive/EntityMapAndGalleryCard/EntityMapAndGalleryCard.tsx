@@ -137,9 +137,11 @@ const EntityMapAndGalleryCard = ({
         title={t("Upload Media")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
         previewAsTable
-        descriptionInput="drag and drop or browse your device"
+        descriptionInput={t("drag and drop or browse your device")}
         onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
-        content={`if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`}
+        content={t(
+          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
+        )}
         acceptedTypes={FileType.Image.split(",") as FileType[]}
         primaryButtonText={t("Save")}
         primaryButtonProps={{

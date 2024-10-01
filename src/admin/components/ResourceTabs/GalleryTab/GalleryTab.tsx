@@ -79,9 +79,11 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
         title={t("Upload Media")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
         previewAsTable
-        descriptionInput="drag and drop or browse your device"
+        descriptionInput={t("drag and drop or browse your device")}
         onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
-        content={`if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`}
+        content={t(
+          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
+        )}
         acceptedTypes={FileType.Image.split(",") as FileType[]}
         primaryButtonText={t("Save")}
         primaryButtonProps={{
@@ -107,9 +109,9 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
       <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
-            <Text variant="text-24-bold">All Images</Text>
+            <Text variant="text-24-bold">{t("All Images")}</Text>
             <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
-              UPLOAD IMAGES
+              {t("UPLOAD IMAGES")}
             </Button>
           </div>
           <ImageGallery

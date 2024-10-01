@@ -51,7 +51,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
       <ModalImageDetails
-        title="IMAGE DETAILS"
+        title={t("IMAGE DETAILS")}
         data={data}
         entityData={entityData}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
