@@ -144,7 +144,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const verifyDisableOption = (title: string) => {
     return props?.disableOptionTitles?.includes(title);
   };
-  console.log(options);
 
   return (
     <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
