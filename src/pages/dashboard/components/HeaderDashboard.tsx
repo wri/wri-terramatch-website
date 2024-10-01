@@ -97,18 +97,6 @@ const HeaderDashboard = () => {
     };
   }, [sharedRef]);
 
-  // useEffect(() => {
-  //   console.log(dashboardCountries?.data);
-  //   if (filterValues.dropdown3.length === 0) {
-  //     router.push("/dashboard/programme");
-  //     return;
-  //   }
-  //   const selectedCountry = dashboardCountries?.data.find((country: { id: OptionValue }) => {
-  //     country.id === filterValues.dropdown3[0];
-  //   });
-  //   router.push(`/dashboard/programme/${selectedCountry?.data.country_slug}`);
-  // }, [dashboardCountries?.data, filterValues.dropdown3, filterValues.dropdown3.length, router]);
-
   const handleChangeCountry = (value: OptionValue[]) => {
     if (value[0] === "global") {
       router.push(`/dashboard/programme`);
