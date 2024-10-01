@@ -23,10 +23,7 @@ export const authProvider: AuthProvider = {
   // remove local credentials
   logout: async () => {
     const { isLoggedIn } = await loadLogin();
-    if (isLoggedIn) {
-      logout();
-      window.location.replace("/auth/login");
-    }
+    if (isLoggedIn) logout();
   },
 
   getIdentity: async () => {

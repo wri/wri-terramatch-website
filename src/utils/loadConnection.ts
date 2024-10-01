@@ -11,8 +11,7 @@ export async function loadConnection<SType, PType extends OptionalProps = undefi
   const predicate = (store: ApiDataStore) => {
     const connected = selector(store, props);
     const loaded = isLoaded == null || isLoaded(connected, props);
-    // Delay to avoid calling dispatch during store update resolution
-    if (!loaded && load != null) setTimeout(() => load(connected, props), 0);
+    if (!loaded && load != null) load(connected, props);
     return loaded;
   };
 
