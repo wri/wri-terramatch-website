@@ -52,14 +52,10 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         }
       >
         {label && (
-          <If condition={labelIsComponent}>
-            <Then>
-              <label htmlFor={id} className="w-full">
-                {label}
-              </label>
-            </Then>
-            <Else>
-              <label htmlFor={id} className="w-full">
+          <label htmlFor={id} className="w-full">
+            <If condition={labelIsComponent}>
+              <Then>{label}</Then>
+              <Else>
                 <Text
                   as="label"
                   htmlFor={id}
@@ -69,9 +65,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                 >
                   {t(`${label} ${required ? "*" : ""}`)}
                 </Text>
-              </label>
-            </Else>
-          </If>
+              </Else>
+            </If>
+          </label>
         )}
 
         <input
@@ -94,7 +90,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <When condition={!!error}>
           <Text
             variant="text-body-500"
-            className={classNames("absolute -bottom-6 right-0 w-full text-right text-error", errorClassName)}
+            className={classNames("absolute right-0 -bottom-6 w-full text-right text-error", errorClassName)}
           >
             {t(error?.message ?? "")}
           </Text>

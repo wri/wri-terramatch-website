@@ -16,7 +16,7 @@ const Pill = ({ children, className, textColor = "black", ...props }: PillProps)
       {...props}
       className={classNames(
         className,
-        "flex items-center justify-center rounded-2xl px-3 py-0.5 first-letter:uppercase"
+        "flex items-center justify-center rounded-2xl py-0.5 px-3 first-letter:uppercase"
       )}
     >
       <Text variant="text-bold-caption-200" className={classNames(`text-${textColor}`, "flex h-fit items-center")}>

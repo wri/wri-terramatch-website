@@ -30,7 +30,7 @@ export const taskDataProvider: DataProvider = {
     try {
       const response = await fetchGetV2TasksUUID({
         pathParams: {
-          uuid: params.id as string
+          uuid: params.id
         }
       });
 

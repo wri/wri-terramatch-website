@@ -26,7 +26,7 @@ function ManagedProjects() {
   return (
     <Labeled>
       <ArrayField source="managed_projects" label="Managed Projects">
-        <SingleFieldList className="pb-2 pt-2">
+        <SingleFieldList className="pt-2 pb-2">
           <ReferenceField link="show" source="uuid" reference={modules.project.ResourceName}>
             <TextField source="name" />
           </ReferenceField>

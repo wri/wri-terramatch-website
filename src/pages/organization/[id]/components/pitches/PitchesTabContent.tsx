@@ -31,7 +31,7 @@ const PitchesTabContent = () => {
   if (!orgUUID) return null;
 
   return (
-    <Container className="px-8 py-15">
+    <Container className="py-15 px-8">
       <If
         condition={
           //@ts-ignore

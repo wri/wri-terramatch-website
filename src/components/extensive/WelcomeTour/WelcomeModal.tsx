@@ -26,7 +26,7 @@ const WelcomeModal: FC<IModalProps> = ({ onSkip, onDontShowAgain, onConfirm }) =
         role="presentation"
         className="h-screen max-h-[280px] min-h-[180px] rounded-lg object-cover"
       />
-      <Text variant="text-bold-headline-1000" className="mb-4 mt-10 uppercase">
+      <Text variant="text-bold-headline-1000" className="mt-10 mb-4 uppercase">
         {t("Welcome to terramatch!")}
       </Text>
       <Text variant="text-light-body-300" containHtml>

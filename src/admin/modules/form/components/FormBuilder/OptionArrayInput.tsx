@@ -45,7 +45,7 @@ export const OptionArrayInput = ({
                   <div className="relative hover:[&>button]:opacity-100">
                     <img src={imageSrc} height={100} width={100} alt="" role="presentation" />
                     <IconButton
-                      className="!absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0"
+                      className="!absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0"
                       onClick={() => field.onChange({ ...field.value, image_url: null, image: null })}
                       color="error"
                       size="large"

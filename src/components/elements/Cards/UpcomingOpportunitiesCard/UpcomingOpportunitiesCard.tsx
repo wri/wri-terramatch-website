@@ -25,7 +25,7 @@ const UpcomingOpportunitiesCard = (props: UpcomingOpportunitiesCardProps) => {
         className
       )}
     >
-      <Text variant="text-body-500" className="absolute right-4 top-2 text-white">
+      <Text variant="text-body-500" className="absolute top-2 right-4 text-white">
         {t("Support")}
       </Text>
       <Text variant="text-heading-300" className="text-white">

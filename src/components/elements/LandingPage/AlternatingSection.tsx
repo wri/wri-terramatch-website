@@ -20,7 +20,7 @@ const AlternatingSection = (props: AlternatingSectionProps) => {
   const { title, description, imageSrc, imageCredit, buttonText, buttonLink, className, ...divProps } = props;
   return (
     <div {...divProps} className={classNames("w-full md:flex", className)}>
-      <div className="flex items-center justify-center px-12 py-9 md:w-[50%]">
+      <div className="flex items-center justify-center py-9 px-12 md:w-[50%]">
         <div className="flex max-w-[400px] flex-col items-start gap-4">
           <Text variant="text-heading-700">{title}</Text>
           <Text variant="text-heading-100" containHtml>
