@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Table from "@/components/elements/Table/Table";
@@ -11,6 +12,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { ACTIVE_COUNTRIES } from "../mockedData/dashboard";
+import { TooltipGridMap } from "./TooltipGridMap";
 const ContentOverview = () => {
   const [collapseMap, setCollapseMap] = useState(false);
   const t = useT();
@@ -44,7 +46,7 @@ const ContentOverview = () => {
           "gap-4": collapseMap
         })}
       >
-        <div className="shadow-lg">
+        <div className="shadow-lg relative">
           <div
             className={classNames("rounded-xl bg-white px-4 transition-all duration-500 ease-in-out", {
               "max-h-[70vh] py-4": !collapseMap,
@@ -61,6 +63,9 @@ const ContentOverview = () => {
               "max-h-0": !collapseMap
             })}
           />
+          <When condition={collapseMap}>
+            <TooltipGridMap label="Angola" learnMore={true} />
+          </When>
         </div>
 
         <div className={classNames("overflow-hidden rounded-xl bg-white p-4 shadow-all", { "-mt-2": !collapseMap })}>
