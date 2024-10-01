@@ -11,11 +11,11 @@ interface ImpactStoryCardProps {
   image: string;
 }
 const ImpactStoryCard = (porps: ImpactStoryCardProps) => {
-  const { id, date, by, title, description, image } = porps;
+  const { key, date, by, title, description, image } = porps;
   return (
     <div
       className="flex cursor-pointer items-center gap-4 overflow-hidden rounded-lg border border-neutral-200 bg-white p-4 hover:bg-grey-200"
-      key={id}
+      key={key}
     >
       <img src={image} alt="profile" className="h-20 w-20 rounded-lg bg-cover" />
       <div className="flex-flex-col flex-1 gap-2 overflow-hidden">
