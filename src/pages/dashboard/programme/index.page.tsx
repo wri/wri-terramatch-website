@@ -106,7 +106,7 @@ const Dashboard = () => {
             )}
           >
             <SecDashboard
-              title="Number of trees planted"
+              title={t("Number of trees planted")}
               type="legend"
               secondOptionsData={LABEL_LEGEND}
               data={NUMBER_OF_TREES_PLANTED}
@@ -115,6 +115,7 @@ const Dashboard = () => {
               title="Number of Trees Planted by Year"
               type="toggle"
               secondOptionsData={dataToggle}
+              tooltipGraphic={true}
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
             />
             <SecDashboard

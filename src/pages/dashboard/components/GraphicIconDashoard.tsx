@@ -1,11 +1,12 @@
 import classNames from "classnames";
 
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { DashboardTableDataProps } from "../index.page";
 
 const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
-  const colorIconLabel = (label: string) => {
+  const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
     switch (label) {
       case "Agroforest":
         return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
@@ -61,7 +62,8 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
           return (
             <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
               <div className="flex w-full justify-between">
-                <div>
+                <div className="flex gap-1">
+                  <Icon name={IconNames[colorIconLabel(item.label).icon]} />
                   <Text variant="text-14-light" className=" text-darkCustom">
                     {item.label}
                   </Text>

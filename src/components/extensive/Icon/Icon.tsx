@@ -174,7 +174,16 @@ export enum IconNames {
   DASHBOARD_REPORTS = "dashboard-reports",
   ABOUT_US = "about-us",
   EXPAND = "expand",
-  COLLAPSE = "collapse"
+  COLLAPSE = "collapse",
+  IC_AGROFOREST = "targetLand/Agroforest",
+  IC_NATURAL_FOREST = "targetLand/NaturalForest",
+  IC_MANGROVE = "targetLand/Mangrove",
+  IC_WOODLOT = "targetLand/Woodlot",
+  IC_OPEN_NATURAL_ECOSYSTEM = "targetLand/OpenNaturalEcosystem",
+  IC_RIPARIAN_AREA = "targetLand/RiparianArea",
+  IC_URBAN_FOREST = "targetLand/UrbanForest",
+  IC_SILVOPASTURE = "targetLand/Silvopasture",
+  IC_PEATLAND = "targetLand/Peatland"
 }
 
 export interface IconProps {
