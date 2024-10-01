@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -11,24 +11,22 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
-import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
-import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
   GetV2MODELUUIDFilesResponse,
   GetV2TypeEntityResponse,
   useDeleteV2FilesUUID,
   useGetV2MODELUUIDFiles,
-  useGetV2TypeEntity,
-  usePostV2FileUploadMODELCOLLECTIONUUID
+  useGetV2TypeEntity
 } from "@/generated/apiComponents";
+import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
-import { EntityName, FileType, UploadedFile } from "@/types/common";
+import { EntityName, FileType } from "@/types/common";
 
-import ModalAdd from "../Modal/ModalAdd";
+import ModalAddImages from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
 export interface EntityMapAndGalleryCardProps {
@@ -50,8 +48,6 @@ const EntityMapAndGalleryCard = ({
   const t = useT();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<{ key: string; value: string }>();
-  const [files, setFiles] = useState<UploadedFile[]>([]);
-  const [saveFlag, setSaveFlag] = useState<boolean>(false);
   const [searchString, setSearchString] = useState<string>("");
   const [isGeotagged, setIsGeotagged] = useState<number>(0);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -59,7 +55,6 @@ const EntityMapAndGalleryCard = ({
     isPublic: undefined,
     modelType: undefined
   });
-  const { showLoader, hideLoader } = useLoading();
   const mapFunctions = useMap();
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
@@ -87,12 +82,6 @@ const EntityMapAndGalleryCard = ({
     queryParams: {
       uuid: projectUUID,
       type: modelName
-    }
-  });
-
-  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess() {
-      refetch();
     }
   });
 
@@ -144,63 +133,34 @@ const EntityMapAndGalleryCard = ({
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
-      <ModalAdd
-        title={t("Upload Images")}
+      <ModalAddImages
+        title={t("Upload Media")}
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput={t(
-          "Drag and drop a geotagged or non-geotagged PNG or JPEG for your site Tannous/Brayton Road."
-        )}
-        descriptionList={
-          <Text variant="text-12-bold" className="mt-9">
-            {t("Uploaded Files")}
-          </Text>
-        }
+        previewAsTable
+        descriptionInput={t("drag and drop or browse your device")}
         onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
-        content={t("Start by adding images for processing.")}
+        content={t(
+          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
+        )}
         acceptedTypes={FileType.Image.split(",") as FileType[]}
         primaryButtonText={t("Save")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            setSaveFlag(true);
+            refetch();
+            closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        setFile={setFiles}
+        model={modelName}
+        collection="media"
+        entityData={entityData}
+        setErrorMessage={message => {
+          console.error(message);
+        }}
       />
     );
   };
-
-  useEffect(() => {
-    if (saveFlag) {
-      showLoader();
-      const uploadPromises = files.map((file: any) => {
-        const bodyFiles = new FormData();
-        bodyFiles.append("upload_file", file.rawFile);
-
-        return uploadFile({
-          pathParams: {
-            model: modelName,
-            collection: "media",
-            uuid: modelUUID
-          },
-          //@ts-ignore swagger issue
-          body: bodyFiles
-        });
-      });
-
-      Promise.all(uploadPromises)
-        .then(() => {
-          setSaveFlag(false);
-          hideLoader();
-          closeModal(ModalId.UPLOAD_IMAGES);
-        })
-        .catch(error => {
-          console.error("Error uploading files:", error);
-          hideLoader();
-        });
-    }
-  }, [files, saveFlag, closeModal, modelName, modelUUID, uploadFile, showLoader, hideLoader]);
 
   return (
     <>
