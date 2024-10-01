@@ -144,7 +144,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const verifyDisableOption = (title: string) => {
     return props?.disableOptionTitles?.includes(title);
   };
-  console.log(options);
 
   return (
     <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
@@ -173,8 +172,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             </When>
             <Listbox.Button
               as="div"
-              className={tw(
-                "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
+              className={classNames(
+                "flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer",
                 !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
                 props.className,

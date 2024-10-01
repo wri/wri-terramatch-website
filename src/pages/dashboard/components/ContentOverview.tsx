@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Table from "@/components/elements/Table/Table";
@@ -11,6 +12,8 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { ACTIVE_COUNTRIES } from "../mockedData/dashboard";
+import { TooltipGridMap } from "./TooltipGridMap";
+
 const ContentOverview = () => {
   const [collapseMap, setCollapseMap] = useState(false);
   const t = useT();
@@ -44,9 +47,9 @@ const ContentOverview = () => {
           "gap-4": collapseMap
         })}
       >
-        <div className="shadow-lg">
+        <div className="shadow-lg relative">
           <div
-            className={classNames("rounded-t-xl bg-white px-4 transition-all duration-500 ease-in-out", {
+            className={classNames("rounded-xl bg-white px-4 transition-all duration-500 ease-in-out", {
               "max-h-[70vh] py-4": !collapseMap,
               "max-h-0 py-0": collapseMap
             })}
@@ -61,13 +64,18 @@ const ContentOverview = () => {
               "max-h-0": !collapseMap
             })}
           />
+          <When condition={collapseMap}>
+            <TooltipGridMap label="Angola" learnMore={true} />
+          </When>
         </div>
 
-        <div className="overflow-hidden rounded-xl bg-white p-4 shadow-all">
+        <div
+          className={classNames("z-10 overflow-hidden rounded-xl bg-white p-4 shadow-all", { "-mt-2": !collapseMap })}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Text variant={"text-20-bold"}>{t("ACTIVE COUNTRIES")}</Text>
-              <ToolTip content={"tooltip table"} placement="top" width="w-44">
+              <ToolTip content={"tooltip table"} placement="top" width="w-44 lg:w-52">
                 <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
               </ToolTip>
             </div>

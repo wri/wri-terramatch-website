@@ -1,11 +1,12 @@
 import classNames from "classnames";
 
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { DashboardTableDataProps } from "../index.page";
 
 const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
-  const colorIconLabel = (label: string) => {
+  const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
     switch (label) {
       case "Agroforest":
         return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
@@ -20,18 +21,18 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
         return { color: "bg-yellow-600", icon: "IC_WOODLOT" };
 
       case "Open Natural Ecosystem":
-        return { color: "bg-red-1000", icon: "IC_OPEN_NATURAL_ECOSYSTEM" };
+        return { color: "bg-green-40", icon: "IC_OPEN_NATURAL_ECOSYSTEM" };
 
       case "Riparian Area / Wetland":
-        return { color: "bg-green-350", icon: "IC_RIPARIAN_AREA" };
+        return { color: "bg-primary-350", icon: "IC_RIPARIAN_AREA" };
 
       case "Urban Forest":
-        return { color: "bg-blueCustom", icon: "IC_URBAN_FOREST" };
+        return { color: "bg-purpleCustom-100", icon: "IC_URBAN_FOREST" };
 
       case "Silvopasture":
-        return { color: "bg-red-900", icon: "IC_SILVOPASTURE" };
+        return { color: "bg-yellow-550", icon: "IC_SILVOPASTURE" };
       case "Peatland":
-        return { color: "bg-purpleCustom-500", icon: "IC_PEATLAND" };
+        return { color: "bg-primary-250", icon: "IC_PEATLAND" };
       default:
         return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
     }
@@ -61,7 +62,8 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
           return (
             <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
               <div className="flex w-full justify-between">
-                <div>
+                <div className="flex gap-1">
+                  <Icon name={IconNames[colorIconLabel(item.label).icon]} />
                   <Text variant="text-14-light" className=" text-darkCustom">
                     {item.label}
                   </Text>

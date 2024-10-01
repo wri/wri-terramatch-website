@@ -52,7 +52,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
   }, [tabItems, selectedTab, selectedImage]);
 
   return ReactDOM.createPortal(
-    <div className={tw("fixed left-0 top-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
+    <div className={tw("fixed top-0 left-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
       <ModalBaseImageGallery {...rest}>
         <header className="mb-6 flex w-full items-center justify-between">
           <div className="flex items-center gap-7">
@@ -94,7 +94,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
               {currentTab.images.length === 0 && (
                 <>
                   <div
-                    className={classNames("h-full rounded-xl border-2 !border-black border-transparent bg-primary-200")}
+                    className={classNames("h-full rounded-xl border-2 border-transparent !border-black bg-primary-200")}
                   />
                   <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
                   <div
@@ -132,7 +132,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                         {currentImage?.dateCreated}
                       </Text>
                     </div>
-                    <div className="absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 px-3 py-[2px] lg:max-w-[350px] wide:max-w-[500px]">
+                    <div className="absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3 lg:max-w-[350px] wide:max-w-[500px]">
                       <Text variant="text-12-semibold" className="text-red-200">
                         {currentImage?.geoTag}
                       </Text>
@@ -142,7 +142,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                       alt={t("Image not available")}
                       imageUrl={item.src}
                     />
-                    <div className="absolute bottom-[24px] left-[calc(50%_-_32px)] z-10 flex items-center justify-center rounded-xl bg-darkCustom px-[8px] py-[5px]">
+                    <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
                       <Text variant="text-13" className="text-white">
                         {t("{selected} of {total}", {
                           selected: selectedImage + 1,

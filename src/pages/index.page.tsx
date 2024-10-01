@@ -140,7 +140,7 @@ const LandingPage = () => {
         }}
       />
       <TwoByOneSection.Container className="bg-black">
-        <TwoByOneSection.Top className="md:px-20 md:py-16">
+        <TwoByOneSection.Top className="md:py-16 md:px-20">
           <div className="relative">
             <Image
               alt="support"
@@ -152,7 +152,7 @@ const LandingPage = () => {
           </div>
         </TwoByOneSection.Top>
         <TwoByOneSection.Bottom>
-          <div className="box-content flex max-w-[514px] flex-col items-start justify-center gap-3 px-12 py-9 md:gap-8">
+          <div className="box-content flex max-w-[514px] flex-col items-start justify-center gap-3 py-9 px-12 md:gap-8">
             <Text variant="text-heading-700" className="text-white">
               {t("Access Support Today")}
             </Text>

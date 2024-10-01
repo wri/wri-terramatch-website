@@ -25,7 +25,7 @@ const ImageGalleryPreviewer: FC<ImageGalleryPreviewerProps> = ({
   ...rest
 }) =>
   ReactDOM.createPortal(
-    <div className={tw("fixed left-0 top-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
+    <div className={tw("fixed top-0 left-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
       <div {...rest} className={tw("m-auto h-[80vh] w-[80vw] overflow-hidden rounded-lg", className)}>
         {/* Controls */}
         <div className="flex items-center justify-between bg-white px-8 py-3.5">

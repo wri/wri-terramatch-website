@@ -11,9 +11,10 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { DashboardDataProps } from "../index.page";
-import GraphicDashboard from "./graphicDashboard";
-import GraphicIconDashoard from "./graphicIconDashoard";
-import ValueNumberDashboard from "./valueNumberDashboard";
+import GraphicDashboard from "./GraphicDashboard";
+import GraphicIconDashoard from "./GraphicIconDashoard";
+import TooltipGraphicDashboard from "./TooltipGraphicDashboard";
+import ValueNumberDashboard from "./ValueNumberDashboard";
 
 const SecDashboard = ({
   title,
@@ -22,6 +23,7 @@ const SecDashboard = ({
   className,
   classNameBody,
   classNameHeader,
+  tooltipGraphic = false,
   data
 }: {
   title: string;
@@ -30,6 +32,7 @@ const SecDashboard = ({
   className?: string;
   classNameBody?: string;
   classNameHeader?: string;
+  tooltipGraphic?: boolean;
   data: DashboardDataProps;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
@@ -86,10 +89,13 @@ const SecDashboard = ({
           />
         </When>
       </div>
-      <div className={classNames("mt-3 flex items-center justify-between", classNameBody)}>
+      <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} />}
         <When condition={data?.value && data?.unit}>
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
+        </When>
+        <When condition={tooltipGraphic}>
+          <TooltipGraphicDashboard />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />

@@ -54,12 +54,7 @@ export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntit
     {},
     {},
     GetV2TreeSpeciesEntityUUIDPathParams
-  >({
-    url: "/v2/tree-species/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/tree-species/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2TreeSpeciesEntityUUID = <TData = GetV2TreeSpeciesEntityUUIDResponse>(
   variables: GetV2TreeSpeciesEntityUUIDVariables,
@@ -70,11 +65,7 @@ export const useGetV2TreeSpeciesEntityUUID = <TData = GetV2TreeSpeciesEntityUUID
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TreeSpeciesEntityUUIDResponse, GetV2TreeSpeciesEntityUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/tree-species/{entity}/{UUID}",
-      operationId: "getV2TreeSpeciesEntityUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/tree-species/{entity}/{UUID}", operationId: "getV2TreeSpeciesEntityUUID", variables }),
     ({ signal }) => fetchGetV2TreeSpeciesEntityUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -586,11 +577,7 @@ export const useGetV2AdminProjectsMulti = <TData = GetV2AdminProjectsMultiRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminProjectsMultiResponse, GetV2AdminProjectsMultiError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/projects/multi",
-      operationId: "getV2AdminProjectsMulti",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/projects/multi", operationId: "getV2AdminProjectsMulti", variables }),
     ({ signal }) => fetchGetV2AdminProjectsMulti({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -1110,11 +1097,7 @@ export const useGetV2AdminNurseriesMulti = <TData = GetV2AdminNurseriesMultiResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminNurseriesMultiResponse, GetV2AdminNurseriesMultiError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/nurseries/multi",
-      operationId: "getV2AdminNurseriesMulti",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/nurseries/multi", operationId: "getV2AdminNurseriesMulti", variables }),
     ({ signal }) => fetchGetV2AdminNurseriesMulti({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -1630,11 +1613,7 @@ export const useGetV2AdminSitesMulti = <TData = GetV2AdminSitesMultiResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminSitesMultiResponse, GetV2AdminSitesMultiError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/sites/multi",
-      operationId: "getV2AdminSitesMulti",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/sites/multi", operationId: "getV2AdminSitesMulti", variables }),
     ({ signal }) => fetchGetV2AdminSitesMulti({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -2195,12 +2174,7 @@ export const fetchGetV2ProjectsUUIDPartners = (variables: GetV2ProjectsUUIDPartn
     {},
     {},
     GetV2ProjectsUUIDPartnersPathParams
-  >({
-    url: "/v2/projects/{uuid}/partners",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/partners", method: "get", ...variables, signal });
 
 export const useGetV2ProjectsUUIDPartners = <TData = GetV2ProjectsUUIDPartnersResponse>(
   variables: GetV2ProjectsUUIDPartnersVariables,
@@ -2211,11 +2185,7 @@ export const useGetV2ProjectsUUIDPartners = <TData = GetV2ProjectsUUIDPartnersRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDPartnersResponse, GetV2ProjectsUUIDPartnersError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/partners",
-      operationId: "getV2ProjectsUUIDPartners",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/partners", operationId: "getV2ProjectsUUIDPartners", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDPartners({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -2246,12 +2216,7 @@ export const fetchDeleteV2ProjectsUUIDEMAILRemovePartner = (
     {},
     {},
     DeleteV2ProjectsUUIDEMAILRemovePartnerPathParams
-  >({
-    url: "/v2/projects/{uuid}/{email}/remove-partner",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/{email}/remove-partner", method: "delete", ...variables, signal });
 
 export const useDeleteV2ProjectsUUIDEMAILRemovePartner = (
   options?: Omit<
@@ -2270,10 +2235,7 @@ export const useDeleteV2ProjectsUUIDEMAILRemovePartner = (
     DeleteV2ProjectsUUIDEMAILRemovePartnerVariables
   >(
     (variables: DeleteV2ProjectsUUIDEMAILRemovePartnerVariables) =>
-      fetchDeleteV2ProjectsUUIDEMAILRemovePartner({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2ProjectsUUIDEMAILRemovePartner({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -2770,11 +2732,7 @@ export const useGetV2MyProjects = <TData = GetV2MyProjectsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MyProjectsResponse, GetV2MyProjectsError, TData>(
-    queryKeyFn({
-      path: "/v2/my/projects",
-      operationId: "getV2MyProjects",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/my/projects", operationId: "getV2MyProjects", variables }),
     ({ signal }) => fetchGetV2MyProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -2827,11 +2785,7 @@ export const useGetV2MyActions = <TData = GetV2MyActionsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MyActionsResponse, GetV2MyActionsError, TData>(
-    queryKeyFn({
-      path: "/v2/my/actions",
-      operationId: "getV2MyActions",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/my/actions", operationId: "getV2MyActions", variables }),
     ({ signal }) => fetchGetV2MyActions({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -2882,12 +2836,7 @@ export const fetchPutV2MyActionsUUIDComplete = (variables: PutV2MyActionsUUIDCom
     {},
     {},
     PutV2MyActionsUUIDCompletePathParams
-  >({
-    url: "/v2/my/actions/{uuid}/complete",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/my/actions/{uuid}/complete", method: "put", ...variables, signal });
 
 export const usePutV2MyActionsUUIDComplete = (
   options?: Omit<
@@ -2930,12 +2879,7 @@ export const fetchPutV2ENTITYUUIDNothingToReport = (
   signal?: AbortSignal
 ) =>
   apiFetch<undefined, PutV2ENTITYUUIDNothingToReportError, undefined, {}, {}, PutV2ENTITYUUIDNothingToReportPathParams>(
-    {
-      url: "/v2/{entity}/{uuid}/nothing-to-report",
-      method: "put",
-      ...variables,
-      signal
-    }
+    { url: "/v2/{entity}/{uuid}/nothing-to-report", method: "put", ...variables, signal }
   );
 
 export const usePutV2ENTITYUUIDNothingToReport = (
@@ -3033,12 +2977,7 @@ export const fetchGetV2ENTITYUUIDReports = (variables: GetV2ENTITYUUIDReportsVar
     {},
     GetV2ENTITYUUIDReportsQueryParams,
     GetV2ENTITYUUIDReportsPathParams
-  >({
-    url: "/v2/{entity}/{uuid}/reports",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/{entity}/{uuid}/reports", method: "get", ...variables, signal });
 
 /**
  * Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, created_at, updated_at
@@ -3052,11 +2991,7 @@ export const useGetV2ENTITYUUIDReports = <TData = GetV2ENTITYUUIDReportsResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ENTITYUUIDReportsResponse, GetV2ENTITYUUIDReportsError, TData>(
-    queryKeyFn({
-      path: "/v2/{ENTITY}/{UUID}/reports",
-      operationId: "getV2ENTITYUUIDReports",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/{ENTITY}/{UUID}/reports", operationId: "getV2ENTITYUUIDReports", variables }),
     ({ signal }) => fetchGetV2ENTITYUUIDReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -4523,11 +4458,7 @@ export const useGetV2AdminNurseryReports = <TData = GetV2AdminNurseryReportsResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminNurseryReportsResponse, GetV2AdminNurseryReportsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/nursery-reports",
-      operationId: "getV2AdminNurseryReports",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/nursery-reports", operationId: "getV2AdminNurseryReports", variables }),
     ({ signal }) => fetchGetV2AdminNurseryReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -5995,11 +5926,7 @@ export const useGetV2AdminSiteReports = <TData = GetV2AdminSiteReportsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminSiteReportsResponse, GetV2AdminSiteReportsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/site-reports",
-      operationId: "getV2AdminSiteReports",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/site-reports", operationId: "getV2AdminSiteReports", variables }),
     ({ signal }) => fetchGetV2AdminSiteReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -6055,11 +5982,7 @@ export const useGetV2AdminProjectReports = <TData = GetV2AdminProjectReportsResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminProjectReportsResponse, GetV2AdminProjectReportsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/project-reports",
-      operationId: "getV2AdminProjectReports",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/project-reports", operationId: "getV2AdminProjectReports", variables }),
     ({ signal }) => fetchGetV2AdminProjectReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -6113,11 +6036,7 @@ export const useGetV2AdminTasks = <TData = GetV2AdminTasksResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminTasksResponse, GetV2AdminTasksError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/tasks",
-      operationId: "getV2AdminTasks",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/tasks", operationId: "getV2AdminTasks", variables }),
     ({ signal }) => fetchGetV2AdminTasks({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -6638,11 +6557,7 @@ export const useGetV2AdminNurseries = <TData = GetV2AdminNurseriesResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminNurseriesResponse, GetV2AdminNurseriesError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/nurseries",
-      operationId: "getV2AdminNurseries",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/nurseries", operationId: "getV2AdminNurseries", variables }),
     ({ signal }) => fetchGetV2AdminNurseries({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -6915,11 +6830,7 @@ export const useGetV2AdminForms = <TData = GetV2AdminFormsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminFormsResponse, GetV2AdminFormsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms",
-      operationId: "getV2AdminForms",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/forms", operationId: "getV2AdminForms", variables }),
     ({ signal }) => fetchGetV2AdminForms({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -6967,11 +6878,7 @@ export const useGetV2AdminReportingFrameworks = <TData = GetV2AdminReportingFram
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminReportingFrameworksResponse, GetV2AdminReportingFrameworksError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/reporting-frameworks",
-      operationId: "getV2AdminReportingFrameworks",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/reporting-frameworks", operationId: "getV2AdminReportingFrameworks", variables }),
     ({ signal }) => fetchGetV2AdminReportingFrameworks({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -7021,12 +6928,7 @@ export const fetchPostV2AdminReportingFrameworks = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/reporting-frameworks",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/reporting-frameworks", method: "post", ...variables, signal });
 
 export const usePostV2AdminReportingFrameworks = (
   options?: Omit<
@@ -7096,12 +6998,7 @@ export const fetchPutV2AdminReportingFrameworksUUID = (
     {},
     {},
     PutV2AdminReportingFrameworksUUIDPathParams
-  >({
-    url: "/v2/admin/reporting-frameworks/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/reporting-frameworks/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2AdminReportingFrameworksUUID = (
   options?: Omit<
@@ -7120,10 +7017,7 @@ export const usePutV2AdminReportingFrameworksUUID = (
     PutV2AdminReportingFrameworksUUIDVariables
   >(
     (variables: PutV2AdminReportingFrameworksUUIDVariables) =>
-      fetchPutV2AdminReportingFrameworksUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPutV2AdminReportingFrameworksUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -7162,12 +7056,7 @@ export const fetchDeleteV2AdminReportingFrameworksUUID = (
     {},
     {},
     DeleteV2AdminReportingFrameworksUUIDPathParams
-  >({
-    url: "/v2/admin/reporting-frameworks/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/reporting-frameworks/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminReportingFrameworksUUID = (
   options?: Omit<
@@ -7186,10 +7075,7 @@ export const useDeleteV2AdminReportingFrameworksUUID = (
     DeleteV2AdminReportingFrameworksUUIDVariables
   >(
     (variables: DeleteV2AdminReportingFrameworksUUIDVariables) =>
-      fetchDeleteV2AdminReportingFrameworksUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminReportingFrameworksUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -7228,12 +7114,7 @@ export const fetchGetV2ReportingFrameworksAccessCodeACCESSCODE = (
     {},
     {},
     GetV2ReportingFrameworksAccessCodeACCESSCODEPathParams
-  >({
-    url: "/v2/reporting-frameworks/access-code/{accessCode}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/reporting-frameworks/access-code/{accessCode}", method: "get", ...variables, signal });
 
 export const useGetV2ReportingFrameworksAccessCodeACCESSCODE = <
   TData = GetV2ReportingFrameworksAccessCodeACCESSCODEResponse
@@ -7301,12 +7182,7 @@ export const fetchGetV2ReportingFrameworksUUID = (
     {},
     {},
     GetV2ReportingFrameworksUUIDPathParams
-  >({
-    url: "/v2/reporting-frameworks/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/reporting-frameworks/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2ReportingFrameworksUUID = <TData = GetV2ReportingFrameworksUUIDResponse>(
   variables: GetV2ReportingFrameworksUUIDVariables,
@@ -7317,11 +7193,7 @@ export const useGetV2ReportingFrameworksUUID = <TData = GetV2ReportingFrameworks
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/reporting-frameworks/{UUID}",
-      operationId: "getV2ReportingFrameworksUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/reporting-frameworks/{UUID}", operationId: "getV2ReportingFrameworksUUID", variables }),
     ({ signal }) => fetchGetV2ReportingFrameworksUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -7384,11 +7256,7 @@ export const useGetV2FormsENTITYUUID = <TData = GetV2FormsENTITYUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsENTITYUUIDResponse, GetV2FormsENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/{ENTITY}/{UUID}",
-      operationId: "getV2FormsENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/{ENTITY}/{UUID}", operationId: "getV2FormsENTITYUUID", variables }),
     ({ signal }) => fetchGetV2FormsENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -7519,12 +7387,7 @@ export const fetchPutV2FormsENTITYUUIDSubmit = (variables: PutV2FormsENTITYUUIDS
     {},
     {},
     PutV2FormsENTITYUUIDSubmitPathParams
-  >({
-    url: "/v2/forms/{entity}/{uuid}/submit",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/forms/{entity}/{uuid}/submit", method: "put", ...variables, signal });
 
 export const usePutV2FormsENTITYUUIDSubmit = (
   options?: Omit<
@@ -7747,12 +7610,7 @@ export const fetchGetV2ProjectsUUIDSitePolygons = (
     {},
     GetV2ProjectsUUIDSitePolygonsQueryParams,
     GetV2ProjectsUUIDSitePolygonsPathParams
-  >({
-    url: "/v2/projects/{uuid}/site-polygons",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/site-polygons", method: "get", ...variables, signal });
 
 export const useGetV2ProjectsUUIDSitePolygons = <TData = GetV2ProjectsUUIDSitePolygonsResponse>(
   variables: GetV2ProjectsUUIDSitePolygonsVariables,
@@ -7763,11 +7621,7 @@ export const useGetV2ProjectsUUIDSitePolygons = <TData = GetV2ProjectsUUIDSitePo
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDSitePolygonsResponse, GetV2ProjectsUUIDSitePolygonsError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/site-polygons",
-      operationId: "getV2ProjectsUUIDSitePolygons",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/site-polygons", operationId: "getV2ProjectsUUIDSitePolygons", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDSitePolygons({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -7822,11 +7676,7 @@ export const useGetV2AdminUpdateRequests = <TData = GetV2AdminUpdateRequestsResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminUpdateRequestsResponse, GetV2AdminUpdateRequestsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/update-requests/",
-      operationId: "getV2AdminUpdateRequests",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/update-requests/", operationId: "getV2AdminUpdateRequests", variables }),
     ({ signal }) => fetchGetV2AdminUpdateRequests({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -7856,12 +7706,7 @@ export const fetchDeleteV2AdminUpdateRequestsUUID = (
     {},
     {},
     DeleteV2AdminUpdateRequestsUUIDPathParams
-  >({
-    url: "/v2/admin/update-requests/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/update-requests/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminUpdateRequestsUUID = (
   options?: Omit<
@@ -7924,12 +7769,7 @@ export const fetchPutV2AdminUpdateRequestsUUIDSTATUS = (
     {},
     {},
     PutV2AdminUpdateRequestsUUIDSTATUSPathParams
-  >({
-    url: "/v2/admin/update-requests/{uuid}/{status}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/update-requests/{uuid}/{status}", method: "put", ...variables, signal });
 
 export const usePutV2AdminUpdateRequestsUUIDSTATUS = (
   options?: Omit<
@@ -7948,10 +7788,7 @@ export const usePutV2AdminUpdateRequestsUUIDSTATUS = (
     PutV2AdminUpdateRequestsUUIDSTATUSVariables
   >(
     (variables: PutV2AdminUpdateRequestsUUIDSTATUSVariables) =>
-      fetchPutV2AdminUpdateRequestsUUIDSTATUS({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPutV2AdminUpdateRequestsUUIDSTATUS({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -7983,12 +7820,7 @@ export const fetchPutV2AdminENTITYUUIDSTATUS = (variables: PutV2AdminENTITYUUIDS
     {},
     {},
     PutV2AdminENTITYUUIDSTATUSPathParams
-  >({
-    url: "/v2/admin/{entity}/{uuid}/{status}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/{entity}/{uuid}/{status}", method: "put", ...variables, signal });
 
 export const usePutV2AdminENTITYUUIDSTATUS = (
   options?: Omit<
@@ -8034,12 +7866,7 @@ export const fetchPostV2AdminENTITYUUIDReminder = (
     {},
     {},
     PostV2AdminENTITYUUIDReminderPathParams
-  >({
-    url: "/v2/admin/{entity}/{uuid}/reminder",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/{entity}/{uuid}/reminder", method: "post", ...variables, signal });
 
 export const usePostV2AdminENTITYUUIDReminder = (
   options?: Omit<
@@ -8101,11 +7928,7 @@ export const useGetV2UpdateRequestsUUID = <TData = GetV2UpdateRequestsUUIDRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2UpdateRequestsUUIDResponse, GetV2UpdateRequestsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/update-requests/{UUID}",
-      operationId: "getV2UpdateRequestsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/update-requests/{UUID}", operationId: "getV2UpdateRequestsUUID", variables }),
     ({ signal }) => fetchGetV2UpdateRequestsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -8184,12 +8007,7 @@ export const fetchGetV2UpdateRequestsENTITYUUID = (
     {},
     {},
     GetV2UpdateRequestsENTITYUUIDPathParams
-  >({
-    url: "/v2/update-requests/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/update-requests/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTITYUUIDResponse>(
   variables: GetV2UpdateRequestsENTITYUUIDVariables,
@@ -8249,12 +8067,7 @@ export const fetchGetV2WorkdaysENTITYUUID = (variables: GetV2WorkdaysENTITYUUIDV
     {},
     {},
     GetV2WorkdaysENTITYUUIDPathParams
-  >({
-    url: "/v2/workdays/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/workdays/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2WorkdaysENTITYUUID = <TData = GetV2WorkdaysENTITYUUIDResponse>(
   variables: GetV2WorkdaysENTITYUUIDVariables,
@@ -8265,11 +8078,7 @@ export const useGetV2WorkdaysENTITYUUID = <TData = GetV2WorkdaysENTITYUUIDRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2WorkdaysENTITYUUIDResponse, GetV2WorkdaysENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/workdays/{ENTITY}/{UUID}",
-      operationId: "getV2WorkdaysENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/workdays/{ENTITY}/{UUID}", operationId: "getV2WorkdaysENTITYUUID", variables }),
     ({ signal }) => fetchGetV2WorkdaysENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -8321,12 +8130,7 @@ export const fetchGetV2StratasENTITYUUID = (variables: GetV2StratasENTITYUUIDVar
     {},
     {},
     GetV2StratasENTITYUUIDPathParams
-  >({
-    url: "/v2/stratas/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/stratas/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2StratasENTITYUUID = <TData = GetV2StratasENTITYUUIDResponse>(
   variables: GetV2StratasENTITYUUIDVariables,
@@ -8337,11 +8141,7 @@ export const useGetV2StratasENTITYUUID = <TData = GetV2StratasENTITYUUIDResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2StratasENTITYUUIDResponse, GetV2StratasENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/stratas/{ENTITY}/{UUID}",
-      operationId: "getV2StratasENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/stratas/{ENTITY}/{UUID}", operationId: "getV2StratasENTITYUUID", variables }),
     ({ signal }) => fetchGetV2StratasENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -8395,12 +8195,7 @@ export const fetchGetV2SeedingsENTITYUUID = (variables: GetV2SeedingsENTITYUUIDV
     {},
     {},
     GetV2SeedingsENTITYUUIDPathParams
-  >({
-    url: "/v2/seedings/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/seedings/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2SeedingsENTITYUUID = <TData = GetV2SeedingsENTITYUUIDResponse>(
   variables: GetV2SeedingsENTITYUUIDVariables,
@@ -8411,11 +8206,7 @@ export const useGetV2SeedingsENTITYUUID = <TData = GetV2SeedingsENTITYUUIDRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SeedingsENTITYUUIDResponse, GetV2SeedingsENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/seedings/{ENTITY}/{UUID}",
-      operationId: "getV2SeedingsENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/seedings/{ENTITY}/{UUID}", operationId: "getV2SeedingsENTITYUUID", variables }),
     ({ signal }) => fetchGetV2SeedingsENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -8471,12 +8262,7 @@ export const fetchGetV2DisturbancesENTITYUUID = (
     {},
     {},
     GetV2DisturbancesENTITYUUIDPathParams
-  >({
-    url: "/v2/disturbances/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/disturbances/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2DisturbancesENTITYUUID = <TData = GetV2DisturbancesENTITYUUIDResponse>(
   variables: GetV2DisturbancesENTITYUUIDVariables,
@@ -8487,11 +8273,7 @@ export const useGetV2DisturbancesENTITYUUID = <TData = GetV2DisturbancesENTITYUU
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DisturbancesENTITYUUIDResponse, GetV2DisturbancesENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/disturbances/{ENTITY}/{UUID}",
-      operationId: "getV2DisturbancesENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/disturbances/{ENTITY}/{UUID}", operationId: "getV2DisturbancesENTITYUUID", variables }),
     ({ signal }) => fetchGetV2DisturbancesENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -8543,12 +8325,7 @@ export const fetchGetV2InvasivesENTITYUUID = (variables: GetV2InvasivesENTITYUUI
     {},
     {},
     GetV2InvasivesENTITYUUIDPathParams
-  >({
-    url: "/v2/invasives/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/invasives/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2InvasivesENTITYUUID = <TData = GetV2InvasivesENTITYUUIDResponse>(
   variables: GetV2InvasivesENTITYUUIDVariables,
@@ -8559,11 +8336,7 @@ export const useGetV2InvasivesENTITYUUID = <TData = GetV2InvasivesENTITYUUIDResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2InvasivesENTITYUUIDResponse, GetV2InvasivesENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/invasives/{ENTITY}/{UUID}",
-      operationId: "getV2InvasivesENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/invasives/{ENTITY}/{UUID}", operationId: "getV2InvasivesENTITYUUID", variables }),
     ({ signal }) => fetchGetV2InvasivesENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -9273,12 +9046,7 @@ export const fetchPatchV2AdminFormsSectionUUID = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/forms/section/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/section/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2AdminFormsSectionUUID = (
   options?: Omit<
@@ -9490,12 +9258,7 @@ export const fetchGetV2FormsLinkedFieldListing = (
     {},
     GetV2FormsLinkedFieldListingQueryParams,
     {}
-  >({
-    url: "/v2/forms/linked-field-listing",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/forms/linked-field-listing", method: "get", ...variables, signal });
 
 export const useGetV2FormsLinkedFieldListing = <TData = GetV2FormsLinkedFieldListingResponse>(
   variables: GetV2FormsLinkedFieldListingVariables,
@@ -9506,11 +9269,7 @@ export const useGetV2FormsLinkedFieldListing = <TData = GetV2FormsLinkedFieldLis
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsLinkedFieldListingResponse, GetV2FormsLinkedFieldListingError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/linked-field-listing",
-      operationId: "getV2FormsLinkedFieldListing",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/linked-field-listing", operationId: "getV2FormsLinkedFieldListing", variables }),
     ({ signal }) => fetchGetV2FormsLinkedFieldListing({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -9558,12 +9317,7 @@ export const fetchGetV2AdminFormsCommonOptionsBUCKET = (
     {},
     GetV2AdminFormsCommonOptionsBUCKETQueryParams,
     GetV2AdminFormsCommonOptionsBUCKETPathParams
-  >({
-    url: "/v2/admin/forms/common-options/{bucket}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/common-options/{bucket}", method: "get", ...variables, signal });
 
 export const useGetV2AdminFormsCommonOptionsBUCKET = <TData = GetV2AdminFormsCommonOptionsBUCKETResponse>(
   variables: GetV2AdminFormsCommonOptionsBUCKETVariables,
@@ -10117,11 +9871,7 @@ export const useGetV2AdminOrganisations = <TData = GetV2AdminOrganisationsRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminOrganisationsResponse, GetV2AdminOrganisationsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/organisations",
-      operationId: "getV2AdminOrganisations",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/organisations", operationId: "getV2AdminOrganisations", variables }),
     ({ signal }) => fetchGetV2AdminOrganisations({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -10600,12 +10350,7 @@ export const fetchGetV2AdminOrganisationsMulti = (
     {},
     GetV2AdminOrganisationsMultiQueryParams,
     {}
-  >({
-    url: "/v2/admin/organisations/multi",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/organisations/multi", method: "get", ...variables, signal });
 
 export const useGetV2AdminOrganisationsMulti = <TData = GetV2AdminOrganisationsMultiResponse>(
   variables: GetV2AdminOrganisationsMultiVariables,
@@ -10616,11 +10361,7 @@ export const useGetV2AdminOrganisationsMulti = <TData = GetV2AdminOrganisationsM
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminOrganisationsMultiResponse, GetV2AdminOrganisationsMultiError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/organisations/multi",
-      operationId: "getV2AdminOrganisationsMulti",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/organisations/multi", operationId: "getV2AdminOrganisationsMulti", variables }),
     ({ signal }) => fetchGetV2AdminOrganisationsMulti({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -11096,12 +10837,7 @@ export const fetchGetV2AdminOrganisationsUUID = (
     {},
     {},
     GetV2AdminOrganisationsUUIDPathParams
-  >({
-    url: "/v2/admin/organisations/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/organisations/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AdminOrganisationsUUID = <TData = GetV2AdminOrganisationsUUIDResponse>(
   variables: GetV2AdminOrganisationsUUIDVariables,
@@ -11112,11 +10848,7 @@ export const useGetV2AdminOrganisationsUUID = <TData = GetV2AdminOrganisationsUU
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminOrganisationsUUIDResponse, GetV2AdminOrganisationsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/organisations/{UUID}",
-      operationId: "getV2AdminOrganisationsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/organisations/{UUID}", operationId: "getV2AdminOrganisationsUUID", variables }),
     ({ signal }) => fetchGetV2AdminOrganisationsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -11689,12 +11421,7 @@ export const fetchPutV2AdminOrganisationsUUID = (
     {},
     {},
     PutV2AdminOrganisationsUUIDPathParams
-  >({
-    url: "/v2/admin/organisations/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/organisations/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2AdminOrganisationsUUID = (
   options?: Omit<
@@ -11733,12 +11460,7 @@ export const fetchDeleteV2AdminOrganisationsUUID = (
   signal?: AbortSignal
 ) =>
   apiFetch<undefined, DeleteV2AdminOrganisationsUUIDError, undefined, {}, {}, DeleteV2AdminOrganisationsUUIDPathParams>(
-    {
-      url: "/v2/admin/organisations/{uuid}",
-      method: "delete",
-      ...variables,
-      signal
-    }
+    { url: "/v2/admin/organisations/{uuid}", method: "delete", ...variables, signal }
   );
 
 export const useDeleteV2AdminOrganisationsUUID = (
@@ -11876,12 +11598,7 @@ export const fetchPutV2AdminOrganisationsApprove = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/organisations/approve",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/organisations/approve", method: "put", ...variables, signal });
 
 export const usePutV2AdminOrganisationsApprove = (
   options?: Omit<
@@ -12018,12 +11735,7 @@ export const fetchPutV2AdminOrganisationsReject = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/organisations/reject",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/organisations/reject", method: "put", ...variables, signal });
 
 export const usePutV2AdminOrganisationsReject = (
   options?: Omit<
@@ -12071,11 +11783,7 @@ export const useGetV2AdminOrganisationsExport = <TData = undefined>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<undefined, GetV2AdminOrganisationsExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/organisations/export",
-      operationId: "getV2AdminOrganisationsExport",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/organisations/export", operationId: "getV2AdminOrganisationsExport", variables }),
     ({ signal }) => fetchGetV2AdminOrganisationsExport({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -12601,11 +12309,7 @@ export const useGetV2OrganisationsUUID = <TData = GetV2OrganisationsUUIDResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2OrganisationsUUIDResponse, GetV2OrganisationsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/organisations/{UUID}",
-      operationId: "getV2OrganisationsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/organisations/{UUID}", operationId: "getV2OrganisationsUUID", variables }),
     ({ signal }) => fetchGetV2OrganisationsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -12691,11 +12395,7 @@ export const useGetV2OrganisationsListing = <TData = GetV2OrganisationsListingRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2OrganisationsListingResponse, GetV2OrganisationsListingError, TData>(
-    queryKeyFn({
-      path: "/v2/organisations/listing",
-      operationId: "getV2OrganisationsListing",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/organisations/listing", operationId: "getV2OrganisationsListing", variables }),
     ({ signal }) => fetchGetV2OrganisationsListing({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -13186,12 +12886,7 @@ export const fetchPostV2OrganisationsJoinExisting = (
     {},
     {},
     {}
-  >({
-    url: "/v2/organisations/join-existing",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/organisations/join-existing", method: "post", ...variables, signal });
 
 export const usePostV2OrganisationsJoinExisting = (
   options?: Omit<
@@ -13715,12 +13410,7 @@ export const fetchGetV2OrganisationsUserRequestsUUID = (
     {},
     {},
     GetV2OrganisationsUserRequestsUUIDPathParams
-  >({
-    url: "/v2/organisations/user-requests/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/organisations/user-requests/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2OrganisationsUserRequestsUUID = <TData = GetV2OrganisationsUserRequestsUUIDResponse>(
   variables: GetV2OrganisationsUserRequestsUUIDVariables,
@@ -14252,12 +13942,7 @@ export const fetchGetV2OrganisationsApprovedUsersUUID = (
     {},
     {},
     GetV2OrganisationsApprovedUsersUUIDPathParams
-  >({
-    url: "/v2/organisations/approved-users/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/organisations/approved-users/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2OrganisationsApprovedUsersUUID = <TData = GetV2OrganisationsApprovedUsersUUIDResponse>(
   variables: GetV2OrganisationsApprovedUsersUUIDVariables,
@@ -14300,12 +13985,7 @@ export const fetchPutV2OrganisationsApproveUser = (
   signal?: AbortSignal
 ) =>
   apiFetch<undefined, PutV2OrganisationsApproveUserError, RequestBodies.V2PostOrganisationsApproveUserBody, {}, {}, {}>(
-    {
-      url: "/v2/organisations/approve-user",
-      method: "put",
-      ...variables,
-      signal
-    }
+    { url: "/v2/organisations/approve-user", method: "put", ...variables, signal }
   );
 
 export const usePutV2OrganisationsApproveUser = (
@@ -14424,10 +14104,7 @@ export const useDeleteV2OrganisationsRetractMyDraft = (
     DeleteV2OrganisationsRetractMyDraftVariables
   >(
     (variables: DeleteV2OrganisationsRetractMyDraftVariables) =>
-      fetchDeleteV2OrganisationsRetractMyDraft({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2OrganisationsRetractMyDraft({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -14523,11 +14200,7 @@ export const useGetV2AdminUsers = <TData = GetV2AdminUsersResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminUsersResponse, GetV2AdminUsersError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/users",
-      operationId: "getV2AdminUsers",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/users", operationId: "getV2AdminUsers", variables }),
     ({ signal }) => fetchGetV2AdminUsers({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -14592,12 +14265,7 @@ export const fetchGetV2AdminUsersUsersOrganisationListUUID = (
     {},
     GetV2AdminUsersUsersOrganisationListUUIDQueryParams,
     GetV2AdminUsersUsersOrganisationListUUIDPathParams
-  >({
-    url: "/v2/admin/users/users-organisation-list/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/users/users-organisation-list/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AdminUsersUsersOrganisationListUUID = <TData = GetV2AdminUsersUsersOrganisationListUUIDResponse>(
   variables: GetV2AdminUsersUsersOrganisationListUUIDVariables,
@@ -14673,11 +14341,7 @@ export const useGetV2AdminUsersUUID = <TData = GetV2AdminUsersUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminUsersUUIDResponse, GetV2AdminUsersUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/users/{UUID}",
-      operationId: "getV2AdminUsersUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/users/{UUID}", operationId: "getV2AdminUsersUUID", variables }),
     ({ signal }) => fetchGetV2AdminUsersUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -15018,11 +14682,7 @@ export const useGetV2AdminUsersMulti = <TData = GetV2AdminUsersMultiResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminUsersMultiResponse, GetV2AdminUsersMultiError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/users/multi",
-      operationId: "getV2AdminUsersMulti",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/users/multi", operationId: "getV2AdminUsersMulti", variables }),
     ({ signal }) => fetchGetV2AdminUsersMulti({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -15049,11 +14709,7 @@ export const useGetV2AdminUsersExport = <TData = undefined>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<undefined, GetV2AdminUsersExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/users/export",
-      operationId: "getV2AdminUsersExport",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/users/export", operationId: "getV2AdminUsersExport", variables }),
     ({ signal }) => fetchGetV2AdminUsersExport({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -15083,12 +14739,7 @@ export const fetchPutV2AdminUsersResetPasswordUUID = (
     {},
     {},
     PutV2AdminUsersResetPasswordUUIDPathParams
-  >({
-    url: "/v2/admin/users/reset-password/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/users/reset-password/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2AdminUsersResetPasswordUUID = (
   options?: Omit<
@@ -15107,10 +14758,7 @@ export const usePutV2AdminUsersResetPasswordUUID = (
     PutV2AdminUsersResetPasswordUUIDVariables
   >(
     (variables: PutV2AdminUsersResetPasswordUUIDVariables) =>
-      fetchPutV2AdminUsersResetPasswordUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPutV2AdminUsersResetPasswordUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -15249,11 +14897,7 @@ export const useGetV2MODELUUIDFiles = <TData = GetV2MODELUUIDFilesResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MODELUUIDFilesResponse, GetV2MODELUUIDFilesError, TData>(
-    queryKeyFn({
-      path: "/v2/{MODEL}/{UUID}/files",
-      operationId: "getV2MODELUUIDFiles",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/{MODEL}/{UUID}/files", operationId: "getV2MODELUUIDFiles", variables }),
     ({ signal }) => fetchGetV2MODELUUIDFiles({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -15298,12 +14942,7 @@ export const fetchGetV2MODELUUIDImageLocations = (
     {},
     {},
     GetV2MODELUUIDImageLocationsPathParams
-  >({
-    url: "/v2/{model}/{uuid}/image/locations",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/{model}/{uuid}/image/locations", method: "get", ...variables, signal });
 
 export const useGetV2MODELUUIDImageLocations = <TData = GetV2MODELUUIDImageLocationsResponse>(
   variables: GetV2MODELUUIDImageLocationsVariables,
@@ -15314,11 +14953,7 @@ export const useGetV2MODELUUIDImageLocations = <TData = GetV2MODELUUIDImageLocat
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MODELUUIDImageLocationsResponse, GetV2MODELUUIDImageLocationsError, TData>(
-    queryKeyFn({
-      path: "/v2/{MODEL}/{UUID}/image/locations",
-      operationId: "getV2MODELUUIDImageLocations",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/{MODEL}/{UUID}/image/locations", operationId: "getV2MODELUUIDImageLocations", variables }),
     ({ signal }) => fetchGetV2MODELUUIDImageLocations({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -15383,12 +15018,7 @@ export const fetchPostV2FileUploadMODELCOLLECTIONUUID = (
     {},
     {},
     PostV2FileUploadMODELCOLLECTIONUUIDPathParams
-  >({
-    url: "/v2/file/upload/{model}/{collection}/{uuid}",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/file/upload/{model}/{collection}/{uuid}", method: "post", ...variables, signal });
 
 export const usePostV2FileUploadMODELCOLLECTIONUUID = (
   options?: Omit<
@@ -15407,10 +15037,7 @@ export const usePostV2FileUploadMODELCOLLECTIONUUID = (
     PostV2FileUploadMODELCOLLECTIONUUIDVariables
   >(
     (variables: PostV2FileUploadMODELCOLLECTIONUUIDVariables) =>
-      fetchPostV2FileUploadMODELCOLLECTIONUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2FileUploadMODELCOLLECTIONUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -15472,12 +15099,7 @@ export const fetchPostV2FileUploadSitePhotosUUIDBulkUrl = (
     {},
     {},
     PostV2FileUploadSitePhotosUUIDBulkUrlPathParams
-  >({
-    url: "/v2/file/upload/site/photos/{uuid}/bulk_url",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/file/upload/site/photos/{uuid}/bulk_url", method: "post", ...variables, signal });
 
 export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
   options?: Omit<
@@ -15496,10 +15118,7 @@ export const usePostV2FileUploadSitePhotosUUIDBulkUrl = (
     PostV2FileUploadSitePhotosUUIDBulkUrlVariables
   >(
     (variables: PostV2FileUploadSitePhotosUUIDBulkUrlVariables) =>
-      fetchPostV2FileUploadSitePhotosUUIDBulkUrl({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2FileUploadSitePhotosUUIDBulkUrl({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -15853,12 +15472,7 @@ export const fetchPatchV2CoreTeamLeaderUUID = (variables: PatchV2CoreTeamLeaderU
     {},
     {},
     PatchV2CoreTeamLeaderUUIDPathParams
-  >({
-    url: "/v2/core-team-leader/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/core-team-leader/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2CoreTeamLeaderUUID = (
   options?: Omit<
@@ -15911,12 +15525,7 @@ export const fetchDeleteV2CoreTeamLeaderUUID = (variables: DeleteV2CoreTeamLeade
     {},
     {},
     DeleteV2CoreTeamLeaderUUIDPathParams
-  >({
-    url: "/v2/core-team-leader/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/core-team-leader/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2CoreTeamLeaderUUID = (
   options?: Omit<
@@ -16019,12 +15628,7 @@ export const fetchPatchV2LeadershipTeamUUID = (variables: PatchV2LeadershipTeamU
     {},
     {},
     PatchV2LeadershipTeamUUIDPathParams
-  >({
-    url: "/v2/leadership-team/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/leadership-team/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2LeadershipTeamUUID = (
   options?: Omit<
@@ -16074,12 +15678,7 @@ export const fetchDeleteV2LeadershipTeamUUID = (variables: DeleteV2LeadershipTea
     {},
     {},
     DeleteV2LeadershipTeamUUIDPathParams
-  >({
-    url: "/v2/leadership-team/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/leadership-team/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2LeadershipTeamUUID = (
   options?: Omit<
@@ -16186,12 +15785,7 @@ export const fetchPatchV2OwnershipStakeUUID = (variables: PatchV2OwnershipStakeU
     {},
     {},
     PatchV2OwnershipStakeUUIDPathParams
-  >({
-    url: "/v2/ownership-stake/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/ownership-stake/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2OwnershipStakeUUID = (
   options?: Omit<
@@ -16242,12 +15836,7 @@ export const fetchDeleteV2OwnershipStakeUUID = (variables: DeleteV2OwnershipStak
     {},
     {},
     DeleteV2OwnershipStakeUUIDPathParams
-  >({
-    url: "/v2/ownership-stake/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/ownership-stake/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2OwnershipStakeUUID = (
   options?: Omit<
@@ -16384,11 +15973,7 @@ export const useGetV2AdminSites = <TData = GetV2AdminSitesResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminSitesResponse, GetV2AdminSitesError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/sites",
-      operationId: "getV2AdminSites",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/sites", operationId: "getV2AdminSites", variables }),
     ({ signal }) => fetchGetV2AdminSites({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -16656,11 +16241,7 @@ export const useGetV2AdminProjectPitches = <TData = GetV2AdminProjectPitchesResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminProjectPitchesResponse, GetV2AdminProjectPitchesError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/project-pitches",
-      operationId: "getV2AdminProjectPitches",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/project-pitches", operationId: "getV2AdminProjectPitches", variables }),
     ({ signal }) => fetchGetV2AdminProjectPitches({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -17200,11 +16781,7 @@ export const useGetV2AdminProjects = <TData = GetV2AdminProjectsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminProjectsResponse, GetV2AdminProjectsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/projects",
-      operationId: "getV2AdminProjects",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/projects", operationId: "getV2AdminProjects", variables }),
     ({ signal }) => fetchGetV2AdminProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -18525,11 +18102,7 @@ export const useGetV2ProjectsUUID = <TData = GetV2ProjectsUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDResponse, GetV2ProjectsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}",
-      operationId: "getV2ProjectsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}", operationId: "getV2ProjectsUUID", variables }),
     ({ signal }) => fetchGetV2ProjectsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -18663,11 +18236,7 @@ export const useGetV2ProjectsUUIDSites = <TData = GetV2ProjectsUUIDSitesResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDSitesResponse, GetV2ProjectsUUIDSitesError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/sites",
-      operationId: "getV2ProjectsUUIDSites",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/sites", operationId: "getV2ProjectsUUIDSites", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDSites({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19225,12 +18794,7 @@ export const fetchGetV2ProjectsUUIDNurseries = (variables: GetV2ProjectsUUIDNurs
     {},
     GetV2ProjectsUUIDNurseriesQueryParams,
     GetV2ProjectsUUIDNurseriesPathParams
-  >({
-    url: "/v2/projects/{uuid}/nurseries",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/nurseries", method: "get", ...variables, signal });
 
 /**
  * Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, created_at, updated_at
@@ -19244,11 +18808,7 @@ export const useGetV2ProjectsUUIDNurseries = <TData = GetV2ProjectsUUIDNurseries
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDNurseriesResponse, GetV2ProjectsUUIDNurseriesError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/nurseries",
-      operationId: "getV2ProjectsUUIDNurseries",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/nurseries", operationId: "getV2ProjectsUUIDNurseries", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDNurseries({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19338,11 +18898,7 @@ export const useGetV2ProjectsUUIDTasks = <TData = GetV2ProjectsUUIDTasksResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDTasksResponse, GetV2ProjectsUUIDTasksError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/tasks",
-      operationId: "getV2ProjectsUUIDTasks",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/tasks", operationId: "getV2ProjectsUUIDTasks", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDTasks({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19421,12 +18977,7 @@ export const fetchGetV2OrganisationsUUIDTasks = (
     {},
     GetV2OrganisationsUUIDTasksQueryParams,
     GetV2OrganisationsUUIDTasksPathParams
-  >({
-    url: "/v2/organisations/{uuid}/tasks",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/organisations/{uuid}/tasks", method: "get", ...variables, signal });
 
 /**
  * Available Sort : period_key (year-month) and status
@@ -19440,11 +18991,7 @@ export const useGetV2OrganisationsUUIDTasks = <TData = GetV2OrganisationsUUIDTas
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2OrganisationsUUIDTasksResponse, GetV2OrganisationsUUIDTasksError, TData>(
-    queryKeyFn({
-      path: "/v2/organisations/{UUID}/tasks",
-      operationId: "getV2OrganisationsUUIDTasks",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/organisations/{UUID}/tasks", operationId: "getV2OrganisationsUUIDTasks", variables }),
     ({ signal }) => fetchGetV2OrganisationsUUIDTasks({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19487,11 +19034,7 @@ export const useGetV2TasksUUID = <TData = GetV2TasksUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TasksUUIDResponse, GetV2TasksUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/tasks/{UUID}",
-      operationId: "getV2TasksUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/tasks/{UUID}", operationId: "getV2TasksUUID", variables }),
     ({ signal }) => fetchGetV2TasksUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19555,11 +19098,7 @@ export const useGetV2TasksUUIDReports = <TData = GetV2TasksUUIDReportsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TasksUUIDReportsResponse, GetV2TasksUUIDReportsError, TData>(
-    queryKeyFn({
-      path: "/v2/tasks/{UUID}/reports",
-      operationId: "getV2TasksUUIDReports",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/tasks/{UUID}/reports", operationId: "getV2TasksUUIDReports", variables }),
     ({ signal }) => fetchGetV2TasksUUIDReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19634,11 +19173,7 @@ export const useGetV2ENTITYUUID = <TData = GetV2ENTITYUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ENTITYUUIDResponse, GetV2ENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/{ENTITY}/{UUID}",
-      operationId: "getV2ENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/{ENTITY}/{UUID}", operationId: "getV2ENTITYUUID", variables }),
     ({ signal }) => fetchGetV2ENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19769,11 +19304,7 @@ export const useGetV2FormsSitesUUID = <TData = GetV2FormsSitesUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsSitesUUIDResponse, GetV2FormsSitesUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/sites/{UUID}",
-      operationId: "getV2FormsSitesUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/sites/{UUID}", operationId: "getV2FormsSitesUUID", variables }),
     ({ signal }) => fetchGetV2FormsSitesUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -19806,11 +19337,7 @@ export const useGetV2AdminProjectPitchesExport = <TData = Record<string, any>>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<Record<string, any>, GetV2AdminProjectPitchesExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/project-pitches/export",
-      operationId: "getV2AdminProjectPitchesExport",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/project-pitches/export", operationId: "getV2AdminProjectPitchesExport", variables }),
     ({ signal }) => fetchGetV2AdminProjectPitchesExport({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -20076,11 +19603,7 @@ export const useGetV2ProjectPitches = <TData = GetV2ProjectPitchesResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectPitchesResponse, GetV2ProjectPitchesError, TData>(
-    queryKeyFn({
-      path: "/v2/project-pitches",
-      operationId: "getV2ProjectPitches",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/project-pitches", operationId: "getV2ProjectPitches", variables }),
     ({ signal }) => fetchGetV2ProjectPitches({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -20646,11 +20169,7 @@ export const useGetV2ProjectPitchesUUID = <TData = GetV2ProjectPitchesUUIDRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectPitchesUUIDResponse, GetV2ProjectPitchesUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/project-pitches/{UUID}",
-      operationId: "getV2ProjectPitchesUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/project-pitches/{UUID}", operationId: "getV2ProjectPitchesUUID", variables }),
     ({ signal }) => fetchGetV2ProjectPitchesUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -20978,12 +20497,7 @@ export const fetchPatchV2ProjectPitchesUUID = (variables: PatchV2ProjectPitchesU
     {},
     {},
     PatchV2ProjectPitchesUUIDPathParams
-  >({
-    url: "/v2/project-pitches/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/project-pitches/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2ProjectPitchesUUID = (
   options?: Omit<
@@ -21211,12 +20725,7 @@ export const fetchGetV2ProjectPitchesUUIDSubmissions = (
     {},
     {},
     GetV2ProjectPitchesUUIDSubmissionsPathParams
-  >({
-    url: "/v2/project-pitches/{uuid}/submissions",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/project-pitches/{uuid}/submissions", method: "get", ...variables, signal });
 
 export const useGetV2ProjectPitchesUUIDSubmissions = <TData = GetV2ProjectPitchesUUIDSubmissionsResponse>(
   variables: GetV2ProjectPitchesUUIDSubmissionsVariables,
@@ -21385,12 +20894,7 @@ export const fetchGetV2AdminFormsSubmissionsUUID = (
     {},
     {},
     GetV2AdminFormsSubmissionsUUIDPathParams
-  >({
-    url: "/v2/admin/forms/submissions/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/submissions/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AdminFormsSubmissionsUUID = <TData = GetV2AdminFormsSubmissionsUUIDResponse>(
   variables: GetV2AdminFormsSubmissionsUUIDVariables,
@@ -21435,12 +20939,7 @@ export const fetchDeleteV2AdminFormsSubmissionsUUID = (
     {},
     {},
     DeleteV2AdminFormsSubmissionsUUIDPathParams
-  >({
-    url: "/v2/admin/forms/submissions/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/submissions/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminFormsSubmissionsUUID = (
   options?: Omit<
@@ -21459,10 +20958,7 @@ export const useDeleteV2AdminFormsSubmissionsUUID = (
     DeleteV2AdminFormsSubmissionsUUIDVariables
   >(
     (variables: DeleteV2AdminFormsSubmissionsUUIDVariables) =>
-      fetchDeleteV2AdminFormsSubmissionsUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminFormsSubmissionsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -21488,12 +20984,7 @@ export const fetchGetV2AdminFormsSubmissionsUUIDExport = (
     {},
     {},
     GetV2AdminFormsSubmissionsUUIDExportPathParams
-  >({
-    url: "/v2/admin/forms/submissions/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/submissions/{uuid}/export", method: "get", ...variables, signal });
 
 export const useGetV2AdminFormsSubmissionsUUIDExport = <TData = Record<string, any>>(
   variables: GetV2AdminFormsSubmissionsUUIDExportVariables,
@@ -21692,12 +21183,7 @@ export const fetchGetV2AdminFormsSubmissions = (variables: GetV2AdminFormsSubmis
     {},
     GetV2AdminFormsSubmissionsQueryParams,
     {}
-  >({
-    url: "/v2/admin/forms/submissions",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/submissions", method: "get", ...variables, signal });
 
 export const useGetV2AdminFormsSubmissions = <TData = GetV2AdminFormsSubmissionsResponse>(
   variables: GetV2AdminFormsSubmissionsVariables,
@@ -21708,11 +21194,7 @@ export const useGetV2AdminFormsSubmissions = <TData = GetV2AdminFormsSubmissions
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminFormsSubmissionsResponse, GetV2AdminFormsSubmissionsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/submissions",
-      operationId: "getV2AdminFormsSubmissions",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/forms/submissions", operationId: "getV2AdminFormsSubmissions", variables }),
     ({ signal }) => fetchGetV2AdminFormsSubmissions({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -21895,11 +21377,7 @@ export const useGetV2FormsMySubmissions = <TData = GetV2FormsMySubmissionsRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsMySubmissionsResponse, GetV2FormsMySubmissionsError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/my/submissions",
-      operationId: "getV2FormsMySubmissions",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/my/submissions", operationId: "getV2FormsMySubmissions", variables }),
     ({ signal }) => fetchGetV2FormsMySubmissions({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -22015,11 +21493,7 @@ export const useGetV2FormsUUID = <TData = GetV2FormsUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsUUIDResponse, GetV2FormsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/{UUID}",
-      operationId: "getV2FormsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/{UUID}", operationId: "getV2FormsUUID", variables }),
     ({ signal }) => fetchGetV2FormsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -22141,12 +21615,7 @@ export const fetchPostV2AdminFundingProgrammeStage = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/funding-programme/stage",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/stage", method: "post", ...variables, signal });
 
 export const usePostV2AdminFundingProgrammeStage = (
   options?: Omit<
@@ -22165,10 +21634,7 @@ export const usePostV2AdminFundingProgrammeStage = (
     PostV2AdminFundingProgrammeStageVariables
   >(
     (variables: PostV2AdminFundingProgrammeStageVariables) =>
-      fetchPostV2AdminFundingProgrammeStage({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2AdminFundingProgrammeStage({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -22284,12 +21750,7 @@ export const fetchDeleteV2AdminFundingProgrammeStageUUID = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/funding-programme/stage/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/stage/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminFundingProgrammeStageUUID = (
   options?: Omit<
@@ -22308,10 +21769,7 @@ export const useDeleteV2AdminFundingProgrammeStageUUID = (
     DeleteV2AdminFundingProgrammeStageUUIDVariables
   >(
     (variables: DeleteV2AdminFundingProgrammeStageUUIDVariables) =>
-      fetchDeleteV2AdminFundingProgrammeStageUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminFundingProgrammeStageUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -22429,12 +21887,7 @@ export const fetchPatchV2AdminFundingProgrammeStageUUID = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/funding-programme/stage/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/stage/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2AdminFundingProgrammeStageUUID = (
   options?: Omit<
@@ -22453,10 +21906,7 @@ export const usePatchV2AdminFundingProgrammeStageUUID = (
     PatchV2AdminFundingProgrammeStageUUIDVariables
   >(
     (variables: PatchV2AdminFundingProgrammeStageUUIDVariables) =>
-      fetchPatchV2AdminFundingProgrammeStageUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPatchV2AdminFundingProgrammeStageUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -22643,11 +22093,7 @@ export const useGetV2FundingProgramme = <TData = GetV2FundingProgrammeResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FundingProgrammeResponse, GetV2FundingProgrammeError, TData>(
-    queryKeyFn({
-      path: "/v2/funding-programme",
-      operationId: "getV2FundingProgramme",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/funding-programme", operationId: "getV2FundingProgramme", variables }),
     ({ signal }) => fetchGetV2FundingProgramme({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -22831,12 +22277,7 @@ export const fetchGetV2AdminFundingProgramme = (variables: GetV2AdminFundingProg
     {},
     GetV2AdminFundingProgrammeQueryParams,
     {}
-  >({
-    url: "/v2/admin/funding-programme",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme", method: "get", ...variables, signal });
 
 export const useGetV2AdminFundingProgramme = <TData = GetV2AdminFundingProgrammeResponse>(
   variables: GetV2AdminFundingProgrammeVariables,
@@ -22847,11 +22288,7 @@ export const useGetV2AdminFundingProgramme = <TData = GetV2AdminFundingProgramme
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminFundingProgrammeResponse, GetV2AdminFundingProgrammeError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/funding-programme",
-      operationId: "getV2AdminFundingProgramme",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/funding-programme", operationId: "getV2AdminFundingProgramme", variables }),
     ({ signal }) => fetchGetV2AdminFundingProgramme({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -23005,12 +22442,7 @@ export const fetchPostV2AdminFundingProgramme = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/funding-programme",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme", method: "post", ...variables, signal });
 
 export const usePostV2AdminFundingProgramme = (
   options?: Omit<
@@ -23176,12 +22608,7 @@ export const fetchGetV2FundingProgrammeUUID = (variables: GetV2FundingProgrammeU
     {},
     {},
     {}
-  >({
-    url: "/v2/funding-programme/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/funding-programme/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2FundingProgrammeUUID = <TData = GetV2FundingProgrammeUUIDResponse>(
   variables: GetV2FundingProgrammeUUIDVariables,
@@ -23192,11 +22619,7 @@ export const useGetV2FundingProgrammeUUID = <TData = GetV2FundingProgrammeUUIDRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FundingProgrammeUUIDResponse, GetV2FundingProgrammeUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/funding-programme/{UUID}",
-      operationId: "getV2FundingProgrammeUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/funding-programme/{UUID}", operationId: "getV2FundingProgrammeUUID", variables }),
     ({ signal }) => fetchGetV2FundingProgrammeUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -23355,12 +22778,7 @@ export const fetchGetV2AdminFundingProgrammeUUID = (
     {},
     {},
     GetV2AdminFundingProgrammeUUIDPathParams
-  >({
-    url: "/v2/admin/funding-programme/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AdminFundingProgrammeUUID = <TData = GetV2AdminFundingProgrammeUUIDResponse>(
   variables: GetV2AdminFundingProgrammeUUIDVariables,
@@ -23534,12 +22952,7 @@ export const fetchPutV2AdminFundingProgrammeUUID = (
     {},
     {},
     PutV2AdminFundingProgrammeUUIDPathParams
-  >({
-    url: "/v2/admin/funding-programme/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2AdminFundingProgrammeUUID = (
   options?: Omit<
@@ -23584,12 +22997,7 @@ export const fetchDeleteV2AdminFundingProgrammeUUID = (
     {},
     {},
     DeleteV2AdminFundingProgrammeUUIDPathParams
-  >({
-    url: "/v2/admin/funding-programme/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminFundingProgrammeUUID = (
   options?: Omit<
@@ -23608,10 +23016,7 @@ export const useDeleteV2AdminFundingProgrammeUUID = (
     DeleteV2AdminFundingProgrammeUUIDVariables
   >(
     (variables: DeleteV2AdminFundingProgrammeUUIDVariables) =>
-      fetchDeleteV2AdminFundingProgrammeUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminFundingProgrammeUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -23635,12 +23040,7 @@ export const fetchPatchV2AdminFundingProgrammeUUIDStatus = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/funding-programme/{uuid}/status",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/{uuid}/status", method: "patch", ...variables, signal });
 
 export const usePatchV2AdminFundingProgrammeUUIDStatus = (
   options?: Omit<
@@ -23659,10 +23059,7 @@ export const usePatchV2AdminFundingProgrammeUUIDStatus = (
     PatchV2AdminFundingProgrammeUUIDStatusVariables
   >(
     (variables: PatchV2AdminFundingProgrammeUUIDStatusVariables) =>
-      fetchPatchV2AdminFundingProgrammeUUIDStatus({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPatchV2AdminFundingProgrammeUUIDStatus({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -23814,12 +23211,7 @@ export const fetchGetV2FundingProgrammeStage = (variables: GetV2FundingProgramme
     {},
     GetV2FundingProgrammeStageQueryParams,
     {}
-  >({
-    url: "/v2/funding-programme/stage",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/funding-programme/stage", method: "get", ...variables, signal });
 
 export const useGetV2FundingProgrammeStage = <TData = GetV2FundingProgrammeStageResponse>(
   variables: GetV2FundingProgrammeStageVariables,
@@ -23830,11 +23222,7 @@ export const useGetV2FundingProgrammeStage = <TData = GetV2FundingProgrammeStage
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FundingProgrammeStageResponse, GetV2FundingProgrammeStageError, TData>(
-    queryKeyFn({
-      path: "/v2/funding-programme/stage",
-      operationId: "getV2FundingProgrammeStage",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/funding-programme/stage", operationId: "getV2FundingProgrammeStage", variables }),
     ({ signal }) => fetchGetV2FundingProgrammeStage({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -23954,12 +23342,7 @@ export const fetchPatchV2AdminFundingProgrammeStageUUIDStatus = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/funding-programme/stage/{uuid}/status",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/funding-programme/stage/{uuid}/status", method: "patch", ...variables, signal });
 
 export const usePatchV2AdminFundingProgrammeStageUUIDStatus = (
   options?: Omit<
@@ -23978,10 +23361,7 @@ export const usePatchV2AdminFundingProgrammeStageUUIDStatus = (
     PatchV2AdminFundingProgrammeStageUUIDStatusVariables
   >(
     (variables: PatchV2AdminFundingProgrammeStageUUIDStatusVariables) =>
-      fetchPatchV2AdminFundingProgrammeStageUUIDStatus({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPatchV2AdminFundingProgrammeStageUUIDStatus({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -24103,12 +23483,7 @@ export const fetchGetV2FundingProgrammeStageUUID = (
     {},
     {},
     GetV2FundingProgrammeStageUUIDPathParams
-  >({
-    url: "/v2/funding-programme/stage/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/funding-programme/stage/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2FundingProgrammeStageUUID = <TData = GetV2FundingProgrammeStageUUIDResponse>(
   variables: GetV2FundingProgrammeStageUUIDVariables,
@@ -24270,12 +23645,7 @@ export const fetchPatchV2AdminFormsSubmissionsUUIDStatus = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/forms/submissions/{uuid}/status",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/submissions/{uuid}/status", method: "patch", ...variables, signal });
 
 export const usePatchV2AdminFormsSubmissionsUUIDStatus = (
   options?: Omit<
@@ -24294,10 +23664,7 @@ export const usePatchV2AdminFormsSubmissionsUUIDStatus = (
     PatchV2AdminFormsSubmissionsUUIDStatusVariables
   >(
     (variables: PatchV2AdminFormsSubmissionsUUIDStatusVariables) =>
-      fetchPatchV2AdminFormsSubmissionsUUIDStatus({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPatchV2AdminFormsSubmissionsUUIDStatus({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -24592,12 +23959,7 @@ export const fetchGetV2FormsSubmissionsUUID = (variables: GetV2FormsSubmissionsU
     {},
     {},
     GetV2FormsSubmissionsUUIDPathParams
-  >({
-    url: "/v2/forms/submissions/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/forms/submissions/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2FormsSubmissionsUUID = <TData = GetV2FormsSubmissionsUUIDResponse>(
   variables: GetV2FormsSubmissionsUUIDVariables,
@@ -24608,11 +23970,7 @@ export const useGetV2FormsSubmissionsUUID = <TData = GetV2FormsSubmissionsUUIDRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsSubmissionsUUIDResponse, GetV2FormsSubmissionsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/submissions/{UUID}",
-      operationId: "getV2FormsSubmissionsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/submissions/{UUID}", operationId: "getV2FormsSubmissionsUUID", variables }),
     ({ signal }) => fetchGetV2FormsSubmissionsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -24768,12 +24126,7 @@ export const fetchPatchV2FormsSubmissionsUUID = (
     {},
     {},
     PatchV2FormsSubmissionsUUIDPathParams
-  >({
-    url: "/v2/forms/submissions/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/forms/submissions/{uuid}", method: "patch", ...variables, signal });
 
 export const usePatchV2FormsSubmissionsUUID = (
   options?: Omit<
@@ -24969,12 +24322,7 @@ export const fetchPostV2FormsSubmissionsUUIDNextStage = (
     {},
     {},
     PostV2FormsSubmissionsUUIDNextStagePathParams
-  >({
-    url: "/v2/forms/submissions/{uuid}/next-stage",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/forms/submissions/{uuid}/next-stage", method: "post", ...variables, signal });
 
 export const usePostV2FormsSubmissionsUUIDNextStage = (
   options?: Omit<
@@ -24993,10 +24341,7 @@ export const usePostV2FormsSubmissionsUUIDNextStage = (
     PostV2FormsSubmissionsUUIDNextStageVariables
   >(
     (variables: PostV2FormsSubmissionsUUIDNextStageVariables) =>
-      fetchPostV2FormsSubmissionsUUIDNextStage({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2FormsSubmissionsUUIDNextStage({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -25138,12 +24483,7 @@ export const fetchPutV2FormsSubmissionsSubmitUUID = (
     {},
     {},
     PutV2FormsSubmissionsSubmitUUIDPathParams
-  >({
-    url: "/v2/forms/submissions/submit/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/forms/submissions/submit/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2FormsSubmissionsSubmitUUID = (
   options?: Omit<
@@ -25989,12 +25329,7 @@ export const fetchGetV2AdminFormsApplications = (
     {},
     GetV2AdminFormsApplicationsQueryParams,
     {}
-  >({
-    url: "/v2/admin/forms/applications",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/applications", method: "get", ...variables, signal });
 
 /**
  * Available Filters : funding_programme_uuid,current_stage, current_submission_status (Current stage is the stage uuid) Available Sorts : created_at, updated_at, organisation_name, funding_programme_name, organisation_name (Prefix with a '-' for descending
@@ -26008,11 +25343,7 @@ export const useGetV2AdminFormsApplications = <TData = GetV2AdminFormsApplicatio
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminFormsApplicationsResponse, GetV2AdminFormsApplicationsError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/applications",
-      operationId: "getV2AdminFormsApplications",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/forms/applications", operationId: "getV2AdminFormsApplications", variables }),
     ({ signal }) => fetchGetV2AdminFormsApplications({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -26856,12 +26187,7 @@ export const fetchGetV2AdminFormsApplicationsUUID = (
     {},
     {},
     GetV2AdminFormsApplicationsUUIDPathParams
-  >({
-    url: "/v2/admin/forms/applications/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/applications/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AdminFormsApplicationsUUID = <TData = GetV2AdminFormsApplicationsUUIDResponse>(
   variables: GetV2AdminFormsApplicationsUUIDVariables,
@@ -26906,12 +26232,7 @@ export const fetchDeleteV2AdminFormsApplicationsUUID = (
     {},
     {},
     DeleteV2AdminFormsApplicationsUUIDPathParams
-  >({
-    url: "/v2/admin/forms/applications/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/applications/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminFormsApplicationsUUID = (
   options?: Omit<
@@ -26930,10 +26251,7 @@ export const useDeleteV2AdminFormsApplicationsUUID = (
     DeleteV2AdminFormsApplicationsUUIDVariables
   >(
     (variables: DeleteV2AdminFormsApplicationsUUIDVariables) =>
-      fetchDeleteV2AdminFormsApplicationsUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminFormsApplicationsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -26962,12 +26280,7 @@ export const fetchGetV2AdminFormsApplicationsUUIDExport = (
     {},
     {},
     GetV2AdminFormsApplicationsUUIDExportPathParams
-  >({
-    url: "/v2/admin/forms/applications/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/forms/applications/{uuid}/export", method: "get", ...variables, signal });
 
 /**
  * The UUID provided is the Funding Programme ID that the applications are for
@@ -27284,11 +26597,7 @@ export const useGetV2MyApplications = <TData = GetV2MyApplicationsResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2MyApplicationsResponse, GetV2MyApplicationsError, TData>(
-    queryKeyFn({
-      path: "/v2/my/applications",
-      operationId: "getV2MyApplications",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/my/applications", operationId: "getV2MyApplications", variables }),
     ({ signal }) => fetchGetV2MyApplications({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -28140,11 +27449,7 @@ export const useGetV2ApplicationsUUID = <TData = GetV2ApplicationsUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ApplicationsUUIDResponse, GetV2ApplicationsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/applications/{UUID}",
-      operationId: "getV2ApplicationsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/applications/{UUID}", operationId: "getV2ApplicationsUUID", variables }),
     ({ signal }) => fetchGetV2ApplicationsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -28180,11 +27485,7 @@ export const useGetV2ApplicationsUUIDExport = <TData = undefined>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<undefined, GetV2ApplicationsUUIDExportError, TData>(
-    queryKeyFn({
-      path: "/v2/applications/{UUID}/export",
-      operationId: "getV2ApplicationsUUIDExport",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/applications/{UUID}/export", operationId: "getV2ApplicationsUUIDExport", variables }),
     ({ signal }) => fetchGetV2ApplicationsUUIDExport({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -28246,12 +27547,7 @@ export const fetchDeleteV2AdminNurseryReportsUUID = (
     {},
     {},
     DeleteV2AdminNurseryReportsUUIDPathParams
-  >({
-    url: "/v2/admin/nursery-reports/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/nursery-reports/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminNurseryReportsUUID = (
   options?: Omit<
@@ -28390,12 +27686,7 @@ export const fetchPostV2AdminSiteMonitorings = (variables: PostV2AdminSiteMonito
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/site-monitorings",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/site-monitorings", method: "post", ...variables, signal });
 
 export const usePostV2AdminSiteMonitorings = (
   options?: Omit<
@@ -28476,12 +27767,7 @@ export const fetchPutV2AdminSiteMonitoringsUUID = (
     {},
     {},
     PutV2AdminSiteMonitoringsUUIDPathParams
-  >({
-    url: "/v2/admin/site-monitorings/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/site-monitorings/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2AdminSiteMonitoringsUUID = (
   options?: Omit<
@@ -28526,12 +27812,7 @@ export const fetchDeleteV2AdminSiteMonitoringsUUID = (
     {},
     {},
     DeleteV2AdminSiteMonitoringsUUIDPathParams
-  >({
-    url: "/v2/admin/site-monitorings/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/site-monitorings/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminSiteMonitoringsUUID = (
   options?: Omit<
@@ -28550,10 +27831,7 @@ export const useDeleteV2AdminSiteMonitoringsUUID = (
     DeleteV2AdminSiteMonitoringsUUIDVariables
   >(
     (variables: DeleteV2AdminSiteMonitoringsUUIDVariables) =>
-      fetchDeleteV2AdminSiteMonitoringsUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminSiteMonitoringsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -28611,12 +27889,7 @@ export const fetchDeleteV2AdminProjectReportsUUID = (
     {},
     {},
     DeleteV2AdminProjectReportsUUIDPathParams
-  >({
-    url: "/v2/admin/project-reports/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/project-reports/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminProjectReportsUUID = (
   options?: Omit<
@@ -28732,12 +28005,7 @@ export const fetchPostV2AdminProjectMonitorings = (
     {},
     {},
     {}
-  >({
-    url: "/v2/admin/project-monitorings",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/project-monitorings", method: "post", ...variables, signal });
 
 export const usePostV2AdminProjectMonitorings = (
   options?: Omit<
@@ -28858,12 +28126,7 @@ export const fetchPutV2AdminProjectMonitoringsUUID = (
     {},
     {},
     PutV2AdminProjectMonitoringsUUIDPathParams
-  >({
-    url: "/v2/admin/project-monitorings/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/project-monitorings/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2AdminProjectMonitoringsUUID = (
   options?: Omit<
@@ -28882,10 +28145,7 @@ export const usePutV2AdminProjectMonitoringsUUID = (
     PutV2AdminProjectMonitoringsUUIDVariables
   >(
     (variables: PutV2AdminProjectMonitoringsUUIDVariables) =>
-      fetchPutV2AdminProjectMonitoringsUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPutV2AdminProjectMonitoringsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -28911,12 +28171,7 @@ export const fetchDeleteV2AdminProjectMonitoringsUUID = (
     {},
     {},
     DeleteV2AdminProjectMonitoringsUUIDPathParams
-  >({
-    url: "/v2/admin/project-monitorings/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/project-monitorings/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2AdminProjectMonitoringsUUID = (
   options?: Omit<
@@ -28935,10 +28190,7 @@ export const useDeleteV2AdminProjectMonitoringsUUID = (
     DeleteV2AdminProjectMonitoringsUUIDVariables
   >(
     (variables: DeleteV2AdminProjectMonitoringsUUIDVariables) =>
-      fetchDeleteV2AdminProjectMonitoringsUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2AdminProjectMonitoringsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -28961,11 +28213,7 @@ export const useGetAuthLogout = <TData = Record<string, any>>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<Record<string, any>, GetAuthLogoutError, TData>(
-    queryKeyFn({
-      path: "/auth/logout",
-      operationId: "getAuthLogout",
-      variables
-    }),
+    queryKeyFn({ path: "/auth/logout", operationId: "getAuthLogout", variables }),
     ({ signal }) => fetchGetAuthLogout({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -29149,11 +28397,7 @@ export const useGetV2FormsOptionLabels = <TData = GetV2FormsOptionLabelsResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2FormsOptionLabelsResponse, GetV2FormsOptionLabelsError, TData>(
-    queryKeyFn({
-      path: "/v2/forms/option-labels",
-      operationId: "getV2FormsOptionLabels",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/forms/option-labels", operationId: "getV2FormsOptionLabels", variables }),
     ({ signal }) => fetchGetV2FormsOptionLabels({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -29838,11 +29082,7 @@ export const useGetV2SitesUUID = <TData = GetV2SitesUUIDResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitesUUIDResponse, GetV2SitesUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/sites/{UUID}",
-      operationId: "getV2SitesUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/sites/{UUID}", operationId: "getV2SitesUUID", variables }),
     ({ signal }) => fetchGetV2SitesUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -29893,12 +29133,7 @@ export const fetchGetV2SiteMonitoringsUUID = (variables: GetV2SiteMonitoringsUUI
     {},
     {},
     GetV2SiteMonitoringsUUIDPathParams
-  >({
-    url: "/v2/site-monitorings/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/site-monitorings/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2SiteMonitoringsUUID = <TData = GetV2SiteMonitoringsUUIDResponse>(
   variables: GetV2SiteMonitoringsUUIDVariables,
@@ -29909,11 +29144,7 @@ export const useGetV2SiteMonitoringsUUID = <TData = GetV2SiteMonitoringsUUIDResp
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SiteMonitoringsUUIDResponse, GetV2SiteMonitoringsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/site-monitorings/{UUID}",
-      operationId: "getV2SiteMonitoringsUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/site-monitorings/{UUID}", operationId: "getV2SiteMonitoringsUUID", variables }),
     ({ signal }) => fetchGetV2SiteMonitoringsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -29998,12 +29229,7 @@ export const fetchGetV2SitesUUIDMonitorings = (variables: GetV2SitesUUIDMonitori
     {},
     GetV2SitesUUIDMonitoringsQueryParams,
     GetV2SitesUUIDMonitoringsPathParams
-  >({
-    url: "/v2/sites/{uuid}/monitorings",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/sites/{uuid}/monitorings", method: "get", ...variables, signal });
 
 export const useGetV2SitesUUIDMonitorings = <TData = GetV2SitesUUIDMonitoringsResponse>(
   variables: GetV2SitesUUIDMonitoringsVariables,
@@ -30014,11 +29240,7 @@ export const useGetV2SitesUUIDMonitorings = <TData = GetV2SitesUUIDMonitoringsRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitesUUIDMonitoringsResponse, GetV2SitesUUIDMonitoringsError, TData>(
-    queryKeyFn({
-      path: "/v2/sites/{UUID}/monitorings",
-      operationId: "getV2SitesUUIDMonitorings",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/sites/{UUID}/monitorings", operationId: "getV2SitesUUIDMonitorings", variables }),
     ({ signal }) => fetchGetV2SitesUUIDMonitorings({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -30126,12 +29348,7 @@ export const fetchGetV2ProjectsUUIDMonitorings = (
     {},
     GetV2ProjectsUUIDMonitoringsQueryParams,
     GetV2ProjectsUUIDMonitoringsPathParams
-  >({
-    url: "/v2/projects/{uuid}/monitorings",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/monitorings", method: "get", ...variables, signal });
 
 export const useGetV2ProjectsUUIDMonitorings = <TData = GetV2ProjectsUUIDMonitoringsResponse>(
   variables: GetV2ProjectsUUIDMonitoringsVariables,
@@ -30142,11 +29359,7 @@ export const useGetV2ProjectsUUIDMonitorings = <TData = GetV2ProjectsUUIDMonitor
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDMonitoringsResponse, GetV2ProjectsUUIDMonitoringsError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/monitorings",
-      operationId: "getV2ProjectsUUIDMonitorings",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/monitorings", operationId: "getV2ProjectsUUIDMonitorings", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDMonitorings({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -30193,12 +29406,7 @@ export const fetchPostV2ProjectsUUIDInvite = (variables: PostV2ProjectsUUIDInvit
     {},
     {},
     PostV2ProjectsUUIDInvitePathParams
-  >({
-    url: "/v2/projects/{uuid}/invite",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/invite", method: "post", ...variables, signal });
 
 export const usePostV2ProjectsUUIDInvite = (
   options?: Omit<
@@ -30255,12 +29463,7 @@ export const fetchPostV2ProjectsInviteAccept = (variables: PostV2ProjectsInviteA
     {},
     {},
     {}
-  >({
-    url: "/v2/projects/invite/accept",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/invite/accept", method: "post", ...variables, signal });
 
 export const usePostV2ProjectsInviteAccept = (
   options?: Omit<
@@ -30333,12 +29536,7 @@ export const fetchPostV2ProjectsUUIDManagers = (variables: PostV2ProjectsUUIDMan
     {},
     {},
     PostV2ProjectsUUIDManagersPathParams
-  >({
-    url: "/v2/projects/{uuid}/managers",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/managers", method: "post", ...variables, signal });
 
 export const usePostV2ProjectsUUIDManagers = (
   options?: Omit<
@@ -30393,12 +29591,7 @@ export const fetchGetV2ProjectsUUIDManagers = (variables: GetV2ProjectsUUIDManag
     {},
     {},
     GetV2ProjectsUUIDManagersPathParams
-  >({
-    url: "/v2/projects/{uuid}/managers",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/managers", method: "get", ...variables, signal });
 
 export const useGetV2ProjectsUUIDManagers = <TData = GetV2ProjectsUUIDManagersResponse>(
   variables: GetV2ProjectsUUIDManagersVariables,
@@ -30409,11 +29602,7 @@ export const useGetV2ProjectsUUIDManagers = <TData = GetV2ProjectsUUIDManagersRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDManagersError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/managers",
-      operationId: "getV2ProjectsUUIDManagers",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/projects/{UUID}/managers", operationId: "getV2ProjectsUUIDManagers", variables }),
     ({ signal }) => fetchGetV2ProjectsUUIDManagers({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -30444,12 +29633,7 @@ export const fetchDeleteV2ProjectsUUIDManagersUSERUUID = (
     {},
     {},
     DeleteV2ProjectsUUIDManagersUSERUUIDPathParams
-  >({
-    url: "/v2/projects/{uuid}/managers/{userUuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/managers/{userUuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2ProjectsUUIDManagersUSERUUID = (
   options?: Omit<
@@ -30468,10 +29652,7 @@ export const useDeleteV2ProjectsUUIDManagersUSERUUID = (
     DeleteV2ProjectsUUIDManagersUSERUUIDVariables
   >(
     (variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables) =>
-      fetchDeleteV2ProjectsUUIDManagersUSERUUID({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2ProjectsUUIDManagersUSERUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -30562,12 +29743,7 @@ export const fetchGetV2AdminAuditsENTITYUUID = (variables: GetV2AdminAuditsENTIT
     {},
     GetV2AdminAuditsENTITYUUIDQueryParams,
     GetV2AdminAuditsENTITYUUIDPathParams
-  >({
-    url: "/v2/admin/audits/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/admin/audits/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUIDResponse>(
   variables: GetV2AdminAuditsENTITYUUIDVariables,
@@ -30578,11 +29754,7 @@ export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUID
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AdminAuditsENTITYUUIDResponse, GetV2AdminAuditsENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/audits/{ENTITY}/{UUID}",
-      operationId: "getV2AdminAuditsENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/admin/audits/{ENTITY}/{UUID}", operationId: "getV2AdminAuditsENTITYUUID", variables }),
     ({ signal }) => fetchGetV2AdminAuditsENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -30774,12 +29946,7 @@ export const fetchPatchV2MediaProjectProjectMediaUuid = (
     {},
     {},
     PatchV2MediaProjectProjectMediaUuidPathParams
-  >({
-    url: "/v2/media/project/{project}/{mediaUuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/media/project/{project}/{mediaUuid}", method: "patch", ...variables, signal });
 
 /**
  * This endpoint allows you to update a specific media item's "is_cover" field to true.
@@ -30801,10 +29968,7 @@ export const usePatchV2MediaProjectProjectMediaUuid = (
     PatchV2MediaProjectProjectMediaUuidVariables
   >(
     (variables: PatchV2MediaProjectProjectMediaUuidVariables) =>
-      fetchPatchV2MediaProjectProjectMediaUuid({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPatchV2MediaProjectProjectMediaUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -30928,11 +30092,7 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<Blob, GetV2ENTITYUUIDExportError, TData>(
-    queryKeyFn({
-      path: "/v2/{ENTITY}/{UUID}/export",
-      operationId: "getV2ENTITYUUIDExport",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/{ENTITY}/{UUID}/export", operationId: "getV2ENTITYUUIDExport", variables }),
     ({ signal }) => fetchGetV2ENTITYUUIDExport({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -30995,12 +30155,7 @@ export const fetchPostV2TerrafundValidationPolygon = (
     {},
     PostV2TerrafundValidationPolygonQueryParams,
     {}
-  >({
-    url: "/v2/terrafund/validation/polygon",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/validation/polygon", method: "post", ...variables, signal });
 
 export const usePostV2TerrafundValidationPolygon = (
   options?: Omit<
@@ -31019,10 +30174,7 @@ export const usePostV2TerrafundValidationPolygon = (
     PostV2TerrafundValidationPolygonVariables
   >(
     (variables: PostV2TerrafundValidationPolygonVariables) =>
-      fetchPostV2TerrafundValidationPolygon({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundValidationPolygon({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -31081,12 +30233,7 @@ export const fetchGetV2TerrafundValidationCriteriaData = (
     {},
     GetV2TerrafundValidationCriteriaDataQueryParams,
     {}
-  >({
-    url: "/v2/terrafund/validation/criteria-data",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/validation/criteria-data", method: "get", ...variables, signal });
 
 export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundValidationCriteriaDataResponse>(
   variables: GetV2TerrafundValidationCriteriaDataVariables,
@@ -31149,12 +30296,7 @@ export const fetchPostV2TerrafundValidationSitePolygons = (
     {},
     PostV2TerrafundValidationSitePolygonsQueryParams,
     {}
-  >({
-    url: "/v2/terrafund/validation/sitePolygons",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/validation/sitePolygons", method: "post", ...variables, signal });
 
 export const usePostV2TerrafundValidationSitePolygons = (
   options?: Omit<
@@ -31173,10 +30315,7 @@ export const usePostV2TerrafundValidationSitePolygons = (
     PostV2TerrafundValidationSitePolygonsVariables
   >(
     (variables: PostV2TerrafundValidationSitePolygonsVariables) =>
-      fetchPostV2TerrafundValidationSitePolygons({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundValidationSitePolygons({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -31224,12 +30363,7 @@ export const fetchGetV2TerrafundValidationSite = (
     {},
     GetV2TerrafundValidationSiteQueryParams,
     {}
-  >({
-    url: "/v2/terrafund/validation/site",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/validation/site", method: "get", ...variables, signal });
 
 export const useGetV2TerrafundValidationSite = <TData = GetV2TerrafundValidationSiteResponse>(
   variables: GetV2TerrafundValidationSiteVariables,
@@ -31240,11 +30374,7 @@ export const useGetV2TerrafundValidationSite = <TData = GetV2TerrafundValidation
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>(
-    queryKeyFn({
-      path: "/v2/terrafund/validation/site",
-      operationId: "getV2TerrafundValidationSite",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/terrafund/validation/site", operationId: "getV2TerrafundValidationSite", variables }),
     ({ signal }) => fetchGetV2TerrafundValidationSite({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -31521,12 +30651,7 @@ export const fetchPostV2GeometryUUIDNewVersion = (
     {},
     {},
     PostV2GeometryUUIDNewVersionPathParams
-  >({
-    url: "/v2/geometry/{uuid}/new-version",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/geometry/{uuid}/new-version", method: "post", ...variables, signal });
 
 export const usePostV2GeometryUUIDNewVersion = (
   options?: Omit<
@@ -31605,12 +30730,7 @@ export const fetchGetV2AuditStatusENTITYUUID = (variables: GetV2AuditStatusENTIT
     {},
     {},
     GetV2AuditStatusENTITYUUIDPathParams
-  >({
-    url: "/v2/audit-status/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/audit-status/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2AuditStatusENTITYUUID = <TData = GetV2AuditStatusENTITYUUIDResponse>(
   variables: GetV2AuditStatusENTITYUUIDVariables,
@@ -31621,11 +30741,7 @@ export const useGetV2AuditStatusENTITYUUID = <TData = GetV2AuditStatusENTITYUUID
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2AuditStatusENTITYUUIDResponse, GetV2AuditStatusENTITYUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/audit-status/{ENTITY}/{UUID}",
-      operationId: "getV2AuditStatusENTITYUUID",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/audit-status/{ENTITY}/{UUID}", operationId: "getV2AuditStatusENTITYUUID", variables }),
     ({ signal }) => fetchGetV2AuditStatusENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -31701,12 +30817,7 @@ export const fetchPostV2AuditStatusENTITYUUID = (
     {},
     {},
     PostV2AuditStatusENTITYUUIDPathParams
-  >({
-    url: "/v2/audit-status/{entity}/{uuid}",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/audit-status/{entity}/{uuid}", method: "post", ...variables, signal });
 
 export const usePostV2AuditStatusENTITYUUID = (
   options?: Omit<
@@ -31810,11 +30921,7 @@ export const useGetV2SitesSitePolygon = <TData = GetV2SitesSitePolygonResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitesSitePolygonResponse, GetV2SitesSitePolygonError, TData>(
-    queryKeyFn({
-      path: "/v2/sites/{site}/polygon",
-      operationId: "getV2SitesSitePolygon",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/sites/{site}/polygon", operationId: "getV2SitesSitePolygon", variables }),
     ({ signal }) => fetchGetV2SitesSitePolygon({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -31857,11 +30964,7 @@ export const useGetV2SitesSiteBbox = <TData = GetV2SitesSiteBboxResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitesSiteBboxResponse, GetV2SitesSiteBboxError, TData>(
-    queryKeyFn({
-      path: "/v2/sites/{site}/bbox",
-      operationId: "getV2SitesSiteBbox",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/sites/{site}/bbox", operationId: "getV2SitesSiteBbox", variables }),
     ({ signal }) => fetchGetV2SitesSiteBbox({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -31916,12 +31019,7 @@ export const fetchPostV2TerrafundSitePolygonUuidSiteUuid = (
     {},
     {},
     PostV2TerrafundSitePolygonUuidSiteUuidPathParams
-  >({
-    url: "/v2/terrafund/site-polygon/{uuid}/{siteUuid}",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/site-polygon/{uuid}/{siteUuid}", method: "post", ...variables, signal });
 
 export const usePostV2TerrafundSitePolygonUuidSiteUuid = (
   options?: Omit<
@@ -31940,10 +31038,7 @@ export const usePostV2TerrafundSitePolygonUuidSiteUuid = (
     PostV2TerrafundSitePolygonUuidSiteUuidVariables
   >(
     (variables: PostV2TerrafundSitePolygonUuidSiteUuidVariables) =>
-      fetchPostV2TerrafundSitePolygonUuidSiteUuid({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundSitePolygonUuidSiteUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -31976,12 +31071,7 @@ export const fetchGetV2TerrafundPolygonBboxUuid = (
     {},
     {},
     GetV2TerrafundPolygonBboxUuidPathParams
-  >({
-    url: "/v2/terrafund/polygon/bbox/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/polygon/bbox/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2TerrafundPolygonBboxUuid = <TData = GetV2TerrafundPolygonBboxUuidResponse>(
   variables: GetV2TerrafundPolygonBboxUuidVariables,
@@ -31992,11 +31082,7 @@ export const useGetV2TerrafundPolygonBboxUuid = <TData = GetV2TerrafundPolygonBb
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundPolygonBboxUuidResponse, GetV2TerrafundPolygonBboxUuidError, TData>(
-    queryKeyFn({
-      path: "/v2/terrafund/polygon/bbox/{uuid}",
-      operationId: "getV2TerrafundPolygonBboxUuid",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/terrafund/polygon/bbox/{uuid}", operationId: "getV2TerrafundPolygonBboxUuid", variables }),
     ({ signal }) => fetchGetV2TerrafundPolygonBboxUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -32052,12 +31138,7 @@ export const fetchGetV2TerrafundGeojsonComplete = (
     {},
     GetV2TerrafundGeojsonCompleteQueryParams,
     {}
-  >({
-    url: "/v2/terrafund/geojson/complete",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/geojson/complete", method: "get", ...variables, signal });
 
 /**
  * Retrieve polygon geometry and properties as GeoJSON.
@@ -32071,11 +31152,7 @@ export const useGetV2TerrafundGeojsonComplete = <TData = GetV2TerrafundGeojsonCo
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundGeojsonCompleteResponse, GetV2TerrafundGeojsonCompleteError, TData>(
-    queryKeyFn({
-      path: "/v2/terrafund/geojson/complete",
-      operationId: "getV2TerrafundGeojsonComplete",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/terrafund/geojson/complete", operationId: "getV2TerrafundGeojsonComplete", variables }),
     ({ signal }) => fetchGetV2TerrafundGeojsonComplete({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -32167,12 +31244,7 @@ export const fetchGetV2TerrafundPolygonUuid = (variables: GetV2TerrafundPolygonU
     {},
     {},
     GetV2TerrafundPolygonUuidPathParams
-  >({
-    url: "/v2/terrafund/polygon/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/polygon/{uuid}", method: "get", ...variables, signal });
 
 /**
  * Retrieve site polygon data for the given UUID.
@@ -32186,11 +31258,7 @@ export const useGetV2TerrafundPolygonUuid = <TData = GetV2TerrafundPolygonUuidRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundPolygonUuidResponse, GetV2TerrafundPolygonUuidError, TData>(
-    queryKeyFn({
-      path: "/v2/terrafund/polygon/{uuid}",
-      operationId: "getV2TerrafundPolygonUuid",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/terrafund/polygon/{uuid}", operationId: "getV2TerrafundPolygonUuid", variables }),
     ({ signal }) => fetchGetV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -32256,12 +31324,7 @@ export const fetchPutV2TerrafundPolygonUuid = (variables: PutV2TerrafundPolygonU
     {},
     {},
     PutV2TerrafundPolygonUuidPathParams
-  >({
-    url: "/v2/terrafund/polygon/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/polygon/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2TerrafundPolygonUuid = (
   options?: Omit<
@@ -32359,11 +31422,7 @@ export const useGetV2TerrafundGeojsonSite = <TData = GetV2TerrafundGeojsonSiteRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundGeojsonSiteResponse, GetV2TerrafundGeojsonSiteError, TData>(
-    queryKeyFn({
-      path: "/v2/terrafund/geojson/site",
-      operationId: "getV2TerrafundGeojsonSite",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/terrafund/geojson/site", operationId: "getV2TerrafundGeojsonSite", variables }),
     ({ signal }) => fetchGetV2TerrafundGeojsonSite({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -32453,12 +31512,7 @@ export const fetchPostV2TerrafundUploadGeojson = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-geojson",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-geojson", method: "post", ...variables, signal });
 
 /**
  * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
@@ -32523,12 +31577,7 @@ export const fetchPostV2TerrafundUploadShapefile = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-shapefile",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-shapefile", method: "post", ...variables, signal });
 
 /**
  * Uploads a shapefile, converts it to GeoJSON, and inserts it into the database.
@@ -32646,12 +31695,7 @@ export const fetchPostV2TerrafundUploadGeojsonValidate = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-geojson-validate",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-geojson-validate", method: "post", ...variables, signal });
 
 /**
  * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
@@ -32673,10 +31717,7 @@ export const usePostV2TerrafundUploadGeojsonValidate = (
     PostV2TerrafundUploadGeojsonValidateVariables
   >(
     (variables: PostV2TerrafundUploadGeojsonValidateVariables) =>
-      fetchPostV2TerrafundUploadGeojsonValidate({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundUploadGeojsonValidate({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -32710,12 +31751,7 @@ export const fetchPostV2TerrafundUploadShapefileValidate = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-shapefile-validate",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-shapefile-validate", method: "post", ...variables, signal });
 
 /**
  * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
@@ -32737,10 +31773,7 @@ export const usePostV2TerrafundUploadShapefileValidate = (
     PostV2TerrafundUploadShapefileValidateVariables
   >(
     (variables: PostV2TerrafundUploadShapefileValidateVariables) =>
-      fetchPostV2TerrafundUploadShapefileValidate({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundUploadShapefileValidate({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -32790,10 +31823,7 @@ export const usePostV2TerrafundUploadKmlValidate = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateVariables>(
     (variables: PostV2TerrafundUploadKmlValidateVariables) =>
-      fetchPostV2TerrafundUploadKmlValidate({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundUploadKmlValidate({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -32840,12 +31870,7 @@ export const fetchPostV2TerrafundUploadGeojsonProject = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-geojson-project",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-geojson-project", method: "post", ...variables, signal });
 
 /**
  * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
@@ -32867,10 +31892,7 @@ export const usePostV2TerrafundUploadGeojsonProject = (
     PostV2TerrafundUploadGeojsonProjectVariables
   >(
     (variables: PostV2TerrafundUploadGeojsonProjectVariables) =>
-      fetchPostV2TerrafundUploadGeojsonProject({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundUploadGeojsonProject({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -32917,12 +31939,7 @@ export const fetchPostV2TerrafundUploadShapefileProject = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-shapefile-project",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-shapefile-project", method: "post", ...variables, signal });
 
 /**
  * Uploads a Shapefile, converts it to Shapefile, and inserts it into the database.
@@ -32944,10 +31961,7 @@ export const usePostV2TerrafundUploadShapefileProject = (
     PostV2TerrafundUploadShapefileProjectVariables
   >(
     (variables: PostV2TerrafundUploadShapefileProjectVariables) =>
-      fetchPostV2TerrafundUploadShapefileProject({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundUploadShapefileProject({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -32994,12 +32008,7 @@ export const fetchPostV2TerrafundUploadKmlProject = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/upload-kml-project",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/upload-kml-project", method: "post", ...variables, signal });
 
 /**
  * Uploads a KML file, converts it to KML, and inserts it into the database.
@@ -33074,12 +32083,7 @@ export const fetchPutV2TerrafundSitePolygonUuid = (
     {},
     {},
     PutV2TerrafundSitePolygonUuidPathParams
-  >({
-    url: "/v2/terrafund/site-polygon/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/site-polygon/{uuid}", method: "put", ...variables, signal });
 
 export const usePutV2TerrafundSitePolygonUuid = (
   options?: Omit<
@@ -33151,12 +32155,7 @@ export const fetchPostV2TerrafundNewSitePolygonUuidNewVersion = (
     {},
     {},
     PostV2TerrafundNewSitePolygonUuidNewVersionPathParams
-  >({
-    url: "/v2/terrafund/new-site-polygon/{uuid}/new-version",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/new-site-polygon/{uuid}/new-version", method: "post", ...variables, signal });
 
 export const usePostV2TerrafundNewSitePolygonUuidNewVersion = (
   options?: Omit<
@@ -33175,10 +32174,7 @@ export const usePostV2TerrafundNewSitePolygonUuidNewVersion = (
     PostV2TerrafundNewSitePolygonUuidNewVersionVariables
   >(
     (variables: PostV2TerrafundNewSitePolygonUuidNewVersionVariables) =>
-      fetchPostV2TerrafundNewSitePolygonUuidNewVersion({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundNewSitePolygonUuidNewVersion({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -33257,12 +32253,7 @@ export const fetchGetV2TerrafundProjectPolygon = (
     {},
     GetV2TerrafundProjectPolygonQueryParams,
     {}
-  >({
-    url: "/v2/terrafund/project-polygon",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/project-polygon", method: "get", ...variables, signal });
 
 /**
  * Retrieve project polygon data for the given UUID.
@@ -33276,11 +32267,7 @@ export const useGetV2TerrafundProjectPolygon = <TData = GetV2TerrafundProjectPol
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TerrafundProjectPolygonResponse, GetV2TerrafundProjectPolygonError, TData>(
-    queryKeyFn({
-      path: "/v2/terrafund/project-polygon",
-      operationId: "getV2TerrafundProjectPolygon",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/terrafund/project-polygon", operationId: "getV2TerrafundProjectPolygon", variables }),
     ({ signal }) => fetchGetV2TerrafundProjectPolygon({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -33313,12 +32300,7 @@ export const fetchDeleteV2TerrafundProjectPolygonUuid = (
     {},
     {},
     DeleteV2TerrafundProjectPolygonUuidPathParams
-  >({
-    url: "/v2/terrafund/project-polygon/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/project-polygon/{uuid}", method: "delete", ...variables, signal });
 
 export const useDeleteV2TerrafundProjectPolygonUuid = (
   options?: Omit<
@@ -33337,10 +32319,7 @@ export const useDeleteV2TerrafundProjectPolygonUuid = (
     DeleteV2TerrafundProjectPolygonUuidVariables
   >(
     (variables: DeleteV2TerrafundProjectPolygonUuidVariables) =>
-      fetchDeleteV2TerrafundProjectPolygonUuid({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2TerrafundProjectPolygonUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -33391,12 +32370,7 @@ export const fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
     {},
     {},
     PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams
-  >({
-    url: "/v2/terrafund/project-polygon/{uuid}/{entityUuid}/{entityType}",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/project-polygon/{uuid}/{entityUuid}/{entityType}", method: "post", ...variables, signal });
 
 /**
  * Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
@@ -33418,10 +32392,7 @@ export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
     PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables
   >(
     (variables: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables) =>
-      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -33470,12 +32441,7 @@ export const fetchDeleteV2TerrafundProjectPolygons = (
     {},
     {},
     {}
-  >({
-    url: "/v2/terrafund/project-polygons",
-    method: "delete",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/project-polygons", method: "delete", ...variables, signal });
 
 export const useDeleteV2TerrafundProjectPolygons = (
   options?: Omit<
@@ -33494,10 +32460,7 @@ export const useDeleteV2TerrafundProjectPolygons = (
     DeleteV2TerrafundProjectPolygonsVariables
   >(
     (variables: DeleteV2TerrafundProjectPolygonsVariables) =>
-      fetchDeleteV2TerrafundProjectPolygons({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchDeleteV2TerrafundProjectPolygons({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -33560,11 +32523,7 @@ export const useGetV2DashboardJobsCreated = <TData = GetV2DashboardJobsCreatedRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardJobsCreatedResponse, GetV2DashboardJobsCreatedError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/jobs-created",
-      operationId: "getV2DashboardJobsCreated",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/jobs-created", operationId: "getV2DashboardJobsCreated", variables }),
     ({ signal }) => fetchGetV2DashboardJobsCreated({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -33628,12 +32587,7 @@ export const fetchGetV2DashboardRestorationStrategy = (
     {},
     GetV2DashboardRestorationStrategyQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/restoration-strategy",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/restoration-strategy", method: "get", ...variables, signal });
 
 export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardRestorationStrategyResponse>(
   variables: GetV2DashboardRestorationStrategyVariables,
@@ -33722,12 +32676,7 @@ export const fetchGetV2DashboardTreeRestorationGoal = (
     {},
     GetV2DashboardTreeRestorationGoalQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/tree-restoration-goal",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/tree-restoration-goal", method: "get", ...variables, signal });
 
 export const useGetV2DashboardTreeRestorationGoal = <TData = GetV2DashboardTreeRestorationGoalResponse>(
   variables: GetV2DashboardTreeRestorationGoalVariables,
@@ -33845,11 +32794,7 @@ export const useGetV2DashboardGetPolygons = <TData = GetV2DashboardGetPolygonsRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardGetPolygonsResponse, GetV2DashboardGetPolygonsError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/get-polygons",
-      operationId: "getV2DashboardGetPolygons",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/get-polygons", operationId: "getV2DashboardGetPolygons", variables }),
     ({ signal }) => fetchGetV2DashboardGetPolygons({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -33889,12 +32834,7 @@ export const fetchGetV2DashboardGetPolygonsStatuses = (
     {},
     GetV2DashboardGetPolygonsStatusesQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/get-polygons/statuses",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/get-polygons/statuses", method: "get", ...variables, signal });
 
 /**
  * This endpoint returns all polygons by project uuid.
@@ -33953,12 +32893,7 @@ export const fetchGetV2DashboardGetBboxProject = (
     {},
     GetV2DashboardGetBboxProjectQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/get-bbox-project",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/get-bbox-project", method: "get", ...variables, signal });
 
 export const useGetV2DashboardGetBboxProject = <TData = GetV2DashboardGetBboxProjectResponse>(
   variables: GetV2DashboardGetBboxProjectVariables,
@@ -33969,11 +32904,7 @@ export const useGetV2DashboardGetBboxProject = <TData = GetV2DashboardGetBboxPro
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardGetBboxProjectResponse, GetV2DashboardGetBboxProjectError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/get-bbox-project",
-      operationId: "getV2DashboardGetBboxProject",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/get-bbox-project", operationId: "getV2DashboardGetBboxProject", variables }),
     ({ signal }) => fetchGetV2DashboardGetBboxProject({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34018,11 +32949,7 @@ export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/bbox/project",
-      operationId: "getV2DashboardBboxProject",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/bbox/project", operationId: "getV2DashboardBboxProject", variables }),
     ({ signal }) => fetchGetV2DashboardBboxProject({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34059,12 +32986,7 @@ export const fetchGetV2DashboardCountryCountry = (
     {},
     {},
     GetV2DashboardCountryCountryPathParams
-  >({
-    url: "/v2/dashboard/country/{country}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/country/{country}", method: "get", ...variables, signal });
 
 export const useGetV2DashboardCountryCountry = <TData = GetV2DashboardCountryCountryResponse>(
   variables: GetV2DashboardCountryCountryVariables,
@@ -34075,11 +32997,7 @@ export const useGetV2DashboardCountryCountry = <TData = GetV2DashboardCountryCou
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardCountryCountryResponse, GetV2DashboardCountryCountryError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/country/{country}",
-      operationId: "getV2DashboardCountryCountry",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/country/{country}", operationId: "getV2DashboardCountryCountry", variables }),
     ({ signal }) => fetchGetV2DashboardCountryCountry({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34129,12 +33047,7 @@ export const fetchGetV2DashboardPolygonDataUuid = (
     {},
     {},
     GetV2DashboardPolygonDataUuidPathParams
-  >({
-    url: "/v2/dashboard/polygon-data/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/polygon-data/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDataUuidResponse>(
   variables: GetV2DashboardPolygonDataUuidVariables,
@@ -34145,11 +33058,7 @@ export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDa
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardPolygonDataUuidResponse, GetV2DashboardPolygonDataUuidError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/polygon-data/{uuid}",
-      operationId: "getV2DashboardPolygonDataUuid",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/polygon-data/{uuid}", operationId: "getV2DashboardPolygonDataUuid", variables }),
     ({ signal }) => fetchGetV2DashboardPolygonDataUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34199,12 +33108,7 @@ export const fetchGetV2DashboardProjectDataUuid = (
     {},
     {},
     GetV2DashboardProjectDataUuidPathParams
-  >({
-    url: "/v2/dashboard/project-data/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/project-data/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDataUuidResponse>(
   variables: GetV2DashboardProjectDataUuidVariables,
@@ -34215,11 +33119,7 @@ export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDa
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardProjectDataUuidResponse, GetV2DashboardProjectDataUuidError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/project-data/{uuid}",
-      operationId: "getV2DashboardProjectDataUuid",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/project-data/{uuid}", operationId: "getV2DashboardProjectDataUuid", variables }),
     ({ signal }) => fetchGetV2DashboardProjectDataUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34286,12 +33186,7 @@ export const fetchGetV2DashboardActiveProjects = (
     {},
     GetV2DashboardActiveProjectsQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/active-projects",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/active-projects", method: "get", ...variables, signal });
 
 /**
  * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
@@ -34305,11 +33200,7 @@ export const useGetV2DashboardActiveProjects = <TData = GetV2DashboardActiveProj
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/active-projects",
-      operationId: "getV2DashboardActiveProjects",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/active-projects", operationId: "getV2DashboardActiveProjects", variables }),
     ({ signal }) => fetchGetV2DashboardActiveProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34390,12 +33281,7 @@ export const fetchGetV2DashboardVolunteersSurvivalRate = (
     {},
     GetV2DashboardVolunteersSurvivalRateQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/volunteers-survival-rate",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/volunteers-survival-rate", method: "get", ...variables, signal });
 
 /**
  * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
@@ -34490,12 +33376,7 @@ export const fetchGetV2DashboardTotalSectionHeader = (
     {},
     GetV2DashboardTotalSectionHeaderQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/total-section-header",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/total-section-header", method: "get", ...variables, signal });
 
 /**
  * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
@@ -34565,12 +33446,7 @@ export const fetchGetV2DashboardActiveCountries = (
     {},
     GetV2DashboardActiveCountriesQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/active-countries",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/active-countries", method: "get", ...variables, signal });
 
 /**
  * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
@@ -34584,11 +33460,7 @@ export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCou
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/active-countries",
-      operationId: "getV2DashboardActiveCountries",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/active-countries", operationId: "getV2DashboardActiveCountries", variables }),
     ({ signal }) => fetchGetV2DashboardActiveCountries({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34646,11 +33518,7 @@ export const useGetV2DashboardCountries = <TData = GetV2DashboardCountriesRespon
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardCountriesResponse, GetV2DashboardCountriesError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/countries",
-      operationId: "getV2DashboardCountries",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/countries", operationId: "getV2DashboardCountries", variables }),
     ({ signal }) => fetchGetV2DashboardCountries({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34712,11 +33580,7 @@ export const useGetV2DashboardGetProjects = <TData = GetV2DashboardGetProjectsRe
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/get-projects",
-      operationId: "getV2DashboardGetProjects",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/get-projects", operationId: "getV2DashboardGetProjects", variables }),
     ({ signal }) => fetchGetV2DashboardGetProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34772,12 +33636,7 @@ export const fetchGetV2DashboardProjectDetailsProject = (
     {},
     {},
     GetV2DashboardProjectDetailsProjectPathParams
-  >({
-    url: "/v2/dashboard/project-details/{project}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/project-details/{project}", method: "get", ...variables, signal });
 
 /**
  * This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
@@ -34853,12 +33712,7 @@ export const fetchGetV2DashboardTopTreesPlanted = (
     {},
     GetV2DashboardTopTreesPlantedQueryParams,
     {}
-  >({
-    url: "/v2/dashboard/top-trees-planted",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/top-trees-planted", method: "get", ...variables, signal });
 
 /**
  * This endpoint returns Tops and metrics related to projects and tree species.
@@ -34872,11 +33726,7 @@ export const useGetV2DashboardTopTreesPlanted = <TData = GetV2DashboardTopTreesP
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/top-trees-planted",
-      operationId: "getV2DashboardTopTreesPlanted",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/top-trees-planted", operationId: "getV2DashboardTopTreesPlanted", variables }),
     ({ signal }) => fetchGetV2DashboardTopTreesPlanted({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -34939,11 +33789,7 @@ export const useGetV2ProjectPipeline = <TData = GetV2ProjectPipelineResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectPipelineResponse, GetV2ProjectPipelineError, TData>(
-    queryKeyFn({
-      path: "/v2/project-pipeline",
-      operationId: "getV2ProjectPipeline",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/project-pipeline", operationId: "getV2ProjectPipeline", variables }),
     ({ signal }) => fetchGetV2ProjectPipeline({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -35069,11 +33915,7 @@ export const useGetV2ProjectPipelineId = <TData = GetV2ProjectPipelineIdResponse
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2ProjectPipelineIdResponse, GetV2ProjectPipelineIdError, TData>(
-    queryKeyFn({
-      path: "/v2/project-pipeline/{id}",
-      operationId: "getV2ProjectPipelineId",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/project-pipeline/{id}", operationId: "getV2ProjectPipelineId", variables }),
     ({ signal }) => fetchGetV2ProjectPipelineId({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -35205,12 +34047,7 @@ export const fetchGetV2DashboardViewProjectUuid = (
     {},
     {},
     GetV2DashboardViewProjectUuidPathParams
-  >({
-    url: "/v2/dashboard/view-project/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/dashboard/view-project/{uuid}", method: "get", ...variables, signal });
 
 export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProjectUuidResponse>(
   variables: GetV2DashboardViewProjectUuidVariables,
@@ -35221,11 +34058,7 @@ export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProje
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/view-project/{uuid}",
-      operationId: "getV2DashboardViewProjectUuid",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/dashboard/view-project/{uuid}", operationId: "getV2DashboardViewProjectUuid", variables }),
     ({ signal }) => fetchGetV2DashboardViewProjectUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -35276,12 +34109,7 @@ export const fetchGetV2TerrafundPolygonGeojsonUuid = (
     {},
     {},
     GetV2TerrafundPolygonGeojsonUuidPathParams
-  >({
-    url: "/v2/terrafund/polygon/geojson/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/polygon/geojson/{uuid}", method: "get", ...variables, signal });
 
 /**
  * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
@@ -35428,11 +34256,7 @@ export const useGetV2TypeEntity = <TData = GetV2TypeEntityResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2TypeEntityResponse, GetV2TypeEntityError, TData>(
-    queryKeyFn({
-      path: "/v2/type-entity",
-      operationId: "getV2TypeEntity",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/type-entity", operationId: "getV2TypeEntity", variables }),
     ({ signal }) => fetchGetV2TypeEntity({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -35549,12 +34373,7 @@ export const fetchGetV2ProjectsUUIDSitePolygonsAll = (
     {},
     {},
     GetV2ProjectsUUIDSitePolygonsAllPathParams
-  >({
-    url: "/v2/projects/{uuid}/site-polygons/all",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/projects/{uuid}/site-polygons/all", method: "get", ...variables, signal });
 
 export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSitePolygonsAllResponse>(
   variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
@@ -35602,12 +34421,7 @@ export const fetchGetV2SitesSiteCheckApprove = (variables: GetV2SitesSiteCheckAp
     {},
     {},
     GetV2SitesSiteCheckApprovePathParams
-  >({
-    url: "/v2/sites/{site}/check-approve",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/sites/{site}/check-approve", method: "get", ...variables, signal });
 
 export const useGetV2SitesSiteCheckApprove = <TData = GetV2SitesSiteCheckApproveResponse>(
   variables: GetV2SitesSiteCheckApproveVariables,
@@ -35618,11 +34432,7 @@ export const useGetV2SitesSiteCheckApprove = <TData = GetV2SitesSiteCheckApprove
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitesSiteCheckApproveResponse, GetV2SitesSiteCheckApproveError, TData>(
-    queryKeyFn({
-      path: "/v2/sites/{site}/check-approve",
-      operationId: "getV2SitesSiteCheckApprove",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/sites/{site}/check-approve", operationId: "getV2SitesSiteCheckApprove", variables }),
     ({ signal }) => fetchGetV2SitesSiteCheckApprove({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -35703,12 +34513,7 @@ export const fetchPutV2SitePolygonStatusBulk = (variables: PutV2SitePolygonStatu
     {},
     {},
     {}
-  >({
-    url: "/v2/site-polygon/status/bulk",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/site-polygon/status/bulk", method: "put", ...variables, signal });
 
 export const usePutV2SitePolygonStatusBulk = (
   options?: Omit<
@@ -35814,11 +34619,7 @@ export const useGetV2SitePolygonUuid = <TData = GetV2SitePolygonUuidResponse>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitePolygonUuidResponse, GetV2SitePolygonUuidError, TData>(
-    queryKeyFn({
-      path: "/v2/site-polygon/{uuid}",
-      operationId: "getV2SitePolygonUuid",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/site-polygon/{uuid}", operationId: "getV2SitePolygonUuid", variables }),
     ({ signal }) => fetchGetV2SitePolygonUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -35903,12 +34704,7 @@ export const fetchGetV2SitePolygonUuidVersions = (
     {},
     {},
     GetV2SitePolygonUuidVersionsPathParams
-  >({
-    url: "/v2/site-polygon/{uuid}/versions",
-    method: "get",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/site-polygon/{uuid}/versions", method: "get", ...variables, signal });
 
 export const useGetV2SitePolygonUuidVersions = <TData = GetV2SitePolygonUuidVersionsResponse>(
   variables: GetV2SitePolygonUuidVersionsVariables,
@@ -35919,11 +34715,7 @@ export const useGetV2SitePolygonUuidVersions = <TData = GetV2SitePolygonUuidVers
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
   return reactQuery.useQuery<GetV2SitePolygonUuidVersionsResponse, GetV2SitePolygonUuidVersionsError, TData>(
-    queryKeyFn({
-      path: "/v2/site-polygon/{uuid}/versions",
-      operationId: "getV2SitePolygonUuidVersions",
-      variables
-    }),
+    queryKeyFn({ path: "/v2/site-polygon/{uuid}/versions", operationId: "getV2SitePolygonUuidVersions", variables }),
     ({ signal }) => fetchGetV2SitePolygonUuidVersions({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
@@ -36008,12 +34800,7 @@ export const fetchPostV2SitePolygonUuidNewVersion = (
     {},
     {},
     PostV2SitePolygonUuidNewVersionPathParams
-  >({
-    url: "/v2/site-polygon/{uuid}/new-version",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/site-polygon/{uuid}/new-version", method: "post", ...variables, signal });
 
 export const usePostV2SitePolygonUuidNewVersion = (
   options?: Omit<
@@ -36113,12 +34900,7 @@ export const fetchPutV2SitePolygonUuidMakeActive = (
     {},
     {},
     PutV2SitePolygonUuidMakeActivePathParams
-  >({
-    url: "/v2/site-polygon/{uuid}/make-active",
-    method: "put",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/site-polygon/{uuid}/make-active", method: "put", ...variables, signal });
 
 export const usePutV2SitePolygonUuidMakeActive = (
   options?: Omit<
@@ -36211,12 +34993,7 @@ export const fetchPostV2TerrafundClipPolygonsPolygonUuid = (
     {},
     {},
     PostV2TerrafundClipPolygonsPolygonUuidPathParams
-  >({
-    url: "/v2/terrafund/clip-polygons/polygon/{uuid}",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/clip-polygons/polygon/{uuid}", method: "post", ...variables, signal });
 
 /**
  * Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
@@ -36238,10 +35015,7 @@ export const usePostV2TerrafundClipPolygonsPolygonUuid = (
     PostV2TerrafundClipPolygonsPolygonUuidVariables
   >(
     (variables: PostV2TerrafundClipPolygonsPolygonUuidVariables) =>
-      fetchPostV2TerrafundClipPolygonsPolygonUuid({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundClipPolygonsPolygonUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -36280,12 +35054,7 @@ export const fetchPostV2TerrafundClipPolygonsSiteUuid = (
     {},
     {},
     PostV2TerrafundClipPolygonsSiteUuidPathParams
-  >({
-    url: "/v2/terrafund/clip-polygons/site/{uuid}",
-    method: "post",
-    ...variables,
-    signal
-  });
+  >({ url: "/v2/terrafund/clip-polygons/site/{uuid}", method: "post", ...variables, signal });
 
 /**
  * Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
@@ -36307,10 +35076,7 @@ export const usePostV2TerrafundClipPolygonsSiteUuid = (
     PostV2TerrafundClipPolygonsSiteUuidVariables
   >(
     (variables: PostV2TerrafundClipPolygonsSiteUuidVariables) =>
-      fetchPostV2TerrafundClipPolygonsSiteUuid({
-        ...fetcherOptions,
-        ...variables
-      }),
+      fetchPostV2TerrafundClipPolygonsSiteUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };

@@ -6,6 +6,7 @@ interface BlurContainerProps {
   children: React.ReactNode;
   className?: string;
 }
+
 const BlurContainer = (props: BlurContainerProps) => {
   const { isCollapse, children, className } = props;
   return (

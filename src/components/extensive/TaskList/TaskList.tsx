@@ -35,13 +35,13 @@ const TaskList = (props: TaskListProps) => {
       </div>
       <List
         as="div"
-        className="flex flex-col gap-8 bg-no-repeat pb-10 pt-8"
+        className="flex flex-col gap-8 bg-no-repeat pt-8 pb-10"
         items={props.items}
         itemAs={Fragment}
         render={item => {
           return (
             <div
-              className={classNames("flex items-center justify-between gap-6 rounded-xl border px-12 py-6 ", {
+              className={classNames("flex items-center justify-between gap-6 rounded-xl border py-6 px-12 ", {
                 "border-neutral-200 bg-white": !item.done,
                 "border-secondary-500 bg-success-100": item.done
               })}

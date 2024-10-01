@@ -82,7 +82,7 @@ const StepProgressbar = ({
 
         <div
           {...rest}
-          className={`absolute left-[10px] top-[5px] h-[9px] w-[calc(100%_-_20px)] rounded-full bg-neutral-200 lg:left-[12px] lg:top-2 lg:w-[calc(100%_-_24px)] wide:left-[14px] wide:top-[10px] wide:w-[calc(100%_-_28px)]`}
+          className={`absolute top-[5px] left-[10px] h-[9px] w-[calc(100%_-_20px)] rounded-full bg-neutral-200 lg:top-2 lg:left-[12px] lg:w-[calc(100%_-_24px)] wide:top-[10px] wide:left-[14px] wide:w-[calc(100%_-_28px)]`}
           role="progressbar"
         >
           <div

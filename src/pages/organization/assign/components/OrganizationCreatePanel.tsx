@@ -38,7 +38,7 @@ const OrganizationAssignPanel = ({ loading, searchedTerm, organizations }: Organ
               </Text>
             </Then>
             <Else>
-              <Text variant="text-body-500" className="mb-2 mt-6">
+              <Text variant="text-body-500" className="mt-6 mb-2">
                 {t(`{number} existing organizations found for "{searchedTerm}"`, {
                   searchedTerm,
                   number: organizations.length

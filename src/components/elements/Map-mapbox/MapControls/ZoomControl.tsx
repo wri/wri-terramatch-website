@@ -26,7 +26,7 @@ export const ZoomControl = ({ map }: { map: mapboxgl.Map | null }) => {
           height: 24
         }}
         onClick={() => map?.zoomOut()}
-        className="rounded-b-lg rounded-t-none p-[10px]"
+        className="rounded-t-none rounded-b-lg p-[10px]"
         aria-label="Zoom out"
       />
     </ControlButtonsGroup>

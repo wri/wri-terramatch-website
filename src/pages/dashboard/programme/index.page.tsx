@@ -8,7 +8,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 import ContentOverview from "../components/ContentOverview";
-import SecDashboard from "../components/secDashboard";
+import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
   JOBS_CREATED_BY_AGE,
@@ -86,7 +86,7 @@ const Dashboard = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {item.value}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-56">
+                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>
@@ -106,7 +106,7 @@ const Dashboard = () => {
             )}
           >
             <SecDashboard
-              title="Number of trees planted"
+              title={t("Number of trees planted")}
               type="legend"
               secondOptionsData={LABEL_LEGEND}
               data={NUMBER_OF_TREES_PLANTED}
@@ -115,6 +115,7 @@ const Dashboard = () => {
               title="Number of Trees Planted by Year"
               type="toggle"
               secondOptionsData={dataToggle}
+              tooltipGraphic={true}
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
             />
             <SecDashboard
