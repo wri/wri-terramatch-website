@@ -11,9 +11,9 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { DashboardDataProps } from "../index.page";
-import GraphicDashboard from "./raphicDashboard";
-import GraphicIconDashoard from "./raphicIconDashoard";
-import ValueNumberDashboard from "./valueNumberDashboard";
+import ValueNumberDashboard from "./alueNumberDashboard";
+import GraphicDashboard from "./GraphicDashboard";
+import GraphicIconDashoard from "./GraphicIconDashoard";
 
 const SecDashboard = ({
   title,

@@ -8,7 +8,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 import ContentOverview from "./components/ContentOverview";
-import SecDashboard from "./components/ecDashboard";
+import SecDashboard from "./components/SecDashboard";
 import { RefContext } from "./context/ScrollContext.provider";
 import {
   JOBS_CREATED_BY_AGE,
