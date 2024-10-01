@@ -7,7 +7,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-import ContentOverview from "../components/ContentOverview";
+import ContentOverviewProject from "../components/ContentOverviewProject";
 import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
@@ -216,7 +216,7 @@ const ProjectView = () => {
         </PageRow>
       </div>
 
-      <ContentOverview />
+      <ContentOverviewProject />
     </div>
   );
 };

@@ -14,7 +14,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
     <RefProvider>
       <div className="flex max-h-screen min-h-screen w-full">
         <Sidebar />
-        <main className={`flex flex-[1_1_0] flex-col ${props.className}`}>
+        <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className}`}>
           <HeaderDashboard />
           {props.children}
         </main>
