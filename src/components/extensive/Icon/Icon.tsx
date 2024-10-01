@@ -167,7 +167,6 @@ export enum IconNames {
   TREE_CIRCLE_HOMEPAGE = "tree-circle-home",
   IC_A_TO_Z_CUSTOM = "ic-a-to-z-custom",
   IC_Z_TO_A_CUSTOM = "ic-z-to-a-custom",
-  EDIT_PA = "edit-pa",
   TERRAFUND_lOGO_MINI = "ic-terrafund-mini",
   DASHBOARDS = "dashboards",
   PROJECT_PROFILE = "project-profile",
@@ -185,7 +184,8 @@ export enum IconNames {
   IC_URBAN_FOREST = "targetLand/UrbanForest",
   IC_SILVOPASTURE = "targetLand/Silvopasture",
   IC_PEATLAND = "targetLand/Peatland",
-  IC_LEGEND_MAP = "ic-legend-map"
+  IC_LEGEND_MAP = "ic-legend-map",
+  EDIT_PA = "edit-pa"
 }
 
 export interface IconProps {
