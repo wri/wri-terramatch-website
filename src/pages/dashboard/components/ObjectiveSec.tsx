@@ -3,7 +3,7 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
-import { DashboardDataProps } from "../project-view/index.page";
+import { DashboardDataProps } from "../project/index.page";
 
 const ObjectiveSec = ({ data }: { data: DashboardDataProps }) => {
   const t = useT();
