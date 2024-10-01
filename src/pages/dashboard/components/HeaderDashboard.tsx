@@ -136,7 +136,7 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]">
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
