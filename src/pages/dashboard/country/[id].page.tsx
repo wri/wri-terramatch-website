@@ -1,18 +1,19 @@
 import { useT } from "@transifex/react";
-import { useContext } from "react";
+import React, { useContext } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-import ContentOverview from "./components/ContentOverview";
-import SecDashboard from "./components/SecDashboard";
-import { RefContext } from "./context/ScrollContext.provider";
+import ContentOverview from "../components/ContentOverview";
+import SecDashboard from "../components/secDashboard";
+import { RefContext } from "../context/ScrollContext.provider";
 import {
-  COLUMN_ACTIVE_PROGRAMME,
-  DATA_ACTIVE_PROGRAMME,
+  COLUMN_ACTIVE_COUNTRY,
+  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -28,36 +29,14 @@ import {
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
-} from "./mockedData/dashboard";
+} from "../mockedData/dashboard";
 
-export interface DashboardTableDataProps {
-  label: string;
-  valueText: string;
-  value: number;
-}
-
-export interface GraphicLegendProps {
-  label: string;
-  value: string;
-  color: string;
-}
-
-export interface DashboardDataProps {
-  value?: string;
-  unit?: string;
-  secondValue?: string;
-  graphic?: string;
-  tableData?: DashboardTableDataProps[];
-  maxValue?: number;
-  graphicLegend?: GraphicLegendProps[];
-  graphicTargetLandUseTypes?: DashboardTableDataProps[];
-}
-
-const Dashboard = () => {
+const Country = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
+
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -88,7 +67,7 @@ const Dashboard = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {item.value}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
+                  <ToolTip content={item.label} placement="top" width="w-56">
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>
@@ -210,9 +189,9 @@ const Dashboard = () => {
         </PageRow>
       </div>
 
-      <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
+      <ContentOverview data={DATA_ACTIVE_COUNTRY} columns={COLUMN_ACTIVE_COUNTRY} />
     </div>
   );
 };
 
-export default Dashboard;
+export default Country;

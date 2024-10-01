@@ -1,3 +1,4 @@
+import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { useState } from "react";
@@ -11,35 +12,18 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { ACTIVE_COUNTRIES } from "../mockedData/dashboard";
 import { TooltipGridMap } from "./TooltipGridMap";
 
-const ContentOverview = () => {
+interface ContentOverviewProps<TData> {
+  data: TData[];
+  columns: ColumnDef<TData>[];
+}
+
+const ContentOverview = (props: ContentOverviewProps<RowData>) => {
+  const { data, columns } = props;
   const [collapseMap, setCollapseMap] = useState(false);
   const t = useT();
 
-  const columnsActiveCountries = [
-    {
-      header: "Country",
-      accessorKey: "country"
-    },
-    {
-      header: "Projest",
-      accessorKey: "project"
-    },
-    {
-      header: "Trees Planted",
-      accessorKey: "treesPlanted"
-    },
-    {
-      header: "Hectares Restoration",
-      accessorKey: "hectaresRestoration"
-    },
-    {
-      header: "Jobs Created",
-      accessorKey: "jobsCreated"
-    }
-  ];
   return (
     <div className="flex w-2/5">
       <div
@@ -70,7 +54,7 @@ const ContentOverview = () => {
         </div>
 
         <div
-          className={classNames("z-10 overflow-hidden rounded-xl bg-white p-4 shadow-all", { "-mt-2": !collapseMap })}
+          className={classNames("z-[5] overflow-hidden rounded-xl bg-white p-4 shadow-all", { "-mt-2": !collapseMap })}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -100,11 +84,7 @@ const ContentOverview = () => {
             })}
           >
             <div className="flex-1 overflow-auto">
-              <Table
-                columns={columnsActiveCountries}
-                data={ACTIVE_COUNTRIES}
-                variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
-              />
+              <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
             </div>
           </div>
         </div>

@@ -11,6 +11,8 @@ import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
+  COLUMN_ACTIVE_PROGRAMME,
+  DATA_ACTIVE_PROGRAMME,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -209,7 +211,7 @@ const Dashboard = () => {
         </PageRow>
       </div>
 
-      <ContentOverview />
+      <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
     </div>
   );
 };

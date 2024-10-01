@@ -58,7 +58,7 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
       </div>
       <div className="w-full">
         {data.map((item, index) => {
-          console.log(item);
+          // console.log(item);
           return (
             <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
               <div className="flex w-full justify-between">

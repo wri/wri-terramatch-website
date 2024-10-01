@@ -187,173 +187,236 @@ export const VOLUNTEERS_CREATED_BY_AGE = {
   ]
 };
 
-export const ACTIVE_COUNTRIES = [
+export const COLUMN_ACTIVE_PROGRAMME = [
+  {
+    header: "Country",
+    accessorKey: "country"
+  },
+  {
+    header: "Projest",
+    accessorKey: "project"
+  },
+  {
+    header: "Trees Planted",
+    accessorKey: "treesPlanted"
+  },
+  {
+    header: "Restoration Hectares",
+    accessorKey: "restoratioHectares"
+  },
+  {
+    header: "Jobs Created",
+    accessorKey: "jobsCreated"
+  }
+];
+
+export const DATA_ACTIVE_PROGRAMME = [
   {
     country: "Angola",
     project: "32",
     treesPlanted: "2,234",
-    hectaresRestoration: "2,234",
+    restoratioHectares: "2,234",
     jobsCreated: "1306"
   },
   {
     country: "Liberia",
     project: "14",
     treesPlanted: "760",
-    hectaresRestoration: "760",
+    restoratioHectares: "760",
     jobsCreated: "430"
   },
   {
     country: "Kenya",
     project: "25",
     treesPlanted: "787",
-    hectaresRestoration: "787",
+    restoratioHectares: "787",
     jobsCreated: "636"
   },
   {
     country: "Mozambique",
     project: "8",
     treesPlanted: "1,838",
-    hectaresRestoration: "1,838",
+    restoratioHectares: "1,838",
     jobsCreated: "1,767"
   },
   {
     country: "Sierra Leone",
     project: "19",
     treesPlanted: "2,058",
-    hectaresRestoration: "2,058",
+    restoratioHectares: "2,058",
     jobsCreated: "1,213"
   },
   {
     country: "Tanzania",
     project: "5",
     treesPlanted: "3,816",
-    hectaresRestoration: "3,816",
+    restoratioHectares: "3,816",
     jobsCreated: "3,720"
   },
   {
     country: "Angola",
     project: "32",
     treesPlanted: "2,234",
-    hectaresRestoration: "2,234",
+    restoratioHectares: "2,234",
     jobsCreated: "1306"
   },
   {
     country: "Liberia",
     project: "14",
     treesPlanted: "760",
-    hectaresRestoration: "760",
+    restoratioHectares: "760",
     jobsCreated: "430"
   },
   {
     country: "Kenya",
     project: "25",
     treesPlanted: "787",
-    hectaresRestoration: "787",
+    restoratioHectares: "787",
     jobsCreated: "636"
   },
   {
     country: "Mozambique",
     project: "8",
     treesPlanted: "1,838",
-    hectaresRestoration: "1,838",
+    restoratioHectares: "1,838",
     jobsCreated: "1,767"
   },
   {
     country: "Sierra Leone",
     project: "19",
     treesPlanted: "2,058",
-    hectaresRestoration: "2,058",
+    restoratioHectares: "2,058",
     jobsCreated: "1,213"
   },
   {
     country: "Tanzania",
     project: "5",
     treesPlanted: "3,816",
-    hectaresRestoration: "3,816",
+    restoratioHectares: "3,816",
     jobsCreated: "3,720"
   },
   {
     country: "Angola",
     project: "32",
     treesPlanted: "2,234",
-    hectaresRestoration: "2,234",
+    restoratioHectares: "2,234",
     jobsCreated: "1306"
   },
   {
     country: "Liberia",
     project: "14",
     treesPlanted: "760",
-    hectaresRestoration: "760",
+    restoratioHectares: "760",
     jobsCreated: "430"
   },
   {
     country: "Kenya",
     project: "25",
     treesPlanted: "787",
-    hectaresRestoration: "787",
+    restoratioHectares: "787",
     jobsCreated: "636"
   },
   {
     country: "Mozambique",
     project: "8",
     treesPlanted: "1,838",
-    hectaresRestoration: "1,838",
+    restoratioHectares: "1,838",
     jobsCreated: "1,767"
   },
   {
     country: "Sierra Leone",
     project: "19",
     treesPlanted: "2,058",
-    hectaresRestoration: "2,058",
+    restoratioHectares: "2,058",
     jobsCreated: "1,213"
   },
   {
     country: "Tanzania",
     project: "5",
     treesPlanted: "3,816",
-    hectaresRestoration: "3,816",
+    restoratioHectares: "3,816",
     jobsCreated: "3,720"
   },
   {
     country: "Angola",
     project: "32",
     treesPlanted: "2,234",
-    hectaresRestoration: "2,234",
+    restoratioHectares: "2,234",
     jobsCreated: "1306"
   },
   {
     country: "Liberia",
     project: "14",
     treesPlanted: "760",
-    hectaresRestoration: "760",
+    restoratioHectares: "760",
     jobsCreated: "430"
   },
   {
     country: "Kenya",
     project: "25",
     treesPlanted: "787",
-    hectaresRestoration: "787",
+    restoratioHectares: "787",
     jobsCreated: "636"
   },
   {
     country: "Mozambique",
     project: "8",
     treesPlanted: "1,838",
-    hectaresRestoration: "1,838",
+    restoratioHectares: "1,838",
     jobsCreated: "1,767"
   },
   {
     country: "Sierra Leone",
     project: "19",
     treesPlanted: "2,058",
-    hectaresRestoration: "2,058",
+    restoratioHectares: "2,058",
     jobsCreated: "1,213"
   },
   {
     country: "Tanzania",
     project: "5",
     treesPlanted: "3,816",
-    hectaresRestoration: "3,816",
+    restoratioHectares: "3,816",
     jobsCreated: "3,720"
+  }
+];
+
+export const COLUMN_ACTIVE_COUNTRY = [
+  {
+    header: "Project",
+    accessorKey: "project"
+  },
+  {
+    header: "Trees Planted",
+    accessorKey: "treesPlanted"
+  },
+  {
+    header: "Restoration Hectares",
+    accessorKey: "restoratioHectares"
+  },
+  {
+    header: "Jobs Created",
+    accessorKey: "jobsCreated"
+  },
+  {
+    header: "Volunteers",
+    accessorKey: "volunteers"
+  }
+];
+
+export const DATA_ACTIVE_COUNTRY = [
+  {
+    project: "Resturation de mangroves et des peripheries de la chaine de I’Atacora au Benin - Eco - Benin",
+    treesPlanted: "14",
+    restoratioHectares: "200",
+    jobsCreated: "14",
+    volunteers: "760"
+  },
+  {
+    project: "Initiative bande verte durable - dedras",
+    treesPlanted: "14",
+    restoratioHectares: "3500",
+    jobsCreated: "3500",
+    volunteers: "760"
   }
 ];
