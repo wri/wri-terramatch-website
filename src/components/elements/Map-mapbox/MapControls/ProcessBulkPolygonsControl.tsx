@@ -13,8 +13,12 @@ const ProcessBulkPolygonsControl = () => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const context = useSitePolygonData();
-  const { selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox, setShouldRefetchPolygonData } =
-    useMapAreaContext();
+  const {
+    selectedPolygonsInCheckbox,
+    setSelectedPolygonsInCheckbox,
+    setShouldRefetchPolygonData,
+    setShouldRefetchValidation
+  } = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as Array<SitePolygon>;
   const openFormModalHandlerProcessBulkPolygons = (title: string, content: string, buttonLabel: string) => {
     openModal(
@@ -41,6 +45,8 @@ const ProcessBulkPolygonsControl = () => {
         selectedPolygonsInCheckbox={selectedPolygonsInCheckbox}
         refetch={() => {
           context?.reloadSiteData();
+
+          setShouldRefetchValidation(true);
           setShouldRefetchPolygonData(true);
           setSelectedPolygonsInCheckbox([]);
         }}

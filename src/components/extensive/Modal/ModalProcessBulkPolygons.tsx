@@ -50,7 +50,6 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
   const { mutate: checkPolygons } = usePostV2TerrafundValidationPolygons();
   const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
-
   useEffect(() => {
     if (sitePolygonData) {
       const initialSelection = sitePolygonData.map((polygon: any) =>
@@ -67,7 +66,6 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
       return newSelected;
     });
   };
-
   const handleSelectAll = (isChecked: boolean) => {
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
   };
@@ -107,10 +105,10 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
         },
         {
           onSuccess: () => {
-            onClose?.();
             refetch?.();
             hideLoader();
             openNotification("success", t("Success!"), t("Polygons checked successfully"));
+            onClose?.();
           },
           onError: () => {
             hideLoader();
@@ -131,12 +129,11 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             const unprocessedNames = response?.unprocessed?.map(item => item.poly_name).join(", ");
 
             const message = [
-              processedNames ? `Processed: ${processedNames}` : "",
-              unprocessedNames ? `Unprocessed: ${unprocessedNames}` : ""
+              processedNames ? `Fixed: ${processedNames}` : "",
+              unprocessedNames ? `Not Fixed: ${unprocessedNames}` : ""
             ]
               .filter(Boolean)
               .join(" | ");
-
             openNotification("success", t("Success!"), t(`Polygons fixed successfully. ${message}`));
 
             onClose?.();
