@@ -13,6 +13,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { ACTIVE_COUNTRIES } from "../mockedData/dashboard";
 import { TooltipGridMap } from "./TooltipGridMap";
+
 const ContentOverview = () => {
   const [collapseMap, setCollapseMap] = useState(false);
   const t = useT();
@@ -68,7 +69,9 @@ const ContentOverview = () => {
           </When>
         </div>
 
-        <div className={classNames("overflow-hidden rounded-xl bg-white p-4 shadow-all", { "-mt-2": !collapseMap })}>
+        <div
+          className={classNames("z-10 overflow-hidden rounded-xl bg-white p-4 shadow-all", { "-mt-2": !collapseMap })}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Text variant={"text-20-bold"}>{t("ACTIVE COUNTRIES")}</Text>
