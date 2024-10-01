@@ -13,7 +13,6 @@ import { ValidationError } from "yup";
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -28,6 +27,7 @@ import {
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   GetV2MODELUUIDFilesResponse,
+  useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
@@ -114,6 +114,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
+  entityData?: any;
 }
 
 export const MapContainer = ({
@@ -142,6 +143,7 @@ export const MapContainer = ({
   formMap,
   pdView = false,
   location,
+  entityData,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -164,10 +166,15 @@ export const MapContainer = ({
     editPolygon: editPolygonSelected,
     setEditPolygon,
     setShouldRefetchPolygonData,
+    setShouldRefetchMediaData,
     setStatusSelectedPolygon,
     selectedPolygonsInCheckbox
   } = contextMapArea;
-
+  const { mutateAsync: deleteFile } = useDeleteV2FilesUUID({
+    onSuccess() {
+      setShouldRefetchMediaData(true);
+    }
+  });
   if (!mapFunctions) {
     return null;
   }
@@ -256,48 +263,31 @@ export const MapContainer = ({
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
     const handleDelete = (id: string) => {
-      openModal(
-        ModalId.DELETE_IMAGE,
-        <Modal
-          title={t("Delete Image")}
-          content={t(
-            "Are you sure you want to delete this image? This action cannot be undone, and the image will be permanently removed."
-          )}
-          iconProps={{
-            height: 60,
-            width: 60,
-            className: "fill-error",
-            name: IconNames.TRASH_CIRCLE
-          }}
-          primaryButtonProps={{
-            children: t("Confirm Delete"),
-            onClick: () => {
-              closeModal(ModalId.DELETE_IMAGE);
-              // onDeleteConfirm(id);
-            }
-          }}
-          secondaryButtonProps={{
-            children: t("Cancel"),
-            onClick: () => closeModal(ModalId.DELETE_IMAGE)
-          }}
-        />
-      );
+      deleteFile({ pathParams: { uuid: id } });
+      closeModal(ModalId.DELETE_IMAGE);
     };
 
     const openModalImageDetail = (data: ImageGalleryItemData | any) => {
       const dataImage = {
-        raw: { ...data, location: JSON.parse(data.location) },
-        thumbnailImageUrl: data.file_url,
-        isGeotagged: true
+        uuid: data.uuid!,
+        fullImageUrl: data.file_url!,
+        thumbnailImageUrl: data.file_url!,
+        label: data.model_name,
+        isPublic: data.is_public!,
+        isGeotagged: true,
+        isCover: data.is_cover,
+        raw: { ...data, location: JSON.parse(data.location), created_date: data.created_date }
       };
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
         <ModalImageDetails
           title="IMAGE DETAILS"
           data={dataImage}
-          entityData={projectUUID}
+          entityData={entityData}
           onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
-          // reloadGalleryImages={reloadGalleryImages}
+          reloadGalleryImages={() => {
+            setShouldRefetchMediaData(true);
+          }}
           handleDelete={handleDelete}
         />,
         true
@@ -310,6 +300,7 @@ export const MapContainer = ({
       });
       if (result) {
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
+        setShouldRefetchMediaData(true);
       } else {
         openNotification("error", t("Error!"), t("Failed to set image as cover"));
       }

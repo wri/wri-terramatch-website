@@ -16,6 +16,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useLoading } from "@/context/loaderAdmin.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
   GetV2MODELUUIDFilesResponse,
@@ -47,6 +48,8 @@ const EntityMapAndGalleryCard = ({
   emptyStateContent
 }: EntityMapAndGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
+  const contextMapArea = useMapAreaContext();
+  const { shouldRefetchMediaData, setShouldRefetchMediaData } = contextMapArea;
   const t = useT();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<{ key: string; value: string }>();
@@ -140,6 +143,13 @@ const EntityMapAndGalleryCard = ({
     return mapping?.[modelName] || [];
   }, [modelName, t]);
 
+  useEffect(() => {
+    if (shouldRefetchMediaData) {
+      refetch();
+      setShouldRefetchMediaData(false);
+    }
+  }, [shouldRefetchMediaData]);
+
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
@@ -216,6 +226,7 @@ const EntityMapAndGalleryCard = ({
           hasControls
           showPopups
           modelFilesData={data?.data}
+          entityData={entityData}
         />
       </PageCard>
       <If

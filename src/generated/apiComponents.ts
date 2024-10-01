@@ -14833,6 +14833,7 @@ export type GetV2MODELUUIDFilesResponse = {
     file_url?: string;
     thumb_url?: string;
     file_name?: string;
+    name?: string;
     created_date?: string;
     model_name?: string;
     is_public?: boolean;
