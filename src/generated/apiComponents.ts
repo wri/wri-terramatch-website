@@ -35081,6 +35081,140 @@ export const usePostV2TerrafundClipPolygonsSiteUuid = (
   );
 };
 
+export type PostV2TerrafundClipPolygonsPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundClipPolygonsPolygonsResponse = {
+  /**
+   * A list of processed polygons
+   */
+  processed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+  /**
+   * A list of polygons that couldn't be processed
+   */
+  unprocessed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+};
+
+export type PostV2TerrafundClipPolygonsPolygonsRequestBody = {
+  uuids?: string[];
+};
+
+export type PostV2TerrafundClipPolygonsPolygonsVariables = {
+  body?: PostV2TerrafundClipPolygonsPolygonsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundClipPolygonsPolygons = (
+  variables: PostV2TerrafundClipPolygonsPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundClipPolygonsPolygonsResponse,
+    PostV2TerrafundClipPolygonsPolygonsError,
+    PostV2TerrafundClipPolygonsPolygonsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/clip-polygons/polygons", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundClipPolygonsPolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundClipPolygonsPolygonsResponse,
+      PostV2TerrafundClipPolygonsPolygonsError,
+      PostV2TerrafundClipPolygonsPolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundClipPolygonsPolygonsResponse,
+    PostV2TerrafundClipPolygonsPolygonsError,
+    PostV2TerrafundClipPolygonsPolygonsVariables
+  >(
+    (variables: PostV2TerrafundClipPolygonsPolygonsVariables) =>
+      fetchPostV2TerrafundClipPolygonsPolygons({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundValidationPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundValidationPolygonsResponse = {
+  /**
+   * A message indicating the completion of validation for all site polygons.
+   */
+  message?: string;
+};
+
+export type PostV2TerrafundValidationPolygonsRequestBody = {
+  uuids?: string[];
+};
+
+export type PostV2TerrafundValidationPolygonsVariables = {
+  body?: PostV2TerrafundValidationPolygonsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundValidationPolygons = (
+  variables: PostV2TerrafundValidationPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundValidationPolygonsResponse,
+    PostV2TerrafundValidationPolygonsError,
+    PostV2TerrafundValidationPolygonsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/validation/polygons", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundValidationPolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationPolygonsResponse,
+      PostV2TerrafundValidationPolygonsError,
+      PostV2TerrafundValidationPolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationPolygonsResponse,
+    PostV2TerrafundValidationPolygonsError,
+    PostV2TerrafundValidationPolygonsVariables
+  >(
+    (variables: PostV2TerrafundValidationPolygonsVariables) =>
+      fetchPostV2TerrafundValidationPolygons({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";

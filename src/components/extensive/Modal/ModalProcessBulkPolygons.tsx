@@ -8,7 +8,11 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Text from "@/components/elements/Text/Text";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useDeleteV2TerrafundProjectPolygons } from "@/generated/apiComponents";
+import {
+  useDeleteV2TerrafundProjectPolygons,
+  usePostV2TerrafundClipPolygonsPolygons,
+  usePostV2TerrafundValidationPolygons
+} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -44,6 +48,8 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
+  const { mutate: checkPolygons } = usePostV2TerrafundValidationPolygons();
+  const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
 
   useEffect(() => {
     if (sitePolygonData) {
@@ -66,31 +72,84 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
   };
 
-  const handleDelete = () => {
+  const handleProcess = () => {
     showLoader();
     const selectedUUIDs: any = sitePolygonData
       .filter((_, index) => polygonsSelected[index])
       .map(polygon => polygon.poly_id);
 
-    deletePolygons(
-      {
-        body: {
-          uuids: selectedUUIDs
-        }
-      },
-      {
-        onSuccess: () => {
-          onClose?.();
-          refetch?.();
-          hideLoader();
-          openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+    if (primaryButtonText === "Delete") {
+      deletePolygons(
+        {
+          body: {
+            uuids: selectedUUIDs
+          }
         },
-        onError: () => {
-          hideLoader();
-          openNotification("error", t("Error!"), t("Failed to delete polygons"));
+        {
+          onSuccess: () => {
+            onClose?.();
+            refetch?.();
+            hideLoader();
+            openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+          },
+          onError: () => {
+            hideLoader();
+            openNotification("error", t("Error!"), t("Failed to delete polygons"));
+          }
         }
-      }
-    );
+      );
+    } else if (primaryButtonText === "Check") {
+      checkPolygons(
+        {
+          body: {
+            uuids: selectedUUIDs
+          }
+        },
+        {
+          onSuccess: () => {
+            onClose?.();
+            refetch?.();
+            hideLoader();
+            openNotification("success", t("Success!"), t("Polygons checked successfully"));
+          },
+          onError: () => {
+            hideLoader();
+            openNotification("error", t("Error!"), t("Failed to check polygons"));
+          }
+        }
+      );
+    } else if (primaryButtonText === "Fix") {
+      fixPolygons(
+        {
+          body: {
+            uuids: selectedUUIDs
+          }
+        },
+        {
+          onSuccess: response => {
+            const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
+            const unprocessedNames = response?.unprocessed?.map(item => item.poly_name).join(", ");
+
+            const message = [
+              processedNames ? `Processed: ${processedNames}` : "",
+              unprocessedNames ? `Unprocessed: ${unprocessedNames}` : ""
+            ]
+              .filter(Boolean)
+              .join(" | ");
+
+            openNotification("success", t("Success!"), t(`Polygons fixed successfully. ${message}`));
+
+            onClose?.();
+            refetch?.();
+            hideLoader();
+          },
+          onError: () => {
+            hideLoader();
+            openNotification("error", t("Error!"), t("Failed to fix polygons"));
+          }
+        }
+      );
+    }
   };
 
   return (
@@ -152,7 +211,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps} onClick={handleDelete}>
+        <Button {...primaryButtonProps} onClick={handleProcess}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>

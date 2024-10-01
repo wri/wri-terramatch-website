@@ -22633,9 +22633,46 @@ export type SitePolygonLoaded = {
   version_name?: string;
 };
 
-export type ClippedPolygonsResponse = {
+export type ClippedPolygonResponse = {
   updated_polygons?: {
     uuid?: string;
+    poly_name?: string;
+  }[];
+};
+
+export type ClippedPolygonsResponse = {
+  /**
+   * A list of processed polygons
+   */
+  processed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+  /**
+   * A list of polygons that couldn't be processed
+   */
+  unprocessed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
     poly_name?: string;
   }[];
 };
