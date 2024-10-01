@@ -127,6 +127,6 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
     "first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-10 whitespace-normal px-1.5 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-10-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap",
+  tdBody: "text-10-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
   thead: "bg-blueCustom-100"
 };
