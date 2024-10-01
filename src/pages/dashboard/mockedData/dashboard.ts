@@ -357,3 +357,11 @@ export const ACTIVE_COUNTRIES = [
     jobsCreated: "3,720"
   }
 ];
+
+export const OBJETIVE = {
+  objetiveText: `Goshen Global Vision restores the vitality of the damaged forests of Western Ghana’s cocoa belt, where local incomes and soil quality are falling. Over the past five years, they have worked with 7,000 community members to establish a network of seven nurseries that has grown and planted 220,000 trees across 11,500 hectares.
+  
+  A grant will enable the organization to mobilize young people and women to grow hundreds of thousands of biodiverse native trees with high economic value, like African mahogany. By planting those trees to shade the crops of struggling cocoa farmers, they will build both economic and climate resilience in this vulnerable region.`,
+  preferredLanguage: "English",
+  landTenure: "Communal Government"
+};
