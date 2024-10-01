@@ -51,6 +51,9 @@ export interface DashboardDataProps {
   maxValue?: number;
   graphicLegend?: GraphicLegendProps[];
   graphicTargetLandUseTypes?: DashboardTableDataProps[];
+  objetiveText?: string;
+  preferredLanguage?: string;
+  landTenure?: string;
 }
 
 const Dashboard = () => {
