@@ -50,7 +50,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
         </p>
       </div>
       <p
-        className="mb-4 mt-1 text-12-light"
+        className="mt-1 mb-4 text-12-light"
         data-testid="txt"
       >
         Start by adding polygons to your site.
