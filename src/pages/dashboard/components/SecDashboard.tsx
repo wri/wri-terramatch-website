@@ -147,7 +147,9 @@ const SecDashboard = ({
         <When condition={!!data?.graphicTargetLandUseTypes}>
           <GraphicIconDashoard data={data?.graphicTargetLandUseTypes ?? []} />
         </When>
-        <ObjectiveSec data={data} />
+        <When condition={!!data?.objetiveText}>
+          <ObjectiveSec data={data} />
+        </When>
       </div>
     </div>
   );
