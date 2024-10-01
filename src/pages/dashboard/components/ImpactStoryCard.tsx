@@ -3,7 +3,7 @@ import React from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 interface ImpactStoryCardProps {
-  id: string;
+  key?: string;
   date: string;
   by: string;
   title: string;
