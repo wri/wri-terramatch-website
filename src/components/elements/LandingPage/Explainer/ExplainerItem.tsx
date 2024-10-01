@@ -16,7 +16,7 @@ export const ExplainerItem = (props: ExplainerItemProps) => {
   return (
     <div {...rest} className={classNames("flex flex-col items-center", className)}>
       <Icon name={iconName} className="fill-success" width={110} />
-      <Text variant="text-heading-200" className="mb-[10px] mt-6 md:mb-5">
+      <Text variant="text-heading-200" className="mt-6 mb-[10px] md:mb-5">
         {title}
       </Text>
       <Text variant="text-heading-100" className="max-w-[250px] text-center">

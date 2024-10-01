@@ -13,7 +13,7 @@ export interface UpcomingOpportunitiesProps {
 }
 const UpcomingOpportunities = (props: UpcomingOpportunitiesProps) => {
   return (
-    <LandingPageSectionLayout className="pb-9 pt-9 md:pb-29 md:pt-24" title={props.title} overridePadding>
+    <LandingPageSectionLayout className="pb-9 pt-9 md:pt-24 md:pb-29" title={props.title} overridePadding>
       <List
         className="mt-8 flex flex-wrap items-center justify-center gap-6"
         itemAs={Fragment}

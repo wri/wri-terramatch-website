@@ -12,7 +12,7 @@ const EmptyStateDisplay = () => {
     <>
       {!isUserDrawingEnabled && (
         <div className="absolute left-[58%] top-[38%] z-30 grid gap-2" id="emptystatedisplay">
-          <div className="rounded-lg bg-[#ffffff26] px-3 py-3 text-center text-white backdrop-blur-md">
+          <div className="rounded-lg bg-[#ffffff26] py-3 px-3 text-center text-white backdrop-blur-md">
             <Text variant="text-10-light">
               {t("Polygons have not been")}
               <br />

@@ -31,7 +31,7 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
           </When>
         </div>
         <div className="flex flex-1 flex-col items-start gap-1">
-          <Text variant="text-body-900" className=" line-clamp-1 capitalize">
+          <Text variant="text-body-900" className=" capitalize line-clamp-1">
             {file.title || file.file_name}
           </Text>
           <When condition={accessLevel}>

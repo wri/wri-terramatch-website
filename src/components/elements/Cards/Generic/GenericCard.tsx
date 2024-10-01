@@ -53,7 +53,7 @@ const ImageFooter = ({ children, className, ...rest }: ImageFooterProps) => {
   return (
     <div
       {...rest}
-      className={classNames(className, "absolute bottom-0 left-0 right-0 flex gap-2 px-6 py-2", {
+      className={classNames(className, "absolute bottom-0 right-0 left-0 flex gap-2 px-6 py-2", {
         "bg-black": !className?.includes("bg-"),
         "items-center": !className?.includes("items-")
       })}

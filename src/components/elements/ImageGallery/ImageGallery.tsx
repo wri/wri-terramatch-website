@@ -354,7 +354,7 @@ const ImageGallery = ({
                 {filterLabel}
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
-                  className={classNames(" right-4 top-3 fill-neutral-900 transition", openFilter && "rotate-180")}
+                  className={classNames(" top-3 right-4 fill-neutral-900 transition", openFilter && "rotate-180")}
                   width={20}
                 />
               </button>
@@ -373,7 +373,7 @@ const ImageGallery = ({
                 <span className="text-14-bold overflow-hidden text-ellipsis whitespace-nowrap">{sortLabel}</span>
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
-                  className={classNames("right-4 top-3 fill-neutral-900 transition", openSort && "rotate-180")}
+                  className={classNames("top-3 right-4 fill-neutral-900 transition", openSort && "rotate-180")}
                   width={20}
                 />
               </button>

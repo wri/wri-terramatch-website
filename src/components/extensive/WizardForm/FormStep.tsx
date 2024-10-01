@@ -35,7 +35,7 @@ export const FormStep = ({
   }, [fields, formHook, title]);
 
   return (
-    <div {...divProps} className={twMerge("flex-1 bg-white px-16 pb-15 pt-8", className)}>
+    <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-15", className)}>
       <div className="flex items-center justify-between">
         <Text variant="text-heading-700">{title}</Text>
         <When condition={!!actionButtonProps}>

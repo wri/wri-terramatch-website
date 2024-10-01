@@ -46,7 +46,7 @@ const ImageControl = ({
           {uploadImageData.map(image => (
             <div
               key={image.id}
-              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 px-4 py-[10px]"
+              className="border-grey-75 flex items-center justify-between rounded-lg border border-grey-750 py-[10px] px-4"
             >
               <div className="flex gap-3">
                 <div className="rounded-lg bg-neutral-150 p-2">

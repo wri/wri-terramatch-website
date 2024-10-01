@@ -243,7 +243,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       </div>
       <When condition={polygonCheck}>
         <div className="relative flex max-h-[300px] w-[231px] flex-col gap-2 rounded-xl p-3">
-          <div className="absolute left-0 top-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
+          <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
           <button
             onClick={() => {
               setOpenCollapse(!openCollapse);
