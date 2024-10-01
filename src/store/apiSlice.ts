@@ -5,7 +5,6 @@ import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
-import { usersFind } from "@/generated/v3/userService/userServiceComponents";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 export type PendingErrorState = {
@@ -124,8 +123,6 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
-const reloadMe = () => setTimeout(() => usersFind({ pathParams: { id: "me" } }), 0);
-
 export const apiSlice = createSlice({
   name: "api",
 
@@ -146,9 +143,6 @@ export const apiSlice = createSlice({
         // After a successful login, clear the entire cache; we want all mounted components to
         // re-fetch their data with the new login credentials.
         clearApiCache(state);
-        // TODO: this will no longer be needed once we have connection chaining, as the my org
-        //  connection will force the my user connection to load.
-        reloadMe();
       } else {
         delete state.meta.pending[method][url];
       }
@@ -195,20 +189,27 @@ export const apiSlice = createSlice({
 
   extraReducers: builder => {
     builder.addCase(HYDRATE, (state, action) => {
-      clearApiCache(state);
+      const {
+        payload: { api: payloadState }
+      } = action as unknown as PayloadAction<{ api: ApiDataStore }>;
 
-      const { payload } = action as unknown as PayloadAction<{ api: ApiDataStore }>;
+      if (state.meta.meUserId !== payloadState.meta.meUserId) {
+        // It's likely the server hasn't loaded as many resources as the client. We should only
+        // clear out our cached client-side state if the server claims to have a different logged-in
+        // user state than we do.
+        clearApiCache(state);
+      }
 
       for (const resource of RESOURCES) {
-        state[resource] = payload.api[resource] as any;
+        state[resource] = payloadState[resource] as StoreResourceMap<any>;
       }
 
       for (const method of METHODS) {
-        state.meta.pending[method] = payload.api.meta.pending[method];
+        state.meta.pending[method] = payloadState.meta.pending[method];
       }
 
-      if (payload.api.meta.meUserId != null) {
-        state.meta.meUserId = payload.api.meta.meUserId;
+      if (payloadState.meta.meUserId != null) {
+        state.meta.meUserId = payloadState.meta.meUserId;
       }
     });
   }

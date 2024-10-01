@@ -1,10 +1,10 @@
 import { createSelector } from "reselect";
 
-import { selectMe } from "@/connections/User";
+import { selectMe, useMyUser } from "@/connections/User";
 import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
+import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 type OrganisationConnection = {
@@ -39,10 +39,6 @@ export const organisationConnection: Connection<OrganisationConnection, Organisa
   )
 };
 
-// TODO (NJC): This connection relies on the User.myUserConnection to have been mounted at some
-//   point. I'd like to create a system for explicit connection dependencies, but haven't had time
-//   yet. For one thing, there's no clean way to indicate that this connection isn't "loaded" when
-//   the user load failed.
 const myOrganisationConnection: Connection<MyOrganisationConnection> = {
   selector: createSelector([selectMe, selectOrganisations], (user, orgs) => {
     const { id, meta } = user?.relationships?.org?.[0] ?? {};
@@ -55,4 +51,11 @@ const myOrganisationConnection: Connection<MyOrganisationConnection> = {
     };
   })
 };
-export const useMyOrg = connectionHook(myOrganisationConnection);
+// The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
+// this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
+// from the store.
+export const useMyOrg = () => {
+  const [loaded] = useMyUser();
+  const [, orgShape] = useConnection(myOrganisationConnection);
+  return [loaded, orgShape];
+};
