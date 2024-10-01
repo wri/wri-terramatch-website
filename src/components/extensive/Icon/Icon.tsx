@@ -183,7 +183,8 @@ export enum IconNames {
   IC_RIPARIAN_AREA = "targetLand/RiparianArea",
   IC_URBAN_FOREST = "targetLand/UrbanForest",
   IC_SILVOPASTURE = "targetLand/Silvopasture",
-  IC_PEATLAND = "targetLand/Peatland"
+  IC_PEATLAND = "targetLand/Peatland",
+  IC_LEGEND_MAP = "ic-legend-map"
 }
 
 export interface IconProps {

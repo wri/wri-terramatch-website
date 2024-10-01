@@ -67,6 +67,22 @@ const ContentOverview = () => {
           <When condition={collapseMap}>
             <TooltipGridMap label="Angola" learnMore={true} />
           </When>
+          <When condition={collapseMap}>
+            <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+              <div className="flex gap-2">
+                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
+                <Text variant="text-10" className="text-darkCustom">
+                  {t("Non-Profit Projects (32)")}
+                </Text>
+              </div>
+              <div className="flex gap-2">
+                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
+                <Text variant="text-10" className="text-darkCustom">
+                  {t("Enterprise Projects (457)")}
+                </Text>
+              </div>
+            </div>
+          </When>
         </div>
 
         <div

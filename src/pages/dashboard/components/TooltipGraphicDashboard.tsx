@@ -28,10 +28,10 @@ const TooltipGraphicDashboard = () => {
       {data.map((item, index) => (
         <div key={index} className="mt-1 flex items-center gap-2">
           <Text variant="text-8-light" className="text-darkCustom">
-            {item.label}
+            {t(item.label)}
           </Text>
           <Text variant="text-8-bold" className="text-darkCustom">
-            {item.value}
+            {t(item.value)}
           </Text>
         </div>
       ))}

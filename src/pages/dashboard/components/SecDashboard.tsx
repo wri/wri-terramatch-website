@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -36,6 +37,7 @@ const SecDashboard = ({
   data: DashboardDataProps;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
+  const t = useT();
 
   const tableColumns = [
     {
@@ -59,9 +61,9 @@ const SecDashboard = ({
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
         <div className="flex items-center gap-1">
           <Text variant="text-14" className="uppercase text-darkCustom">
-            {title}
+            {t(title)}
           </Text>
-          <ToolTip content={title} placement="top" width="w-44">
+          <ToolTip content={t(title)} placement="top" width="w-44">
             <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
           </ToolTip>
         </div>
@@ -72,7 +74,7 @@ const SecDashboard = ({
                 <div key={index} className="flex items-center gap-1">
                   <div className={classNames("h-2 w-2 rounded-full", item.color)} />
                   <Text variant="text-10" className="text-darkCustom">
-                    {item.label}
+                    {t(item.label)}
                   </Text>
                 </div>
               ))}
@@ -107,10 +109,10 @@ const SecDashboard = ({
                     <div className={classNames("h-2 w-2 rounded-full lg:h-3 lg:w-3", item.color)} />
                     <div>
                       <Text variant="text-12-light" className="text-darkCustom">
-                        {item.label}
+                        {t(item.label)}
                       </Text>
                       <Text variant="text-12-light" className="text-darkCustom opacity-60">
-                        {item.value}
+                        {t(item.value)}
                       </Text>
                     </div>
                   </div>

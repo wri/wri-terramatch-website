@@ -57,30 +57,27 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
         })}
       </div>
       <div className="w-full">
-        {data.map((item, index) => {
-          console.log(item);
-          return (
-            <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
-              <div className="flex w-full justify-between">
-                <div className="flex gap-1">
-                  <Icon name={IconNames[colorIconLabel(item.label).icon]} />
-                  <Text variant="text-14-light" className=" text-darkCustom">
-                    {item.label}
-                  </Text>
-                </div>
-                <Text variant="text-14" className=" text-darkCustom">
-                  {item.valueText}
+        {data.map((item, index) => (
+          <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
+            <div className="flex w-full justify-between">
+              <div className="flex gap-1">
+                <Icon name={IconNames[colorIconLabel(item.label).icon]} />
+                <Text variant="text-14-light" className=" text-darkCustom">
+                  {item.label}
                 </Text>
               </div>
-              <div className="relative h-4 rounded bg-blueCustom-30 lg:h-5">
-                <div
-                  className={classNames("relative h-4 w-0 rounded lg:h-5", colorIconLabel(item.label).color)}
-                  style={{ width: `${item.value}%` }}
-                />
-              </div>
+              <Text variant="text-14" className=" text-darkCustom">
+                {item.valueText}
+              </Text>
             </div>
-          );
-        })}
+            <div className="relative h-4 rounded bg-blueCustom-30 lg:h-5">
+              <div
+                className={classNames("relative h-4 w-0 rounded lg:h-5", colorIconLabel(item.label).color)}
+                style={{ width: `${item.value}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { useContext, useEffect, useState } from "react";
 
@@ -12,6 +13,7 @@ import BlurContainer from "./BlurContainer";
 
 const HeaderDashboard = () => {
   const sharedRef = useContext(RefContext);
+  const t = useT();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const dropdwonOptions = [
     {
@@ -99,14 +101,14 @@ const HeaderDashboard = () => {
           variant={"text-28-bold"}
           className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
         >
-          TerraMatch Insights
+          {t("TerraMatch Insights")}
         </Text>
         <div className="flex items-center gap-3">
           <BlurContainer isCollapse={isHeaderCollapsed}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
-                  Programme:
+                  {t("Programme:")}
                 </Text>
               }
               inputVariant="text-14-semibold"
@@ -123,7 +125,7 @@ const HeaderDashboard = () => {
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
-                  Landscape:
+                  {t("Landscape:")}
                 </Text>
               }
               inputVariant="text-14-semibold"
@@ -140,7 +142,7 @@ const HeaderDashboard = () => {
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
-                  Country:
+                  {t("Country:")}
                 </Text>
               }
               inputVariant="text-14-semibold"
@@ -157,7 +159,7 @@ const HeaderDashboard = () => {
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
-                  Organization:
+                  {t("Organization:")}
                 </Text>
               }
               inputVariant="text-14-semibold"
@@ -172,13 +174,13 @@ const HeaderDashboard = () => {
             />
           </BlurContainer>
           <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
-            Clear Filters
+            {t("Clear Filters")}
           </button>
         </div>
       </div>
       <div className="relative h-fit">
         <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
-        <button className="relative z-10 px-4 py-2 font-bold leading-normal text-white">Export</button>
+        <button className="relative z-10 px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
       </div>
     </header>
   );
