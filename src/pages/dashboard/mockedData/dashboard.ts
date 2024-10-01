@@ -125,12 +125,12 @@ export const JOBS_CREATED_BY_GENDER = {
     {
       label: "Women",
       value: "20,500 (15.4%)",
-      color: "bg-pinkCustom-300"
+      color: "bg-secondary-600"
     },
     {
       label: "Men",
       value: "20,500 (15.4%)",
-      color: "bg-purpleCustom"
+      color: "bg-primary"
     }
   ]
 };
@@ -141,12 +141,12 @@ export const JOBS_CREATED_BY_AGE = {
     {
       label: "Youth",
       value: "20,500 (15.4%)",
-      color: "bg-primary"
+      color: "bg-secondary-600"
     },
     {
       label: "Non-Youth",
       value: "20,500 (15.4%)",
-      color: "bg-secondary-600"
+      color: "bg-primary"
     }
   ]
 };
@@ -161,12 +161,12 @@ export const VOLUNTEERS_CREATED_BY_GENDER = {
     {
       label: "Women",
       value: "20,500 (15.4%)",
-      color: "bg-pinkCustom-300"
+      color: "bg-secondary-600"
     },
     {
       label: "Men",
       value: "20,500 (15.4%)",
-      color: "bg-purpleCustom"
+      color: "bg-primary"
     }
   ]
 };
@@ -177,12 +177,12 @@ export const VOLUNTEERS_CREATED_BY_AGE = {
     {
       label: "Youth",
       value: "20,500 (15.4%)",
-      color: "bg-primary"
+      color: "bg-secondary-600"
     },
     {
       label: "Non-Youth",
       value: "20,500 (15.4%)",
-      color: "bg-secondary-600"
+      color: "bg-primary"
     }
   ]
 };

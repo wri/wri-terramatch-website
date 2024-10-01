@@ -66,7 +66,9 @@ module.exports = {
         DEFAULT: "#27A9E0",
         500: "#27A9E0",
         400: "#4EBBEA",
+        350: "#6BBFCC",
         300: "#98CEED",
+        250: "#C5FCFF",
         200: "#E5F8FF",
         100: "#F2FAFD"
       },
@@ -109,7 +111,7 @@ module.exports = {
       },
       tertiary: {
         DEFAULT: "#F0AB00",
-        800: "#C8662F",
+        800: "#795305",
         650: "#FF8838",
         600: "#FF8938",
         550: "#FFA160",
@@ -157,7 +159,7 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
-        500: "#6B137A"
+        100: "#8096D3"
       },
       grey: {
         200: "#F0F2F2",
@@ -182,18 +184,18 @@ module.exports = {
         DEFAULT: "#72D961",
         500: "#198E2B",
         400: "#1BA631",
-        350: "#4E4C18",
-        300: "#597C0F",
+        300: "#4FB967",
         100: "#28C499",
         60: "#0D614D",
         50: "rgba(40, 196, 153, 0.10)",
-        40: "#A3CCAB",
+        40: "#A2DCB3",
         30: "#EAFAF5"
       },
       yellow: {
         DEFAULT: "#FCFBE8",
         700: "#F4B059",
-        600: "#C8A62F",
+        600: "#BB881E",
+        550: "#F8CE7B",
         500: "#F3EFB0",
         300: "#FEF8EF"
       },
