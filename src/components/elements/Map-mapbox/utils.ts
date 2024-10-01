@@ -216,7 +216,15 @@ export const addGeojsonToDraw = (
   }
 };
 
-export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2MODELUUIDFilesResponse["data"]) => {
+export const addMediaSourceAndLayer = (
+  map: mapboxgl.Map,
+  modelFilesData: GetV2MODELUUIDFilesResponse["data"],
+  setImageCover: Function,
+  handleDownload: Function,
+  handleDelete: Function,
+  openModalImageDetail: Function,
+  isProjectPath: boolean
+) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
   removePopups("MEDIA");
@@ -235,9 +243,19 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
     },
     properties: {
       uuid: modelFile.uuid,
-      name: modelFile.file_name,
+      name: modelFile.name,
       created_date: modelFile.created_date,
-      file_url: modelFile.file_url
+      file_url: modelFile.file_url,
+      location: {
+        lat: modelFile.location?.lat,
+        lng: modelFile.location?.lng
+      },
+      is_cover: modelFile.is_cover,
+      is_public: modelFile.is_public,
+      photographer: (modelFile as any).photographer || null,
+      description: (modelFile as any).description || null,
+      mime_type: modelFile.mime_type,
+      file_name: modelFile.file_name
     }
   }));
 
@@ -270,12 +288,30 @@ export const addMediaSourceAndLayer = (map: mapboxgl.Map, modelFilesData: GetV2M
       let popupContent = document.createElement("div");
       popupContent.className = "popup-content-media";
       const root = createRoot(popupContent);
+
+      const coverImage = () => {
+        setImageCover(feature?.properties?.uuid);
+      };
+      const handleDownloadFunction = () => {
+        handleDownload(feature?.properties?.uuid, feature?.properties?.name);
+      };
+      const handleDeleteFunction = () => {
+        handleDelete(feature?.properties?.uuid);
+      };
+      const openModalImageDetailFunction = () => {
+        openModalImageDetail(feature?.properties);
+      };
       root.render(
         createElement(MediaPopup, {
           ...feature.properties,
           onClose: () => {
             removePopups("MEDIA");
-          }
+          },
+          handleDownload: handleDownloadFunction,
+          coverImage: coverImage,
+          handleDelete: handleDeleteFunction,
+          openModalImageDetail: openModalImageDetailFunction,
+          isProjectPath: isProjectPath
         })
       );
       popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
