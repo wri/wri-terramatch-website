@@ -12,7 +12,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { ACTIVE_COUNTRIES } from "../mockedData/dashboard";
-import { TooltipGridMap } from "./TooltipGridMap";
+import TooltipGridMap from "./TooltipGridMap";
 
 const ContentOverview = () => {
   const [collapseMap, setCollapseMap] = useState(false);

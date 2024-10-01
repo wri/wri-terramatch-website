@@ -13,7 +13,7 @@ export interface TooltipGridProps {
   learnMore?: boolean;
 }
 
-export const TooltipGridMap = (props: TooltipGridProps) => {
+const TooltipGridMap = (props: TooltipGridProps) => {
   const { label, learnMore } = props;
 
   const items = [
@@ -70,3 +70,5 @@ export const TooltipGridMap = (props: TooltipGridProps) => {
     </div>
   );
 };
+
+export default TooltipGridMap;
