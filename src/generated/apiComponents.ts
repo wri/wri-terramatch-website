@@ -14833,7 +14833,6 @@ export type GetV2MODELUUIDFilesResponse = {
     file_url?: string;
     thumb_url?: string;
     file_name?: string;
-    name?: string;
     created_date?: string;
     model_name?: string;
     is_public?: boolean;
@@ -14845,8 +14844,6 @@ export type GetV2MODELUUIDFilesResponse = {
     mime_type?: string;
     file_size?: number;
     collection_name?: string;
-    description?: string;
-    photographer?: string;
   }[];
   links?: {
     first?: string;
