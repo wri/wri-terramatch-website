@@ -88,11 +88,13 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
     openModal(
       ModalId.FIX_POLYGONS,
       <ModalFixOverlaps
-        title="Fix Polygons"
+        title={t("Fix Polygons")}
         site={entityData}
         onClose={() => closeModal(ModalId.FIX_POLYGONS)}
-        content="The following polygons have one or more failed criteria, for which an automated solution may be applied. Click 'Fix Polygons' to correct the issue as a new version."
-        primaryButtonText="Fix Polygons"
+        content={t(
+          "The following polygons have one or more failed criteria, for which an automated solution may be applied. Click 'Fix Polygons' to correct the issue as a new version."
+        )}
+        primaryButtonText={t("Fix Polygons")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
@@ -128,7 +130,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
             );
           }
         }}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t("Cancel")}
         secondaryButtonProps={{
           className: "px-8 py-3",
           variant: "white-page-admin",
