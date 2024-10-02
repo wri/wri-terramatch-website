@@ -86,6 +86,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
               {
                 onSuccess: response => {
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
+                  closeModal(ModalId.FIX_POLYGONS);
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -97,7 +98,6 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
                   }
                   refetchData?.();
                   hideLoader();
-                  closeModal(ModalId.FIX_POLYGONS);
                 },
                 onError: () => {
                   hideLoader();
