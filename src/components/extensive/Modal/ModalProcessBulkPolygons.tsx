@@ -126,16 +126,11 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
         {
           onSuccess: response => {
             const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
-            const unprocessedNames = response?.unprocessed?.map(item => item.poly_name).join(", ");
-
-            const message = [
-              processedNames ? `Fixed: ${processedNames}` : "",
-              unprocessedNames ? `Not Fixed: ${unprocessedNames}` : ""
-            ]
-              .filter(Boolean)
-              .join(" | ");
-            openNotification("success", t("Success!"), t(`Polygons fixed successfully. ${message}`));
-
+            if (processedNames) {
+              openNotification("success", t("Success!"), t(`Polygons fixed successfully. Fixed: ${processedNames}`));
+            } else {
+              openNotification("warning", t("Warning"), t("No polygons were fixed."));
+            }
             onClose?.();
             refetch?.();
             hideLoader();
