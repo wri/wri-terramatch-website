@@ -156,6 +156,7 @@ export type GetV2AdminProjectsMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -170,6 +171,7 @@ export type GetV2AdminProjectsMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -184,6 +186,7 @@ export type GetV2AdminProjectsMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -198,6 +201,7 @@ export type GetV2AdminProjectsMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -212,6 +216,7 @@ export type GetV2AdminProjectsMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -401,6 +406,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -415,6 +421,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -429,6 +436,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -443,6 +451,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -457,6 +466,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -471,6 +481,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -485,6 +496,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -499,6 +511,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -513,6 +526,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -527,6 +541,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -541,6 +556,7 @@ export type GetV2AdminProjectsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -671,6 +687,7 @@ export type GetV2AdminNurseriesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -685,6 +702,7 @@ export type GetV2AdminNurseriesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -699,6 +717,7 @@ export type GetV2AdminNurseriesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -713,6 +732,7 @@ export type GetV2AdminNurseriesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -727,6 +747,7 @@ export type GetV2AdminNurseriesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -916,6 +937,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -930,6 +952,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -944,6 +967,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -958,6 +982,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -972,6 +997,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -986,6 +1012,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -1000,6 +1027,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -1014,6 +1042,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -1028,6 +1057,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -1042,6 +1072,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -1056,6 +1087,7 @@ export type GetV2AdminNurseriesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -1191,6 +1223,7 @@ export type GetV2AdminSitesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -1205,6 +1238,7 @@ export type GetV2AdminSitesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -1219,6 +1253,7 @@ export type GetV2AdminSitesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -1233,6 +1268,7 @@ export type GetV2AdminSitesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -1247,6 +1283,7 @@ export type GetV2AdminSitesMultiResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -1436,6 +1473,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -1450,6 +1488,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -1464,6 +1503,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -1478,6 +1518,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -1492,6 +1533,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -1506,6 +1548,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -1520,6 +1563,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -1534,6 +1578,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -1548,6 +1593,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -1562,6 +1608,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -1576,6 +1623,7 @@ export type GetV2AdminSitesMultiResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -1700,6 +1748,7 @@ export type PostUsersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -1714,6 +1763,7 @@ export type PostUsersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -1728,6 +1778,7 @@ export type PostUsersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -1742,6 +1793,7 @@ export type PostUsersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -1756,6 +1808,7 @@ export type PostUsersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -1930,6 +1983,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -1944,6 +1998,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -1958,6 +2013,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -1972,6 +2028,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -1986,6 +2043,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -2000,6 +2058,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -2014,6 +2073,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -2028,6 +2088,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -2042,6 +2103,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -2056,6 +2118,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -2070,6 +2133,7 @@ export type PostUsersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -2315,6 +2379,7 @@ export type GetV2MyProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -2329,6 +2394,7 @@ export type GetV2MyProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -2343,6 +2409,7 @@ export type GetV2MyProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -2357,6 +2424,7 @@ export type GetV2MyProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -2371,6 +2439,7 @@ export type GetV2MyProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -2560,6 +2629,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -2574,6 +2644,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -2588,6 +2659,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -2602,6 +2674,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -2616,6 +2689,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -2630,6 +2704,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -2644,6 +2719,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -2658,6 +2734,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -2672,6 +2749,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -2686,6 +2764,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -2700,6 +2779,7 @@ export type GetV2MyProjectsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -3080,6 +3160,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -3094,6 +3175,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -3108,6 +3190,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -3122,6 +3205,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -3136,6 +3220,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -3325,6 +3410,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -3339,6 +3425,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -3353,6 +3440,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -3367,6 +3455,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -3381,6 +3470,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -3395,6 +3485,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -3409,6 +3500,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -3423,6 +3515,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -3437,6 +3530,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -3451,6 +3545,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -3465,6 +3560,7 @@ export type GetV2AdminNurseryReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -3545,6 +3641,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -3559,6 +3656,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -3573,6 +3671,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -3587,6 +3686,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -3601,6 +3701,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -3790,6 +3891,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -3804,6 +3906,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -3818,6 +3921,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -3832,6 +3936,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -3846,6 +3951,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -3860,6 +3966,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -3874,6 +3981,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -3888,6 +3996,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -3902,6 +4011,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -3916,6 +4026,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -3930,6 +4041,7 @@ export type GetV2AdminNurseryReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -4018,6 +4130,7 @@ export type GetV2AdminNurseryReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             restoration_photos?: {
@@ -4032,6 +4145,7 @@ export type GetV2AdminNurseryReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             cover?: {
@@ -4046,6 +4160,7 @@ export type GetV2AdminNurseryReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             proof_of_land_tenure_mou?: {
@@ -4060,6 +4175,7 @@ export type GetV2AdminNurseryReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             detailed_project_budget?: {
@@ -4074,6 +4190,7 @@ export type GetV2AdminNurseryReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             expected_active_restoration_start_date?: string;
@@ -4263,6 +4380,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           previous_annual_reports?: {
@@ -4277,6 +4395,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           logo?: {
@@ -4291,6 +4410,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           cover?: {
@@ -4305,6 +4425,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           reference?: {
@@ -4319,6 +4440,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           additional?: {
@@ -4333,6 +4455,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_2year?: {
@@ -4347,6 +4470,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_last_year?: {
@@ -4361,6 +4485,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_this_year?: {
@@ -4375,6 +4500,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_next_year?: {
@@ -4389,6 +4515,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           legal_registration?: {
@@ -4403,6 +4530,7 @@ export type GetV2AdminNurseryReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           /**
@@ -4547,6 +4675,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -4561,6 +4690,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -4575,6 +4705,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -4589,6 +4720,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -4603,6 +4735,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -4792,6 +4925,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -4806,6 +4940,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -4820,6 +4955,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -4834,6 +4970,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -4848,6 +4985,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -4862,6 +5000,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -4876,6 +5015,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -4890,6 +5030,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -4904,6 +5045,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -4918,6 +5060,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -4932,6 +5075,7 @@ export type GetV2AdminSiteReportsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -5012,6 +5156,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -5026,6 +5171,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -5040,6 +5186,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -5054,6 +5201,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -5068,6 +5216,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -5257,6 +5406,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -5271,6 +5421,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -5285,6 +5436,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -5299,6 +5451,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -5313,6 +5466,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -5327,6 +5481,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -5341,6 +5496,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -5355,6 +5511,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -5369,6 +5526,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -5383,6 +5541,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -5397,6 +5556,7 @@ export type GetV2AdminSiteReportsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -5485,6 +5645,7 @@ export type GetV2AdminSiteReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             restoration_photos?: {
@@ -5499,6 +5660,7 @@ export type GetV2AdminSiteReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             cover?: {
@@ -5513,6 +5675,7 @@ export type GetV2AdminSiteReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             proof_of_land_tenure_mou?: {
@@ -5527,6 +5690,7 @@ export type GetV2AdminSiteReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             detailed_project_budget?: {
@@ -5541,6 +5705,7 @@ export type GetV2AdminSiteReportsResponse = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             expected_active_restoration_start_date?: string;
@@ -5730,6 +5895,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           previous_annual_reports?: {
@@ -5744,6 +5910,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           logo?: {
@@ -5758,6 +5925,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           cover?: {
@@ -5772,6 +5940,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           reference?: {
@@ -5786,6 +5955,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           additional?: {
@@ -5800,6 +5970,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_2year?: {
@@ -5814,6 +5985,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_last_year?: {
@@ -5828,6 +6000,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_this_year?: {
@@ -5842,6 +6015,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_next_year?: {
@@ -5856,6 +6030,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           legal_registration?: {
@@ -5870,6 +6045,7 @@ export type GetV2AdminSiteReportsResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           /**
@@ -6127,6 +6303,7 @@ export type GetV2AdminNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -6141,6 +6318,7 @@ export type GetV2AdminNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -6155,6 +6333,7 @@ export type GetV2AdminNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -6169,6 +6348,7 @@ export type GetV2AdminNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -6183,6 +6363,7 @@ export type GetV2AdminNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -6372,6 +6553,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -6386,6 +6568,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -6400,6 +6583,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -6414,6 +6598,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -6428,6 +6613,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -6442,6 +6628,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -6456,6 +6643,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -6470,6 +6658,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -6484,6 +6673,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -6498,6 +6688,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -6512,6 +6703,7 @@ export type GetV2AdminNurseriesResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -9441,6 +9633,7 @@ export type GetV2AdminOrganisationsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -9455,6 +9648,7 @@ export type GetV2AdminOrganisationsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -9469,6 +9663,7 @@ export type GetV2AdminOrganisationsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -9483,6 +9678,7 @@ export type GetV2AdminOrganisationsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -9497,6 +9693,7 @@ export type GetV2AdminOrganisationsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -9671,6 +9868,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -9685,6 +9883,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -9699,6 +9898,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -9713,6 +9913,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -9727,6 +9928,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -9741,6 +9943,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -9755,6 +9958,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -9769,6 +9973,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -9783,6 +9988,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -9797,6 +10003,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -9811,6 +10018,7 @@ export type GetV2AdminOrganisationsResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -9955,6 +10163,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -9969,6 +10178,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -9983,6 +10193,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -9997,6 +10208,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -10011,6 +10223,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -10185,6 +10398,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -10199,6 +10413,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -10213,6 +10428,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -10227,6 +10443,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -10241,6 +10458,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -10255,6 +10473,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -10269,6 +10488,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -10283,6 +10503,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -10297,6 +10518,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -10311,6 +10533,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -10325,6 +10548,7 @@ export type GetV2AdminOrganisationsMultiResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -10442,6 +10666,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -10456,6 +10681,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -10470,6 +10696,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -10484,6 +10711,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -10498,6 +10726,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -10672,6 +10901,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -10686,6 +10916,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -10700,6 +10931,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -10714,6 +10946,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -10728,6 +10961,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -10742,6 +10976,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -10756,6 +10991,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -10770,6 +11006,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -10784,6 +11021,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -10798,6 +11036,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -10812,6 +11051,7 @@ export type GetV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -10929,6 +11169,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -10943,6 +11184,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -10957,6 +11199,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -10971,6 +11214,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -10985,6 +11229,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -11159,6 +11404,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -11173,6 +11419,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -11187,6 +11434,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -11201,6 +11449,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -11215,6 +11464,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -11229,6 +11479,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -11243,6 +11494,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -11257,6 +11509,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -11271,6 +11524,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -11285,6 +11539,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -11299,6 +11554,7 @@ export type PutV2AdminOrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -11893,6 +12149,7 @@ export type GetV2OrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -11907,6 +12164,7 @@ export type GetV2OrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -11921,6 +12179,7 @@ export type GetV2OrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -11935,6 +12194,7 @@ export type GetV2OrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -11949,6 +12209,7 @@ export type GetV2OrganisationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -12138,6 +12399,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -12152,6 +12414,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -12166,6 +12429,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -12180,6 +12444,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -12194,6 +12459,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -12208,6 +12474,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -12222,6 +12489,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -12236,6 +12504,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -12250,6 +12519,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -12264,6 +12534,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -12278,6 +12549,7 @@ export type GetV2OrganisationsUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -12474,6 +12746,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -12488,6 +12761,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -12502,6 +12776,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -12516,6 +12791,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -12530,6 +12806,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -12719,6 +12996,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -12733,6 +13011,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -12747,6 +13026,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -12761,6 +13041,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -12775,6 +13056,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -12789,6 +13071,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -12803,6 +13086,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -12817,6 +13101,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -12831,6 +13116,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -12845,6 +13131,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -12859,6 +13146,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -12992,6 +13280,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -13006,6 +13295,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -13020,6 +13310,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -13034,6 +13325,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -13048,6 +13340,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -13222,6 +13515,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -13236,6 +13530,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -13250,6 +13545,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -13264,6 +13560,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -13278,6 +13575,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -13292,6 +13590,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -13306,6 +13605,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -13320,6 +13620,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -13334,6 +13635,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -13348,6 +13650,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -13362,6 +13665,7 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -13524,6 +13828,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -13538,6 +13843,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -13552,6 +13858,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -13566,6 +13873,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -13580,6 +13888,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -13754,6 +14063,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -13768,6 +14078,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -13782,6 +14093,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -13796,6 +14108,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -13810,6 +14123,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -13824,6 +14138,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -13838,6 +14153,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -13852,6 +14168,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -13866,6 +14183,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -13880,6 +14198,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -13894,6 +14213,7 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -14459,6 +14779,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -14473,6 +14794,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -14487,6 +14809,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -14501,6 +14824,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -14515,6 +14839,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -14529,6 +14854,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -14543,6 +14869,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -14557,6 +14884,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -14571,6 +14899,7 @@ export type PutV2AdminUsersUUIDRequestBody = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -14845,8 +15174,6 @@ export type GetV2MODELUUIDFilesResponse = {
     mime_type?: string;
     file_size?: number;
     collection_name?: string;
-    description?: string;
-    photographer?: string;
   }[];
   links?: {
     first?: string;
@@ -14988,6 +15315,7 @@ export type PostV2FileUploadMODELCOLLECTIONUUIDResponse = {
   lat?: number;
   lng?: number;
   is_public?: boolean;
+  is_cover?: boolean;
   created_at?: string;
 };
 
@@ -15063,6 +15391,7 @@ export type PostV2FileUploadSitePhotosUUIDBulkUrlResponse = {
   lat?: number;
   lng?: number;
   is_public?: boolean;
+  is_cover?: boolean;
   created_at?: string;
 }[];
 
@@ -15172,6 +15501,7 @@ export type PutV2FilesUUIDResponse = {
   lat?: number;
   lng?: number;
   is_public?: boolean;
+  is_cover?: boolean;
   created_at?: string;
 };
 
@@ -16058,6 +16388,7 @@ export type GetV2AdminProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -16072,6 +16403,7 @@ export type GetV2AdminProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -16086,6 +16418,7 @@ export type GetV2AdminProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -16100,6 +16433,7 @@ export type GetV2AdminProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -16114,6 +16448,7 @@ export type GetV2AdminProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -16352,6 +16687,7 @@ export type GetV2AdminProjectsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -16366,6 +16702,7 @@ export type GetV2AdminProjectsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -16380,6 +16717,7 @@ export type GetV2AdminProjectsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -16394,6 +16732,7 @@ export type GetV2AdminProjectsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -16408,6 +16747,7 @@ export type GetV2AdminProjectsResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -16597,6 +16937,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -16611,6 +16952,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -16625,6 +16967,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -16639,6 +16982,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -16653,6 +16997,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -16667,6 +17012,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -16681,6 +17027,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -16695,6 +17042,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -16709,6 +17057,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -16723,6 +17072,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -16737,6 +17087,7 @@ export type GetV2AdminProjectsResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -16872,6 +17223,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -16886,6 +17238,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -16900,6 +17253,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -16914,6 +17268,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -16928,6 +17283,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -17117,6 +17473,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -17131,6 +17488,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -17145,6 +17503,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -17159,6 +17518,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -17173,6 +17533,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -17187,6 +17548,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -17201,6 +17563,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -17215,6 +17578,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -17229,6 +17593,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -17243,6 +17608,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -17257,6 +17623,7 @@ export type GetV2ProjectsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -17617,6 +17984,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         deleted_at?: string;
@@ -17689,6 +18057,7 @@ export type GetV2ProjectsUUIDResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -17703,6 +18072,7 @@ export type GetV2ProjectsUUIDResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -17717,6 +18087,7 @@ export type GetV2ProjectsUUIDResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -17731,6 +18102,7 @@ export type GetV2ProjectsUUIDResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -17745,6 +18117,7 @@ export type GetV2ProjectsUUIDResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -17919,6 +18292,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -17933,6 +18307,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -17947,6 +18322,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -17961,6 +18337,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -17975,6 +18352,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -17989,6 +18367,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -18003,6 +18382,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -18017,6 +18397,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -18031,6 +18412,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -18045,6 +18427,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -18059,6 +18442,7 @@ export type GetV2ProjectsUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -18354,6 +18738,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -18368,6 +18753,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -18382,6 +18768,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -18396,6 +18783,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -18410,6 +18798,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -18599,6 +18988,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -18613,6 +19003,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -18627,6 +19018,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -18641,6 +19033,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -18655,6 +19048,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -18669,6 +19063,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -18683,6 +19078,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -18697,6 +19093,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -18711,6 +19108,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -18725,6 +19123,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -18739,6 +19138,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -19422,6 +19822,7 @@ export type GetV2ProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -19436,6 +19837,7 @@ export type GetV2ProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -19450,6 +19852,7 @@ export type GetV2ProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -19464,6 +19867,7 @@ export type GetV2ProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -19478,6 +19882,7 @@ export type GetV2ProjectPitchesResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -19664,6 +20069,7 @@ export type PostV2ProjectPitchesResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   restoration_photos?: {
@@ -19678,6 +20084,7 @@ export type PostV2ProjectPitchesResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   cover?: {
@@ -19692,6 +20099,7 @@ export type PostV2ProjectPitchesResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   proof_of_land_tenure_mou?: {
@@ -19706,6 +20114,7 @@ export type PostV2ProjectPitchesResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   detailed_project_budget?: {
@@ -19720,6 +20129,7 @@ export type PostV2ProjectPitchesResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   expected_active_restoration_start_date?: string;
@@ -19999,6 +20409,7 @@ export type GetV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   restoration_photos?: {
@@ -20013,6 +20424,7 @@ export type GetV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   cover?: {
@@ -20027,6 +20439,7 @@ export type GetV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   proof_of_land_tenure_mou?: {
@@ -20041,6 +20454,7 @@ export type GetV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   detailed_project_budget?: {
@@ -20055,6 +20469,7 @@ export type GetV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   expected_active_restoration_start_date?: string;
@@ -20234,6 +20649,7 @@ export type PatchV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   restoration_photos?: {
@@ -20248,6 +20664,7 @@ export type PatchV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   cover?: {
@@ -20262,6 +20679,7 @@ export type PatchV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   proof_of_land_tenure_mou?: {
@@ -20276,6 +20694,7 @@ export type PatchV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   detailed_project_budget?: {
@@ -20290,6 +20709,7 @@ export type PatchV2ProjectPitchesUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   expected_active_restoration_start_date?: string;
@@ -22045,6 +22465,7 @@ export type GetV2FundingProgrammeResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     deleted_at?: string;
@@ -22240,6 +22661,7 @@ export type GetV2AdminFundingProgrammeResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     deleted_at?: string;
@@ -22423,6 +22845,7 @@ export type PostV2AdminFundingProgrammeResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   deleted_at?: string;
@@ -22592,6 +23015,7 @@ export type GetV2FundingProgrammeUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   deleted_at?: string;
@@ -22758,6 +23182,7 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   deleted_at?: string;
@@ -22932,6 +23357,7 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   deleted_at?: string;
@@ -24588,6 +25014,7 @@ export type PatchV2MyBannersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -24602,6 +25029,7 @@ export type PatchV2MyBannersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -24616,6 +25044,7 @@ export type PatchV2MyBannersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -24630,6 +25059,7 @@ export type PatchV2MyBannersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -24644,6 +25074,7 @@ export type PatchV2MyBannersResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -24818,6 +25249,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -24832,6 +25264,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -24846,6 +25279,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -24860,6 +25294,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -24874,6 +25309,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -24888,6 +25324,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -24902,6 +25339,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -24916,6 +25354,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -24930,6 +25369,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -24944,6 +25384,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -24958,6 +25399,7 @@ export type PatchV2MyBannersResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -25714,6 +26156,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     deleted_at?: string;
@@ -25786,6 +26229,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -25800,6 +26244,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -25814,6 +26259,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -25828,6 +26274,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -25842,6 +26289,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -26016,6 +26464,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -26030,6 +26479,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -26044,6 +26494,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -26058,6 +26509,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -26072,6 +26524,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -26086,6 +26539,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -26100,6 +26554,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -26114,6 +26569,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -26128,6 +26584,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -26142,6 +26599,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -26156,6 +26614,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -26968,6 +27427,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     deleted_at?: string;
@@ -27040,6 +27500,7 @@ export type GetV2ApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -27054,6 +27515,7 @@ export type GetV2ApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -27068,6 +27530,7 @@ export type GetV2ApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -27082,6 +27545,7 @@ export type GetV2ApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -27096,6 +27560,7 @@ export type GetV2ApplicationsUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -27270,6 +27735,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -27284,6 +27750,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -27298,6 +27765,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -27312,6 +27780,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -27326,6 +27795,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -27340,6 +27810,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -27354,6 +27825,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -27368,6 +27840,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -27382,6 +27855,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -27396,6 +27870,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -27410,6 +27885,7 @@ export type GetV2ApplicationsUUIDResponse = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -28672,6 +29148,7 @@ export type GetV2SitesUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -28686,6 +29163,7 @@ export type GetV2SitesUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -28700,6 +29178,7 @@ export type GetV2SitesUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -28714,6 +29193,7 @@ export type GetV2SitesUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -28728,6 +29208,7 @@ export type GetV2SitesUUIDResponse = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -28917,6 +29398,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -28931,6 +29413,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -28945,6 +29428,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -28959,6 +29443,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -28973,6 +29458,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -28987,6 +29473,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -29001,6 +29488,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -29015,6 +29503,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -29029,6 +29518,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -29043,6 +29533,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -29057,6 +29548,7 @@ export type GetV2SitesUUIDResponse = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -30717,6 +31209,7 @@ export type GetV2AuditStatusENTITYUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
 }[];
@@ -30792,6 +31285,7 @@ export type PostV2AuditStatusENTITYUUIDResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
 };
@@ -32470,13 +32964,13 @@ export const useDeleteV2TerrafundProjectPolygons = (
 
 export type GetV2DashboardJobsCreatedQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
   /**
-   * Optional. Filter counts and metrics by UUID.
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid?: string;
+  filter?: string;
 };
 
 export type GetV2DashboardJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
@@ -32537,13 +33031,13 @@ export const useGetV2DashboardJobsCreated = <TData = GetV2DashboardJobsCreatedRe
 
 export type GetV2DashboardRestorationStrategyQueryParams = {
   /**
-   * Optional. Filter restoration strategy by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
   /**
-   * Optional. Filter restoration strategy by UUID.
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid?: string;
+  filter?: string;
 };
 
 export type GetV2DashboardRestorationStrategyError = Fetcher.ErrorWrapper<undefined>;
@@ -32620,13 +33114,13 @@ export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardResto
 
 export type GetV2DashboardTreeRestorationGoalQueryParams = {
   /**
-   * Optional. Filter tree restoration goal by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
   /**
-   * Optional. Filter tree restoration goal by UUID.
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid?: string;
+  filter?: string;
 };
 
 export type GetV2DashboardTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
@@ -32746,9 +33240,9 @@ export const useGetV2DashboardProjectListExport = <TData = undefined>(
 
 export type GetV2DashboardGetPolygonsQueryParams = {
   /**
-   * uuid for the given project
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid?: string;
+  filter?: string;
 };
 
 export type GetV2DashboardGetPolygonsError = Fetcher.ErrorWrapper<undefined>;
@@ -32808,9 +33302,9 @@ export const useGetV2DashboardGetPolygons = <TData = GetV2DashboardGetPolygonsRe
 
 export type GetV2DashboardGetPolygonsStatusesQueryParams = {
   /**
-   * uuid for the given project
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid?: string;
+  filter?: string;
 };
 
 export type GetV2DashboardGetPolygonsStatusesError = Fetcher.ErrorWrapper<undefined>;
@@ -32870,9 +33364,9 @@ export const useGetV2DashboardGetPolygonsStatuses = <TData = GetV2DashboardGetPo
 
 export type GetV2DashboardGetBboxProjectQueryParams = {
   /**
-   * UUID of the project
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid: string;
+  filter: string;
 };
 
 export type GetV2DashboardGetBboxProjectError = Fetcher.ErrorWrapper<undefined>;
@@ -32918,9 +33412,9 @@ export const useGetV2DashboardGetBboxProject = <TData = GetV2DashboardGetBboxPro
 
 export type GetV2DashboardBboxProjectQueryParams = {
   /**
-   * UUID of the project
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid: string;
+  filter: string;
 };
 
 export type GetV2DashboardBboxProjectError = Fetcher.ErrorWrapper<undefined>;
@@ -33133,9 +33627,13 @@ export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDa
 
 export type GetV2DashboardActiveProjectsQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
   /**
    * Optional. per_page to projects.
    */
@@ -33214,9 +33712,13 @@ export const useGetV2DashboardActiveProjects = <TData = GetV2DashboardActiveProj
 
 export type GetV2DashboardVolunteersSurvivalRateQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
   /**
    * Optional. Filter counts and metrics by UUID.
    */
@@ -33321,9 +33823,13 @@ export const useGetV2DashboardVolunteersSurvivalRate = <TData = GetV2DashboardVo
 
 export type GetV2DashboardTotalSectionHeaderQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
 };
 
 export type GetV2DashboardTotalSectionHeaderError = Fetcher.ErrorWrapper<undefined>;
@@ -33408,13 +33914,13 @@ export const useGetV2DashboardTotalSectionHeader = <TData = GetV2DashboardTotalS
 
 export type GetV2DashboardActiveCountriesQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
   /**
-   * Optional. Filter restoration strategy by UUID.
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
    */
-  uuid?: string;
+  filter?: string;
 };
 
 export type GetV2DashboardActiveCountriesError = Fetcher.ErrorWrapper<undefined>;
@@ -33474,9 +33980,13 @@ export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCou
 
 export type GetV2DashboardCountriesQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
 };
 
 export type GetV2DashboardCountriesError = Fetcher.ErrorWrapper<undefined>;
@@ -33532,9 +34042,13 @@ export const useGetV2DashboardCountries = <TData = GetV2DashboardCountriesRespon
 
 export type GetV2DashboardGetProjectsQueryParams = {
   /**
-   * Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
 };
 
 export type GetV2DashboardGetProjectsError = Fetcher.ErrorWrapper<undefined>;
@@ -33676,9 +34190,13 @@ export const useGetV2DashboardProjectDetailsProject = <TData = GetV2DashboardPro
 
 export type GetV2DashboardTopTreesPlantedQueryParams = {
   /**
-   * Optional. Filter counts and metrics by country.
+   * search term to use on the collection
    */
-  country?: string;
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
 };
 
 export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>;
@@ -35080,6 +35598,140 @@ export const usePostV2TerrafundClipPolygonsSiteUuid = (
   >(
     (variables: PostV2TerrafundClipPolygonsSiteUuidVariables) =>
       fetchPostV2TerrafundClipPolygonsSiteUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundClipPolygonsPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundClipPolygonsPolygonsResponse = {
+  /**
+   * A list of processed polygons
+   */
+  processed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+  /**
+   * A list of polygons that couldn't be processed
+   */
+  unprocessed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+};
+
+export type PostV2TerrafundClipPolygonsPolygonsRequestBody = {
+  uuids?: string[];
+};
+
+export type PostV2TerrafundClipPolygonsPolygonsVariables = {
+  body?: PostV2TerrafundClipPolygonsPolygonsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundClipPolygonsPolygons = (
+  variables: PostV2TerrafundClipPolygonsPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundClipPolygonsPolygonsResponse,
+    PostV2TerrafundClipPolygonsPolygonsError,
+    PostV2TerrafundClipPolygonsPolygonsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/clip-polygons/polygons", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundClipPolygonsPolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundClipPolygonsPolygonsResponse,
+      PostV2TerrafundClipPolygonsPolygonsError,
+      PostV2TerrafundClipPolygonsPolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundClipPolygonsPolygonsResponse,
+    PostV2TerrafundClipPolygonsPolygonsError,
+    PostV2TerrafundClipPolygonsPolygonsVariables
+  >(
+    (variables: PostV2TerrafundClipPolygonsPolygonsVariables) =>
+      fetchPostV2TerrafundClipPolygonsPolygons({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundValidationPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundValidationPolygonsResponse = {
+  /**
+   * A message indicating the completion of validation for all site polygons.
+   */
+  message?: string;
+};
+
+export type PostV2TerrafundValidationPolygonsRequestBody = {
+  uuids?: string[];
+};
+
+export type PostV2TerrafundValidationPolygonsVariables = {
+  body?: PostV2TerrafundValidationPolygonsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundValidationPolygons = (
+  variables: PostV2TerrafundValidationPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundValidationPolygonsResponse,
+    PostV2TerrafundValidationPolygonsError,
+    PostV2TerrafundValidationPolygonsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/validation/polygons", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundValidationPolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationPolygonsResponse,
+      PostV2TerrafundValidationPolygonsError,
+      PostV2TerrafundValidationPolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationPolygonsResponse,
+    PostV2TerrafundValidationPolygonsError,
+    PostV2TerrafundValidationPolygonsVariables
+  >(
+    (variables: PostV2TerrafundValidationPolygonsVariables) =>
+      fetchPostV2TerrafundValidationPolygons({ ...fetcherOptions, ...variables }),
     options
   );
 };
