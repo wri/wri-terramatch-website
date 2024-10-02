@@ -46,7 +46,7 @@ export const MediaPopup = ({
     },
     {
       id: "2",
-      render: () => <Text variant="text-12-bold">{t("Dowload")}</Text>,
+      render: () => <Text variant="text-12-bold">{t("Download")}</Text>,
       onClick: handleDownload
     },
     ...(isProjectPath
@@ -79,7 +79,7 @@ export const MediaPopup = ({
             <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={file_url} />
           </div>
           <button
-            className="absolute top-3 right-3 z-10 rounded bg-grey-200 p-1 leading-normal"
+            className="absolute right-3 top-3 z-10 rounded bg-grey-200 p-1 leading-normal"
             onClick={e => {
               e.stopPropagation();
               onClose();

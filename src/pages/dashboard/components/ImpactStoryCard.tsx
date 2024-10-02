@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -12,6 +13,8 @@ interface ImpactStoryCardProps {
 }
 const ImpactStoryCard = (porps: ImpactStoryCardProps) => {
   const { key, date, by, title, description, image } = porps;
+  const t = useT();
+
   return (
     <div
       className="flex cursor-pointer items-center gap-4 overflow-hidden rounded-lg border border-neutral-200 bg-white p-4 hover:bg-grey-200"
@@ -21,15 +24,15 @@ const ImpactStoryCard = (porps: ImpactStoryCardProps) => {
       <div className="flex-flex-col flex-1 gap-2 overflow-hidden">
         <div className="flex items-center gap-1">
           <Text variant="text-14-light" className="whitespace-nowrap text-grey-700">
-            {date} by {by}
+            {t(`${date} by ${by}`)}
           </Text>
           <Icon name={IconNames.PIN} className="w-3" />
         </div>
         <Text variant="text-14-bold" className="overflow-hidden text-ellipsis whitespace-nowrap text-darkCustom">
-          {title}
+          {t(title)}
         </Text>
         <Text variant="text-14-light" className="overflow-hidden text-ellipsis whitespace-nowrap text-grey-700">
-          {description}
+          {t(description)}
         </Text>
       </div>
     </div>
