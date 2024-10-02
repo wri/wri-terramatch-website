@@ -169,6 +169,7 @@ export type UserRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -183,6 +184,7 @@ export type UserRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -197,6 +199,7 @@ export type UserRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -211,6 +214,7 @@ export type UserRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -225,6 +229,7 @@ export type UserRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -399,6 +404,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -413,6 +419,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -427,6 +434,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -441,6 +449,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -455,6 +464,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -469,6 +479,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -483,6 +494,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -497,6 +509,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -511,6 +524,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -525,6 +539,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -539,6 +554,7 @@ export type UserRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -648,6 +664,7 @@ export type UserReadAll = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -662,6 +679,7 @@ export type UserReadAll = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -676,6 +694,7 @@ export type UserReadAll = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -690,6 +709,7 @@ export type UserReadAll = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -704,6 +724,7 @@ export type UserReadAll = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -878,6 +899,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -892,6 +914,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -906,6 +929,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -920,6 +944,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -934,6 +959,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -948,6 +974,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -962,6 +989,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -976,6 +1004,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -990,6 +1019,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -1004,6 +1034,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -1018,6 +1049,7 @@ export type UserReadAll = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -1172,6 +1204,7 @@ export type FundingProgramme = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   deleted_at?: string;
@@ -1212,6 +1245,7 @@ export type FundingProgrammeCreate = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   status?: string;
@@ -1918,6 +1952,7 @@ export type V2AdminOrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -1932,6 +1967,7 @@ export type V2AdminOrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -1946,6 +1982,7 @@ export type V2AdminOrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -1960,6 +1997,7 @@ export type V2AdminOrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -1974,6 +2012,7 @@ export type V2AdminOrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -2148,6 +2187,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -2162,6 +2202,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -2176,6 +2217,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -2190,6 +2232,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -2204,6 +2247,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -2218,6 +2262,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -2232,6 +2277,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -2246,6 +2292,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -2260,6 +2307,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -2274,6 +2322,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -2288,6 +2337,7 @@ export type V2AdminOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -2370,6 +2420,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -2384,6 +2435,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -2398,6 +2450,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -2412,6 +2465,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -2426,6 +2480,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -2440,6 +2495,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -2454,6 +2510,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -2468,6 +2525,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -2482,6 +2540,7 @@ export type V2MonitoringOrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -2792,6 +2851,7 @@ export type V2OrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     restoration_photos?: {
@@ -2806,6 +2866,7 @@ export type V2OrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     cover?: {
@@ -2820,6 +2881,7 @@ export type V2OrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     proof_of_land_tenure_mou?: {
@@ -2834,6 +2896,7 @@ export type V2OrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     detailed_project_budget?: {
@@ -2848,6 +2911,7 @@ export type V2OrganisationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     expected_active_restoration_start_date?: string;
@@ -3037,6 +3101,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   previous_annual_reports?: {
@@ -3051,6 +3116,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   logo?: {
@@ -3065,6 +3131,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   cover?: {
@@ -3079,6 +3146,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   reference?: {
@@ -3093,6 +3161,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   additional?: {
@@ -3107,6 +3176,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_2year?: {
@@ -3121,6 +3191,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_last_year?: {
@@ -3135,6 +3206,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_this_year?: {
@@ -3149,6 +3221,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   op_budget_next_year?: {
@@ -3163,6 +3236,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   legal_registration?: {
@@ -3177,6 +3251,7 @@ export type V2OrganisationRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   /**
@@ -3298,6 +3373,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -3312,6 +3388,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -3326,6 +3403,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -3340,6 +3418,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -3354,6 +3433,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -3368,6 +3448,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -3382,6 +3463,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -3396,6 +3478,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -3410,6 +3493,7 @@ export type V2AdminUserUpdate = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -3433,6 +3517,7 @@ export type V2FileRead = {
   lat?: number;
   lng?: number;
   is_public?: boolean;
+  is_cover?: boolean;
   created_at?: string;
 };
 
@@ -3441,6 +3526,7 @@ export type V2FileGallery = {
   file_url?: string;
   thumb_url?: string;
   file_name?: string;
+  name?: string;
   created_date?: string;
   model_name?: string;
   is_public?: boolean;
@@ -4067,6 +4153,7 @@ export type V2NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -4081,6 +4168,7 @@ export type V2NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -4095,6 +4183,7 @@ export type V2NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -4109,6 +4198,7 @@ export type V2NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -4123,6 +4213,7 @@ export type V2NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -4312,6 +4403,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -4326,6 +4418,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -4340,6 +4433,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -4354,6 +4448,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -4368,6 +4463,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -4382,6 +4478,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -4396,6 +4493,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -4410,6 +4508,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -4424,6 +4523,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -4438,6 +4538,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -4452,6 +4553,7 @@ export type V2NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -4672,6 +4774,7 @@ export type ProjectLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -4686,6 +4789,7 @@ export type ProjectLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -4700,6 +4804,7 @@ export type ProjectLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -4714,6 +4819,7 @@ export type ProjectLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -4728,6 +4834,7 @@ export type ProjectLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -4917,6 +5024,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -4931,6 +5039,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -4945,6 +5054,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -4959,6 +5069,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -4973,6 +5084,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -4987,6 +5099,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -5001,6 +5114,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -5015,6 +5129,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -5029,6 +5144,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -5043,6 +5159,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -5057,6 +5174,7 @@ export type ProjectLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -5142,6 +5260,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -5156,6 +5275,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -5170,6 +5290,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -5184,6 +5305,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -5198,6 +5320,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -5387,6 +5510,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -5401,6 +5525,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -5415,6 +5540,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -5429,6 +5555,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -5443,6 +5570,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -5457,6 +5585,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -5471,6 +5600,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -5485,6 +5615,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -5499,6 +5630,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -5513,6 +5645,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -5527,6 +5660,7 @@ export type ProjectFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -5887,6 +6021,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       deleted_at?: string;
@@ -5959,6 +6094,7 @@ export type ProjectFullRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -5973,6 +6109,7 @@ export type ProjectFullRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -5987,6 +6124,7 @@ export type ProjectFullRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -6001,6 +6139,7 @@ export type ProjectFullRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -6015,6 +6154,7 @@ export type ProjectFullRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -6189,6 +6329,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -6203,6 +6344,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -6217,6 +6359,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -6231,6 +6374,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -6245,6 +6389,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -6259,6 +6404,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -6273,6 +6419,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -6287,6 +6434,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -6301,6 +6449,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -6315,6 +6464,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -6329,6 +6479,7 @@ export type ProjectFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -6521,6 +6672,7 @@ export type SiteFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -6535,6 +6687,7 @@ export type SiteFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -6549,6 +6702,7 @@ export type SiteFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -6563,6 +6717,7 @@ export type SiteFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -6577,6 +6732,7 @@ export type SiteFullRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -6766,6 +6922,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -6780,6 +6937,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -6794,6 +6952,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -6808,6 +6967,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -6822,6 +6982,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -6836,6 +6997,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -6850,6 +7012,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -6864,6 +7027,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -6878,6 +7042,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -6892,6 +7057,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -6906,6 +7072,7 @@ export type SiteFullRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -7055,6 +7222,7 @@ export type ProjectPitchRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   restoration_photos?: {
@@ -7069,6 +7237,7 @@ export type ProjectPitchRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   cover?: {
@@ -7083,6 +7252,7 @@ export type ProjectPitchRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   proof_of_land_tenure_mou?: {
@@ -7097,6 +7267,7 @@ export type ProjectPitchRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
   detailed_project_budget?: {
@@ -7111,6 +7282,7 @@ export type ProjectPitchRead = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   };
   expected_active_restoration_start_date?: string;
@@ -8325,6 +8497,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     deleted_at?: string;
@@ -8397,6 +8570,7 @@ export type ApplicationRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -8411,6 +8585,7 @@ export type ApplicationRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -8425,6 +8600,7 @@ export type ApplicationRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -8439,6 +8615,7 @@ export type ApplicationRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -8453,6 +8630,7 @@ export type ApplicationRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -8627,6 +8805,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -8641,6 +8820,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -8655,6 +8835,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -8669,6 +8850,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -8683,6 +8865,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -8697,6 +8880,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -8711,6 +8895,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -8725,6 +8910,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -8739,6 +8925,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -8753,6 +8940,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -8767,6 +8955,7 @@ export type ApplicationRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -8915,6 +9104,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -8929,6 +9119,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -8943,6 +9134,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -8957,6 +9149,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -8971,6 +9164,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -9160,6 +9354,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -9174,6 +9369,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -9188,6 +9384,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -9202,6 +9399,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -9216,6 +9414,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -9230,6 +9429,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -9244,6 +9444,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -9258,6 +9459,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -9272,6 +9474,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -9286,6 +9489,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -9300,6 +9504,7 @@ export type SiteReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -9380,6 +9585,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -9394,6 +9600,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -9408,6 +9615,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -9422,6 +9630,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -9436,6 +9645,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -9625,6 +9835,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -9639,6 +9850,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -9653,6 +9865,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -9667,6 +9880,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -9681,6 +9895,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -9695,6 +9910,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -9709,6 +9925,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -9723,6 +9940,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -9737,6 +9955,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -9751,6 +9970,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -9765,6 +9985,7 @@ export type SiteReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -9853,6 +10074,7 @@ export type SiteReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -9867,6 +10089,7 @@ export type SiteReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -9881,6 +10104,7 @@ export type SiteReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -9895,6 +10119,7 @@ export type SiteReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -9909,6 +10134,7 @@ export type SiteReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -10098,6 +10324,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -10112,6 +10339,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -10126,6 +10354,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -10140,6 +10369,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -10154,6 +10384,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -10168,6 +10399,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -10182,6 +10414,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -10196,6 +10429,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -10210,6 +10444,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -10224,6 +10459,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -10238,6 +10474,7 @@ export type SiteReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -10336,6 +10573,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -10350,6 +10588,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -10364,6 +10603,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -10378,6 +10618,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -10392,6 +10633,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -10581,6 +10823,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -10595,6 +10838,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -10609,6 +10853,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -10623,6 +10868,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -10637,6 +10883,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -10651,6 +10898,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -10665,6 +10913,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -10679,6 +10928,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -10693,6 +10943,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -10707,6 +10958,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -10721,6 +10973,7 @@ export type SiteReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -10801,6 +11054,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -10815,6 +11069,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -10829,6 +11084,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -10843,6 +11099,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -10857,6 +11114,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -11046,6 +11304,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -11060,6 +11319,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -11074,6 +11334,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -11088,6 +11349,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -11102,6 +11364,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -11116,6 +11379,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -11130,6 +11394,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -11144,6 +11409,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -11158,6 +11424,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -11172,6 +11439,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -11186,6 +11454,7 @@ export type SiteReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -11274,6 +11543,7 @@ export type SiteReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             restoration_photos?: {
@@ -11288,6 +11558,7 @@ export type SiteReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             cover?: {
@@ -11302,6 +11573,7 @@ export type SiteReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             proof_of_land_tenure_mou?: {
@@ -11316,6 +11588,7 @@ export type SiteReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             detailed_project_budget?: {
@@ -11330,6 +11603,7 @@ export type SiteReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             expected_active_restoration_start_date?: string;
@@ -11519,6 +11793,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           previous_annual_reports?: {
@@ -11533,6 +11808,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           logo?: {
@@ -11547,6 +11823,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           cover?: {
@@ -11561,6 +11838,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           reference?: {
@@ -11575,6 +11853,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           additional?: {
@@ -11589,6 +11868,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_2year?: {
@@ -11603,6 +11883,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_last_year?: {
@@ -11617,6 +11898,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_this_year?: {
@@ -11631,6 +11913,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_next_year?: {
@@ -11645,6 +11928,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           legal_registration?: {
@@ -11659,6 +11943,7 @@ export type SiteReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           /**
@@ -11769,6 +12054,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -11783,6 +12069,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -11797,6 +12084,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -11811,6 +12099,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -11825,6 +12114,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -12014,6 +12304,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -12028,6 +12319,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -12042,6 +12334,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -12056,6 +12349,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -12070,6 +12364,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -12084,6 +12379,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -12098,6 +12394,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -12112,6 +12409,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -12126,6 +12424,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -12140,6 +12439,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -12154,6 +12454,7 @@ export type NurseryReportLiteRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -12234,6 +12535,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -12248,6 +12550,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -12262,6 +12565,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -12276,6 +12580,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -12290,6 +12595,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -12479,6 +12785,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -12493,6 +12800,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -12507,6 +12815,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -12521,6 +12830,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -12535,6 +12845,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -12549,6 +12860,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -12563,6 +12875,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -12577,6 +12890,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -12591,6 +12905,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -12605,6 +12920,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -12619,6 +12935,7 @@ export type NurseryReportLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -12707,6 +13024,7 @@ export type NurseryReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -12721,6 +13039,7 @@ export type NurseryReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -12735,6 +13054,7 @@ export type NurseryReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -12749,6 +13069,7 @@ export type NurseryReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -12763,6 +13084,7 @@ export type NurseryReportLiteRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -12952,6 +13274,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -12966,6 +13289,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -12980,6 +13304,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -12994,6 +13319,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -13008,6 +13334,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -13022,6 +13349,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -13036,6 +13364,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -13050,6 +13379,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -13064,6 +13394,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -13078,6 +13409,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -13092,6 +13424,7 @@ export type NurseryReportLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -13189,6 +13522,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -13203,6 +13537,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -13217,6 +13552,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -13231,6 +13567,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -13245,6 +13582,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -13434,6 +13772,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -13448,6 +13787,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -13462,6 +13802,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -13476,6 +13817,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -13490,6 +13832,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -13504,6 +13847,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -13518,6 +13862,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -13532,6 +13877,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -13546,6 +13892,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -13560,6 +13907,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -13574,6 +13922,7 @@ export type NurseryReportPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -13654,6 +14003,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -13668,6 +14018,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -13682,6 +14033,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -13696,6 +14048,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -13710,6 +14063,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -13899,6 +14253,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -13913,6 +14268,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -13927,6 +14283,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -13941,6 +14298,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -13955,6 +14313,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -13969,6 +14328,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -13983,6 +14343,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -13997,6 +14358,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -14011,6 +14373,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -14025,6 +14388,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -14039,6 +14403,7 @@ export type NurseryReportPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -14127,6 +14492,7 @@ export type NurseryReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             restoration_photos?: {
@@ -14141,6 +14507,7 @@ export type NurseryReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             cover?: {
@@ -14155,6 +14522,7 @@ export type NurseryReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             proof_of_land_tenure_mou?: {
@@ -14169,6 +14537,7 @@ export type NurseryReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             }[];
             detailed_project_budget?: {
@@ -14183,6 +14552,7 @@ export type NurseryReportPaginated = {
               lat?: number;
               lng?: number;
               is_public?: boolean;
+              is_cover?: boolean;
               created_at?: string;
             };
             expected_active_restoration_start_date?: string;
@@ -14372,6 +14742,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           previous_annual_reports?: {
@@ -14386,6 +14757,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           logo?: {
@@ -14400,6 +14772,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           cover?: {
@@ -14414,6 +14787,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           reference?: {
@@ -14428,6 +14802,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           additional?: {
@@ -14442,6 +14817,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_2year?: {
@@ -14456,6 +14832,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_last_year?: {
@@ -14470,6 +14847,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_this_year?: {
@@ -14484,6 +14862,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           op_budget_next_year?: {
@@ -14498,6 +14877,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           legal_registration?: {
@@ -14512,6 +14892,7 @@ export type NurseryReportPaginated = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           /**
@@ -14624,6 +15005,7 @@ export type NurseryPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -14638,6 +15020,7 @@ export type NurseryPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -14652,6 +15035,7 @@ export type NurseryPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -14666,6 +15050,7 @@ export type NurseryPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -14680,6 +15065,7 @@ export type NurseryPaginated = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -14869,6 +15255,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -14883,6 +15270,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -14897,6 +15285,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -14911,6 +15300,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -14925,6 +15315,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -14939,6 +15330,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -14953,6 +15345,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -14967,6 +15360,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -14981,6 +15375,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -14995,6 +15390,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -15009,6 +15405,7 @@ export type NurseryPaginated = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -15110,6 +15507,7 @@ export type NurseryRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -15124,6 +15522,7 @@ export type NurseryRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -15138,6 +15537,7 @@ export type NurseryRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -15152,6 +15552,7 @@ export type NurseryRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -15166,6 +15567,7 @@ export type NurseryRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -15355,6 +15757,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -15369,6 +15772,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -15383,6 +15787,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -15397,6 +15802,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -15411,6 +15817,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -15425,6 +15832,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -15439,6 +15847,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -15453,6 +15862,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -15467,6 +15877,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -15481,6 +15892,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -15495,6 +15907,7 @@ export type NurseryRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -15608,6 +16021,7 @@ export type NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -15622,6 +16036,7 @@ export type NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -15636,6 +16051,7 @@ export type NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -15650,6 +16066,7 @@ export type NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -15664,6 +16081,7 @@ export type NurseryLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -15853,6 +16271,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -15867,6 +16286,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -15881,6 +16301,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -15895,6 +16316,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -15909,6 +16331,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -15923,6 +16346,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -15937,6 +16361,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -15951,6 +16376,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -15965,6 +16391,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -15979,6 +16406,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -15993,6 +16421,7 @@ export type NurseryLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -16087,6 +16516,7 @@ export type SiteLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -16101,6 +16531,7 @@ export type SiteLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -16115,6 +16546,7 @@ export type SiteLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -16129,6 +16561,7 @@ export type SiteLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -16143,6 +16576,7 @@ export type SiteLiteRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -16332,6 +16766,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -16346,6 +16781,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -16360,6 +16796,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -16374,6 +16811,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -16388,6 +16826,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -16402,6 +16841,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -16416,6 +16856,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -16430,6 +16871,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -16444,6 +16886,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -16458,6 +16901,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -16472,6 +16916,7 @@ export type SiteLiteRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -16571,6 +17016,7 @@ export type NurseryReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -16585,6 +17031,7 @@ export type NurseryReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -16599,6 +17046,7 @@ export type NurseryReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -16613,6 +17061,7 @@ export type NurseryReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -16627,6 +17076,7 @@ export type NurseryReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -16816,6 +17266,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -16830,6 +17281,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -16844,6 +17296,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -16858,6 +17311,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -16872,6 +17326,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -16886,6 +17341,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -16900,6 +17356,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -16914,6 +17371,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -16928,6 +17386,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -16942,6 +17401,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -16956,6 +17416,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -17057,6 +17518,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -17071,6 +17533,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -17085,6 +17548,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -17099,6 +17563,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -17113,6 +17578,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -17287,6 +17753,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -17301,6 +17768,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -17315,6 +17783,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -17329,6 +17798,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -17343,6 +17813,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -17357,6 +17828,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -17371,6 +17843,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -17385,6 +17858,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -17399,6 +17873,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -17413,6 +17888,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -17427,6 +17903,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -17535,6 +18012,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -17549,6 +18027,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -17563,6 +18042,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -17577,6 +18057,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -17591,6 +18072,7 @@ export type NurseryReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -17765,6 +18247,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -17779,6 +18262,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -17793,6 +18277,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -17807,6 +18292,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -17821,6 +18307,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -17835,6 +18322,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -17849,6 +18337,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -17863,6 +18352,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -17877,6 +18367,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -17891,6 +18382,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -17905,6 +18397,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -18005,6 +18498,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -18019,6 +18513,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -18033,6 +18528,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -18047,6 +18543,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -18061,6 +18558,7 @@ export type NurseryReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -18250,6 +18748,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -18264,6 +18763,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -18278,6 +18778,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -18292,6 +18793,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -18306,6 +18808,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -18320,6 +18823,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -18334,6 +18838,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -18348,6 +18853,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -18362,6 +18868,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -18376,6 +18883,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -18390,6 +18898,7 @@ export type NurseryReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -18481,6 +18990,7 @@ export type SiteReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           restoration_photos?: {
@@ -18495,6 +19005,7 @@ export type SiteReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           cover?: {
@@ -18509,6 +19020,7 @@ export type SiteReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           proof_of_land_tenure_mou?: {
@@ -18523,6 +19035,7 @@ export type SiteReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           }[];
           detailed_project_budget?: {
@@ -18537,6 +19050,7 @@ export type SiteReportRead = {
             lat?: number;
             lng?: number;
             is_public?: boolean;
+            is_cover?: boolean;
             created_at?: string;
           };
           expected_active_restoration_start_date?: string;
@@ -18726,6 +19240,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         previous_annual_reports?: {
@@ -18740,6 +19255,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         logo?: {
@@ -18754,6 +19270,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         cover?: {
@@ -18768,6 +19285,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         reference?: {
@@ -18782,6 +19300,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         additional?: {
@@ -18796,6 +19315,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_2year?: {
@@ -18810,6 +19330,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_last_year?: {
@@ -18824,6 +19345,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_this_year?: {
@@ -18838,6 +19360,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         op_budget_next_year?: {
@@ -18852,6 +19375,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         legal_registration?: {
@@ -18866,6 +19390,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         /**
@@ -18963,6 +19488,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -18977,6 +19503,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -18991,6 +19518,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -19005,6 +19533,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -19019,6 +19548,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -19193,6 +19723,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -19207,6 +19738,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -19221,6 +19753,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -19235,6 +19768,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -19249,6 +19783,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -19263,6 +19798,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -19277,6 +19813,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -19291,6 +19828,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -19305,6 +19843,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -19319,6 +19858,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -19333,6 +19873,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -19441,6 +19982,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -19455,6 +19997,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -19469,6 +20012,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -19483,6 +20027,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -19497,6 +20042,7 @@ export type SiteReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -19671,6 +20217,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -19685,6 +20232,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -19699,6 +20247,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -19713,6 +20262,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -19727,6 +20277,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -19741,6 +20292,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -19755,6 +20307,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -19769,6 +20322,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -19783,6 +20337,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -19797,6 +20352,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -19811,6 +20367,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -19981,6 +20538,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -19995,6 +20553,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -20009,6 +20568,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -20023,6 +20583,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -20037,6 +20598,7 @@ export type SiteReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -20226,6 +20788,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -20240,6 +20803,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -20254,6 +20818,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -20268,6 +20833,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -20282,6 +20848,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -20296,6 +20863,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -20310,6 +20878,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -20324,6 +20893,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -20338,6 +20908,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -20352,6 +20923,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -20366,6 +20938,7 @@ export type SiteReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -20579,6 +21152,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       restoration_photos?: {
@@ -20593,6 +21167,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       cover?: {
@@ -20607,6 +21182,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       proof_of_land_tenure_mou?: {
@@ -20621,6 +21197,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       detailed_project_budget?: {
@@ -20635,6 +21212,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       expected_active_restoration_start_date?: string;
@@ -20824,6 +21402,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     previous_annual_reports?: {
@@ -20838,6 +21417,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     logo?: {
@@ -20852,6 +21432,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     cover?: {
@@ -20866,6 +21447,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     };
     reference?: {
@@ -20880,6 +21462,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     additional?: {
@@ -20894,6 +21477,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_2year?: {
@@ -20908,6 +21492,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_last_year?: {
@@ -20922,6 +21507,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_this_year?: {
@@ -20936,6 +21522,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     op_budget_next_year?: {
@@ -20950,6 +21537,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     legal_registration?: {
@@ -20964,6 +21552,7 @@ export type ProjectReportRead = {
       lat?: number;
       lng?: number;
       is_public?: boolean;
+      is_cover?: boolean;
       created_at?: string;
     }[];
     /**
@@ -21049,6 +21638,7 @@ export type ProjectReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         restoration_photos?: {
@@ -21063,6 +21653,7 @@ export type ProjectReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         cover?: {
@@ -21077,6 +21668,7 @@ export type ProjectReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         proof_of_land_tenure_mou?: {
@@ -21091,6 +21683,7 @@ export type ProjectReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         }[];
         detailed_project_budget?: {
@@ -21105,6 +21698,7 @@ export type ProjectReportRead = {
           lat?: number;
           lng?: number;
           is_public?: boolean;
+          is_cover?: boolean;
           created_at?: string;
         };
         expected_active_restoration_start_date?: string;
@@ -21279,6 +21873,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       previous_annual_reports?: {
@@ -21293,6 +21888,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       logo?: {
@@ -21307,6 +21903,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       cover?: {
@@ -21321,6 +21918,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       };
       reference?: {
@@ -21335,6 +21933,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       additional?: {
@@ -21349,6 +21948,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_2year?: {
@@ -21363,6 +21963,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_last_year?: {
@@ -21377,6 +21978,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_this_year?: {
@@ -21391,6 +21993,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       op_budget_next_year?: {
@@ -21405,6 +22008,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       legal_registration?: {
@@ -21419,6 +22023,7 @@ export type ProjectReportRead = {
         lat?: number;
         lng?: number;
         is_public?: boolean;
+        is_cover?: boolean;
         created_at?: string;
       }[];
       /**
@@ -21774,6 +22379,7 @@ export type AuditStatusResponse = {
     lat?: number;
     lng?: number;
     is_public?: boolean;
+    is_cover?: boolean;
     created_at?: string;
   }[];
 };
@@ -22633,9 +23239,46 @@ export type SitePolygonLoaded = {
   version_name?: string;
 };
 
-export type ClippedPolygonsResponse = {
+export type ClippedPolygonResponse = {
   updated_polygons?: {
     uuid?: string;
+    poly_name?: string;
+  }[];
+};
+
+export type ClippedPolygonsResponse = {
+  /**
+   * A list of processed polygons
+   */
+  processed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+  /**
+   * A list of polygons that couldn't be processed
+   */
+  unprocessed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
     poly_name?: string;
   }[];
 };
