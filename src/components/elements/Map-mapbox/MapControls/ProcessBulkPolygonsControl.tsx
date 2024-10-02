@@ -97,6 +97,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
                   }
                   refetchData?.();
                   hideLoader();
+                  closeModal(ModalId.FIX_POLYGONS);
                 },
                 onError: () => {
                   hideLoader();
