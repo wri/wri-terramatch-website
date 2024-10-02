@@ -66,32 +66,34 @@ const ProcessBulkPolygonsControl = () => {
   };
 
   return (
-    <div className="flex-col items-center gap-1">
-      <div className="rounded-lg bg-[#ffffff26] bg-white p-3 text-center text-white">
-        <Text variant="text-10" className="text-black">
+    <div className="w-[320px] flex-col items-center gap-1 lg:w-[390px]">
+      <div className="rounded-lg bg-[#ffffff26]  p-3 text-center text-white backdrop-blur-md">
+        <Text variant="text-10-bold" className="text-white">
           {t("Click below to process the selected polygons")}
         </Text>
-        <Button
-          variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white"
-          onClick={() => handleOpen("delete")}
-        >
-          {t("Delete")}
-        </Button>
-        <Button
-          variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white"
-          onClick={() => handleOpen("check")}
-        >
-          {t("Check")}
-        </Button>
-        <Button
-          variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white"
-          onClick={() => handleOpen("fix")}
-        >
-          {t("Fix")}
-        </Button>
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            variant="text"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white"
+            onClick={() => handleOpen("delete")}
+          >
+            {t("Delete")}
+          </Button>
+          <Button
+            variant="text"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+            onClick={() => handleOpen("check")}
+          >
+            {t("Check")}
+          </Button>
+          <Button
+            variant="text"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            onClick={() => handleOpen("fix")}
+          >
+            {t("Fix")}
+          </Button>
+        </div>
       </div>
     </div>
   );
