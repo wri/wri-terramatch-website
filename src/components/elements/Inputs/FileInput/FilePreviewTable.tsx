@@ -56,7 +56,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
         entityData={entityData}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
         reloadGalleryImages={() => {}}
-        handleDelete={() => {}}
+        handleDelete={onDelete && (() => onDelete(item))}
         updateValuesInForm={updatedItem => {
           if (updatedItem.is_cover) {
             items.forEach(item => {
@@ -182,14 +182,14 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
             cell: (props: any) => (
               <If condition={props.getValue}>
                 <Then>
-                  <div className="w-fit rounded bg-secondary-200 py-1 px-2">
+                  <div className="w-fit rounded bg-secondary-200 px-2 py-1">
                     <Text variant="text-12-bold" className="text-green">
                       {t("Yes")}
                     </Text>
                   </div>
                 </Then>
                 <Else>
-                  <div className="w-fit rounded bg-grey-100 py-1 px-2">
+                  <div className="w-fit rounded bg-grey-100 px-2 py-1">
                     <Text variant="text-12-semibold" className="text-neutral-600">
                       {t("No")}
                     </Text>
