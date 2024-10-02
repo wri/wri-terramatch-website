@@ -16,7 +16,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { formatOptionsList, getMetaData } from "@/utils/options";
+import { formatOptionsList, getPrefix } from "@/utils/options";
 
 import { DropdownVariant, VARIANT_DROPDOWN_DEFAULT } from "./DropdownVariant";
 
@@ -173,7 +173,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             <Listbox.Button
               as="div"
               className={classNames(
-                "flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer",
+                "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
                 !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
                 props.className,
@@ -182,7 +182,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             >
               <When condition={!!props.prefix}>{props.prefix}</When>
               <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
-                {getMetaData(options, toArray<any>(value))}
+                {getPrefix(options, toArray<any>(value))}
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname)}
@@ -254,7 +254,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
-                            <When condition={option.meta}>{option.meta}</When>
+                            <When condition={option.prefix}>{option.prefix}</When>
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
                               className={tw(
