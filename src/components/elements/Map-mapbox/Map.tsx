@@ -502,7 +502,7 @@ export const MapContainer = ({
           </ControlGroup>
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
-          <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
+          <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
             <ProcessBulkPolygonsControl />
           </ControlGroup>
         </When>
