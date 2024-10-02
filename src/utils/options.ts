@@ -9,11 +9,11 @@ import { toArray } from "@/utils/array";
  * @returns Comma separated values as string.
  */
 
-export const getMetaData = (options: Option[], values?: string | string[]): any => {
+export const getPrefix = (options: Option[], values?: string | string[]): any => {
   if (!values) return undefined;
   if (options.length === 0) return undefined;
 
-  return options.find(o => o.value === values[0])?.meta;
+  return options.find(o => o.value === values[0])?.prefix;
 };
 
 export const formatOptionsList = (options: Option[], values?: string | string[]): string => {
