@@ -254,7 +254,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
-                            <When condition={option.prefix}>{option.prefix}</When>
+                            <When condition={!!option.prefix}>{option.prefix}</When>
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
                               className={tw(
