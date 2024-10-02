@@ -46,7 +46,7 @@ export const MediaPopup = ({
     },
     {
       id: "2",
-      render: () => <Text variant="text-12-bold">{t("Dowload")}</Text>,
+      render: () => <Text variant="text-12-bold">{t("Download")}</Text>,
       onClick: handleDownload
     },
     ...(isProjectPath

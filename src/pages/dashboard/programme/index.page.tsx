@@ -42,17 +42,6 @@ export interface GraphicLegendProps {
   color: string;
 }
 
-export interface DashboardDataProps {
-  value?: string;
-  unit?: string;
-  secondValue?: string;
-  graphic?: string;
-  tableData?: DashboardTableDataProps[];
-  maxValue?: number;
-  graphicLegend?: GraphicLegendProps[];
-  graphicTargetLandUseTypes?: DashboardTableDataProps[];
-}
-
 const Dashboard = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
