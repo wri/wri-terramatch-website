@@ -6,13 +6,12 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
-  COLUMN_ACTIVE_PROGRAMME,
-  DATA_ACTIVE_PROGRAMME,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -61,6 +60,52 @@ const Dashboard = () => {
       value: "23,000"
     }
   ];
+
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+
+  const COLUMN_ACTIVE_PROGRAMME = [
+    {
+      header: "Country",
+      cell: (props: any) => {
+        const value = props.getValue().split("_");
+        return (
+          <div className="flex items-center gap-2">
+            <img src={value[1]} alt="flag" className="h-3" />
+            <Text variant="text-10-light">{value[0]}</Text>
+          </div>
+        );
+      },
+      accessorKey: "country"
+    },
+    {
+      header: "Projest",
+      accessorKey: "project"
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted"
+    },
+    {
+      header: "Restoration Hectares",
+      accessorKey: "restoratioHectares"
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated"
+    }
+  ];
+
+  const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
+    ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
+        country: `${country.data.label}_${country.data.icon}`,
+        project: "project",
+        treesPlanted: "treesPlanted",
+        restoratioHectares: "restorationHectares",
+        jobsCreated: "jobsCreated"
+      }))
+    : [];
 
   return (
     <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
@@ -199,7 +244,6 @@ const Dashboard = () => {
           </PageCard>
         </PageRow>
       </div>
-
       <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
     </div>
   );
