@@ -6,9 +6,6 @@ import { twMerge } from "tailwind-merge";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Text from "@/components/elements/Text/Text";
-import { useLoading } from "@/context/loaderAdmin.provider";
-import { useNotificationContext } from "@/context/notification.provider";
-import { useDeleteV2TerrafundProjectPolygons } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -41,9 +38,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
 }) => {
   const t = useT();
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-  const { showLoader, hideLoader } = useLoading();
-  const { openNotification } = useNotificationContext();
-  const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
+
   useEffect(() => {
     if (sitePolygonData) {
       const initialSelection = sitePolygonData.map((polygon: any) =>
@@ -62,32 +57,6 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   };
   const handleSelectAll = (isChecked: boolean) => {
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
-  };
-
-  const handleProcess = () => {
-    showLoader();
-    const selectedUUIDs: any = sitePolygonData
-      .filter((_, index) => polygonsSelected[index])
-      .map(polygon => polygon.poly_id);
-    deletePolygons(
-      {
-        body: {
-          uuids: selectedUUIDs
-        }
-      },
-      {
-        onSuccess: () => {
-          onClose?.();
-          refetch?.();
-          hideLoader();
-          openNotification("success", t("Success!"), t("Polygons deleted successfully"));
-        },
-        onError: () => {
-          hideLoader();
-          openNotification("error", t("Error!"), t("Failed to delete polygons"));
-        }
-      }
-    );
   };
 
   return (
@@ -149,7 +118,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps} onClick={handleProcess}>
+        <Button {...primaryButtonProps}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>

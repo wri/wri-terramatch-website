@@ -11,6 +11,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
+  useDeleteV2TerrafundProjectPolygons,
   usePostV2TerrafundClipPolygonsPolygons,
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
@@ -37,7 +38,8 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
   const { openNotification } = useNotificationContext();
   const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
   const sitePolygonData = context?.sitePolygonData as Array<SitePolygon>;
-  const openFormModalHandlerProcessBulkPolygons = () => {
+  const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
+  const openFormModalHandlerProcessBulkPolygons = (selectedUUIDs: string[]) => {
     openModal(
       ModalId.DELETE_BULK_POLYGONS,
       <ModalProcessBulkPolygons
@@ -49,7 +51,26 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            showLoader();
             closeModal(ModalId.DELETE_BULK_POLYGONS);
+            deletePolygons(
+              {
+                body: {
+                  uuids: selectedUUIDs
+                }
+              },
+              {
+                onSuccess: () => {
+                  refetchData();
+                  hideLoader();
+                  openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+                },
+                onError: () => {
+                  hideLoader();
+                  openNotification("error", t("Error!"), t("Failed to delete polygons"));
+                }
+              }
+            );
           }
         }}
         secondaryButtonText={t("Cancel")}
@@ -60,7 +81,6 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
         }}
         sitePolygonData={sitePolygonData}
         selectedPolygonsInCheckbox={selectedPolygonsInCheckbox}
-        refetch={refetchData}
       />
     );
   };
@@ -77,6 +97,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            showLoader();
             fixPolygons(
               {
                 body: {
@@ -151,7 +172,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
     } else if (type === "fix") {
       openFormModalHandlerSubmitPolygon(selectedUUIDs);
     } else {
-      openFormModalHandlerProcessBulkPolygons();
+      openFormModalHandlerProcessBulkPolygons(selectedUUIDs);
     }
   };
 
