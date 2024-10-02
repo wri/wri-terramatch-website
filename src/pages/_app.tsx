@@ -8,9 +8,11 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import { Else, If, Then } from "react-if";
 
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
+import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
 import AuthProvider from "@/context/auth.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
@@ -31,6 +33,7 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
+  const isOnDashboards = router.asPath.includes("/dashboard");
 
   setClientSideTranslations(props);
   setupYup(t);
@@ -66,10 +69,20 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
                         <NavbarProvider>
                           <ModalRoot />
                           <Toast />
-                          <MainLayout isLoggedIn={!!accessToken}>
-                            <Component {...pageProps} accessToken={accessToken} />
-                            <CookieBanner />
-                          </MainLayout>
+                          <If condition={isOnDashboards}>
+                            <Then>
+                              <DashboardLayout isLoggedIn={!!accessToken}>
+                                <Component {...pageProps} accessToken={accessToken} />
+                                <CookieBanner />
+                              </DashboardLayout>
+                            </Then>
+                            <Else>
+                              <MainLayout isLoggedIn={!!accessToken}>
+                                <Component {...pageProps} accessToken={accessToken} />
+                                <CookieBanner />
+                              </MainLayout>
+                            </Else>
+                          </If>
                         </NavbarProvider>
                       </ModalProvider>
                     </NotificationProvider>

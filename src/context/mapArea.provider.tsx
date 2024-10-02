@@ -17,6 +17,8 @@ type MapAreaType = {
   setSiteData: (value: any) => void;
   shouldRefetchPolygonData: boolean;
   setShouldRefetchPolygonData: (value: boolean) => void;
+  shouldRefetchMediaData: boolean;
+  setShouldRefetchMediaData: (value: boolean) => void;
   shouldRefetchValidation: boolean;
   setShouldRefetchValidation: (value: boolean) => void;
   shouldRefetchPolygonVersions: boolean;
@@ -61,6 +63,8 @@ const defaultValue: MapAreaType = {
   setSiteData: () => {},
   shouldRefetchPolygonData: false,
   setShouldRefetchPolygonData: () => {},
+  shouldRefetchMediaData: false,
+  setShouldRefetchMediaData: () => {},
   shouldRefetchValidation: false,
   setShouldRefetchValidation: () => {},
   shouldRefetchPolygonVersions: false,
@@ -94,6 +98,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
+  const [shouldRefetchMediaData, setShouldRefetchMediaData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
   const [shouldRefetchPolygonVersions, setShouldRefetchPolygonVersions] = useState<boolean>(false);
   const [hasOverlaps, setHasOverlaps] = useState<boolean>(false);
@@ -148,6 +153,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setSiteData,
     shouldRefetchPolygonData,
     setShouldRefetchPolygonData,
+    shouldRefetchMediaData,
+    setShouldRefetchMediaData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
     shouldRefetchPolygonVersions,

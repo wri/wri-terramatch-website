@@ -8,7 +8,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
     className="relative flex rounded-lg bg-neutral-40 p-1"
   >
     <div
-      className="absolute top-1 h-[calc(100%_-_8px)] rounded-lg bg-white transition-all"
+      className="absolute top-1 transition-all rounded-lg bg-white h-[calc(100%_-_8px)]"
       style={
         Object {
           "transform": "translateX(calc(undefinedpx - 4px))",

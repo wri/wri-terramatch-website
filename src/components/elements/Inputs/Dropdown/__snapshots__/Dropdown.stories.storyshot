@@ -47,6 +47,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -55,7 +56,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
@@ -111,6 +112,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -119,7 +121,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
@@ -175,6 +177,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -183,7 +186,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
@@ -224,12 +227,11 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
     <div
       className="flex items-center gap-2"
     >
-      <div
-        className="min-h-[8px] min-w-[8px] rounded-full "
-      />
+      Approved
       <p
         className="w-full line-clamp-1 text-14-light"
         data-testid="txt"
+        title="Aerobic Agroforestry"
       >
         Aerobic Agroforestry
       </p>
@@ -238,7 +240,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
       style={
         Object {
           "height": undefined,
-          "width": 16,
+          "width": 24,
         }
       }
     />
@@ -293,6 +295,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -301,7 +304,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
