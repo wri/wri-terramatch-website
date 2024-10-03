@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import Button from "../Button/Button";
+import { DRAWER_VARIANT_DEFAULT, DrawerVariant } from "./DrawerVariants";
 
 export interface DrawerProps {
   isOpen?: boolean;
@@ -11,12 +12,22 @@ export interface DrawerProps {
   children: ReactNode;
   setIsOpen: (isOpen: boolean) => void;
   setPolygonFromMap?: any;
+  isScrolledDefault?: boolean;
+  variant?: DrawerVariant;
 }
 
 const Drawer = (props: DrawerProps) => {
-  const { isOpen, setIsOpen, title = "", setPolygonFromMap, children } = props;
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const {
+    isOpen,
+    setIsOpen,
+    title = "",
+    setPolygonFromMap,
+    children,
+    isScrolledDefault,
+    variant = DRAWER_VARIANT_DEFAULT
+  } = props;
+  const [isScrolled, setIsScrolled] = useState(isScrolledDefault);
+  const [isScrollingDown, setIsScrollingDown] = useState(isScrolledDefault);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 
   useEffect(() => {
@@ -43,7 +54,7 @@ const Drawer = (props: DrawerProps) => {
   return (
     <div
       className={classNames(
-        "fixed left-full top-0 z-50 ml-2 flex h-full h-[-webkit-fill-available] w-[25rem] flex-col overflow-visible bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem]",
+        "fixed left-full top-0 z-50 ml-2 flex h-[-webkit-fill-available] h-full w-[25rem] flex-col overflow-visible bg-white py-6 pl-6 pr-3 shadow-[0_0_5px_0_rgba(0,0,0,0.2)] transition-all duration-[200ms] ease-in-out lg:w-[26.5rem]",
         {
           "translate-x-[-25.5rem] lg:translate-x-[-27rem]": isOpen,
           "mt-[70px] h-[calc(100%_-_70px)]": !isScrolled || !isScrollingDown,
@@ -58,10 +69,10 @@ const Drawer = (props: DrawerProps) => {
           className="ml-auto rounded p-1 hover:bg-grey-800"
           onClick={() => {
             setIsOpen(false);
-            setPolygonFromMap({ isOpen: false, uuid: "" });
+            setPolygonFromMap && setPolygonFromMap({ isOpen: false, uuid: "" });
           }}
         >
-          <Icon name={IconNames.CLEAR} className="h-5 w-5 text-blueCustom-900 opacity-50" />
+          <Icon name={IconNames.CLEAR} className={classNames("h-5 w-5", variant.iconClassName)} />
         </Button>
       </div>
       {children}

@@ -16,7 +16,7 @@ const HeaderDashboard = () => {
   const sharedRef = useContext(RefContext);
   const t = useT();
   const router = useRouter();
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const dropdwonOptions = [
     {
       title: "Tree Planting",
