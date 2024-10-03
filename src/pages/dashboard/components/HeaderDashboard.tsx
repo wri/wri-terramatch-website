@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
@@ -17,6 +18,7 @@ const HeaderDashboard = () => {
   const t = useT();
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
+  const isAirTablePage = router.pathname.includes("dashboard/airtable");
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -114,6 +116,13 @@ const HeaderDashboard = () => {
     router.push(`/dashboard/country/${selectedCountry?.country_slug}`);
   };
 
+  const getHeaderTitle = () => {
+    if (isAirTablePage) {
+      return "Project Insights";
+    }
+    return "TerraMatch Insights";
+  };
+
   return (
     <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
@@ -121,87 +130,91 @@ const HeaderDashboard = () => {
           variant={"text-28-bold"}
           className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
         >
-          {t("TerraMatch Insights")}
+          {t(getHeaderTitle())}
         </Text>
-        <div className="flex items-center gap-3">
-          <BlurContainer isCollapse={isHeaderCollapsed}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Programme:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              variant={VARIANT_DROPDOWN_HEADER}
-              value={filterValues.dropdown1}
-              placeholder="Top100"
-              onChange={(value: OptionValue[]) => {
-                handleChange("dropdown1", value);
-              }}
-              options={dropdwonOptions}
-            />
-          </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Landscape:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              variant={VARIANT_DROPDOWN_HEADER}
-              placeholder="Top100"
-              value={filterValues.dropdown2}
-              onChange={value => {
-                handleChange("dropdown2", value);
-              }}
-              options={dropdwonOptions}
-            />
-          </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]">
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Country:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              variant={VARIANT_DROPDOWN_HEADER}
-              placeholder="Global"
-              value={filterValues.dropdown3}
-              onChange={value => {
-                handleChangeCountry(value);
-              }}
-              options={dropdwonCountryOptions}
-            />
-          </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Organization:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              multiSelect
-              variant={VARIANT_DROPDOWN_HEADER}
-              placeholder="Private"
-              value={filterValues.dropdown4}
-              onChange={value => {
-                handleChange("dropdown4", value);
-              }}
-              options={dropdwonOptions}
-            />
-          </BlurContainer>
-          <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
-            {t("Clear Filters")}
-          </button>
+        <When condition={!isAirTablePage}>
+          <div className="flex items-center gap-3">
+            <BlurContainer isCollapse={isHeaderCollapsed}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Programme:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={VARIANT_DROPDOWN_HEADER}
+                value={filterValues.dropdown1}
+                placeholder="Top100"
+                onChange={(value: OptionValue[]) => {
+                  handleChange("dropdown1", value);
+                }}
+                options={dropdwonOptions}
+              />
+            </BlurContainer>
+            <BlurContainer isCollapse={isHeaderCollapsed}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Landscape:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={VARIANT_DROPDOWN_HEADER}
+                placeholder="Top100"
+                value={filterValues.dropdown2}
+                onChange={value => {
+                  handleChange("dropdown2", value);
+                }}
+                options={dropdwonOptions}
+              />
+            </BlurContainer>
+            <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]">
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Country:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={VARIANT_DROPDOWN_HEADER}
+                placeholder="Global"
+                value={filterValues.dropdown3}
+                onChange={value => {
+                  handleChangeCountry(value);
+                }}
+                options={dropdwonCountryOptions}
+              />
+            </BlurContainer>
+            <BlurContainer isCollapse={isHeaderCollapsed}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Organization:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                multiSelect
+                variant={VARIANT_DROPDOWN_HEADER}
+                placeholder="Private"
+                value={filterValues.dropdown4}
+                onChange={value => {
+                  handleChange("dropdown4", value);
+                }}
+                options={dropdwonOptions}
+              />
+            </BlurContainer>
+            <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
+              {t("Clear Filters")}
+            </button>
+          </div>
+        </When>
+      </div>
+      <When condition={!isAirTablePage}>
+        <div className="relative h-fit">
+          <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
+          <button className="relative z-10 px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
         </div>
-      </div>
-      <div className="relative h-fit">
-        <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
-        <button className="relative z-10 px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
-      </div>
+      </When>
     </header>
   );
 };
