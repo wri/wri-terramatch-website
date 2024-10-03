@@ -16,7 +16,7 @@ const HeaderDashboard = () => {
   const sharedRef = useContext(RefContext);
   const t = useT();
   const router = useRouter();
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -115,7 +115,7 @@ const HeaderDashboard = () => {
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
