@@ -9,7 +9,9 @@ import { VARIANT_DROPDOWN_FILTER } from "@/components/elements/Inputs/Dropdown/D
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD_COUNTRIES } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+
 const AirTable = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const dropdwonOptions = [
@@ -193,32 +195,142 @@ const AirTable = () => {
           variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
           hasPagination
           data={[
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" },
-            { projectName: "projectName", lastUpdate: "9 January 2024" }
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            },
+            {
+              projectName: {
+                title: "Harit Bharat Fund Base",
+                description:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                link: "",
+                image: "/images/airtable-card.png",
+                year: "2023"
+              },
+              lastUpdate: "9 January 2024"
+            }
           ]}
           columns={[
             {
               accessorKey: "projectName",
               header: "Project Name",
               enableSorting: false,
-              cell: (props: any) => (
-                <button
-                  className="w-fit"
-                  onClick={e => {
-                    e.stopPropagation();
-                    setIsDrawerOpen(!isDrawerOpen);
-                  }}
-                >
-                  <Text variant="text-bold-caption-100">{props.getValue()}</Text>
-                </button>
-              )
+              cell: (props: any) => {
+                const { title, description, link, image, year } = props.getValue();
+
+                return (
+                  <button
+                    className="flex w-full items-center gap-2"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setIsDrawerOpen(!isDrawerOpen);
+                    }}
+                  >
+                    <img src={image} alt="project-img" className="h-10 w-10 rounded" />
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-1">
+                        <Text variant="text-14-semibold">
+                          {title} - {year}
+                        </Text>
+                        <Text variant="text-14-light" className="text-blueCustom-900">
+                          Airtable
+                        </Text>
+                        <a href={link} target="_blank" rel="noreferrer">
+                          <Icon name={IconNames.LINK_AIRTABLE} className="h-3 w-3" />
+                        </a>
+                      </div>
+                      <Text variant="text-14-light" className="text-darkCustom-50">
+                        {description}
+                      </Text>
+                    </div>
+                  </button>
+                );
+              }
             },
             {
               accessorKey: "lastUpdate",
