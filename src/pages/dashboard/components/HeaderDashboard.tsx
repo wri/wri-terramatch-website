@@ -2,9 +2,12 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
+import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
+import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 import { OptionValue } from "@/types/common";
@@ -17,6 +20,7 @@ const HeaderDashboard = () => {
   const t = useT();
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
+  const isProjectList = router.pathname === "/dashboard/project-list";
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -45,7 +49,7 @@ const HeaderDashboard = () => {
     ...(dashboardCountries?.data?.map((country: any) => ({
       title: country.data.label,
       value: country.id,
-      meta: <img src={country.data.icon} alt="flag" className="h-4" />
+      meta: <img src={country.data.icon} alt="flag" className="h-4 w-6 object-cover" />
     })) || [])
   ];
 
@@ -115,8 +119,8 @@ const HeaderDashboard = () => {
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
-      <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
+    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+      <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
           className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
@@ -198,9 +202,16 @@ const HeaderDashboard = () => {
           </button>
         </div>
       </div>
-      <div className="relative h-fit">
-        <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
-        <button className="relative z-10 px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
+      <div className="flex flex-col items-end justify-between gap-3">
+        <div className="relative h-fit w-fit">
+          <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
+          <button className="relative z-10 w-fit px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
+        </div>
+        <When condition={isProjectList}>
+          <BlurContainer isCollapse={isHeaderCollapsed}>
+            <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+          </BlurContainer>
+        </When>
       </div>
     </header>
   );

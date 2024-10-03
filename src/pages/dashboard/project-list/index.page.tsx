@@ -5,8 +5,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-
-import { DATA_TABLE_PROJECT_LIST } from "../mockedData/dashboard";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 export interface DashboardTableDataProps {
   label: string;
@@ -77,7 +76,16 @@ const ProjectList = () => {
     },
     {
       header: "Country",
-      accessorKey: "country"
+      accessorKey: "country",
+      cell: (props: any) => {
+        const { label, image } = props.getValue();
+        return (
+          <div className="flex items-center gap-2">
+            <img src={image} alt="flas" className="h-6 w-8 object-cover" />
+            <Text variant="text-14-light">{label}</Text>
+          </div>
+        );
+      }
     },
     {
       header: "Trees Planted",
@@ -105,8 +113,24 @@ const ProjectList = () => {
     }
   ];
 
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+
+  const DATA_TABLE_PROJECT_LIST = dashboardCountries
+    ? dashboardCountries.data.map((country: any) => ({
+        project: "Annette Ward (3SC)",
+        organization: "Goshen Global Vision",
+        programme: "TerraFund Top100",
+        country: { label: country.data.label, image: country.data.icon },
+        treesPlanted: "12,000,000",
+        restorationHectares: "15,700",
+        jobsCreated: "9,000,000"
+      }))
+    : [];
+
   return (
-    <div className="h-full overflow-hidden bg-neutral-70 py-8 px-14">
+    <div className="h-full overflow-hidden bg-neutral-70 px-14 py-8">
       <Table
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
