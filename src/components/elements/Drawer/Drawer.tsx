@@ -62,7 +62,7 @@ const Drawer = (props: DrawerProps) => {
         }
       )}
     >
-      <div className="flex w-full items-center">
+      <div className={classNames("flex w-full", variant.headerClassname)}>
         {title}
         <Button
           variant="text"

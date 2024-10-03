@@ -34,11 +34,15 @@ const AirTable = () => {
       <Drawer
         isOpen={isDrawerOpen}
         setIsOpen={setIsDrawerOpen}
-        title={<Text variant="text-20-light">Filter</Text>}
+        title={
+          <Text variant="text-20-light" className="mt-6">
+            Filter
+          </Text>
+        }
         isScrolledDefault={true}
         variant={DRAWER_VARIANT_FILTER}
       >
-        <div className="flex flex-col gap-6 overflow-auto pr-2">
+        <div className="mb-6 flex flex-col gap-6 overflow-auto pr-2">
           <div className="flex flex-col gap-2">
             <Text variant="text-14-light">SITE STATUS</Text>
             <div className="grid grid-cols-2 gap-2">
@@ -167,27 +171,27 @@ const AirTable = () => {
               variant={VARIANT_DROPDOWN_FILTER}
             />
           </div>
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              variant="white-border"
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            >
-              <Text variant="text-14-semibold" className="capitalize">
-                Reset
-              </Text>
-            </Button>
-            <Button
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            >
-              <Text variant="text-14-semibold" className="capitalize">
-                Apply
-              </Text>
-            </Button>
-          </div>
+        </div>
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            variant="white-border"
+            onClick={() => {
+              setIsDrawerOpen(false);
+            }}
+          >
+            <Text variant="text-14-semibold" className="capitalize">
+              Reset
+            </Text>
+          </Button>
+          <Button
+            onClick={() => {
+              setIsDrawerOpen(false);
+            }}
+          >
+            <Text variant="text-14-semibold" className="capitalize">
+              Apply
+            </Text>
+          </Button>
         </div>
       </Drawer>
       <PageCard>
