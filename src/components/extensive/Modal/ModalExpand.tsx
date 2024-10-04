@@ -10,6 +10,7 @@ import { ExpandModalBase } from "./ModalsBases";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 export interface ModalExpandProps extends ModalBaseProps {
+  id: string;
   title: string;
   popUpContent?: string;
   closeModal: (id: string) => void;
