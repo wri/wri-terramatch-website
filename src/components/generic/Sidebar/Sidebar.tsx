@@ -10,7 +10,7 @@ const Sidebar = () => {
 
   return (
     <div className="flex flex-col items-center gap-8 bg-blueCustom-700 p-3 text-darkCustom-200">
-      <a className="mt-4 mb-10 cursor-pointer" href="/home">
+      <a className="mb-10 mt-4 cursor-pointer" href="/home">
         <Icon name={IconNames.TERRAFUND_lOGO_MINI} />
       </a>
       <a
@@ -26,7 +26,7 @@ const Sidebar = () => {
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
           "text-white": router.asPath.includes("/dashboard/project-profile")
         })}
-        href="/dashboard/project-profile"
+        href="/dashboard/project-list"
       >
         <Icon name={IconNames.PROJECT_PROFILE} className="h-8 w-8" />
         <Text variant={"text-8"}>

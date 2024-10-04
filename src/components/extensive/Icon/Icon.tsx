@@ -186,7 +186,8 @@ export enum IconNames {
   IC_PEATLAND = "targetLand/Peatland",
   IC_LEGEND_MAP = "ic-legend-map",
   EDIT_PA = "edit-pa",
-  PIN = "pin"
+  PIN = "pin",
+  LINK_AIRTABLE = "link-aritable"
 }
 
 export interface IconProps {

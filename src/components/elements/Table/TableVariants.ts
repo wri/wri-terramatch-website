@@ -141,3 +141,29 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL = {
   tdBody: "text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
   thead: "bg-blueCustom-100 "
 };
+
+export const VARIANT_TABLE_DASHBOARD = {
+  table: "border-collapse",
+  name: "border-airtable",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto w-full max-h-[calc(100vh-252px)]",
+  trHeader: "bg-neutral-150 sticky top-0 z-10",
+  thHeader:
+    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-2",
+  tBody: "",
+  trBody: "bg-white border-y border-neutral-200 last:border-b-0",
+  tdBody: "text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
+  thead: "text-14-semibold bg-blueCustom-100"
+};
+
+export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
+  table: "border-collapse",
+  name: "border-airtable",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto w-full max-h-[calc(100vh-298px)]",
+  trHeader: "bg-neutral-150 sticky top-0 z-10",
+  thHeader:
+    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-2",
+  tBody: "",
+  trBody: "bg-white border-y border-neutral-200 last:border-b-0",
+  tdBody: "text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
+  thead: "text-14-semibold bg-blueCustom-100"
+};
