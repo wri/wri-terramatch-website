@@ -42,19 +42,12 @@ const HeaderDashboard = () => {
     queryParams: {}
   });
 
-  const dropdwonCountryOptions = [
-    {
-      title: "Global",
-      value: "global",
-      prefix: undefined
-    },
-    ...(dashboardCountries?.data?.map((country: any) => ({
+  const dropdwonCountryOptions =
+    dashboardCountries?.data?.map((country: any) => ({
       title: country.data.label,
       value: country.id,
       prefix: <img src={country.data.icon} alt="flag" className="h-4" />
-    })) || [])
-  ];
-
+    })) || [];
   const [filterValues, setFilterValues] = useState<{
     dropdown1: OptionValue[];
     dropdown2: OptionValue[];
@@ -140,6 +133,7 @@ const HeaderDashboard = () => {
           <div className="flex items-center gap-3">
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
+                showClear
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Programme:")}
@@ -157,6 +151,7 @@ const HeaderDashboard = () => {
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
+                showClear
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Landscape:")}
@@ -174,6 +169,7 @@ const HeaderDashboard = () => {
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
               <Dropdown
+                showClear
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Country:")}
@@ -191,6 +187,8 @@ const HeaderDashboard = () => {
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
+                showSelectAll
+                showClear
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Organization:")}
@@ -217,17 +215,11 @@ const HeaderDashboard = () => {
           </div>
         </When>
       </div>
-      <div className="flex flex-col items-end justify-between gap-3">
-        <When condition={!isAirTablePage}>
-          <div className="relative h-fit w-fit">
-            <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
-            <button className="relative z-10 w-fit px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
-          </div>
-          <When condition={isProjectList}>
-            <BlurContainer isCollapse={isHeaderCollapsed}>
-              <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
-            </BlurContainer>
-          </When>
+      <div className="flex flex-col items-end justify-end gap-3">
+        <When condition={isProjectList}>
+          <BlurContainer isCollapse={isHeaderCollapsed}>
+            <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+          </BlurContainer>
         </When>
       </div>
     </header>

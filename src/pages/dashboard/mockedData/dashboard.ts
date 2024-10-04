@@ -384,23 +384,28 @@ export const DATA_ACTIVE_PROGRAMME = [
 export const COLUMN_ACTIVE_COUNTRY = [
   {
     header: "Project",
-    accessorKey: "project"
+    accessorKey: "project",
+    enableSorting: false
   },
   {
     header: "Trees Planted",
-    accessorKey: "treesPlanted"
+    accessorKey: "treesPlanted",
+    enableSorting: false
   },
   {
-    header: "Restoration Hectares",
-    accessorKey: "restoratioHectares"
+    header: "Hectares",
+    accessorKey: "restoratioHectares",
+    enableSorting: false
   },
   {
     header: "Jobs Created",
-    accessorKey: "jobsCreated"
+    accessorKey: "jobsCreated",
+    enableSorting: false
   },
   {
     header: "Volunteers",
-    accessorKey: "volunteers"
+    accessorKey: "volunteers",
+    enableSorting: false
   }
 ];
 

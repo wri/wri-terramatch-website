@@ -29,7 +29,7 @@ const AirTable = () => {
   ];
 
   return (
-    <div className="h-full overflow-hidden bg-neutral-70 py-8 px-14">
+    <div className="h-full overflow-hidden bg-neutral-70 px-14 py-8">
       <Drawer
         isOpen={isDrawerOpen}
         setIsOpen={setIsDrawerOpen}
