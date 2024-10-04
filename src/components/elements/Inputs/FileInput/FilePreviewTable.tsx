@@ -56,7 +56,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
         entityData={entityData}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
         reloadGalleryImages={() => {}}
-        handleDelete={() => {}}
+        handleDelete={onDelete && (() => onDelete(item))}
         updateValuesInForm={updatedItem => {
           if (updatedItem.is_cover) {
             items.forEach(item => {
@@ -157,6 +157,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
                 onChange={e => {
                   handleUpdateIsCover(props.getValue(), e.target.checked);
                 }}
+                disabled={!entityData?.project}
               />
             ),
             header: `${t("Cover")}`,

@@ -78,6 +78,8 @@ const ProjectView = () => {
 
   return (
     <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
+      <ContentOverviewProject />
+
       <div ref={sharedRef} className="w-3/5 overflow-auto pr-2 ">
         <PageRow className="gap-4 p-0">
           <div>
@@ -248,8 +250,6 @@ const ProjectView = () => {
           </PageCard>
         </PageRow>
       </div>
-
-      <ContentOverviewProject />
     </div>
   );
 };

@@ -42,12 +42,12 @@ const HeaderDashboard = () => {
     {
       title: "Global",
       value: "global",
-      meta: undefined
+      prefix: undefined
     },
     ...(dashboardCountries?.data?.map((country: any) => ({
       title: country.data.label,
       value: country.id,
-      meta: <img src={country.data.icon} alt="flag" className="h-4" />
+      prefix: <img src={country.data.icon} alt="flag" className="h-4" />
     })) || [])
   ];
 
