@@ -35,7 +35,8 @@ module.exports = {
       backgroundImage: {
         imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
         "square-pattern": "url('/icons/ic-bg.svg')",
-        "back-map": "url('/icons/bg-map.svg')"
+        "back-map": "url('/icons/bg-map.svg')",
+        dash: "url('/icons/dash.svg')"
       },
       gridTemplateColumns: {
         1: "repeat(1, minmax(0, 1fr))",
@@ -179,7 +180,7 @@ module.exports = {
       },
       blue: {
         DEFAULT: "#2398D8",
-        50:"#0079FF",
+        50: "#0079FF",
         100: "#1B59F8",
         200: "#E9F5FC"
       },

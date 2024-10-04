@@ -7,8 +7,12 @@ export interface DropdownVariant {
   titleContainerClassName: string;
   titleClassname?: string;
   iconName?: IconNames;
+  iconNameClear?: IconNames;
+  iconClearContainerClassName?: string;
+  iconClearClassName?: string;
   optionCheckboxClassName?: string;
   optionLabelClassName?: string;
+  optionClassName?: string;
 }
 
 export const VARIANT_DROPDOWN_DEFAULT: DropdownVariant = {
@@ -27,8 +31,12 @@ export const VARIANT_DROPDOWN_HEADER: DropdownVariant = {
   className: "gap-2 text-white",
   iconClassName: "w-3 h-[9px] fill-trasparent",
   iconName: IconNames.CHEVRON_DOWN_DASH,
+  iconNameClear: IconNames.CLEAR,
+  iconClearClassName: "w-3 h-3",
+  iconClearContainerClassName: "p-1 border border-neutral-200 rounded",
   titleContainerClassName: "flex-1 overflow-hidden",
   titleClassname: "leading-none text-ellipsis whitespace-nowrap overflow-hidden",
   optionCheckboxClassName: "checked:text-blueCustom-700",
-  optionLabelClassName: "text-14-semibold"
+  optionLabelClassName: "text-14-semibold",
+  optionClassName: "gap-2"
 };

@@ -37,19 +37,12 @@ const HeaderDashboard = () => {
     queryParams: {}
   });
 
-  const dropdwonCountryOptions = [
-    {
-      title: "Global",
-      value: "global",
-      prefix: undefined
-    },
-    ...(dashboardCountries?.data?.map((country: any) => ({
+  const dropdwonCountryOptions =
+    dashboardCountries?.data?.map((country: any) => ({
       title: country.data.label,
       value: country.id,
       prefix: <img src={country.data.icon} alt="flag" className="h-4" />
-    })) || [])
-  ];
-
+    })) || [];
   const [filterValues, setFilterValues] = useState<{
     dropdown1: OptionValue[];
     dropdown2: OptionValue[];
@@ -127,6 +120,7 @@ const HeaderDashboard = () => {
         <div className="flex items-center gap-3">
           <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
+              showClear
               prefix={
                 <Text variant="text-14-light" className="leading-none">
                   {t("Programme:")}
@@ -144,6 +138,7 @@ const HeaderDashboard = () => {
           </BlurContainer>
           <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
+              showClear
               prefix={
                 <Text variant="text-14-light" className="leading-none">
                   {t("Landscape:")}
@@ -161,6 +156,7 @@ const HeaderDashboard = () => {
           </BlurContainer>
           <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
             <Dropdown
+              showClear
               prefix={
                 <Text variant="text-14-light" className="leading-none">
                   {t("Country:")}
@@ -178,6 +174,8 @@ const HeaderDashboard = () => {
           </BlurContainer>
           <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
+              showSelectAll
+              showClear
               prefix={
                 <Text variant="text-14-light" className="leading-none">
                   {t("Organization:")}
