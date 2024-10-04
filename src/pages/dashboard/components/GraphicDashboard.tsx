@@ -26,6 +26,10 @@ const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[];
           </div>
         );
       })}
+
+      <Text variant="text-14" className="mt-1 text-primary underline">
+        {t("VIEW ALL PROJECTS ")}
+      </Text>
     </div>
   );
 };

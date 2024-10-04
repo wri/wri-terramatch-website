@@ -27,12 +27,12 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
         return { color: "bg-primary-350", icon: "IC_RIPARIAN_AREA" };
 
       case "Urban Forest":
-        return { color: "bg-purpleCustom-100", icon: "IC_URBAN_FOREST" };
+        return { color: "bg-blueCustom", icon: "IC_URBAN_FOREST" };
 
       case "Silvopasture":
         return { color: "bg-yellow-550", icon: "IC_SILVOPASTURE" };
       case "Peatland":
-        return { color: "bg-primary-250", icon: "IC_PEATLAND" };
+        return { color: "bg-primary", icon: "IC_PEATLAND" };
       default:
         return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
     }

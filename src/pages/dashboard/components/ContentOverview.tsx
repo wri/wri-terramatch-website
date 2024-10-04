@@ -37,20 +37,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           <img
             src="/images/map-img.png"
             alt="map"
-            className={"h-full max-h-[48vh] w-full transition-all duration-500 ease-in-out"}
+            className={"h-full max-h-[50vh] w-full transition-all duration-500 ease-in-out"}
           />
           <TooltipGridMap label="Angola" learnMore={true} />
 
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-              <Text variant="text-10" className="text-darkCustom">
+              <Text variant="text-12" className="text-darkCustom">
                 {t("Non-Profit Projects (32)")}
               </Text>
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-              <Text variant="text-10" className="text-darkCustom">
+              <Text variant="text-12" className="text-darkCustom">
                 {t("Enterprise Projects (457)")}
               </Text>
             </div>
