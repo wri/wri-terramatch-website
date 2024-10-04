@@ -1,6 +1,6 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useState } from "react";
+import React from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Table from "@/components/elements/Table/Table";
@@ -8,8 +8,10 @@ import { VARIANT_TABLE_DASHBOARD_COUNTRIES } from "@/components/elements/Table/T
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useModalContext } from "@/context/modal.provider";
 
 import {
   RESTORATION_STRATEGIES_REPRESENTED,
@@ -27,13 +29,44 @@ interface ContentOverviewProps<TData> {
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const { data, columns } = props;
-  const [collapseMap, setCollapseMap] = useState(false);
   const t = useT();
+  const { openModal, closeModal } = useModalContext();
+  const ModalMap = () => {
+    openModal(
+      "modalExpand",
+      <ModalExpand id="modalExpand" title="" closeModal={closeModal}>
+        <img src="/images/map-img.png" alt="map" className="w-full flex-1" />
+      </ModalExpand>
+    );
+  };
+
+  const ModalTable = () => {
+    openModal(
+      "modalExpand",
+      <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" closeModal={closeModal}>
+        <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
+      </ModalExpand>
+    );
+  };
 
   return (
     <div className="flex w-1/2">
       <PageRow className="gap-4 p-0">
         <div className="shadow-lg relative w-full">
+          <Button
+            className="absolute right-6 top-6 z-10"
+            variant="white-button-map"
+            onClick={() => {
+              ModalMap();
+            }}
+          >
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                Expand
+              </Text>
+            </div>
+          </Button>
           <img
             src="/images/map-img.png"
             alt="map"
@@ -95,13 +128,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <Button
               variant="white-border"
               onClick={() => {
-                setCollapseMap(!collapseMap);
+                ModalTable();
               }}
             >
               <div className="flex items-center gap-1">
-                <Icon name={!collapseMap ? IconNames.COLLAPSE : IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
                 <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {!collapseMap ? "Collapse" : "Expand"}
+                  Expand
                 </Text>
               </div>
             </Button>
