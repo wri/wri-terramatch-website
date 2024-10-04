@@ -17,6 +17,7 @@ const HeaderDashboard = () => {
   const t = useT();
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const isProjectPage = router.pathname.includes("dashboard/project");
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -124,7 +125,7 @@ const HeaderDashboard = () => {
           {t("TerraMatch Insights")}
         </Text>
         <div className="flex items-center gap-3">
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -141,7 +142,7 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -158,7 +159,7 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]">
+          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -175,7 +176,7 @@ const HeaderDashboard = () => {
               options={dropdwonCountryOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -193,7 +194,11 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
+          <button
+            className="text-14-semibold p-1 text-white disabled:opacity-70"
+            onClick={resetValues}
+            disabled={isProjectPage}
+          >
             {t("Clear Filters")}
           </button>
         </div>
