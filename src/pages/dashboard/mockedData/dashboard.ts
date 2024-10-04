@@ -428,3 +428,168 @@ export const OBJETIVE = {
   preferredLanguage: "English",
   landTenure: "Communal Government"
 };
+
+export const DATA_TABLE_PROJECT_LIST = [
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Angola",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Liberia",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Kenya",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Mozambique",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Sierra Leone",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Tanzania",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Angola",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Liberia",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Kenya",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Mozambique",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Sierra Leone",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Tanzania",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Angola",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Liberia",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Kenya",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Mozambique",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Sierra Leone",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Tanzania",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  }
+];

@@ -6,6 +6,8 @@ import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
+import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
+import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 import { OptionValue } from "@/types/common";
@@ -19,6 +21,8 @@ const HeaderDashboard = () => {
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const isAirTablePage = router.pathname.includes("dashboard/airtable");
+  const isProjectList = router.pathname === "/dashboard/project-list";
+  const isProjectPage = router.pathname.includes("dashboard/project");
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -125,7 +129,7 @@ const HeaderDashboard = () => {
 
   return (
     <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
-      <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap": isHeaderCollapsed })}>
+      <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
           className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
@@ -134,7 +138,7 @@ const HeaderDashboard = () => {
         </Text>
         <When condition={!isAirTablePage}>
           <div className="flex items-center gap-3">
-            <BlurContainer isCollapse={isHeaderCollapsed}>
+            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
@@ -151,7 +155,7 @@ const HeaderDashboard = () => {
                 options={dropdwonOptions}
               />
             </BlurContainer>
-            <BlurContainer isCollapse={isHeaderCollapsed}>
+            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
@@ -168,7 +172,7 @@ const HeaderDashboard = () => {
                 options={dropdwonOptions}
               />
             </BlurContainer>
-            <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]">
+            <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
               <Dropdown
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
@@ -185,7 +189,7 @@ const HeaderDashboard = () => {
                 options={dropdwonCountryOptions}
               />
             </BlurContainer>
-            <BlurContainer isCollapse={isHeaderCollapsed}>
+            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
@@ -203,18 +207,29 @@ const HeaderDashboard = () => {
                 options={dropdwonOptions}
               />
             </BlurContainer>
-            <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
+            <button
+              className="text-14-semibold p-1 text-white disabled:opacity-70"
+              onClick={resetValues}
+              disabled={isProjectPage}
+            >
               {t("Clear Filters")}
             </button>
           </div>
         </When>
       </div>
-      <When condition={!isAirTablePage}>
-        <div className="relative h-fit">
-          <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
-          <button className="relative z-10 px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
-        </div>
-      </When>
+      <div className="flex flex-col items-end justify-between gap-3">
+        <When condition={!isAirTablePage}>
+          <div className="relative h-fit w-fit">
+            <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
+            <button className="relative z-10 w-fit px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
+          </div>
+          <When condition={isProjectList}>
+            <BlurContainer isCollapse={isHeaderCollapsed}>
+              <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+            </BlurContainer>
+          </When>
+        </When>
+      </div>
     </header>
   );
 };
