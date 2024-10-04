@@ -10,7 +10,7 @@ import {
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
-import { ClippedPolygonsResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
 
@@ -50,7 +50,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   });
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
-    onSuccess: async (data: ClippedPolygonsResponse) => {
+    onSuccess: async (data: ClippedPolygonResponse) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();

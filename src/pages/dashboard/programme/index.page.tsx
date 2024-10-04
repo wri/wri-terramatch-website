@@ -64,6 +64,8 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
+      <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
+
       <div ref={sharedRef} className="w-3/5 overflow-auto pr-2 ">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">
@@ -199,8 +201,6 @@ const Dashboard = () => {
           </PageCard>
         </PageRow>
       </div>
-
-      <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
     </div>
   );
 };

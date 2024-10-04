@@ -21,7 +21,7 @@ import {
   usePostV2TerrafundClipPolygonsSiteUuid,
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
-import { ClippedPolygonsResponse, SitePolygon } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -100,7 +100,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   });
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
-    onSuccess: (data: ClippedPolygonsResponse) => {
+    onSuccess: (data: ClippedPolygonResponse) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();
