@@ -69,48 +69,53 @@ const Dashboard = () => {
         return (
           <div className="flex items-center gap-2">
             <img src={value[1]} alt="flag" className="h-3" />
-            <Text variant="text-10-light">{value[0]}</Text>
+            <Text variant="text-12-light">{value[0]}</Text>
           </div>
         );
       },
-      accessorKey: "country"
+      accessorKey: "country",
+      enableSorting: false
     },
     {
       header: "Projest",
-      accessorKey: "project"
+      accessorKey: "project",
+      enableSorting: false
     },
     {
       header: "Trees Planted",
-      accessorKey: "treesPlanted"
+      accessorKey: "treesPlanted",
+      enableSorting: false
     },
     {
-      header: "Restoration Hectares",
-      accessorKey: "restoratioHectares"
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
     },
     {
       header: "Jobs Created",
-      accessorKey: "jobsCreated"
+      accessorKey: "jobsCreated",
+      enableSorting: false
     }
   ];
 
   const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
     ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
         country: `${country.data.label}_${country.data.icon}`,
-        project: "project",
-        treesPlanted: "treesPlanted",
-        restoratioHectares: "restorationHectares",
-        jobsCreated: "jobsCreated"
+        project: "32",
+        treesPlanted: "2,234",
+        restoratioHectares: "2,234",
+        jobsCreated: "1306"
       }))
     : [];
 
   return (
-    <div className="flex flex-1 gap-4 overflow-auto bg-neutral-70 p-4 " ref={sharedRef}>
-      <div className="overflow-hiden w-1/2 pr-2 ">
+    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
+      <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
-              <div key={index} className="rounded-lg bg-white px-5 py-4.5">
-                <Text variant="text-10-light" className="text-darkCustom opacity-60">
+              <div key={index} className="rounded-lg bg-white px-4 py-3">
+                <Text variant="text-12-light" className="text-darkCustom opacity-60">
                   {t(item.label)}
                 </Text>
 
@@ -151,7 +156,7 @@ const Dashboard = () => {
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
             />
             <SecDashboard
-              title={t("Top 10 Projects With The Most Planted Trees")}
+              title={t("Top 5 Projects With The Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
@@ -182,7 +187,7 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center"
               />
             </div>
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={JOBS_CREATED_BY_GENDER}
@@ -197,7 +202,7 @@ const Dashboard = () => {
               />
             </div>
             <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("VOLUNTEERS CREATED BY GENDER")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
