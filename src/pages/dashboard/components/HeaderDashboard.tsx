@@ -44,12 +44,12 @@ const HeaderDashboard = () => {
     {
       title: "Global",
       value: "global",
-      meta: undefined
+      prefix: undefined
     },
     ...(dashboardCountries?.data?.map((country: any) => ({
       title: country.data.label,
       value: country.id,
-      meta: <img src={country.data.icon} alt="flag" className="h-4 w-6 object-cover" />
+      prefix: <img src={country.data.icon} alt="flag" className="h-4" />
     })) || [])
   ];
 
@@ -119,7 +119,7 @@ const HeaderDashboard = () => {
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
