@@ -45,7 +45,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.FillLayer,
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "submitted" },
         type: "line",
@@ -66,7 +66,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.FillLayer,
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "approved" },
         type: "line",
@@ -87,7 +87,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.FillLayer,
+      } as mapboxgl.Style & mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "line",
