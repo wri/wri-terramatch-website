@@ -26,7 +26,7 @@ const Sidebar = () => {
         className={classNames("flex cursor-pointer flex-col items-center gap-1", {
           "text-white": router.asPath.includes("/dashboard/project-profile")
         })}
-        href="/dashboard/project-profile"
+        href="/dashboard/project-list"
       >
         <Icon name={IconNames.PROJECT_PROFILE} className="h-8 w-8" />
         <Text variant={"text-8"}>
