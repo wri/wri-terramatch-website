@@ -122,11 +122,10 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
   table: "border-collapse",
   name: "border-airtable",
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[267px] lg:max-h-[285px]",
-  trHeader: "bg-neutral-150 sticky top-0 z-10",
-  thHeader:
-    "first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 whitespace-normal px-1.5 border-t-0",
+  trHeader: "bg-neutral-150 sticky top-0 z-10 ",
+  thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100 "
 };
