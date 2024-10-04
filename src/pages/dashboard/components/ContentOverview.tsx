@@ -4,7 +4,10 @@ import React from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_DASHBOARD_COUNTRIES } from "@/components/elements/Table/TableVariants";
+import {
+  VARIANT_TABLE_DASHBOARD_COUNTRIES,
+  VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL
+} from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -35,7 +38,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title="" closeModal={closeModal}>
-        <img src="/images/map-img.png" alt="map" className="w-full flex-1" />
+        <img src="/images/map-img.png" alt="map" className="w-full flex-1 overflow-hidden" />
       </ModalExpand>
     );
   };
@@ -43,8 +46,10 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalTable = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" closeModal={closeModal}>
-        <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
+      <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" popUpContent="POPUP" closeModal={closeModal}>
+        <div className="w-full px-6">
+          <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL} />
+        </div>
       </ModalExpand>
     );
   };
