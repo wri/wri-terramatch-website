@@ -157,6 +157,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
                 onChange={e => {
                   handleUpdateIsCover(props.getValue(), e.target.checked);
                 }}
+                disabled={!entityData?.project}
               />
             ),
             header: `${t("Cover")}`,

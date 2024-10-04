@@ -52,6 +52,15 @@ const Country = () => {
     <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
       <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
+          <div className="flex items-center gap-2">
+            <Text variant="text-14-light" className="uppercase text-black ">
+              {t("results for:")}
+            </Text>
+            <img src="/flags/ke.svg" alt="flag" className="h-6 w-8 object-cover" />
+            <Text variant="text-24-semibold" className="text-black">
+              {t("Kenya")}
+            </Text>
+          </div>
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-4 py-3">
