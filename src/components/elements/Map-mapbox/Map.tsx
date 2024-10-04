@@ -3,6 +3,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import { When } from "react-if";
@@ -12,9 +13,13 @@ import { ValidationError } from "yup";
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
@@ -22,17 +27,20 @@ import {
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   GetV2MODELUUIDFilesResponse,
+  useDeleteV2FilesUUID,
+  usePatchV2MediaProjectProjectMediaUuid,
+  usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
+import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
-import DeleteBulkPolygonsControl from "./MapControls/DeleteBulkPolygonsControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
@@ -41,6 +49,7 @@ import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { PolygonHandler } from "./MapControls/PolygonHandler";
 import PolygonModifier from "./MapControls/PolygonModifier";
+import ProcessBulkPolygonsControl from "./MapControls/ProcessBulkPolygonsControl";
 import { StyleControl } from "./MapControls/StyleControl";
 import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
@@ -105,6 +114,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
+  entityData?: any;
+  imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const MapContainer = ({
@@ -133,6 +144,8 @@ export const MapContainer = ({
   formMap,
   pdView = false,
   location,
+  entityData,
+  imageGalleryRef,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -143,6 +156,11 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
   const t = useT();
+  const { mutateAsync } = usePostV2ExportImage();
+  const { showLoader, hideLoader } = useLoading();
+  const router = useRouter();
+  const { openModal, closeModal } = useModalContext();
+  const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
   const { openNotification } = useNotificationContext();
   const {
     isUserDrawingEnabled,
@@ -150,10 +168,15 @@ export const MapContainer = ({
     editPolygon: editPolygonSelected,
     setEditPolygon,
     setShouldRefetchPolygonData,
+    setShouldRefetchMediaData,
     setStatusSelectedPolygon,
     selectedPolygonsInCheckbox
   } = contextMapArea;
-
+  const { mutateAsync: deleteFile } = useDeleteV2FilesUUID({
+    onSuccess() {
+      setShouldRefetchMediaData(true);
+    }
+  });
   if (!mapFunctions) {
     return null;
   }
@@ -238,9 +261,98 @@ export const MapContainer = ({
   }, [bbox]);
 
   useEffect(() => {
+    const projectUUID = router.query.uuid as string;
+    const isProjectPath = router.isReady && router.asPath.includes("project");
+
+    const handleDelete = (id: string) => {
+      deleteFile({ pathParams: { uuid: id } });
+      closeModal(ModalId.DELETE_IMAGE);
+    };
+
+    const openModalImageDetail = (data: ImageGalleryItemData | any) => {
+      const dataImage = {
+        uuid: data.uuid!,
+        fullImageUrl: data.file_url!,
+        thumbnailImageUrl: data.file_url!,
+        label: data.model_name,
+        isPublic: data.is_public!,
+        isGeotagged: true,
+        isCover: data.is_cover,
+        raw: { ...data, location: JSON.parse(data.location), created_date: data.created_date }
+      };
+      openModal(
+        ModalId.MODAL_IMAGE_DETAIL,
+        <ModalImageDetails
+          title="IMAGE DETAILS"
+          data={dataImage}
+          entityData={entityData}
+          onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+          reloadGalleryImages={() => {
+            setShouldRefetchMediaData(true);
+          }}
+          handleDelete={handleDelete}
+        />,
+        true
+      );
+    };
+
+    const setImageCover = async (uuid: string) => {
+      const result = await updateIsCoverAsync({
+        pathParams: { project: projectUUID, mediaUuid: uuid }
+      });
+      if (result) {
+        openNotification("success", t("Success!"), t("Image set as cover successfully"));
+        setShouldRefetchMediaData(true);
+      } else {
+        openNotification("error", t("Error!"), t("Failed to set image as cover"));
+      }
+    };
+
+    const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
+      showLoader();
+      try {
+        const response = await mutateAsync({
+          body: {
+            uuid: uuid
+          }
+        });
+
+        if (!response) {
+          console.error("No response received from the server.");
+          openNotification("error", t("Error!"), t("No response received from the server."));
+          return;
+        }
+
+        const blob = new Blob([response], { type: "image/jpeg" });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file_name || "image.jpg";
+        document.body.appendChild(link);
+        link.click();
+
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        hideLoader();
+        openNotification("success", t("Success!"), t("Image downloaded successfully"));
+      } catch (error) {
+        console.error("Download error:", error);
+        hideLoader();
+      }
+    };
+
     if (map?.current && styleLoaded && props?.modelFilesData) {
       if (showMediaPopups) {
-        addMediaSourceAndLayer(map.current, props?.modelFilesData);
+        addMediaSourceAndLayer(
+          map.current,
+          props?.modelFilesData,
+          setImageCover,
+          handleDownload,
+          handleDelete,
+          openModalImageDetail,
+          isProjectPath
+        );
       } else {
         removePopups("MEDIA");
         removeMediaLayer(map.current);
@@ -390,8 +502,8 @@ export const MapContainer = ({
           </ControlGroup>
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
-          <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
-            <DeleteBulkPolygonsControl />
+          <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
+            <ProcessBulkPolygonsControl entityData={record} />
           </ControlGroup>
         </When>
         <ControlGroup position="top-right">
@@ -450,7 +562,7 @@ export const MapContainer = ({
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-            <ViewImageCarousel modelFilesData={props?.modelFilesData} />
+            <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
           </ControlGroup>
         </When>
       </When>

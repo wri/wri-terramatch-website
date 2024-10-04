@@ -12,12 +12,13 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Input from "@/components/elements/Inputs/Input/Input";
 import InputDescription from "@/components/elements/Inputs/InputElements/InputDescription";
 import InputLabel from "@/components/elements/Inputs/InputElements/InputLabel";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { formatOptionsList, statusColor } from "@/utils/options";
+import { formatOptionsList, getPrefix } from "@/utils/options";
+
+import { DropdownVariant, VARIANT_DROPDOWN_DEFAULT } from "./DropdownVariant";
 
 export interface DropdownProps {
   customName?: string;
@@ -41,6 +42,8 @@ export interface DropdownProps {
   defaultValue?: OptionValue[];
   required?: boolean;
   error?: FieldError;
+  prefix?: React.ReactNode;
+  variant?: DropdownVariant;
   multiSelect?: boolean;
   hasOtherOptions?: boolean;
   optionsFilter?: string;
@@ -70,6 +73,7 @@ const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOther
  */
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
+  const { variant = VARIANT_DROPDOWN_DEFAULT } = props;
   const [selected, setSelected] = useState<OptionValue[]>(() =>
     getDefaultDropDownValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
@@ -137,27 +141,12 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherIsSelected, otherValue, t]);
 
-  const getColorStatus = (option: string): string => {
-    const colorMap: { [key: string]: string } = {
-      approved: "bg-secondary",
-      submitted: "bg-blue",
-      draft: "bg-pinkCustom",
-      started: "bg-pinkCustom",
-      "Under Review": "bg-tertiary-600",
-      "needs-more-information": "bg-tertiary-600",
-      "restoration-in-progress": "bg-blue",
-      "awaiting-approval": "bg-tertiary-600"
-    };
-
-    return colorMap[option] ?? "";
-  };
-
   const verifyDisableOption = (title: string) => {
     return props?.disableOptionTitles?.includes(title);
   };
 
   return (
-    <div className={tw("space-y-2", props.containerClassName)}>
+    <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
         {({ open, value }) => (
           <>
@@ -184,29 +173,27 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             <Listbox.Button
               as="div"
               className={classNames(
-                "flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer",
+                "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
                 !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
-                props.className
+                props.className,
+                variant.className
               )}
             >
-              <div className="flex items-center gap-2">
-                <When condition={options?.[0]?.meta != null}>
-                  <div
-                    className={`min-h-[8px] min-w-[8px] rounded-full ${getColorStatus(
-                      statusColor(options, toArray<any>(value)) ?? ""
-                    )}`}
-                  />
-                </When>
-                <Text variant={props.inputVariant ?? "text-14-light"} className="w-full line-clamp-1">
+              <When condition={!!props.prefix}>{props.prefix}</When>
+              <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
+                {getPrefix(options, toArray<any>(value))}
+                <Text
+                  variant={props.inputVariant ?? "text-14-light"}
+                  className={tw("w-full", variant.titleClassname)}
+                  title={formatOptionsList(options, toArray<any>(value))}
+                >
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>
-
               <Icon
-                name={props.iconName || IconNames.CHEVRON_DOWN}
-                className={classNames("fill-neutral-900 transition", open && "rotate-180")}
-                width={16}
+                name={variant.iconName || IconNames.CHEVRON_DOWN}
+                className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
               />
             </Listbox.Button>
             <Transition
@@ -255,6 +242,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             name=""
                             checked={isSelected}
                             label={option.title}
+                            textClassName={variant.optionLabelClassName}
+                            inputClassName={variant.optionCheckboxClassName}
                             className="flex flex-row-reverse items-center gap-3"
                             onChange={() => {
                               !isSelected
@@ -265,6 +254,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
+                            <When condition={!!option.prefix}>{option.prefix}</When>
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
                               className={tw(
@@ -274,9 +264,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             >
                               {option.title}
                             </Text>
-                            <When condition={option.meta}>
-                              <Status className="w-[35%]" status={option.meta} />
-                            </When>
                           </div>
                         </Else>
                       </If>

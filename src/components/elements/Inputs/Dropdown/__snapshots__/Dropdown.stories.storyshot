@@ -33,7 +33,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:rj: headlessui-listbox-button-:rk:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:rk:"
@@ -47,6 +47,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -55,7 +56,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
@@ -97,7 +98,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:rn: headlessui-listbox-button-:ro:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:ro:"
@@ -111,6 +112,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -119,7 +121,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
@@ -161,7 +163,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:rh: headlessui-listbox-button-:ri:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:ri:"
@@ -175,6 +177,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -183,7 +186,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />
@@ -213,7 +216,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="headlessui-listbox-label-:rp: headlessui-listbox-button-:rq:"
-    className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
     data-headlessui-state=""
     disabled={false}
     id="headlessui-listbox-button-:rq:"
@@ -224,12 +227,10 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
     <div
       className="flex items-center gap-2"
     >
-      <div
-        className="min-h-[8px] min-w-[8px] rounded-full "
-      />
       <p
         className="w-full line-clamp-1 text-14-light"
         data-testid="txt"
+        title="Aerobic Agroforestry"
       >
         Aerobic Agroforestry
       </p>
@@ -238,7 +239,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
       style={
         Object {
           "height": undefined,
-          "width": 16,
+          "width": 24,
         }
       }
     />
@@ -279,7 +280,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
       aria-expanded={false}
       aria-haspopup="listbox"
       aria-labelledby="headlessui-listbox-label-:rl: headlessui-listbox-button-:rm:"
-      className="flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer border-light"
+      className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
       data-headlessui-state=""
       disabled={false}
       id="headlessui-listbox-button-:rm:"
@@ -293,6 +294,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
         <p
           className="w-full line-clamp-1 text-14-light"
           data-testid="txt"
+          title=""
         >
           placeholder
         </p>
@@ -301,7 +303,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
         style={
           Object {
             "height": undefined,
-            "width": 16,
+            "width": 24,
           }
         }
       />

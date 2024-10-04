@@ -169,7 +169,7 @@ const Menu = (props: MenuProps) => {
   return (
     <div
       ref={menuContainerRef}
-      className={classNames(className, "relative w-fit-content")}
+      className={classNames(className, "relative w-fit-content cursor-pointer")}
       onClick={e => {
         e.stopPropagation();
         setIsOpen(!isOpen);

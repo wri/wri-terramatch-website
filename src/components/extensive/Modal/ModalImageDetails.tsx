@@ -27,6 +27,7 @@ export interface ModalImageDetailProps extends ModalProps {
   handleDelete?: (uuid: string) => void;
   data: any;
   entityData: any;
+  updateValuesInForm?: (updatedItem: any) => void;
 }
 
 const ModalImageDetails: FC<ModalImageDetailProps> = ({
@@ -41,6 +42,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   handleDelete: onDeleteConfirm,
   data,
   entityData,
+  updateValuesInForm,
   ...rest
 }) => {
   const t = useT();
@@ -94,17 +96,17 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       formData.photographer !== initialFormData.photographer ||
       formData.is_public !== initialFormData.is_public
     ) {
-      updatePromises.push(
-        updateMedia({
-          pathParams: { uuid: data.uuid },
-          body: {
-            name: formData.name,
-            description: formData.description,
-            photographer: formData.photographer,
-            is_public: formData.is_public
-          }
-        })
-      );
+      const mediaUpdate = updateMedia({
+        pathParams: { uuid: data.uuid },
+        body: {
+          name: formData.name,
+          description: formData.description,
+          photographer: formData.photographer,
+          is_public: formData.is_public
+        }
+      });
+
+      updatePromises.push(mediaUpdate);
     }
 
     if (formData.is_cover !== initialFormData.is_cover && formData.is_cover) {
@@ -118,6 +120,19 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       await Promise.all(updatePromises);
       openNotification("success", t("Success!"), t("Image updated successfully"));
       reloadGalleryImages?.();
+
+      const updatedData = {
+        ...data.raw,
+        name: formData.name,
+        title: formData.name,
+        description: formData.description,
+        photographer: formData.photographer,
+        is_public: formData.is_public,
+        is_cover: formData.is_cover,
+        uuid: data.uuid
+      };
+      updateValuesInForm?.(updatedData);
+
       onClose?.();
     } catch (error) {
       openNotification("error", t("Error"), t("Failed to update image details"));
@@ -192,7 +207,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             onChange={e => handleInputChange("name", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
-          {entityData.project ? (
+          {entityData.project || entityData.model !== "project" ? (
             <></>
           ) : (
             <div>

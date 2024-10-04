@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 
+import { ReactNode } from "react";
+
 export type Colors = "white" | "black" | "neutral" | "secondary" | "tertiary" | "primary" | "success" | "error";
 export type ColorCodes = "none" | 50 | 100 | 150 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 export type TextSizes = "xs" | "sm" | "base" | "md" | "m" | "lg";
@@ -150,6 +152,7 @@ export type ButtonTextVariants =
   | "text-button-700";
 
 export type Option = {
+  prefix?: ReactNode;
   title: string;
   value: OptionValue;
   meta?: any;
@@ -190,7 +193,10 @@ export type UploadedFile = {
   created_at: string;
   collection_name: string;
   is_public?: boolean;
+  is_cover?: boolean;
   status?: boolean;
+  lat?: number;
+  lng?: number;
 
   //Client side data
   rawFile?: File;

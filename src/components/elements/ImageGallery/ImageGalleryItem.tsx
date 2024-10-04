@@ -92,7 +92,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     try {
       const response = await mutateAsync({
         body: {
-          imageUrl: data.fullImageUrl
+          uuid: data.uuid
         }
       });
 
@@ -107,7 +107,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = "image.jpg";
+      link.download = data?.raw?.file_name ? data?.raw?.file_name : "image.jpg";
       document.body.appendChild(link);
       link.click();
 

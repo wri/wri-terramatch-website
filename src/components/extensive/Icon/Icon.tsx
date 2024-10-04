@@ -131,6 +131,8 @@ export enum IconNames {
   REQUEST = "request",
   COMMENT = "comment",
   CHEVRON_DOWN_PA = "chevron-down-pa",
+  CHEVRON_DOWN_DASH = "chevron-down-dash",
+  FRAMEWORK_PROGRAMME = "framework-programme",
   PAPER_CLIP = "paper-clip",
   CHECK_PROGRESSBAR_NULL = "check-progressbar-null",
   UPLOAD_CLOUD = "upload-cloud",
@@ -164,7 +166,27 @@ export enum IconNames {
   DOCUMENT_CIRCLE_HOMEPAGE = "document-circle-home",
   TREE_CIRCLE_HOMEPAGE = "tree-circle-home",
   IC_A_TO_Z_CUSTOM = "ic-a-to-z-custom",
-  IC_Z_TO_A_CUSTOM = "ic-z-to-a-custom"
+  IC_Z_TO_A_CUSTOM = "ic-z-to-a-custom",
+  TERRAFUND_lOGO_MINI = "ic-terrafund-mini",
+  DASHBOARDS = "dashboards",
+  PROJECT_PROFILE = "project-profile",
+  DASHBOARD_AIRTABLE = "dashboard-airtable",
+  DASHBOARD_REPORTS = "dashboard-reports",
+  ABOUT_US = "about-us",
+  EXPAND = "expand",
+  COLLAPSE = "collapse",
+  IC_AGROFOREST = "targetLand/Agroforest",
+  IC_NATURAL_FOREST = "targetLand/NaturalForest",
+  IC_MANGROVE = "targetLand/Mangrove",
+  IC_WOODLOT = "targetLand/Woodlot",
+  IC_OPEN_NATURAL_ECOSYSTEM = "targetLand/OpenNaturalEcosystem",
+  IC_RIPARIAN_AREA = "targetLand/RiparianArea",
+  IC_URBAN_FOREST = "targetLand/UrbanForest",
+  IC_SILVOPASTURE = "targetLand/Silvopasture",
+  IC_PEATLAND = "targetLand/Peatland",
+  IC_LEGEND_MAP = "ic-legend-map",
+  EDIT_PA = "edit-pa",
+  PIN = "pin"
 }
 
 export interface IconProps {

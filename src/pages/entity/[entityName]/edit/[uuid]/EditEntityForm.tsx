@@ -90,10 +90,14 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
       errors={error}
       onBackFirstStep={router.back}
       onCloseForm={() => router.push("/home")}
-      onChange={data =>
+      onChange={(data, closeAndSave?: boolean) =>
         updateEntity({
           pathParams: { uuid: entityUUID, entity: entityName },
-          body: { answers: normalizedFormData(data, formSteps!) }
+          // @ts-ignore
+          body: {
+            answers: normalizedFormData(data, formSteps!),
+            ...(closeAndSave ? { continue_later_action: true } : {})
+          }
         })
       }
       formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
