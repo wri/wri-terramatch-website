@@ -9,13 +9,13 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
   const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
     switch (label) {
       case "Agroforest":
-        return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
+        return { color: "bg-secondary-600", icon: "IC_AGROFOREST" };
 
       case "Natural Forest":
         return { color: "bg-green-60", icon: "IC_NATURAL_FOREST" };
 
       case "Mangrove":
-        return { color: "bg-green-300", icon: "IC_MANGROVE" };
+        return { color: "bg-green-35", icon: "IC_MANGROVE" };
 
       case "Woodlot / Plantation":
         return { color: "bg-yellow-600", icon: "IC_WOODLOT" };
@@ -59,7 +59,7 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
       <div className="w-full">
         {data.map((item, index) => (
           <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
-            <div className="flex w-full justify-between">
+            <div className="mb-1 flex w-full justify-between">
               <div className="flex gap-1">
                 <Icon name={IconNames[colorIconLabel(item.label).icon]} />
                 <Text variant="text-14-light" className=" text-darkCustom">
