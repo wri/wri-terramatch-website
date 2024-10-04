@@ -21,6 +21,7 @@ const HeaderDashboard = () => {
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const isProjectList = router.pathname === "/dashboard/project-list";
+  const isProjectPage = router.pathname.includes("dashboard/project");
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -119,7 +120,7 @@ const HeaderDashboard = () => {
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
@@ -128,7 +129,7 @@ const HeaderDashboard = () => {
           {t("TerraMatch Insights")}
         </Text>
         <div className="flex items-center gap-3">
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -145,7 +146,7 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -162,7 +163,7 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]">
+          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -179,7 +180,7 @@ const HeaderDashboard = () => {
               options={dropdwonCountryOptions}
             />
           </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
             <Dropdown
               prefix={
                 <Text variant="text-14-light" className="leading-none">
@@ -197,7 +198,11 @@ const HeaderDashboard = () => {
               options={dropdwonOptions}
             />
           </BlurContainer>
-          <button className="text-14-semibold p-1 text-white" onClick={resetValues}>
+          <button
+            className="text-14-semibold p-1 text-white disabled:opacity-70"
+            onClick={resetValues}
+            disabled={isProjectPage}
+          >
             {t("Clear Filters")}
           </button>
         </div>
