@@ -20,6 +20,7 @@ const HeaderDashboard = () => {
   const t = useT();
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
+  const isAirTablePage = router.pathname.includes("dashboard/airtable");
   const isProjectList = router.pathname === "/dashboard/project-list";
   const isProjectPage = router.pathname.includes("dashboard/project");
   const dropdwonOptions = [
@@ -119,6 +120,13 @@ const HeaderDashboard = () => {
     router.push(`/dashboard/country/${selectedCountry?.country_slug}`);
   };
 
+  const getHeaderTitle = () => {
+    if (isAirTablePage) {
+      return "Project Insights";
+    }
+    return "TerraMatch Insights";
+  };
+
   return (
     <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
@@ -126,96 +134,100 @@ const HeaderDashboard = () => {
           variant={"text-28-bold"}
           className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
         >
-          {t("TerraMatch Insights")}
+          {t(getHeaderTitle())}
         </Text>
-        <div className="flex items-center gap-3">
-          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Programme:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              variant={VARIANT_DROPDOWN_HEADER}
-              value={filterValues.dropdown1}
-              placeholder="Top100"
-              onChange={(value: OptionValue[]) => {
-                handleChange("dropdown1", value);
-              }}
-              options={dropdwonOptions}
-            />
-          </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Landscape:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              variant={VARIANT_DROPDOWN_HEADER}
-              placeholder="Top100"
-              value={filterValues.dropdown2}
-              onChange={value => {
-                handleChange("dropdown2", value);
-              }}
-              options={dropdwonOptions}
-            />
-          </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Country:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              variant={VARIANT_DROPDOWN_HEADER}
-              placeholder="Global"
-              value={filterValues.dropdown3}
-              onChange={value => {
-                handleChangeCountry(value);
-              }}
-              options={dropdwonCountryOptions}
-            />
-          </BlurContainer>
-          <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
-            <Dropdown
-              prefix={
-                <Text variant="text-14-light" className="leading-none">
-                  {t("Organization:")}
-                </Text>
-              }
-              inputVariant="text-14-semibold"
-              multiSelect
-              variant={VARIANT_DROPDOWN_HEADER}
-              placeholder="Private"
-              value={filterValues.dropdown4}
-              onChange={value => {
-                handleChange("dropdown4", value);
-              }}
-              options={dropdwonOptions}
-            />
-          </BlurContainer>
-          <button
-            className="text-14-semibold p-1 text-white disabled:opacity-70"
-            onClick={resetValues}
-            disabled={isProjectPage}
-          >
-            {t("Clear Filters")}
-          </button>
-        </div>
+        <When condition={!isAirTablePage}>
+          <div className="flex items-center gap-3">
+            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Programme:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={VARIANT_DROPDOWN_HEADER}
+                value={filterValues.dropdown1}
+                placeholder="Top100"
+                onChange={(value: OptionValue[]) => {
+                  handleChange("dropdown1", value);
+                }}
+                options={dropdwonOptions}
+              />
+            </BlurContainer>
+            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Landscape:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={VARIANT_DROPDOWN_HEADER}
+                placeholder="Top100"
+                value={filterValues.dropdown2}
+                onChange={value => {
+                  handleChange("dropdown2", value);
+                }}
+                options={dropdwonOptions}
+              />
+            </BlurContainer>
+            <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Country:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={VARIANT_DROPDOWN_HEADER}
+                placeholder="Global"
+                value={filterValues.dropdown3}
+                onChange={value => {
+                  handleChangeCountry(value);
+                }}
+                options={dropdwonCountryOptions}
+              />
+            </BlurContainer>
+            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
+              <Dropdown
+                prefix={
+                  <Text variant="text-14-light" className="leading-none">
+                    {t("Organization:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                multiSelect
+                variant={VARIANT_DROPDOWN_HEADER}
+                placeholder="Private"
+                value={filterValues.dropdown4}
+                onChange={value => {
+                  handleChange("dropdown4", value);
+                }}
+                options={dropdwonOptions}
+              />
+            </BlurContainer>
+            <button
+              className="text-14-semibold p-1 text-white disabled:opacity-70"
+              onClick={resetValues}
+              disabled={isProjectPage}
+            >
+              {t("Clear Filters")}
+            </button>
+          </div>
+        </When>
       </div>
       <div className="flex flex-col items-end justify-between gap-3">
-        <div className="relative h-fit w-fit">
-          <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
-          <button className="relative z-10 w-fit px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
-        </div>
-        <When condition={isProjectList}>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
-            <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
-          </BlurContainer>
+        <When condition={!isAirTablePage}>
+          <div className="relative h-fit w-fit">
+            <div className="absolute h-full w-full rounded bg-white bg-opacity-20 backdrop-blur-md" />
+            <button className="relative z-10 w-fit px-4 py-2 font-bold leading-normal text-white">{t("Export")}</button>
+          </div>
+          <When condition={isProjectList}>
+            <BlurContainer isCollapse={isHeaderCollapsed}>
+              <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+            </BlurContainer>
+          </When>
         </When>
       </div>
     </header>

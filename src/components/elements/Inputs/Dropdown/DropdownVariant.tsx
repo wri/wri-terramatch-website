@@ -32,3 +32,14 @@ export const VARIANT_DROPDOWN_HEADER: DropdownVariant = {
   optionCheckboxClassName: "checked:text-blueCustom-700",
   optionLabelClassName: "text-14-semibold"
 };
+
+export const VARIANT_DROPDOWN_FILTER: DropdownVariant = {
+  containerClassName: "",
+  className: "",
+  iconClassName: "w-4 fill-primary",
+  iconName: undefined,
+  titleContainerClassName: "flex items-center gap-2",
+  titleClassname: "line-clamp-1",
+  optionCheckboxClassName: "",
+  optionLabelClassName: ""
+};
