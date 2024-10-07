@@ -70,10 +70,11 @@ const SecDashboard = ({
             {t(title)}
           </Text>
           <ToolTip
+            title={title}
             content={t(
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             )}
-            width="w-44 text-left"
+            width="w-56 lg:w-64"
           >
             <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
           </ToolTip>

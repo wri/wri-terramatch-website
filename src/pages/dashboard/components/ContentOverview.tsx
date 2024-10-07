@@ -78,7 +78,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex items-center gap-1">
               <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
               <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                Expand
+                {t("Expand")}
               </Text>
             </div>
           </Button>
@@ -88,6 +88,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             className={"h-full max-h-[50vh] w-full rounded-lg transition-all duration-500 ease-in-out"}
           />
           <TooltipGridMap label="Angola" learnMore={true} />
+          <div className="absolute top-6 left-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
+            <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
+          </div>
 
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
