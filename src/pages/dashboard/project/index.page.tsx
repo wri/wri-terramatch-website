@@ -73,7 +73,10 @@ const ProjectView = () => {
   ];
 
   return (
-    <div className="mb-4 mr-2 mt-4 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2" ref={sharedRef}>
+    <div
+      className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
+      ref={sharedRef}
+    >
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2">
         <PageRow className="gap-4 p-0">
           <div>
