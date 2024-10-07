@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { ReactNode, useRef, useState } from "react";
 import { When } from "react-if";
@@ -17,6 +18,7 @@ export interface TooltipProps {
 const ToolTip = ({ children, content, width, placement = "top", className, title }: TooltipProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const t = useT();
   const [tooltipStyles, setTooltipStyles] = useState({ left: 0, top: 0 });
 
   const handleMouseEnter = () => {
@@ -73,11 +75,11 @@ const ToolTip = ({ children, content, width, placement = "top", className, title
           />
           <When condition={!!title}>
             <Text variant="text-12-bold" className="mb-1">
-              {title}
+              {t(title)}
             </Text>
           </When>
           <Text variant="text-12-light" className="!font-light leading-[normal]">
-            {content}
+            {t(content)}
           </Text>
         </div>
       </div>
