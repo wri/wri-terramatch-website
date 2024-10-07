@@ -83,7 +83,7 @@ export type ApiDataStore = ApiResources & {
   };
 };
 
-const initialState = {
+export const INITIAL_STATE = {
   ...RESOURCES.reduce((acc: Partial<ApiResources>, resource) => {
     acc[resource] = {};
     return acc;
@@ -126,7 +126,7 @@ const isLogin = ({ url, method }: { url: string; method: Method }) =>
 export const apiSlice = createSlice({
   name: "api",
 
-  initialState,
+  initialState: INITIAL_STATE,
 
   reducers: {
     apiFetchStarting: (state, action: PayloadAction<ApiFetchStartingProps>) => {

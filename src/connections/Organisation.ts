@@ -4,7 +4,7 @@ import { selectMe, useMyUser } from "@/connections/User";
 import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
+import { Connected, Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
 type OrganisationConnection = {
@@ -54,8 +54,8 @@ const myOrganisationConnection: Connection<MyOrganisationConnection> = {
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
 // from the store.
-export const useMyOrg = () => {
+export const useMyOrg = (): Connected<MyOrganisationConnection> => {
   const [loaded] = useMyUser();
   const [, orgShape] = useConnection(myOrganisationConnection);
-  return [loaded, orgShape];
+  return loaded ? [true, orgShape] : [false, {}];
 };
