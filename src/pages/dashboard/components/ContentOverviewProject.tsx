@@ -1,14 +1,20 @@
 import { useT } from "@transifex/react";
 import React from "react";
 
+import Button from "@/components/elements/Button/Button";
 import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_DASHBOARD_COUNTRIES } from "@/components/elements/Table/TableVariants";
+import {
+  VARIANT_TABLE_DASHBOARD_COUNTRIES,
+  VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL
+} from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useModalContext } from "@/context/modal.provider";
 
 import {
   COLUMN_ACTIVE_COUNTRY,
@@ -50,10 +56,55 @@ const ContentOverviewProject = () => {
       title: "Wild Fire"
     }
   ];
+  const { openModal, closeModal } = useModalContext();
+  const ModalMap = () => {
+    openModal(
+      "modalExpand",
+      <ModalExpand id="modalExpand" title="" closeModal={closeModal}>
+        <img src="/images/map-img.png" alt="map" className="w-full flex-1 overflow-hidden" />
+      </ModalExpand>
+    );
+  };
+
+  const ModalTable = () => {
+    openModal(
+      "modalExpand",
+      <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" popUpContent="POPUP" closeModal={closeModal}>
+        <div className="w-full px-6">
+          <Table
+            columns={COLUMN_ACTIVE_COUNTRY.map(column => {
+              column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
+              return {
+                ...column,
+                enableSorting: true
+              };
+            })}
+            data={DATA_ACTIVE_COUNTRY}
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
+          />
+        </div>
+      </ModalExpand>
+    );
+  };
+
   return (
     <div className="flex w-1/2 ">
       <PageRow className="w-full gap-4 p-0">
         <div className="shadow-lg relative w-full">
+          <Button
+            className="absolute right-6 top-6 z-10"
+            variant="white-button-map"
+            onClick={() => {
+              ModalMap();
+            }}
+          >
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                Expand
+              </Text>
+            </div>
+          </Button>
           <img src="/images/map-img.png" alt="map" className="h-full w-full" />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
@@ -113,12 +164,28 @@ const ContentOverviewProject = () => {
         </PageCard>
 
         <div className="z-10 rounded-xl bg-white p-4 shadow-all">
-          <div className="flex items-center gap-2">
-            <Text variant={"text-20-bold"}>{t("OTHER PROJECTS IN NIGER")}</Text>
-            <ToolTip content={"tooltip table"} placement="top" width="w-44 lg:w-52">
-              <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-            </ToolTip>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Text variant={"text-20-bold"}>{t("OTHER PROJECTS IN NIGER")}</Text>
+              <ToolTip content={"tooltip table"} placement="top" width="w-44 lg:w-52">
+                <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+              </ToolTip>
+            </div>
+            <Button
+              variant="white-border"
+              onClick={() => {
+                ModalTable();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                  Expand
+                </Text>
+              </div>
+            </Button>
           </div>
+
           <div className="mt-2 flex h-full w-full">
             <div className="flex-1 overflow-auto">
               <Table

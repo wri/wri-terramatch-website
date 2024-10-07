@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { useContext } from "react";
+import React from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -10,7 +10,6 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
-import { RefContext } from "../context/ScrollContext.provider";
 import {
   COLUMN_ACTIVE_COUNTRY,
   DATA_ACTIVE_COUNTRY,
@@ -31,7 +30,6 @@ const Country = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const sharedRef = useContext(RefContext);
 
   const dashboardHeader = [
     {
@@ -49,7 +47,7 @@ const Country = () => {
   ];
 
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
+    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 pt-4">
       <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
           <div className="flex items-center gap-2">

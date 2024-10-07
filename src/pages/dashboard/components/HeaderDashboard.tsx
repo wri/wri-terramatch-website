@@ -121,7 +121,7 @@ const HeaderDashboard = () => {
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
@@ -134,6 +134,8 @@ const HeaderDashboard = () => {
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 showClear
+                showSelectAll
+                multiSelect
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Programme:")}
@@ -147,11 +149,14 @@ const HeaderDashboard = () => {
                   handleChange("dropdown1", value);
                 }}
                 options={dropdwonOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 showClear
+                showSelectAll
+                multiSelect
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Landscape:")}
@@ -165,6 +170,7 @@ const HeaderDashboard = () => {
                   handleChange("dropdown2", value);
                 }}
                 options={dropdwonOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
@@ -183,6 +189,7 @@ const HeaderDashboard = () => {
                   handleChangeCountry(value);
                 }}
                 options={dropdwonCountryOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
@@ -203,6 +210,7 @@ const HeaderDashboard = () => {
                   handleChange("dropdown4", value);
                 }}
                 options={dropdwonOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <button

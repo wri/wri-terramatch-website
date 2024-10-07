@@ -48,7 +48,17 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       "modalExpand",
       <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" popUpContent="POPUP" closeModal={closeModal}>
         <div className="w-full px-6">
-          <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL} />
+          <Table
+            columns={columns.map(column => {
+              column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
+              return {
+                ...column,
+                enableSorting: true
+              };
+            })}
+            data={data}
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
+          />
         </div>
       </ModalExpand>
     );

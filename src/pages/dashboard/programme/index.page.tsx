@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { useContext } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -10,7 +9,6 @@ import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
-import { RefContext } from "../context/ScrollContext.provider";
 import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
@@ -41,7 +39,6 @@ const Dashboard = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const sharedRef = useContext(RefContext);
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -109,7 +106,7 @@ const Dashboard = () => {
     : [];
 
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
+    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 pt-4">
       <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">

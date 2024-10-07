@@ -11,7 +11,7 @@ import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/Ta
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-const AirTable = () => {
+const ProjectInsights = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const dropdwonOptions = [
     {
@@ -347,4 +347,4 @@ const AirTable = () => {
   );
 };
 
-export default AirTable;
+export default ProjectInsights;

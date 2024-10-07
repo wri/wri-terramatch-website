@@ -259,9 +259,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             : setSelected(options.map(option => option.value));
                         }}
                       />
-                      <Text variant="text-14-semibold" className="ml-4 whitespace-nowrap">
-                        Show selected
-                      </Text>
                     </div>
                   </Listbox.Option>
                   <hr className="mx-3 border-grey-350" />
