@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/nextjs";
 import { NextRequest } from "next/server";
 
 import { isAdmin, UserRole } from "@/admin/apiProvider/utils/user";
-import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { MiddlewareCacheKey, MiddlewareMatcher } from "@/utils/MiddlewareMatcher";
 
@@ -51,8 +51,8 @@ export async function middleware(request: NextRequest) {
         const {
           id: organisationId,
           meta: { userStatus }
-        } = json.data.relationships.org.data;
-        const organisation = json.included[0];
+        } = json.data.relationships?.org?.data ?? { meta: {} };
+        const organisation: OrganisationDto | undefined = json.included?.[0]?.attributes;
 
         matcher.if(
           !user?.emailAddressVerifiedAt,

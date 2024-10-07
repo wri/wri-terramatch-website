@@ -55,6 +55,9 @@ export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =
   });
 
 export type UsersFindPathParams = {
+  /**
+   * A valid user id or "me"
+   */
   id: string;
 };
 
@@ -117,7 +120,7 @@ export type UsersFindResponse = {
          */
         id?: string;
         meta?: {
-          userStatus?: "approved" | "requested" | "rejected";
+          userStatus?: "approved" | "requested" | "rejected" | "na";
         };
       };
     };

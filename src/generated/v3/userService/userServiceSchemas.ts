@@ -30,12 +30,12 @@ export type UserFramework = {
 
 export type UserDto = {
   uuid: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   /**
    * Currently just calculated by appending lastName to firstName.
    */
-  fullName: string;
+  fullName: string | null;
   primaryRole: string;
   /**
    * @example person@foocorp.net
@@ -44,12 +44,12 @@ export type UserDto = {
   /**
    * @format date-time
    */
-  emailAddressVerifiedAt: string;
-  locale: string;
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
   frameworks: UserFramework[];
 };
 
 export type OrganisationDto = {
   status: "draft" | "pending" | "approved" | "rejected";
-  name: string;
+  name: string | null;
 };
