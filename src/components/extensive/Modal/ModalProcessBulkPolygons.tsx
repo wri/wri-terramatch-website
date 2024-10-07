@@ -6,9 +6,6 @@ import { twMerge } from "tailwind-merge";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Text from "@/components/elements/Text/Text";
-import { useLoading } from "@/context/loaderAdmin.provider";
-import { useNotificationContext } from "@/context/notification.provider";
-import { useDeleteV2TerrafundProjectPolygons } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -24,7 +21,7 @@ export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   refetch?: () => void;
 }
 
-const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
+const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   iconProps,
   title,
   content,
@@ -41,9 +38,6 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
 }) => {
   const t = useT();
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-  const { showLoader, hideLoader } = useLoading();
-  const { openNotification } = useNotificationContext();
-  const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
 
   useEffect(() => {
     if (sitePolygonData) {
@@ -61,36 +55,8 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
       return newSelected;
     });
   };
-
   const handleSelectAll = (isChecked: boolean) => {
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
-  };
-
-  const handleDelete = () => {
-    showLoader();
-    const selectedUUIDs: any = sitePolygonData
-      .filter((_, index) => polygonsSelected[index])
-      .map(polygon => polygon.poly_id);
-
-    deletePolygons(
-      {
-        body: {
-          uuids: selectedUUIDs
-        }
-      },
-      {
-        onSuccess: () => {
-          onClose?.();
-          refetch?.();
-          hideLoader();
-          openNotification("success", t("Success!"), t("Polygons deleted successfully"));
-        },
-        onError: () => {
-          hideLoader();
-          openNotification("error", t("Error!"), t("Failed to delete polygons"));
-        }
-      }
-    );
   };
 
   return (
@@ -152,7 +118,7 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps} onClick={handleDelete}>
+        <Button {...primaryButtonProps}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
@@ -162,4 +128,4 @@ const ModalDeleteBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   );
 };
 
-export default ModalDeleteBulkPolygons;
+export default ModalProcessBulkPolygons;

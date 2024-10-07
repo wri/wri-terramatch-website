@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots Components/Elements/Table Default 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -825,7 +827,9 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Primary 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -1649,7 +1653,9 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -2473,7 +2479,9 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -3297,7 +3305,9 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Table Border 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -4121,7 +4131,9 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -4945,7 +4957,9 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -5774,7 +5788,9 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
 <div
   className="bg-neutral-600"
 >
-  <div>
+  <div
+    className="w-full"
+  >
     <div
       className="overflow-x-auto px-4 md:px-0 undefined"
     >
