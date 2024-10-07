@@ -121,11 +121,12 @@ const Dashboard = () => {
                     {t(item.value)}
                   </Text>
                   <ToolTip
+                    title={item.label}
                     content={t(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
                     )}
                     placement="top"
-                    width="w-44 lg:w-52"
+                    width="w-56 lg:w-64"
                   >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>

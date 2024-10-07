@@ -1,4 +1,5 @@
 import { ReactNode, useRef, useState } from "react";
+import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Text from "../Text/Text";
@@ -54,8 +55,14 @@ const ToolTip = ({ children, content, width, placement, className, title }: Tool
           )}
         >
           <div className="absolute bottom-0 left-1/2 mb-[-9px] ml-[-4px] border-[5px] border-darkCustom border-b-transparent border-l-transparent border-r-transparent group-hover:block" />
-          <Text variant="text-12-semibold">{title}</Text>
-          <Text variant="text-12-light">{content}</Text>
+          <When condition={!!title}>
+            <Text variant="text-12-bold" className="mb-1">
+              {title}
+            </Text>
+          </When>
+          <Text variant="text-12-light" className="!font-light leading-[normal]">
+            {content}
+          </Text>
         </div>
       </div>
 
