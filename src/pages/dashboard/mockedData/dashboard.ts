@@ -381,34 +381,6 @@ export const DATA_ACTIVE_PROGRAMME = [
   }
 ];
 
-export const COLUMN_ACTIVE_COUNTRY = [
-  {
-    header: "Project",
-    accessorKey: "project",
-    enableSorting: false
-  },
-  {
-    header: "Trees Planted",
-    accessorKey: "treesPlanted",
-    enableSorting: false
-  },
-  {
-    header: "Hectares",
-    accessorKey: "restoratioHectares",
-    enableSorting: false
-  },
-  {
-    header: "Jobs Created",
-    accessorKey: "jobsCreated",
-    enableSorting: false
-  },
-  {
-    header: "Volunteers",
-    accessorKey: "volunteers",
-    enableSorting: false
-  }
-];
-
 export const DATA_ACTIVE_COUNTRY = [
   {
     project: "Resturation de mangroves et des peripheries de la chaine de I’Atacora au Benin - Eco - Benin",

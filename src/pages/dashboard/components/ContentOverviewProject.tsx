@@ -17,7 +17,6 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useModalContext } from "@/context/modal.provider";
 
 import {
-  COLUMN_ACTIVE_COUNTRY,
   DATA_ACTIVE_COUNTRY,
   RESTORATION_STRATEGIES_REPRESENTED,
   TARGET_LAND_USE_TYPES_REPRESENTED,
@@ -90,6 +89,46 @@ const ContentOverviewProject = () => {
       </ModalExpand>
     );
   };
+
+  const COLUMN_ACTIVE_COUNTRY = [
+    {
+      header: "Project",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom" />
+          </a>
+        );
+      }
+    }
+  ];
 
   const ModalTable = () => {
     openModal(

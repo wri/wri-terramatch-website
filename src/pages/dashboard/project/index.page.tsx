@@ -55,7 +55,7 @@ export interface DashboardDataProps {
 const ProjectView = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graph"];
+  const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
   const dashboardHeader = [
     {
@@ -82,13 +82,13 @@ const ProjectView = () => {
           <div>
             <Breadcrumbs
               links={[
-                { title: t("TerraFund Top100"), path: "/#" },
-                { title: t("Niger"), path: "/#" },
+                { title: t("TerraFund Top100"), path: "/dashboard/country" },
+                { title: t("Niger"), path: "/dashboard/country" },
                 { title: t("Restoration of Degraded Forest Lands in Ghana - PADO") }
               ]}
               className="pt-0 "
               textVariant="text-16"
-              clasNameText=""
+              clasNameText="!no-underline hover:text-primary hover:opacity-100"
             />
           </div>
 
