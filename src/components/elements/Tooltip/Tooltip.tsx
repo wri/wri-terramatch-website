@@ -48,7 +48,7 @@ const ToolTip = ({ children, content, width, placement, className, title }: Tool
       >
         <div
           className={tw(
-            "shadow-lg text-12 relative bottom-full -z-10 mb-1 w-fit rounded bg-darkCustom p-1 text-center text-white group-hover:z-50 lg:p-2",
+            "shadow-lg text-12 relative bottom-full -z-10 mb-1 w-fit rounded bg-darkCustom p-2 text-left text-white group-hover:z-50 lg:p-2",
             width,
             placement
           )}
