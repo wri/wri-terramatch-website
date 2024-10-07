@@ -29,8 +29,7 @@ import {
 const Country = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graphic"];
-
+  const dataToggleGraphic = ["Table", "Graph"];
   const dashboardHeader = [
     {
       label: "Trees Planted",

@@ -67,7 +67,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   return (
     <div className="flex w-1/2">
       <PageRow className="gap-4 p-0">
-        <div className="shadow-lg relative w-full">
+        <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
             className="absolute right-6 top-6 z-10"
             variant="white-button-map"
@@ -85,7 +85,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           <img
             src="/images/map-img.png"
             alt="map"
-            className={"h-full max-h-[50vh] w-full transition-all duration-500 ease-in-out"}
+            className={"h-full max-h-[50vh] w-full rounded-lg transition-all duration-500 ease-in-out"}
           />
           <TooltipGridMap label="Angola" learnMore={true} />
 

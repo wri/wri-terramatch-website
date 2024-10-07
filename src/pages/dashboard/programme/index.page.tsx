@@ -38,7 +38,7 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graphic"];
+  const dataToggleGraphic = ["Table", "Graph"];
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -120,7 +120,13 @@ const Dashboard = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
+                  <ToolTip
+                    content={t(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                    )}
+                    placement="top"
+                    width="w-44 lg:w-52"
+                  >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>
