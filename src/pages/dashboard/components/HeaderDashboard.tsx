@@ -20,9 +20,9 @@ const HeaderDashboard = () => {
   const t = useT();
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
-  const isAirTablePage = router.pathname.includes("dashboard/airtable");
+  const isProjectInsights = router.pathname.includes("dashboard/project-insights");
   const isProjectList = router.pathname === "/dashboard/project-list";
-  const isProjectPage = router.pathname.includes("dashboard/project");
+  const isProjectPage = router.pathname === "dashboard/project";
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -94,12 +94,7 @@ const HeaderDashboard = () => {
       scrollElement?.removeEventListener("scroll", handleScroll);
     };
   }, [sharedRef]);
-
   const handleChangeCountry = (value: OptionValue[]) => {
-    if (value[0] === "global") {
-      router.push(`/dashboard/programme`);
-      return;
-    }
     setFilterValues(prevValues => ({
       ...prevValues,
       dropdown3: value
@@ -114,14 +109,17 @@ const HeaderDashboard = () => {
   };
 
   const getHeaderTitle = () => {
-    if (isAirTablePage) {
+    if (isProjectInsights) {
       return "Project Insights";
+    }
+    if (isProjectList) {
+      return "Project List";
     }
     return "TerraMatch Insights";
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
@@ -129,11 +127,13 @@ const HeaderDashboard = () => {
         >
           {t(getHeaderTitle())}
         </Text>
-        <When condition={!isAirTablePage}>
+        <When condition={!isProjectInsights}>
           <div className="flex items-center gap-3">
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 showClear
+                showSelectAll
+                multiSelect
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Programme:")}
@@ -147,11 +147,14 @@ const HeaderDashboard = () => {
                   handleChange("dropdown1", value);
                 }}
                 options={dropdwonOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
                 showClear
+                showSelectAll
+                multiSelect
                 prefix={
                   <Text variant="text-14-light" className="leading-none">
                     {t("Landscape:")}
@@ -165,6 +168,7 @@ const HeaderDashboard = () => {
                   handleChange("dropdown2", value);
                 }}
                 options={dropdwonOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
@@ -182,7 +186,9 @@ const HeaderDashboard = () => {
                 onChange={value => {
                   handleChangeCountry(value);
                 }}
+                onClear={() => router.push(`/dashboard/country`)}
                 options={dropdwonCountryOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
@@ -203,6 +209,7 @@ const HeaderDashboard = () => {
                   handleChange("dropdown4", value);
                 }}
                 options={dropdwonOptions}
+                optionClassName="hover:bg-grey-200"
               />
             </BlurContainer>
             <button

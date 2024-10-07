@@ -26,7 +26,7 @@ const TooltipGridMap = (props: TooltipGridProps) => {
     },
     {
       id: "2",
-      title: "Trees Plantedd",
+      title: "Trees Planted",
       value: "2,234"
     },
     {

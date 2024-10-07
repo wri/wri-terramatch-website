@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { When } from "react-if";
 
@@ -17,15 +18,17 @@ export interface ModalExpandProps extends ModalBaseProps {
 }
 
 const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, closeModal, ...rest }) => {
+  const t = useT();
+
   return (
     <ExpandModalBase {...rest}>
       <div className="flex w-full items-center justify-between p-6">
         <div className="flex items-center gap-1">
           <Text variant="text-28-bold" className="text-center uppercase">
-            {title}
+            {t(title)}
           </Text>
           <When condition={popUpContent}>
-            <Tooltip content={popUpContent}>
+            <Tooltip content={popUpContent} width="w-72 lg:w-96">
               <Icon name={IconNames.IC_INFO} />
             </Tooltip>
           </When>
@@ -35,7 +38,7 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
           <div className="flex items-center gap-1">
             <Icon name={IconNames.COLLAPSE} className="h-[14px] w-[14px]" />
             <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-              Collapse
+              {t("Collapse")}
             </Text>
           </div>
         </Button>

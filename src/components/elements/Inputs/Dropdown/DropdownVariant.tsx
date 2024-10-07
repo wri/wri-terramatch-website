@@ -37,7 +37,7 @@ export const VARIANT_DROPDOWN_HEADER: DropdownVariant = {
   titleContainerClassName: "flex-1 overflow-hidden",
   titleClassname: "leading-none text-ellipsis whitespace-nowrap overflow-hidden",
   optionCheckboxClassName: "checked:text-blueCustom-700",
-  optionLabelClassName: "text-14-semibold",
+  optionLabelClassName: "text-14-semibold whitespace-nowrap",
   optionClassName: "gap-2"
 };
 
@@ -49,5 +49,5 @@ export const VARIANT_DROPDOWN_FILTER: DropdownVariant = {
   titleContainerClassName: "flex items-center gap-2",
   titleClassname: "line-clamp-1",
   optionCheckboxClassName: "",
-  optionLabelClassName: ""
+  optionLabelClassName: "whitespace-nowrap"
 };

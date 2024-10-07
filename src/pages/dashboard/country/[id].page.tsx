@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
-import React, { useContext } from "react";
+import { useRouter } from "next/router";
+import React from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -7,12 +8,11 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Icon from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
-import { RefContext } from "../context/ScrollContext.provider";
 import {
-  COLUMN_ACTIVE_COUNTRY,
   DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
@@ -27,12 +27,19 @@ import {
   VOLUNTEERS_CREATED_BY_GENDER
 } from "../mockedData/dashboard";
 
+interface DashboardCountry {
+  country_slug: string;
+  data: {
+    icon: string;
+    label: string;
+  };
+}
+
 const Country = () => {
   const t = useT();
+  const router = useRouter();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const sharedRef = useContext(RefContext);
-
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -48,17 +55,65 @@ const Country = () => {
     }
   ];
 
+  const COLUMN_ACTIVE_COUNTRY = [
+    {
+      header: "Project",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
+          </a>
+        );
+      }
+    }
+  ];
+
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+  const countrySelected = dashboardCountries?.data.find(
+    (country: DashboardCountry) => country.country_slug === router.asPath.split("/")[3]
+  );
+
+  router;
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
-      <div className="overflow-hiden w-1/2">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+      <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <div className="flex items-center gap-2">
             <Text variant="text-14-light" className="uppercase text-black ">
               {t("results for:")}
             </Text>
-            <img src="/flags/ke.svg" alt="flag" className="h-6 w-8 object-cover" />
+            <img src={countrySelected?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
             <Text variant="text-24-semibold" className="text-black">
-              {t("Kenya")}
+              {t(countrySelected?.data.label)}
             </Text>
           </div>
           <div className="grid w-full grid-cols-3 gap-4">
@@ -72,7 +127,14 @@ const Country = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
+                  <ToolTip
+                    title={item.label}
+                    content={t(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                    )}
+                    placement="top"
+                    width="w-56 lg:w-64"
+                  >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>

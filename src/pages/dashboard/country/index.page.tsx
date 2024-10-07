@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { useContext } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -10,7 +9,6 @@ import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
-import { RefContext } from "../context/ScrollContext.provider";
 import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
@@ -41,7 +39,6 @@ const Dashboard = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const sharedRef = useContext(RefContext);
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -77,7 +74,7 @@ const Dashboard = () => {
       enableSorting: false
     },
     {
-      header: "Projest",
+      header: "Projects",
       accessorKey: "project",
       enableSorting: false
     },
@@ -109,8 +106,8 @@ const Dashboard = () => {
     : [];
 
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
-      <div className="overflow-hiden w-1/2">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+      <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
@@ -123,7 +120,14 @@ const Dashboard = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
+                  <ToolTip
+                    title={item.label}
+                    content={t(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                    )}
+                    placement="top"
+                    width="w-56 lg:w-64"
+                  >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>

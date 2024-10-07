@@ -45,9 +45,11 @@ const PageCard = ({
   const [subtitleText, setSubtitleText] = useState(subtitle);
   const t = useT();
 
+  const maxLength = 278;
+
   useEffect(() => {
-    if (collapseSubtile && (subtitle?.length ?? 0) > 253) {
-      setSubtitleText(subtitle?.slice(0, 253));
+    if (collapseSubtile && (subtitle?.length ?? 0) > maxLength) {
+      setSubtitleText(subtitle?.slice(0, maxLength));
     } else {
       setSubtitleText(subtitle);
     }
@@ -62,7 +64,7 @@ const PageCard = ({
               {title}
               <When condition={!!tooltip}>
                 &nbsp;
-                <ToolTip content={tooltip} placement="top" width="w-44 lg:w-52" title={title}>
+                <ToolTip content={tooltip} width="w-44 lg:w-52" title={title}>
                   <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
                 </ToolTip>
               </When>
@@ -81,7 +83,7 @@ const PageCard = ({
           >
             {subtitleText}
           </Text>
-          <When condition={subtitleMore && (subtitle?.length ?? 0) > 253}>
+          <When condition={subtitleMore && (subtitle?.length ?? 0) > maxLength}>
             <button
               className="text-14-bold text-darkCustom opacity-80 hover:text-primary"
               onClick={() => setCollapseSubtile(!collapseSubtile)}

@@ -54,6 +54,7 @@ export interface DropdownProps {
   disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
+  onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
   showSelectAll?: boolean;
 }
@@ -75,7 +76,7 @@ const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOther
  */
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
-  const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll } = props;
+  const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll, onClear } = props;
   const [selected, setSelected] = useState<OptionValue[]>(() =>
     getDefaultDropDownValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
@@ -198,6 +199,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                   onClick={e => {
                     e.stopPropagation();
                     setSelected([]);
+                    onClear?.();
                   }}
                 >
                   <Icon
@@ -226,7 +228,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <Listbox.Options
                 as="div"
                 className={tw(
-                  "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white lg:max-h-[250px] wide:max-h-[266px]",
+                  "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white outline-none lg:max-h-[250px] wide:max-h-[266px]",
                   props.optionsClassName
                 )}
               >
@@ -237,8 +239,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     value="all"
                     className={classNames(
                       tw(
-                        "w-full cursor-pointer hover:bg-primary-100",
-                        props.multiSelect ? "p-3.5" : "p-3",
+                        "w-full cursor-pointer p-3 hover:bg-primary-100",
                         selected.length === options.length && "bg-primary-100",
                         props.optionClassName
                       )
@@ -259,9 +260,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             : setSelected(options.map(option => option.value));
                         }}
                       />
-                      <Text variant="text-14-semibold" className="ml-4 whitespace-nowrap">
-                        Show selected
-                      </Text>
                     </div>
                   </Listbox.Option>
                   <hr className="mx-3 border-grey-350" />
@@ -280,8 +278,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       value={option.value}
                       className={classNames(
                         tw(
-                          "w-full cursor-pointer hover:bg-primary-100",
-                          props.multiSelect ? "p-3.5" : "p-3",
+                          "w-full cursor-pointer p-3 hover:bg-primary-100",
                           isSelected && !props.multiSelect && "bg-primary-100",
                           props.optionClassName,
                           verifyDisableOption(option.title) ? "cursor-not-allowed bg-grey-750 hover:bg-grey-750" : ""

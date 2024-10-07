@@ -59,7 +59,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
+    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 pt-4" ref={sharedRef}>
       <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">
@@ -73,7 +73,7 @@ const Dashboard = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
+                  <ToolTip content={item.label} width="w-44 lg:w-52">
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>
