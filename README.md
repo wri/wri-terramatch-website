@@ -64,6 +64,18 @@ Connections are a **declarative** way for components to get access to the data f
 layer that they need. This system is under development, and the current documentation about it is 
 [available in Confluence](https://gfw.atlassian.net/wiki/spaces/TerraMatch/pages/1423147024/Connections)
 
+Note for Storybook: Because multiple storybook components can be on the page at the same time that each
+have their own copy of the redux store, the Connection utilities `loadConnection` (typically used 
+via `connectionLoaded` in `connectionShortcuts.ts`) and `connectionSelector` will not work as expected
+in storybook stories. This is because those utilities rely on `ApiSlice.redux` and `ApiSlice.apiDataStore`, 
+and in the case of storybook, those will end up with only the redux store from the last component on the
+page. Regular connection use through `useConnection` will work because it gets the store from the 
+Provider in the redux component tree in that case. 
+
+When building storybook stories for components that rely on connections via `useConnection`, make sure
+that the story is provided with a store that has all dependent data already loaded. See `testStore.tsx`'s
+`buildStore` builder, and `Navbar.stories.tsx` for example usage.
+
 ## Translation ([Transifex Native SDK](https://developers.transifex.com/docs/native)).
 
 Transifex native sdk provides a simple solution for internationalization.
