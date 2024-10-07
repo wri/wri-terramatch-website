@@ -22,7 +22,7 @@ import {
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
-import { ClippedPolygonsResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
 
 import CommentarySection from "../CommentarySection/CommentarySection";
@@ -122,7 +122,7 @@ const PolygonDrawer = ({
   );
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
-    onSuccess: async (data: ClippedPolygonsResponse) => {
+    onSuccess: async (data: ClippedPolygonResponse) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();

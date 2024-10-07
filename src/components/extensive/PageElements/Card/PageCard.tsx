@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
@@ -42,6 +43,7 @@ const PageCard = ({
 }: PageCardProps) => {
   const [collapseSubtile, setCollapseSubtile] = useState(true);
   const [subtitleText, setSubtitleText] = useState(subtitle);
+  const t = useT();
 
   useEffect(() => {
     if (collapseSubtile && (subtitle?.length ?? 0) > 253) {
@@ -79,10 +81,13 @@ const PageCard = ({
           >
             {subtitleText}
           </Text>
-          <When condition={subtitleMore && collapseSubtile && (subtitle?.length ?? 0) > 253}>
-            ...
-            <button className="text-14-bold text-darkCustom opacity-80" onClick={() => setCollapseSubtile(false)}>
-              See More
+          <When condition={subtitleMore && (subtitle?.length ?? 0) > 253}>
+            <button
+              className="text-14-bold text-darkCustom opacity-80 hover:text-primary"
+              onClick={() => setCollapseSubtile(!collapseSubtile)}
+            >
+              &nbsp;
+              {collapseSubtile ? t("...See More") : t("See Less")}
             </button>
           </When>
         </div>

@@ -39,6 +39,7 @@ export interface TableProps<TData>
   hasPagination?: boolean;
   onTableStateChange?: (state: TableState) => void;
   isLoading?: boolean;
+  invertSelectPagination?: boolean;
 }
 
 export interface TableState {
@@ -66,6 +67,7 @@ function Table<TData extends RowData>({
   variant = VARIANT_TABLE_PRIMARY,
   children,
   isLoading,
+  invertSelectPagination = false,
   hasPagination = false,
   ...props
 }: TableProps<TData>) {
@@ -115,7 +117,7 @@ function Table<TData extends RowData>({
   }, [data]);
 
   return (
-    <div>
+    <div className="w-full">
       <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter
@@ -221,6 +223,7 @@ function Table<TData extends RowData>({
           defaultPageSize={initialTableState?.pagination?.pageSize || 5}
           containerClassName="mt-6"
           hasPageSizeSelector
+          invertSelect={invertSelectPagination}
         />
       )}
     </div>

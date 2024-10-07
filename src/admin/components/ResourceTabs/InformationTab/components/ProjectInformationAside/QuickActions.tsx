@@ -72,9 +72,6 @@ const QuickActions: FC = () => {
         <Button variant="outlined" onClick={() => handleExport("sites")}>
           Export Site Reports
         </Button>
-        <Button variant="outlined" onClick={() => handleExport("shapefiles")}>
-          Export Shapefiles
-        </Button>
         <Divider sx={{ marginBottom: 2 }} />
       </Stack>
 

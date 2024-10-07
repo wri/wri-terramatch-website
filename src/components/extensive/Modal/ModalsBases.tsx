@@ -15,6 +15,8 @@ const createModalComponent =
 const commonBaseClasses =
   "m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white";
 
+export const ExpandModalBase = createModalComponent(commonBaseClasses + " h-[90vh] w-[95vw]");
+
 export const EditModalBase = createModalComponent(commonBaseClasses + " max-w-[1400px]");
 
 export const ModalBase = createModalComponent(commonBaseClasses + " max-w-[800px] p-15", "margin-4 z-50");

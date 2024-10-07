@@ -20,7 +20,10 @@ const ConfirmPage = () => {
   const entityUUID = router.query.uuid as string;
 
   const { data, isLoading } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
+    pathParams: { entity: entityName, uuid: entityUUID },
+    queryParams: {
+      lang: router.locale
+    }
   });
 
   const { data: entityData } = useGetV2ENTITYUUID({

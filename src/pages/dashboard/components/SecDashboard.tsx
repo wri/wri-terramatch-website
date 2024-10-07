@@ -69,7 +69,13 @@ const SecDashboard = ({
           <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
           </Text>
-          <ToolTip content={t(title)} placement="top" width="w-44">
+          <ToolTip
+            content={t(
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            )}
+            placement="top"
+            width="w-44 text-left"
+          >
             <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
           </ToolTip>
         </div>
@@ -79,7 +85,7 @@ const SecDashboard = ({
               secondOptionsData.map((item: any, index: number) => (
                 <div key={index} className="flex items-center gap-1">
                   <div className={classNames("h-2 w-2 rounded-full", item.color)} />
-                  <Text variant="text-10" className="text-darkCustom">
+                  <Text variant="text-12" className="text-darkCustom">
                     {t(item.label)}
                   </Text>
                 </div>

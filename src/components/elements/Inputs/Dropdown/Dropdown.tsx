@@ -16,7 +16,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { formatOptionsList, getMetaData } from "@/utils/options";
+import { formatOptionsList } from "@/utils/options";
 
 import { DropdownVariant, VARIANT_DROPDOWN_DEFAULT } from "./DropdownVariant";
 
@@ -50,10 +50,12 @@ export interface DropdownProps {
   feedbackRequired?: boolean;
   formHook?: UseFormReturn;
   onChangeConfirm?: boolean;
+  showClear?: boolean;
   disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
   onInternalError?: (error: ErrorOption) => void;
+  showSelectAll?: boolean;
 }
 const otherKey = "other#value#key";
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
@@ -73,7 +75,7 @@ const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOther
  */
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
-  const { variant = VARIANT_DROPDOWN_DEFAULT } = props;
+  const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll } = props;
   const [selected, setSelected] = useState<OptionValue[]>(() =>
     getDefaultDropDownValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
@@ -173,7 +175,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             <Listbox.Button
               as="div"
               className={classNames(
-                "flex h-10 items-center justify-between gap-3 rounded-lg py-2 px-3 hover:cursor-pointer",
+                "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
                 !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
                 props.className,
@@ -182,7 +184,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             >
               <When condition={!!props.prefix}>{props.prefix}</When>
               <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
-                {getMetaData(options, toArray<any>(value))}
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname)}
@@ -191,10 +192,26 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                   {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
                 </Text>
               </div>
-              <Icon
-                name={variant.iconName || IconNames.CHEVRON_DOWN}
-                className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
-              />
+              <When condition={selected.length > 0 && showClear}>
+                <div
+                  className={variant.iconClearContainerClassName}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setSelected([]);
+                  }}
+                >
+                  <Icon
+                    name={variant.iconNameClear || IconNames.CLEAR}
+                    className={tw("fill-neutral-900", variant.iconClearClassName)}
+                  />
+                </div>
+              </When>
+              <When condition={selected.length === 0 || !showClear}>
+                <Icon
+                  name={variant.iconName || IconNames.CHEVRON_DOWN}
+                  className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
+                />
+              </When>
             </Listbox.Button>
             <Transition
               className="relative z-50 !m-0"
@@ -213,6 +230,42 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                   props.optionsClassName
                 )}
               >
+                <When condition={props.multiSelect && showSelectAll}>
+                  <Listbox.Option
+                    as="div"
+                    key="all"
+                    value="all"
+                    className={classNames(
+                      tw(
+                        "w-full cursor-pointer hover:bg-primary-100",
+                        props.multiSelect ? "p-3.5" : "p-3",
+                        selected.length === options.length && "bg-primary-100",
+                        props.optionClassName
+                      )
+                    )}
+                    disabled={verifyDisableOption("All")}
+                  >
+                    <div className="flex items-center justify-between">
+                      <Checkbox
+                        name=""
+                        label="Select All"
+                        textClassName={classNames(variant.optionLabelClassName, "whitespace-nowrap")}
+                        inputClassName={classNames(variant.optionCheckboxClassName, "checked:bg-dash")}
+                        className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
+                        checked={selected.length === options.length}
+                        onChange={() => {
+                          selected.length === options.length
+                            ? setSelected([])
+                            : setSelected(options.map(option => option.value));
+                        }}
+                      />
+                      <Text variant="text-14-semibold" className="ml-4 whitespace-nowrap">
+                        Show selected
+                      </Text>
+                    </div>
+                  </Listbox.Option>
+                  <hr className="mx-3 border-grey-350" />
+                </When>
                 {options.map(option => {
                   let isSelected = false;
                   if (typeof selected === "string" || Array.isArray(selected)) {
@@ -244,7 +297,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             label={option.title}
                             textClassName={variant.optionLabelClassName}
                             inputClassName={variant.optionCheckboxClassName}
-                            className="flex flex-row-reverse items-center gap-3"
+                            className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
                             onChange={() => {
                               !isSelected
                                 ? setSelected([...selected, option.value])
@@ -254,7 +307,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         </Then>
                         <Else>
                           <div className="flex items-center gap-2">
-                            <When condition={option.meta}>{option.meta}</When>
+                            <When condition={!!option.prefix}>{option.prefix}</When>
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
                               className={tw(

@@ -4,7 +4,7 @@ import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } fro
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { downloadFileBlob } from "@/utils/network";
+
 const QuickActions: FC = () => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
@@ -27,16 +27,6 @@ const QuickActions: FC = () => {
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
     justifyContent: "space-between"
-  };
-
-  const downloadShapefile = async () => {
-    try {
-      if (record && record.name && record.boundary_geojson) {
-        downloadFileBlob(record.boundary_geojson, `${record.name}_shapefile.geojson`);
-      }
-    } catch (error) {
-      console.error("Error downloading shapefile:", error);
-    }
   };
 
   return (
@@ -77,7 +67,6 @@ const QuickActions: FC = () => {
             to={getNavigationPath("./4")}
             label="Add Monitored Data"
           />
-          <Button className="button-aside-page-admin" onClick={downloadShapefile} label="Download Shapefile" />
         </Stack>
       </Box>
     </Card>

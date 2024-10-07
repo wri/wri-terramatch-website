@@ -20,11 +20,7 @@ import {
   NEW_PART_TIME_JOBS,
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
-  RESTORATION_STRATEGIES_REPRESENTED,
-  TARGET_LAND_USE_TYPES_REPRESENTED,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
-  TOTAL_HECTARES_UNDER_RESTORATION,
-  TOTAL_NUMBER_OF_SITES,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
@@ -63,13 +59,13 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
-      <div ref={sharedRef} className="w-3/5 overflow-auto pr-2 ">
+    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pt-4 pl-4 pr-2" ref={sharedRef}>
+      <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
-              <div key={index} className="rounded-lg bg-white px-5 py-4.5">
-                <Text variant="text-10-light" className="text-darkCustom opacity-60">
+              <div key={index} className="rounded-lg bg-white px-4 py-3">
+                <Text variant="text-12-light" className="text-darkCustom opacity-60">
                   {t(item.label)}
                 </Text>
 
@@ -110,39 +106,13 @@ const Dashboard = () => {
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
             />
             <SecDashboard
-              title={t("Top 10 Projects With The Most Planted Trees")}
+              title={t("Top 5 Projects With The Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
             />
           </PageCard>
-          <PageCard
-            className="border-0 px-4 py-6"
-            classNameSubTitle="mt-4"
-            gap={8}
-            subtitleMore={true}
-            title={t("HECTARES UNDER RESTORATION")}
-            variantSubTitle="text-14-light"
-            subtitle={t(
-              `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
-            )}
-          >
-            <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
-              <SecDashboard
-                title={t("Total HECTARES UNDER RESTORATION")}
-                data={TOTAL_HECTARES_UNDER_RESTORATION}
-                classNameBody="w-full place-content-center !justify-center"
-              />
-              <SecDashboard
-                title={t("TOTAL NUMBER OF SITES")}
-                data={TOTAL_NUMBER_OF_SITES}
-                className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
-              />
-            </div>
-            <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
-            <SecDashboard title={t("TARGET LAND USE TYPES REPRESENTED")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
-          </PageCard>
+
           <PageCard
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
@@ -167,7 +137,7 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center"
               />
             </div>
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={JOBS_CREATED_BY_GENDER}
@@ -182,7 +152,7 @@ const Dashboard = () => {
               />
             </div>
             <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("VOLUNTEERS CREATED BY GENDER")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
@@ -199,7 +169,6 @@ const Dashboard = () => {
           </PageCard>
         </PageRow>
       </div>
-
       <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
     </div>
   );
