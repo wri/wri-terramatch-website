@@ -9,7 +9,7 @@ export type AppStore = {
   api: ApiDataStore;
 };
 
-const makeStore: MakeStore<Store<AppStore>> = () => {
+export const makeStore = () => {
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer
@@ -39,4 +39,4 @@ const makeStore: MakeStore<Store<AppStore>> = () => {
   return store;
 };
 
-export const wrapper = createWrapper<Store<AppStore>>(makeStore);
+export const wrapper = createWrapper<Store<AppStore>>(makeStore as MakeStore<Store<AppStore>>);
