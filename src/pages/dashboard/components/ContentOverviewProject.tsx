@@ -115,7 +115,7 @@ const ContentOverviewProject = () => {
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="w-full gap-4 p-0">
-        <div className="shadow-lg relative w-full">
+        <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
             className="absolute right-6 top-6 z-10"
             variant="white-button-map"
@@ -130,7 +130,7 @@ const ContentOverviewProject = () => {
               </Text>
             </div>
           </Button>
-          <img src="/images/map-img.png" alt="map" className="h-full w-full" />
+          <img src="/images/map-img.png" alt="map" className="h-full w-full rounded-lg " />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
