@@ -46,7 +46,7 @@ const Country = () => {
   ];
 
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 pt-4">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2">
       <div className="overflow-hiden w-1/2">
         <PageRow className="gap-4 p-0">
           <div className="flex items-center gap-2">
