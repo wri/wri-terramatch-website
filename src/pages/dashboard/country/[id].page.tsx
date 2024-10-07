@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import React from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -7,6 +8,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Icon from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
@@ -27,6 +29,7 @@ import {
 
 const Country = () => {
   const t = useT();
+  const router = useRouter();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
   const dashboardHeader = [
@@ -84,6 +87,15 @@ const Country = () => {
     }
   ];
 
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+  const countrySelected = dashboardCountries?.data.find(
+    (country: any) => country.country_slug === router.asPath.split("/")[3]
+  );
+  console.log(countrySelected);
+
+  router;
   return (
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -92,9 +104,9 @@ const Country = () => {
             <Text variant="text-14-light" className="uppercase text-black ">
               {t("results for:")}
             </Text>
-            <img src="/flags/ke.svg" alt="flag" className="h-6 w-8 object-cover" />
+            <img src={countrySelected?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
             <Text variant="text-24-semibold" className="text-black">
-              {t("Kenya")}
+              {t(countrySelected?.data.label)}
             </Text>
           </div>
           <div className="grid w-full grid-cols-3 gap-4">

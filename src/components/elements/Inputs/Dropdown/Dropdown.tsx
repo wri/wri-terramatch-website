@@ -239,8 +239,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     value="all"
                     className={classNames(
                       tw(
-                        "w-full cursor-pointer hover:bg-primary-100",
-                        props.multiSelect ? "p-3.5" : "p-3",
+                        "w-full cursor-pointer p-3 hover:bg-primary-100",
                         selected.length === options.length && "bg-primary-100",
                         props.optionClassName
                       )
@@ -279,8 +278,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       value={option.value}
                       className={classNames(
                         tw(
-                          "w-full cursor-pointer hover:bg-primary-100",
-                          props.multiSelect ? "p-3.5" : "p-3",
+                          "w-full cursor-pointer p-3 hover:bg-primary-100",
                           isSelected && !props.multiSelect && "bg-primary-100",
                           props.optionClassName,
                           verifyDisableOption(option.title) ? "cursor-not-allowed bg-grey-750 hover:bg-grey-750" : ""
