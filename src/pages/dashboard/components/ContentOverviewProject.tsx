@@ -88,7 +88,7 @@ const ContentOverviewProject = () => {
   };
 
   return (
-    <div className="flex w-1/2 ">
+    <div className="mx-auto flex w-full max-w-[730px] small:w-1/2">
       <PageRow className="w-full gap-4 p-0">
         <div className="shadow-lg relative w-full">
           <Button

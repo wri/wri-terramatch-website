@@ -65,7 +65,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   };
 
   return (
-    <div className="flex w-1/2">
+    <div className="mx-auto flex w-full max-w-[730px] small:w-1/2">
       <PageRow className="gap-4 p-0">
         <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
@@ -88,7 +88,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             className={"h-full max-h-[50vh] w-full rounded-lg transition-all duration-500 ease-in-out"}
           />
           <TooltipGridMap label="Angola" learnMore={true} />
-          <div className="absolute top-6 left-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
+          <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
           </div>
 

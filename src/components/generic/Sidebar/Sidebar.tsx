@@ -19,7 +19,7 @@ const Sidebar = () => {
           className={classNames("flex cursor-pointer flex-col items-center gap-1", {
             "text-white": router.asPath === "/dashboard/project" || router.asPath.includes("/dashboard/country")
           })}
-          href="/dashboard/programme"
+          href="/dashboard/country"
         >
           <Icon name={IconNames.DASHBOARDS} className="h-8 w-8" />
           <Text variant={"text-8"}>DASHBOARDS</Text>
