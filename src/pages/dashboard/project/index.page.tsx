@@ -55,7 +55,7 @@ export interface DashboardDataProps {
 const ProjectView = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graph"];
+  const dataToggleGraphic = ["Table", "Graphic"];
   const sharedRef = useContext(RefContext);
   const dashboardHeader = [
     {
@@ -82,12 +82,13 @@ const ProjectView = () => {
           <div>
             <Breadcrumbs
               links={[
-                { title: t("TerraFund Top100"), path: "/#" },
-                { title: t("Niger"), path: "/#" },
+                { title: t("TerraFund Top100"), path: "/dashboard/country" },
+                { title: t("Niger"), path: "/dashboard/country" },
                 { title: t("Restoration of Degraded Forest Lands in Ghana - PADO") }
               ]}
               className="pt-0 "
-              textVariant="text-14"
+              textVariant="text-16"
+              clasNameText="!no-underline hover:text-primary hover:opacity-100"
             />
           </div>
 
@@ -102,7 +103,14 @@ const ProjectView = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} width="w-44 lg:w-52">
+                  <ToolTip
+                    title={item.label}
+                    content={t(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                    )}
+                    placement="top"
+                    width="w-56 lg:w-64"
+                  >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>

@@ -17,7 +17,6 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useModalContext } from "@/context/modal.provider";
 
 import {
-  COLUMN_ACTIVE_COUNTRY,
   DATA_ACTIVE_COUNTRY,
   RESTORATION_STRATEGIES_REPRESENTED,
   TARGET_LAND_USE_TYPES_REPRESENTED,
@@ -91,6 +90,46 @@ const ContentOverviewProject = () => {
     );
   };
 
+  const COLUMN_ACTIVE_COUNTRY = [
+    {
+      header: "Project",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom" />
+          </a>
+        );
+      }
+    }
+  ];
+
   const ModalTable = () => {
     openModal(
       "modalExpand",
@@ -115,7 +154,7 @@ const ContentOverviewProject = () => {
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="w-full gap-4 p-0">
-        <div className="shadow-lg relative w-full">
+        <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
             className="absolute right-6 top-6 z-10"
             variant="white-button-map"
@@ -130,7 +169,7 @@ const ContentOverviewProject = () => {
               </Text>
             </div>
           </Button>
-          <img src="/images/map-img.png" alt="map" className="h-full w-full" />
+          <img src="/images/map-img.png" alt="map" className="h-full w-full rounded-lg " />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
@@ -188,11 +227,17 @@ const ContentOverviewProject = () => {
           <SecDashboard title={t("TARGET LAND USE TYPES REPRESENTED")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
         </PageCard>
 
-        <div className="z-10 rounded-xl bg-white p-4 shadow-all">
+        <div className="rounded-xl bg-white p-4 shadow-all">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Text variant={"text-20-bold"}>{t("OTHER PROJECTS IN NIGER")}</Text>
-              <ToolTip content={"tooltip table"} width="w-44 lg:w-52">
+              <ToolTip
+                content={t(
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                )}
+                placement="top"
+                width="w-56 lg:w-64"
+              >
                 <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
               </ToolTip>
             </div>
