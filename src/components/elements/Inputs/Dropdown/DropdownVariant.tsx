@@ -40,3 +40,14 @@ export const VARIANT_DROPDOWN_HEADER: DropdownVariant = {
   optionLabelClassName: "text-14-semibold",
   optionClassName: "gap-2"
 };
+
+export const VARIANT_DROPDOWN_FILTER: DropdownVariant = {
+  containerClassName: "",
+  className: "",
+  iconClassName: "w-4 fill-primary",
+  iconName: undefined,
+  titleContainerClassName: "flex items-center gap-2",
+  titleClassname: "line-clamp-1",
+  optionCheckboxClassName: "",
+  optionLabelClassName: ""
+};
