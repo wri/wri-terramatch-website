@@ -159,7 +159,7 @@ export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
   table: "border-collapse",
   name: "border-airtable",
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto w-full max-h-[calc(100vh-298px)]",
-  trHeader: "bg-neutral-150 sticky top-0 z-10",
+  trHeader: "bg-neutral-150 sticky top-0 z-[1]",
   thHeader:
     "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-2",
   tBody: "",

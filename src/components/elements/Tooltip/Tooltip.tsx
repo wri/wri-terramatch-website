@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { ReactNode, useRef, useState } from "react";
+import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Text from "../Text/Text";
@@ -70,8 +71,14 @@ const ToolTip = ({ children, content, width, placement = "top", className, title
           <div
             className={classNames("absolute border-[5px] border-darkCustom group-hover:block", PLACEMENT[placement])}
           />
-          <Text variant="text-12-semibold">{title}</Text>
-          <Text variant="text-12-light">{content}</Text>
+          <When condition={!!title}>
+            <Text variant="text-12-bold" className="mb-1">
+              {title}
+            </Text>
+          </When>
+          <Text variant="text-12-light" className="!font-light leading-[normal]">
+            {content}
+          </Text>
         </div>
       </div>
 
