@@ -182,7 +182,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
                 <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  Expand
+                  {t("Expand")}
                 </Text>
               </div>
             </Button>

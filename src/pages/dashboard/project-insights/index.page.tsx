@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React from "react";
 
 import Table from "@/components/elements/Table/Table";
@@ -6,8 +7,10 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 const ProjectInsights = () => {
+  const t = useT();
+
   return (
-    <div className="h-full overflow-hidden bg-neutral-70 px-14 py-8">
+    <div className="h-full overflow-hidden bg-neutral-70 py-8 px-14">
       <Table
         variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
         hasPagination
@@ -128,17 +131,17 @@ const ProjectInsights = () => {
                   <div className="flex flex-col">
                     <div className="flex items-center gap-1">
                       <Text variant="text-14-semibold">
-                        {title} - {year}
+                        {t(title)} - {t(year)}
                       </Text>
                       <Text variant="text-14-light" className="text-blueCustom-900">
-                        Airtable
+                        {t("Airtable")}
                       </Text>
                       <a href={link} target="_blank" rel="noreferrer">
                         <Icon name={IconNames.LINK_AIRTABLE} className="h-3 w-3" />
                       </a>
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom-50">
-                      {description}
+                      {t(description)}
                     </Text>
                   </div>
                 </div>

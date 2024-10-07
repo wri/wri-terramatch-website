@@ -27,6 +27,14 @@ import {
   VOLUNTEERS_CREATED_BY_GENDER
 } from "../mockedData/dashboard";
 
+interface DashboardCountry {
+  country_slug: string;
+  data: {
+    icon: string;
+    label: string;
+  };
+}
+
 const Country = () => {
   const t = useT();
   const router = useRouter();
@@ -91,9 +99,8 @@ const Country = () => {
     queryParams: {}
   });
   const countrySelected = dashboardCountries?.data.find(
-    (country: any) => country.country_slug === router.asPath.split("/")[3]
+    (country: DashboardCountry) => country.country_slug === router.asPath.split("/")[3]
   );
-  console.log(countrySelected);
 
   router;
   return (
