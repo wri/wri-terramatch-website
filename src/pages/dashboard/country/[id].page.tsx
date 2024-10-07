@@ -80,7 +80,7 @@ const Country = () => {
       cell: () => {
         return (
           <a href="/dashboard/project">
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom" />
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
           </a>
         );
       }

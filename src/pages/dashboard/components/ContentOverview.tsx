@@ -71,7 +71,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalTable = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" popUpContent="POPUP" closeModal={closeModal}>
+      <ModalExpand
+        id="modalExpand"
+        title="ACTIVE COUNTRIES"
+        popUpContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        closeModal={closeModal}
+      >
         <div className="w-full px-6">
           <Table
             columns={columns.map(column => {

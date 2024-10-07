@@ -123,7 +123,7 @@ const ContentOverviewProject = () => {
       cell: () => {
         return (
           <a href="/dashboard/project">
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom" />
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
           </a>
         );
       }
@@ -133,7 +133,12 @@ const ContentOverviewProject = () => {
   const ModalTable = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title="ACTIVE COUNTRIES" popUpContent="POPUP" closeModal={closeModal}>
+      <ModalExpand
+        id="modalExpand"
+        title="ACTIVE COUNTRIES"
+        popUpContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        closeModal={closeModal}
+      >
         <div className="w-full px-6">
           <Table
             columns={COLUMN_ACTIVE_COUNTRY.map(column => {
