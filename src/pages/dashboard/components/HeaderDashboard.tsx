@@ -20,7 +20,7 @@ const HeaderDashboard = () => {
   const t = useT();
   const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
-  const isAirTablePage = router.pathname.includes("dashboard/airtable");
+  const isProjectInsights = router.pathname.includes("dashboard/project-insights");
   const isProjectList = router.pathname === "/dashboard/project-list";
   const isProjectPage = router.pathname.includes("dashboard/project");
   const dropdwonOptions = [
@@ -114,8 +114,11 @@ const HeaderDashboard = () => {
   };
 
   const getHeaderTitle = () => {
-    if (isAirTablePage) {
+    if (isProjectInsights) {
       return "Project Insights";
+    }
+    if (isProjectList) {
+      return "Project List";
     }
     return "TerraMatch Insights";
   };
@@ -129,7 +132,7 @@ const HeaderDashboard = () => {
         >
           {t(getHeaderTitle())}
         </Text>
-        <When condition={!isAirTablePage}>
+        <When condition={!isProjectInsights}>
           <div className="flex items-center gap-3">
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown

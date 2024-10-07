@@ -167,7 +167,7 @@ const ContentOverviewProject = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Text variant={"text-20-bold"}>{t("OTHER PROJECTS IN NIGER")}</Text>
-              <ToolTip content={"tooltip table"} placement="top" width="w-44 lg:w-52">
+              <ToolTip content={"tooltip table"} width="w-44 lg:w-52">
                 <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
               </ToolTip>
             </div>

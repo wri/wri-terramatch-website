@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { ReactNode, useRef, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -7,12 +8,12 @@ export interface TooltipProps {
   children: ReactNode;
   content: ReactNode;
   width?: string;
-  placement?: string;
+  placement?: "top" | "right";
   className?: string;
   title?: string;
 }
 
-const ToolTip = ({ children, content, width, placement, className, title }: TooltipProps) => {
+const ToolTip = ({ children, content, width, placement = "top", className, title }: TooltipProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipStyles, setTooltipStyles] = useState({ left: 0, top: 0 });
@@ -22,14 +23,28 @@ const ToolTip = ({ children, content, width, placement, className, title }: Tool
     const positionTooltip = tooltipRef.current?.getBoundingClientRect();
 
     if (position && positionTooltip) {
-      const newLeft = position.left + position.width / 2 - positionTooltip.width / 2;
-      const newTop = position.top - positionTooltip.height - 5;
+      let newLeft = 0;
+      let newTop = 0;
+
+      if (placement === "right") {
+        newLeft = position.left + position.width + 5;
+        newTop = position.top + position.height / 2 - positionTooltip.height / 2;
+      }
+      if (placement === "top") {
+        newLeft = position.left + position.width / 2 - positionTooltip.width / 2;
+        newTop = position.top - positionTooltip.height - 5;
+      }
 
       setTooltipStyles({
         left: newLeft,
         top: newTop
       });
     }
+  };
+
+  const PLACEMENT = {
+    top: "bottom-0 left-1/2 ml-[-4px] mb-[-9px] border-b-transparent border-l-transparent border-r-transparent",
+    right: "left-0 top-1/2 ml-[-10px] border-b-transparent border-l-transparent border-t-transparent -translate-y-1/2"
   };
 
   return (
@@ -48,12 +63,13 @@ const ToolTip = ({ children, content, width, placement, className, title }: Tool
       >
         <div
           className={tw(
-            "shadow-lg text-12 relative bottom-full -z-10 mb-1 w-fit rounded bg-darkCustom p-1 text-center text-white group-hover:z-50 lg:p-2",
-            width,
-            placement
+            "shadow-lg text-12 relative -z-10 w-fit rounded bg-darkCustom p-1 text-center text-white group-hover:z-50 lg:p-2",
+            width
           )}
         >
-          <div className="absolute bottom-0 left-1/2 mb-[-9px] ml-[-4px] border-[5px] border-darkCustom border-b-transparent border-l-transparent border-r-transparent group-hover:block" />
+          <div
+            className={classNames("absolute border-[5px] border-darkCustom group-hover:block", PLACEMENT[placement])}
+          />
           <Text variant="text-12-semibold">{title}</Text>
           <Text variant="text-12-light">{content}</Text>
         </div>
