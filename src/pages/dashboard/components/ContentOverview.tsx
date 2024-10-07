@@ -65,7 +65,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[730px] small:w-1/2">
+    <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="gap-4 p-0">
         <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
