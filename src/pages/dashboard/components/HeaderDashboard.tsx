@@ -94,12 +94,7 @@ const HeaderDashboard = () => {
       scrollElement?.removeEventListener("scroll", handleScroll);
     };
   }, [sharedRef]);
-
   const handleChangeCountry = (value: OptionValue[]) => {
-    if (value[0] === "global") {
-      router.push(`/dashboard/programme`);
-      return;
-    }
     setFilterValues(prevValues => ({
       ...prevValues,
       dropdown3: value
@@ -190,6 +185,7 @@ const HeaderDashboard = () => {
               onChange={value => {
                 handleChangeCountry(value);
               }}
+              onClear={() => router.push(`/dashboard/country`)}
               options={dropdwonCountryOptions}
               optionClassName="hover:bg-grey-200"
             />

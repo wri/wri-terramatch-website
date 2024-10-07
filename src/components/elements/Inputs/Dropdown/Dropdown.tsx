@@ -54,6 +54,7 @@ export interface DropdownProps {
   disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
+  onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
   showSelectAll?: boolean;
 }
@@ -75,7 +76,7 @@ const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOther
  */
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
-  const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll } = props;
+  const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll, onClear } = props;
   const [selected, setSelected] = useState<OptionValue[]>(() =>
     getDefaultDropDownValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
@@ -198,6 +199,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                   onClick={e => {
                     e.stopPropagation();
                     setSelected([]);
+                    onClear?.();
                   }}
                 >
                   <Icon
