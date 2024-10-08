@@ -145,7 +145,7 @@ const ContentOverviewProject = () => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
               return {
                 ...column,
-                enableSorting: true
+                enableSorting: column.header?.length === 0 ? false : true
               };
             })}
             data={DATA_ACTIVE_COUNTRY}
