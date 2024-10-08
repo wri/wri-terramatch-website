@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
-import { useRouter } from "next/router";
 import React from "react";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -8,10 +8,10 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Icon from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 
-import ContentOverview from "../components/ContentOverview";
-import SecDashboard from "../components/SecDashboard";
+import ContentOverview from "./components/ContentOverview";
+import SecDashboard from "./components/SecDashboard";
 import {
   DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
@@ -25,19 +25,14 @@ import {
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
-} from "../mockedData/dashboard";
+} from "./mockedData/dashboard";
 
-interface DashboardCountry {
-  country_slug: string;
-  data: {
-    icon: string;
-    label: string;
-  };
+interface ChildComponentProps {
+  selectedCountry: CountriesProps;
 }
 
-const Country = () => {
+const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   const t = useT();
-  const router = useRouter();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
   const dashboardHeader = [
@@ -95,27 +90,22 @@ const Country = () => {
     }
   ];
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
-  const countrySelected = dashboardCountries?.data.find(
-    (country: DashboardCountry) => country.country_slug === router.asPath.split("/")[3]
-  );
-
-  router;
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
-          <div className="flex items-center gap-2">
-            <Text variant="text-14-light" className="uppercase text-black ">
-              {t("results for:")}
-            </Text>
-            <img src={countrySelected?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
-            <Text variant="text-24-semibold" className="text-black">
-              {t(countrySelected?.data.label)}
-            </Text>
-          </div>
+          <When condition={selectedCountry}>
+            <div className="flex items-center gap-2">
+              <Text variant="text-14-light" className="uppercase text-black ">
+                {t("results for:")}
+              </Text>
+              <img src={selectedCountry?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
+              <Text variant="text-24-semibold" className="text-black">
+                {t(selectedCountry?.data.label)}
+              </Text>
+            </div>
+          </When>
+
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-4 py-3">

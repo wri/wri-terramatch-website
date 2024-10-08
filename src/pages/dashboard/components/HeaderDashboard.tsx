@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { When } from "react-if";
 
@@ -9,20 +8,36 @@ import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/D
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { OptionValue } from "@/types/common";
 
 import { RefContext } from "../context/ScrollContext.provider";
 import BlurContainer from "./BlurContainer";
 
-const HeaderDashboard = () => {
+interface HeaderDashboardProps {
+  isProjectInsightsPage?: boolean;
+  isProjectListPage?: boolean;
+  isProjectPage?: boolean;
+  dashboardCountries: CountriesProps[];
+  defaultSelectedCountry: CountriesProps | undefined;
+  toSelectedCountry: (country_slug?: string) => void;
+  setSelectedCountry: (country?: CountriesProps) => void;
+}
+
+const HeaderDashboard = (props: HeaderDashboardProps) => {
+  const {
+    isProjectInsightsPage,
+    isProjectListPage,
+    isProjectPage,
+    toSelectedCountry,
+    dashboardCountries,
+    setSelectedCountry,
+    defaultSelectedCountry
+  } = props;
   const sharedRef = useContext(RefContext);
   const t = useT();
-  const router = useRouter();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
-  const isProjectInsights = router.pathname.includes("dashboard/project-insights");
-  const isProjectList = router.pathname === "/dashboard/project-list";
-  const isProjectPage = router.pathname === "dashboard/project";
+
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -38,16 +53,13 @@ const HeaderDashboard = () => {
     }
   ];
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
-
   const dropdwonCountryOptions =
-    dashboardCountries?.data?.map((country: any) => ({
+    dashboardCountries?.map((country: CountriesProps) => ({
       title: country.data.label,
       value: country.id,
       prefix: <img src={country.data.icon} alt="flag" className="h-4" />
     })) || [];
+
   const [filterValues, setFilterValues] = useState<{
     dropdown1: OptionValue[];
     dropdown2: OptionValue[];
@@ -99,27 +111,29 @@ const HeaderDashboard = () => {
       ...prevValues,
       dropdown3: value
     }));
-    const selectedCountry = dashboardCountries?.data.find((country: { id: OptionValue }) => {
+    const selectedCountry = dashboardCountries?.find((country: CountriesProps) => {
       if (country.id === value[0]) {
         return country;
       }
     });
-
-    router.push(`/dashboard/country/${selectedCountry?.country_slug}`);
+    if (selectedCountry) {
+      toSelectedCountry(selectedCountry.country_slug);
+      setSelectedCountry(selectedCountry);
+    }
   };
 
   const getHeaderTitle = () => {
-    if (isProjectInsights) {
+    if (isProjectInsightsPage) {
       return "Project Insights";
     }
-    if (isProjectList) {
+    if (isProjectListPage) {
       return "Project List";
     }
     return "TerraMatch Insights";
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header className="flex bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
         <Text
           variant={"text-28-bold"}
@@ -127,7 +141,7 @@ const HeaderDashboard = () => {
         >
           {t(getHeaderTitle())}
         </Text>
-        <When condition={!isProjectInsights}>
+        <When condition={!isProjectInsightsPage}>
           <div className="flex items-center gap-3">
             <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
               <Dropdown
@@ -182,11 +196,20 @@ const HeaderDashboard = () => {
                 inputVariant="text-14-semibold"
                 variant={VARIANT_DROPDOWN_HEADER}
                 placeholder="Global"
-                value={filterValues.dropdown3}
+                value={
+                  filterValues.dropdown3.length === 0
+                    ? defaultSelectedCountry
+                      ? [defaultSelectedCountry?.id]
+                      : []
+                    : filterValues.dropdown3
+                }
                 onChange={value => {
                   handleChangeCountry(value);
                 }}
-                onClear={() => router.push(`/dashboard/country`)}
+                onClear={() => {
+                  toSelectedCountry();
+                  setSelectedCountry(undefined);
+                }}
                 options={dropdwonCountryOptions}
                 optionClassName="hover:bg-grey-200"
               />
@@ -223,7 +246,7 @@ const HeaderDashboard = () => {
         </When>
       </div>
       <div className="flex flex-col items-end justify-end gap-3">
-        <When condition={isProjectList}>
+        <When condition={isProjectListPage}>
           <BlurContainer isCollapse={isHeaderCollapsed}>
             <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
           </BlurContainer>
