@@ -3,21 +3,17 @@ import React from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 interface BlurContainerProps {
-  isCollapse?: boolean;
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
 }
 
 const BlurContainer = (props: BlurContainerProps) => {
-  const { isCollapse, children, className, disabled } = props;
+  const { children, className, disabled } = props;
   return (
     <div
       className={tw(
-        classNames("relative rounded-lg border border-[#989E97]", {
-          "max-w-[265px] lg:max-w-[395px] wide:max-w-[550px]": isCollapse,
-          "max-w-[192px] lg:max-w-[300px] wide:max-w-[445px]": !isCollapse
-        }),
+        classNames("relative max-h-fit w-fit min-w-[196px] flex-auto rounded-lg border border-[#989E97]"),
         className
       )}
     >
