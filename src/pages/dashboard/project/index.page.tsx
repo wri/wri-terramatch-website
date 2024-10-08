@@ -110,6 +110,7 @@ const ProjectView = () => {
                     )}
                     placement="top"
                     width="w-56 lg:w-64"
+                    trigger="click"
                   >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
@@ -183,20 +184,20 @@ const ProjectView = () => {
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund’s MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
           >
-            <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
+            <div className="grid w-full auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
             </div>
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={JOBS_CREATED_BY_GENDER}
@@ -204,22 +205,22 @@ const ProjectView = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("JOBS CREATED BY AGE")}
+                title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY GENDER")}
+                title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY AGE")}
+                title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"

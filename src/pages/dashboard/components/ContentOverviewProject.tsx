@@ -145,7 +145,7 @@ const ContentOverviewProject = () => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
               return {
                 ...column,
-                enableSorting: true
+                enableSorting: column.header?.length === 0 ? false : true
               };
             })}
             data={DATA_ACTIVE_COUNTRY}
@@ -217,19 +217,19 @@ const ContentOverviewProject = () => {
         >
           <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
             <SecDashboard
-              title={t("Total HECTARES UNDER RESTORATION")}
+              title={t("Total Hectares Under Restoration")}
               data={TOTAL_HECTARES_UNDER_RESTORATION}
-              classNameBody="w-full place-content-center !justify-center"
+              classNameBody="w-full place-content-center"
             />
             <SecDashboard
-              title={t("TOTAL NUMBER OF SITES")}
+              title={t("Total Number Of Sites")}
               data={TOTAL_NUMBER_OF_SITES}
               className="pl-12"
-              classNameBody="w-full place-content-center !justify-center"
+              classNameBody="w-full place-content-center"
             />
           </div>
           <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
-          <SecDashboard title={t("TARGET LAND USE TYPES REPRESENTED")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
+          <SecDashboard title={t("Target Land Use Types Represented")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
         </PageCard>
 
         <div className="rounded-xl bg-white p-4 shadow-all">
@@ -240,6 +240,7 @@ const ContentOverviewProject = () => {
                 content={t(
                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
                 )}
+                title="Other Projects in Niger"
                 placement="top"
                 width="w-56 lg:w-64"
               >
@@ -255,7 +256,7 @@ const ContentOverviewProject = () => {
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
                 <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {t("Expand")}
+                  {t("See All")}
                 </Text>
               </div>
             </Button>

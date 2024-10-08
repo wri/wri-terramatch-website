@@ -91,10 +91,10 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   ];
 
   return (
-    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
-          <When condition={selectedCountry}>
+          <When condition={!!selectedCountry}>
             <div className="flex items-center gap-2">
               <Text variant="text-14-light" className="uppercase text-black ">
                 {t("results for:")}
@@ -124,6 +124,7 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
                     )}
                     placement="top"
                     width="w-56 lg:w-64"
+                    trigger="click"
                   >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
@@ -179,13 +180,13 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
             </div>
             <div className="grid w-full grid-cols-2 gap-12">
@@ -196,22 +197,22 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("JOBS CREATED BY AGE")}
+                title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY GENDER")}
+                title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY AGE")}
+                title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
