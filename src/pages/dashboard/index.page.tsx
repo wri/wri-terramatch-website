@@ -183,13 +183,13 @@ const Dashboard = () => {
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
             </div>
             <div className="grid w-full grid-cols-2 gap-12">

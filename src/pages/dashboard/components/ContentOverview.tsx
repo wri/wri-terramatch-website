@@ -153,13 +153,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <SecDashboard
               title={t("Total Hectares Under Restoration")}
               data={TOTAL_HECTARES_UNDER_RESTORATION}
-              classNameBody="w-full place-content-center !justify-center"
+              classNameBody="w-full place-content-center"
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
               data={TOTAL_NUMBER_OF_SITES}
               className="pl-12"
-              classNameBody="w-full place-content-center !justify-center"
+              classNameBody="w-full place-content-center"
             />
           </div>
           <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
