@@ -1,4 +1,4 @@
-import { AdminTokenStorageKey } from "../admin/apiProvider/utils/token";
+import { getAccessToken } from "../admin/apiProvider/utils/token";
 import { ApiContext } from "./apiContext";
 import FormData from "form-data";
 import Log from "@/utils/log";
@@ -56,10 +56,10 @@ export async function apiFetch<
       ...headers
     };
 
-    const adminToken = typeof window !== "undefined" && localStorage.getItem(AdminTokenStorageKey);
+    const accessToken = typeof window !== "undefined" && getAccessToken();
 
-    if (!requestHeaders?.Authorization && adminToken) {
-      requestHeaders.Authorization = `Bearer ${adminToken}`;
+    if (!requestHeaders?.Authorization && accessToken) {
+      requestHeaders.Authorization = `Bearer ${accessToken}`;
     }
 
     /**

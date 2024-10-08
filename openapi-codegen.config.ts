@@ -180,18 +180,65 @@ const createPredicateNodes = ({
 }) => {
   const nodes: ts.Node[] = [];
 
-  const stateTypeDeclaration = f.createParameterDeclaration(
+  const storeTypeDeclaration = f.createParameterDeclaration(
     undefined,
     undefined,
-    f.createIdentifier("state"),
+    f.createIdentifier("store"),
     undefined,
     f.createTypeReferenceNode("ApiDataStore"),
     undefined
   );
 
   nodes.push(
-    ...["isFetching", "fetchFailed"].map(fnName =>
-      f.createVariableStatement(
+    ...["isFetching", "fetchFailed"].map(fnName => {
+      const callBaseSelector = f.createCallExpression(
+        f.createIdentifier(fnName),
+        [queryParamsType, pathParamsType],
+        [
+          f.createObjectLiteralExpression(
+            [
+              f.createShorthandPropertyAssignment("store"),
+              f.createPropertyAssignment(f.createIdentifier("url"), f.createStringLiteral(camelizedPathParams(url))),
+              f.createPropertyAssignment(f.createIdentifier("method"), f.createStringLiteral(verb)),
+              ...(variablesType.kind !== ts.SyntaxKind.VoidKeyword
+                ? [f.createSpreadAssignment(f.createIdentifier("variables"))]
+                : [])
+            ],
+            false
+          )
+        ]
+      );
+
+      let selector = f.createArrowFunction(
+        undefined,
+        undefined,
+        [storeTypeDeclaration],
+        undefined,
+        f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+        callBaseSelector
+      );
+
+      if (variablesType.kind !== ts.SyntaxKind.VoidKeyword) {
+        selector = f.createArrowFunction(
+          undefined,
+          undefined,
+          [
+            f.createParameterDeclaration(
+              undefined,
+              undefined,
+              f.createIdentifier("variables"),
+              undefined,
+              variablesType,
+              undefined
+            )
+          ],
+          undefined,
+          f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+          selector
+        );
+      }
+
+      return f.createVariableStatement(
         [f.createModifier(ts.SyntaxKind.ExportKeyword)],
         f.createVariableDeclarationList(
           [
@@ -199,51 +246,13 @@ const createPredicateNodes = ({
               f.createIdentifier(`${name}${_.upperFirst(fnName)}`),
               undefined,
               undefined,
-              f.createArrowFunction(
-                undefined,
-                undefined,
-                variablesType.kind !== ts.SyntaxKind.VoidKeyword
-                  ? [
-                      stateTypeDeclaration,
-                      f.createParameterDeclaration(
-                        undefined,
-                        undefined,
-                        f.createIdentifier("variables"),
-                        undefined,
-                        variablesType,
-                        undefined
-                      )
-                    ]
-                  : [stateTypeDeclaration],
-                undefined,
-                f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-                f.createCallExpression(
-                  f.createIdentifier(fnName),
-                  [queryParamsType, pathParamsType],
-                  [
-                    f.createObjectLiteralExpression(
-                      [
-                        f.createShorthandPropertyAssignment("state"),
-                        f.createPropertyAssignment(
-                          f.createIdentifier("url"),
-                          f.createStringLiteral(camelizedPathParams(url))
-                        ),
-                        f.createPropertyAssignment(f.createIdentifier("method"), f.createStringLiteral(verb)),
-                        ...(variablesType.kind !== ts.SyntaxKind.VoidKeyword
-                          ? [f.createSpreadAssignment(f.createIdentifier("variables"))]
-                          : [])
-                      ],
-                      false
-                    )
-                  ]
-                )
-              )
+              selector
             )
           ],
           ts.NodeFlags.Const
         )
-      )
-    )
+      );
+    })
   );
 
   return nodes;

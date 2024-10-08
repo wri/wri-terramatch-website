@@ -5,6 +5,7 @@ import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { authLoginFetchFailed, authLoginIsFetching } from "@/generated/v3/userService/userServicePredicates";
 import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
+import { connectionHook, connectionLoader, connectionSelector } from "@/utils/connectionShortcuts";
 
 type LoginConnection = {
   isLoggingIn: boolean;
@@ -19,14 +20,12 @@ export const logout = () => {
   // When we log out, remove all cached API resources so that when we log in again, these resources
   // are freshly fetched from the BE.
   ApiSlice.clearApiCache();
+  window.location.replace("/auth/login");
 };
 
-const selectFirstLogin = (state: ApiDataStore) => {
-  const values = Object.values(state.logins);
-  return values.length < 1 ? null : values[0];
-};
+export const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
 
-export const loginConnection: Connection<LoginConnection> = {
+const loginConnection: Connection<LoginConnection> = {
   selector: createSelector(
     [authLoginIsFetching, authLoginFetchFailed, selectFirstLogin],
     (isLoggingIn, failedLogin, firstLogin) => {
@@ -39,3 +38,6 @@ export const loginConnection: Connection<LoginConnection> = {
     }
   )
 };
+export const useLogin = connectionHook(loginConnection);
+export const loadLogin = connectionLoader(loginConnection);
+export const selectLogin = connectionSelector(loginConnection);

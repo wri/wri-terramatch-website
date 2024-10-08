@@ -18,11 +18,25 @@ export type AuthLoginError = Fetcher.ErrorWrapper<{
      * @example Unauthorized
      */
     message: string;
+    /**
+     * @example Unauthorized
+     */
+    error?: string;
   };
 }>;
 
 export type AuthLoginResponse = {
-  data?: Schemas.LoginResponse;
+  data?: {
+    /**
+     * @example logins
+     */
+    type?: string;
+    /**
+     * @pattern ^\d{5}$
+     */
+    id?: string;
+    attributes?: Schemas.LoginDto;
+  };
 };
 
 export type AuthLoginVariables = {
@@ -36,6 +50,105 @@ export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =
   userServiceFetch<AuthLoginResponse, AuthLoginError, Schemas.LoginRequest, {}, {}, {}>({
     url: "/auth/v3/logins",
     method: "post",
+    ...variables,
+    signal
+  });
+
+export type UsersFindPathParams = {
+  /**
+   * A valid user id or "me"
+   */
+  id: string;
+};
+
+export type UsersFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+        /**
+         * @example Unauthorized
+         */
+        error?: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+        /**
+         * @example Not Found
+         */
+        error?: string;
+      };
+    }
+>;
+
+export type UsersFindResponse = {
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UsersFindVariables = {
+  pathParams: UsersFindPathParams;
+};
+
+/**
+ * Fetch a user by ID, or with the 'me' identifier
+ */
+export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =>
+  userServiceFetch<UsersFindResponse, UsersFindError, undefined, {}, {}, UsersFindPathParams>({
+    url: "/users/v3/users/{id}",
+    method: "get",
     ...variables,
     signal
   });

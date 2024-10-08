@@ -50,5 +50,5 @@ export function useConnection<TSelected, TProps extends OptionalProps = undefine
     [connection, ...Object.keys(props ?? [])]
   );
 
-  return [connected != null, connected ?? {}];
+  return connected == null ? [false, {}] : [true, connected];
 }

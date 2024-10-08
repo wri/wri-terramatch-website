@@ -1,15 +1,19 @@
 import { renderHook } from "@testing-library/react";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { act } from "react-dom/test-utils";
+import { Provider as ReduxProvider } from "react-redux";
 import { createSelector } from "reselect";
 
-import { LoginResponse } from "@/generated/v3/userService/userServiceSchemas";
+import { AuthLoginResponse } from "@/generated/v3/userService/userServiceComponents";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice, { ApiDataStore, JsonApiResource } from "@/store/apiSlice";
-import StoreProvider from "@/store/StoreProvider";
+import { makeStore } from "@/store/store";
 import { Connection } from "@/types/connection";
 
-const StoreWrapper = ({ children }: { children: ReactNode }) => <StoreProvider>{children}</StoreProvider>;
+const StoreWrapper = ({ children }: { children: ReactNode }) => {
+  const store = useMemo(() => makeStore(), []);
+  return <ReduxProvider store={store}>{children}</ReduxProvider>;
+};
 
 describe("Test useConnection hook", () => {
   test("isLoaded", () => {
@@ -40,7 +44,7 @@ describe("Test useConnection hook", () => {
     });
     const connection = {
       selector: createSelector([selector], payloadCreator)
-    } as Connection<{ login: LoginResponse }>;
+    } as Connection<{ login: AuthLoginResponse }>;
 
     const { result, rerender } = renderHook(() => useConnection(connection), { wrapper: StoreWrapper });
     rerender();
@@ -52,7 +56,7 @@ describe("Test useConnection hook", () => {
     expect(payloadCreator).toHaveBeenCalledTimes(1);
 
     const token = "asdfasdfasdf";
-    const data = { type: "logins", id: "1", token } as JsonApiResource;
+    const data = { type: "logins", id: "1", attributes: { token } } as JsonApiResource;
     act(() => {
       ApiSlice.fetchSucceeded({ url: "/foo", method: "POST", response: { data } });
     });
@@ -60,7 +64,7 @@ describe("Test useConnection hook", () => {
     // The store has changed so the selector gets called again, and the selector's result has
     // changed so the payload creator gets called again, and returns the new Login response that
     // was saved in the store.
-    expect(result.current[1]).toStrictEqual({ login: data });
+    expect(result.current[1]).toStrictEqual({ login: { attributes: { token } } });
     expect(selector).toHaveBeenCalledTimes(2);
     expect(payloadCreator).toHaveBeenCalledTimes(2);
 

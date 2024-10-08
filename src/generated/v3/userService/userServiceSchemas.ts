@@ -3,17 +3,7 @@
  *
  * @version 1.0
  */
-export type LoginResponse = {
-  /**
-   * @example logins
-   */
-  type: string;
-  /**
-   * The ID of the user associated with this login
-   *
-   * @example 1234
-   */
-  id: string;
+export type LoginDto = {
   /**
    * JWT token for use in future authenticated requests to the API.
    *
@@ -25,4 +15,41 @@ export type LoginResponse = {
 export type LoginRequest = {
   emailAddress: string;
   password: string;
+};
+
+export type UserFramework = {
+  /**
+   * @example TerraFund Landscapes
+   */
+  name: string;
+  /**
+   * @example terrafund-landscapes
+   */
+  slug: string;
+};
+
+export type UserDto = {
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  /**
+   * Currently just calculated by appending lastName to firstName.
+   */
+  fullName: string | null;
+  primaryRole: string;
+  /**
+   * @example person@foocorp.net
+   */
+  emailAddress: string;
+  /**
+   * @format date-time
+   */
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
+  frameworks: UserFramework[];
+};
+
+export type OrganisationDto = {
+  status: "draft" | "pending" | "approved" | "rejected";
+  name: string | null;
 };

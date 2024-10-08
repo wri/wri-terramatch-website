@@ -4,9 +4,8 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { login, loginConnection } from "@/connections/Login";
+import { login, useLogin } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useConnection } from "@/hooks/useConnection";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -29,7 +28,7 @@ const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
   const router = useRouter();
-  const [, { isLoggedIn, isLoggingIn, loginFailed }] = useConnection(loginConnection);
+  const [, { isLoggedIn, isLoggingIn, loginFailed }] = useLogin();
   const { openToast } = useToastContext();
   const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema(t)),

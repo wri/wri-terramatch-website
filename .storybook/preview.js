@@ -1,6 +1,6 @@
 import "src/styles/globals.css";
 import * as NextImage from "next/image";
-import StoreProvider from "../src/store/StoreProvider";
+import { StoreProvider } from "../src/utils/testStore";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -30,12 +30,7 @@ export const decorators = [
   (Story, options) => {
     const { parameters } = options;
 
-    let storeProviderProps = {};
-    if (parameters.storeProviderProps != null) {
-      storeProviderProps = parameters.storeProviderProps;
-    }
-
-    return <StoreProvider {...storeProviderProps}>
+    return <StoreProvider storeBuilder={parameters.storeBuilder}>
       <Story {...options} />
     </StoreProvider>;
   },
