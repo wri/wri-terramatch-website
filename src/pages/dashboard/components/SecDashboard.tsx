@@ -48,11 +48,13 @@ const SecDashboard = ({
   const tableColumns = [
     {
       header: "Specie",
-      accessorKey: "label"
+      accessorKey: "label",
+      enableSorting: false
     },
     {
       header: "Count",
-      accessorKey: "valueText"
+      accessorKey: "valueText",
+      enableSorting: false
     }
   ];
 

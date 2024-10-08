@@ -14,7 +14,6 @@ const ProjectInsights = () => {
       <Table
         variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
         hasPagination
-        classNameWrapper=" py-8 !px-9 bg-white rounded-3xl"
         invertSelectPagination={true}
         data={[
           {

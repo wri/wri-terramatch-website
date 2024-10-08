@@ -82,20 +82,20 @@ const ProjectView = () => {
           <div>
             <Breadcrumbs
               links={[
-                { title: t("TerraFund Top100"), path: "/dashboard/country" },
-                { title: t("Niger"), path: "/dashboard/country" },
+                { title: t("TerraFund Top100"), path: "/dashboard" },
+                { title: t("Niger"), path: "/dashboard/country/AU" },
                 { title: t("Restoration of Degraded Forest Lands in Ghana - PADO") }
               ]}
               className="pt-0 "
-              textVariant="text-16"
-              clasNameText="!no-underline hover:text-primary hover:opacity-100"
+              textVariant="text-14"
+              clasNameText="!no-underline hover:text-primary hover:opacity-100 mt-0.5 hover:mb-0.5 hover:mt-0"
             />
           </div>
 
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-5 py-4.5">
-                <Text variant="text-10-light" className="text-darkCustom opacity-60">
+                <Text variant="text-12-light" className="text-darkCustom opacity-60">
                   {t(item.label)}
                 </Text>
 
