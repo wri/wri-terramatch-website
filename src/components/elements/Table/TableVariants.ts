@@ -121,7 +121,7 @@ export const VARIANT_TABLE_ORGANISATION = {
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
   table: "border-collapse",
   name: "border-airtable",
-  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[267px] lg:max-h-[285px]",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto ",
   trHeader: "bg-neutral-150 sticky top-0 z-10 ",
   thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0",
   tBody: "",
