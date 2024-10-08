@@ -21,10 +21,12 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
            
           <div
             className="group relative flex flex-col items-center undefined"
+            onClick={[Function]}
             onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
           >
             <div
-              className="fixed -z-10 group-hover:z-50"
+              className="fixed -z-10 "
               style={
                 Object {
                   "left": "0px",
@@ -33,10 +35,15 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
               }
             >
               <div
-                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 group-hover:z-50 group-hover:opacity-100 w-56"
+                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-56"
               >
                 <div
-                  className="absolute border-[5px] border-darkCustom group-hover:block bottom-0 left-1/2 ml-[-4px] mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  style={
+                    Object {
+                      "marginLeft": "0px",
+                    }
+                  }
                 />
                 <p
                   className="mb-1 text-12-bold"
@@ -93,10 +100,12 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
            
           <div
             className="group relative flex flex-col items-center undefined"
+            onClick={[Function]}
             onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
           >
             <div
-              className="fixed -z-10 group-hover:z-50"
+              className="fixed -z-10 "
               style={
                 Object {
                   "left": "0px",
@@ -105,10 +114,15 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
               }
             >
               <div
-                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 group-hover:z-50 group-hover:opacity-100 w-56"
+                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-56"
               >
                 <div
-                  className="absolute border-[5px] border-darkCustom group-hover:block bottom-0 left-1/2 ml-[-4px] mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  style={
+                    Object {
+                      "marginLeft": "0px",
+                    }
+                  }
                 />
                 <p
                   className="mb-1 text-12-bold"
@@ -195,10 +209,12 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
            
           <div
             className="group relative flex flex-col items-center undefined"
+            onClick={[Function]}
             onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
           >
             <div
-              className="fixed -z-10 group-hover:z-50"
+              className="fixed -z-10 "
               style={
                 Object {
                   "left": "0px",
@@ -207,10 +223,15 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
               }
             >
               <div
-                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 group-hover:z-50 group-hover:opacity-100 w-56"
+                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-56"
               >
                 <div
-                  className="absolute border-[5px] border-darkCustom group-hover:block bottom-0 left-1/2 ml-[-4px] mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  style={
+                    Object {
+                      "marginLeft": "0px",
+                    }
+                  }
                 />
                 <p
                   className="mb-1 text-12-bold"
