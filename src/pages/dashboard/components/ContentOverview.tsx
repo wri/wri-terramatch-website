@@ -143,7 +143,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           classNameSubTitle="mt-4"
           gap={8}
           subtitleMore={true}
-          title={t("HECTARES UNDER RESTORATION")}
+          title={t("Hectares Under Restoration")}
           variantSubTitle="text-14-light"
           subtitle={t(
             `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
@@ -151,19 +151,19 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         >
           <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
             <SecDashboard
-              title={t("Total HECTARES UNDER RESTORATION")}
+              title={t("Total Hectares Under Restoration")}
               data={TOTAL_HECTARES_UNDER_RESTORATION}
               classNameBody="w-full place-content-center !justify-center"
             />
             <SecDashboard
-              title={t("TOTAL NUMBER OF SITES")}
+              title={t("Total Number Of Sites")}
               data={TOTAL_NUMBER_OF_SITES}
               className="pl-12"
               classNameBody="w-full place-content-center !justify-center"
             />
           </div>
           <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
-          <SecDashboard title={t("TARGET LAND USE TYPES REPRESENTED")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
+          <SecDashboard title={t("Target Land Use Types Represented")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
         </PageCard>
 
         <PageCard
@@ -182,7 +182,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
                 <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {t("Expand")}
+                  {t("See All")}
                 </Text>
               </div>
             </Button>

@@ -127,6 +127,7 @@ const Dashboard = () => {
                     )}
                     placement="top"
                     width="w-56 lg:w-64"
+                    trigger="click"
                   >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
@@ -199,22 +200,22 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("JOBS CREATED BY AGE")}
+                title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY GENDER")}
+                title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY AGE")}
+                title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
