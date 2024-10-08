@@ -84,6 +84,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     getDefaultOtherValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
   const updateControl = useRef(0);
+
   useEffect(() => {
     if (!!props.value && !!props.options && updateControl.current < 5) {
       setSelected(getDefaultDropDownValue(props.value, props.options, !!props.hasOtherOptions));

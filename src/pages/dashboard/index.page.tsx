@@ -1,18 +1,15 @@
 import { useT } from "@transifex/react";
-import { useContext } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
-import { RefContext } from "./context/ScrollContext.provider";
 import {
-  COLUMN_ACTIVE_PROGRAMME,
-  DATA_ACTIVE_PROGRAMME,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -42,7 +39,6 @@ const Dashboard = () => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const sharedRef = useContext(RefContext);
   const dashboardHeader = [
     {
       label: "Trees Planted",
@@ -58,9 +54,60 @@ const Dashboard = () => {
     }
   ];
 
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+
+  const COLUMN_ACTIVE_PROGRAMME = [
+    {
+      header: "Country",
+      cell: (props: any) => {
+        const value = props.getValue().split("_");
+        return (
+          <div className="flex items-center gap-2">
+            <img src={value[1]} alt="flag" className="h-3" />
+            <Text variant="text-12-light">{value[0]}</Text>
+          </div>
+        );
+      },
+      accessorKey: "country",
+      enableSorting: false
+    },
+    {
+      header: "Projects",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    }
+  ];
+
+  const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
+    ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
+        country: `${country.data.label}_${country.data.icon}`,
+        project: "32",
+        treesPlanted: "2,234",
+        restoratioHectares: "2,234",
+        jobsCreated: "1306"
+      }))
+    : [];
+
   return (
-    <div className="mb-4 mr-2 flex flex-1 gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 pt-4" ref={sharedRef}>
-      <div className="overflow-hiden w-1/2">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+      <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
@@ -73,7 +120,15 @@ const Dashboard = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} width="w-44 lg:w-52">
+                  <ToolTip
+                    title={item.label}
+                    content={t(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                    )}
+                    placement="top"
+                    width="w-56 lg:w-64"
+                    trigger="click"
+                  >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>
@@ -86,14 +141,14 @@ const Dashboard = () => {
             classNameSubTitle="mt-4"
             gap={8}
             subtitleMore={true}
-            title={t("TREES RESTORED")}
+            title={t("Trees Restored")}
             variantSubTitle="text-14-light"
             subtitle={t(
-              `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund’s  MRV framework </span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+              `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
             )}
           >
             <SecDashboard
-              title={t("Number of trees planted")}
+              title={t("Number of Trees Planted")}
               type="legend"
               secondOptionsData={LABEL_LEGEND}
               data={NUMBER_OF_TREES_PLANTED}
@@ -106,7 +161,7 @@ const Dashboard = () => {
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
             />
             <SecDashboard
-              title={t("Top 5 Projects With The Most Planted Trees")}
+              title={t("Top 5 Projects with the Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
@@ -128,13 +183,13 @@ const Dashboard = () => {
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
             </div>
             <div className="grid w-full grid-cols-2 gap-12">
@@ -145,22 +200,22 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("JOBS CREATED BY AGE")}
+                title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY GENDER")}
+                title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY AGE")}
+                title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"

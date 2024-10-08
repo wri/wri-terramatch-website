@@ -48,11 +48,13 @@ const SecDashboard = ({
   const tableColumns = [
     {
       header: "Specie",
-      accessorKey: "label"
+      accessorKey: "label",
+      enableSorting: false
     },
     {
       header: "Count",
-      accessorKey: "valueText"
+      accessorKey: "valueText",
+      enableSorting: false
     }
   ];
 
@@ -74,7 +76,8 @@ const SecDashboard = ({
             content={t(
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             )}
-            width="w-56 lg:w-64"
+            width="w-[200px] lg:w-64"
+            trigger="click"
           >
             <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
           </ToolTip>

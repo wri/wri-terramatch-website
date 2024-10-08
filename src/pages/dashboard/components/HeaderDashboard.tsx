@@ -1,7 +1,5 @@
 import { useT } from "@transifex/react";
-import classNames from "classnames";
-import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -9,20 +7,33 @@ import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/D
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { OptionValue } from "@/types/common";
 
-import { RefContext } from "../context/ScrollContext.provider";
 import BlurContainer from "./BlurContainer";
 
-const HeaderDashboard = () => {
-  const sharedRef = useContext(RefContext);
+interface HeaderDashboardProps {
+  isProjectInsightsPage?: boolean;
+  isProjectListPage?: boolean;
+  isProjectPage?: boolean;
+  dashboardCountries: CountriesProps[];
+  defaultSelectedCountry: CountriesProps | undefined;
+  toSelectedCountry: (country_slug?: string) => void;
+  setSelectedCountry: (country?: CountriesProps) => void;
+}
+
+const HeaderDashboard = (props: HeaderDashboardProps) => {
+  const {
+    isProjectInsightsPage,
+    isProjectListPage,
+    isProjectPage,
+    toSelectedCountry,
+    dashboardCountries,
+    setSelectedCountry,
+    defaultSelectedCountry
+  } = props;
   const t = useT();
-  const router = useRouter();
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
-  const isProjectInsights = router.pathname.includes("dashboard/project-insights");
-  const isProjectList = router.pathname === "/dashboard/project-list";
-  const isProjectPage = router.pathname === "dashboard/project";
+
   const dropdwonOptions = [
     {
       title: "Tree Planting",
@@ -38,16 +49,13 @@ const HeaderDashboard = () => {
     }
   ];
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
-
   const dropdwonCountryOptions =
-    dashboardCountries?.data?.map((country: any) => ({
+    dashboardCountries?.map((country: CountriesProps) => ({
       title: country.data.label,
       value: country.id,
       prefix: <img src={country.data.icon} alt="flag" className="h-4" />
     })) || [];
+
   const [filterValues, setFilterValues] = useState<{
     dropdown1: OptionValue[];
     dropdown2: OptionValue[];
@@ -76,155 +84,147 @@ const HeaderDashboard = () => {
     }));
   };
 
-  useEffect(() => {
-    const scrollElement = sharedRef?.current;
-    const handleScroll = () => {
-      if (scrollElement) {
-        const currentScrollY = scrollElement.scrollTop;
-        if (currentScrollY === 0) {
-          setIsHeaderCollapsed(true);
-        } else {
-          setIsHeaderCollapsed(false);
-        }
-      }
-    };
-    scrollElement?.addEventListener("scroll", handleScroll);
-
-    return () => {
-      scrollElement?.removeEventListener("scroll", handleScroll);
-    };
-  }, [sharedRef]);
   const handleChangeCountry = (value: OptionValue[]) => {
     setFilterValues(prevValues => ({
       ...prevValues,
       dropdown3: value
     }));
-    const selectedCountry = dashboardCountries?.data.find((country: { id: OptionValue }) => {
+    const selectedCountry = dashboardCountries?.find((country: CountriesProps) => {
       if (country.id === value[0]) {
         return country;
       }
     });
-
-    router.push(`/dashboard/country/${selectedCountry?.country_slug}`);
+    if (selectedCountry) {
+      toSelectedCountry(selectedCountry.country_slug);
+      setSelectedCountry(selectedCountry);
+    }
   };
 
   const getHeaderTitle = () => {
-    if (isProjectInsights) {
+    if (isProjectInsightsPage) {
       return "Project Insights";
     }
-    if (isProjectList) {
+    if (isProjectListPage) {
       return "Project List";
     }
     return "TerraMatch Insights";
   };
 
   return (
-    <header className="flex bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
-      <div className={classNames("flex flex-1", { "gap-5": !isHeaderCollapsed, "flex-wrap gap-3": isHeaderCollapsed })}>
-        <Text
-          variant={"text-28-bold"}
-          className={classNames("whitespace-nowrap text-white", { "w-full": isHeaderCollapsed })}
-        >
+    <header className="flex max-w-full bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+      <div className="flex max-w-full flex-1 flex-wrap gap-3">
+        <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
         </Text>
-        <When condition={!isProjectInsights}>
-          <div className="flex items-center gap-3">
-            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
-              <Dropdown
-                showClear
-                showSelectAll
-                multiSelect
-                prefix={
-                  <Text variant="text-14-light" className="leading-none">
-                    {t("Programme:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                variant={VARIANT_DROPDOWN_HEADER}
-                value={filterValues.dropdown1}
-                placeholder="Top100"
-                onChange={(value: OptionValue[]) => {
-                  handleChange("dropdown1", value);
-                }}
-                options={dropdwonOptions}
-                optionClassName="hover:bg-grey-200"
-              />
-            </BlurContainer>
-            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
-              <Dropdown
-                showClear
-                showSelectAll
-                multiSelect
-                prefix={
-                  <Text variant="text-14-light" className="leading-none">
-                    {t("Landscape:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                variant={VARIANT_DROPDOWN_HEADER}
-                placeholder="Top100"
-                value={filterValues.dropdown2}
-                onChange={value => {
-                  handleChange("dropdown2", value);
-                }}
-                options={dropdwonOptions}
-                optionClassName="hover:bg-grey-200"
-              />
-            </BlurContainer>
-            <BlurContainer isCollapse={isHeaderCollapsed} className="min-w-[190px]" disabled={isProjectPage}>
-              <Dropdown
-                showClear
-                prefix={
-                  <Text variant="text-14-light" className="leading-none">
-                    {t("Country:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                variant={VARIANT_DROPDOWN_HEADER}
-                placeholder="Global"
-                value={filterValues.dropdown3}
-                onChange={value => {
-                  handleChangeCountry(value);
-                }}
-                onClear={() => router.push(`/dashboard/country`)}
-                options={dropdwonCountryOptions}
-                optionClassName="hover:bg-grey-200"
-              />
-            </BlurContainer>
-            <BlurContainer isCollapse={isHeaderCollapsed} disabled={isProjectPage}>
-              <Dropdown
-                showSelectAll
-                showClear
-                prefix={
-                  <Text variant="text-14-light" className="leading-none">
-                    {t("Organization:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                multiSelect
-                variant={VARIANT_DROPDOWN_HEADER}
-                placeholder="Private"
-                value={filterValues.dropdown4}
-                onChange={value => {
-                  handleChange("dropdown4", value);
-                }}
-                options={dropdwonOptions}
-                optionClassName="hover:bg-grey-200"
-              />
-            </BlurContainer>
-            <button
-              className="text-14-semibold p-1 text-white disabled:opacity-70"
-              onClick={resetValues}
-              disabled={isProjectPage}
-            >
-              {t("Clear Filters")}
-            </button>
+        <When condition={!isProjectInsightsPage}>
+          <div className="max-w-full overflow-x-clip overflow-y-visible">
+            <div className="flex max-w-full flex-1 items-center gap-3">
+              <BlurContainer disabled={isProjectPage}>
+                <Dropdown
+                  showClear
+                  showSelectAll
+                  multiSelect
+                  prefix={
+                    <Text variant="text-14-light" className="leading-none">
+                      {t("Programme:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  value={filterValues.dropdown1}
+                  placeholder="Top100"
+                  onChange={(value: OptionValue[]) => {
+                    handleChange("dropdown1", value);
+                  }}
+                  options={dropdwonOptions}
+                  optionClassName="hover:bg-grey-200"
+                />
+              </BlurContainer>
+              <BlurContainer disabled={isProjectPage}>
+                <Dropdown
+                  showClear
+                  showSelectAll
+                  multiSelect
+                  prefix={
+                    <Text variant="text-14-light" className="leading-none">
+                      {t("Landscape:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  placeholder="Top100"
+                  value={filterValues.dropdown2}
+                  onChange={value => {
+                    handleChange("dropdown2", value);
+                  }}
+                  options={dropdwonOptions}
+                  optionClassName="hover:bg-grey-200"
+                />
+              </BlurContainer>
+              <BlurContainer className="min-w-[190px]" disabled={isProjectPage}>
+                <Dropdown
+                  showClear
+                  prefix={
+                    <Text variant="text-14-light" className="leading-none">
+                      {t("Country:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  placeholder="Global"
+                  value={
+                    filterValues.dropdown3.length === 0
+                      ? defaultSelectedCountry
+                        ? [defaultSelectedCountry?.id]
+                        : []
+                      : filterValues.dropdown3
+                  }
+                  onChange={value => {
+                    handleChangeCountry(value);
+                  }}
+                  onClear={() => {
+                    toSelectedCountry();
+                    setSelectedCountry(undefined);
+                  }}
+                  options={dropdwonCountryOptions}
+                  optionClassName="hover:bg-grey-200"
+                />
+              </BlurContainer>
+              <BlurContainer disabled={isProjectPage}>
+                <Dropdown
+                  showSelectAll
+                  showClear
+                  prefix={
+                    <Text variant="text-14-light" className="leading-none">
+                      {t("Organization:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  multiSelect
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  placeholder="Private"
+                  value={filterValues.dropdown4}
+                  onChange={value => {
+                    handleChange("dropdown4", value);
+                  }}
+                  options={dropdwonOptions}
+                  optionClassName="hover:bg-grey-200"
+                />
+              </BlurContainer>
+              <button
+                className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
+                onClick={resetValues}
+                disabled={isProjectPage}
+              >
+                {t("Clear Filters")}
+              </button>
+            </div>
           </div>
         </When>
       </div>
       <div className="flex flex-col items-end justify-end gap-3">
-        <When condition={isProjectList}>
-          <BlurContainer isCollapse={isHeaderCollapsed}>
+        <When condition={isProjectListPage}>
+          <BlurContainer>
             <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
           </BlurContainer>
         </When>

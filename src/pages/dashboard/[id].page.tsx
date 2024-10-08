@@ -1,15 +1,19 @@
 import { useT } from "@transifex/react";
+import React from "react";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 
-import ContentOverview from "../components/ContentOverview";
-import SecDashboard from "../components/SecDashboard";
+import ContentOverview from "./components/ContentOverview";
+import SecDashboard from "./components/SecDashboard";
 import {
+  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -21,21 +25,13 @@ import {
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
-} from "../mockedData/dashboard";
+} from "./mockedData/dashboard";
 
-export interface DashboardTableDataProps {
-  label: string;
-  valueText: string;
-  value: number;
+interface ChildComponentProps {
+  selectedCountry: CountriesProps;
 }
 
-export interface GraphicLegendProps {
-  label: string;
-  value: string;
-  color: string;
-}
-
-const Dashboard = () => {
+const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   const t = useT();
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
@@ -54,27 +50,9 @@ const Dashboard = () => {
     }
   ];
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
-
-  const COLUMN_ACTIVE_PROGRAMME = [
+  const COLUMN_ACTIVE_COUNTRY = [
     {
-      header: "Country",
-      cell: (props: any) => {
-        const value = props.getValue().split("_");
-        return (
-          <div className="flex items-center gap-2">
-            <img src={value[1]} alt="flag" className="h-3" />
-            <Text variant="text-12-light">{value[0]}</Text>
-          </div>
-        );
-      },
-      accessorKey: "country",
-      enableSorting: false
-    },
-    {
-      header: "Projects",
+      header: "Project",
       accessorKey: "project",
       enableSorting: false
     },
@@ -92,23 +70,42 @@ const Dashboard = () => {
       header: "Jobs Created",
       accessorKey: "jobsCreated",
       enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
+          </a>
+        );
+      }
     }
   ];
-
-  const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
-    ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
-        country: `${country.data.label}_${country.data.icon}`,
-        project: "32",
-        treesPlanted: "2,234",
-        restoratioHectares: "2,234",
-        jobsCreated: "1306"
-      }))
-    : [];
 
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
+          <When condition={!!selectedCountry}>
+            <div className="flex items-center gap-2">
+              <Text variant="text-14-light" className="uppercase text-black ">
+                {t("results for:")}
+              </Text>
+              <img src={selectedCountry?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
+              <Text variant="text-24-semibold" className="text-black">
+                {t(selectedCountry?.data.label)}
+              </Text>
+            </div>
+          </When>
+
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-4 py-3">
@@ -127,6 +124,7 @@ const Dashboard = () => {
                     )}
                     placement="top"
                     width="w-56 lg:w-64"
+                    trigger="click"
                   >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
@@ -182,13 +180,13 @@ const Dashboard = () => {
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
             </div>
             <div className="grid w-full grid-cols-2 gap-12">
@@ -199,22 +197,22 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("JOBS CREATED BY AGE")}
+                title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY GENDER")}
+                title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY AGE")}
+                title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
@@ -223,9 +221,9 @@ const Dashboard = () => {
           </PageCard>
         </PageRow>
       </div>
-      <ContentOverview data={DATA_ACTIVE_PROGRAMME} columns={COLUMN_ACTIVE_PROGRAMME} />
+      <ContentOverview data={DATA_ACTIVE_COUNTRY} columns={COLUMN_ACTIVE_COUNTRY} />
     </div>
   );
 };
 
-export default Dashboard;
+export default Country;
