@@ -19,7 +19,7 @@ const Sidebar = () => {
         <a className="mb-10 mt-4 cursor-pointer" href="/home">
           <Icon name={IconNames.TERRAFUND_lOGO_MINI} />
         </a>
-        <Tooltip content="DASHBOARDS" placement="right">
+        <Tooltip content={t("DASHBOARDS")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
               "text-white":
@@ -33,7 +33,7 @@ const Sidebar = () => {
             <Text variant={"text-8"}>{t("DASHBOARDS")}</Text>
           </a>
         </Tooltip>
-        <Tooltip content="PROJECT LIST" placement="right">
+        <Tooltip content={t("PROJECT LIST")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
               "text-white": router.asPath.includes("/dashboard/project-list")
@@ -47,7 +47,7 @@ const Sidebar = () => {
           </a>
         </Tooltip>
 
-        <Tooltip content="PROJECT INSIGHTS" placement="right">
+        <Tooltip content={t("PROJECT INSIGHTS")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
               "text-white": router.asPath.includes("/dashboard/project-insights")
@@ -62,7 +62,7 @@ const Sidebar = () => {
           </a>
         </Tooltip>
 
-        <Tooltip content="COMING SOON" placement="right">
+        <Tooltip content={t("COMING SOON")} placement="right">
           <a
             className={classNames("flex cursor-not-allowed flex-col items-center gap-1 opacity-50", {
               "text-white": router.asPath.includes("/dashboard/reports")
@@ -73,7 +73,7 @@ const Sidebar = () => {
           </a>
         </Tooltip>
 
-        <Tooltip content="ABOUT US" placement="right">
+        <Tooltip content={t("ABOUT US")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
               "text-white": router.asPath.includes("/dashboard/about-us")

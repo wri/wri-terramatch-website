@@ -51,7 +51,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title="MAP" closeModal={closeModal}>
+      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <img
             src="/images/map-img.png"
@@ -87,7 +87,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       "modalExpand",
       <ModalExpand
         id="modalExpand"
-        title="ACTIVE COUNTRIES"
+        title={t("ACTIVE COUNTRIES")}
         popUpContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         closeModal={closeModal}
       >
