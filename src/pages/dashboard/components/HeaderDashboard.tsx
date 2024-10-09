@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import React, { useState } from "react";
 import { When } from "react-if";
 
@@ -111,8 +112,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   return (
-    <header className="flex max-w-full bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
-      <div className="flex max-w-full flex-1 flex-wrap gap-3">
+    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+      <div
+        className={classNames("flex flex-1 flex-wrap gap-3", {
+          "max-w-[calc(100%_-_260px)]": isProjectListPage,
+          "max-w-full": !isProjectListPage
+        })}
+      >
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
         </Text>
