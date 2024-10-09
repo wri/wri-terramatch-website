@@ -22,6 +22,7 @@ import {
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
+  TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
@@ -163,6 +164,12 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
             />
+            <SecDashboard
+              title={t("Top 20 Tree Species Planted")}
+              type="toggle"
+              secondOptionsData={dataToggleGraphic}
+              data={TOP_20_TREE_SPECIES_PLANTED}
+            />
           </PageCard>
 
           <PageCard
@@ -221,7 +228,11 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
           </PageCard>
         </PageRow>
       </div>
-      <ContentOverview data={DATA_ACTIVE_COUNTRY} columns={COLUMN_ACTIVE_COUNTRY} />
+      <ContentOverview
+        dataTable={DATA_ACTIVE_COUNTRY}
+        columns={COLUMN_ACTIVE_COUNTRY}
+        titleTable={"ACTIVE COUNTRIES"}
+      />
     </div>
   );
 };

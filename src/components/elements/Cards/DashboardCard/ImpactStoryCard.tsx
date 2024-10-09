@@ -3,7 +3,7 @@ import React from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-interface ImpactStoryCardProps {
+export interface ImpactStoryCardProps {
   key?: string;
   date: string;
   by: string;

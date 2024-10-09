@@ -201,7 +201,7 @@ module.exports = {
         DEFAULT: "#FCFBE8",
         700: "#F4B059",
         600: "#F8CE7B",
-        550: "#FEFED1",
+        550: "#F7D913",
         500: "#F3EFB0",
         300: "#FEF8EF"
       },

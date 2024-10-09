@@ -140,7 +140,7 @@ const ToolTip = ({
 
   return (
     <div
-      className={`group relative flex flex-col items-center ${className}`}
+      className={`group relative flex cursor-pointer flex-col items-center ${className}`}
       ref={contentRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

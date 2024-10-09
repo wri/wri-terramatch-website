@@ -100,7 +100,7 @@ const ProjectList = () => {
     : [];
 
   return (
-    <div className="h-full overflow-hidden bg-neutral-70 py-8 px-14">
+    <div className="h-full overflow-scroll bg-neutral-70 py-8 px-14">
       <Table
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
