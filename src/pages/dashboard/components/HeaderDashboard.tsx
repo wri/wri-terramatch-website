@@ -53,28 +53,36 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     },
     {
       id: "3",
-      country: "Åland Islands",
+      country: "Ghana",
       organization: "Annette Ward (3SC)",
       project: "Goshen Global Vision",
       programme: "TerraFund Top100"
     },
     {
       id: "4",
-      country: "Central African Republic",
+      country: "Congo",
       organization: "Annette Ward (3SC)",
       project: "Goshen Global Vision",
       programme: "TerraFund Top100"
     },
     {
       id: "5",
-      country: "Cameroon",
+      country: "Central African Republic",
       organization: "Annette Ward (3SC)",
       project: "Goshen Global Vision",
       programme: "TerraFund Top100"
     },
     {
       id: "6",
-      country: "Ghana",
+      country: "Cameroon",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "7",
+
+      country: "Åland Islands",
       organization: "Annette Ward (3SC)",
       project: "Goshen Global Vision",
       programme: "TerraFund Top100"
