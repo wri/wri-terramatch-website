@@ -30,7 +30,7 @@ export interface CountriesProps {
 
 const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
   const router = useRouter();
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+  const { data: dashboardCountries } = useGetV2DashboardCountries<{ data: CountriesProps[] }>({
     queryParams: {}
   });
 
