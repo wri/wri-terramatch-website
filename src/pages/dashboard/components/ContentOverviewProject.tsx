@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import React from "react";
 
 import Button from "@/components/elements/Button/Button";
+import ImpactStoryCard from "@/components/elements/Cards/DashboardCard/ImpactStoryCard";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -23,7 +24,6 @@ import {
   TOTAL_HECTARES_UNDER_RESTORATION,
   TOTAL_NUMBER_OF_SITES
 } from "../mockedData/dashboard";
-import ImpactStoryCard from "./ImpactStoryCard";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
