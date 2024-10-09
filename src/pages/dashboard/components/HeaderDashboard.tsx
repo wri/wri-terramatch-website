@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { useState } from "react";
+import React from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -8,6 +8,7 @@ import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSea
 import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
+import { useDashboardContext } from "@/context/dashboard.provider";
 import { OptionValue } from "@/types/common";
 
 import BlurContainer from "./BlurContainer";
@@ -29,26 +30,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     isProjectPage,
     toSelectedCountry,
     dashboardCountries,
-    setSelectedCountry,
-    defaultSelectedCountry
+    setSelectedCountry
   } = props;
   const t = useT();
-
-  const dropdwonOptions = [
-    {
-      title: "Tree Planting",
-      value: "1"
-    },
-    {
-      title: "Direct Seeding",
-      value: "2"
-    },
-    {
-      title: "Natural Regeneration",
-      value: "3"
-    }
-  ];
-
+  const { filters, setFilters } = useDashboardContext();
   const dropdwonCountryOptions =
     dashboardCountries?.map((country: CountriesProps) => ({
       title: country.data.label,
@@ -56,47 +41,81 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       prefix: <img src={country.data.icon} alt="flag" className="h-4" />
     })) || [];
 
-  const [filterValues, setFilterValues] = useState<{
-    dropdown1: OptionValue[];
-    dropdown2: OptionValue[];
-    dropdown3: OptionValue[];
-    dropdown4: OptionValue[];
-  }>({
-    dropdown1: [],
-    dropdown2: [],
-    dropdown3: [],
-    dropdown4: []
-  });
+  const organizationOptions = [
+    {
+      title: "Non-profit organization",
+      value: "non-profit-organization"
+    },
+    {
+      title: "For-profit organization",
+      value: "for-profit-organization"
+    }
+  ];
+  const programmeOptions = [
+    {
+      title: "Top 100",
+      value: "terrafund"
+    },
+    {
+      title: "PPC",
+      value: "ppc"
+    },
+    {
+      title: "Enterprise",
+      value: "enterprise"
+    },
+    {
+      title: "HBF",
+      value: "hbf"
+    },
+    {
+      title: "Terrafund Landscapes",
+      value: "terrafund-landscapes"
+    }
+  ];
+  const landscapeOption = [
+    { title: "Kenya’s Greater Rift Valley", value: "kenya_greater_rift_valley" },
+    { title: "Ghana Cocoa Belt ", value: "ghana_cocoa_belt" },
+    { title: "Lake Kivu and Rusizi River Basin ", value: "lake_kivu_rusizi_river_basin" }
+  ];
 
   const resetValues = () => {
-    setFilterValues({
-      dropdown1: [],
-      dropdown2: [],
-      dropdown3: [],
-      dropdown4: []
+    setFilters({
+      programmes: [],
+      landscapes: [],
+      country: {
+        country_slug: "",
+        id: 0,
+        data: {
+          label: "",
+          icon: ""
+        }
+      },
+      organizations: []
     });
   };
 
   const handleChange = (selectName: string, value: OptionValue[]) => {
-    setFilterValues(prevValues => ({
+    setFilters(prevValues => ({
       ...prevValues,
       [selectName]: value
     }));
   };
 
   const handleChangeCountry = (value: OptionValue[]) => {
-    setFilterValues(prevValues => ({
-      ...prevValues,
-      dropdown3: value
-    }));
     const selectedCountry = dashboardCountries?.find((country: CountriesProps) => {
       if (country.id === value[0]) {
         return country;
       }
     });
+
     if (selectedCountry) {
       toSelectedCountry(selectedCountry.country_slug);
       setSelectedCountry(selectedCountry);
+      setFilters(prevValues => ({
+        ...prevValues,
+        country: selectedCountry
+      }));
     }
   };
 
@@ -131,12 +150,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  value={filterValues.dropdown1}
-                  placeholder="Top100"
+                  value={filters.programmes}
+                  placeholder="Programme"
                   onChange={(value: OptionValue[]) => {
-                    handleChange("dropdown1", value);
+                    handleChange("programmes", value);
                   }}
-                  options={dropdwonOptions}
+                  options={programmeOptions}
                   optionClassName="hover:bg-grey-200"
                 />
               </BlurContainer>
@@ -152,12 +171,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Top100"
-                  value={filterValues.dropdown2}
+                  placeholder="Landscape"
+                  value={filters.landscapes}
                   onChange={value => {
-                    handleChange("dropdown2", value);
+                    handleChange("landscapes", value);
                   }}
-                  options={dropdwonOptions}
+                  options={landscapeOption}
                   optionClassName="hover:bg-grey-200"
                 />
               </BlurContainer>
@@ -172,13 +191,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   placeholder="Global"
-                  value={
-                    filterValues.dropdown3.length === 0
-                      ? defaultSelectedCountry
-                        ? [defaultSelectedCountry?.id]
-                        : []
-                      : filterValues.dropdown3
-                  }
+                  value={filters.country ? [filters.country.data.label] : undefined}
                   onChange={value => {
                     handleChangeCountry(value);
                   }}
@@ -202,12 +215,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Private"
-                  value={filterValues.dropdown4}
+                  placeholder="Organization"
+                  value={filters.organizations}
                   onChange={value => {
-                    handleChange("dropdown4", value);
+                    handleChange("organizations", value);
                   }}
-                  options={dropdwonOptions}
+                  options={organizationOptions}
                   optionClassName="hover:bg-grey-200"
                 />
               </BlurContainer>
