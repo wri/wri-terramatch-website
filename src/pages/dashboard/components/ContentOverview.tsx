@@ -97,7 +97,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
               return {
                 ...column,
-                enableSorting: column.header?.length === 0 ? false : true
+                enableSorting: Boolean(column.header?.length)
               };
             })}
             data={data}
