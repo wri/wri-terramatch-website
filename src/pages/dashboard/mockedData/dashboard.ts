@@ -48,6 +48,46 @@ export const TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES = {
   ],
   maxValue: 1889396.551724138
 };
+export const TOP_20_TREE_SPECIES_PLANTED = {
+  tableData: [
+    {
+      label: "Gmelina",
+      valueText: "650,000",
+      value: 650000
+    },
+    {
+      label: "Rhizophora racemosa",
+      valueText: "505,000",
+      value: 505000
+    },
+    {
+      label: "Markhamia lutea",
+      valueText: "410,000",
+      value: 410000
+    },
+    {
+      label: "Terminalia superba",
+      valueText: "370,000",
+      value: 370000
+    },
+    {
+      label: "milicia excelsa",
+      valueText: "370,000",
+      value: 370000
+    },
+    {
+      label: "Gliricidia sepium",
+      valueText: "354,000",
+      value: 354000
+    },
+    {
+      label: "Coffea canephora",
+      valueText: "350,000",
+      value: 350000
+    }
+  ],
+  maxValue: 1889396.551724138
+};
 
 export const TOTAL_HECTARES_UNDER_RESTORATION = {
   value: "23,000"
