@@ -1,8 +1,10 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import ImpactStoryCard from "@/components/elements/Cards/DashboardCard/ImpactStoryCard";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -25,19 +27,31 @@ import {
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
+interface ImpactStoryCardProps {
+  id: string;
+  by: string;
+  date: string;
+  description: string;
+  image: string;
+  title: string;
+}
+
 interface ContentOverviewProps<TData> {
-  data: TData[];
+  dataTable: TData[];
   columns: ColumnDef<TData>[];
+  dataImpactStories?: ImpactStoryCardProps[];
+  titleTable: string;
+  textTooltipTable?: string;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
-  const { data, columns } = props;
+  const { dataTable: data, columns, dataImpactStories = [], titleTable, textTooltipTable } = props;
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title="" closeModal={closeModal}>
+      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <img
             src="/images/map-img.png"
@@ -73,7 +87,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       "modalExpand",
       <ModalExpand
         id="modalExpand"
-        title="ACTIVE COUNTRIES"
+        title={t("ACTIVE COUNTRIES")}
         popUpContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         closeModal={closeModal}
       >
@@ -83,7 +97,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
               return {
                 ...column,
-                enableSorting: column.header?.length === 0 ? false : true
+                enableSorting: Boolean(column.header?.length)
               };
             })}
             data={data}
@@ -96,7 +110,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
-      <PageRow className="gap-4 p-0">
+      <PageRow className="w-full gap-4 p-0">
         <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
             className="absolute right-6 top-6 z-10"
@@ -137,6 +151,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             </div>
           </div>
         </div>
+        <When condition={dataImpactStories?.length !== 0}>
+          <PageCard title="IMPACT STORIES" gap={4}>
+            {dataImpactStories.map(story => (
+              <ImpactStoryCard
+                key={story.id}
+                by={story.by}
+                date={story.date}
+                description={story.description}
+                image={story.image}
+                title={story.title}
+              />
+            ))}
+          </PageCard>
+        </When>
 
         <PageCard
           className="border-0 px-4 py-6"
@@ -169,9 +197,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         <PageCard
           className="border-0 px-4 py-6"
           classNameSubTitle="mt-4"
-          gap={8}
+          gap={6}
           subtitleMore={true}
-          title={t("ACTIVE COUNTRIES")}
+          title={t(titleTable)}
+          tooltip={textTooltipTable}
+          tooltipTrigger="click"
+          iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           headerChildren={
             <Button
               variant="white-border"

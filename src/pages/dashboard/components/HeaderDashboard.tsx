@@ -1,9 +1,12 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import React from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_ITEM_VARIANT_SEARCH } from "@/components/elements/MenuItem/MenuItemVariant";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
@@ -33,6 +36,59 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     setSelectedCountry
   } = props;
   const t = useT();
+
+  const optionMenu = [
+    {
+      id: "1",
+      country: "Angola",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "2",
+      country: "Kenya",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "3",
+      country: "Ghana",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "4",
+      country: "Congo",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "5",
+      country: "Central African Republic",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "6",
+      country: "Cameroon",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    },
+    {
+      id: "7",
+
+      country: "Åland Islands",
+      organization: "Annette Ward (3SC)",
+      project: "Goshen Global Vision",
+      programme: "TerraFund Top100"
+    }
+  ];
   const { filters, setFilters } = useDashboardContext();
   const dropdwonCountryOptions =
     dashboardCountries?.map((country: CountriesProps) => ({
@@ -130,14 +186,19 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   return (
-    <header className="flex max-w-full bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
-      <div className="flex max-w-full flex-1 flex-wrap gap-3">
+    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+      <div
+        className={classNames("flex flex-1 flex-wrap gap-3", {
+          "max-w-[calc(100%_-_260px)] lg:max-w-[calc(100%_-_295px)]": isProjectListPage,
+          "max-w-full": !isProjectListPage
+        })}
+      >
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
         </Text>
         <When condition={!isProjectInsightsPage}>
-          <div className="max-w-full overflow-x-clip overflow-y-visible">
-            <div className="flex max-w-full flex-1 items-center gap-3">
+          <div className="flexl-col flex max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
+            <div className="flex max-w-full flex-1 flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
                   showClear
@@ -224,22 +285,40 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   optionClassName="hover:bg-grey-200"
                 />
               </BlurContainer>
-              <button
-                className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
-                onClick={resetValues}
-                disabled={isProjectPage}
-              >
-                {t("Clear Filters")}
-              </button>
             </div>
+            <button
+              className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
+              onClick={resetValues}
+              disabled={isProjectPage}
+            >
+              {t("Clear Filters")}
+            </button>
           </div>
         </When>
       </div>
-      <div className="flex flex-col items-end justify-end gap-3">
+      <div className="flex flex-col items-end justify-end gap-3 lg:min-w-[287px]">
         <When condition={isProjectListPage}>
-          <BlurContainer>
-            <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
-          </BlurContainer>
+          <Menu
+            classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
+            menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
+            menu={optionMenu.map(option => ({
+              id: option.id,
+              render: () => (
+                <span className="leading-[normal] tracking-[normal]">
+                  <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                    {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
+                  </Text>
+                  <Text variant="text-12-light" className="text-darkCustom" as="span">
+                    {t(option.project)},&nbsp;{t(option.programme)}
+                  </Text>
+                </span>
+              )
+            }))}
+          >
+            <BlurContainer className="lg:min-w-[287px]">
+              <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+            </BlurContainer>
+          </Menu>
         </When>
       </div>
     </header>

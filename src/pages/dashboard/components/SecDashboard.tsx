@@ -72,7 +72,7 @@ const SecDashboard = ({
             {t(title)}
           </Text>
           <ToolTip
-            title={title}
+            title={t(title)}
             content={t(
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             )}
