@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyField";
 import Paper from "@/components/elements/Paper/Paper";
@@ -25,6 +26,8 @@ export interface PageCardProps
   classNameSubTitle?: string;
   variantSubTitle?: TextVariants;
   subtitleMore?: boolean;
+  tooltipTrigger?: "hover" | "click";
+  iconClassName?: string;
 }
 
 const PageCard = ({
@@ -38,6 +41,8 @@ const PageCard = ({
   classNameSubTitle,
   variantSubTitle,
   subtitleMore = false,
+  tooltipTrigger = "hover",
+  iconClassName,
   tooltip,
   ...props
 }: PageCardProps) => {
@@ -64,8 +69,11 @@ const PageCard = ({
               {title}
               <When condition={!!tooltip}>
                 &nbsp;
-                <ToolTip content={tooltip} width="w-44 lg:w-52" title={title}>
-                  <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
+                <ToolTip content={tooltip} width="w-44 lg:w-52" title={title} trigger={tooltipTrigger}>
+                  <Icon
+                    name={IconNames.IC_INFO}
+                    className={tw("h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4", iconClassName)}
+                  />
                 </ToolTip>
               </When>
             </Text>

@@ -8,10 +8,12 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-import ContentOverviewProject from "../components/ContentOverviewProject";
+import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
+  DATA_ACTIVE_COUNTRY,
+  DATA_IMPACT_STORIES,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -72,9 +74,49 @@ const ProjectView = () => {
     }
   ];
 
+  const COLUMN_ACTIVE_COUNTRY = [
+    {
+      header: "Project",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
+          </a>
+        );
+      }
+    }
+  ];
+
   return (
     <div
-      className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
+      className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
       ref={sharedRef}
     >
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -229,7 +271,15 @@ const ProjectView = () => {
           </PageCard>
         </PageRow>
       </div>
-      <ContentOverviewProject />
+      <ContentOverview
+        dataTable={DATA_ACTIVE_COUNTRY}
+        columns={COLUMN_ACTIVE_COUNTRY}
+        dataImpactStories={DATA_IMPACT_STORIES}
+        titleTable={"OTHER PROJECTS IN NIGER"}
+        textTooltipTable={
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+        }
+      />
     </div>
   );
 };

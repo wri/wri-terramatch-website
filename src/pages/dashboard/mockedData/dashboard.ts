@@ -399,3 +399,30 @@ export const DATA_TABLE_PROJECT_LIST = [
     jobsCreated: "9,000,000"
   }
 ];
+
+export const DATA_IMPACT_STORIES = [
+  {
+    id: "1",
+    by: "FilmsForChange",
+    date: "23 Sep 2023",
+    description: "Mud Floods in our village in Kasese Uganda.",
+    image: "/images/pitch-placeholder.webp",
+    title: "Huge mudslide Causes Damage"
+  },
+  {
+    id: "2",
+    by: "FilmsForChange",
+    date: "23 Sep 2023",
+    description: "Women’s Tree Nursery is doing well. After receiving trees and he Lorem ipsum dolor sit amet",
+    image: "/images/landing-page-hero-banner.webp",
+    title: "Kyemihoko Rural Women’s Initiative"
+  },
+  {
+    id: "3",
+    by: "FilmsForChange",
+    date: "23 Sep 2023",
+    description: "Mud Floods in our village in Kasese Uganda.",
+    image: "/images/terrafund-afr-100-explainer.webp",
+    title: "Wild Fire"
+  }
+];

@@ -91,7 +91,7 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   ];
 
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={!!selectedCountry}>
@@ -221,7 +221,11 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
           </PageCard>
         </PageRow>
       </div>
-      <ContentOverview data={DATA_ACTIVE_COUNTRY} columns={COLUMN_ACTIVE_COUNTRY} />
+      <ContentOverview
+        dataTable={DATA_ACTIVE_COUNTRY}
+        columns={COLUMN_ACTIVE_COUNTRY}
+        titleTable={"ACTIVE COUNTRIES"}
+      />
     </div>
   );
 };
