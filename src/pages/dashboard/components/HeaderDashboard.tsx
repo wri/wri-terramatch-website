@@ -178,8 +178,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           {t(getHeaderTitle())}
         </Text>
         <When condition={!isProjectInsightsPage}>
-          <div className="max-w-full overflow-x-clip overflow-y-visible">
-            <div className="flex max-w-full flex-1 items-center gap-3">
+          <div className="flexl-col flex max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
+            <div className="flex max-w-full flex-1 flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
                   showClear
@@ -272,14 +272,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   optionClassName="hover:bg-grey-200"
                 />
               </BlurContainer>
-              <button
-                className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
-                onClick={resetValues}
-                disabled={isProjectPage}
-              >
-                {t("Clear Filters")}
-              </button>
             </div>
+            <button
+              className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
+              onClick={resetValues}
+              disabled={isProjectPage}
+            >
+              {t("Clear Filters")}
+            </button>
           </div>
         </When>
       </div>
