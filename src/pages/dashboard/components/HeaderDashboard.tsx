@@ -170,7 +170,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div
         className={classNames("flex flex-1 flex-wrap gap-3", {
-          "max-w-[calc(100%_-_260px)]": isProjectListPage,
+          "max-w-[calc(100%_-_260px)] lg:max-w-[calc(100%_-_295px)]": isProjectListPage,
           "max-w-full": !isProjectListPage
         })}
       >
