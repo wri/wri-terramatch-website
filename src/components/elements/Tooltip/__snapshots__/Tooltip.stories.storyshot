@@ -1,8 +1,86 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots Components/Elements/Tooltip Click 1`] = `
+<div
+  className="group relative flex cursor-pointer flex-col items-center undefined"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <div
+    className="fixed -z-10 "
+    style={
+      Object {
+        "left": "0px",
+        "top": "0px",
+      }
+    }
+  >
+    <div
+      className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-28"
+    >
+      <div
+        className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+        style={
+          Object {
+            "marginLeft": "0px",
+          }
+        }
+      />
+      <p
+        className="!font-light leading-[normal] text-12-light"
+        data-testid="txt"
+      >
+        This is a tooltip
+      </p>
+    </div>
+  </div>
+  Open-Click
+</div>
+`;
+
 exports[`Storyshots Components/Elements/Tooltip Default 1`] = `
 <div
-  className="group relative flex flex-col items-center undefined"
+  className="group relative flex cursor-pointer flex-col items-center undefined"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <div
+    className="fixed -z-10 "
+    style={
+      Object {
+        "left": "0px",
+        "top": "0px",
+      }
+    }
+  >
+    <div
+      className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-28"
+    >
+      <div
+        className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+        style={
+          Object {
+            "marginLeft": "0px",
+          }
+        }
+      />
+      <p
+        className="!font-light leading-[normal] text-12-light"
+        data-testid="txt"
+      >
+        This is a tooltip
+      </p>
+    </div>
+  </div>
+  Open-Hover
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Tooltip Hover 1`] = `
+<div
+  className="group relative flex cursor-pointer flex-col items-center undefined"
   onClick={[Function]}
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}

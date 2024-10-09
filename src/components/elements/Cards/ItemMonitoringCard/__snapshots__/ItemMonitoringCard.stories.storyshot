@@ -20,7 +20,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
           Tree Count
            
           <div
-            className="group relative flex flex-col items-center undefined"
+            className="group relative flex cursor-pointer flex-col items-center undefined"
             onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
@@ -99,7 +99,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
           Tree Count
            
           <div
-            className="group relative flex flex-col items-center undefined"
+            className="group relative flex cursor-pointer flex-col items-center undefined"
             onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
@@ -208,7 +208,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
           EMA SNOVO
            
           <div
-            className="group relative flex flex-col items-center undefined"
+            className="group relative flex cursor-pointer flex-col items-center undefined"
             onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
