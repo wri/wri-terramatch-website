@@ -187,7 +187,8 @@ export enum IconNames {
   IC_LEGEND_MAP = "ic-legend-map",
   EDIT_PA = "edit-pa",
   PIN = "pin",
-  LINK_AIRTABLE = "link-aritable"
+  LINK_AIRTABLE = "link-aritable",
+  IC_USER = "ic-user"
 }
 
 export interface IconProps {

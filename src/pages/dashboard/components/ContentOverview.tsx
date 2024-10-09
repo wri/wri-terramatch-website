@@ -51,7 +51,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title="" closeModal={closeModal}>
+      <ModalExpand id="modalExpand" title="MAP" closeModal={closeModal}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <img
             src="/images/map-img.png"
