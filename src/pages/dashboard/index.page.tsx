@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -72,11 +73,11 @@ const Dashboard = () => {
     return queryParams.toString();
   };
 
-  const queryParams = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+  const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
 
   const { data: totalSectionHeader, refetch } = useGetV2DashboardTotalSectionHeader<any>(
     {
-      queryParams: queryParams as any
+      queryParams: queryParams
     },
     {
       enabled: !!filters
@@ -161,6 +162,17 @@ const Dashboard = () => {
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
+          <When condition={filters.country.id !== 0}>
+            <div className="flex items-center gap-2">
+              <Text variant="text-14-light" className="uppercase text-black ">
+                {t("results for:")}
+              </Text>
+              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
+              <Text variant="text-24-semibold" className="text-black">
+                {t(filters.country?.data.label)}
+              </Text>
+            </div>
+          </When>
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-4 py-3">
