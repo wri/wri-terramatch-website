@@ -70,7 +70,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                 defaultSelectedCountry={selectedCountry}
                 setSelectedCountry={setSelectedCountry}
                 toSelectedCountry={country_slug =>
-                  country_slug ? router.push(`/dashboard/${country_slug}`) : router.push(`/dashboard`)
+                  country_slug ? router.push(`/dashboard`) : router.push(`/dashboard`)
                 }
               />
               {childrenWithProps}

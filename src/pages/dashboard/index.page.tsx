@@ -1,11 +1,13 @@
 import { useT } from "@transifex/react";
+import { useEffect, useMemo, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { useDashboardContext } from "@/context/dashboard.provider";
+import { useGetV2DashboardCountries, useGetV2DashboardTotalSectionHeader } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -37,26 +39,72 @@ export interface GraphicLegendProps {
 
 const Dashboard = () => {
   const t = useT();
+  const { filters } = useDashboardContext();
+  const [updateFilters, setUpdateFilters] = useState<any>({});
+  const [dashboardHeader, setDashboardHeader] = useState([
+    { label: "Trees Planted", value: "0" },
+    { label: "Hectares Under Restoration", value: "0 ha" },
+    { label: "Jobs Created", value: "0" }
+  ]);
+
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const dashboardHeader = [
+
+  useEffect(() => {
+    const parsedFilters = {
+      programmes: filters.programmes,
+      country: filters.country.country_slug,
+      "organisations.type": filters.organizations,
+      landscapes: filters.landscapes
+    };
+    setUpdateFilters(parsedFilters);
+  }, [filters]);
+
+  const createQueryParams = (filters: any) => {
+    const queryParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
+      } else if (value !== undefined && value !== null && value !== "") {
+        queryParams.append(`filter[${key}]`, value as string);
+      }
+    });
+    return queryParams.toString();
+  };
+
+  const queryParams = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+
+  const { data: totalSectionHeader } = useGetV2DashboardTotalSectionHeader<any>(
     {
-      label: "Trees Planted",
-      value: "12.2M"
+      queryParams: queryParams as any
     },
     {
-      label: "Hectares Under Restoration",
-      value: "5,220 ha"
-    },
-    {
-      label: "Jobs Created",
-      value: "23,000"
+      enabled: !!filters
     }
-  ];
+  );
 
   const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
     queryParams: {}
   });
+
+  useEffect(() => {
+    if (totalSectionHeader) {
+      setDashboardHeader([
+        {
+          label: "Trees Planted",
+          value: totalSectionHeader.total_trees_restored.toLocaleString()
+        },
+        {
+          label: "Hectares Under Restoration",
+          value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+        },
+        {
+          label: "Jobs Created",
+          value: totalSectionHeader.total_entries.toLocaleString()
+        }
+      ]);
+    }
+  }, [totalSectionHeader]);
 
   const COLUMN_ACTIVE_PROGRAMME = [
     {

@@ -172,6 +172,18 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         ...prevValues,
         country: selectedCountry
       }));
+    } else {
+      setFilters(prevValues => ({
+        ...prevValues,
+        country: {
+          country_slug: "",
+          id: 0,
+          data: {
+            label: "",
+            icon: ""
+          }
+        }
+      }));
     }
   };
 
@@ -216,6 +228,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   onChange={(value: OptionValue[]) => {
                     handleChange("programmes", value);
                   }}
+                  onClear={() => {
+                    handleChange("programmes", []);
+                  }}
                   options={programmeOptions}
                   optionClassName="hover:bg-grey-200"
                 />
@@ -236,6 +251,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   value={filters.landscapes}
                   onChange={value => {
                     handleChange("landscapes", value);
+                  }}
+                  onClear={() => {
+                    handleChange("landscapes", []);
                   }}
                   options={landscapeOption}
                   optionClassName="hover:bg-grey-200"
@@ -259,6 +277,17 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   onClear={() => {
                     toSelectedCountry();
                     setSelectedCountry(undefined);
+                    setFilters(prevValues => ({
+                      ...prevValues,
+                      country: {
+                        country_slug: "",
+                        id: 0,
+                        data: {
+                          label: "",
+                          icon: ""
+                        }
+                      }
+                    }));
                   }}
                   options={dropdwonCountryOptions}
                   optionClassName="hover:bg-grey-200"
@@ -280,6 +309,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   value={filters.organizations}
                   onChange={value => {
                     handleChange("organizations", value);
+                  }}
+                  onClear={() => {
+                    handleChange("organizations", []);
                   }}
                   options={organizationOptions}
                   optionClassName="hover:bg-grey-200"
