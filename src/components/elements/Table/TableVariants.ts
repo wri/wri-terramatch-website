@@ -172,5 +172,6 @@ export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
-  thead: "text-14-semibold bg-blueCustom-100"
+  thead: "text-14-semibold bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
