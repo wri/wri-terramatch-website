@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import React from "react";
+import React, { useEffect } from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -144,7 +144,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       organizations: []
     });
   };
-
+  useEffect(() => {
+    console.log("filters", filters);
+  }, [filters]);
   const handleChange = (selectName: string, value: OptionValue[]) => {
     setFilters(prevValues => ({
       ...prevValues,
@@ -203,6 +205,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             <div className="flex max-w-full flex-1 flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
+                  key={filters.programmes.length}
                   showClear
                   showSelectAll
                   multiSelect
@@ -227,6 +230,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               </BlurContainer>
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
+                  key={filters.landscapes.length}
                   showClear
                   showSelectAll
                   multiSelect
@@ -289,6 +293,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               </BlurContainer>
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
+                  key={filters.organizations.length}
                   showSelectAll
                   showClear
                   prefix={
