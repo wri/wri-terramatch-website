@@ -90,12 +90,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     }
   ];
   const { filters, setFilters } = useDashboardContext();
-  const dropdwonCountryOptions =
-    dashboardCountries?.map((country: CountriesProps) => ({
-      title: country.data.label,
-      value: country.id,
-      prefix: <img src={country.data.icon} alt="flag" className="h-4" />
-    })) || [];
 
   const organizationOptions = [
     {
@@ -159,11 +153,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   const handleChangeCountry = (value: OptionValue[]) => {
-    const selectedCountry = dashboardCountries?.find((country: CountriesProps) => {
-      if (country.id === value[0]) {
-        return country;
-      }
-    });
+    const selectedCountry = dashboardCountries?.find((country: CountriesProps) => country.id === value[0]);
 
     if (selectedCountry) {
       toSelectedCountry(selectedCountry.country_slug);
@@ -270,7 +260,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   placeholder="Global"
-                  value={filters.country ? [filters.country.data.label] : undefined}
+                  value={filters.country?.id ? [filters.country.id] : undefined}
                   onChange={value => {
                     handleChangeCountry(value);
                   }}
@@ -289,7 +279,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                       }
                     }));
                   }}
-                  options={dropdwonCountryOptions}
+                  options={dashboardCountries.map((country: CountriesProps) => ({
+                    title: country.data.label,
+                    value: country.id,
+                    prefix: <img src={country.data.icon} alt="flag" className="h-4" />
+                  }))}
                   optionClassName="hover:bg-grey-200"
                 />
               </BlurContainer>
