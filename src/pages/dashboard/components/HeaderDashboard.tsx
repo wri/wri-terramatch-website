@@ -109,7 +109,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     dashboardCountries?.map((country: CountriesProps) => ({
       title: country.data.label,
       value: country.id,
-      prefix: <img src={country.data.icon} alt="flag" className="h-4" />
+      prefix: <img src={country.data.icon} alt="flag" className="h-4 w-6 object-cover shadow-all" />
     })) || [];
 
   const [filterValues, setFilterValues] = useState<{
@@ -168,12 +168,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   return (
     <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
-      <div
-        className={classNames("flex flex-1 flex-wrap gap-3", {
-          "max-w-[calc(100%_-_260px)] lg:max-w-[calc(100%_-_295px)]": isProjectListPage,
-          "max-w-full": !isProjectListPage
-        })}
-      >
+      <div className={classNames("flex max-w-full flex-1 flex-wrap gap-3")}>
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
         </Text>
@@ -199,6 +194,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={dropdwonOptions}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[5]"
                 />
               </BlurContainer>
               <BlurContainer disabled={isProjectPage}>
@@ -220,6 +216,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={dropdwonOptions}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[4]"
                 />
               </BlurContainer>
               <BlurContainer className="min-w-[190px]" disabled={isProjectPage}>
@@ -249,6 +246,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={dropdwonCountryOptions}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[3]"
                 />
               </BlurContainer>
               <BlurContainer disabled={isProjectPage}>
@@ -270,42 +268,43 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={dropdwonOptions}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[2]"
                 />
               </BlurContainer>
             </div>
-            <button
-              className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
-              onClick={resetValues}
-              disabled={isProjectPage}
-            >
-              {t("Clear Filters")}
-            </button>
+            <div className="flex h-full flex-col items-start justify-between gap-3 lg:min-w-[287px] small:flex-row small:items-center">
+              <button
+                className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
+                onClick={resetValues}
+                disabled={isProjectPage}
+              >
+                {t("Clear Filters")}
+              </button>
+              <When condition={isProjectListPage}>
+                <Menu
+                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
+                  menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
+                  menu={optionMenu.map(option => ({
+                    id: option.id,
+                    render: () => (
+                      <span className="leading-[normal] tracking-[normal]">
+                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                          {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
+                        </Text>
+                        <Text variant="text-12-light" className="text-darkCustom" as="span">
+                          {t(option.project)},&nbsp;{t(option.programme)}
+                        </Text>
+                      </span>
+                    )
+                  }))}
+                >
+                  <BlurContainer className="lg:min-w-[287px]">
+                    <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+                  </BlurContainer>
+                </Menu>
+              </When>
+            </div>
           </div>
-        </When>
-      </div>
-      <div className="flex flex-col items-end justify-end gap-3 lg:min-w-[287px]">
-        <When condition={isProjectListPage}>
-          <Menu
-            classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
-            menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
-            menu={optionMenu.map(option => ({
-              id: option.id,
-              render: () => (
-                <span className="leading-[normal] tracking-[normal]">
-                  <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                    {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
-                  </Text>
-                  <Text variant="text-12-light" className="text-darkCustom" as="span">
-                    {t(option.project)},&nbsp;{t(option.programme)}
-                  </Text>
-                </span>
-              )
-            }))}
-          >
-            <BlurContainer className="lg:min-w-[287px]">
-              <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
-            </BlurContainer>
-          </Menu>
         </When>
       </div>
     </header>

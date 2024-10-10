@@ -27,7 +27,7 @@ export const VARIANT_DROPDOWN_DEFAULT: DropdownVariant = {
 };
 
 export const VARIANT_DROPDOWN_HEADER: DropdownVariant = {
-  containerClassName: "relative z-10",
+  containerClassName: "relative",
   className: "gap-2 text-white",
   iconClassName: "w-3 h-[9px] fill-trasparent",
   iconName: IconNames.CHEVRON_DOWN_DASH,
