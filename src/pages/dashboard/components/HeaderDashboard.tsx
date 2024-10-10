@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { When } from "react-if";
 
@@ -36,6 +37,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     setSelectedCountry
   } = props;
   const t = useT();
+  const router = useRouter();
 
   const optionMenu = [
     {
@@ -145,8 +147,39 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     });
   };
   useEffect(() => {
-    console.log("filters", filters);
+    const query: any = {
+      ...router.query,
+      programmes: filters.programmes,
+      landscapes: filters.landscapes,
+      country: filters.country?.country_slug || undefined,
+      organizations: filters.organizations
+    };
+
+    Object.keys(query).forEach(key => !query[key]?.length && delete query[key]);
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query
+      },
+      undefined,
+      { shallow: true }
+    );
   }, [filters]);
+
+  useEffect(() => {
+    const { programmes, landscapes, country, organizations } = router.query;
+
+    const newFilters = {
+      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
+      landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
+      country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
+      organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : []
+    };
+
+    setFilters(newFilters);
+  }, []);
+
   const handleChange = (selectName: string, value: OptionValue[]) => {
     setFilters(prevValues => ({
       ...prevValues,

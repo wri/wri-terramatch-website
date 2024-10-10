@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 
@@ -40,7 +39,6 @@ export interface GraphicLegendProps {
 }
 
 const Dashboard = () => {
-  const router = useRouter();
   const t = useT();
   const { filters } = useDashboardContext();
   const [updateFilters, setUpdateFilters] = useState<any>({});
@@ -61,15 +59,7 @@ const Dashboard = () => {
       landscapes: filters.landscapes
     };
     setUpdateFilters(parsedFilters);
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...parsedFilters }
-      },
-      undefined,
-      { shallow: true }
-    );
-  }, [filters, router]);
+  }, [filters]);
 
   const createQueryParams = (filters: any) => {
     const queryParams = new URLSearchParams();
