@@ -1,4 +1,8 @@
-import { VARIANT_PAGINATION_TEXT_16, VariantPagination } from "@/components/extensive/Pagination/PaginationVariant";
+import {
+  VARIANT_PAGINATION_DASHBOARD,
+  VARIANT_PAGINATION_TEXT_16,
+  VariantPagination
+} from "@/components/extensive/Pagination/PaginationVariant";
 
 export interface TableVariant {
   className?: string;
@@ -154,7 +158,8 @@ export const VARIANT_TABLE_DASHBOARD = {
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
-  thead: "text-14-semibold bg-blueCustom-100"
+  thead: "text-14-semibold bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
