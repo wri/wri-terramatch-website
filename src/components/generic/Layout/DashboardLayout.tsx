@@ -39,7 +39,6 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
 
   useEffect(() => {
     if (dashboardCountries) {
-      console.log("Dashboard Countries", dashboardCountries, router.asPath);
       const country = dashboardCountries.data.find((country: CountriesProps) => {
         const slugFromPath = router.asPath.split("/")[2];
         return country.country_slug === slugFromPath;
