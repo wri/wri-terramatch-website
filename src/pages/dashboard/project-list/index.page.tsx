@@ -100,12 +100,12 @@ const ProjectList = () => {
     : [];
 
   return (
-    <div className="h-full overflow-scroll bg-neutral-70 py-8 px-14">
+    <div className="h-full overflow-scroll bg-neutral-70 px-14 py-8">
       <Table
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
         variant={VARIANT_TABLE_DASHBOARD}
-        classNameWrapper="max-h-[calc(100%_-_4rem)] !px-0"
+        classNameWrapper="max-h-[calc(100%_-_4rem)] h-[calc(100%_-_4rem)] !px-0"
         hasPagination={true}
         invertSelectPagination={true}
       />
