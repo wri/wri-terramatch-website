@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       screens: {
         sx: "460px",
+        small: "1350px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
         md: "1400px",
         wide: "2500px",
@@ -35,7 +36,8 @@ module.exports = {
       backgroundImage: {
         imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
         "square-pattern": "url('/icons/ic-bg.svg')",
-        "back-map": "url('/icons/bg-map.svg')"
+        "back-map": "url('/icons/bg-map.svg')",
+        dash: "url('/icons/dash.svg')"
       },
       gridTemplateColumns: {
         1: "repeat(1, minmax(0, 1fr))",
@@ -179,7 +181,7 @@ module.exports = {
       },
       blue: {
         DEFAULT: "#2398D8",
-        50:"#0079FF",
+        50: "#0079FF",
         100: "#1B59F8",
         200: "#E9F5FC"
       },
@@ -187,18 +189,19 @@ module.exports = {
         DEFAULT: "#72D961",
         500: "#198E2B",
         400: "#1BA631",
-        300: "#4FB967",
+
         100: "#28C499",
-        60: "#0D614D",
+        60: "#24555C",
         50: "rgba(40, 196, 153, 0.10)",
         40: "#A2DCB3",
+        35: "#B9B942",
         30: "#EAFAF5"
       },
       yellow: {
         DEFAULT: "#FCFBE8",
         700: "#F4B059",
-        600: "#BB881E",
-        550: "#F8CE7B",
+        600: "#F8CE7B",
+        550: "#F7D913",
         500: "#F3EFB0",
         300: "#FEF8EF"
       },

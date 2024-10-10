@@ -1,6 +1,8 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode, useEffect, useState } from "react";
 import { When } from "react-if";
+import { twMerge as tw } from "tailwind-merge";
 
 import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyField";
 import Paper from "@/components/elements/Paper/Paper";
@@ -24,6 +26,8 @@ export interface PageCardProps
   classNameSubTitle?: string;
   variantSubTitle?: TextVariants;
   subtitleMore?: boolean;
+  tooltipTrigger?: "hover" | "click";
+  iconClassName?: string;
 }
 
 const PageCard = ({
@@ -37,15 +41,20 @@ const PageCard = ({
   classNameSubTitle,
   variantSubTitle,
   subtitleMore = false,
+  tooltipTrigger = "hover",
+  iconClassName,
   tooltip,
   ...props
 }: PageCardProps) => {
   const [collapseSubtile, setCollapseSubtile] = useState(true);
   const [subtitleText, setSubtitleText] = useState(subtitle);
+  const t = useT();
+
+  const maxLength = 278;
 
   useEffect(() => {
-    if (collapseSubtile && (subtitle?.length ?? 0) > 253) {
-      setSubtitleText(subtitle?.slice(0, 253));
+    if (collapseSubtile && (subtitle?.length ?? 0) > maxLength) {
+      setSubtitleText(subtitle?.slice(0, maxLength));
     } else {
       setSubtitleText(subtitle);
     }
@@ -60,8 +69,11 @@ const PageCard = ({
               {title}
               <When condition={!!tooltip}>
                 &nbsp;
-                <ToolTip content={tooltip} placement="top" width="w-44 lg:w-52" title={title}>
-                  <Icon name={IconNames.IC_INFO} className="h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4" />
+                <ToolTip content={tooltip} width="w-44 lg:w-52" title={title} trigger={tooltipTrigger}>
+                  <Icon
+                    name={IconNames.IC_INFO}
+                    className={tw("h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4", iconClassName)}
+                  />
                 </ToolTip>
               </When>
             </Text>
@@ -79,10 +91,13 @@ const PageCard = ({
           >
             {subtitleText}
           </Text>
-          <When condition={subtitleMore && collapseSubtile && (subtitle?.length ?? 0) > 253}>
-            ...
-            <button className="text-14-bold text-darkCustom opacity-80" onClick={() => setCollapseSubtile(false)}>
-              See More
+          <When condition={subtitleMore && (subtitle?.length ?? 0) > maxLength}>
+            <button
+              className="text-14-bold text-darkCustom opacity-80 hover:text-primary"
+              onClick={() => setCollapseSubtile(!collapseSubtile)}
+            >
+              &nbsp;
+              {collapseSubtile ? t("...See More") : t("See Less")}
             </button>
           </When>
         </div>

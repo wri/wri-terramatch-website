@@ -207,7 +207,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             onChange={e => handleInputChange("name", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
-          {entityData.project ? (
+          {entityData.project || entityData.model !== "project" ? (
             <></>
           ) : (
             <div>

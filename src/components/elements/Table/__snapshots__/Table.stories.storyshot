@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots Components/Elements/Table Default 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -825,7 +827,9 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Primary 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -1649,7 +1653,9 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -2473,7 +2479,9 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -3296,8 +3304,842 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
 </div>
 `;
 
+exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
+<div
+  className="bg-neutral-600"
+>
+  <div
+    className="w-full"
+  >
+    <div
+      className="overflow-x-auto px-4 md:px-0 undefined"
+    >
+      <div
+        className="flex w-full items-center justify-between"
+      >
+        <div>
+          <div
+            className="relative w-64"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+            <input
+              className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
+              onChange={[Function]}
+              placeholder="Search"
+              type="search"
+            />
+          </div>
+        </div>
+        <div
+          className="flex gap-5"
+        >
+          <div
+            className="flex items-center gap-5"
+          >
+            <div
+              className="space-y-2"
+              data-headlessui-state=""
+            >
+              <div
+                className="flex items-center gap-3"
+              >
+                <p
+                  className="text-16-bold"
+                  data-headlessui-state=""
+                  data-testid="txt"
+                  id="headlessui-listbox-label-:r2v:"
+                  onClick={[Function]}
+                >
+                  Funding source
+                </p>
+                <div
+                  className="relative"
+                >
+                  <div
+                    aria-expanded={false}
+                    aria-haspopup="listbox"
+                    aria-labelledby="headlessui-listbox-label-:r2v: headlessui-listbox-button-:r30:"
+                    className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                    data-headlessui-state=""
+                    disabled={false}
+                    id="headlessui-listbox-button-:r30:"
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                  >
+                    <p
+                      className="w-full uppercase line-clamp-1 text-14-bold"
+                      data-testid="txt"
+                    >
+                      Show All
+                    </p>
+                    <div
+                      style={
+                        Object {
+                          "height": undefined,
+                          "width": 20,
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex items-center gap-5"
+          />
+        </div>
+      </div>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          Create
+        </span>
+      </button>
+      <div
+        className="border border-neutral-200 rounded-lg overflow-auto w-full max-h-[calc(100vh-219px)]"
+      >
+        <table
+          className="w-full border-collapse"
+        >
+          <thead
+            className="text-14-semibold bg-blueCustom-100"
+          >
+            <tr
+              className="bg-neutral-150 sticky top-0 z-auto"
+            >
+              <th
+                align="left"
+                className="first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-4"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding type
+                </div>
+              </th>
+              <th
+                align="left"
+                className="first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-4 cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding source
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-4 cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding amount
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-4"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Status
+                </div>
+              </th>
+              <th
+                align="left"
+                className="first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-4"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            className=""
+          >
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                2000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                7500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1900
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    edit
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                5000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                100000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                60000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                15000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1510000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Components/Elements/Table Table Border 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -4121,7 +4963,9 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
 `;
 
 exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -4944,8 +5788,2504 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
 </div>
 `;
 
+exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
+<div
+  className="bg-neutral-600"
+>
+  <div
+    className="w-full"
+  >
+    <div
+      className="overflow-x-auto px-4 md:px-0 undefined"
+    >
+      <div
+        className="flex w-full items-center justify-between"
+      >
+        <div>
+          <div
+            className="relative w-64"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+            <input
+              className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
+              onChange={[Function]}
+              placeholder="Search"
+              type="search"
+            />
+          </div>
+        </div>
+        <div
+          className="flex gap-5"
+        >
+          <div
+            className="flex items-center gap-5"
+          >
+            <div
+              className="space-y-2"
+              data-headlessui-state=""
+            >
+              <div
+                className="flex items-center gap-3"
+              >
+                <p
+                  className="text-16-bold"
+                  data-headlessui-state=""
+                  data-testid="txt"
+                  id="headlessui-listbox-label-:r2r:"
+                  onClick={[Function]}
+                >
+                  Funding source
+                </p>
+                <div
+                  className="relative"
+                >
+                  <div
+                    aria-expanded={false}
+                    aria-haspopup="listbox"
+                    aria-labelledby="headlessui-listbox-label-:r2r: headlessui-listbox-button-:r2s:"
+                    className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                    data-headlessui-state=""
+                    disabled={false}
+                    id="headlessui-listbox-button-:r2s:"
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                  >
+                    <p
+                      className="w-full uppercase line-clamp-1 text-14-bold"
+                      data-testid="txt"
+                    >
+                      Show All
+                    </p>
+                    <div
+                      style={
+                        Object {
+                          "height": undefined,
+                          "width": 20,
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex items-center gap-5"
+          />
+        </div>
+      </div>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          Create
+        </span>
+      </button>
+      <div
+        className="border border-neutral-200 rounded-lg overflow-auto "
+      >
+        <table
+          className="w-full border-collapse"
+        >
+          <thead
+            className="bg-blueCustom-100 "
+          >
+            <tr
+              className="bg-neutral-150 sticky top-0 z-10 "
+            >
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding type
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0 cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding source
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0 cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding amount
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Status
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            className=""
+          >
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                2000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                7500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1900
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    edit
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                5000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                100000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                60000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                15000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1510000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`] = `
+<div
+  className="bg-neutral-600"
+>
+  <div
+    className="w-full"
+  >
+    <div
+      className="overflow-x-auto px-4 md:px-0 undefined"
+    >
+      <div
+        className="flex w-full items-center justify-between"
+      >
+        <div>
+          <div
+            className="relative w-64"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+            <input
+              className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
+              onChange={[Function]}
+              placeholder="Search"
+              type="search"
+            />
+          </div>
+        </div>
+        <div
+          className="flex gap-5"
+        >
+          <div
+            className="flex items-center gap-5"
+          >
+            <div
+              className="space-y-2"
+              data-headlessui-state=""
+            >
+              <div
+                className="flex items-center gap-3"
+              >
+                <p
+                  className="text-16-bold"
+                  data-headlessui-state=""
+                  data-testid="txt"
+                  id="headlessui-listbox-label-:r2t:"
+                  onClick={[Function]}
+                >
+                  Funding source
+                </p>
+                <div
+                  className="relative"
+                >
+                  <div
+                    aria-expanded={false}
+                    aria-haspopup="listbox"
+                    aria-labelledby="headlessui-listbox-label-:r2t: headlessui-listbox-button-:r2u:"
+                    className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                    data-headlessui-state=""
+                    disabled={false}
+                    id="headlessui-listbox-button-:r2u:"
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                  >
+                    <p
+                      className="w-full uppercase line-clamp-1 text-14-bold"
+                      data-testid="txt"
+                    >
+                      Show All
+                    </p>
+                    <div
+                      style={
+                        Object {
+                          "height": undefined,
+                          "width": 20,
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex items-center gap-5"
+          />
+        </div>
+      </div>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          Create
+        </span>
+      </button>
+      <div
+        className="border border-neutral-200 rounded-lg overflow-auto"
+      >
+        <table
+          className="w-full border-collapse"
+        >
+          <thead
+            className="bg-blueCustom-100 "
+          >
+            <tr
+              className="bg-neutral-150 sticky top-0 z-10 "
+            >
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding type
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0 cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding source
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0 cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding amount
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Status
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap py-4 first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            className=""
+          >
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                2000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                7500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1900
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    edit
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                5000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                100000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                60000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                15000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-y border-neutral-200 last:border-b-0"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                1510000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
+<div
+  className="bg-neutral-600"
+>
+  <div
+    className="w-full"
+  >
+    <div
+      className="overflow-x-auto px-4 md:px-0 undefined"
+    >
+      <div
+        className="flex w-full items-center justify-between"
+      >
+        <div>
+          <div
+            className="relative w-64"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+            <input
+              className="placeholder:text-body-300 text-body-300 w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-4 text-neutral-1000 placeholder:text-neutral-1000"
+              onChange={[Function]}
+              placeholder="Search"
+              type="search"
+            />
+          </div>
+        </div>
+        <div
+          className="flex gap-5"
+        >
+          <div
+            className="flex items-center gap-5"
+          >
+            <div
+              className="space-y-2"
+              data-headlessui-state=""
+            >
+              <div
+                className="flex items-center gap-3"
+              >
+                <p
+                  className="text-16-bold"
+                  data-headlessui-state=""
+                  data-testid="txt"
+                  id="headlessui-listbox-label-:r2p:"
+                  onClick={[Function]}
+                >
+                  Funding source
+                </p>
+                <div
+                  className="relative"
+                >
+                  <div
+                    aria-expanded={false}
+                    aria-haspopup="listbox"
+                    aria-labelledby="headlessui-listbox-label-:r2p: headlessui-listbox-button-:r2q:"
+                    className="pitems-center flex items-center justify-center gap-1 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4"
+                    data-headlessui-state=""
+                    disabled={false}
+                    id="headlessui-listbox-button-:r2q:"
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                  >
+                    <p
+                      className="w-full uppercase line-clamp-1 text-14-bold"
+                      data-testid="txt"
+                    >
+                      Show All
+                    </p>
+                    <div
+                      style={
+                        Object {
+                          "height": undefined,
+                          "width": 20,
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex items-center gap-5"
+          />
+        </div>
+      </div>
+      <button
+        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+      >
+        <span
+          className="flex items-center text-bold-caption-200"
+        >
+          Create
+        </span>
+      </button>
+      <div>
+        <table
+          className="w-full border-collapse w-full"
+        >
+          <thead
+            className="bg-transparent"
+          >
+            <tr
+              className="!bg-transparent border-b border-neutral-200"
+            >
+              <th
+                align="left"
+                className="whitespace-nowrap px-6 py-4 text-black !px-2 !py-2 font-bold"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding type
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap px-6 py-4 text-black !px-2 !py-2 font-bold cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding source
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap px-6 py-4 text-black !px-2 !py-2 font-bold cursor-pointer"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Funding amount
+                  <div
+                    style={
+                      Object {
+                        "height": 14,
+                        "width": 11,
+                      }
+                    }
+                  />
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap px-6 py-4 text-black !px-2 !py-2 font-bold"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                >
+                  Status
+                </div>
+              </th>
+              <th
+                align="left"
+                className="whitespace-nowrap px-6 py-4 text-black !px-2 !py-2 font-bold"
+                colSpan={1}
+                onClick={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                  style={
+                    Object {
+                      "color": "currentColor",
+                      "fontFamily": "inherit",
+                      "fontSize": "inherit",
+                      "fontWeight": "inherit",
+                    }
+                  }
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            className=""
+          >
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                2000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                1000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                1500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                7500
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                American Express
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                1900
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    edit
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                5000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                100000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    error
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                60000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    awaiting
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Credit
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Master Card
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                15000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    warning
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="rounded-lg bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100"
+            >
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                Cash
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                VISA
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                1510000
+              </td>
+              <td
+                align="left"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <div
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                  <p
+                    className="text-bold-caption-100"
+                    data-testid="txt"
+                  >
+                    success
+                  </p>
+                </div>
+              </td>
+              <td
+                align="right"
+                className="text-normal-subtitle-400 first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200"
+              >
+                <button
+                  className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
+                >
+                  <span
+                    className="flex items-center text-bold-caption-200"
+                  >
+                    View
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
-<div>
+<div
+  className="w-full"
+>
   <div
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
@@ -5774,7 +9114,9 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
 <div
   className="bg-neutral-600"
 >
-  <div>
+  <div
+    className="w-full"
+  >
     <div
       className="overflow-x-auto px-4 md:px-0 undefined"
     >

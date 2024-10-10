@@ -8,10 +8,12 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-import ContentOverviewProject from "../components/ContentOverviewProject";
+import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
+  DATA_ACTIVE_COUNTRY,
+  DATA_IMPACT_STORIES,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -20,11 +22,7 @@ import {
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   OBJETIVE,
-  RESTORATION_STRATEGIES_REPRESENTED,
-  TARGET_LAND_USE_TYPES_REPRESENTED,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
-  TOTAL_HECTARES_UNDER_RESTORATION,
-  TOTAL_NUMBER_OF_SITES,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
@@ -76,28 +74,70 @@ const ProjectView = () => {
     }
   ];
 
-  return (
-    <div className="flex flex-1 gap-4 overflow-hidden bg-neutral-70 p-4 ">
-      <ContentOverviewProject />
+  const COLUMN_ACTIVE_COUNTRY = [
+    {
+      header: "Project",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
+          </a>
+        );
+      }
+    }
+  ];
 
-      <div ref={sharedRef} className="w-3/5 overflow-auto pr-2 ">
+  return (
+    <div
+      className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
+      ref={sharedRef}
+    >
+      <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <div>
             <Breadcrumbs
               links={[
-                { title: t("TerraFund Top100"), path: "/#" },
-                { title: t("Niger"), path: "/#" },
+                { title: t("TerraFund Top100"), path: "/dashboard" },
+                { title: t("Niger"), path: "/dashboard/country/AU" },
                 { title: t("Restoration of Degraded Forest Lands in Ghana - PADO") }
               ]}
               className="pt-0 "
               textVariant="text-14"
+              clasNameText="!no-underline hover:text-primary hover:opacity-100 mt-0.5 hover:mb-0.5 hover:mt-0"
             />
           </div>
 
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-5 py-4.5">
-                <Text variant="text-10-light" className="text-darkCustom opacity-60">
+                <Text variant="text-12-light" className="text-darkCustom opacity-60">
                   {t(item.label)}
                 </Text>
 
@@ -105,7 +145,15 @@ const ProjectView = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip content={item.label} placement="top" width="w-44 lg:w-52">
+                  <ToolTip
+                    title={item.label}
+                    content={t(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                    )}
+                    placement="top"
+                    width="w-56 lg:w-64"
+                    trigger="click"
+                  >
                     <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
                   </ToolTip>
                 </div>
@@ -171,33 +219,6 @@ const ProjectView = () => {
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
             gap={8}
-            subtitleMore={true}
-            title={t("HECTARES UNDER RESTORATION")}
-            variantSubTitle="text-14-light"
-            subtitle={t(
-              `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
-            )}
-          >
-            <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
-              <SecDashboard
-                title={t("Total HECTARES UNDER RESTORATION")}
-                data={TOTAL_HECTARES_UNDER_RESTORATION}
-                classNameBody="w-full place-content-center !justify-center"
-              />
-              <SecDashboard
-                title={t("TOTAL NUMBER OF SITES")}
-                data={TOTAL_NUMBER_OF_SITES}
-                className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
-              />
-            </div>
-            <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
-            <SecDashboard title={t("TARGET LAND USE TYPES REPRESENTED")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
-          </PageCard>
-          <PageCard
-            className="border-0 px-4 py-6"
-            classNameSubTitle="mt-4"
-            gap={8}
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
@@ -205,20 +226,20 @@ const ProjectView = () => {
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund’s MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
           >
-            <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
+            <div className="grid w-full auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
-                classNameBody="w-full place-content-center !justify-center"
+                classNameBody="w-full place-content-center"
               />
             </div>
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={JOBS_CREATED_BY_GENDER}
@@ -226,22 +247,22 @@ const ProjectView = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("JOBS CREATED BY AGE")}
+                title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
             </div>
-            <SecDashboard title={t("Total VOLUNTEERS")} data={TOTAL_VOLUNTEERS} />
-            <div className="grid w-11/12 grid-cols-2 gap-12">
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
+            <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY GENDER")}
+                title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               />
               <SecDashboard
-                title={t("VOLUNTEERS CREATED BY AGE")}
+                title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
@@ -250,6 +271,15 @@ const ProjectView = () => {
           </PageCard>
         </PageRow>
       </div>
+      <ContentOverview
+        dataTable={DATA_ACTIVE_COUNTRY}
+        columns={COLUMN_ACTIVE_COUNTRY}
+        dataImpactStories={DATA_IMPACT_STORIES}
+        titleTable={"OTHER PROJECTS IN NIGER"}
+        textTooltipTable={
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+        }
+      />
     </div>
   );
 };
