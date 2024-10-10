@@ -117,7 +117,7 @@ function Table<TData extends RowData>({
   }, [data]);
 
   return (
-    <div className="w-full">
+    <div className={classNames("w-full", variant.className)}>
       <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter

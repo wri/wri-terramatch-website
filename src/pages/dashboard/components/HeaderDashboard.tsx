@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { When } from "react-if";
@@ -95,6 +94,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       value: "for-profit-organization"
     }
   ];
+
   const programmeOptions = [
     {
       title: "Top 100",
@@ -214,19 +214,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   return (
-    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
-      <div
-        className={classNames("flex flex-1 flex-wrap gap-3", {
-          "max-w-[calc(100%_-_260px)] lg:max-w-[calc(100%_-_295px)]": isProjectListPage,
-          "max-w-full": !isProjectListPage
-        })}
-      >
+    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+      <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
         </Text>
         <When condition={!isProjectInsightsPage}>
-          <div className="flexl-col flex max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
-            <div className="flex max-w-full flex-1 flex-wrap items-center gap-3 small:flex-nowrap">
+          <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
+            <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
                   key={filters.programmes.length}
@@ -250,6 +245,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={programmeOptions}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[5]"
                 />
               </BlurContainer>
               <BlurContainer disabled={isProjectPage}>
@@ -275,6 +271,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={landscapeOption}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[4]"
                 />
               </BlurContainer>
               <BlurContainer className="min-w-[190px]" disabled={isProjectPage}>
@@ -313,6 +310,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     prefix: <img src={country.data.icon} alt="flag" className="h-4" />
                   }))}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[3]"
                 />
               </BlurContainer>
               <BlurContainer disabled={isProjectPage}>
@@ -338,42 +336,43 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={organizationOptions}
                   optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[2]"
                 />
               </BlurContainer>
             </div>
-            <button
-              className="text-14-semibold whitespace-nowrap p-1 text-white disabled:opacity-70"
-              onClick={resetValues}
-              disabled={isProjectPage}
-            >
-              {t("Clear Filters")}
-            </button>
+            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center">
+              <button
+                className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
+                onClick={resetValues}
+                disabled={isProjectPage}
+              >
+                {t("Clear Filters")}
+              </button>
+              <When condition={isProjectListPage}>
+                <Menu
+                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
+                  menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
+                  menu={optionMenu.map(option => ({
+                    id: option.id,
+                    render: () => (
+                      <span className="leading-[normal] tracking-[normal]">
+                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                          {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
+                        </Text>
+                        <Text variant="text-12-light" className="text-darkCustom" as="span">
+                          {t(option.project)},&nbsp;{t(option.programme)}
+                        </Text>
+                      </span>
+                    )
+                  }))}
+                >
+                  <BlurContainer className="lg:min-w-[287px]">
+                    <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+                  </BlurContainer>
+                </Menu>
+              </When>
+            </div>
           </div>
-        </When>
-      </div>
-      <div className="flex flex-col items-end justify-end gap-3 lg:min-w-[287px]">
-        <When condition={isProjectListPage}>
-          <Menu
-            classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
-            menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
-            menu={optionMenu.map(option => ({
-              id: option.id,
-              render: () => (
-                <span className="leading-[normal] tracking-[normal]">
-                  <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                    {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
-                  </Text>
-                  <Text variant="text-12-light" className="text-darkCustom" as="span">
-                    {t(option.project)},&nbsp;{t(option.programme)}
-                  </Text>
-                </span>
-              )
-            }))}
-          >
-            <BlurContainer className="lg:min-w-[287px]">
-              <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
-            </BlurContainer>
-          </Menu>
         </When>
       </div>
     </header>
