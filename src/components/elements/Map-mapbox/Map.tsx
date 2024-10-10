@@ -114,6 +114,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
+  isDashboard?: boolean;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }
@@ -141,6 +142,7 @@ export const MapContainer = ({
   tooltipType = "view",
   polygonsExists = true,
   shouldBboxZoom = true,
+  isDashboard = false,
   formMap,
   pdView = false,
   location,
@@ -506,9 +508,11 @@ export const MapContainer = ({
             <ProcessBulkPolygonsControl entityData={record} />
           </ControlGroup>
         </When>
-        <ControlGroup position="top-right">
-          <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
-        </ControlGroup>
+        <When condition={!isDashboard}>
+          <ControlGroup position="top-right">
+            <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+          </ControlGroup>
+        </When>
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
@@ -562,7 +566,11 @@ export const MapContainer = ({
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-            <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+            {isDashboard ? (
+              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+            ) : (
+              <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+            )}
           </ControlGroup>
         </When>
       </When>

@@ -113,7 +113,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       <PageRow className="w-full gap-4 p-0">
         <div className="shadow-lg relative w-full rounded-lg border-4 border-white">
           <Button
-            className="absolute right-6 top-6 z-10"
+            className="absolute right-5 top-6 z-10"
             variant="white-button-map"
             onClick={() => {
               ModalMap();
@@ -126,13 +126,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               </Text>
             </div>
           </Button>
-          <MapContainer showLegend={false} mapFunctions={mapFunctions} />
+          <MapContainer showLegend={false} mapFunctions={mapFunctions} isDashboard={true} />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
           </div>
 
-          <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+          <div className="absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
