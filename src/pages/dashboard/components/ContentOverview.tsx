@@ -56,11 +56,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       "modalExpand",
       <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          {/* <img
-            src="/images/map-img.png"
-            alt="map"
-            className={"h-full w-full rounded-lg transition-all duration-500 ease-in-out"}
-          /> */}
           <MapContainer className="h-[240px] flex-1" showLegend={false} mapFunctions={mapFunctions} />
 
           <TooltipGridMap label="Angola" learnMore={true} />
@@ -131,11 +126,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               </Text>
             </div>
           </Button>
-          {/* <img
-            src="/images/map-img.png"
-            alt="map"
-            className={"h-full max-h-[50vh] w-full rounded-lg transition-all duration-500 ease-in-out"}
-          /> */}
           <MapContainer showLegend={false} mapFunctions={mapFunctions} />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
