@@ -7,11 +7,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import {
-  GetV2DashboardTotalSectionHeaderQueryParams,
-  useGetV2DashboardCountries,
-  useGetV2DashboardTotalSectionHeader
-} from "@/generated/apiComponents";
+import { useGetV2DashboardCountries, useGetV2DashboardTotalSectionHeader } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -64,34 +60,23 @@ const Dashboard = () => {
     setUpdateFilters(parsedFilters);
   }, [filters]);
 
-  const createQueryParams = (filters: any): GetV2DashboardTotalSectionHeaderQueryParams => {
-    const queryParams: GetV2DashboardTotalSectionHeaderQueryParams = {};
-
-    if (filters.search) {
-      queryParams.search = filters.search;
-    }
-
-    const filterParams: Record<string, any> = {};
+  const createQueryParams = (filters: any) => {
+    const queryParams = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        filterParams[key] = value.join(",");
+        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
       } else if (value !== undefined && value !== null && value !== "") {
-        filterParams[key] = value;
+        queryParams.append(`filter[${key}]`, value as string);
       }
     });
-
-    if (Object.keys(filterParams).length > 0) {
-      queryParams.filter = JSON.stringify(filterParams);
-    }
-
-    return queryParams;
+    return queryParams.toString();
   };
 
   const queryParams = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
 
   const { data: totalSectionHeader, refetch } = useGetV2DashboardTotalSectionHeader<any>(
     {
-      queryParams: queryParams
+      queryParams: queryParams as any
     },
     {
       enabled: !!filters
