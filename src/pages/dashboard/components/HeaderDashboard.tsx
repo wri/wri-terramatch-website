@@ -173,8 +173,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           {t(getHeaderTitle())}
         </Text>
         <When condition={!isProjectInsightsPage}>
-          <div className="flexl-col flex max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
-            <div className="flex max-w-full flex-1 flex-wrap items-center gap-3 small:flex-nowrap">
+          <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
+            <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>
                 <Dropdown
                   showClear
@@ -272,7 +272,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 />
               </BlurContainer>
             </div>
-            <div className="flex h-full flex-col items-start justify-between gap-3 lg:min-w-[287px] small:flex-row small:items-center">
+            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center">
               <button
                 className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
                 onClick={resetValues}
