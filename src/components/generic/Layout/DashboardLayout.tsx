@@ -69,7 +69,6 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                 dashboardCountries={dashboardCountries.data}
                 defaultSelectedCountry={selectedCountry}
                 setSelectedCountry={setSelectedCountry}
-                toSelectedCountry={() => {}}
               />
               {childrenWithProps}
             </>

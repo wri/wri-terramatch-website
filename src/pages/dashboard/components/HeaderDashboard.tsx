@@ -23,19 +23,11 @@ interface HeaderDashboardProps {
   isProjectPage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
-  toSelectedCountry: (country_slug?: string) => void;
   setSelectedCountry: (country?: CountriesProps) => void;
 }
 
 const HeaderDashboard = (props: HeaderDashboardProps) => {
-  const {
-    isProjectInsightsPage,
-    isProjectListPage,
-    isProjectPage,
-    toSelectedCountry,
-    dashboardCountries,
-    setSelectedCountry
-  } = props;
+  const { isProjectInsightsPage, isProjectListPage, isProjectPage, dashboardCountries, setSelectedCountry } = props;
   const t = useT();
   const router = useRouter();
 
@@ -191,7 +183,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const selectedCountry = dashboardCountries?.find((country: CountriesProps) => country.id === value[0]);
 
     if (selectedCountry) {
-      toSelectedCountry(selectedCountry.country_slug);
       setSelectedCountry(selectedCountry);
       setFilters(prevValues => ({
         ...prevValues,
@@ -288,6 +279,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               </BlurContainer>
               <BlurContainer className="min-w-[190px]" disabled={isProjectPage}>
                 <Dropdown
+                  key={filters.country.id}
                   showClear
                   prefix={
                     <Text variant="text-14-light" className="leading-none">
@@ -302,7 +294,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     handleChangeCountry(value);
                   }}
                   onClear={() => {
-                    toSelectedCountry();
                     setSelectedCountry(undefined);
                     setFilters(prevValues => ({
                       ...prevValues,
