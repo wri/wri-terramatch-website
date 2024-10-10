@@ -1,11 +1,14 @@
 import { useT } from "@transifex/react";
+import { useEffect, useMemo, useState } from "react";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { useDashboardContext } from "@/context/dashboard.provider";
+import { useGetV2DashboardCountries, useGetV2DashboardTotalSectionHeader } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -37,26 +40,76 @@ export interface GraphicLegendProps {
 
 const Dashboard = () => {
   const t = useT();
+  const { filters } = useDashboardContext();
+  const [updateFilters, setUpdateFilters] = useState<any>({});
+  const [dashboardHeader, setDashboardHeader] = useState([
+    { label: "Trees Planted", value: "0" },
+    { label: "Hectares Under Restoration", value: "0 ha" },
+    { label: "Jobs Created", value: "0" }
+  ]);
+
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-  const dashboardHeader = [
+
+  useEffect(() => {
+    const parsedFilters = {
+      programmes: filters.programmes,
+      country: filters.country.country_slug,
+      "organisations.type": filters.organizations,
+      landscapes: filters.landscapes
+    };
+    setUpdateFilters(parsedFilters);
+  }, [filters]);
+
+  const createQueryParams = (filters: any) => {
+    const queryParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
+      } else if (value !== undefined && value !== null && value !== "") {
+        queryParams.append(`filter[${key}]`, value as string);
+      }
+    });
+    return queryParams.toString();
+  };
+
+  const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+
+  const { data: totalSectionHeader, refetch } = useGetV2DashboardTotalSectionHeader<any>(
     {
-      label: "Trees Planted",
-      value: "12.2M"
+      queryParams: queryParams
     },
     {
-      label: "Hectares Under Restoration",
-      value: "5,220 ha"
-    },
-    {
-      label: "Jobs Created",
-      value: "23,000"
+      enabled: !!filters
     }
-  ];
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [filters]);
 
   const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
     queryParams: {}
   });
+
+  useEffect(() => {
+    if (totalSectionHeader) {
+      setDashboardHeader([
+        {
+          label: "Trees Planted",
+          value: totalSectionHeader.total_trees_restored.toLocaleString()
+        },
+        {
+          label: "Hectares Under Restoration",
+          value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+        },
+        {
+          label: "Jobs Created",
+          value: totalSectionHeader.total_entries.toLocaleString()
+        }
+      ]);
+    }
+  }, [totalSectionHeader]);
 
   const COLUMN_ACTIVE_PROGRAMME = [
     {
@@ -109,6 +162,17 @@ const Dashboard = () => {
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
+          <When condition={filters.country.id !== 0}>
+            <div className="flex items-center gap-2">
+              <Text variant="text-14-light" className="uppercase text-black ">
+                {t("results for:")}
+              </Text>
+              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
+              <Text variant="text-24-semibold" className="text-black">
+                {t(filters.country?.data.label)}
+              </Text>
+            </div>
+          </When>
           <div className="grid w-full grid-cols-3 gap-4">
             {dashboardHeader.map((item, index) => (
               <div key={index} className="rounded-lg bg-white px-4 py-3">
@@ -144,7 +208,7 @@ const Dashboard = () => {
             title={t("Trees Restored")}
             variantSubTitle="text-14-light"
             subtitle={t(
-              `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+              `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund's MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
             )}
           >
             <SecDashboard
@@ -176,7 +240,7 @@ const Dashboard = () => {
             variantSubTitle="text-14-light"
             subtitleMore={true}
             subtitle={t(
-              `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund’s MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
+              `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund's MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
           >
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
