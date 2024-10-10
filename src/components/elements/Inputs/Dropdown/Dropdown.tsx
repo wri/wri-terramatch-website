@@ -256,9 +256,14 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
                         checked={selected.length === options.length}
                         onChange={() => {
-                          selected.length === options.length
-                            ? setSelected([])
-                            : setSelected(options.map(option => option.value));
+                          if (selected.length === options.length) {
+                            setSelected([]);
+                            props.onChange([]);
+                          } else {
+                            const allValues = options.map(option => option.value);
+                            setSelected(allValues);
+                            props.onChange(allValues);
+                          }
                         }}
                       />
                     </div>

@@ -5,6 +5,8 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import ImpactStoryCard from "@/components/elements/Cards/DashboardCard/ImpactStoryCard";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -47,17 +49,15 @@ interface ContentOverviewProps<TData> {
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const { dataTable: data, columns, dataImpactStories = [], titleTable, textTooltipTable } = props;
   const t = useT();
+  const mapFunctions = useMap();
   const { openModal, closeModal } = useModalContext();
   const ModalMap = () => {
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <img
-            src="/images/map-img.png"
-            alt="map"
-            className={"h-full w-full rounded-lg transition-all duration-500 ease-in-out"}
-          />
+          <MapContainer className="h-[240px] flex-1" showLegend={false} mapFunctions={mapFunctions} />
+
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
@@ -126,11 +126,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               </Text>
             </div>
           </Button>
-          <img
-            src="/images/map-img.png"
-            alt="map"
-            className={"h-full max-h-[50vh] w-full rounded-lg transition-all duration-500 ease-in-out"}
-          />
+          <MapContainer showLegend={false} mapFunctions={mapFunctions} />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
