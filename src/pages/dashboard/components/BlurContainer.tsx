@@ -14,7 +14,7 @@ const BlurContainer = (props: BlurContainerProps) => {
     <div
       className={tw(
         classNames(
-          "relative max-h-fit w-fit min-w-[196px]  flex-[1_1_45%] rounded-lg border border-[#989E97] small:flex-auto"
+          "relative max-h-fit w-fit min-w-[196px] flex-[1_1_45%] rounded-lg border border-[#989E97] small:flex-auto"
         ),
         className
       )}
