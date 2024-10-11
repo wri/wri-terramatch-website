@@ -72,7 +72,7 @@ const PageCard = ({
               <When condition={!!tooltip}>
                 &nbsp;
                 <ToolTip
-                  content={tooltip}
+                  content={tooltip || ""}
                   width={widthTooltip || "w-44 lg:w-52"}
                   title={title}
                   trigger={tooltipTrigger}

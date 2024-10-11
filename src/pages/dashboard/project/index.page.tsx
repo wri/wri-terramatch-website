@@ -63,15 +63,21 @@ const ProjectView = () => {
   const dashboardHeader = [
     {
       label: "Trees Planted",
-      value: "12.2M"
+      value: "0",
+      tooltip:
+        "Total number of trees planted by funded projects to date, including through assisted natural regeneration, as reported through six-month progress reports."
     },
     {
       label: "Hectares Under Restoration",
-      value: "5,220 ha"
+      value: "0 ha",
+      tooltip:
+        "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts."
     },
     {
       label: "Jobs Created",
-      value: "23,000"
+      value: "0",
+      tooltip:
+        "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
     }
   ];
 
@@ -117,7 +123,7 @@ const ProjectView = () => {
 
   return (
     <div
-      className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
+      className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
       ref={sharedRef}
     >
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -148,9 +154,7 @@ const ProjectView = () => {
                   </Text>
                   <ToolTip
                     title={item.label}
-                    content={t(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
-                    )}
+                    content={t(item.tooltip)}
                     placement="top"
                     width="w-56 lg:w-64"
                     trigger="click"
