@@ -19,7 +19,14 @@ export interface ModalExpandProps extends ModalBaseProps {
 
 const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, closeModal, ...rest }) => {
   const t = useT();
-
+  const popUpContentInTwoLines = (
+    <div className="flex w-auto min-w-0 max-w-full flex-col">
+      <Text className="line-clamp-2 max-h-[3em] whitespace-normal leading-tight" variant="text-12-light">
+        {popUpContent}
+      </Text>
+    </div>
+  );
+  <Text variant="text-12-light" className="!font-light leading-[normal]"></Text>;
   return (
     <ExpandModalBase {...rest}>
       <div className="flex w-full items-center justify-between p-6">
@@ -28,7 +35,7 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
             {t(title)}
           </Text>
           <When condition={popUpContent}>
-            <Tooltip content={popUpContent} width="w-96 lg:w-96">
+            <Tooltip trigger="click" content={popUpContentInTwoLines} width="max-w-[60vw]">
               <Icon name={IconNames.IC_INFO} />
             </Tooltip>
           </When>

@@ -170,8 +170,8 @@ const ToolTip = ({
               {t(title)}
             </Text>
           </When>
-          <Text variant="text-12-light" className="!font-light leading-[normal]" containHtml={true}>
-            {t(content)}
+          <Text variant="text-12-light" className="!font-light leading-[normal]">
+            {content}
           </Text>
         </div>
       </div>
