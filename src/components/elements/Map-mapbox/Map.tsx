@@ -387,7 +387,7 @@ export const MapContainer = ({
   }
 
   useEffect(() => {
-    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded && map.current.isStyleLoaded()) {
       const newPolygonData = {
         [DELETED_POLYGONS]: selectedPolygonsInCheckbox
       };
