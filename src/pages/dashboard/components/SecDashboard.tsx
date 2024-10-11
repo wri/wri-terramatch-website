@@ -66,6 +66,8 @@ const SecDashboard = ({
     }
   }, []);
 
+  console.log("data", data);
+
   return (
     <div className={className}>
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
@@ -103,7 +105,7 @@ const SecDashboard = ({
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
-        <When condition={data?.value}>
+        <When condition={data?.totalValue}>
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
         </When>
         <When condition={tooltipGraphic}>
