@@ -73,7 +73,7 @@ const SecDashboard = ({
           <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
           </Text>
-          <ToolTip title={t(title)} content={t(tooltip)} width="w-[200px] lg:w-64" trigger="click">
+          <ToolTip title={t(title)} content={t(tooltip)} width="w-52 lg:w-64" trigger="click">
             <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
           </ToolTip>
         </div>
