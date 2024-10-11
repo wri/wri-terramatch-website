@@ -8,6 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardCountries, useGetV2DashboardTotalSectionHeader } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
@@ -75,7 +76,12 @@ const Dashboard = () => {
 
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
 
-  const { data: totalSectionHeader, refetch } = useGetV2DashboardTotalSectionHeader<any>(
+  const { showLoader, hideLoader } = useLoading();
+  const {
+    data: totalSectionHeader,
+    refetch,
+    isLoading
+  } = useGetV2DashboardTotalSectionHeader<any>(
     {
       queryParams: queryParams
     },
@@ -83,7 +89,13 @@ const Dashboard = () => {
       enabled: !!filters
     }
   );
-
+  useEffect(() => {
+    if (isLoading) {
+      showLoader();
+    } else {
+      hideLoader();
+    }
+  }, [isLoading, showLoader, hideLoader]);
   useEffect(() => {
     refetch();
   }, [filters]);
