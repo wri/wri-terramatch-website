@@ -85,12 +85,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalTable = () => {
     openModal(
       "modalExpand",
-      <ModalExpand
-        id="modalExpand"
-        title={t("ACTIVE COUNTRIES")}
-        popUpContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-        closeModal={closeModal}
-      >
+      <ModalExpand id="modalExpand" title={titleTable} popUpContent={textTooltipTable} closeModal={closeModal}>
         <div className="w-full px-6">
           <Table
             columns={columns.map(column => {
@@ -178,16 +173,34 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               title={t("Total Hectares Under Restoration")}
               data={TOTAL_HECTARES_UNDER_RESTORATION}
               classNameBody="w-full place-content-center"
+              tooltip={t(
+                "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects."
+              )}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
               data={TOTAL_NUMBER_OF_SITES}
               className="pl-12"
               classNameBody="w-full place-content-center"
+              tooltip={t(
+                "Sites are the fundamental unit for reporting data on TerraMatch. They consist of either a single restoration area or a grouping of restoration areas, represented by one or several geospatial polygons."
+              )}
             />
           </div>
-          <SecDashboard title={t("Restoration Strategies Represented")} data={RESTORATION_STRATEGIES_REPRESENTED} />
-          <SecDashboard title={t("Target Land Use Types Represented")} data={TARGET_LAND_USE_TYPES_REPRESENTED} />
+          <SecDashboard
+            title={t("Restoration Strategies Represented")}
+            data={RESTORATION_STRATEGIES_REPRESENTED}
+            tooltip={t(
+              "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare. Please refer to the link in the description above for detailed definitions."
+            )}
+          />
+          <SecDashboard
+            title={t("Target Land Use Types Represented")}
+            data={TARGET_LAND_USE_TYPES_REPRESENTED}
+            tooltip={t(
+              "Total hectares under restoration broken down by target land use types. Please refer to the link in the description above for detailed definitions."
+            )}
+          />
         </PageCard>
 
         <PageCard

@@ -45,9 +45,24 @@ const Dashboard = () => {
   const { filters } = useDashboardContext();
   const [updateFilters, setUpdateFilters] = useState<any>({});
   const [dashboardHeader, setDashboardHeader] = useState([
-    { label: "Trees Planted", value: "0" },
-    { label: "Hectares Under Restoration", value: "0 ha" },
-    { label: "Jobs Created", value: "0" }
+    {
+      label: "Trees Planted",
+      value: "0",
+      tooltip:
+        "Total number of trees planted by funded projects to date, including through assisted natural regeneration, as reported through six-month progress reports."
+    },
+    {
+      label: "Hectares Under Restoration",
+      value: "0 ha",
+      tooltip:
+        "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts."
+    },
+    {
+      label: "Jobs Created",
+      value: "0",
+      tooltip:
+        "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
+    }
   ]);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -107,18 +122,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (totalSectionHeader) {
-      setDashboardHeader([
+      setDashboardHeader(prev => [
         {
           label: "Trees Planted",
-          value: totalSectionHeader.total_trees_restored.toLocaleString()
+          value: totalSectionHeader.total_trees_restored.toLocaleString(),
+          tooltip: prev[0].tooltip
         },
         {
           label: "Hectares Under Restoration",
-          value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+          value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`,
+          tooltip: prev[1].tooltip
         },
         {
           label: "Jobs Created",
-          value: totalSectionHeader.total_entries.toLocaleString()
+          value: totalSectionHeader.total_entries.toLocaleString(),
+          tooltip: prev[2].tooltip
         }
       ]);
     }
@@ -172,7 +190,7 @@ const Dashboard = () => {
     : [];
 
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0}>
@@ -198,10 +216,8 @@ const Dashboard = () => {
                     {t(item.value)}
                   </Text>
                   <ToolTip
-                    title={item.label}
-                    content={t(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
-                    )}
+                    title={t(item.label)}
+                    content={t(item.tooltip)}
                     placement="top"
                     width="w-56 lg:w-64"
                     trigger="click"
@@ -229,6 +245,9 @@ const Dashboard = () => {
               type="legend"
               secondOptionsData={LABEL_LEGEND}
               data={NUMBER_OF_TREES_PLANTED}
+              tooltip={t(
+                "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
+              )}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
@@ -236,12 +255,16 @@ const Dashboard = () => {
               secondOptionsData={dataToggle}
               tooltipGraphic={true}
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
+              tooltip={t("Number of trees planted in each year.")}
             />
             <SecDashboard
               title={t("Top 5 Projects with the Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
+              tooltip={t(
+                "The 5 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
+              )}
             />
             <When condition={filters.country.id !== 0}>
               <SecDashboard
@@ -249,6 +272,9 @@ const Dashboard = () => {
                 type="toggle"
                 secondOptionsData={dataToggleGraphic}
                 data={TOP_20_TREE_SPECIES_PLANTED}
+                tooltip={t(
+                  "The 20 most frequently planted tree species across all projects and the corresponding number planted of each."
+                )}
               />
             </When>
           </PageCard>
@@ -269,12 +295,18 @@ const Dashboard = () => {
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
                 classNameBody="w-full place-content-center"
+                tooltip={t(
+                  "Number of part-time jobs created to date. TerraFund defines a part-time job as under 35 hours per work week."
+                )}
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
+                tooltip={t(
+                  "Number of full-time jobs created to date. TerraFund defines a full-time job as over 35 hours per work week."
+                )}
               />
             </div>
             <div className="grid w-full grid-cols-2 gap-12">
@@ -283,27 +315,41 @@ const Dashboard = () => {
                 data={JOBS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+                tooltip={t("Total number of jobs created broken down by gender.")}
               />
               <SecDashboard
                 title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+                tooltip={t(
+                  "Total number of jobs created broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old."
+                )}
               />
             </div>
-            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} />
+            <SecDashboard
+              title={t("Total Volunteers")}
+              data={TOTAL_VOLUNTEERS}
+              tooltip={t(
+                "Number of unpaid volunteers contributing to the project. A volunteer is an individual that freely dedicates their time to the project because they see value in doing so but does not receive payment for their work. Paid workers or beneficiaries who do not dedicate their time to the project are not considered volunteers."
+              )}
+            />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+                tooltip={t("Total number of volunteers broken down by gender.")}
               />
               <SecDashboard
                 title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+                tooltip={t(
+                  "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old."
+                )}
               />
             </div>
           </PageCard>
@@ -312,7 +358,10 @@ const Dashboard = () => {
       <ContentOverview
         dataTable={DATA_ACTIVE_PROGRAMME}
         columns={COLUMN_ACTIVE_PROGRAMME}
-        titleTable={"ACTIVE COUNTRIES"}
+        titleTable={t("ACTIVE COUNTRIES")}
+        textTooltipTable={t(
+          "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date."
+        )}
       />
     </div>
   );
