@@ -117,6 +117,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isDashboard?: boolean;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  id?: string;
 }
 
 export const MapContainer = ({
@@ -148,6 +149,7 @@ export const MapContainer = ({
   location,
   entityData,
   imageGalleryRef,
+  id,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -496,7 +498,7 @@ export const MapContainer = ({
   }, [selectedPolyVersion]);
 
   return (
-    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
+    <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id={id ?? "map-container"}>
       <When condition={hasControls}>
         <When condition={polygonFromMap?.isOpen && !formMap}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
