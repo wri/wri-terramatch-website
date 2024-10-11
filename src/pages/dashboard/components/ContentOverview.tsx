@@ -56,7 +56,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
+      <ModalExpand
+        id="modalExpand"
+        title={t("MAP")}
+        closeModal={closeModal}
+        popUpContent="Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos."
+      >
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
 
