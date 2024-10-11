@@ -55,7 +55,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
                   className="!font-light leading-[normal] text-12-light with-inner-html"
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": undefined,
+                      "__html": "",
                     }
                   }
                   data-testid="txt"
@@ -139,7 +139,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
                   className="!font-light leading-[normal] text-12-light with-inner-html"
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": undefined,
+                      "__html": "",
                     }
                   }
                   data-testid="txt"
@@ -253,7 +253,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
                   className="!font-light leading-[normal] text-12-light with-inner-html"
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": undefined,
+                      "__html": "",
                     }
                   }
                   data-testid="txt"
