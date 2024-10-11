@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -12,7 +12,8 @@ import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/I
 import Text from "@/components/elements/Text/Text";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { OptionValue } from "@/types/common";
+import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
+import { Option, OptionValue } from "@/types/common";
 
 import BlurContainer from "./BlurContainer";
 
@@ -27,6 +28,7 @@ interface HeaderDashboardProps {
 
 const HeaderDashboard = (props: HeaderDashboardProps) => {
   const { isProjectInsightsPage, isProjectListPage, isProjectPage, dashboardCountries, setSelectedCountry } = props;
+  const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
 
@@ -94,33 +96,28 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       value: "for-profit-organization"
     }
   ];
-  const programmeOptions = [
-    {
-      title: "Top 100",
-      value: "terrafund"
-    },
-    {
-      title: "PPC",
-      value: "ppc"
-    },
-    {
-      title: "Enterprise",
-      value: "enterprise"
-    },
-    {
-      title: "HBF",
-      value: "hbf"
-    },
-    {
-      title: "Terrafund Landscapes",
-      value: "terrafund-landscapes"
-    }
-  ];
+
   const landscapeOption = [
     { title: "Kenya’s Greater Rift Valley", value: "kenya_greater_rift_valley" },
     { title: "Ghana Cocoa Belt ", value: "ghana_cocoa_belt" },
     { title: "Lake Kivu and Rusizi River Basin ", value: "lake_kivu_rusizi_river_basin" }
   ];
+
+  const { data: frameworks } = useGetV2DashboardFrameworks({
+    queryParams: {}
+  });
+
+  useEffect(() => {
+    if (frameworks) {
+      const options: Option[] = frameworks
+        .filter(framework => framework.name && framework.framework_slug)
+        .map(framework => ({
+          title: framework.name!,
+          value: framework.framework_slug!
+        }));
+      setProgrammeOptions(options);
+    }
+  }, [frameworks]);
 
   const resetValues = () => {
     setFilters({
