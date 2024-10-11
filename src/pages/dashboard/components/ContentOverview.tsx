@@ -58,7 +58,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       "modalExpand",
       <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" />
+          <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
 
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
@@ -128,7 +128,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               </Text>
             </div>
           </Button>
-          <MapContainer id="dashboard" showLegend={false} mapFunctions={dashboardMapFunctions} isDashboard={true} />
+          <MapContainer
+            id="dashboard"
+            showLegend={false}
+            mapFunctions={dashboardMapFunctions}
+            isDashboard={"dashboard"}
+          />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>

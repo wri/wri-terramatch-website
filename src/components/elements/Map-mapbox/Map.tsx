@@ -114,7 +114,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
-  isDashboard?: boolean;
+  isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }
@@ -142,7 +142,7 @@ export const MapContainer = ({
   tooltipType = "view",
   polygonsExists = true,
   shouldBboxZoom = true,
-  isDashboard = false,
+  isDashboard = undefined,
   formMap,
   pdView = false,
   location,
@@ -508,7 +508,7 @@ export const MapContainer = ({
             <ProcessBulkPolygonsControl entityData={record} />
           </ControlGroup>
         </When>
-        <When condition={!isDashboard}>
+        <When condition={isDashboard !== "dashboard"}>
           <ControlGroup position="top-right">
             <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
           </ControlGroup>
@@ -566,10 +566,12 @@ export const MapContainer = ({
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-            {isDashboard ? (
+            {isDashboard === "dashboard" ? (
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (
-              <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+              isDashboard !== "modal" && (
+                <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+              )
             )}
           </ControlGroup>
         </When>
