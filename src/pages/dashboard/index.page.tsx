@@ -19,7 +19,6 @@ import {
   LABEL_LEGEND,
   NEW_FULL_TIME_JOBS,
   NEW_PART_TIME_JOBS,
-  NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOP_20_TREE_SPECIES_PLANTED,
@@ -50,6 +49,10 @@ const Dashboard = () => {
     { label: "Jobs Created", value: "0" }
   ]);
 
+  const [numberTreesPlanted, setNumberTreesPlanted] = useState({
+    value: "0",
+    totalValue: "0"
+  });
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
 
@@ -105,6 +108,12 @@ const Dashboard = () => {
     queryParams: {}
   });
 
+  const formatNumberUS = (value: number) => {
+    if (value >= 1000000) {
+      return (value / 1000000).toFixed(2) + "M";
+    }
+    return value.toLocaleString("en-US");
+  };
   useEffect(() => {
     if (totalSectionHeader) {
       setDashboardHeader([
@@ -121,6 +130,10 @@ const Dashboard = () => {
           value: totalSectionHeader.total_entries.toLocaleString()
         }
       ]);
+      setNumberTreesPlanted({
+        value: formatNumberUS(totalSectionHeader.total_trees_restored),
+        totalValue: formatNumberUS(totalSectionHeader.total_trees_restored_goal)
+      });
     }
   }, [totalSectionHeader]);
 
@@ -228,7 +241,7 @@ const Dashboard = () => {
               title={t("Number of Trees Planted")}
               type="legend"
               secondOptionsData={LABEL_LEGEND}
-              data={NUMBER_OF_TREES_PLANTED}
+              data={numberTreesPlanted}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}

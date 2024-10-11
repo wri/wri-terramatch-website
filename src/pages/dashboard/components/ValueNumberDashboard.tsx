@@ -6,9 +6,10 @@ import Text from "@/components/elements/Text/Text";
 export interface ValueNumberDashboardProps {
   value: string;
   unit?: string;
+  totalValue?: string;
 }
 
-const ValueNumberDashboard = ({ value, unit }: ValueNumberDashboardProps) => {
+const ValueNumberDashboard = ({ value, unit, totalValue }: ValueNumberDashboardProps) => {
   const t = useT();
 
   return (
@@ -19,9 +20,10 @@ const ValueNumberDashboard = ({ value, unit }: ValueNumberDashboardProps) => {
       <Text variant="text-32-bold" className="text-blueCustom">
         {t(unit)}
       </Text>
-      <When condition={unit}>
+      <When condition={totalValue}>
         <Text variant="text-20" className="ml-2 text-darkCustom opacity-50">
-          {t("out of 20M")}
+          {t("out of ")} {t(totalValue)}
+          {t(unit)}
         </Text>
       </When>
     </div>

@@ -107,8 +107,8 @@ const SecDashboard = ({
         </When>
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
-        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} />}
-        <When condition={data?.value && data?.unit}>
+        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
+        <When condition={data?.value}>
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
         </When>
         <When condition={tooltipGraphic}>

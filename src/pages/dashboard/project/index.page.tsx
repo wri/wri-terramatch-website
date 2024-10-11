@@ -52,6 +52,7 @@ export interface DashboardDataProps {
   objetiveText?: string;
   preferredLanguage?: string;
   landTenure?: string;
+  totalValue?: string;
 }
 
 const ProjectView = () => {
