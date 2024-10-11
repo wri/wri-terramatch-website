@@ -28,6 +28,7 @@ export interface PageCardProps
   subtitleMore?: boolean;
   tooltipTrigger?: "hover" | "click";
   iconClassName?: string;
+  widthTooltip?: string;
 }
 
 const PageCard = ({
@@ -44,6 +45,7 @@ const PageCard = ({
   tooltipTrigger = "hover",
   iconClassName,
   tooltip,
+  widthTooltip,
   ...props
 }: PageCardProps) => {
   const [collapseSubtile, setCollapseSubtile] = useState(true);
@@ -69,7 +71,12 @@ const PageCard = ({
               {title}
               <When condition={!!tooltip}>
                 &nbsp;
-                <ToolTip content={tooltip} width="w-44 lg:w-52" title={title} trigger={tooltipTrigger}>
+                <ToolTip
+                  content={tooltip}
+                  width={widthTooltip || "w-44 lg:w-52"}
+                  title={title}
+                  trigger={tooltipTrigger}
+                >
                   <Icon
                     name={IconNames.IC_INFO}
                     className={tw("h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4", iconClassName)}

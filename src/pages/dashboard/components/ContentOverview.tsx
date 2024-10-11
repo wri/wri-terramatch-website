@@ -143,7 +143,15 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           </div>
         </div>
         <When condition={dataImpactStories?.length !== 0}>
-          <PageCard title="IMPACT STORIES" gap={4}>
+          <PageCard
+            title={t("IMPACT STORIES")}
+            gap={4}
+            tooltip={t(
+              "Short project success stories will be accessible by early 2025 through the relevant project pages."
+            )}
+            widthTooltip="w-52 lg:w-64"
+            iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
+          >
             {dataImpactStories.map(story => (
               <ImpactStoryCard
                 key={story.id}
@@ -164,9 +172,14 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           subtitleMore={true}
           title={t("Hectares Under Restoration")}
           variantSubTitle="text-14-light"
+          tooltip={t(
+            "This section displays data related to Indicator 2: Hectares Under Restoration described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified. Restoration strategies and target land use types are defined <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>here</a>."
+          )}
+          iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
             `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
           )}
+          widthTooltip="w-52 lg:w-64"
         >
           <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
             <SecDashboard

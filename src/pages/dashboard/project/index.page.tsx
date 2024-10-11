@@ -191,6 +191,11 @@ const ProjectView = () => {
             gap={8}
             subtitleMore={true}
             title={t("TREES RESTORED")}
+            tooltip={t(
+              "This section displays data related to Indicator 1: Trees Restored described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified."
+            )}
+            widthTooltip="w-52 lg:w-64"
+            iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             variantSubTitle="text-14-light"
             subtitle={t(
               `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund’s  MRV framework </span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
