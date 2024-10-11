@@ -94,7 +94,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       value: "for-profit-organization"
     }
   ];
-
   const programmeOptions = [
     {
       title: "Top 100",
