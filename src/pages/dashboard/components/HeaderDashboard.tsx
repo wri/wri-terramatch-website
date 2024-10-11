@@ -213,7 +213,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   return (
-    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
@@ -227,11 +227,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   showClear
                   showSelectAll
                   multiSelect
-                  prefix={
-                    <Text variant="text-14-light" className="leading-none">
-                      {t("Programme:")}
-                    </Text>
-                  }
+                  prefix={<Text variant="text-14-light">{t("Programme:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   value={filters.programmes}
@@ -253,11 +249,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   showClear
                   showSelectAll
                   multiSelect
-                  prefix={
-                    <Text variant="text-14-light" className="leading-none">
-                      {t("Landscape:")}
-                    </Text>
-                  }
+                  prefix={<Text variant="text-14-light">{t("Landscape:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   placeholder="Landscape"
@@ -277,11 +269,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 <Dropdown
                   key={filters.country.id}
                   showClear
-                  prefix={
-                    <Text variant="text-14-light" className="leading-none">
-                      {t("Country:")}
-                    </Text>
-                  }
+                  prefix={<Text variant="text-14-light">{t("Country:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   placeholder="Global"
@@ -317,11 +305,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   key={filters.organizations.length}
                   showSelectAll
                   showClear
-                  prefix={
-                    <Text variant="text-14-light" className="leading-none">
-                      {t("Organization:")}
-                    </Text>
-                  }
+                  prefix={<Text variant="text-14-light">{t("Organization:")}</Text>}
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}

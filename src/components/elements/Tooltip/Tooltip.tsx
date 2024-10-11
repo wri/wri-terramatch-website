@@ -8,7 +8,7 @@ import Text from "../Text/Text";
 
 export interface TooltipProps {
   children: ReactNode;
-  content: ReactNode;
+  content: string;
   width?: string;
   placement?: "top" | "right";
   className?: string;
@@ -170,7 +170,7 @@ const ToolTip = ({
               {t(title)}
             </Text>
           </When>
-          <Text variant="text-12-light" className="!font-light leading-[normal]">
+          <Text variant="text-12-light" className="!font-light leading-[normal]" containHtml={true}>
             {t(content)}
           </Text>
         </div>

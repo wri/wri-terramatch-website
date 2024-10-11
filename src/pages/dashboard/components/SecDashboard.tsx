@@ -29,6 +29,7 @@ const SecDashboard = ({
   classNameTitle,
   tooltipGraphic = false,
   variantTitle,
+  tooltip,
   data
 }: {
   title: string;
@@ -41,6 +42,7 @@ const SecDashboard = ({
   tooltipGraphic?: boolean;
   variantTitle?: TextVariants;
   data: DashboardDataProps;
+  tooltip?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
   const t = useT();
@@ -71,16 +73,11 @@ const SecDashboard = ({
           <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
           </Text>
-          <ToolTip
-            title={t(title)}
-            content={t(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            )}
-            width="w-[200px] lg:w-64"
-            trigger="click"
-          >
-            <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-          </ToolTip>
+          <When condition={!!tooltip}>
+            <ToolTip title={t(title)} content={t(tooltip)} width="w-52 lg:w-64" trigger="click">
+              <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+            </ToolTip>
+          </When>
         </div>
         <When condition={type === "legend"}>
           <div className="flex gap-4">
@@ -108,7 +105,7 @@ const SecDashboard = ({
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
-        <When condition={data?.value}>
+        <When condition={data?.totalValue}>
           <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
         </When>
         <When condition={tooltipGraphic}>
