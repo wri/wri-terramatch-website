@@ -182,7 +182,6 @@ const ProjectView = () => {
               type="legend"
               data={OBJETIVE}
               variantTitle="text-18-semibold"
-              tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
             />
           </PageCard>
 
