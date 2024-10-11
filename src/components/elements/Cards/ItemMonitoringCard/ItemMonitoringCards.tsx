@@ -37,7 +37,7 @@ const ItemMonitoringCards = ({
   headerChildren,
   isEmpty,
   gap = 8,
-  tooltip,
+  tooltip = "",
   className,
   type,
   img,
