@@ -10,9 +10,11 @@ import {
 } from "react";
 
 import { DashboardProvider } from "@/context/dashboard.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 import HeaderDashboard from "@/pages/dashboard/components/HeaderDashboard";
 
+import Loader from "../Loading/Loader";
 import Sidebar from "../Sidebar/Sidebar";
 
 interface DashboardLayoutProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -36,7 +38,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
   });
 
   const [selectedCountry, setSelectedCountry] = useState<CountriesProps | undefined>(undefined);
-
+  const { loading } = useLoading();
   useEffect(() => {
     if (dashboardCountries) {
       const country = dashboardCountries.data.find((country: CountriesProps) => {
@@ -56,6 +58,11 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
 
   return (
     <DashboardProvider>
+      {loading && (
+        <div className="fixed z-50 flex h-screen w-full items-center justify-center backdrop-brightness-50">
+          <Loader />
+        </div>
+      )}
       <div className="flex max-h-screen min-h-screen w-full bg-neutral-70">
         <Sidebar />
         <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className}`}>

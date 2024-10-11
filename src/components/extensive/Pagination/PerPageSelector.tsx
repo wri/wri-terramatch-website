@@ -7,6 +7,8 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { TextVariants } from "@/types/common";
 
+import { VariantPagination } from "./PaginationVariant";
+
 export interface PerPageSelectorProps {
   label?: string;
   value?: number;
@@ -16,6 +18,7 @@ export interface PerPageSelectorProps {
   invertSelect?: boolean;
   className?: string;
   onChange: (value: number) => void;
+  variant?: VariantPagination;
 }
 
 const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
@@ -31,62 +34,81 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
       {({ open, value }) => (
         <>
           <div className="flex items-center gap-3">
-            <Listbox.Button as="div" className="flex h-10 w-20 items-center justify-center rounded-md shadow">
+            <Listbox.Button
+              as="div"
+              className={classNames(
+                "relative flex h-10 w-20 items-center justify-center rounded-md shadow",
+                props.variant?.value
+              )}
+            >
+              <Transition
+                show={open}
+                enter="transition duration-100 ease-out"
+                enterFrom="transform scale-95 opacity-0"
+                enterTo="transform scale-100 opacity-100 !mt-0"
+                leave="transition duration-75 ease-out"
+                leaveFrom="transform scale-100 opacity-100"
+                leaveTo="transform scale-95 opacity-0 !mt-0"
+              >
+                <Listbox.Options
+                  as="div"
+                  className={classNames(
+                    "absolute mt-6 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow outline-none",
+                    { "bottom-[35px]": props.invertSelect }
+                  )}
+                >
+                  {props.options.map(option => {
+                    let isSelected = value === option;
+
+                    return (
+                      <Listbox.Option
+                        as={Text}
+                        key={option}
+                        value={option}
+                        reversed={props.invertSelect}
+                        variant={props.variantText ?? "text-14"}
+                        className={tw(
+                          "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
+                          isSelected ? "!font-bold" : "!font-light"
+                        )}
+                      >
+                        {option}
+                      </Listbox.Option>
+                    );
+                  })}
+                </Listbox.Options>
+              </Transition>
               <div className="flex h-full flex-1 items-center justify-center">
                 <Text variant={props.variantText ?? "text-bold-subtitle-500"} className="w-fit uppercase line-clamp-1">
                   {value}
                 </Text>
               </div>
-              <div className="flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]">
+              <div
+                className={classNames(
+                  "flex h-full flex-1 items-center justify-center rounded-r-lg bg-[#CFE6F4]",
+                  props.variant?.iconContent
+                )}
+              >
                 <Icon
                   name={IconNames.CHEVRON_DOWN}
-                  className={classNames("mb-[2px] fill-neutral-900 transition", open && "rotate-180")}
+                  className={classNames(
+                    "mb-[2px] fill-neutral-900 transition",
+                    open && "rotate-180",
+                    props.variant?.icon
+                  )}
                   width={20}
                 />
               </div>
             </Listbox.Button>
 
-            <Listbox.Label as={Text} variant={props.variantText ?? "text-bold-subtitle-500"}>
+            <Listbox.Label
+              as={Text}
+              variant={props.variantText ?? "text-bold-subtitle-500"}
+              className={classNames(props.variant?.label)}
+            >
               {props.label}
             </Listbox.Label>
           </div>
-          <Transition
-            show={open}
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100 !mt-0"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0 !mt-0"
-          >
-            <Listbox.Options
-              as="div"
-              className={classNames(
-                "absolute mt-2 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow",
-                { "bottom-[50px]": props.invertSelect }
-              )}
-            >
-              {props.options.map(option => {
-                let isSelected = value === option;
-
-                return (
-                  <Listbox.Option
-                    as={Text}
-                    key={option}
-                    value={option}
-                    reversed={props.invertSelect}
-                    variant={props.variantText ?? "text-14"}
-                    className={tw(
-                      "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
-                      isSelected ? "!font-bold" : "!font-light"
-                    )}
-                  >
-                    {option}
-                  </Listbox.Option>
-                );
-              })}
-            </Listbox.Options>
-          </Transition>
         </>
       )}
     </Listbox>
