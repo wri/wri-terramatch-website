@@ -9,7 +9,11 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardCountries, useGetV2DashboardTotalSectionHeader } from "@/generated/apiComponents";
+import {
+  useGetV2DashboardCountries,
+  useGetV2DashboardJobsCreated,
+  useGetV2DashboardTotalSectionHeader
+} from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -17,8 +21,6 @@ import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
-  NEW_FULL_TIME_JOBS,
-  NEW_PART_TIME_JOBS,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOP_20_TREE_SPECIES_PLANTED,
@@ -48,6 +50,8 @@ const Dashboard = () => {
     { label: "Hectares Under Restoration", value: "0 ha" },
     { label: "Jobs Created", value: "0" }
   ]);
+  const [totalFtJobs, setTotalFtJobs] = useState({ value: "0" });
+  const [totalPtJobs, setTotalPtJobs] = useState({ value: "0" });
 
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
     value: "0",
@@ -93,6 +97,27 @@ const Dashboard = () => {
       enabled: !!filters
     }
   );
+  const { data: jobsCreatedData } = useGetV2DashboardJobsCreated<any>(
+    {
+      queryParams: queryParams
+    },
+    {
+      enabled: !!filters
+    }
+  );
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+
+  useEffect(() => {
+    if (jobsCreatedData?.data?.total_ft) {
+      setTotalFtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_ft) });
+    }
+    if (jobsCreatedData?.data?.total_pt) {
+      setTotalPtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_pt) });
+    }
+  }, [jobsCreatedData]);
+
   useEffect(() => {
     if (isLoading) {
       showLoader();
@@ -104,11 +129,8 @@ const Dashboard = () => {
     refetch();
   }, [filters]);
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
-
   const formatNumberUS = (value: number) => {
+    if (!value) return "";
     if (value >= 1000000) {
       return (value / 1000000).toFixed(2) + "M";
     }
@@ -183,7 +205,6 @@ const Dashboard = () => {
         jobsCreated: "1306"
       }))
     : [];
-
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -280,12 +301,12 @@ const Dashboard = () => {
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
-                data={NEW_PART_TIME_JOBS}
+                data={totalPtJobs}
                 classNameBody="w-full place-content-center"
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
-                data={NEW_FULL_TIME_JOBS}
+                data={totalFtJobs}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
               />
