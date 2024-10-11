@@ -29,7 +29,7 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
             {t(title)}
           </Text>
           <When condition={popUpContent}>
-            <Tooltip content={popUpContent} width="w-[400px] lg:w-[450px]">
+            <Tooltip content={popUpContent} width="w-[600px] lg:w-[650px]">
               <Icon name={IconNames.IC_INFO} />
             </Tooltip>
           </When>
