@@ -52,7 +52,12 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
                   Tree Count
                 </p>
                 <p
-                  className="!font-light leading-[normal] text-12-light"
+                  className="!font-light leading-[normal] text-12-light with-inner-html"
+                  dangerouslySetInnerHTML={
+                    Object {
+                      "__html": undefined,
+                    }
+                  }
                   data-testid="txt"
                 />
               </div>
@@ -131,7 +136,12 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
                   Tree Count
                 </p>
                 <p
-                  className="!font-light leading-[normal] text-12-light"
+                  className="!font-light leading-[normal] text-12-light with-inner-html"
+                  dangerouslySetInnerHTML={
+                    Object {
+                      "__html": undefined,
+                    }
+                  }
                   data-testid="txt"
                 />
               </div>
@@ -240,7 +250,12 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
                   EMA SNOVO
                 </p>
                 <p
-                  className="!font-light leading-[normal] text-12-light"
+                  className="!font-light leading-[normal] text-12-light with-inner-html"
+                  dangerouslySetInnerHTML={
+                    Object {
+                      "__html": undefined,
+                    }
+                  }
                   data-testid="txt"
                 />
               </div>

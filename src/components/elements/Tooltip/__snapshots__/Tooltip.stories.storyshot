@@ -28,11 +28,14 @@ exports[`Storyshots Components/Elements/Tooltip Click 1`] = `
         }
       />
       <p
-        className="!font-light leading-[normal] text-12-light"
+        className="!font-light leading-[normal] text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a tooltip",
+          }
+        }
         data-testid="txt"
-      >
-        This is a tooltip
-      </p>
+      />
     </div>
   </div>
   Open-Click
@@ -67,11 +70,14 @@ exports[`Storyshots Components/Elements/Tooltip Default 1`] = `
         }
       />
       <p
-        className="!font-light leading-[normal] text-12-light"
+        className="!font-light leading-[normal] text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a tooltip",
+          }
+        }
         data-testid="txt"
-      >
-        This is a tooltip
-      </p>
+      />
     </div>
   </div>
   Open-Hover
@@ -106,11 +112,14 @@ exports[`Storyshots Components/Elements/Tooltip Hover 1`] = `
         }
       />
       <p
-        className="!font-light leading-[normal] text-12-light"
+        className="!font-light leading-[normal] text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a tooltip",
+          }
+        }
         data-testid="txt"
-      >
-        This is a tooltip
-      </p>
+      />
     </div>
   </div>
   Open-Hover
