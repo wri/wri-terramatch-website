@@ -9,7 +9,11 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardCountries, useGetV2DashboardTotalSectionHeader } from "@/generated/apiComponents";
+import {
+  useGetV2DashboardCountries,
+  useGetV2DashboardJobsCreated,
+  useGetV2DashboardTotalSectionHeader
+} from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -17,9 +21,6 @@ import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
-  NEW_FULL_TIME_JOBS,
-  NEW_PART_TIME_JOBS,
-  NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOP_20_TREE_SPECIES_PLANTED,
@@ -64,7 +65,13 @@ const Dashboard = () => {
         "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
     }
   ]);
+  const [totalFtJobs, setTotalFtJobs] = useState({ value: "0" });
+  const [totalPtJobs, setTotalPtJobs] = useState({ value: "0" });
 
+  const [numberTreesPlanted, setNumberTreesPlanted] = useState({
+    value: "0",
+    totalValue: "0"
+  });
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
 
@@ -105,6 +112,27 @@ const Dashboard = () => {
       enabled: !!filters
     }
   );
+  const { data: jobsCreatedData } = useGetV2DashboardJobsCreated<any>(
+    {
+      queryParams: queryParams
+    },
+    {
+      enabled: !!filters
+    }
+  );
+  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
+    queryParams: {}
+  });
+
+  useEffect(() => {
+    if (jobsCreatedData?.data?.total_ft) {
+      setTotalFtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_ft) });
+    }
+    if (jobsCreatedData?.data?.total_pt) {
+      setTotalPtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_pt) });
+    }
+  }, [jobsCreatedData]);
+
   useEffect(() => {
     if (isLoading) {
       showLoader();
@@ -116,10 +144,13 @@ const Dashboard = () => {
     refetch();
   }, [filters]);
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
-
+  const formatNumberUS = (value: number) => {
+    if (!value) return "";
+    if (value >= 1000000) {
+      return (value / 1000000).toFixed(2) + "M";
+    }
+    return value.toLocaleString("en-US");
+  };
   useEffect(() => {
     if (totalSectionHeader) {
       setDashboardHeader(prev => [
@@ -139,6 +170,10 @@ const Dashboard = () => {
           tooltip: prev[2].tooltip
         }
       ]);
+      setNumberTreesPlanted({
+        value: formatNumberUS(totalSectionHeader.total_trees_restored),
+        totalValue: formatNumberUS(totalSectionHeader.total_trees_restored_goal)
+      });
     }
   }, [totalSectionHeader]);
 
@@ -188,7 +223,6 @@ const Dashboard = () => {
         jobsCreated: "1306"
       }))
     : [];
-
   return (
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -249,10 +283,10 @@ const Dashboard = () => {
               title={t("Number of Trees Planted")}
               type="legend"
               secondOptionsData={LABEL_LEGEND}
-              data={NUMBER_OF_TREES_PLANTED}
               tooltip={t(
                 "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
               )}
+              data={numberTreesPlanted}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
@@ -291,6 +325,11 @@ const Dashboard = () => {
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
+            widthTooltip="w-80 lg:w-96"
+            iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
+            tooltip={t(
+              "This section displays data related to Indicator 3: Jobs Created described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 years or older in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment.  Please refer to the linked framework for additional details on how these numbers are sourced and verified."
+            )}
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund's MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
@@ -298,7 +337,7 @@ const Dashboard = () => {
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
-                data={NEW_PART_TIME_JOBS}
+                data={totalPtJobs}
                 classNameBody="w-full place-content-center"
                 tooltip={t(
                   "Number of part-time jobs created to date. TerraFund defines a part-time job as under 35 hours per work week."
@@ -306,7 +345,7 @@ const Dashboard = () => {
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
-                data={NEW_FULL_TIME_JOBS}
+                data={totalFtJobs}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
                 tooltip={t(

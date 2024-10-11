@@ -49,14 +49,21 @@ interface ContentOverviewProps<TData> {
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const { dataTable: data, columns, dataImpactStories = [], titleTable, textTooltipTable } = props;
   const t = useT();
-  const mapFunctions = useMap();
+  const modalMapFunctions = useMap();
+  const dashboardMapFunctions = useMap();
+
   const { openModal, closeModal } = useModalContext();
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal}>
+      <ModalExpand
+        id="modalExpand"
+        title={t("MAP")}
+        closeModal={closeModal}
+        popUpContent="Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos."
+      >
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <MapContainer className="h-[240px] flex-1" showLegend={false} mapFunctions={mapFunctions} />
+          <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
 
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
@@ -121,7 +128,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               </Text>
             </div>
           </Button>
-          <MapContainer showLegend={false} mapFunctions={mapFunctions} isDashboard={true} />
+          <MapContainer
+            id="dashboard"
+            showLegend={false}
+            mapFunctions={dashboardMapFunctions}
+            isDashboard={"dashboard"}
+          />
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
