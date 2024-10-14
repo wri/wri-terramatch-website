@@ -104,6 +104,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             })}
             data={data}
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
+            hasPagination={true}
+            invertSelectPagination={true}
           />
         </div>
       </ModalExpand>
