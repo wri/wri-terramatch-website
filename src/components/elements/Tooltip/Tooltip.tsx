@@ -30,7 +30,8 @@ const ToolTip = ({
   const t = useT();
   const [tooltipStyles, setTooltipStyles] = useState({ left: 0, top: 0 });
   const [isVisible, setIsVisible] = useState(false);
-  const [placementArrow, setPlacementArrow] = useState(0);
+  const [placementArrowLeft, setPlacementArrowLeft] = useState(0);
+  const [placementArrowTop, setPlacementArrowTop] = useState(0);
 
   const handleMouseEnter = () => {
     if (trigger === "hover") {
@@ -113,6 +114,7 @@ const ToolTip = ({
         newLeft = position.left + position.width / 2 - positionTooltip.width / 2;
         newTop = position.top - positionTooltip.height - 5;
         const copyLeft = newLeft;
+        const copyTop = newTop;
         if (newLeft + positionTooltip.width > window.innerWidth) {
           newLeft = window.innerWidth - positionTooltip.width - 5;
         }
@@ -122,7 +124,9 @@ const ToolTip = ({
         if (newTop < 0) {
           newTop = position.top + position.height + 5;
         }
-        setPlacementArrow(copyLeft - newLeft);
+        setPlacementArrowLeft(copyLeft - newLeft);
+        setPlacementArrowTop(copyTop - newTop);
+        console.log(copyTop - newTop);
       }
 
       setTooltipStyles({
@@ -135,7 +139,9 @@ const ToolTip = ({
   const PLACEMENT = {
     top: "bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent",
     right:
-      "left-0 top-1/2 transform -translate-y-1/2 ml-[-10px] border-b-transparent border-l-transparent border-t-transparent"
+      "left-0 top-1/2 transform -translate-y-1/2 ml-[-10px] border-b-transparent border-l-transparent border-t-transparent",
+    bottom:
+      "top-0 left-1/2 transform -translate-x-1/2 mt-[-9px] border-t-transparent border-l-transparent border-r-transparent"
   };
 
   return (
@@ -162,8 +168,11 @@ const ToolTip = ({
           )}
         >
           <div
-            className={classNames("absolute border-[5px] border-darkCustom", PLACEMENT[placement])}
-            style={placement === "top" ? { marginLeft: `${placementArrow}px` } : {}}
+            className={classNames(
+              "absolute border-[5px] border-darkCustom",
+              PLACEMENT[placementArrowTop < 0 ? "bottom" : placement]
+            )}
+            style={placement === "top" ? { marginLeft: `${placementArrowLeft}px` } : {}}
           />
           <When condition={!!title}>
             <Text variant="text-12-bold" className="mb-1">
