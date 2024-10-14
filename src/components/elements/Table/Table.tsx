@@ -40,6 +40,7 @@ export interface TableProps<TData>
   onTableStateChange?: (state: TableState) => void;
   isLoading?: boolean;
   invertSelectPagination?: boolean;
+  visibleRows?: number;
 }
 
 export interface TableState {
@@ -69,6 +70,7 @@ function Table<TData extends RowData>({
   isLoading,
   invertSelectPagination = false,
   hasPagination = false,
+  visibleRows = 10,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -113,8 +115,9 @@ function Table<TData extends RowData>({
 
   useEffect(() => {
     setSorting(initialTableState?.sorting ?? []);
+    setPageSize(visibleRows);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, visibleRows]);
 
   return (
     <div className={classNames("w-full", variant.className)}>
