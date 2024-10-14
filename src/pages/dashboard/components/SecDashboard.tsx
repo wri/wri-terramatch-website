@@ -114,7 +114,7 @@ const SecDashboard = ({
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
         <When condition={data?.totalValue}>
           <HorizontalStackedBarChart data={dataForChart} />
-          <img src="/images/treeBackground.svg" alt="secondValue" className="absolute h-9" />
+          <img src="/images/treeBackground.svg" alt="secondValue" className="absolute right-0 h-9" />
         </When>
         <When condition={tooltipGraphic}>
           <TooltipGraphicDashboard />
