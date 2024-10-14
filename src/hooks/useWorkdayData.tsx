@@ -6,6 +6,13 @@ import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/Work
 import { GRID_VARIANT_DEFAULT } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 import { GetV2WorkdaysENTITYUUIDResponse } from "@/generated/apiComponents";
 
+interface DemographicCounts {
+  gender: number;
+  age: number;
+  ethnicity: number;
+  caste: number;
+}
+
 export interface Workday {
   collection: string;
   readable_collection: string;
@@ -45,17 +52,20 @@ export default function useWorkdayData(
               };
             });
 
-      const counts = workdays?.reduce(
-        (counts, { demographics }) => {
-          return (
-            demographics?.reduce(
-              (counts, { type, amount }) => ({ ...counts, [type]: counts[type] + amount }),
-              counts
-            ) ?? counts
-          );
-        },
-        { gender: 0, age: 0, ethnicity: 0 }
-      );
+      const initialCounts: DemographicCounts = {
+        gender: 0,
+        age: 0,
+        ethnicity: 0,
+        caste: 0
+      };
+
+      const counts = workdays?.reduce((counts, { demographics }) => {
+        return (
+          demographics?.reduce((counts, { type, amount }) => ({ ...counts, [type]: counts[type] + amount }), counts) ??
+          counts
+        );
+      }, initialCounts);
+
       const total = counts && Math.max(counts.age, counts.gender, counts.ethnicity);
       const title = t(`${titlePrefix} - {total}`, { total: total ?? "...loading" });
 
