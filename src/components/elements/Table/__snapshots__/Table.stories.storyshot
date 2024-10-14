@@ -8518,25 +8518,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               2000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
@@ -8559,7 +8559,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8577,25 +8577,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Master Card
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               1000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
@@ -8618,7 +8618,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8636,25 +8636,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               American Express
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               1500
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
@@ -8677,7 +8677,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8695,25 +8695,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               7500
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
@@ -8736,7 +8736,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8754,25 +8754,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               American Express
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               1900
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200 w-fit"
@@ -8795,7 +8795,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8813,25 +8813,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Master Card
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               5000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
@@ -8854,7 +8854,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8872,25 +8872,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               100000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200 w-fit"
@@ -8913,7 +8913,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8931,25 +8931,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               60000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200 w-fit"
@@ -8972,7 +8972,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -8990,25 +8990,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Credit
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Master Card
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               15000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200 w-fit"
@@ -9031,7 +9031,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
@@ -9049,25 +9049,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           >
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               Cash
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               VISA
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               1510000
             </td>
             <td
               align="left"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <div
                 className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200 w-fit"
@@ -9090,7 +9090,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
             </td>
             <td
               align="right"
-              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap"
+              className="text-normal-subtitle-400 text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 "
             >
               <button
                 className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"

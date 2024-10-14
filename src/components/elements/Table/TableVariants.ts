@@ -97,7 +97,7 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
     "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-12-semibold whitespace-normal px-2 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 whitespace-nowrap",
+  tdBody: "text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
   thead: "bg-blueCustom-100"
 };
 
