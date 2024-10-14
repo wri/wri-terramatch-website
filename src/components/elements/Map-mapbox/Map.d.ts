@@ -8,6 +8,7 @@ export interface LayerType {
   name: string;
   styles: LayerWithStyle[];
   geoserverLayerName: string;
+  hover?: boolean;
 }
 
 export type ControlType = Control | IControl;
