@@ -153,7 +153,6 @@ export const layersList: LayerType[] = [
     styles: [
       {
         type: "line",
-        layout: {},
         paint: {
           "line-color": "#ff5a5f",
           "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
