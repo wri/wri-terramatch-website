@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -8,16 +8,11 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useLoading } from "@/context/loaderAdmin.provider";
-import {
-  useGetV2DashboardCountries,
-  useGetV2DashboardJobsCreated,
-  useGetV2DashboardTopTreesPlanted,
-  useGetV2DashboardTotalSectionHeader
-} from "@/generated/apiComponents";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
+import { useDashboardData } from "./hooks/useDashboardData";
 import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
@@ -44,167 +39,19 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const { filters } = useDashboardContext();
-  const [updateFilters, setUpdateFilters] = useState<any>({});
-  const [topProject, setTopProjects] = useState<any>([]);
-  const [dashboardHeader, setDashboardHeader] = useState([
-    {
-      label: "Trees Planted",
-      value: "0",
-      tooltip:
-        "Total number of trees planted by funded projects to date, including through assisted natural regeneration, as reported through six-month progress reports."
-    },
-    {
-      label: "Hectares Under Restoration",
-      value: "0 ha",
-      tooltip:
-        "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts."
-    },
-    {
-      label: "Jobs Created",
-      value: "0",
-      tooltip:
-        "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
-    }
-  ]);
-  const [totalFtJobs, setTotalFtJobs] = useState({ value: "0" });
-  const [totalPtJobs, setTotalPtJobs] = useState({ value: "0" });
+  const { dashboardHeader, totalFtJobs, totalPtJobs, numberTreesPlanted, topProject, refetchTotalSectionHeader } =
+    useDashboardData(filters);
 
-  const [numberTreesPlanted, setNumberTreesPlanted] = useState({
-    value: "0",
-    totalValue: "0"
-  });
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
 
-  useEffect(() => {
-    const parsedFilters = {
-      programmes: filters.programmes,
-      country: filters.country.country_slug,
-      "organisations.type": filters.organizations,
-      landscapes: filters.landscapes
-    };
-    setUpdateFilters(parsedFilters);
-  }, [filters]);
-
-  const createQueryParams = (filters: any) => {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
-      } else if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(`filter[${key}]`, value as string);
-      }
-    });
-    return queryParams.toString();
-  };
-
-  const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
-
-  const { showLoader, hideLoader } = useLoading();
-  const {
-    data: totalSectionHeader,
-    refetch,
-    isLoading
-  } = useGetV2DashboardTotalSectionHeader<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters
-    }
-  );
-  const { data: jobsCreatedData } = useGetV2DashboardJobsCreated<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters
-    }
-  );
   const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
     queryParams: {}
   });
 
-  const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({
-    queryParams: queryParams
-  });
-
-  console.log("topData", topData);
-
   useEffect(() => {
-    if (jobsCreatedData?.data?.total_ft) {
-      setTotalFtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_ft) });
-    }
-    if (jobsCreatedData?.data?.total_pt) {
-      setTotalPtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_pt) });
-    }
-  }, [jobsCreatedData]);
-
-  const formatNumber = (num: { toString: () => string }) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-  useEffect(() => {
-    if (topData?.data) {
-      const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
-
-      const tableData = projects.map((project: { project: string; trees_planted: { toString: () => string } }) => ({
-        label: project.project,
-        valueText: formatNumber(project.trees_planted),
-        value: project.trees_planted
-      }));
-
-      const maxValue = Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6);
-
-      const topProjectsMostPlantedTrees = {
-        tableData,
-        maxValue
-      };
-      setTopProjects(topProjectsMostPlantedTrees);
-    }
-  }, [topData]);
-
-  useEffect(() => {
-    if (isLoading) {
-      showLoader();
-    } else {
-      hideLoader();
-    }
-  }, [isLoading, showLoader, hideLoader]);
-  useEffect(() => {
-    refetch();
+    refetchTotalSectionHeader();
   }, [filters]);
-
-  const formatNumberUS = (value: number) => {
-    if (!value) return "";
-    if (value >= 1000000) {
-      return (value / 1000000).toFixed(2) + "M";
-    }
-    return value.toLocaleString("en-US");
-  };
-  useEffect(() => {
-    if (totalSectionHeader) {
-      setDashboardHeader(prev => [
-        {
-          label: "Trees Planted",
-          value: totalSectionHeader.total_trees_restored.toLocaleString(),
-          tooltip: prev[0].tooltip
-        },
-        {
-          label: "Hectares Under Restoration",
-          value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`,
-          tooltip: prev[1].tooltip
-        },
-        {
-          label: "Jobs Created",
-          value: totalSectionHeader.total_entries.toLocaleString(),
-          tooltip: prev[2].tooltip
-        }
-      ]);
-      setNumberTreesPlanted({
-        value: formatNumberUS(totalSectionHeader.total_trees_restored),
-        totalValue: formatNumberUS(totalSectionHeader.total_trees_restored_goal)
-      });
-    }
-  }, [totalSectionHeader]);
 
   const COLUMN_ACTIVE_PROGRAMME = [
     {
