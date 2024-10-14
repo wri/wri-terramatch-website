@@ -21,7 +21,7 @@ const HorizontalStackedBarChart = ({ data, className }: { data: any; className?:
         <BarChart
           layout="vertical"
           data={chartData}
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          margin={{ top: 1, right: 0, left: 0, bottom: 1 }}
           barCategoryGap="0%"
         >
           <XAxis type="number" hide={true} domain={[0, totalValue]} />
