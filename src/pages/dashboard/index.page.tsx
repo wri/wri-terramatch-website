@@ -12,6 +12,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardCountries,
   useGetV2DashboardJobsCreated,
+  useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader
 } from "@/generated/apiComponents";
 
@@ -22,7 +23,6 @@ import {
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
-  TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
@@ -45,6 +45,7 @@ const Dashboard = () => {
   const t = useT();
   const { filters } = useDashboardContext();
   const [updateFilters, setUpdateFilters] = useState<any>({});
+  const [topProject, setTopProjects] = useState<any>([]);
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
@@ -124,6 +125,12 @@ const Dashboard = () => {
     queryParams: {}
   });
 
+  const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({
+    queryParams: queryParams
+  });
+
+  console.log("topData", topData);
+
   useEffect(() => {
     if (jobsCreatedData?.data?.total_ft) {
       setTotalFtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_ft) });
@@ -132,6 +139,28 @@ const Dashboard = () => {
       setTotalPtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_pt) });
     }
   }, [jobsCreatedData]);
+
+  const formatNumber = (num: { toString: () => string }) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  useEffect(() => {
+    if (topData?.data) {
+      const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
+
+      const tableData = projects.map((project: { project: string; trees_planted: { toString: () => string } }) => ({
+        label: project.project,
+        valueText: formatNumber(project.trees_planted),
+        value: project.trees_planted
+      }));
+
+      const maxValue = Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6);
+
+      const topProjectsMostPlantedTrees = {
+        tableData,
+        maxValue
+      };
+      setTopProjects(topProjectsMostPlantedTrees);
+    }
+  }, [topData]);
 
   useEffect(() => {
     if (isLoading) {
@@ -300,7 +329,7 @@ const Dashboard = () => {
               title={t("Top 5 Projects with the Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
-              data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
+              data={topProject}
               tooltip={t(
                 "The 5 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
               )}
