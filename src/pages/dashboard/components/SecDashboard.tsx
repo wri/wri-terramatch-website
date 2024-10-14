@@ -12,6 +12,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { TextVariants } from "@/types/common";
 
+import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashoard from "./GraphicIconDashoard";
@@ -31,7 +32,9 @@ const SecDashboard = ({
   variantTitle,
   tooltip,
   isTableProject,
-  data
+  data,
+  dataForChart,
+  chartType
 }: {
   title: string;
   type?: "legend" | "toggle";
@@ -45,6 +48,8 @@ const SecDashboard = ({
   data: DashboardDataProps;
   isTableProject?: boolean;
   tooltip?: string;
+  dataForChart?: any;
+  chartType?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
   const t = useT();
@@ -108,7 +113,8 @@ const SecDashboard = ({
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
         <When condition={data?.totalValue}>
-          <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
+          <HorizontalStackedBarChart data={dataForChart} />
+          <img src="/images/treeBackground.svg" alt="secondValue" className="absolute h-9" />
         </When>
         <When condition={tooltipGraphic}>
           <TooltipGraphicDashboard />

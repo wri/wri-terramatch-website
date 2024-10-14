@@ -1,0 +1,37 @@
+import React from "react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+
+const HorizontalStackedBarChart = ({ data }: { data: any }) => {
+  const totalValue = data[0].value;
+  const enterpriseValue = data[1].value;
+  const nonProfitValue = data[2].value;
+  const remainingValue = totalValue - enterpriseValue - nonProfitValue;
+
+  const chartData = [
+    {
+      nonProfit: nonProfitValue,
+      enterprise: enterpriseValue,
+      remaining: remainingValue
+    }
+  ];
+
+  return (
+    <ResponsiveContainer width="100%" height={50}>
+      <BarChart
+        layout="vertical"
+        width={500}
+        height={300}
+        data={chartData}
+        margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+      >
+        <XAxis type="number" hide={true} />
+        <YAxis type="category" hide={true} />
+        <Bar dataKey="nonProfit" stackId="a" fill="#7BBD31" />
+        <Bar dataKey="enterprise" stackId="a" fill="#27A9E0" />
+        <Bar dataKey="remaining" stackId="a" fill="#DDDDDD" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
+
+export default HorizontalStackedBarChart;
