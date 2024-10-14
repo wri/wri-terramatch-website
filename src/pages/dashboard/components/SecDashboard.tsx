@@ -113,13 +113,15 @@ const SecDashboard = ({
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
         <When condition={data?.totalValue}>
-          <div className="relative h-9 w-1/2">
-            <HorizontalStackedBarChart data={dataForChart} className="z-full z-0" />
+          <div className="relative h-9 w-[315px]">
+            <div className="absolute inset-0 z-0 h-full w-full">
+              <HorizontalStackedBarChart data={dataForChart} className="h-full w-full" />
+            </div>
             <img
               src="/images/treeBackground.svg"
               id="treeBackground"
               alt="secondValue"
-              className="absolute right-0 z-10 h-9"
+              className="absolute right-0 z-10 h-9 w-[316px]"
             />
           </div>
         </When>
