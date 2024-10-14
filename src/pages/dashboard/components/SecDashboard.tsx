@@ -114,12 +114,12 @@ const SecDashboard = ({
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
         <When condition={data?.totalValue}>
           <div className="relative h-9 w-1/2">
-            <HorizontalStackedBarChart data={dataForChart} className="z-0" />
+            <HorizontalStackedBarChart data={dataForChart} className="z-full z-0" />
             <img
               src="/images/treeBackground.svg"
               id="treeBackground"
               alt="secondValue"
-              className="absolute right-0.5 z-10 h-9"
+              className="absolute right-0 z-10 h-9"
             />
           </div>
         </When>

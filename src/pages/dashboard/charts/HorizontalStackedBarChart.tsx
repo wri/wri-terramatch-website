@@ -18,8 +18,13 @@ const HorizontalStackedBarChart = ({ data, className }: { data: any; className?:
   return (
     <div className={`absolute inset-0 right-0 ${className}`}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart layout="vertical" data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-          <XAxis type="number" hide={true} />
+        <BarChart
+          layout="vertical"
+          data={chartData}
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          barCategoryGap="0%"
+        >
+          <XAxis type="number" hide={true} domain={[0, totalValue]} />
           <YAxis type="category" hide={true} />
           <Bar dataKey="nonProfit" stackId="a" fill="#7BBD31" />
           <Bar dataKey="enterprise" stackId="a" fill="#27A9E0" />
