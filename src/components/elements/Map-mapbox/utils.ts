@@ -457,7 +457,6 @@ export const addSourceToLayer = (
       loadLayersInMap(map, polygonsData, layer);
     }
     if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-      console.log("addHoverEvent");
       addHoverEvent(layer, map);
     }
   }
