@@ -126,7 +126,6 @@ const ToolTip = ({
         }
         setPlacementArrowLeft(copyLeft - newLeft);
         setPlacementArrowTop(copyTop - newTop);
-        console.log(copyTop - newTop);
       }
 
       setTooltipStyles({
