@@ -68,8 +68,6 @@ const SecDashboard = ({
     }
   }, []);
 
-  console.log("dataAAAAAAAA", data);
-
   return (
     <div className={className}>
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
