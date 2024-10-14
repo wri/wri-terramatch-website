@@ -401,8 +401,43 @@ const getGeoserverURL = (layerName: string) => {
   return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
       &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
-export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
+  const { name, styles } = layer;
+  const layersToHover = styles.map((_, index) => `${name}-${index}`);
+  if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+    let hoveredPolygonId: any = null;
+    map.on("mousemove", layersToHover, e => {
+      const zoomLevel = map.getZoom();
+      if (zoomLevel <= 4.5) {
+        if (e.features && e.features.length > 0) {
+          if (hoveredPolygonId !== null) {
+            map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
+          }
+          hoveredPolygonId = e.features[0].id;
+          map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: true });
+        }
+      } else {
+        if (hoveredPolygonId !== null) {
+          map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
+        }
+        hoveredPolygonId = null;
+      }
+    });
+    map.on("mouseleave", layersToHover, () => {
+      if (hoveredPolygonId !== null) {
+        map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
+      }
+      hoveredPolygonId = null;
+    });
+  }
+};
+export const addSourceToLayer = (
+  layer: LayerType,
+  map: mapboxgl.Map,
+  polygonsData: Record<string, string[]> | undefined
+) => {
   const { name, geoserverLayerName, styles } = layer;
+
   if (map) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
@@ -418,7 +453,12 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerStyle(map, name, geoserverLayerName, style, index);
     });
-    loadLayersInMap(map, polygonsData, layer);
+    if (polygonsData) {
+      loadLayersInMap(map, polygonsData, layer);
+    }
+    if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      addHoverEvent(layer, map);
+    }
   }
 };
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {

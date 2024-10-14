@@ -134,7 +134,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             mapFunctions={dashboardMapFunctions}
             isDashboard={"dashboard"}
           />
-          <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
           </div>
