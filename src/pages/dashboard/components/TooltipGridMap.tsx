@@ -12,10 +12,11 @@ export interface TooltipItemProps {
 export interface TooltipGridProps {
   label: string;
   learnMore?: boolean;
+  isoCountry?: string;
 }
 
 const TooltipGridMap = (props: TooltipGridProps) => {
-  const { label, learnMore } = props;
+  const { label, learnMore, isoCountry } = props;
   const t = useT();
 
   const items = [
@@ -45,7 +46,7 @@ const TooltipGridMap = (props: TooltipGridProps) => {
     <div className="absolute left-[35%] top-[20%] w-auto rounded bg-white p-2">
       <div className="max-w-52 min-w-40 flex flex-col gap-1">
         <div className="mb-1 flex items-center gap-2">
-          <img src="/flags/ao.svg" alt="flag" className="h-4 w-6 object-cover" />
+          <img src={`/flags/${isoCountry?.toLowerCase()}.svg`} alt="flag" className="h-4 w-6 object-cover" />
           <Text className="text-start text-darkCustom" variant="text-12-bold">
             {t(label)}
           </Text>

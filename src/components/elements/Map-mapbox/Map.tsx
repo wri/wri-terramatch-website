@@ -37,6 +37,7 @@ import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
+import { DashboardPopup } from "./components/DashboardPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -62,6 +63,7 @@ import {
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  addSourceToLayer,
   drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
@@ -202,6 +204,24 @@ export const MapContainer = ({
       addMarkerAndZoom(map.current, location);
     }
   }, [map, location]);
+  useEffect(() => {
+    if (map?.current && isDashboard && styleLoaded) {
+      const layerCountry = layersList.find(layer => layer.name === LAYERS_NAMES.WORLD_COUNTRIES);
+      if (layerCountry) {
+        addSourceToLayer(layerCountry, map.current, undefined);
+      }
+      addPopupsToMap(
+        map.current,
+        DashboardPopup,
+        setPolygonFromMap,
+        sitePolygonData,
+        tooltipType,
+        editPolygonSelected,
+        setEditPolygon,
+        draw.current
+      );
+    }
+  }, [map, isDashboard, styleLoaded]);
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
