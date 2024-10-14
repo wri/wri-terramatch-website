@@ -253,7 +253,7 @@ const Dashboard = () => {
       }))
     : [];
   return (
-    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0}>
@@ -330,6 +330,7 @@ const Dashboard = () => {
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={topProject}
+              isTableProject={true}
               tooltip={t(
                 "The 5 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
               )}

@@ -30,6 +30,7 @@ const SecDashboard = ({
   tooltipGraphic = false,
   variantTitle,
   tooltip,
+  isTableProject,
   data
 }: {
   title: string;
@@ -42,6 +43,7 @@ const SecDashboard = ({
   tooltipGraphic?: boolean;
   variantTitle?: TextVariants;
   data: DashboardDataProps;
+  isTableProject?: boolean;
   tooltip?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
@@ -49,7 +51,7 @@ const SecDashboard = ({
 
   const tableColumns = [
     {
-      header: "Specie",
+      header: isTableProject ? "Project" : "Specie",
       accessorKey: "label",
       enableSorting: false
     },
@@ -65,6 +67,8 @@ const SecDashboard = ({
       setToggleValue(1);
     }
   }, []);
+
+  console.log("dataAAAAAAAA", data);
 
   return (
     <div className={className}>
