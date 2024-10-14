@@ -14,6 +14,7 @@ import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
 import {
+  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -97,6 +98,46 @@ const Dashboard = () => {
     }
   ];
 
+  const COLUMN_ACTIVE_COUNTRY = [
+    {
+      header: "Project",
+      accessorKey: "project",
+      enableSorting: false
+    },
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restoratioHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
+    {
+      header: "Volunteers",
+      accessorKey: "volunteers",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: () => {
+        return (
+          <a href="/dashboard/project">
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
+          </a>
+        );
+      }
+    }
+  ];
+
   const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
     ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
         country: `${country.data.label}_${country.data.icon}`,
@@ -106,6 +147,7 @@ const Dashboard = () => {
         jobsCreated: "1306"
       }))
     : [];
+
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -286,11 +328,13 @@ const Dashboard = () => {
         </PageRow>
       </div>
       <ContentOverview
-        dataTable={DATA_ACTIVE_PROGRAMME}
-        columns={COLUMN_ACTIVE_PROGRAMME}
-        titleTable={t("ACTIVE COUNTRIES")}
+        dataTable={filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : DATA_ACTIVE_COUNTRY}
+        columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
+        titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
         textTooltipTable={t(
-          "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date."
+          filters.country.id === 0
+            ? "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date."
+            : "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep."
         )}
       />
     </div>

@@ -253,7 +253,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             </Button>
           }
         >
-          <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
+          <Table visibleRows={5} columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
         </PageCard>
       </PageRow>
     </div>
