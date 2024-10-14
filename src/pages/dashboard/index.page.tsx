@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -8,21 +8,16 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useLoading } from "@/context/loaderAdmin.provider";
-import {
-  useGetV2DashboardCountries,
-  useGetV2DashboardJobsCreated,
-  useGetV2DashboardTotalSectionHeader
-} from "@/generated/apiComponents";
+import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
+import { useDashboardData } from "./hooks/useDashboardData";
 import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
-  TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
   TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
@@ -44,138 +39,19 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const { filters } = useDashboardContext();
-  const [updateFilters, setUpdateFilters] = useState<any>({});
-  const [dashboardHeader, setDashboardHeader] = useState([
-    {
-      label: "Trees Planted",
-      value: "0",
-      tooltip:
-        "Total number of trees planted by funded projects to date, including through assisted natural regeneration, as reported through six-month progress reports."
-    },
-    {
-      label: "Hectares Under Restoration",
-      value: "0 ha",
-      tooltip:
-        "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts."
-    },
-    {
-      label: "Jobs Created",
-      value: "0",
-      tooltip:
-        "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
-    }
-  ]);
-  const [totalFtJobs, setTotalFtJobs] = useState({ value: "0" });
-  const [totalPtJobs, setTotalPtJobs] = useState({ value: "0" });
+  const { dashboardHeader, totalFtJobs, totalPtJobs, numberTreesPlanted, topProject, refetchTotalSectionHeader } =
+    useDashboardData(filters);
 
-  const [numberTreesPlanted, setNumberTreesPlanted] = useState({
-    value: "0",
-    totalValue: "0"
-  });
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
 
-  useEffect(() => {
-    const parsedFilters = {
-      programmes: filters.programmes,
-      country: filters.country.country_slug,
-      "organisations.type": filters.organizations,
-      landscapes: filters.landscapes
-    };
-    setUpdateFilters(parsedFilters);
-  }, [filters]);
-
-  const createQueryParams = (filters: any) => {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
-      } else if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(`filter[${key}]`, value as string);
-      }
-    });
-    return queryParams.toString();
-  };
-
-  const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
-
-  const { showLoader, hideLoader } = useLoading();
-  const {
-    data: totalSectionHeader,
-    refetch,
-    isLoading
-  } = useGetV2DashboardTotalSectionHeader<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters
-    }
-  );
-  const { data: jobsCreatedData } = useGetV2DashboardJobsCreated<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters
-    }
-  );
   const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
     queryParams: {}
   });
 
   useEffect(() => {
-    if (jobsCreatedData?.data?.total_ft) {
-      setTotalFtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_ft) });
-    }
-    if (jobsCreatedData?.data?.total_pt) {
-      setTotalPtJobs({ value: formatNumberUS(jobsCreatedData?.data?.total_pt) });
-    }
-  }, [jobsCreatedData]);
-
-  useEffect(() => {
-    if (isLoading) {
-      showLoader();
-    } else {
-      hideLoader();
-    }
-  }, [isLoading, showLoader, hideLoader]);
-  useEffect(() => {
-    refetch();
+    refetchTotalSectionHeader();
   }, [filters]);
-
-  const formatNumberUS = (value: number) => {
-    if (!value) return "";
-    if (value >= 1000000) {
-      return (value / 1000000).toFixed(2) + "M";
-    }
-    return value.toLocaleString("en-US");
-  };
-  useEffect(() => {
-    if (totalSectionHeader) {
-      setDashboardHeader(prev => [
-        {
-          label: "Trees Planted",
-          value: totalSectionHeader.total_trees_restored.toLocaleString(),
-          tooltip: prev[0].tooltip
-        },
-        {
-          label: "Hectares Under Restoration",
-          value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`,
-          tooltip: prev[1].tooltip
-        },
-        {
-          label: "Jobs Created",
-          value: totalSectionHeader.total_entries.toLocaleString(),
-          tooltip: prev[2].tooltip
-        }
-      ]);
-      setNumberTreesPlanted({
-        value: formatNumberUS(totalSectionHeader.total_trees_restored),
-        totalValue: formatNumberUS(totalSectionHeader.total_trees_restored_goal)
-      });
-    }
-  }, [totalSectionHeader]);
 
   const COLUMN_ACTIVE_PROGRAMME = [
     {
@@ -224,7 +100,7 @@ const Dashboard = () => {
       }))
     : [];
   return (
-    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0}>
@@ -300,7 +176,8 @@ const Dashboard = () => {
               title={t("Top 5 Projects with the Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
-              data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
+              data={topProject}
+              isTableProject={true}
               tooltip={t(
                 "The 5 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
               )}

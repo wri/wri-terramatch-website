@@ -34106,6 +34106,62 @@ export const useGetV2DashboardGetProjects = <TData = GetV2DashboardGetProjectsRe
   );
 };
 
+export type GetV2DashboardFrameworksQueryParams = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+};
+
+export type GetV2DashboardFrameworksError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardFrameworksResponse = {
+  framework_slug?: string;
+  name?: string;
+}[];
+
+export type GetV2DashboardFrameworksVariables = {
+  queryParams?: GetV2DashboardFrameworksQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieves distinct frameworks used in projects
+ */
+export const fetchGetV2DashboardFrameworks = (variables: GetV2DashboardFrameworksVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2DashboardFrameworksResponse,
+    GetV2DashboardFrameworksError,
+    undefined,
+    {},
+    GetV2DashboardFrameworksQueryParams,
+    {}
+  >({ url: "/v2/dashboard/frameworks", method: "get", ...variables, signal });
+
+/**
+ * Retrieves distinct frameworks used in projects
+ */
+export const useGetV2DashboardFrameworks = <TData = GetV2DashboardFrameworksResponse>(
+  variables: GetV2DashboardFrameworksVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardFrameworksResponse, GetV2DashboardFrameworksError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardFrameworksResponse, GetV2DashboardFrameworksError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/frameworks", operationId: "getV2DashboardFrameworks", variables }),
+    ({ signal }) => fetchGetV2DashboardFrameworks({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardProjectDetailsProjectPathParams = {
   /**
    * Optional. Filter counts and metrics by UUID.
@@ -36331,6 +36387,11 @@ export type QueryOperation =
       path: "/v2/dashboard/get-projects";
       operationId: "getV2DashboardGetProjects";
       variables: GetV2DashboardGetProjectsVariables;
+    }
+  | {
+      path: "/v2/dashboard/frameworks";
+      operationId: "getV2DashboardFrameworks";
+      variables: GetV2DashboardFrameworksVariables;
     }
   | {
       path: "/v2/dashboard/project-details/{project}";
