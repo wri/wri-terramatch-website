@@ -113,8 +113,15 @@ const SecDashboard = ({
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
         <When condition={data?.totalValue}>
-          <HorizontalStackedBarChart data={dataForChart} />
-          <img src="/images/treeBackground.svg" alt="secondValue" className="absolute right-0 h-9" />
+          <div className="relative h-9 w-1/2">
+            <HorizontalStackedBarChart data={dataForChart} className="z-0" />
+            <img
+              src="/images/treeBackground.svg"
+              id="treeBackground"
+              alt="secondValue"
+              className="absolute right-0.5 z-10 h-9"
+            />
+          </div>
         </When>
         <When condition={tooltipGraphic}>
           <TooltipGraphicDashboard />
