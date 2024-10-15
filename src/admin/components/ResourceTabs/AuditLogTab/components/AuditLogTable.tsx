@@ -22,7 +22,11 @@ const getTextForActionTable = (
   if (item.type === "comment" && entity == "site-polygon") {
     return "New Comment";
   } else if (item.type === "status" && entity == "site-polygon") {
-    return `New Status: ${formattedTextStatus(item.status)}`;
+    const text = `New Status: ${formattedTextStatus(item.status)}`;
+    if (text === "New Status: Updated") {
+      return "Updated";
+    }
+    return text;
   } else if (item.type === "change-request-updated") {
     return "Change Request Updated";
   } else if (item.request_removed && entity == "site-polygon") {

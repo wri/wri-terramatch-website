@@ -22833,6 +22833,31 @@ export type DashboardTotalSectionHeaderResponse = {
   };
 };
 
+export type DashboardTotalSectionHeaderCountryResponse = {
+  data?: {
+    /**
+     * Total number of non profit projects.
+     */
+    total_non_profit_count?: number;
+    /**
+     * Total number of enterprise projects.
+     */
+    total_enterprise_count?: number;
+    /**
+     * Total number of jobs created.
+     */
+    total_entries?: number;
+    /**
+     * Total number of hectares restored.
+     */
+    total_hectares_restored?: number;
+    /**
+     * Total number of trees restored.=
+     */
+    total_trees_restored?: number;
+  };
+};
+
 export type DashboardActiveCountriesResponse = {
   data?: {
     country_slug?: string;

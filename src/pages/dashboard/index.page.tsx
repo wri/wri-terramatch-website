@@ -40,6 +40,7 @@ const Dashboard = () => {
   const { filters } = useDashboardContext();
   const {
     dashboardHeader,
+    restorationGoals,
     totalFtJobs,
     totalPtJobs,
     numberTreesPlanted,
@@ -236,6 +237,8 @@ const Dashboard = () => {
                 "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
               )}
               data={numberTreesPlanted}
+              dataForChart={restorationGoals}
+              chartType="treesPlantedBarChart"
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
