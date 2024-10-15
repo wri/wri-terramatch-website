@@ -155,12 +155,14 @@ const Dashboard = () => {
   const DATA_ACTIVE_COUNTRY = activeProjects?.data
     ? activeProjects.data.map(
         (item: {
+          uuid: string;
           name: string;
           hectares_under_restoration: number;
           trees_under_restoration: number;
           jobs_created: number;
           volunteers: number;
         }) => ({
+          uuid: item.uuid,
           project: item?.name,
           treesPlanted: item.trees_under_restoration.toLocaleString(),
           restorationHectares: item.hectares_under_restoration.toLocaleString(),
@@ -350,11 +352,7 @@ const Dashboard = () => {
       <ContentOverview
         dataTable={filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : DATA_ACTIVE_COUNTRY}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
-        titleTable={t(
-          filters.country.id === 0
-            ? "ACTIVE COUNTRIES"
-            : `OTHER PROJECTS IN ${filters.country.data.label.toUpperCase()}`
-        )}
+        titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
         textTooltipTable={t(
           filters.country.id === 0
             ? "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date."
