@@ -26,6 +26,23 @@ import { getPulsingDot } from "./pulsing.dot";
 const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
 const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
 
+type EditPolygon = {
+  isOpen: boolean;
+  uuid: string;
+  primary_uuid?: string;
+};
+
+type PopupComponentProps = {
+  feature: mapboxgl.MapboxGeoJSONFeature;
+  popup: mapboxgl.Popup;
+  setPolygonFromMap: (polygon: any) => void;
+  sitePolygonData: SitePolygonsDataResponse | undefined;
+  type: TooltipType;
+  editPolygon: EditPolygon;
+  setEditPolygon: (value: EditPolygon) => void;
+  addPopupToMap?: () => void;
+};
+
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] ?? properties[`user_${key}`];
 };
@@ -151,7 +168,7 @@ const handleLayerClick = (
 
   const isWorldCountriesLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES;
 
-  const commonProps: any = {
+  const commonProps: PopupComponentProps = {
     feature,
     popup: newPopup,
     setPolygonFromMap,

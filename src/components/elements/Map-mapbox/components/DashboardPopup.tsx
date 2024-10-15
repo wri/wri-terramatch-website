@@ -6,12 +6,16 @@ import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 const client = new QueryClient();
-
+type Item = {
+  id: string;
+  title: string;
+  value: string;
+};
 export const DashboardPopup = (event: any) => {
   const isoCountry = event?.feature?.properties?.iso;
   const countryName = event?.feature?.properties?.country;
   const { addPopupToMap } = event;
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   useEffect(() => {
     async function fetchData() {
       const parsedFilters = {

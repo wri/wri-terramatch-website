@@ -15,6 +15,11 @@ export interface TooltipGridProps {
   isoCountry?: string;
   items?: TooltipItemProps[];
 }
+type Item = {
+  id: string;
+  title: string;
+  value: string;
+};
 
 const TooltipGridMap = (props: TooltipGridProps) => {
   const { label, learnMore, isoCountry, items } = props;
@@ -30,7 +35,7 @@ const TooltipGridMap = (props: TooltipGridProps) => {
         </div>
         <div>
           {items &&
-            items.map((item: any) => (
+            items.map((item: Item) => (
               <div className="flex gap-10" key={item.id}>
                 <Text className="flex-1 text-start text-darkCustom" variant="text-12-light">
                   {t(item.title)}
