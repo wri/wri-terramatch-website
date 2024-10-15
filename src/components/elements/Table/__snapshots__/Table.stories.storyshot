@@ -5892,7 +5892,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
         </span>
       </button>
       <div
-        className="border border-neutral-200 rounded-lg overflow-auto "
+        className="border border-neutral-200 rounded-lg overflow-auto max-h-[267px] lg:max-h-[284px] wide:max-h-[304px]"
       >
         <table
           className="w-full border-collapse"
@@ -6724,7 +6724,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
         </span>
       </button>
       <div
-        className="border border-neutral-200 rounded-lg overflow-auto"
+        className="border border-neutral-200 rounded-lg overflow-auto max-h-[calc(90vh-208px)]"
       >
         <table
           className="w-full border-collapse"
