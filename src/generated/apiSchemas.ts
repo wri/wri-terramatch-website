@@ -22433,6 +22433,8 @@ export type V2TerrafundCriteriaSite = {
   nonValidCriteria?: Record<string, any>[];
 }[];
 
+export type DashboardProjectAvailableResponse = any[];
+
 export type SitePolygon = {
   id?: number;
   uuid?: string;
