@@ -8,13 +8,11 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
 import {
-  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -40,15 +38,19 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const { filters } = useDashboardContext();
-  const { dashboardHeader, totalFtJobs, totalPtJobs, numberTreesPlanted, topProject, refetchTotalSectionHeader } =
-    useDashboardData(filters);
+  const {
+    dashboardHeader,
+    totalFtJobs,
+    totalPtJobs,
+    numberTreesPlanted,
+    topProject,
+    refetchTotalSectionHeader,
+    activeCountries,
+    activeProjects
+  } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
 
   useEffect(() => {
     refetchTotalSectionHeader();
@@ -81,7 +83,7 @@ const Dashboard = () => {
     },
     {
       header: "Hectares",
-      accessorKey: "restoratioHectares",
+      accessorKey: "restorationHectares",
       enableSorting: false
     },
     {
@@ -104,7 +106,7 @@ const Dashboard = () => {
     },
     {
       header: "Hectares",
-      accessorKey: "restoratioHectares",
+      accessorKey: "restorationHectares",
       enableSorting: false
     },
     {
@@ -131,14 +133,41 @@ const Dashboard = () => {
     }
   ];
 
-  const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
-    ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
-        country: `${country.data.label}_${country.data.icon}`,
-        project: "32",
-        treesPlanted: "2,234",
-        restoratioHectares: "2,234",
-        jobsCreated: "1306"
-      }))
+  const DATA_ACTIVE_PROGRAMME = activeCountries?.data
+    ? activeCountries.data.map(
+        (item: {
+          country: string;
+          country_slug: string;
+          number_of_projects: number;
+          total_trees_planted: number;
+          total_jobs_created: number;
+          hectares_restored: number;
+        }) => ({
+          country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
+          project: item.number_of_projects.toLocaleString(),
+          treesPlanted: item.total_trees_planted.toLocaleString(),
+          restorationHectares: item.hectares_restored.toLocaleString(),
+          jobsCreated: item.total_jobs_created.toLocaleString()
+        })
+      )
+    : [];
+
+  const DATA_ACTIVE_COUNTRY = activeProjects?.data
+    ? activeProjects.data.map(
+        (item: {
+          name: string;
+          hectares_under_restoration: number;
+          trees_under_restoration: number;
+          jobs_created: number;
+          volunteers: number;
+        }) => ({
+          project: item?.name,
+          treesPlanted: item.trees_under_restoration.toLocaleString(),
+          restorationHectares: item.hectares_under_restoration.toLocaleString(),
+          jobsCreated: item.jobs_created.toLocaleString(),
+          volunteers: item.volunteers.toLocaleString()
+        })
+      )
     : [];
 
   return (
@@ -321,7 +350,11 @@ const Dashboard = () => {
       <ContentOverview
         dataTable={filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : DATA_ACTIVE_COUNTRY}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
-        titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
+        titleTable={t(
+          filters.country.id === 0
+            ? "ACTIVE COUNTRIES"
+            : `OTHER PROJECTS IN ${filters.country.data.label.toUpperCase()}`
+        )}
         textTooltipTable={t(
           filters.country.id === 0
             ? "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date."
