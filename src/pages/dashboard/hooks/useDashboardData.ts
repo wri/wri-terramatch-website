@@ -8,6 +8,7 @@ import {
   useGetV2DashboardTreeRestorationGoal
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+import { createQueryParams } from "@/utils/dashboardUtils";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -47,18 +48,6 @@ export const useDashboardData = (filters: any) => {
     };
     setUpdateFilters(parsedFilters);
   }, [filters]);
-
-  const createQueryParams = (filters: any) => {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
-      } else if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(`filter[${key}]`, value as string);
-      }
-    });
-    return queryParams.toString();
-  };
 
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
   const { showLoader, hideLoader } = useLoading();
