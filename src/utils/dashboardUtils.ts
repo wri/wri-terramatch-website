@@ -6,7 +6,7 @@ export const createQueryParams = (filters: any) => {
   Object.entries(filters).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach(v => queryParams.append(`filter[${key}][]`, v));
-    } else if (value !== undefined && value !== null && value !== "") {
+    } else if (value) {
       queryParams.append(`filter[${key}]`, value as string);
     }
   });
