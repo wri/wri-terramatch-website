@@ -8,6 +8,7 @@ import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab
 import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab";
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
+import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
 import ShowTitle from "@/admin/components/ShowTitle";
 
 const ProjectShow: FC = () => {
@@ -22,7 +23,7 @@ const ProjectShow: FC = () => {
         <GalleryTab label="Project Gallery" entity="projects" />
         <DocumentTab label="Project Documents" entity="projects" />
         <ChangeRequestsTab entity="projects" singularEntity="project" />
-        <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab>
+        <MonitoredTab label="Monitored Data" />
         <AuditLogTab entity={AuditLogButtonStates.PROJECT} />
       </TabbedShowLayout>
     </Show>
