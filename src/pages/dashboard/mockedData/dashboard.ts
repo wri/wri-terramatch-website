@@ -10,7 +10,7 @@ export const LABEL_LEGEND = [
 ];
 
 export const NUMBER_OF_TREES_PLANTED = {
-  value: "12.2",
+  value: 12.2,
   unit: "M"
 };
 
@@ -90,11 +90,11 @@ export const TOP_20_TREE_SPECIES_PLANTED = {
 };
 
 export const TOTAL_HECTARES_UNDER_RESTORATION = {
-  value: "23,000"
+  value: 23000
 };
 
 export const TOTAL_NUMBER_OF_SITES = {
-  value: "345"
+  value: 345
 };
 
 export const RESTORATION_STRATEGIES_REPRESENTED = {
@@ -152,11 +152,11 @@ export const TARGET_LAND_USE_TYPES_REPRESENTED = {
 };
 
 export const NEW_PART_TIME_JOBS = {
-  value: "22,000"
+  value: 22000
 };
 
 export const NEW_FULL_TIME_JOBS = {
-  value: "1,000"
+  value: 1000
 };
 
 export const JOBS_CREATED_BY_GENDER = {
@@ -192,7 +192,7 @@ export const JOBS_CREATED_BY_AGE = {
 };
 
 export const TOTAL_VOLUNTEERS = {
-  value: "23,000"
+  value: 23000
 };
 
 export const VOLUNTEERS_CREATED_BY_GENDER = {
