@@ -13,35 +13,12 @@ export interface TooltipGridProps {
   label: string;
   learnMore?: boolean;
   isoCountry?: string;
+  items?: TooltipItemProps[];
 }
 
 const TooltipGridMap = (props: TooltipGridProps) => {
-  const { label, learnMore, isoCountry } = props;
+  const { label, learnMore, isoCountry, items } = props;
   const t = useT();
-
-  const items = [
-    {
-      id: "1",
-      title: "No. of Projects",
-      value: "32"
-    },
-    {
-      id: "2",
-      title: "Trees Planted",
-      value: "2,234"
-    },
-    {
-      id: "3",
-      title: "Restoration Hectares",
-      value: "832"
-    },
-    {
-      id: "4",
-      title: "Jobs Created",
-      value: "1,306"
-    }
-  ];
-
   return (
     <div className="absolute left-[35%] top-[20%] w-auto rounded bg-white p-2">
       <div className="max-w-52 min-w-40 flex flex-col gap-1">
@@ -52,16 +29,17 @@ const TooltipGridMap = (props: TooltipGridProps) => {
           </Text>
         </div>
         <div>
-          {items.map(item => (
-            <div className="flex gap-10" key={item.id}>
-              <Text className="flex-1 text-start text-darkCustom" variant="text-12-light">
-                {t(item.title)}
-              </Text>
-              <Text className="text-end text-darkCustom" variant="text-12-bold">
-                {t(item.value)}
-              </Text>
-            </div>
-          ))}
+          {items &&
+            items.map((item: any) => (
+              <div className="flex gap-10" key={item.id}>
+                <Text className="flex-1 text-start text-darkCustom" variant="text-12-light">
+                  {t(item.title)}
+                </Text>
+                <Text className="text-end text-darkCustom" variant="text-12-bold">
+                  {t(item.value)}
+                </Text>
+              </div>
+            ))}
         </div>
 
         <When condition={learnMore}>

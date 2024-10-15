@@ -121,38 +121,54 @@ export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, 
 
 const handleLayerClick = (
   e: any,
-  popupComponent: any,
+  PopupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  layerName?: string
 ) => {
   removePopups("POLYGON");
-  const { lng, lat } = e.lngLat;
-  const feature = e.features[0];
 
-  let popupContent = document.createElement("div");
+  const { lngLat, features } = e;
+  const feature = features?.[0];
+
+  if (!feature) {
+    console.warn("No feature found in click event");
+    return;
+  }
+
+  const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
 
-  const newPopup = new mapboxgl.Popup({ className: "popup-map" })
-    .setLngLat([lng, lat])
-    .setDOMContent(popupContent)
-    .addTo(map);
+  const createPopup = (lngLat: mapboxgl.LngLat) =>
+    new mapboxgl.Popup({ className: "popup-map" }).setLngLat(lngLat).setDOMContent(popupContent);
 
-  root.render(
-    createElement(popupComponent, {
-      feature,
-      popup: newPopup,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon
-    })
-  );
+  const newPopup = createPopup(lngLat);
+
+  const isWorldCountriesLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES;
+
+  const commonProps: any = {
+    feature,
+    popup: newPopup,
+    setPolygonFromMap,
+    sitePolygonData,
+    type,
+    editPolygon,
+    setEditPolygon
+  };
+
+  if (isWorldCountriesLayer) {
+    const addPopupToMap = () => newPopup.addTo(map);
+    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap }));
+  } else {
+    newPopup.addTo(map);
+    root.render(createElement(PopupComponent, commonProps));
+  }
+
   popupAttachedMap["POLYGON"].push(newPopup);
 };
 
@@ -389,7 +405,8 @@ export const addPopupToLayer = (
             sitePolygonData,
             type,
             editPolygon,
-            setEditPolygon
+            setEditPolygon,
+            name
           );
         }
       });
