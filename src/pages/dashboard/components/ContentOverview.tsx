@@ -1,10 +1,8 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
-import ImpactStoryCard from "@/components/elements/Cards/DashboardCard/ImpactStoryCard";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
@@ -29,25 +27,15 @@ import {
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
-interface ImpactStoryCardProps {
-  id: string;
-  by: string;
-  date: string;
-  description: string;
-  image: string;
-  title: string;
-}
-
 interface ContentOverviewProps<TData> {
   dataTable: TData[];
   columns: ColumnDef<TData>[];
-  dataImpactStories?: ImpactStoryCardProps[];
   titleTable: string;
   textTooltipTable?: string;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
-  const { dataTable: data, columns, dataImpactStories = [], titleTable, textTooltipTable } = props;
+  const { dataTable: data, columns, titleTable, textTooltipTable } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
@@ -157,28 +145,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             </div>
           </div>
         </div>
-        <When condition={dataImpactStories?.length !== 0}>
-          <PageCard
-            title={t("IMPACT STORIES")}
-            gap={4}
-            tooltip={t(
-              "Short project success stories will be accessible by early 2025 through the relevant project pages."
-            )}
-            widthTooltip="w-52 lg:w-64"
-            iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-          >
-            {dataImpactStories.map(story => (
-              <ImpactStoryCard
-                key={story.id}
-                by={story.by}
-                date={story.date}
-                description={story.description}
-                image={story.image}
-                title={story.title}
-              />
-            ))}
-          </PageCard>
-        </When>
 
         <PageCard
           className="border-0 px-4 py-6"
