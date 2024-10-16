@@ -10,13 +10,16 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { TextVariants } from "@/types/common";
+import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
+import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
+import MultiLineChart from "../charts/MultiLineChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashoard from "./GraphicIconDashoard";
 import ObjectiveSec from "./ObjectiveSec";
-import TooltipGraphicDashboard from "./TooltipGraphicDashboard";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
 const SecDashboard = ({
@@ -29,7 +32,11 @@ const SecDashboard = ({
   classNameTitle,
   tooltipGraphic = false,
   variantTitle,
-  data
+  tooltip,
+  isTableProject,
+  data,
+  dataForChart,
+  chartType
 }: {
   title: string;
   type?: "legend" | "toggle";
@@ -41,18 +48,28 @@ const SecDashboard = ({
   tooltipGraphic?: boolean;
   variantTitle?: TextVariants;
   data: DashboardDataProps;
+  isTableProject?: boolean;
+  tooltip?: string;
+  dataForChart?: any;
+  chartType?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
+  const [restorationGoalResume, setRestorationGoalResume] = useState<
+    { name: string; value: number | undefined; color: string }[]
+  >([]);
+  const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
 
   const tableColumns = [
     {
-      header: "Specie",
-      accessorKey: "label"
+      header: isTableProject ? "Project" : "Specie",
+      accessorKey: "label",
+      enableSorting: false
     },
     {
       header: "Count",
-      accessorKey: "valueText"
+      accessorKey: "valueText",
+      enableSorting: false
     }
   ];
 
@@ -62,6 +79,17 @@ const SecDashboard = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
+      setTreesPlantedByYear(data);
+    }
+    if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
+      const data = getRestorationGoalResumeData(dataForChart);
+      setRestorationGoalResume(data);
+    }
+  }, [dataForChart, toggleValue]);
+
   return (
     <div className={className}>
       <div className={classNames("flex items-center justify-between", classNameHeader)}>
@@ -69,9 +97,11 @@ const SecDashboard = ({
           <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
           </Text>
-          <ToolTip content={t(title)} placement="top" width="w-44">
-            <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-          </ToolTip>
+          <When condition={!!tooltip}>
+            <ToolTip title={t(title)} content={t(tooltip)} width="w-52 lg:w-64" trigger="click">
+              <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+            </ToolTip>
+          </When>
         </div>
         <When condition={type === "legend"}>
           <div className="flex gap-4">
@@ -79,7 +109,7 @@ const SecDashboard = ({
               secondOptionsData.map((item: any, index: number) => (
                 <div key={index} className="flex items-center gap-1">
                   <div className={classNames("h-2 w-2 rounded-full", item.color)} />
-                  <Text variant="text-10" className="text-darkCustom">
+                  <Text variant="text-12" className="text-darkCustom">
                     {t(item.label)}
                   </Text>
                 </div>
@@ -98,12 +128,22 @@ const SecDashboard = ({
         </When>
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
-        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} />}
-        <When condition={data?.value && data?.unit}>
-          <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
+        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
+        <When condition={data?.totalValue}>
+          <div className="relative h-9 w-[315px]">
+            <div className="absolute inset-0 z-0 h-full w-full">
+              <HorizontalStackedBarChart data={restorationGoalResume} className="h-full w-full" />
+            </div>
+            <img
+              src="/images/treeBackground.svg"
+              id="treeBackground"
+              alt="secondValue"
+              className="absolute right-0 z-10 h-9 w-[316px]"
+            />
+          </div>
         </When>
-        <When condition={tooltipGraphic}>
-          <TooltipGraphicDashboard />
+        <When condition={chartType === "multiLineChart"}>
+          <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />

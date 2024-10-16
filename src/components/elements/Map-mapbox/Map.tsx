@@ -33,10 +33,11 @@ import {
   usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
+import { DashboardPopup } from "./components/DashboardPopup";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -57,11 +58,13 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addDeleteLayer,
   addFilterOnLayer,
+  addGeojsonSourceToLayer,
   addGeojsonToDraw,
   addMarkerAndZoom,
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  addSourceToLayer,
   drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
@@ -97,7 +100,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   editPolygon?: boolean;
   polygonChecks?: boolean;
   legend?: LegendItem[];
-  centroids?: any;
+  centroids?: DashboardGetProjectsData[];
   polygonsData?: Record<string, string[]>;
   bbox?: BBox;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
@@ -114,6 +117,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
+  isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }
@@ -141,11 +145,13 @@ export const MapContainer = ({
   tooltipType = "view",
   polygonsExists = true,
   shouldBboxZoom = true,
+  isDashboard = undefined,
   formMap,
   pdView = false,
   location,
   entityData,
   imageGalleryRef,
+  centroids,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -200,6 +206,28 @@ export const MapContainer = ({
       addMarkerAndZoom(map.current, location);
     }
   }, [map, location]);
+  useEffect(() => {
+    if (map?.current && isDashboard && styleLoaded && map.current.isStyleLoaded()) {
+      const layerCountry = layersList.find(layer => layer.name === LAYERS_NAMES.WORLD_COUNTRIES);
+      if (layerCountry) {
+        addSourceToLayer(layerCountry, map.current, undefined);
+      }
+      const centroidsLayer = layersList.find(layer => layer.name === LAYERS_NAMES.CENTROIDS);
+      if (centroidsLayer && centroids) {
+        addGeojsonSourceToLayer(centroids, map.current, centroidsLayer);
+      }
+      addPopupsToMap(
+        map.current,
+        DashboardPopup,
+        setPolygonFromMap,
+        sitePolygonData,
+        tooltipType,
+        editPolygonSelected,
+        setEditPolygon,
+        draw.current
+      );
+    }
+  }, [map, isDashboard, map?.current?.isStyleLoaded()]);
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
@@ -385,7 +413,7 @@ export const MapContainer = ({
   }
 
   useEffect(() => {
-    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded && map.current.isStyleLoaded()) {
       const newPolygonData = {
         [DELETED_POLYGONS]: selectedPolygonsInCheckbox
       };
@@ -506,9 +534,11 @@ export const MapContainer = ({
             <ProcessBulkPolygonsControl entityData={record} />
           </ControlGroup>
         </When>
-        <ControlGroup position="top-right">
-          <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
-        </ControlGroup>
+        <When condition={isDashboard !== "dashboard"}>
+          <ControlGroup position="top-right">
+            <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+          </ControlGroup>
+        </When>
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
@@ -562,7 +592,13 @@ export const MapContainer = ({
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-            <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+            {isDashboard === "dashboard" ? (
+              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+            ) : (
+              isDashboard !== "modal" && (
+                <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+              )
+            )}
           </ControlGroup>
         </When>
       </When>

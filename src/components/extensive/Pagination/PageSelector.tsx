@@ -1,10 +1,14 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { When } from "react-if";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { TextVariants } from "@/types/common";
+
+import { VariantPagination } from "./PaginationVariant";
 
 export interface PageSelectorProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageIndex: number;
@@ -18,6 +22,8 @@ export interface PageSelectorProps extends DetailedHTMLProps<HTMLAttributes<HTML
 
   getPageCount: () => number;
   setPageIndex: (index: number) => void;
+
+  variant?: VariantPagination;
 }
 
 function PageSelector({
@@ -30,16 +36,39 @@ function PageSelector({
   pageIndex,
   className,
   variantText,
+  variant,
   ...props
 }: PageSelectorProps) {
   const currentPage = pageIndex + 1;
+  const t = useT();
 
   return (
-    <div {...props} className={classNames(className, "flex items-center justify-center gap-5")}>
+    <div
+      {...props}
+      className={classNames(className, "flex items-center justify-center gap-5", variant?.contentPageSelector)}
+    >
+      <When condition={variant?.labelsPagination ?? false}>
+        <div className="flex items-center gap-2">
+          <Text variant={"text-12-semibold"} className={classNames("text-black")}>
+            {t("Page")}
+          </Text>
+          <Text variant={"text-12-semibold"} className={classNames("text-black", variant?.iconContentPagination)}>
+            {currentPage}
+          </Text>
+          <Text variant={"text-12-semibold"} className={classNames("text-black")}>
+            {t("of")} {getPageCount()}
+          </Text>
+        </div>
+      </When>
       <IconButton
-        iconProps={{ name: IconNames.CHEVRON_LEFT, className: "fill-primary", width: 20 }}
+        iconProps={{
+          name: IconNames.CHEVRON_LEFT,
+          className: classNames("fill-primary", variant?.iconPagination),
+          width: 20
+        }}
         onClick={() => previousPage()}
         disabled={!getCanPreviousPage()}
+        className={variant?.iconContentPagination}
       />
       {getPaginationItems(currentPage, getPageCount()).map(pageNumber => {
         return (
@@ -47,7 +76,10 @@ function PageSelector({
             key={pageNumber}
             role="button"
             variant={variantText ?? "text-bold-subtitle-500"}
-            className={classNames(currentPage === pageNumber ? "text-neutral-1000 underline" : "text-neutral-600")}
+            className={classNames(
+              currentPage === pageNumber ? "text-neutral-1000 underline" : "text-neutral-600",
+              variant?.textNumberPagination
+            )}
             disabled={typeof pageNumber !== "number"}
             onClick={() => typeof pageNumber === "number" && setPageIndex(pageNumber - 1)}
           >
@@ -56,9 +88,14 @@ function PageSelector({
         );
       })}
       <IconButton
-        iconProps={{ name: IconNames.CHEVRON_RIGHT, className: "fill-primary", width: 20 }}
+        iconProps={{
+          name: IconNames.CHEVRON_RIGHT,
+          className: classNames("fill-primary", variant?.iconPagination),
+          width: 20
+        }}
         onClick={() => nextPage()}
         disabled={!getCanNextPage()}
+        className={variant?.iconContentPagination}
       />
     </div>
   );

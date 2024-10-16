@@ -21,3 +21,20 @@ export const Default: Story = {
     children: "Open-Hover"
   }
 };
+
+export const Hover: Story = {
+  args: {
+    content: "This is a tooltip",
+    width: "w-28",
+    children: "Open-Hover"
+  }
+};
+
+export const Click: Story = {
+  args: {
+    content: "This is a tooltip",
+    width: "w-28",
+    children: "Open-Click",
+    trigger: "click"
+  }
+};
