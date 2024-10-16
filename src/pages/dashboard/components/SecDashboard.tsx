@@ -53,8 +53,10 @@ const SecDashboard = ({
   chartType?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
-  const [restorationGoalResume, setRestorationGoalResume] = useState<any>([]);
-  const [treesPlantedByYear, setTreesPlantedByYear] = useState<any>([]);
+  const [restorationGoalResume, setRestorationGoalResume] = useState<
+    { name: string; value: number | undefined; color: string }[]
+  >([]);
+  const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
 
   const tableColumns = [
