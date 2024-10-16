@@ -143,7 +143,7 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={chartType === "multiLineChart"}>
-          <MultiLineChart data={treesPlantedByYear} />
+          <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
