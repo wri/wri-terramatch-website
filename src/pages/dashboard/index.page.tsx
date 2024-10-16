@@ -46,6 +46,7 @@ const Dashboard = () => {
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
+    centroidsDataProjects,
     activeCountries,
     activeProjects
   } = useDashboardData(filters);
@@ -356,6 +357,7 @@ const Dashboard = () => {
       </div>
       <ContentOverview
         dataTable={filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : DATA_ACTIVE_COUNTRY}
+        centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
         titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
         textTooltipTable={t(

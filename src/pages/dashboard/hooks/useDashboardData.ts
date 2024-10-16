@@ -4,10 +4,12 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
+  useGetV2DashboardGetProjects,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
-  useGetV2DashboardTreeRestorationGoal
+  useGetV2DashboardTreeRestorationGoal,
+  useGetV2DashboardViewProjectList
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
@@ -33,6 +35,20 @@ export const useDashboardData = (filters: any) => {
   ]);
   const [totalFtJobs, setTotalFtJobs] = useState({ value: 0 });
   const [totalPtJobs, setTotalPtJobs] = useState({ value: 0 });
+  const projectUuid = filters.project?.project_uuid;
+  const queryParamsCountryProject: any = (country?: string, project?: string) => {
+    if (country) {
+      return { country: country };
+    } else if (project) {
+      return { uuid: project };
+    } else {
+      return {};
+    }
+  };
+  const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
+  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
+    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
+  });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
     value: 0,
     totalValue: 0
@@ -125,6 +141,8 @@ export const useDashboardData = (filters: any) => {
     topProject,
     refetchTotalSectionHeader,
     activeCountries,
-    activeProjects
+    activeProjects,
+    centroidsDataProjects: centroidsDataProjects?.data,
+    listViewProjects
   };
 };
