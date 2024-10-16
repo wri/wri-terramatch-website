@@ -1,7 +1,7 @@
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 export interface DropdownVariant {
-  containerClassName: string;
+  containerClassName?: string;
   className: string;
   iconClassName?: string;
   titleContainerClassName: string;
@@ -17,7 +17,7 @@ export interface DropdownVariant {
 
 export const VARIANT_DROPDOWN_DEFAULT: DropdownVariant = {
   containerClassName: "",
-  className: "",
+  className: "border-light",
   iconClassName: "w-4",
   iconName: undefined,
   titleContainerClassName: "flex items-center gap-2",
@@ -50,4 +50,16 @@ export const VARIANT_DROPDOWN_FILTER: DropdownVariant = {
   titleClassname: "",
   optionCheckboxClassName: "",
   optionLabelClassName: "whitespace-nowrap"
+};
+
+export const VARIANT_DROPDOWN_SIMPLE: DropdownVariant = {
+  className: "gap-2 text-black border-b-2 border-black py-0 px-1 rounded-none h-fit",
+  iconClassName: "w-3 h-[9px] fill-trasparent",
+  iconName: IconNames.CHEVRON_DOWN_DASH,
+  iconNameClear: IconNames.CLEAR,
+  titleContainerClassName: "flex-1 overflow-hidden",
+  titleClassname: "leading-normal text-ellipsis whitespace-nowrap overflow-hidden",
+  optionCheckboxClassName: "checked:text-blueCustom-700",
+  optionLabelClassName: "text-14-semibold whitespace-nowrap",
+  optionClassName: "gap-2"
 };

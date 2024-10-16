@@ -175,6 +175,7 @@ module.exports = {
         740: "#E0E0E0",
         750: "#E6EAEB",
         800: "#E9EDF0",
+        850: "#F0F3FA",
         900: "#F6FAFD",
         950: "#ebebeb",
         1000: "#DFE3E8"

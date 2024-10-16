@@ -3,15 +3,80 @@ import { TabbedShowLayout, TabProps } from "react-admin";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 
+import DataCard, { DataStructure } from "./components/DataCard";
+
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
 }
+
+const MonitoredCardData: DataStructure[] = [
+  {
+    label: "Tree Cover (TTC)",
+    tooltipContent: "Tooltip",
+    tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      }
+    ]
+  },
+  {
+    label: "Tree Cover Loss",
+    tooltipContent: "Tooltip",
+    tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      }
+    ]
+  }
+];
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex w-full gap-4">
-        <div className="w-1/5">
+        <div className="w-[30%]">
           Map
           <Input
             name="email"
@@ -28,7 +93,11 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             classNameError="!mt-0"
           />
         </div>
-        <div>Analysis is due for 345 Polygons for this project. Please run analysis.</div>
+        <div className="flex w-full flex-col gap-5">
+          {MonitoredCardData.map(data => (
+            <DataCard key={data.label} data={data} />
+          ))}
+        </div>
       </div>
     </TabbedShowLayout.Tab>
   );
