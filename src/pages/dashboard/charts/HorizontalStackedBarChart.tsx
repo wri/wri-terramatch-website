@@ -1,7 +1,8 @@
 import React from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
-const HorizontalStackedBarChart = ({ data, className }: { data: any; className?: string }) => {
+const HorizontalStackedBarChart = ({ data = [], className }: { data: any; className?: string }) => {
+  if (!data.length) return null;
   const totalValue = data[0].value;
   const enterpriseValue = data[1].value;
   const nonProfitValue = data[2].value;

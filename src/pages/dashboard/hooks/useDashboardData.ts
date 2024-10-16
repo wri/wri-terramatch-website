@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
+  useGetV2DashboardActiveCountries,
+  useGetV2DashboardActiveProjects,
   useGetV2DashboardGetProjects,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
@@ -51,9 +53,6 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const [restorationGoals, setRestorationGoals] = useState<
-    { name: string; value: number | undefined; color: string }[]
-  >([]);
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
@@ -77,6 +76,16 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!filters }
   );
   const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
+
+  const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
+    { queryParams: queryParams },
+    { enabled: !!filters }
+  );
+
+  const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
+    { queryParams: queryParams },
+    { enabled: !!filters }
+  );
 
   const { data: dashboardRestorationGoalData } =
     useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
@@ -123,22 +132,16 @@ export const useDashboardData = (filters: any) => {
     }
   }, [totalSectionHeader]);
 
-  useEffect(() => {
-    setRestorationGoals([
-      { name: "Total", value: dashboardRestorationGoalData?.totalTreesGrownGoal, color: "#13487A" },
-      { name: "Enterprise", value: dashboardRestorationGoalData?.forProfitTreeCount, color: "#7BBD31" },
-      { name: "Non Profit", value: dashboardRestorationGoalData?.nonProfitTreeCount, color: "#B9EDFF" }
-    ]);
-  }, [dashboardRestorationGoalData]);
-
   return {
     dashboardHeader,
-    restorationGoals,
+    dashboardRestorationGoalData,
     totalFtJobs,
     totalPtJobs,
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
+    activeCountries,
+    activeProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     listViewProjects
   };
