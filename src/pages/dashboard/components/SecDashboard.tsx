@@ -11,13 +11,14 @@ import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVar
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { TextVariants } from "@/types/common";
+import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
+import MultiLineChart from "../charts/MultiLineChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashoard from "./GraphicIconDashoard";
 import ObjectiveSec from "./ObjectiveSec";
-import TooltipGraphicDashboard from "./TooltipGraphicDashboard";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
 const SecDashboard = ({
@@ -52,6 +53,8 @@ const SecDashboard = ({
   chartType?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
+  const [restorationGoalResume, setRestorationGoalResume] = useState<any>([]);
+  const [treesPlantedByYear, setTreesPlantedByYear] = useState<any>([]);
   const t = useT();
 
   const tableColumns = [
@@ -72,6 +75,17 @@ const SecDashboard = ({
       setToggleValue(1);
     }
   }, []);
+
+  useEffect(() => {
+    if (dataForChart && chartType === "multiLineChart") {
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
+      setTreesPlantedByYear(data);
+    }
+    if (dataForChart && chartType === "treesPlantedBarChart") {
+      const data = getRestorationGoalResumeData(dataForChart);
+      setRestorationGoalResume(data);
+    }
+  }, [dataForChart, toggleValue]);
 
   return (
     <div className={className}>
@@ -115,7 +129,7 @@ const SecDashboard = ({
         <When condition={data?.totalValue}>
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
-              <HorizontalStackedBarChart data={dataForChart} className="h-full w-full" />
+              <HorizontalStackedBarChart data={restorationGoalResume} className="h-full w-full" />
             </div>
             <img
               src="/images/treeBackground.svg"
@@ -125,8 +139,8 @@ const SecDashboard = ({
             />
           </div>
         </When>
-        <When condition={tooltipGraphic}>
-          <TooltipGraphicDashboard />
+        <When condition={chartType === "multiLineChart"}>
+          <MultiLineChart data={treesPlantedByYear} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
