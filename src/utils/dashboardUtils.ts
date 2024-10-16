@@ -1,4 +1,12 @@
+import { MONTHS } from "@/constants/dashbordConsts";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+
+type DataPoint = {
+  time: string;
+  Total: number;
+  Enterprise: number;
+  "Non Profit": number;
+};
 
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
@@ -11,6 +19,21 @@ export const formatNumberChart = (value: number) => {
     return `${(value / 1000).toFixed(1)}K`;
   }
   return value.toLocaleString("en-US");
+};
+
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+};
+
+export const formatMonth = (monthNumber: number): string => MONTHS[monthNumber - 1];
+
+export const countValuesPerYear = (data: DataPoint[]): Record<string, number> => {
+  return data.reduce((acc, item) => {
+    const year = item.time.split("-")[0];
+    acc[year] = (acc[year] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 };
 
 export const createQueryParams = (filters: any) => {

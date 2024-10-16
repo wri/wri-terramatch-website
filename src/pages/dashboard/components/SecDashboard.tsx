@@ -10,6 +10,7 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
@@ -79,11 +80,11 @@ const SecDashboard = ({
   }, []);
 
   useEffect(() => {
-    if (dataForChart && chartType === "multiLineChart") {
+    if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
       const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
       setTreesPlantedByYear(data);
     }
-    if (dataForChart && chartType === "treesPlantedBarChart") {
+    if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
       const data = getRestorationGoalResumeData(dataForChart);
       setRestorationGoalResume(data);
     }

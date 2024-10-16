@@ -1,7 +1,8 @@
 import React from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { formatNumberChart } from "@/utils/dashboardUtils";
+import { COLORS } from "@/constants/dashbordConsts";
+import { countValuesPerYear, formatDate, formatMonth, formatNumberChart } from "@/utils/dashboardUtils";
 
 type DataPoint = {
   time: string;
@@ -16,42 +17,6 @@ type ChartData = {
 
 type ChartProps = {
   data: ChartData[];
-};
-
-const COLORS: Record<string, string> = {
-  Total: "#053D38",
-  Enterprise: "#27A9E0",
-  "Non Profit": "#7BBD31"
-};
-
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-};
-
-const formatMonth = (monthNumber: number): string => MONTHS[monthNumber - 1];
-
-const countValuesPerYear = (data: DataPoint[]): Record<string, number> => {
-  return data.reduce((acc, item) => {
-    const year = item.time.split("-")[0];
-    acc[year] = (acc[year] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
 };
 
 const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {

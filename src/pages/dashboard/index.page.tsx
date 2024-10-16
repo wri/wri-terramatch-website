@@ -7,6 +7,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
@@ -212,7 +213,7 @@ const Dashboard = () => {
               )}
               data={numberTreesPlanted}
               dataForChart={dashboardRestorationGoalData}
-              chartType="treesPlantedBarChart"
+              chartType={CHART_TYPES.treesPlantedBarChart}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
@@ -221,7 +222,7 @@ const Dashboard = () => {
               tooltipGraphic={true}
               data={{}}
               dataForChart={dashboardRestorationGoalData}
-              chartType="multiLineChart"
+              chartType={CHART_TYPES.multiLineChart}
               tooltip={t("Number of trees planted in each year.")}
             />
             <SecDashboard
