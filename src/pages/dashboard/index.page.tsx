@@ -7,6 +7,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
@@ -18,7 +19,6 @@ import {
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
-  NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
@@ -42,7 +42,7 @@ const Dashboard = () => {
   const { filters } = useDashboardContext();
   const {
     dashboardHeader,
-    restorationGoals,
+    dashboardRestorationGoalData,
     totalFtJobs,
     totalPtJobs,
     numberTreesPlanted,
@@ -212,15 +212,17 @@ const Dashboard = () => {
                 "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
               )}
               data={numberTreesPlanted}
-              dataForChart={restorationGoals}
-              chartType="treesPlantedBarChart"
+              dataForChart={dashboardRestorationGoalData}
+              chartType={CHART_TYPES.treesPlantedBarChart}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
               tooltipGraphic={true}
-              data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
+              data={{}}
+              dataForChart={dashboardRestorationGoalData}
+              chartType={CHART_TYPES.multiLineChart}
               tooltip={t("Number of trees planted in each year.")}
             />
             <SecDashboard

@@ -35,9 +35,6 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const [restorationGoals, setRestorationGoals] = useState<
-    { name: string; value: number | undefined; color: string }[]
-  >([]);
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
@@ -107,17 +104,9 @@ export const useDashboardData = (filters: any) => {
     }
   }, [totalSectionHeader]);
 
-  useEffect(() => {
-    setRestorationGoals([
-      { name: "Total", value: dashboardRestorationGoalData?.totalTreesGrownGoal, color: "#13487A" },
-      { name: "Enterprise", value: dashboardRestorationGoalData?.forProfitTreeCount, color: "#7BBD31" },
-      { name: "Non Profit", value: dashboardRestorationGoalData?.nonProfitTreeCount, color: "#B9EDFF" }
-    ]);
-  }, [dashboardRestorationGoalData]);
-
   return {
     dashboardHeader,
-    restorationGoals,
+    dashboardRestorationGoalData,
     totalFtJobs,
     totalPtJobs,
     numberTreesPlanted,
