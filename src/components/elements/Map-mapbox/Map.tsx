@@ -207,7 +207,7 @@ export const MapContainer = ({
     }
   }, [map, location]);
   useEffect(() => {
-    if (map?.current && isDashboard && styleLoaded && map.current.isStyleLoaded()) {
+    if (map?.current && isDashboard && map.current.isStyleLoaded()) {
       const layerCountry = layersList.find(layer => layer.name === LAYERS_NAMES.WORLD_COUNTRIES);
       if (layerCountry) {
         addSourceToLayer(layerCountry, map.current, undefined);
