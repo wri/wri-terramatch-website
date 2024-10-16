@@ -51,6 +51,7 @@ export interface DropdownProps {
   formHook?: UseFormReturn;
   onChangeConfirm?: boolean;
   showClear?: boolean;
+  showLabelAsMultiple?: boolean;
   disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
@@ -149,6 +150,15 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return props?.disableOptionTitles?.includes(title);
   };
 
+  const formatSelectedValues = (selected: OptionValue[], options: Option[], value: any) => {
+    if (selected.length > 1 && props.showLabelAsMultiple) {
+      return `Multiple ${props.placeholder}s`;
+    } else {
+      formatOptionsList(options, toArray<any>(value));
+    }
+    return formatOptionsList(options, selected.map(String));
+  };
+
   return (
     <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
@@ -189,9 +199,9 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname)}
-                  title={formatOptionsList(options, toArray<any>(value))}
+                  title={formatSelectedValues(selected, options, value)}
                 >
-                  {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
+                  {formatSelectedValues(selected, options, value) || props.placeholder}
                 </Text>
               </div>
               <When condition={selected.length > 0 && showClear}>
