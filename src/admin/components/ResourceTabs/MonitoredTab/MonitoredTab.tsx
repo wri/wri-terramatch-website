@@ -80,7 +80,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex w-full gap-4">
-        <div className="flex w-[30%] flex-col gap-4">
+        <div className="flex w-[36%] flex-col gap-4">
           <div className="relative w-full self-center overflow-hidden rounded-lg">
             <img src="/images/map-img.png" alt="Monitored" className="w-full" />
             <div className="absolute top-0 z-10 flex h-full w-full items-center justify-center">
@@ -99,6 +99,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
               contentClassName="flex flex-wrap gap-1 !space-y-0"
               variantTextRadio="text-12-semibold"
               labelRadio="text-darkCustom-300"
+              classNameRadio="!gap-1"
               contentRadioClassName="text-darkCustom-300 !border-neutral-300 py-[6px] px-[6px] rounded-lg w-fit"
               options={[
                 { title: "All Polygons", value: "All Polygons" },
@@ -143,6 +144,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
               contentClassName="flex flex-wrap gap-1 !space-y-0"
               variantTextRadio="text-12-semibold"
               labelRadio="text-darkCustom-300"
+              classNameRadio="!gap-1"
               contentRadioClassName="text-darkCustom-300 !border-neutral-300 py-[6px] px-[6px] rounded-lg w-fit"
               options={[
                 { title: "In last month", value: "In last month" },

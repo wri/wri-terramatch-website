@@ -13,6 +13,7 @@ export interface RadioGroupProps extends InputWrapperProps {
   radioClassName?: string;
   contentRadioClassName?: string;
   variantTextRadio?: TextVariants;
+  classNameRadio?: string;
   labelRadio?: string;
 }
 
@@ -24,6 +25,7 @@ const RadioGroup = ({
   radioClassName,
   contentRadioClassName,
   variantTextRadio,
+  classNameRadio,
   ...inputWrapperProps
 }: RadioGroupProps) => {
   return (
@@ -37,7 +39,7 @@ const RadioGroup = ({
                   label={option.title}
                   checked={checked}
                   onChange={() => onChange && onChange(option.value)}
-                  className={classNames("flex flex-row-reverse items-center justify-end gap-3 ")}
+                  className={classNames("flex flex-row-reverse items-center justify-end gap-3 ", classNameRadio)}
                   variantText={variantTextRadio}
                   labelRadio={radioClassName}
                 />
