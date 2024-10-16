@@ -26,6 +26,23 @@ import { getPulsingDot } from "./pulsing.dot";
 const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
 const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
 
+type EditPolygon = {
+  isOpen: boolean;
+  uuid: string;
+  primary_uuid?: string;
+};
+
+type PopupComponentProps = {
+  feature: mapboxgl.MapboxGeoJSONFeature;
+  popup: mapboxgl.Popup;
+  setPolygonFromMap: (polygon: any) => void;
+  sitePolygonData: SitePolygonsDataResponse | undefined;
+  type: TooltipType;
+  editPolygon: EditPolygon;
+  setEditPolygon: (value: EditPolygon) => void;
+  addPopupToMap?: () => void;
+};
+
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] ?? properties[`user_${key}`];
 };
@@ -121,38 +138,54 @@ export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, 
 
 const handleLayerClick = (
   e: any,
-  popupComponent: any,
+  PopupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  layerName?: string
 ) => {
   removePopups("POLYGON");
-  const { lng, lat } = e.lngLat;
-  const feature = e.features[0];
 
-  let popupContent = document.createElement("div");
+  const { lngLat, features } = e;
+  const feature = features?.[0];
+
+  if (!feature) {
+    console.warn("No feature found in click event");
+    return;
+  }
+
+  const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
 
-  const newPopup = new mapboxgl.Popup({ className: "popup-map" })
-    .setLngLat([lng, lat])
-    .setDOMContent(popupContent)
-    .addTo(map);
+  const createPopup = (lngLat: mapboxgl.LngLat) =>
+    new mapboxgl.Popup({ className: "popup-map" }).setLngLat(lngLat).setDOMContent(popupContent);
 
-  root.render(
-    createElement(popupComponent, {
-      feature,
-      popup: newPopup,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon
-    })
-  );
+  const newPopup = createPopup(lngLat);
+
+  const isWorldCountriesLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES;
+
+  const commonProps: PopupComponentProps = {
+    feature,
+    popup: newPopup,
+    setPolygonFromMap,
+    sitePolygonData,
+    type,
+    editPolygon,
+    setEditPolygon
+  };
+
+  if (isWorldCountriesLayer) {
+    const addPopupToMap = () => newPopup.addTo(map);
+    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap }));
+  } else {
+    newPopup.addTo(map);
+    root.render(createElement(PopupComponent, commonProps));
+  }
+
   popupAttachedMap["POLYGON"].push(newPopup);
 };
 
@@ -389,7 +422,8 @@ export const addPopupToLayer = (
             sitePolygonData,
             type,
             editPolygon,
-            setEditPolygon
+            setEditPolygon,
+            name
           );
         }
       });
@@ -401,8 +435,43 @@ const getGeoserverURL = (layerName: string) => {
   return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
       &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
-export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
+  const { name, styles } = layer;
+  const layersToHover = styles.map((_, index) => `${name}-${index}`);
+  if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+    let hoveredPolygonId: any = null;
+    map.on("mousemove", layersToHover, e => {
+      const zoomLevel = map.getZoom();
+      if (zoomLevel <= 4.5) {
+        if (e.features && e.features.length > 0) {
+          if (hoveredPolygonId !== null) {
+            map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
+          }
+          hoveredPolygonId = e.features[0].id;
+          map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: true });
+        }
+      } else {
+        if (hoveredPolygonId !== null) {
+          map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
+        }
+        hoveredPolygonId = null;
+      }
+    });
+    map.on("mouseleave", layersToHover, () => {
+      if (hoveredPolygonId !== null) {
+        map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
+      }
+      hoveredPolygonId = null;
+    });
+  }
+};
+export const addSourceToLayer = (
+  layer: LayerType,
+  map: mapboxgl.Map,
+  polygonsData: Record<string, string[]> | undefined
+) => {
   const { name, geoserverLayerName, styles } = layer;
+
   if (map) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
@@ -418,7 +487,12 @@ export const addSourceToLayer = (layer: any, map: mapboxgl.Map, polygonsData: Re
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerStyle(map, name, geoserverLayerName, style, index);
     });
-    loadLayersInMap(map, polygonsData, layer);
+    if (polygonsData) {
+      loadLayersInMap(map, polygonsData, layer);
+    }
+    if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      addHoverEvent(layer, map);
+    }
   }
 };
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {

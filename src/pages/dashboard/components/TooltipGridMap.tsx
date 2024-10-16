@@ -12,55 +12,39 @@ export interface TooltipItemProps {
 export interface TooltipGridProps {
   label: string;
   learnMore?: boolean;
+  isoCountry?: string;
+  items?: TooltipItemProps[];
 }
+type Item = {
+  id: string;
+  title: string;
+  value: string;
+};
 
 const TooltipGridMap = (props: TooltipGridProps) => {
-  const { label, learnMore } = props;
+  const { label, learnMore, isoCountry, items } = props;
   const t = useT();
-
-  const items = [
-    {
-      id: "1",
-      title: "No. of Projects",
-      value: "32"
-    },
-    {
-      id: "2",
-      title: "Trees Planted",
-      value: "2,234"
-    },
-    {
-      id: "3",
-      title: "Restoration Hectares",
-      value: "832"
-    },
-    {
-      id: "4",
-      title: "Jobs Created",
-      value: "1,306"
-    }
-  ];
-
   return (
-    <div className="absolute left-[35%] top-[20%] w-auto rounded bg-white p-2">
-      <div className="max-w-52 min-w-40 flex flex-col gap-1">
+    <div className="w-auto rounded bg-white p-2">
+      <div className="min-w-40 max-w-52 flex flex-col gap-1">
         <div className="mb-1 flex items-center gap-2">
-          <img src="/flags/ao.svg" alt="flag" className="h-4 w-6 object-cover" />
+          <img src={`/flags/${isoCountry?.toLowerCase()}.svg`} alt="flag" className="h-4 w-6 object-cover" />
           <Text className="text-start text-darkCustom" variant="text-12-bold">
             {t(label)}
           </Text>
         </div>
         <div>
-          {items.map(item => (
-            <div className="flex gap-10" key={item.id}>
-              <Text className="flex-1 text-start text-darkCustom" variant="text-12-light">
-                {t(item.title)}
-              </Text>
-              <Text className="text-end text-darkCustom" variant="text-12-bold">
-                {t(item.value)}
-              </Text>
-            </div>
-          ))}
+          {items &&
+            items.map((item: Item) => (
+              <div className="flex gap-10" key={item.id}>
+                <Text className="flex-1 text-start text-darkCustom" variant="text-12-light">
+                  {t(item.title)}
+                </Text>
+                <Text className="text-end text-darkCustom" variant="text-12-bold">
+                  {t(item.value)}
+                </Text>
+              </div>
+            ))}
         </div>
 
         <When condition={learnMore}>

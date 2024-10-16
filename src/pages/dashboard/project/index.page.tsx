@@ -41,7 +41,7 @@ export interface GraphicLegendProps {
 }
 
 export interface DashboardDataProps {
-  value?: string;
+  value?: number;
   unit?: string;
   secondValue?: string;
   graphic?: string;
@@ -52,7 +52,7 @@ export interface DashboardDataProps {
   objetiveText?: string;
   preferredLanguage?: string;
   landTenure?: string;
-  totalValue?: string;
+  totalValue?: number;
 }
 
 const ProjectView = () => {

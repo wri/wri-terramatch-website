@@ -10,13 +10,16 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { TextVariants } from "@/types/common";
+import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
+import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
+import MultiLineChart from "../charts/MultiLineChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashoard from "./GraphicIconDashoard";
 import ObjectiveSec from "./ObjectiveSec";
-import TooltipGraphicDashboard from "./TooltipGraphicDashboard";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
 const SecDashboard = ({
@@ -31,7 +34,9 @@ const SecDashboard = ({
   variantTitle,
   tooltip,
   isTableProject,
-  data
+  data,
+  dataForChart,
+  chartType
 }: {
   title: string;
   type?: "legend" | "toggle";
@@ -45,8 +50,14 @@ const SecDashboard = ({
   data: DashboardDataProps;
   isTableProject?: boolean;
   tooltip?: string;
+  dataForChart?: any;
+  chartType?: string;
 }) => {
   const [toggleValue, setToggleValue] = useState(0);
+  const [restorationGoalResume, setRestorationGoalResume] = useState<
+    { name: string; value: number | undefined; color: string }[]
+  >([]);
+  const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
 
   const tableColumns = [
@@ -67,6 +78,17 @@ const SecDashboard = ({
       setToggleValue(1);
     }
   }, []);
+
+  useEffect(() => {
+    if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
+      setTreesPlantedByYear(data);
+    }
+    if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
+      const data = getRestorationGoalResumeData(dataForChart);
+      setRestorationGoalResume(data);
+    }
+  }, [dataForChart, toggleValue]);
 
   return (
     <div className={className}>
@@ -108,10 +130,20 @@ const SecDashboard = ({
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
         {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
         <When condition={data?.totalValue}>
-          <img src="/images/img-tree.png" alt="secondValue" className="h-9" />
+          <div className="relative h-9 w-[315px]">
+            <div className="absolute inset-0 z-0 h-full w-full">
+              <HorizontalStackedBarChart data={restorationGoalResume} className="h-full w-full" />
+            </div>
+            <img
+              src="/images/treeBackground.svg"
+              id="treeBackground"
+              alt="secondValue"
+              className="absolute right-0 z-10 h-9 w-[316px]"
+            />
+          </div>
         </When>
-        <When condition={tooltipGraphic}>
-          <TooltipGraphicDashboard />
+        <When condition={chartType === "multiLineChart"}>
+          <MultiLineChart data={treesPlantedByYear} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />

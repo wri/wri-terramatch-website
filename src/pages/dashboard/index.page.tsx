@@ -7,18 +7,16 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
 import {
-  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
-  NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
@@ -40,15 +38,20 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const { filters } = useDashboardContext();
-  const { dashboardHeader, totalFtJobs, totalPtJobs, numberTreesPlanted, topProject, refetchTotalSectionHeader } =
-    useDashboardData(filters);
+  const {
+    dashboardHeader,
+    dashboardRestorationGoalData,
+    totalFtJobs,
+    totalPtJobs,
+    numberTreesPlanted,
+    topProject,
+    refetchTotalSectionHeader,
+    activeCountries,
+    activeProjects
+  } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
 
   useEffect(() => {
     refetchTotalSectionHeader();
@@ -81,7 +84,7 @@ const Dashboard = () => {
     },
     {
       header: "Hectares",
-      accessorKey: "restoratioHectares",
+      accessorKey: "restorationHectares",
       enableSorting: false
     },
     {
@@ -104,7 +107,7 @@ const Dashboard = () => {
     },
     {
       header: "Hectares",
-      accessorKey: "restoratioHectares",
+      accessorKey: "restorationHectares",
       enableSorting: false
     },
     {
@@ -131,14 +134,43 @@ const Dashboard = () => {
     }
   ];
 
-  const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
-    ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
-        country: `${country.data.label}_${country.data.icon}`,
-        project: "32",
-        treesPlanted: "2,234",
-        restoratioHectares: "2,234",
-        jobsCreated: "1306"
-      }))
+  const DATA_ACTIVE_PROGRAMME = activeCountries?.data
+    ? activeCountries.data.map(
+        (item: {
+          country: string;
+          country_slug: string;
+          number_of_projects: number;
+          total_trees_planted: number;
+          total_jobs_created: number;
+          hectares_restored: number;
+        }) => ({
+          country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
+          project: item.number_of_projects.toLocaleString(),
+          treesPlanted: item.total_trees_planted.toLocaleString(),
+          restorationHectares: item.hectares_restored.toLocaleString(),
+          jobsCreated: item.total_jobs_created.toLocaleString()
+        })
+      )
+    : [];
+
+  const DATA_ACTIVE_COUNTRY = activeProjects?.data
+    ? activeProjects.data.map(
+        (item: {
+          uuid: string;
+          name: string;
+          hectares_under_restoration: number;
+          trees_under_restoration: number;
+          jobs_created: number;
+          volunteers: number;
+        }) => ({
+          uuid: item.uuid,
+          project: item?.name,
+          treesPlanted: item.trees_under_restoration.toLocaleString(),
+          restorationHectares: item.hectares_under_restoration.toLocaleString(),
+          jobsCreated: item.jobs_created.toLocaleString(),
+          volunteers: item.volunteers.toLocaleString()
+        })
+      )
     : [];
 
   return (
@@ -205,13 +237,17 @@ const Dashboard = () => {
                 "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
               )}
               data={numberTreesPlanted}
+              dataForChart={dashboardRestorationGoalData}
+              chartType={CHART_TYPES.treesPlantedBarChart}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
               tooltipGraphic={true}
-              data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
+              data={{}}
+              dataForChart={dashboardRestorationGoalData}
+              chartType={CHART_TYPES.multiLineChart}
               tooltip={t("Number of trees planted in each year.")}
             />
             <SecDashboard

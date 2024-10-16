@@ -146,5 +146,26 @@ export const layersList: LayerType[] = [
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.LineLayer
     ]
+  },
+  {
+    name: LAYERS_NAMES.WORLD_COUNTRIES,
+    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
+    styles: [
+      {
+        type: "line",
+        paint: {
+          "line-color": "#ff5a5f",
+          "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
+        }
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      {
+        type: "fill",
+        paint: {
+          "fill-color": "#ff5a5f",
+          "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
+        }
+      } as unknown as mapboxgl.FillLayer
+    ],
+    hover: true
   }
 ];
