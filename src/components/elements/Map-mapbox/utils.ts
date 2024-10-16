@@ -16,7 +16,7 @@ import {
   useGetV2SitesSiteBbox,
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
@@ -465,6 +465,41 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
     });
   }
 };
+export const addGeojsonSourceToLayer = (
+  centroids: DashboardGetProjectsData[] | undefined,
+  map: mapboxgl.Map,
+  layer: LayerType
+) => {
+  const { name, styles } = layer;
+  if (map && centroids) {
+    if (map.getSource(name)) {
+      styles?.forEach((_: unknown, index: number) => {
+        map.removeLayer(`${name}-${index}`);
+      });
+      map.removeSource(name);
+    }
+    map.addSource(name, {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: centroids.map((centroid: any) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [centroid.long, centroid.lat]
+          },
+          properties: {
+            uuid: centroid.uuid,
+            name: centroid.name
+          }
+        }))
+      }
+    });
+    styles?.forEach((style: LayerWithStyle, index: number) => {
+      addLayerGeojsonStyle(map, name, name, style, index);
+    });
+  }
+};
 export const addSourceToLayer = (
   layer: LayerType,
   map: mapboxgl.Map,
@@ -537,6 +572,27 @@ const moveDeleteLayers = (map: mapboxgl.Map) => {
       }
     });
   });
+};
+export const addLayerGeojsonStyle = (
+  map: mapboxgl.Map,
+  layerName: string,
+  sourceName: string,
+  style: LayerWithStyle,
+  index: number
+) => {
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+  if (map.getLayer(`${layerName}-${index}`)) {
+    map.removeLayer(`${layerName}-${index}`);
+  }
+  map.addLayer(
+    {
+      ...style,
+      id: `${layerName}-${index}`,
+      source: sourceName
+    } as mapboxgl.AnyLayer,
+    beforeLayer
+  );
+  moveDeleteLayers(map);
 };
 export const addLayerStyle = (
   map: mapboxgl.Map,

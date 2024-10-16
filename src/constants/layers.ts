@@ -8,7 +8,8 @@ export const LAYERS_NAMES = {
   WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry",
   MEDIA_IMAGES: "media_images",
-  DELETED_GEOMETRIES: "deleted_geometries"
+  DELETED_GEOMETRIES: "deleted_geometries",
+  CENTROIDS: "centroids"
 };
 export const layersList: LayerType[] = [
   {
@@ -165,6 +166,41 @@ export const layersList: LayerType[] = [
           "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
         }
       } as unknown as mapboxgl.FillLayer
+    ],
+    hover: true
+  },
+  {
+    name: LAYERS_NAMES.CENTROIDS,
+    geoserverLayerName: "",
+    styles: [
+      {
+        type: "circle",
+        paint: {
+          "circle-color": "#26a9e0",
+          "circle-blur": 1.5,
+          "circle-radius": 15
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        paint: {
+          "circle-color": "#26a9e0",
+          "circle-blur": 1.5,
+          "circle-radius": 10
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        paint: {
+          "circle-color": "hsl(242, 1%, 100%)",
+          "circle-radius": 4,
+          "circle-blur": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        paint: { "circle-color": "hsl(242, 1%, 100%)", "circle-radius": 1 }
+      } as mapboxgl.Style & mapboxgl.CircleLayer
     ],
     hover: true
   }
