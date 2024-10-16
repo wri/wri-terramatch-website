@@ -34735,6 +34735,41 @@ export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProje
   );
 };
 
+export type GetV2DashboardViewProjectListError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardViewProjectListResponse = any[];
+
+export type GetV2DashboardViewProjectListVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardViewProjectList = (
+  variables: GetV2DashboardViewProjectListVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, undefined, {}, {}, {}>({
+    url: "/v2/dashboard/view-project-list",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2DashboardViewProjectList = <TData = GetV2DashboardViewProjectListResponse>(
+  variables: GetV2DashboardViewProjectListVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/view-project-list", operationId: "getV2DashboardViewProjectList", variables }),
+    ({ signal }) => fetchGetV2DashboardViewProjectList({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2TerrafundPolygonGeojsonUuidPathParams = {
   /**
    * The UUID of the polygon geometry to retrieve.
@@ -36513,6 +36548,11 @@ export type QueryOperation =
       path: "/v2/dashboard/view-project/{uuid}";
       operationId: "getV2DashboardViewProjectUuid";
       variables: GetV2DashboardViewProjectUuidVariables;
+    }
+  | {
+      path: "/v2/dashboard/view-project-list";
+      operationId: "getV2DashboardViewProjectList";
+      variables: GetV2DashboardViewProjectListVariables;
     }
   | {
       path: "/v2/terrafund/polygon/geojson/{uuid}";

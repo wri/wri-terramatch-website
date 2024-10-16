@@ -119,18 +119,6 @@ export const useDashboardData = (filters: any) => {
     }
   }, [totalSectionHeader]);
 
-  return {
-    dashboardHeader,
-    totalFtJobs,
-    totalPtJobs,
-    numberTreesPlanted,
-    topProject,
-    refetchTotalSectionHeader,
-    activeCountries,
-    activeProjects
-  };
-};
-
   useEffect(() => {
     setRestorationGoals([
       { name: "Total", value: dashboardRestorationGoalData?.totalTreesGrownGoal, color: "#13487A" },
@@ -146,6 +134,8 @@ export const useDashboardData = (filters: any) => {
     totalPtJobs,
     numberTreesPlanted,
     topProject,
-    refetchTotalSectionHeader
+    refetchTotalSectionHeader,
+    activeCountries,
+    activeProjects
   };
 };
