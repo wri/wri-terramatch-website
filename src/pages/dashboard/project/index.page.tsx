@@ -13,7 +13,6 @@ import SecDashboard from "../components/SecDashboard";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
   DATA_ACTIVE_COUNTRY,
-  DATA_IMPACT_STORIES,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -316,7 +315,6 @@ const ProjectView = () => {
       <ContentOverview
         dataTable={DATA_ACTIVE_COUNTRY}
         columns={COLUMN_ACTIVE_COUNTRY}
-        dataImpactStories={DATA_IMPACT_STORIES}
         titleTable={t("ACTIVE PROJECTS")}
         textTooltipTable={t(
           "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep."
