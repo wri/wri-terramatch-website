@@ -44,7 +44,7 @@ export const useDashboardData = (filters: any) => {
     }
   };
   const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
-  const { data: getLocationProjects } = useGetV2DashboardGetProjects<any>({
+  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
     queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
   });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
@@ -139,7 +139,7 @@ export const useDashboardData = (filters: any) => {
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
-    getLocationProjects,
+    centroidsDataProjects: centroidsDataProjects?.data,
     listViewProjects
   };
 };

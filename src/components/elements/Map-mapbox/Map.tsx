@@ -33,7 +33,7 @@ import {
   usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
@@ -58,6 +58,7 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addDeleteLayer,
   addFilterOnLayer,
+  addGeojsonSourceToLayer,
   addGeojsonToDraw,
   addMarkerAndZoom,
   addMediaSourceAndLayer,
@@ -99,7 +100,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   editPolygon?: boolean;
   polygonChecks?: boolean;
   legend?: LegendItem[];
-  centroids?: any;
+  centroids?: DashboardGetProjectsData[];
   polygonsData?: Record<string, string[]>;
   bbox?: BBox;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
@@ -150,6 +151,7 @@ export const MapContainer = ({
   location,
   entityData,
   imageGalleryRef,
+  centroids,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -205,10 +207,14 @@ export const MapContainer = ({
     }
   }, [map, location]);
   useEffect(() => {
-    if (map?.current && isDashboard && styleLoaded) {
+    if (map?.current && isDashboard && styleLoaded && map.current.isStyleLoaded()) {
       const layerCountry = layersList.find(layer => layer.name === LAYERS_NAMES.WORLD_COUNTRIES);
       if (layerCountry) {
         addSourceToLayer(layerCountry, map.current, undefined);
+      }
+      const centroidsLayer = layersList.find(layer => layer.name === LAYERS_NAMES.CENTROIDS);
+      if (centroidsLayer && centroids) {
+        addGeojsonSourceToLayer(centroids, map.current, centroidsLayer);
       }
       addPopupsToMap(
         map.current,
@@ -221,7 +227,7 @@ export const MapContainer = ({
         draw.current
       );
     }
-  }, [map, isDashboard, styleLoaded]);
+  }, [map, isDashboard, map?.current?.isStyleLoaded()]);
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
