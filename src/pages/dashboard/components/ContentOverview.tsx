@@ -104,6 +104,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             })}
             data={data}
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
+            hasPagination={true}
+            invertSelectPagination={true}
+            initialTableState={{ pagination: { pageSize: 10 } }}
           />
         </div>
       </ModalExpand>
@@ -253,7 +256,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             </Button>
           }
         >
-          <Table visibleRows={5} columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
+          <Table columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
         </PageCard>
       </PageRow>
     </div>

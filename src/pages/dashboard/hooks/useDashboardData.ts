@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
+  useGetV2DashboardActiveCountries,
+  useGetV2DashboardActiveProjects,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
@@ -59,6 +61,16 @@ export const useDashboardData = (filters: any) => {
   );
   const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
 
+  const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
+    { queryParams: queryParams },
+    { enabled: !!filters }
+  );
+
+  const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
+    { queryParams: queryParams },
+    { enabled: !!filters }
+  );
+
   const { data: dashboardRestorationGoalData } =
     useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
       queryParams: queryParams
@@ -111,6 +123,8 @@ export const useDashboardData = (filters: any) => {
     totalPtJobs,
     numberTreesPlanted,
     topProject,
-    refetchTotalSectionHeader
+    refetchTotalSectionHeader,
+    activeCountries,
+    activeProjects
   };
 };
