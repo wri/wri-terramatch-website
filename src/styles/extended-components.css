@@ -35,37 +35,6 @@
 }
 
 .custom-popup-close-button {
-  .mapboxgl-popup-anchor-top,
-  .mapboxgl-popup-anchor-top-left,
-  .mapboxgl-popup-anchor-top-right {
-    .mapboxgl-popup-close-button {
-      top: 0px;
-      right: -10px;
-    }
-  }
-  .mapboxgl-popup-anchor-bottom,
-  .mapboxgl-popup-anchor-bottom-left,
-  .mapboxgl-popup-anchor-bottom-right {
-    .mapboxgl-popup-close-button {
-      top: -10px;
-      right: -10px;
-    }
-  }
-
-  .mapboxgl-popup-anchor-right {
-    .mapboxgl-popup-close-button {
-      top: -10px;
-      right: 0px;
-    }
-  }
-
-  .mapboxgl-popup-anchor-left {
-    .mapboxgl-popup-close-button {
-      top: -10px;
-      right: -10px;
-    }
-  }
-
   .mapboxgl-popup-tip {
     border: 6px solid #0c33f000;
   }
@@ -81,6 +50,8 @@
     line-height: 1px;
     font-weight: 600;
     background-color: white;
+    top: -10px;
+    right: -10px;
   }
 
   .mapboxgl-popup-close-button:hover {
