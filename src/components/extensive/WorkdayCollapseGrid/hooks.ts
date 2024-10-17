@@ -16,6 +16,43 @@ import {
 
 export type Position = "first" | "last" | null;
 
+interface DemographicCounts {
+  gender: number;
+  age: number;
+  ethnicity: number;
+}
+
+interface HBFDemographicCounts {
+  gender: number;
+  age: number;
+  caste: number;
+}
+
+function isHBFDemographicCounts(
+  counts: HBFDemographicCounts | DemographicCounts,
+  framework: Framework
+): counts is HBFDemographicCounts {
+  return framework === Framework.HBF;
+}
+
+export type FrameworkDemographicCountTypes<T extends Framework> = T extends Framework.HBF
+  ? HBFDemographicCounts
+  : DemographicCounts;
+
+function getInitialCounts<T extends Framework>(framework: T) {
+  return framework === Framework.HBF
+    ? ({
+        gender: 0,
+        age: 0,
+        caste: 0
+      } as HBFDemographicCounts)
+    : ({
+        gender: 0,
+        age: 0,
+        ethnicity: 0
+      } as DemographicCounts);
+}
+
 export interface SectionRow {
   demographicIndex: number;
   typeName: string;
@@ -25,16 +62,27 @@ export interface SectionRow {
 }
 
 export function calculateTotals(demographics: Demographic[]) {
-  const counts = demographics.reduce(
-    function (counts, { type, amount }) {
-      counts[type] += amount;
-      return counts;
-    },
-    { gender: 0, age: 0, ethnicity: 0, caste: 0 }
-  );
+  const { framework } = useFrameworkContext();
+  const initialCounts = getInitialCounts(framework);
+  const counts = demographics.reduce(function (counts, { type, amount }) {
+    const typedType = type as keyof FrameworkDemographicCountTypes<typeof framework>;
+    counts[typedType] += amount;
+    return counts;
+  }, initialCounts);
 
-  const total = Math.max(counts.age, counts.gender, counts.ethnicity, counts.caste);
-  const countsMatch = uniq([counts.age, counts.gender, counts.ethnicity, counts.caste]).length === 1;
+  let total: number = 0;
+  let countsMatch: boolean = false;
+
+  if (counts) {
+    if (isHBFDemographicCounts(counts, framework)) {
+      total = Math.max(counts.age, counts.gender, counts.caste);
+      countsMatch = uniq([counts.age, counts.gender, counts.caste]).length === 1;
+    } else {
+      total = Math.max(counts.age, counts.gender, counts.ethnicity);
+      countsMatch = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
+    }
+  }
+
   return { counts, total, countsMatch };
 }
 
@@ -47,7 +95,7 @@ export function useTableStatus(demographics: Demographic[]): { total: number; st
       let status: Status = "in-progress";
       if (total === 0) {
         status = "not-started";
-      } else if (countsMatch || (framework === Framework.HBF && counts.gender !== 0)) {
+      } else if (countsMatch) {
         status = "complete";
       }
 
