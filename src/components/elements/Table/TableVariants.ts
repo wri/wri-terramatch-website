@@ -175,3 +175,16 @@ export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
   thead: "text-14-semibold bg-blueCustom-100",
   paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
+
+export const VARIANT_TABLE_MONITORED = {
+  table: "border-collapse",
+  name: "border-airtable",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto ",
+  trHeader: "bg-white sticky top-0 z-10 ",
+  thHeader:
+    "text-nowrap first:pl-2 first:pr-2 last:pr-2 border-y border-neutral-200 text-10-semibold px-[3px] border-t-0 py-2",
+  tBody: "",
+  trBody: "bg-white border-y border-neutral-200 last:border-b-0",
+  tdBody: "text-10-light px-[3px] py-1 first:pl-2 first:pr-2 last:pr-2",
+  thead: "bg-blueCustom-100 "
+};

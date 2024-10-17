@@ -40,6 +40,54 @@ const MonitoredCardData: DataStructure[] = [
         cover: "",
         confidence: 50.0,
         phase: "baseline"
+      },
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
       }
     ]
   },
@@ -47,6 +95,54 @@ const MonitoredCardData: DataStructure[] = [
     label: "Tree Cover Loss",
     tooltipContent: "Tooltip",
     tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
       {
         polygonName: "ABA",
         site: "Tannous/Brayton Road",

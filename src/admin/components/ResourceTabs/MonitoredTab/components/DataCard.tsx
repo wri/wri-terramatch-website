@@ -1,3 +1,4 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React from "react";
 
@@ -6,8 +7,8 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import Table from "@/components/elements/Table/Table";
 import {
-  VARIANT_TABLE_DASHBOARD_COUNTRIES,
-  VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL
+  VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
+  VARIANT_TABLE_MONITORED
 } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -30,7 +31,7 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tableData: TableData[];
 }
 
-const TABLE_COLUMNS = [
+const TABLE_COLUMNS: ColumnDef<TableData>[] = [
   {
     header: "Polygon Name",
     accessorKey: "polygonName"
@@ -48,7 +49,13 @@ const TABLE_COLUMNS = [
     accessorKey: "cover"
   },
   {
-    header: "Confidence",
+    header: () => (
+      <>
+        Confi-
+        <br />
+        dence
+      </>
+    ),
     accessorKey: "confidence"
   },
   {
@@ -169,8 +176,8 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
             </div>
           </div>
         </div>
-        <div className="flex-[5] overflow-hidden">
-          <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
+        <div className="w-[55%]verflow-hidden w">
+          <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} />
         </div>
       </div>
     </div>
