@@ -3,6 +3,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
+import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -23,7 +24,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -31,7 +32,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -39,15 +40,39 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
-        polygonName: "ABA",
+        polygonName: "AEK Raso",
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
+        phase: "baseline"
+      },
+      {
+        polygonName: "Africas",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: "50.0",
+        phase: "baseline"
+      },
+      {
+        polygonName: "Agoue Iboe",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: "50.0",
+        phase: "baseline"
+      },
+      {
+        polygonName: "Agrajaya Baktitama",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -55,7 +80,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -63,31 +88,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
-        phase: "baseline"
-      },
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: 50.0,
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: 50.0,
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       }
     ]
@@ -101,7 +102,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -109,7 +110,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -117,7 +118,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -125,7 +126,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -133,7 +134,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -141,7 +142,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -149,7 +150,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -157,7 +158,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -165,7 +166,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       }
     ]
@@ -179,7 +180,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -187,7 +188,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -195,7 +196,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       }
     ]
@@ -209,7 +210,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -217,7 +218,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -225,7 +226,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       }
     ]
@@ -239,7 +240,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -247,7 +248,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -255,7 +256,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       }
     ]
@@ -269,7 +270,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -277,7 +278,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       },
       {
@@ -285,7 +286,7 @@ const MonitoredCardData: DataStructure[] = [
         site: "Tannous/Brayton Road",
         year: "2024",
         cover: "",
-        confidence: 50.0,
+        confidence: "50.0",
         phase: "baseline"
       }
     ]
@@ -456,7 +457,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
           </div>
           <FormMonitored />
         </div>
-        <div className="flex min-w-0 flex-col gap-1" style={{ width: (refWidth.current?.clientWidth ?? 0) * 1.74 }}>
+        <div className="flex min-w-0 flex-col gap-4" style={{ width: (refWidth.current?.clientWidth ?? 0) * 1.74 }}>
           <div className="flex min-w-0 items-center gap-2">
             <div
               ref={scrollContainerRef}
@@ -481,6 +482,12 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             </div>
             <button onClick={scrollRight}>{">"}</button>
           </div>
+          <StatusBar
+            title="Analysis is due for 345 Polygons for this project. Please run analysis."
+            status="awaiting"
+            className="!w-full"
+            classNameStatusBar="!w-full"
+          />
           <div className="flex max-h-[89vh] w-full flex-col gap-5 overflow-auto">
             {MonitoredCardData.map((data, index) => (
               <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
