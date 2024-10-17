@@ -45,7 +45,7 @@ const TABLE_COLUMNS: ColumnDef<TableData>[] = [
     accessorKey: "year"
   },
   {
-    header: "Cover",
+    header: "% Cover",
     accessorKey: "cover",
     cell: () => {
       return <img src={"/images/graphic-1.png"} alt="graphic" className="h-3" />;
