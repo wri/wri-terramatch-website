@@ -23,7 +23,7 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
   const [open, setOpen] = useState(false);
   const t = useT();
   const { framework } = useFrameworkContext();
-  const { total, status } = useTableStatus(framework, demographics);
+  const { total, status } = useTableStatus(demographics);
   const byType = useMemo(() => groupBy(demographics, "type"), [demographics]);
 
   const onSectionChange = useCallback(
@@ -88,7 +88,6 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
           >
             {demographicTypes.map(type => (
               <WorkdaySection
-                framework={framework}
                 key={type}
                 onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}
                 demographics={byType[type] ?? []}

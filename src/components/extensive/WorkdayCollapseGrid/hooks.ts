@@ -1,7 +1,7 @@
 import { Dictionary, findLastIndex, uniq } from "lodash";
 import { useMemo } from "react";
 
-import { Framework } from "@/context/framework.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import {
   Demographic,
@@ -38,7 +38,8 @@ export function calculateTotals(demographics: Demographic[]) {
   return { counts, total, countsMatch };
 }
 
-export function useTableStatus(framework: Framework, demographics: Demographic[]): { total: number; status: Status } {
+export function useTableStatus(demographics: Demographic[]): { total: number; status: Status } {
+  const { framework } = useFrameworkContext();
   return useMemo(
     function () {
       const { counts, total, countsMatch } = calculateTotals(demographics);
@@ -81,9 +82,6 @@ function mapRows(usesSubtype: boolean, typeMap: Dictionary<string>, demographics
     };
   });
 }
-export type FrameworkDemographicTypes<T extends Framework> = T extends Framework.HBF
-  ? HBFDemographicType
-  : DemographicType;
 
 function getDemographicTypes<T extends Framework>(framework: T): Readonly<string[]> {
   return framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPES : DEMOGRAPHIC_TYPES;
@@ -93,11 +91,8 @@ function getDemographicTypesMap<T extends Framework>(framework: T) {
   return framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
 }
 
-export function useSectionData<T extends Framework>(
-  framework: T,
-  type: FrameworkDemographicTypes<T>,
-  demographics: Demographic[]
-) {
+export function useSectionData(type: DemographicType | HBFDemographicType, demographics: Demographic[]) {
+  const { framework } = useFrameworkContext();
   const demographicTypes = getDemographicTypes(framework);
   const demographicTypesMap = getDemographicTypesMap(framework);
 
