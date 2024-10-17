@@ -46,7 +46,11 @@ const TABLE_COLUMNS: ColumnDef<TableData>[] = [
   },
   {
     header: "Cover",
-    accessorKey: "cover"
+    accessorKey: "cover",
+    cell: () => {
+      return <img src={"/images/graphic-1.png"} alt="graphic" className="h-3" />;
+    },
+    enableSorting: false
   },
   {
     header: () => (
