@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
@@ -168,13 +168,166 @@ const MonitoredCardData: DataStructure[] = [
         phase: "baseline"
       }
     ]
+  },
+  {
+    label: "Tree Cover Loss from Fire",
+    tooltipContent: "Tooltip",
+    tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      }
+    ]
+  },
+  {
+    label: "Hectares by EcoRegion",
+    tooltipContent: "Tooltip",
+    tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      }
+    ]
+  },
+  {
+    label: "Hectares by Strategy",
+    tooltipContent: "Tooltip",
+    tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      }
+    ]
+  },
+  {
+    label: "Hectares by Land Use",
+    tooltipContent: "Tooltip",
+    tableData: [
+      {
+        polygonName: "ABA",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "Adison Thaochu A",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      },
+      {
+        polygonName: "AEK Nabara Selatan",
+        site: "Tannous/Brayton Road",
+        year: "2024",
+        cover: "",
+        confidence: 50.0,
+        phase: "baseline"
+      }
+    ]
   }
 ];
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
+  const [intersectingCard, setIntersectingCard] = useState<string | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const index = entry.target.getAttribute("data-index");
+            if (index !== null) {
+              setIntersectingCard(MonitoredCardData[Number(index)].label);
+            }
+          }
+        });
+      },
+      { threshold: 1 }
+    );
+
+    cardRefs.current.forEach(ref => {
+      if (ref) {
+        observer.observe(ref);
+      }
+    });
+
+    return () => {
+      cardRefs.current.forEach(ref => {
+        if (ref) {
+          observer.unobserve(ref);
+        }
+      });
+    };
+  }, [MonitoredCardData]);
+
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
-      <div className="flex w-full gap-4">
+      <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
         <div className="flex w-[36%] flex-col gap-4">
           <div className="relative w-full self-center overflow-hidden rounded-lg">
             <img src="/images/map-img.png" alt="Monitored" className="w-full" />
@@ -206,10 +359,15 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
           </div>
           <FormMonitored />
         </div>
-        <div className="flex w-full flex-col gap-5">
-          {MonitoredCardData.map(data => (
-            <DataCard key={data.label} data={data} />
-          ))}
+        <div className="w-full">
+          <span className="mb-4 block text-center">Currently Intersecting: {intersectingCard || "None"}</span>
+          <div className="flex max-h-[80vh] w-full flex-col gap-5 overflow-auto">
+            {MonitoredCardData.map((data, index) => (
+              <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
+                <DataCard data={data} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </TabbedShowLayout.Tab>

@@ -180,7 +180,7 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
             </div>
           </div>
         </div>
-        <div className="w-[55%]verflow-hidden w">
+        <div className="w-[55%] overflow-hidden">
           <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} />
         </div>
       </div>
