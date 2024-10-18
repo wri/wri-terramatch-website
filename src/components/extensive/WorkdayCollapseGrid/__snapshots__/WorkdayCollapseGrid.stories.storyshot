@@ -19,10 +19,18 @@ exports[`Storyshots Components/Extensive/WorkdayCollapse Complete Green 1`] = `
         className="flex items-baseline gap-2"
       >
         <p
-          className="flex items-start gap-2 leading-normal text-tertiary-450 text-14-bold"
+          className="flex items-start gap-2 leading-normal text-customGreen-200 text-14-bold"
           data-testid="txt"
         >
-          In Progress
+          Complete
+          <div
+            style={
+              Object {
+                "height": 16,
+                "width": 16,
+              }
+            }
+          />
         </p>
         <div
           style={
