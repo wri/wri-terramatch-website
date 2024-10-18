@@ -5,23 +5,32 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import WorkdayRow from "@/components/extensive/WorkdayCollapseGrid/WorkdayRow";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { Demographic, DEMOGRAPHIC_TYPE_MAP, DemographicType, WorkdayGridVariantProps } from "./types";
-
+import {
+  Demographic,
+  DEMOGRAPHIC_TYPE_MAP,
+  DemographicType,
+  HBF_DEMOGRAPHIC_TYPE_MAP,
+  HBFDemographicType,
+  WorkdayGridVariantProps
+} from "./types";
 export interface WorkdaySectionProps {
   demographics: Demographic[];
-  type: DemographicType;
+  type: DemographicType | HBFDemographicType;
   variant: WorkdayGridVariantProps;
   onChange?: (demographics: Demographic[]) => void;
 }
 
 const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectionProps) => {
   const [openMenu, setOpenMenu] = useState(false);
+  const { framework } = useFrameworkContext();
   const t = useT();
   const { title, rows, total, position, subtypes } = useSectionData(type, demographics);
-  const { addSubtypeLabel } = DEMOGRAPHIC_TYPE_MAP[type];
+  const demographicTypes = framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
+  const { addSubtypeLabel } = demographicTypes[type];
 
   const onRowChange = useCallback(
     (index: number, name: string, amount: number, userLabel?: string) => {

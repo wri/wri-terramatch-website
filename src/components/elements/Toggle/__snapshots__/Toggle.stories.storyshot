@@ -17,7 +17,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       }
     />
     <button
-      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom"
+      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom"
       disabled={false}
       onClick={[Function]}
       type="button"
@@ -25,7 +25,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       Tab 1
     </button>
     <button
-      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
       disabled={false}
       onClick={[Function]}
       type="button"
@@ -33,7 +33,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       Tab 2
     </button>
     <button
-      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
+      className="hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
       disabled={false}
       onClick={[Function]}
       type="button"

@@ -44,7 +44,7 @@ const Toggle = (props: ToggleProps) => {
           onClick={() => setActiveIndex(index)}
           disabled={isDisabled(index)}
           className={classNames(
-            "hover:stroke-blue-950 hover:text-blue-950 group relative z-10 inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
+            "hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
             props.textClassName,
             activeIndex === index && variant.textActive,
             activeIndex !== index && variant.textInactive

@@ -21,17 +21,18 @@ function Pagination(props: PaginationProps) {
     <div className={classNames("flex items-center justify-between", props.containerClassName)}>
       {props.hasPageSizeSelector ? (
         <PerPageSelector
-          label={t("Per page")}
+          label={t(props.variant?.labelText || "Per page")}
           options={props.isImageGallery ? [3, 6, 12, 30, 60] : [5, 10, 15, 20, 50]}
           variantText={props.variant?.VariantPrePageText}
           defaultValue={props.defaultPageSize}
           onChange={props.setPageSize!}
           invertSelect={props.invertSelect}
+          variant={props.variant}
         />
       ) : (
         <div />
       )}
-      <PageSelector variantText={props.variant?.VariantPageText} {...props} />
+      <PageSelector variantText={props.variant?.VariantPageText} {...props} variant={props.variant} />
     </div>
   );
 }

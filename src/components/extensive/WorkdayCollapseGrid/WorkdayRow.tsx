@@ -7,10 +7,10 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DemographicType, WorkdayGridVariantProps } from "./types";
+import { DemographicType, HBFDemographicType, WorkdayGridVariantProps } from "./types";
 
 export interface WorkdayRowProps {
-  type: DemographicType;
+  type: DemographicType | HBFDemographicType;
   subtypes?: Dictionary<string>;
   label: string;
   userLabel?: string;

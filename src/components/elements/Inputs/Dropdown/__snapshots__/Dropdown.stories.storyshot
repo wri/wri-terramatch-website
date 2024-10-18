@@ -45,7 +45,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select 1`] = `
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="w-full text-14-light"
           data-testid="txt"
           title=""
         >
@@ -110,7 +110,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Multi Select With Other 
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="w-full text-14-light"
           data-testid="txt"
           title=""
         >
@@ -175,7 +175,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select 1`] = `
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="w-full text-14-light"
           data-testid="txt"
           title=""
         >
@@ -228,7 +228,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
       className="flex items-center gap-2"
     >
       <p
-        className="w-full line-clamp-1 text-14-light"
+        className="w-full text-14-light"
         data-testid="txt"
         title="Aerobic Agroforestry"
       >
@@ -292,7 +292,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Other
         className="flex items-center gap-2"
       >
         <p
-          className="w-full line-clamp-1 text-14-light"
+          className="w-full text-14-light"
           data-testid="txt"
           title=""
         >

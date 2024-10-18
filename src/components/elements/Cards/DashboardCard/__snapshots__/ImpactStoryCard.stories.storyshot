@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Elements/Cards/ImpactStoryCard Default 1`] = `
+<div
+  className="flex cursor-pointer items-center gap-4 overflow-hidden rounded-lg border border-neutral-200 bg-white p-4 hover:bg-grey-200"
+>
+  <img
+    alt="profile"
+    className="h-20 w-20 rounded-lg bg-cover"
+    src="https://via.placeholder.com/150"
+  />
+  <div
+    className="flex-flex-col flex-1 gap-2 overflow-hidden"
+  >
+    <div
+      className="flex items-center gap-1"
+    >
+      <p
+        className="whitespace-nowrap text-grey-700 text-14-light"
+        data-testid="txt"
+      >
+        undefined by undefined
+      </p>
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 24,
+          }
+        }
+      />
+    </div>
+    <p
+      className="overflow-hidden text-ellipsis whitespace-nowrap text-darkCustom text-14-bold"
+      data-testid="txt"
+    >
+      Impact Story Title
+    </p>
+    <p
+      className="overflow-hidden text-ellipsis whitespace-nowrap text-grey-700 text-14-light"
+      data-testid="txt"
+    >
+      This is a brief description of the impact story.
+    </p>
+  </div>
+</div>
+`;
