@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
@@ -119,15 +120,22 @@ const MonitoredCardData: DataStructure[] = [
     label: "Hectares by Land Use",
     tooltipContent: "Tooltip",
     tableData: TableData
+  },
+  {
+    label: "Hectares by Land Use and Strategy",
+    tooltipContent: "Tooltip",
+    tableData: TableData
   }
 ];
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const [intersectingCard, setIntersectingCard] = useState<string | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isContainerLabelLeft, setIsContainerLabelLeft] = useState<boolean>();
+  const [isContainerLabelRigth, setIsContainerLabelRigth] = useState<boolean>();
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const labelsContainerRef = useRef<HTMLDivElement>(null);
   const refWidth = useRef<HTMLDivElement>(null);
   const cardRefsContainer = useRef<HTMLDivElement>(null);
 
@@ -187,16 +195,32 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const labelsContainer = labelsContainerRef.current;
+    if (!labelsContainer) return;
+
+    const handleScroll = () => {
+      setIsContainerLabelLeft(labelsContainer.scrollLeft === 0);
+      setIsContainerLabelRigth(labelsContainer.scrollLeft + labelsContainer.clientWidth >= labelsContainer.scrollWidth);
+    };
+
+    labelsContainer.addEventListener("scroll", handleScroll);
+
+    return () => {
+      labelsContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      const scroll = scrollContainerRef.current;
+    if (labelsContainerRef.current) {
+      const scroll = labelsContainerRef.current;
       scroll.scrollBy({ left: scroll.clientWidth, behavior: "smooth" });
     }
   };
 
   const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      const scroll = scrollContainerRef.current;
+    if (labelsContainerRef.current) {
+      const scroll = labelsContainerRef.current;
       scroll.scrollBy({ left: -scroll.clientWidth, behavior: "smooth" });
     }
   };
@@ -222,7 +246,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const focusOnCardLabel = (index: number) => {
     const targetElement = cardLabelRefs.current[index];
     if (targetElement) {
-      const parentElement = scrollContainerRef.current;
+      const parentElement = labelsContainerRef.current;
       if (parentElement) {
         const rect = targetElement.getBoundingClientRect();
         const parentRect = parentElement.getBoundingClientRect();
@@ -274,13 +298,16 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
           </div>
           <FormMonitored />
         </div>
-        <div className="flex min-w-0 flex-col gap-4" style={{ width: containerWidth * 3.6 }}>
+        <div className="flex min-w-0 flex-col gap-4" style={{ width: Math.floor(containerWidth * 3.6) }}>
           <div className="flex min-w-0 items-center gap-2">
-            <Button variant="white-border" onClick={scrollLeft} className="min-h-fit rounded-full p-1">
-              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 rotate-180" />
-            </Button>
+            <When condition={!isContainerLabelLeft}>
+              <Button variant="white-border" onClick={scrollLeft} className="min-h-fit rounded-full p-1">
+                <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 rotate-180" />
+              </Button>
+            </When>
+
             <div
-              ref={scrollContainerRef}
+              ref={labelsContainerRef}
               className="scroll-indicator-hide flex min-w-0 items-center gap-2 overflow-auto"
             >
               {MonitoredCardData.map((data, index) => (
@@ -291,18 +318,23 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                 >
                   <Text
                     variant="text-12-light"
-                    className={classNames("whitespace-nowrap rounded-lg border border-grey-700 px-1", {
-                      "!font-bold": intersectingCard === data.label
-                    })}
+                    className={classNames(
+                      "whitespace-nowrap rounded-lg border border-grey-700 px-1 hover:bg-grey-100",
+                      {
+                        "!font-bold": intersectingCard === data.label
+                      }
+                    )}
                   >
                     {data.label}
                   </Text>
                 </button>
               ))}
             </div>
-            <Button variant="white-border" onClick={scrollRight} className="min-h-fit rounded-full p-1">
-              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3" />
-            </Button>
+            <When condition={!isContainerLabelRigth}>
+              <Button variant="white-border" onClick={scrollRight} className="min-h-fit rounded-full p-1">
+                <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3" />
+              </Button>
+            </When>
           </div>
           <StatusBar
             title="Analysis is due for 345 Polygons for this project. Please run analysis."
