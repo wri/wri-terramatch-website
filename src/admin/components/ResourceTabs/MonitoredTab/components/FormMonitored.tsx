@@ -7,6 +7,25 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 const FormMonitored = () => {
   return (
     <>
+      <div>
+        <Text variant="text-14" className="mb-1.5 flex items-center gap-1">
+          Display polygons
+          <Icon name={IconNames.IC_INFO} className="ml-1 h-[14px] w-[14px] text-darkCustom" />
+        </Text>
+        <RadioGroup
+          contentClassName="flex flex-wrap gap-1 !space-y-0"
+          variantTextRadio="text-12-semibold"
+          labelRadio="text-darkCustom-300"
+          classNameRadio="!gap-1"
+          contentRadioClassName="text-darkCustom-300 !border-neutral-300 py-[6px] px-[6px] rounded-lg w-fit"
+          options={[
+            { title: "All Polygons", value: "All Polygons" },
+            { title: "Analysis Due <30 Days", value: "Analysis Due <30 Days" },
+            { title: "Analysis Due < 7 Days", value: "Analysis Due < 7 Days" },
+            { title: "OverDue", value: "OverDue" }
+          ]}
+        />
+      </div>
       <Input
         name="email"
         type="text"
