@@ -126,7 +126,7 @@ export const VARIANT_TABLE_ORGANISATION = {
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
   table: "border-collapse",
   name: "border-airtable",
-  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto ",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[267px] lg:max-h-[284px] wide:max-h-[304px]",
   trHeader: "bg-neutral-150 sticky top-0 z-10 ",
   thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0",
   tBody: "",
@@ -138,13 +138,14 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL = {
   table: "border-collapse",
   name: "border-airtable",
-  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[calc(90vh-208px)]",
   trHeader: "bg-neutral-150 sticky top-0 z-10 ",
   thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
-  thead: "bg-blueCustom-100 "
+  thead: "bg-blueCustom-100 ",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_DASHBOARD = {

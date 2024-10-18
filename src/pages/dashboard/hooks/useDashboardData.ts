@@ -2,12 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
+  useGetV2DashboardActiveCountries,
+  useGetV2DashboardActiveProjects,
+  useGetV2DashboardGetProjects,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
-  useGetV2DashboardTreeRestorationGoal
+  useGetV2DashboardTreeRestorationGoal,
+  useGetV2DashboardViewProjectList
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+import { createQueryParams } from "@/utils/dashboardUtils";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -30,13 +35,24 @@ export const useDashboardData = (filters: any) => {
   ]);
   const [totalFtJobs, setTotalFtJobs] = useState({ value: 0 });
   const [totalPtJobs, setTotalPtJobs] = useState({ value: 0 });
+  const projectUuid = filters.project?.project_uuid;
+  const queryParamsCountryProject: any = (country?: string, project?: string) => {
+    if (country) {
+      return { country: country };
+    } else if (project) {
+      return { uuid: project };
+    } else {
+      return {};
+    }
+  };
+  const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
+  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
+    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
+  });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
     value: 0,
     totalValue: 0
   });
-  const [restorationGoals, setRestorationGoals] = useState<
-    { name: string; value: number | undefined; color: string }[]
-  >([]);
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
@@ -47,18 +63,6 @@ export const useDashboardData = (filters: any) => {
     };
     setUpdateFilters(parsedFilters);
   }, [filters]);
-
-  const createQueryParams = (filters: any) => {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => queryParams.append(`filter[${key}][]`, v));
-      } else if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(`filter[${key}]`, value as string);
-      }
-    });
-    return queryParams.toString();
-  };
 
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
   const { showLoader, hideLoader } = useLoading();
@@ -72,6 +76,16 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!filters }
   );
   const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
+
+  const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
+    { queryParams: queryParams },
+    { enabled: !!filters }
+  );
+
+  const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
+    { queryParams: queryParams },
+    { enabled: !!filters }
+  );
 
   const { data: dashboardRestorationGoalData } =
     useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
@@ -118,21 +132,17 @@ export const useDashboardData = (filters: any) => {
     }
   }, [totalSectionHeader]);
 
-  useEffect(() => {
-    setRestorationGoals([
-      { name: "Total", value: dashboardRestorationGoalData?.totalTreesGrownGoal, color: "#13487A" },
-      { name: "Enterprise", value: dashboardRestorationGoalData?.forProfitTreeCount, color: "#7BBD31" },
-      { name: "Non Profit", value: dashboardRestorationGoalData?.nonProfitTreeCount, color: "#B9EDFF" }
-    ]);
-  }, [dashboardRestorationGoalData]);
-
   return {
     dashboardHeader,
-    restorationGoals,
+    dashboardRestorationGoalData,
     totalFtJobs,
     totalPtJobs,
     numberTreesPlanted,
     topProject,
-    refetchTotalSectionHeader
+    refetchTotalSectionHeader,
+    activeCountries,
+    activeProjects,
+    centroidsDataProjects: centroidsDataProjects?.data,
+    listViewProjects
   };
 };

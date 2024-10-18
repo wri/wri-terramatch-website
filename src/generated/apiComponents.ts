@@ -33912,6 +33912,97 @@ export const useGetV2DashboardTotalSectionHeader = <TData = GetV2DashboardTotalS
   );
 };
 
+export type GetV2DashboardTotalSectionHeaderCountryQueryParams = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+};
+
+export type GetV2DashboardTotalSectionHeaderCountryError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardTotalSectionHeaderCountryResponse = {
+  data?: {
+    /**
+     * Total number of non profit projects.
+     */
+    total_non_profit_count?: number;
+    /**
+     * Total number of enterprise projects.
+     */
+    total_enterprise_count?: number;
+    /**
+     * Total number of jobs created.
+     */
+    total_entries?: number;
+    /**
+     * Total number of hectares restored.
+     */
+    total_hectares_restored?: number;
+    /**
+     * Total number of trees restored.=
+     */
+    total_trees_restored?: number;
+  };
+};
+
+export type GetV2DashboardTotalSectionHeaderCountryVariables = {
+  queryParams?: GetV2DashboardTotalSectionHeaderCountryQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+ */
+export const fetchGetV2DashboardTotalSectionHeaderCountry = (
+  variables: GetV2DashboardTotalSectionHeaderCountryVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardTotalSectionHeaderCountryResponse,
+    GetV2DashboardTotalSectionHeaderCountryError,
+    undefined,
+    {},
+    GetV2DashboardTotalSectionHeaderCountryQueryParams,
+    {}
+  >({ url: "/v2/dashboard/total-section-header/country", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
+ */
+export const useGetV2DashboardTotalSectionHeaderCountry = <TData = GetV2DashboardTotalSectionHeaderCountryResponse>(
+  variables: GetV2DashboardTotalSectionHeaderCountryVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardTotalSectionHeaderCountryResponse,
+      GetV2DashboardTotalSectionHeaderCountryError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardTotalSectionHeaderCountryResponse,
+    GetV2DashboardTotalSectionHeaderCountryError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/total-section-header/country",
+      operationId: "getV2DashboardTotalSectionHeaderCountry",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardTotalSectionHeaderCountry({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardActiveCountriesQueryParams = {
   /**
    * search term to use on the collection
@@ -34637,6 +34728,41 @@ export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProje
   return reactQuery.useQuery<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>(
     queryKeyFn({ path: "/v2/dashboard/view-project/{uuid}", operationId: "getV2DashboardViewProjectUuid", variables }),
     ({ signal }) => fetchGetV2DashboardViewProjectUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardViewProjectListError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardViewProjectListResponse = any[];
+
+export type GetV2DashboardViewProjectListVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardViewProjectList = (
+  variables: GetV2DashboardViewProjectListVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, undefined, {}, {}, {}>({
+    url: "/v2/dashboard/view-project-list",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2DashboardViewProjectList = <TData = GetV2DashboardViewProjectListResponse>(
+  variables: GetV2DashboardViewProjectListVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/view-project-list", operationId: "getV2DashboardViewProjectList", variables }),
+    ({ signal }) => fetchGetV2DashboardViewProjectList({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -36374,6 +36500,11 @@ export type QueryOperation =
       variables: GetV2DashboardTotalSectionHeaderVariables;
     }
   | {
+      path: "/v2/dashboard/total-section-header/country";
+      operationId: "getV2DashboardTotalSectionHeaderCountry";
+      variables: GetV2DashboardTotalSectionHeaderCountryVariables;
+    }
+  | {
       path: "/v2/dashboard/active-countries";
       operationId: "getV2DashboardActiveCountries";
       variables: GetV2DashboardActiveCountriesVariables;
@@ -36417,6 +36548,11 @@ export type QueryOperation =
       path: "/v2/dashboard/view-project/{uuid}";
       operationId: "getV2DashboardViewProjectUuid";
       variables: GetV2DashboardViewProjectUuidVariables;
+    }
+  | {
+      path: "/v2/dashboard/view-project-list";
+      operationId: "getV2DashboardViewProjectList";
+      variables: GetV2DashboardViewProjectListVariables;
     }
   | {
       path: "/v2/terrafund/polygon/geojson/{uuid}";

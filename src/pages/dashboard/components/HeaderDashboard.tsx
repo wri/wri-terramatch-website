@@ -88,11 +88,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const organizationOptions = [
     {
-      title: "Non-profit organization",
+      title: t("Non-profit Organization"),
       value: "non-profit-organization"
     },
     {
-      title: "For-profit organization",
+      title: t("Enterprise Organization"),
       value: "for-profit-organization"
     }
   ];
@@ -223,6 +223,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   key={filters.programmes.length}
                   showClear
                   showSelectAll
+                  showLabelAsMultiple
                   multiSelect
                   prefix={<Text variant="text-14-light">{t("Programme:")}</Text>}
                   inputVariant="text-14-semibold"
@@ -245,6 +246,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   key={filters.landscapes.length}
                   showClear
                   showSelectAll
+                  showLabelAsMultiple
                   multiSelect
                   prefix={<Text variant="text-14-light">{t("Landscape:")}</Text>}
                   inputVariant="text-14-semibold"
@@ -301,12 +303,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 <Dropdown
                   key={filters.organizations.length}
                   showSelectAll
+                  showLabelAsMultiple
                   showClear
                   prefix={<Text variant="text-14-light">{t("Organization:")}</Text>}
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Organization"
+                  placeholder="Organization Type"
                   value={filters.organizations}
                   onChange={value => {
                     handleChange("organizations", value);
