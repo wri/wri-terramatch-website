@@ -119,16 +119,12 @@ const MonitoredCardData: DataStructure[] = [
     label: "Hectares by Land Use",
     tooltipContent: "Tooltip",
     tableData: TableData
-  },
-  {
-    label: "Hectares by Land Use and Strategy",
-    tooltipContent: "Tooltip",
-    tableData: TableData
   }
 ];
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const [intersectingCard, setIntersectingCard] = useState<string | null>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -241,10 +237,32 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     }
   };
 
+  useEffect(() => {
+    const observedElement = refWidth.current;
+
+    if (!observedElement) return;
+
+    const resizeObserver = new ResizeObserver(entries => {
+      const entry = entries[0];
+      if (entry.contentRect) {
+        const newWidth = entry.contentRect.width;
+        setContainerWidth(newWidth);
+      }
+    });
+
+    resizeObserver.observe(observedElement);
+
+    return () => {
+      if (observedElement) {
+        resizeObserver.unobserve(observedElement);
+      }
+    };
+  }, []);
+
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
-        <div className="flex w-[36%] flex-col gap-4" ref={refWidth}>
+        <div className="flex w-[22%] flex-col gap-4" ref={refWidth}>
           <div className="relative w-full self-center overflow-hidden rounded-lg">
             <img src="/images/map-img.png" alt="Monitored" className="w-full" />
             <div className="absolute top-0 z-10 flex h-full w-full items-center justify-center">
@@ -256,7 +274,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
           </div>
           <FormMonitored />
         </div>
-        <div className="flex min-w-0 flex-col gap-4" style={{ width: (refWidth.current?.clientWidth ?? 0) * 1.74 }}>
+        <div className="flex min-w-0 flex-col gap-4" style={{ width: containerWidth * 3.6 }}>
           <div className="flex min-w-0 items-center gap-2">
             <Button variant="white-border" onClick={scrollLeft} className="min-h-fit rounded-full p-1">
               <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 rotate-180" />
@@ -292,7 +310,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             className="!w-full"
             classNameStatusBar="!w-full"
           />
-          <div className="relative flex max-h-[89vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
+          <div className="flex max-h-[89vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
             {MonitoredCardData.map((data, index) => (
               <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
                 <DataCard data={data} />
