@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
+import Button from "@/components/elements/Button/Button";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import Text from "@/components/elements/Text/Text";
@@ -329,61 +330,75 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const refWidth = useRef<HTMLDivElement>(null);
+  const cardRefsContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cardElements = cardRefs.current;
+    const container = cardRefsContainer.current;
 
-    const observer = new IntersectionObserver(
-      entries => {
-        const intersectingEntries = entries.filter(entry => entry.isIntersecting);
+    if (!container) return;
+    if (MonitoredCardData.length == 0) return;
 
-        if (intersectingEntries.length > 0) {
-          const sortedEntries = intersectingEntries.sort((a, b) => {
-            const aRect = a.target.getBoundingClientRect();
-            const bRect = b.target.getBoundingClientRect();
-            const aCenter = Math.abs(aRect.top + aRect.height / 2 - window.innerHeight / 2);
-            const bCenter = Math.abs(bRect.top + bRect.height / 2 - window.innerHeight / 2);
-            return aCenter - bCenter;
-          });
+    const findNearestCard = (cardsTop: number[], centerContainer: number): number => {
+      let nearestCardIndex = 0;
+      let smallestDifference = Math.abs(cardsTop[0] - centerContainer);
 
-          const mostCenteredEntry = sortedEntries[0];
-          const index = mostCenteredEntry.target.getAttribute("data-index");
-
-          if (index !== null) {
-            const numIndex = Number(index);
-
-            setIntersectingCard(MonitoredCardData[numIndex].label);
-            focusOnCardLabel(numIndex);
-
-            if (numIndex === 0) {
-              focusOnCardLabel(0);
-            } else if (numIndex === MonitoredCardData.length - 1) {
-              focusOnCardLabel(MonitoredCardData.length - 1);
-            }
-          }
+      for (let i = 1; i < cardsTop.length; i++) {
+        const difference = Math.abs(cardsTop[i] - centerContainer);
+        if (difference < smallestDifference) {
+          nearestCardIndex = i;
+          smallestDifference = difference;
         }
-      },
-      { threshold: 1 }
-    );
-
-    cardElements.forEach(ref => {
-      if (ref) {
-        observer.observe(ref);
       }
-    });
+
+      return nearestCardIndex;
+    };
+
+    const handleScroll = () => {
+      if (!cardElements.length) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const centerContainer = containerRect.top + containerRect.height / 2;
+      const isAtTop = container.scrollTop === 0;
+      const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 50;
+
+      let intersectingCard = null;
+      let cardsTop: number[] = [];
+
+      for (let i = 0; i < cardElements.length; i++) {
+        const card = cardElements[i];
+        if (!card) continue;
+
+        const rect = card.getBoundingClientRect();
+        const top = rect.top + rect.height / 2;
+        cardsTop = [...cardsTop, top];
+      }
+      if (isAtTop || isAtBottom) {
+        intersectingCard = isAtTop ? 0 : MonitoredCardData.length - 1;
+      } else {
+        intersectingCard = findNearestCard(cardsTop, centerContainer);
+      }
+      setIntersectingCard(MonitoredCardData[intersectingCard].label);
+      focusOnCardLabel(intersectingCard);
+    };
+    container.addEventListener("scroll", handleScroll);
 
     return () => {
-      cardElements.forEach(ref => {
-        if (ref) {
-          observer.unobserve(ref);
-        }
-      });
+      container.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 100, behavior: "smooth" });
+      const scroll = scrollContainerRef.current;
+      scroll.scrollBy({ left: scroll.clientWidth, behavior: "smooth" });
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      const scroll = scrollContainerRef.current;
+      scroll.scrollBy({ left: -scroll.clientWidth, behavior: "smooth" });
     }
   };
 
@@ -459,6 +474,9 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
         </div>
         <div className="flex min-w-0 flex-col gap-4" style={{ width: (refWidth.current?.clientWidth ?? 0) * 1.74 }}>
           <div className="flex min-w-0 items-center gap-2">
+            <Button variant="white-border" onClick={scrollLeft} className="min-h-fit rounded-full p-1">
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 rotate-180" />
+            </Button>
             <div
               ref={scrollContainerRef}
               className="scroll-indicator-hide flex min-w-0 items-center gap-2 overflow-auto"
@@ -480,7 +498,9 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                 </button>
               ))}
             </div>
-            <button onClick={scrollRight}>{">"}</button>
+            <Button variant="white-border" onClick={scrollRight} className="min-h-fit rounded-full p-1">
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3" />
+            </Button>
           </div>
           <StatusBar
             title="Analysis is due for 345 Polygons for this project. Please run analysis."
@@ -488,7 +508,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             className="!w-full"
             classNameStatusBar="!w-full"
           />
-          <div className="flex max-h-[89vh] w-full flex-col gap-5 overflow-auto">
+          <div className="relative flex max-h-[89vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
             {MonitoredCardData.map((data, index) => (
               <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
                 <DataCard data={data} />
