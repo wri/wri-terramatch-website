@@ -21,7 +21,7 @@ interface TableData {
   site: string;
   year: string;
   cover: string;
-  confidence: number;
+  confidence: string;
   phase: string;
 }
 
