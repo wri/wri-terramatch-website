@@ -16,7 +16,7 @@ import {
   useGetV2SitesSiteBbox,
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
@@ -25,6 +25,23 @@ import { getPulsingDot } from "./pulsing.dot";
 
 const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
 const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
+
+type EditPolygon = {
+  isOpen: boolean;
+  uuid: string;
+  primary_uuid?: string;
+};
+
+type PopupComponentProps = {
+  feature: mapboxgl.MapboxGeoJSONFeature;
+  popup: mapboxgl.Popup;
+  setPolygonFromMap: (polygon: any) => void;
+  sitePolygonData: SitePolygonsDataResponse | undefined;
+  type: TooltipType;
+  editPolygon: EditPolygon;
+  setEditPolygon: (value: EditPolygon) => void;
+  addPopupToMap?: () => void;
+};
 
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] ?? properties[`user_${key}`];
@@ -121,38 +138,54 @@ export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, 
 
 const handleLayerClick = (
   e: any,
-  popupComponent: any,
+  PopupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
   sitePolygonData: SitePolygonsDataResponse | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void
+  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  layerName?: string
 ) => {
   removePopups("POLYGON");
-  const { lng, lat } = e.lngLat;
-  const feature = e.features[0];
 
-  let popupContent = document.createElement("div");
+  const { lngLat, features } = e;
+  const feature = features?.[0];
+
+  if (!feature) {
+    console.warn("No feature found in click event");
+    return;
+  }
+
+  const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
 
-  const newPopup = new mapboxgl.Popup({ className: "popup-map" })
-    .setLngLat([lng, lat])
-    .setDOMContent(popupContent)
-    .addTo(map);
+  const createPopup = (lngLat: mapboxgl.LngLat) =>
+    new mapboxgl.Popup({ className: "popup-map" }).setLngLat(lngLat).setDOMContent(popupContent);
 
-  root.render(
-    createElement(popupComponent, {
-      feature,
-      popup: newPopup,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon
-    })
-  );
+  const newPopup = createPopup(lngLat);
+
+  const isWorldCountriesLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES;
+
+  const commonProps: PopupComponentProps = {
+    feature,
+    popup: newPopup,
+    setPolygonFromMap,
+    sitePolygonData,
+    type,
+    editPolygon,
+    setEditPolygon
+  };
+
+  if (isWorldCountriesLayer) {
+    const addPopupToMap = () => newPopup.addTo(map);
+    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap }));
+  } else {
+    newPopup.addTo(map);
+    root.render(createElement(PopupComponent, commonProps));
+  }
+
   popupAttachedMap["POLYGON"].push(newPopup);
 };
 
@@ -389,7 +422,8 @@ export const addPopupToLayer = (
             sitePolygonData,
             type,
             editPolygon,
-            setEditPolygon
+            setEditPolygon,
+            name
           );
         }
       });
@@ -428,6 +462,41 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
         map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
       }
       hoveredPolygonId = null;
+    });
+  }
+};
+export const addGeojsonSourceToLayer = (
+  centroids: DashboardGetProjectsData[] | undefined,
+  map: mapboxgl.Map,
+  layer: LayerType
+) => {
+  const { name, styles } = layer;
+  if (map && centroids) {
+    if (map.getSource(name)) {
+      styles?.forEach((_: unknown, index: number) => {
+        map.removeLayer(`${name}-${index}`);
+      });
+      map.removeSource(name);
+    }
+    map.addSource(name, {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: centroids.map((centroid: any) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [centroid.long, centroid.lat]
+          },
+          properties: {
+            uuid: centroid.uuid,
+            name: centroid.name
+          }
+        }))
+      }
+    });
+    styles?.forEach((style: LayerWithStyle, index: number) => {
+      addLayerGeojsonStyle(map, name, name, style, index);
     });
   }
 };
@@ -503,6 +572,27 @@ const moveDeleteLayers = (map: mapboxgl.Map) => {
       }
     });
   });
+};
+export const addLayerGeojsonStyle = (
+  map: mapboxgl.Map,
+  layerName: string,
+  sourceName: string,
+  style: LayerWithStyle,
+  index: number
+) => {
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+  if (map.getLayer(`${layerName}-${index}`)) {
+    map.removeLayer(`${layerName}-${index}`);
+  }
+  map.addLayer(
+    {
+      ...style,
+      id: `${layerName}-${index}`,
+      source: sourceName
+    } as mapboxgl.AnyLayer,
+    beforeLayer
+  );
+  moveDeleteLayers(map);
 };
 export const addLayerStyle = (
   map: mapboxgl.Map,

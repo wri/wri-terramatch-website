@@ -7,19 +7,16 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
 import {
-  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
-  NUMBER_OF_TREES_PLANTED_BY_YEAR,
-  TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
@@ -42,20 +39,19 @@ const Dashboard = () => {
   const { filters } = useDashboardContext();
   const {
     dashboardHeader,
-    restorationGoals,
+    dashboardRestorationGoalData,
     totalFtJobs,
     totalPtJobs,
     numberTreesPlanted,
     topProject,
-    refetchTotalSectionHeader
+    refetchTotalSectionHeader,
+    centroidsDataProjects,
+    activeCountries,
+    activeProjects
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
-
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
 
   useEffect(() => {
     refetchTotalSectionHeader();
@@ -88,7 +84,7 @@ const Dashboard = () => {
     },
     {
       header: "Hectares",
-      accessorKey: "restoratioHectares",
+      accessorKey: "restorationHectares",
       enableSorting: false
     },
     {
@@ -111,7 +107,7 @@ const Dashboard = () => {
     },
     {
       header: "Hectares",
-      accessorKey: "restoratioHectares",
+      accessorKey: "restorationHectares",
       enableSorting: false
     },
     {
@@ -138,18 +134,47 @@ const Dashboard = () => {
     }
   ];
 
-  const DATA_ACTIVE_PROGRAMME = dashboardCountries?.data
-    ? dashboardCountries.data.map((country: { data: { label: string; icon: string } }) => ({
-        country: `${country.data.label}_${country.data.icon}`,
-        project: "32",
-        treesPlanted: "2,234",
-        restoratioHectares: "2,234",
-        jobsCreated: "1306"
-      }))
+  const DATA_ACTIVE_PROGRAMME = activeCountries?.data
+    ? activeCountries.data.map(
+        (item: {
+          country: string;
+          country_slug: string;
+          number_of_projects: number;
+          total_trees_planted: number;
+          total_jobs_created: number;
+          hectares_restored: number;
+        }) => ({
+          country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
+          project: item.number_of_projects.toLocaleString(),
+          treesPlanted: item.total_trees_planted.toLocaleString(),
+          restorationHectares: item.hectares_restored.toLocaleString(),
+          jobsCreated: item.total_jobs_created.toLocaleString()
+        })
+      )
+    : [];
+
+  const DATA_ACTIVE_COUNTRY = activeProjects?.data
+    ? activeProjects.data.map(
+        (item: {
+          uuid: string;
+          name: string;
+          hectares_under_restoration: number;
+          trees_under_restoration: number;
+          jobs_created: number;
+          volunteers: number;
+        }) => ({
+          uuid: item.uuid,
+          project: item?.name,
+          treesPlanted: item.trees_under_restoration.toLocaleString(),
+          restorationHectares: item.hectares_under_restoration.toLocaleString(),
+          jobsCreated: item.jobs_created.toLocaleString(),
+          volunteers: item.volunteers.toLocaleString()
+        })
+      )
     : [];
 
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0}>
@@ -212,15 +237,17 @@ const Dashboard = () => {
                 "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
               )}
               data={numberTreesPlanted}
-              dataForChart={restorationGoals}
-              chartType="treesPlantedBarChart"
+              dataForChart={dashboardRestorationGoalData}
+              chartType={CHART_TYPES.treesPlantedBarChart}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
               tooltipGraphic={true}
-              data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
+              data={{}}
+              dataForChart={dashboardRestorationGoalData}
+              chartType={CHART_TYPES.multiLineChart}
               tooltip={t("Number of trees planted in each year.")}
             />
             <SecDashboard
@@ -233,17 +260,6 @@ const Dashboard = () => {
                 "The 5 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
               )}
             />
-            <When condition={filters.country.id !== 0}>
-              <SecDashboard
-                title={t("Top 20 Tree Species Planted")}
-                type="toggle"
-                secondOptionsData={dataToggleGraphic}
-                data={TOP_20_TREE_SPECIES_PLANTED}
-                tooltip={t(
-                  "The 20 most frequently planted tree species across all projects and the corresponding number planted of each."
-                )}
-              />
-            </When>
           </PageCard>
 
           <PageCard
@@ -329,6 +345,7 @@ const Dashboard = () => {
       </div>
       <ContentOverview
         dataTable={filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : DATA_ACTIVE_COUNTRY}
+        centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
         titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
         textTooltipTable={t(

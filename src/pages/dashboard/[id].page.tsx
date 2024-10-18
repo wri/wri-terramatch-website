@@ -22,7 +22,6 @@ import {
   NUMBER_OF_TREES_PLANTED,
   NUMBER_OF_TREES_PLANTED_BY_YEAR,
   TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES,
-  TOP_20_TREE_SPECIES_PLANTED,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
   VOLUNTEERS_CREATED_BY_GENDER
@@ -178,15 +177,6 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
               tooltip={t(
                 "The 5 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
-              )}
-            />
-            <SecDashboard
-              title={t("Top 20 Tree Species Planted")}
-              type="toggle"
-              secondOptionsData={dataToggleGraphic}
-              data={TOP_20_TREE_SPECIES_PLANTED}
-              tooltip={t(
-                "The 20 most frequently planted tree species across all projects and the corresponding number planted of each."
               )}
             />
           </PageCard>
