@@ -3,10 +3,12 @@ import { Dictionary } from "lodash";
 export type Status = "complete" | "not-started" | "in-progress";
 
 export const DEMOGRAPHIC_TYPES = ["gender", "age", "ethnicity"] as const;
+export const HBF_DEMOGRAPHIC_TYPES = ["gender", "age", "caste"] as const;
 export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
+export type HBFDemographicType = (typeof HBF_DEMOGRAPHIC_TYPES)[number];
 
 export interface Demographic {
-  type: DemographicType;
+  type: DemographicType | HBFDemographicType;
   subtype?: string;
   name?: string;
   amount: number;
@@ -41,12 +43,20 @@ const GENDERS: Dictionary<string> = {
   unknown: "Unknown"
 };
 
+const HBF_GENDERS = Object.fromEntries(Object.entries(GENDERS).filter(([key]) => key !== "unknown"));
+
+const CASTES: Dictionary<string> = {
+  marginalized: "Marginalized"
+};
+
 const AGES: Dictionary<string> = {
   youth: "Youth (15-24)",
   adult: "Adult (24-64)",
   elder: "Elder (65+)",
   unknown: "Unknown"
 };
+
+const HBF_AGES = Object.fromEntries(Object.entries(AGES).filter(([key]) => key === "youth"));
 
 const ETHNICITIES: Dictionary<string> = {
   indigenous: "Indigenous",
@@ -71,5 +81,24 @@ export const DEMOGRAPHIC_TYPE_MAP: Dictionary<{
     title: "Ethnicity",
     typeMap: ETHNICITIES,
     addSubtypeLabel: "Add Ethnic Group"
+  }
+};
+
+export const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<{
+  title: string;
+  typeMap: Dictionary<string>;
+  addSubtypeLabel?: string;
+}> = {
+  gender: {
+    title: "Gender",
+    typeMap: HBF_GENDERS
+  },
+  age: {
+    title: "Age",
+    typeMap: HBF_AGES
+  },
+  caste: {
+    title: "Caste",
+    typeMap: CASTES
   }
 };
