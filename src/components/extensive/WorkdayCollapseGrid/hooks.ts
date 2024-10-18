@@ -71,37 +71,36 @@ export function calculateTotals(demographics: Demographic[]) {
   }, initialCounts);
 
   let total: number = 0;
-  let countsMatch: boolean = false;
+  let complete: boolean = false;
 
   if (counts) {
     if (isHBFDemographicCounts(counts, framework)) {
-      total = Math.max(counts.age, counts.gender, counts.caste);
-      countsMatch = uniq([counts.age, counts.gender, counts.caste]).length === 1;
+      total = counts.gender;
+      complete = counts.gender > 0;
     } else {
       total = Math.max(counts.age, counts.gender, counts.ethnicity);
-      countsMatch = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
+      complete = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
     }
   }
 
-  return { counts, total, countsMatch };
+  return { counts, total, complete };
 }
 
 export function useTableStatus(demographics: Demographic[]): { total: number; status: Status } {
-  const { framework } = useFrameworkContext();
   return useMemo(
     function () {
-      const { counts, total, countsMatch } = calculateTotals(demographics);
+      const { total, complete } = calculateTotals(demographics);
 
       let status: Status = "in-progress";
       if (total === 0) {
         status = "not-started";
-      } else if (countsMatch) {
+      } else if (complete) {
         status = "complete";
       }
 
-      return { total: framework === Framework.HBF ? counts.gender : total, status };
+      return { total, status };
     },
-    [demographics, framework]
+    [demographics]
   );
 }
 
