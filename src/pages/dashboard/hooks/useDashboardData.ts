@@ -33,8 +33,6 @@ export const useDashboardData = (filters: any) => {
       tooltip: "Number of jobs created to date."
     }
   ]);
-  const [totalFtJobs, setTotalFtJobs] = useState({ value: 0 });
-  const [totalPtJobs, setTotalPtJobs] = useState({ value: 0 });
   const projectUuid = filters.project?.project_uuid;
   const queryParamsCountryProject: any = (country?: string, project?: string) => {
     if (country) {
@@ -93,15 +91,6 @@ export const useDashboardData = (filters: any) => {
     });
 
   useEffect(() => {
-    if (jobsCreatedData?.data?.total_ft) {
-      setTotalFtJobs({ value: jobsCreatedData?.data?.total_ft });
-    }
-    if (jobsCreatedData?.data?.total_pt) {
-      setTotalPtJobs({ value: jobsCreatedData?.data?.total_pt });
-    }
-  }, [jobsCreatedData]);
-
-  useEffect(() => {
     if (topData?.data) {
       const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
       const tableData = projects.map((project: { project: string; trees_planted: number }) => ({
@@ -135,8 +124,7 @@ export const useDashboardData = (filters: any) => {
   return {
     dashboardHeader,
     dashboardRestorationGoalData,
-    totalFtJobs,
-    totalPtJobs,
+    jobsCreatedData,
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
