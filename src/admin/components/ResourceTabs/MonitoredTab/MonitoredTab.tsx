@@ -3,7 +3,6 @@ import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
-import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -15,312 +14,116 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
 }
 
+const TableData = [
+  {
+    polygonName: "ABA",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "50.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "Adison Thaochu A",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "85.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "AEK Nabara Selatan",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "75.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "AEK Raso",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "50.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "AEK Torup",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "65.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "Africas",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "50.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "Agoue Iboe",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "55.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "Agrajaya Baktitama",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "50.0",
+    phase: "baseline"
+  },
+  {
+    polygonName: "Agralsa",
+    site: "Tannous/Brayton Road",
+    year: "2024",
+    cover: "",
+    confidence: "75.0",
+    phase: "baseline"
+  }
+];
+
 const MonitoredCardData: DataStructure[] = [
   {
     label: "Tree Cover (TTC)",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Raso",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Africas",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Agoue Iboe",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Agrajaya Baktitama",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   },
   {
     label: "Tree Cover Loss",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   },
   {
     label: "Tree Cover Loss from Fire",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   },
   {
     label: "Hectares by EcoRegion",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   },
   {
     label: "Hectares by Strategy",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   },
   {
     label: "Hectares by Land Use",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: "50.0",
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   },
   {
     label: "Hectares by Land Use and Strategy",
     tooltipContent: "Tooltip",
-    tableData: [
-      {
-        polygonName: "ABA",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: 50.0,
-        phase: "baseline"
-      },
-      {
-        polygonName: "Adison Thaochu A",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: 50.0,
-        phase: "baseline"
-      },
-      {
-        polygonName: "AEK Nabara Selatan",
-        site: "Tannous/Brayton Road",
-        year: "2024",
-        cover: "",
-        confidence: 50.0,
-        phase: "baseline"
-      }
-    ]
+    tableData: TableData
   }
 ];
 
@@ -450,25 +253,6 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                 View Map
               </button>
             </div>
-          </div>
-          <div>
-            <Text variant="text-14" className="mb-1.5 flex items-center gap-1">
-              Display polygons
-              <Icon name={IconNames.IC_INFO} className="ml-1 h-[14px] w-[14px] text-darkCustom" />
-            </Text>
-            <RadioGroup
-              contentClassName="flex flex-wrap gap-1 !space-y-0"
-              variantTextRadio="text-12-semibold"
-              labelRadio="text-darkCustom-300"
-              classNameRadio="!gap-1"
-              contentRadioClassName="text-darkCustom-300 !border-neutral-300 py-[6px] px-[6px] rounded-lg w-fit"
-              options={[
-                { title: "All Polygons", value: "All Polygons" },
-                { title: "Analysis Due <30 Days", value: "Analysis Due <30 Days" },
-                { title: "Analysis Due < 7 Days", value: "Analysis Due < 7 Days" },
-                { title: "OverDue", value: "OverDue" }
-              ]}
-            />
           </div>
           <FormMonitored />
         </div>
