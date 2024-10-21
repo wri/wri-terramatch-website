@@ -10,7 +10,7 @@ export const LABEL_LEGEND = [
 ];
 
 export const NUMBER_OF_TREES_PLANTED = {
-  value: "12.2",
+  value: 12.2,
   unit: "M"
 };
 
@@ -48,13 +48,53 @@ export const TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES = {
   ],
   maxValue: 1889396.551724138
 };
+export const TOP_20_TREE_SPECIES_PLANTED = {
+  tableData: [
+    {
+      label: "Gmelina",
+      valueText: "650,000",
+      value: 650000
+    },
+    {
+      label: "Rhizophora racemosa",
+      valueText: "505,000",
+      value: 505000
+    },
+    {
+      label: "Markhamia lutea",
+      valueText: "410,000",
+      value: 410000
+    },
+    {
+      label: "Terminalia superba",
+      valueText: "370,000",
+      value: 370000
+    },
+    {
+      label: "milicia excelsa",
+      valueText: "370,000",
+      value: 370000
+    },
+    {
+      label: "Gliricidia sepium",
+      valueText: "354,000",
+      value: 354000
+    },
+    {
+      label: "Coffea canephora",
+      valueText: "350,000",
+      value: 350000
+    }
+  ],
+  maxValue: 1889396.551724138
+};
 
 export const TOTAL_HECTARES_UNDER_RESTORATION = {
-  value: "23,000"
+  value: 23000
 };
 
 export const TOTAL_NUMBER_OF_SITES = {
-  value: "345"
+  value: 345
 };
 
 export const RESTORATION_STRATEGIES_REPRESENTED = {
@@ -112,11 +152,11 @@ export const TARGET_LAND_USE_TYPES_REPRESENTED = {
 };
 
 export const NEW_PART_TIME_JOBS = {
-  value: "22,000"
+  value: 22000
 };
 
 export const NEW_FULL_TIME_JOBS = {
-  value: "1,000"
+  value: 1000
 };
 
 export const JOBS_CREATED_BY_GENDER = {
@@ -152,7 +192,7 @@ export const JOBS_CREATED_BY_AGE = {
 };
 
 export const TOTAL_VOLUNTEERS = {
-  value: "23,000"
+  value: 23000
 };
 
 export const VOLUNTEERS_CREATED_BY_GENDER = {
@@ -210,200 +250,6 @@ export const COLUMN_ACTIVE_PROGRAMME = [
   }
 ];
 
-export const DATA_ACTIVE_PROGRAMME = [
-  {
-    country: "Angola",
-    project: "32",
-    treesPlanted: "2,234",
-    restoratioHectares: "2,234",
-    jobsCreated: "1306"
-  },
-  {
-    country: "Liberia",
-    project: "14",
-    treesPlanted: "760",
-    restoratioHectares: "760",
-    jobsCreated: "430"
-  },
-  {
-    country: "Kenya",
-    project: "25",
-    treesPlanted: "787",
-    restoratioHectares: "787",
-    jobsCreated: "636"
-  },
-  {
-    country: "Mozambique",
-    project: "8",
-    treesPlanted: "1,838",
-    restoratioHectares: "1,838",
-    jobsCreated: "1,767"
-  },
-  {
-    country: "Sierra Leone",
-    project: "19",
-    treesPlanted: "2,058",
-    restoratioHectares: "2,058",
-    jobsCreated: "1,213"
-  },
-  {
-    country: "Tanzania",
-    project: "5",
-    treesPlanted: "3,816",
-    restoratioHectares: "3,816",
-    jobsCreated: "3,720"
-  },
-  {
-    country: "Angola",
-    project: "32",
-    treesPlanted: "2,234",
-    restoratioHectares: "2,234",
-    jobsCreated: "1306"
-  },
-  {
-    country: "Liberia",
-    project: "14",
-    treesPlanted: "760",
-    restoratioHectares: "760",
-    jobsCreated: "430"
-  },
-  {
-    country: "Kenya",
-    project: "25",
-    treesPlanted: "787",
-    restoratioHectares: "787",
-    jobsCreated: "636"
-  },
-  {
-    country: "Mozambique",
-    project: "8",
-    treesPlanted: "1,838",
-    restoratioHectares: "1,838",
-    jobsCreated: "1,767"
-  },
-  {
-    country: "Sierra Leone",
-    project: "19",
-    treesPlanted: "2,058",
-    restoratioHectares: "2,058",
-    jobsCreated: "1,213"
-  },
-  {
-    country: "Tanzania",
-    project: "5",
-    treesPlanted: "3,816",
-    restoratioHectares: "3,816",
-    jobsCreated: "3,720"
-  },
-  {
-    country: "Angola",
-    project: "32",
-    treesPlanted: "2,234",
-    restoratioHectares: "2,234",
-    jobsCreated: "1306"
-  },
-  {
-    country: "Liberia",
-    project: "14",
-    treesPlanted: "760",
-    restoratioHectares: "760",
-    jobsCreated: "430"
-  },
-  {
-    country: "Kenya",
-    project: "25",
-    treesPlanted: "787",
-    restoratioHectares: "787",
-    jobsCreated: "636"
-  },
-  {
-    country: "Mozambique",
-    project: "8",
-    treesPlanted: "1,838",
-    restoratioHectares: "1,838",
-    jobsCreated: "1,767"
-  },
-  {
-    country: "Sierra Leone",
-    project: "19",
-    treesPlanted: "2,058",
-    restoratioHectares: "2,058",
-    jobsCreated: "1,213"
-  },
-  {
-    country: "Tanzania",
-    project: "5",
-    treesPlanted: "3,816",
-    restoratioHectares: "3,816",
-    jobsCreated: "3,720"
-  },
-  {
-    country: "Angola",
-    project: "32",
-    treesPlanted: "2,234",
-    restoratioHectares: "2,234",
-    jobsCreated: "1306"
-  },
-  {
-    country: "Liberia",
-    project: "14",
-    treesPlanted: "760",
-    restoratioHectares: "760",
-    jobsCreated: "430"
-  },
-  {
-    country: "Kenya",
-    project: "25",
-    treesPlanted: "787",
-    restoratioHectares: "787",
-    jobsCreated: "636"
-  },
-  {
-    country: "Mozambique",
-    project: "8",
-    treesPlanted: "1,838",
-    restoratioHectares: "1,838",
-    jobsCreated: "1,767"
-  },
-  {
-    country: "Sierra Leone",
-    project: "19",
-    treesPlanted: "2,058",
-    restoratioHectares: "2,058",
-    jobsCreated: "1,213"
-  },
-  {
-    country: "Tanzania",
-    project: "5",
-    treesPlanted: "3,816",
-    restoratioHectares: "3,816",
-    jobsCreated: "3,720"
-  }
-];
-
-export const COLUMN_ACTIVE_COUNTRY = [
-  {
-    header: "Project",
-    accessorKey: "project"
-  },
-  {
-    header: "Trees Planted",
-    accessorKey: "treesPlanted"
-  },
-  {
-    header: "Restoration Hectares",
-    accessorKey: "restoratioHectares"
-  },
-  {
-    header: "Jobs Created",
-    accessorKey: "jobsCreated"
-  },
-  {
-    header: "Volunteers",
-    accessorKey: "volunteers"
-  }
-];
-
 export const DATA_ACTIVE_COUNTRY = [
   {
     project: "Resturation de mangroves et des peripheries de la chaine de I’Atacora au Benin - Eco - Benin",
@@ -428,3 +274,195 @@ export const OBJETIVE = {
   preferredLanguage: "English",
   landTenure: "Communal Government"
 };
+
+export const DATA_TABLE_PROJECT_LIST = [
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Angola",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Liberia",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Kenya",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Mozambique",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Sierra Leone",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Tanzania",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Angola",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Liberia",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Kenya",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Mozambique",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Sierra Leone",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Tanzania",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Angola",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Liberia",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Kenya",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Mozambique",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Sierra Leone",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  },
+  {
+    project: "Annette Ward (3SC)",
+    organization: "Goshen Global Vision",
+    programme: "TerraFund Top100",
+    country: "Tanzania",
+    treesPlanted: "12,000,000",
+    restorationHectares: "15,700",
+    jobsCreated: "9,000,000"
+  }
+];
+
+export const DATA_IMPACT_STORIES = [
+  {
+    id: "1",
+    by: "FilmsForChange",
+    date: "23 Sep 2023",
+    description: "Mud Floods in our village in Kasese Uganda.",
+    image: "/images/pitch-placeholder.webp",
+    title: "Huge mudslide Causes Damage"
+  },
+  {
+    id: "2",
+    by: "FilmsForChange",
+    date: "23 Sep 2023",
+    description: "Women’s Tree Nursery is doing well. After receiving trees and he Lorem ipsum dolor sit amet",
+    image: "/images/landing-page-hero-banner.webp",
+    title: "Kyemihoko Rural Women’s Initiative"
+  },
+  {
+    id: "3",
+    by: "FilmsForChange",
+    date: "23 Sep 2023",
+    description: "Mud Floods in our village in Kasese Uganda.",
+    image: "/images/terrafund-afr-100-explainer.webp",
+    title: "Wild Fire"
+  }
+];

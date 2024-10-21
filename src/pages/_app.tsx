@@ -71,9 +71,8 @@ const _App = ({ Component, pageProps, props, accessToken }: AppProps & { accessT
                           <Toast />
                           <If condition={isOnDashboards}>
                             <Then>
-                              <DashboardLayout isLoggedIn={!!accessToken}>
+                              <DashboardLayout>
                                 <Component {...pageProps} accessToken={accessToken} />
-                                <CookieBanner />
                               </DashboardLayout>
                             </Then>
                             <Else>

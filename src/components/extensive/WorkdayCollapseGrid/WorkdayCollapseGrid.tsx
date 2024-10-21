@@ -5,26 +5,40 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useTableStatus } from "./hooks";
-import { Demographic, DEMOGRAPHIC_TYPES, DemographicType, WorkdayCollapseGridProps } from "./types";
+import {
+  Demographic,
+  DEMOGRAPHIC_TYPES,
+  DemographicType,
+  HBF_DEMOGRAPHIC_TYPES,
+  HBFDemographicType,
+  WorkdayCollapseGridProps
+} from "./types";
 import WorkdaySection from "./WorkdaySection";
 
 const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
+  const { framework } = useFrameworkContext();
   const { total, status } = useTableStatus(demographics);
   const byType = useMemo(() => groupBy(demographics, "type"), [demographics]);
 
   const onSectionChange = useCallback(
-    (type: DemographicType, sectionDemographics: Demographic[]) => {
+    (type: DemographicType | HBFDemographicType, sectionDemographics: Demographic[]) => {
       onChange?.([
         ...demographics.filter(({ type: demographicType }) => demographicType !== type),
         ...sectionDemographics
       ]);
     },
     [onChange, demographics]
+  );
+
+  const demographicTypes = useMemo(
+    () => (framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPES : DEMOGRAPHIC_TYPES),
+    [framework]
   );
 
   const titleDays = t("{total} Days", { total });
@@ -72,7 +86,7 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
               variant.gridStyle
             )}
           >
-            {DEMOGRAPHIC_TYPES.map(type => (
+            {demographicTypes.map(type => (
               <WorkdaySection
                 key={type}
                 onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}

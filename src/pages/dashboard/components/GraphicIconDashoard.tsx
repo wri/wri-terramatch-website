@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 
 import Text from "@/components/elements/Text/Text";
@@ -6,16 +7,18 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { DashboardTableDataProps } from "../index.page";
 
 const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
+  const t = useT();
+
   const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
     switch (label) {
       case "Agroforest":
-        return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
+        return { color: "bg-secondary-600", icon: "IC_AGROFOREST" };
 
       case "Natural Forest":
         return { color: "bg-green-60", icon: "IC_NATURAL_FOREST" };
 
       case "Mangrove":
-        return { color: "bg-green-300", icon: "IC_MANGROVE" };
+        return { color: "bg-green-35", icon: "IC_MANGROVE" };
 
       case "Woodlot / Plantation":
         return { color: "bg-yellow-600", icon: "IC_WOODLOT" };
@@ -27,12 +30,12 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
         return { color: "bg-primary-350", icon: "IC_RIPARIAN_AREA" };
 
       case "Urban Forest":
-        return { color: "bg-purpleCustom-100", icon: "IC_URBAN_FOREST" };
+        return { color: "bg-blueCustom", icon: "IC_URBAN_FOREST" };
 
       case "Silvopasture":
         return { color: "bg-yellow-550", icon: "IC_SILVOPASTURE" };
       case "Peatland":
-        return { color: "bg-primary-250", icon: "IC_PEATLAND" };
+        return { color: "bg-primary", icon: "IC_PEATLAND" };
       default:
         return { color: "bg-tertiary-800", icon: "IC_AGROFOREST" };
     }
@@ -59,15 +62,15 @@ const GraphicIconDashoard = ({ data }: { data: DashboardTableDataProps[] }) => {
       <div className="w-full">
         {data.map((item, index) => (
           <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
-            <div className="flex w-full justify-between">
+            <div className="mb-1 flex w-full justify-between">
               <div className="flex gap-1">
                 <Icon name={IconNames[colorIconLabel(item.label).icon]} />
                 <Text variant="text-14-light" className=" text-darkCustom">
-                  {item.label}
+                  {t(item.label)}
                 </Text>
               </div>
               <Text variant="text-14" className=" text-darkCustom">
-                {item.valueText}
+                {t(item.valueText)}
               </Text>
             </div>
             <div className="relative h-4 rounded bg-blueCustom-30 lg:h-5">

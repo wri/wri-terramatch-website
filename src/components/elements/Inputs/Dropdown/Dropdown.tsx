@@ -16,7 +16,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
-import { formatOptionsList, getPrefix } from "@/utils/options";
+import { formatOptionsList } from "@/utils/options";
 
 import { DropdownVariant, VARIANT_DROPDOWN_DEFAULT } from "./DropdownVariant";
 
@@ -50,10 +50,14 @@ export interface DropdownProps {
   feedbackRequired?: boolean;
   formHook?: UseFormReturn;
   onChangeConfirm?: boolean;
+  showClear?: boolean;
+  showLabelAsMultiple?: boolean;
   disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
+  onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
+  showSelectAll?: boolean;
 }
 const otherKey = "other#value#key";
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
@@ -73,7 +77,7 @@ const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOther
  */
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
-  const { variant = VARIANT_DROPDOWN_DEFAULT } = props;
+  const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll, onClear } = props;
   const [selected, setSelected] = useState<OptionValue[]>(() =>
     getDefaultDropDownValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
@@ -81,6 +85,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     getDefaultOtherValue(props.defaultValue || props.value || [], props.options, !!props.hasOtherOptions)
   );
   const updateControl = useRef(0);
+
   useEffect(() => {
     if (!!props.value && !!props.options && updateControl.current < 5) {
       setSelected(getDefaultDropDownValue(props.value, props.options, !!props.hasOtherOptions));
@@ -145,6 +150,14 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return props?.disableOptionTitles?.includes(title);
   };
 
+  const formatSelectedValues = (selected: OptionValue[], options: Option[], value: any) => {
+    if (selected.length > 1 && props.showLabelAsMultiple) {
+      return `Multiple ${props.placeholder}s`;
+    } else {
+      return formatOptionsList(options, toArray<any>(value));
+    }
+  };
+
   return (
     <div className={tw("space-y-2", props.containerClassName, variant.containerClassName)}>
       <Listbox value={selected} defaultValue={selected} onChange={onChange} multiple={props.multiSelect}>
@@ -182,19 +195,35 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             >
               <When condition={!!props.prefix}>{props.prefix}</When>
               <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
-                {getPrefix(options, toArray<any>(value))}
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname)}
-                  title={formatOptionsList(options, toArray<any>(value))}
+                  title={formatSelectedValues(selected, options, value)}
                 >
-                  {formatOptionsList(options, toArray<any>(value)) || props.placeholder}
+                  {formatSelectedValues(selected, options, value) || props.placeholder}
                 </Text>
               </div>
-              <Icon
-                name={variant.iconName || IconNames.CHEVRON_DOWN}
-                className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
-              />
+              <When condition={selected.length > 0 && showClear}>
+                <div
+                  className={variant.iconClearContainerClassName}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setSelected([]);
+                    onClear?.();
+                  }}
+                >
+                  <Icon
+                    name={variant.iconNameClear || IconNames.CLEAR}
+                    className={tw("fill-neutral-900", variant.iconClearClassName)}
+                  />
+                </div>
+              </When>
+              <When condition={selected.length === 0 || !showClear}>
+                <Icon
+                  name={variant.iconName || IconNames.CHEVRON_DOWN}
+                  className={tw("fill-neutral-900 transition", open && "rotate-180", variant.iconClassName)}
+                />
+              </When>
             </Listbox.Button>
             <Transition
               className="relative z-50 !m-0"
@@ -209,10 +238,47 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <Listbox.Options
                 as="div"
                 className={tw(
-                  "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white lg:max-h-[250px] wide:max-h-[266px]",
+                  "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white outline-none lg:max-h-[250px] wide:max-h-[266px]",
                   props.optionsClassName
                 )}
               >
+                <When condition={props.multiSelect && showSelectAll}>
+                  <Listbox.Option
+                    as="div"
+                    key="all"
+                    value="all"
+                    className={classNames(
+                      tw(
+                        "w-full cursor-pointer p-3 hover:bg-primary-100",
+                        selected.length === options.length && "bg-primary-100",
+                        props.optionClassName
+                      )
+                    )}
+                    disabled={verifyDisableOption("All")}
+                  >
+                    <div className="flex items-center justify-between">
+                      <Checkbox
+                        name=""
+                        label="Select All"
+                        textClassName={classNames(variant.optionLabelClassName, "whitespace-nowrap")}
+                        inputClassName={classNames(variant.optionCheckboxClassName, "checked:bg-dash")}
+                        className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
+                        checked={selected.length === options.length}
+                        onChange={() => {
+                          if (selected.length === options.length) {
+                            setSelected([]);
+                            props.onChange([]);
+                          } else {
+                            const allValues = options.map(option => option.value);
+                            setSelected(allValues);
+                            props.onChange(allValues);
+                          }
+                        }}
+                      />
+                    </div>
+                  </Listbox.Option>
+                  <hr className="mx-3 border-grey-350" />
+                </When>
                 {options.map(option => {
                   let isSelected = false;
                   if (typeof selected === "string" || Array.isArray(selected)) {
@@ -227,8 +293,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       value={option.value}
                       className={classNames(
                         tw(
-                          "w-full cursor-pointer hover:bg-primary-100",
-                          props.multiSelect ? "p-3.5" : "p-3",
+                          "w-full cursor-pointer p-3 hover:bg-primary-100",
                           isSelected && !props.multiSelect && "bg-primary-100",
                           props.optionClassName,
                           verifyDisableOption(option.title) ? "cursor-not-allowed bg-grey-750 hover:bg-grey-750" : ""
@@ -244,7 +309,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             label={option.title}
                             textClassName={variant.optionLabelClassName}
                             inputClassName={variant.optionCheckboxClassName}
-                            className="flex flex-row-reverse items-center gap-3"
+                            className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
                             onChange={() => {
                               !isSelected
                                 ? setSelected([...selected, option.value])

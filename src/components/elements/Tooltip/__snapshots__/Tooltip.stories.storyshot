@@ -1,25 +1,126 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Components/Elements/Tooltip Default 1`] = `
+exports[`Storyshots Components/Elements/Tooltip Click 1`] = `
 <div
-  className="group relative flex flex-col items-center undefined"
+  className="group relative flex cursor-pointer flex-col items-center undefined"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
 >
   <div
-    className="shadow-lg absolute bottom-full z-10 mb-1 hidden rounded bg-darkCustom p-1 text-center text-white group-hover:inline-block lg:p-2 w-28"
+    className="fixed -z-10 "
+    style={
+      Object {
+        "left": "0px",
+        "top": "0px",
+      }
+    }
   >
     <div
-      className="absolute bottom-0 left-1/2 ml-[-4px] mb-[-9px] hidden border-[5px] border-darkCustom border-r-transparent border-b-transparent border-l-transparent group-hover:block "
-    />
-    <p
-      className="text-12-semibold"
-      data-testid="txt"
-    />
-    <p
-      className="text-12-light"
-      data-testid="txt"
+      className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-28"
     >
-      This is a tooltip
-    </p>
+      <div
+        className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+        style={
+          Object {
+            "marginLeft": "0px",
+          }
+        }
+      />
+      <p
+        className="!font-light leading-[normal] text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a tooltip",
+          }
+        }
+        data-testid="txt"
+      />
+    </div>
+  </div>
+  Open-Click
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Tooltip Default 1`] = `
+<div
+  className="group relative flex cursor-pointer flex-col items-center undefined"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <div
+    className="fixed -z-10 "
+    style={
+      Object {
+        "left": "0px",
+        "top": "0px",
+      }
+    }
+  >
+    <div
+      className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-28"
+    >
+      <div
+        className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+        style={
+          Object {
+            "marginLeft": "0px",
+          }
+        }
+      />
+      <p
+        className="!font-light leading-[normal] text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a tooltip",
+          }
+        }
+        data-testid="txt"
+      />
+    </div>
+  </div>
+  Open-Hover
+</div>
+`;
+
+exports[`Storyshots Components/Elements/Tooltip Hover 1`] = `
+<div
+  className="group relative flex cursor-pointer flex-col items-center undefined"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <div
+    className="fixed -z-10 "
+    style={
+      Object {
+        "left": "0px",
+        "top": "0px",
+      }
+    }
+  >
+    <div
+      className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-28"
+    >
+      <div
+        className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+        style={
+          Object {
+            "marginLeft": "0px",
+          }
+        }
+      />
+      <p
+        className="!font-light leading-[normal] text-12-light with-inner-html"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "This is a tooltip",
+          }
+        }
+        data-testid="txt"
+      />
+    </div>
   </div>
   Open-Hover
 </div>
