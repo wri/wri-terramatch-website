@@ -167,7 +167,6 @@ const handleLayerClick = (
   const newPopup = createPopup(lngLat);
 
   const isFetchdataLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES || layerName === LAYERS_NAMES.CENTROIDS;
-
   const commonProps: PopupComponentProps = {
     feature,
     popup: newPopup,
@@ -179,7 +178,9 @@ const handleLayerClick = (
   };
 
   if (isFetchdataLayer) {
-    const addPopupToMap = () => newPopup.addTo(map);
+    const addPopupToMap = () => {
+      newPopup.addTo(map);
+    };
     root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName }));
   } else {
     newPopup.addTo(map);
@@ -408,6 +409,9 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
+    if (name === LAYERS_NAMES.CENTROIDS) {
+      targetLayers = [targetLayers[0]];
+    }
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) => {
         const currentMode = draw?.getMode();
