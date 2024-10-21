@@ -22,3 +22,5 @@ export const CustomBar: React.FC<CustomBarProps> = ({ fill, x, y, width, height 
 
   return <path d={path} fill={fill} />;
 };
+
+export default CustomBar;

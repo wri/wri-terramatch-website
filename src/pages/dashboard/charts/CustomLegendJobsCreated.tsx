@@ -29,3 +29,5 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
     </ul>
   );
 };
+
+export default CustomLegend;

@@ -13,3 +13,5 @@ export const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
     </g>
   );
 };
+
+export default CustomYAxisTick;

@@ -14,3 +14,5 @@ export const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
     </div>
   );
 };
+
+export default CustomTooltip;
