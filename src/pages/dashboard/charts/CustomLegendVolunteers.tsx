@@ -34,3 +34,5 @@ export const CustomLegendVolunteers: React.FC<CustomLegendProps> = ({ payload, t
     </div>
   );
 };
+
+export default CustomLegendVolunteers;
