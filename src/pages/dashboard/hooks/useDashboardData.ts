@@ -9,7 +9,8 @@ import {
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
-  useGetV2DashboardViewProjectList
+  useGetV2DashboardViewProjectList,
+  useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
@@ -90,6 +91,10 @@ export const useDashboardData = (filters: any) => {
       queryParams: queryParams
     });
 
+  const { data: dashboardVolunteersSurvivalRate } = useGetV2DashboardVolunteersSurvivalRate<any>({
+    queryParams: queryParams
+  });
+
   useEffect(() => {
     if (topData?.data) {
       const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
@@ -125,6 +130,7 @@ export const useDashboardData = (filters: any) => {
     dashboardHeader,
     dashboardRestorationGoalData,
     jobsCreatedData,
+    dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,

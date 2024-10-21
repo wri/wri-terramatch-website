@@ -9,16 +9,12 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE } from "@/constants/dashbordConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { formatLabelsVolunteers } from "@/utils/dashboardUtils";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
-import {
-  LABEL_LEGEND,
-  TOTAL_VOLUNTEERS,
-  VOLUNTEERS_CREATED_BY_AGE,
-  VOLUNTEERS_CREATED_BY_GENDER
-} from "./mockedData/dashboard";
+import { LABEL_LEGEND } from "./mockedData/dashboard";
 
 export interface DashboardTableDataProps {
   label: string;
@@ -39,6 +35,7 @@ const Dashboard = () => {
     dashboardHeader,
     dashboardRestorationGoalData,
     jobsCreatedData,
+    dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
@@ -197,6 +194,17 @@ const Dashboard = () => {
     return { type, chartData, total: data.totalJobsCreated, maxValue };
   };
 
+  const parseVolunteersByType = (data: any, type: string) => {
+    if (!data) return { type, chartData: [] };
+    const firstvalue = type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth";
+    const secondValue = type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth";
+    const chartData = [
+      { name: formatLabelsVolunteers(firstvalue), value: data[`${firstvalue}_volunteers`] },
+      { name: formatLabelsVolunteers(secondValue), value: data[`${secondValue}_volunteers`] }
+    ];
+    return { type, chartData, total: data.total_volunteers };
+  };
+
   return (
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -345,7 +353,7 @@ const Dashboard = () => {
             </div>
             <SecDashboard
               title={t("Total Volunteers")}
-              data={TOTAL_VOLUNTEERS}
+              data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
               tooltip={t(
                 "Number of unpaid volunteers contributing to the project. A volunteer is an individual that freely dedicates their time to the project because they see value in doing so but does not receive payment for their work. Paid workers or beneficiaries who do not dedicate their time to the project are not considered volunteers."
               )}
@@ -353,14 +361,18 @@ const Dashboard = () => {
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Volunteers Created by Gender")}
-                data={VOLUNTEERS_CREATED_BY_GENDER}
+                data={{}}
+                chartType={CHART_TYPES.doughnutChart}
+                dataForChart={parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.gender)}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t("Total number of volunteers broken down by gender.")}
               />
               <SecDashboard
                 title={t("Volunteers Created by Age")}
-                data={VOLUNTEERS_CREATED_BY_AGE}
+                data={{}}
+                chartType={CHART_TYPES.doughnutChart}
+                dataForChart={parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.age)}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(
