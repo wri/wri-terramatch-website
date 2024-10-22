@@ -8,7 +8,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
-import Log from "@/utils/log";
 
 import Text from "../Text/Text";
 
@@ -25,7 +24,7 @@ export const validationLabels: any = {
 };
 function useRenderCounter() {
   const ref = useRef(0);
-  Log.debug(`Render count: ${++ref.current}`);
+  console.log(`Render count: ${++ref.current}`);
 }
 const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCriteriaData }) => {
   useRenderCounter();

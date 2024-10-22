@@ -14,8 +14,12 @@ import { formatCommentaryDate } from "@/components/elements/Map-mapbox/utils";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
-import { useMyUser } from "@/connections/User";
-import { GetV2AuditStatusENTITYUUIDResponse, useGetV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
+import {
+  GetAuthMeResponse,
+  GetV2AuditStatusENTITYUUIDResponse,
+  useGetAuthMe,
+  useGetV2AuditStatusENTITYUUID
+} from "@/generated/apiComponents";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -56,7 +60,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
     }
   });
 
-  const [, { user }] = useMyUser();
+  const { data: authMe } = useGetAuthMe<{ data: GetAuthMeResponse }>({});
 
   const [commentsAuditLogData, restAuditLogData] = useMemo(() => {
     const commentsAuditLog: GetV2AuditStatusENTITYUUIDResponse = [];
@@ -120,8 +124,8 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
           <When condition={buttonToogle}>
             <div className="flex flex-col gap-4">
               <CommentaryBox
-                name={user?.firstName!}
-                lastName={user?.lastName!}
+                name={authMe?.data?.first_name!}
+                lastName={authMe?.data?.last_name!}
                 entity={AuditLogEntityEnum.Polygon}
                 record={{ uuid, status }}
                 refresh={refetch}

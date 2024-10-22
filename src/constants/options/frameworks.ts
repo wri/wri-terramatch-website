@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { GetListParams } from "react-admin";
 
 import { reportingFrameworkDataProvider } from "@/admin/apiProvider/dataProviders/reportingFrameworkDataProvider";
-import Log from "@/utils/log";
 
 async function getFrameworkChoices() {
   const params: GetListParams = {
@@ -30,7 +29,7 @@ export function useFrameworkChoices() {
     try {
       setFrameworkChoices(await getFrameworkChoices());
     } catch (error) {
-      Log.error("Error fetching framework choices", error);
+      console.error("Error fetching framework choices", error);
     }
   };
 

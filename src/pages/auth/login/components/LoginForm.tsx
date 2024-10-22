@@ -11,7 +11,7 @@ import { LoginFormDataType } from "../index.page";
 
 type LoginFormProps = {
   form: UseFormReturn<LoginFormDataType>;
-  handleSave: (data: LoginFormDataType) => void;
+  handleSave: (data: LoginFormDataType) => Promise<any>;
   loading?: boolean;
 };
 

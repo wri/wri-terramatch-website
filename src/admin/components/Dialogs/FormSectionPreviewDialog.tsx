@@ -18,7 +18,6 @@ import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import ModalProvider from "@/context/modal.provider";
 import { FormSectionRead, V2GenericList } from "@/generated/apiSchemas";
 import { apiFormSectionToFormStep } from "@/helpers/customForms";
-import Log from "@/utils/log";
 
 interface ConfirmationDialogProps extends DialogProps {
   section?: FormSectionRead;
@@ -50,7 +49,7 @@ export const FormSectionPreviewDialog = ({ linkedFieldData, section: _section, .
         <Divider />
 
         <DialogContent>
-          <FormStep {...step} formHook={formHook} onChange={() => Log.debug("FormStep onChange")} />
+          <FormStep {...step} formHook={formHook} onChange={console.log} />
         </DialogContent>
 
         <DialogActions sx={{ padding: 3 }}>

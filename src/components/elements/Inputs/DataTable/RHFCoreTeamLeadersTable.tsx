@@ -5,9 +5,9 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
-import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
 import { useDeleteV2CoreTeamLeaderUUID, usePostV2CoreTeamLeader } from "@/generated/apiComponents";
+import { useMyOrg } from "@/hooks/useMyOrg";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -45,7 +45,8 @@ const RHFCoreTeamLeadersDataTable = ({
   const { field } = useController(props);
   const value = field?.value || [];
 
-  const [, { organisationId }] = useMyOrg();
+  const myOrg = useMyOrg();
+  const organisationId = myOrg?.uuid;
 
   const { mutate: createTeamMember } = usePostV2CoreTeamLeader({
     onSuccess(data) {

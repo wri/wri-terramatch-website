@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { getDisturbanceTableFields } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
-import Log from "@/utils/log";
 
 import Component, { FormModalProps as Props } from "./FormModal";
 
@@ -26,6 +25,6 @@ export const Default: Story = {
   args: {
     title: "Add new disturbance",
     fields: getDisturbanceTableFields({ hasIntensity: true, hasExtent: true }),
-    onSubmit: Log.info
+    onSubmit: console.log
   }
 };

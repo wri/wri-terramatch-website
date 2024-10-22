@@ -15,7 +15,6 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useDeleteV2FilesUUID, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
-import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -212,7 +211,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
           body.append("lng", location.longitude.toString());
         }
       } catch (e) {
-        Log.error(e);
+        console.log(e);
       }
 
       uploadFile?.({

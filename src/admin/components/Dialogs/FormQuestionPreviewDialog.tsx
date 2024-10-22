@@ -18,7 +18,6 @@ import { FieldMapper } from "@/components/extensive/WizardForm/FieldMapper";
 import ModalProvider from "@/context/modal.provider";
 import { FormQuestionRead, V2GenericList } from "@/generated/apiSchemas";
 import { apiFormQuestionToFormField } from "@/helpers/customForms";
-import Log from "@/utils/log";
 
 interface ConfirmationDialogProps extends DialogProps {
   question?: FormQuestionRead;
@@ -55,7 +54,7 @@ export const FormQuestionPreviewDialog = ({
         <Divider />
 
         <DialogContent>
-          <FieldMapper field={field} formHook={formHook} onChange={() => Log.debug("Field Mapper onChange")} />
+          <FieldMapper field={field} formHook={formHook} onChange={console.log} />
         </DialogContent>
 
         <DialogActions sx={{ padding: 3 }}>

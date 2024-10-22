@@ -4,7 +4,7 @@ import { useNotify, useRecordContext } from "react-admin";
 import { useForm } from "react-hook-form";
 
 import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
-import { getAccessToken } from "@/admin/apiProvider/utils/token";
+import { AdminTokenStorageKey } from "@/admin/apiProvider/utils/token";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
@@ -12,7 +12,7 @@ import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
 export const CloneForm = () => {
   const record: any = useRecordContext();
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const token = getAccessToken();
+  const token = localStorage.getItem(AdminTokenStorageKey);
   const [open, setOpen] = useState(false);
   const notify = useNotify();
   const formHook = useForm<any>({
@@ -90,7 +90,7 @@ export const CloneForm = () => {
           <Button variant="outlined" onClick={handleSubmit(cloneForm)}>
             Clone
           </Button>
-          <Button variant="outlined" onClick={() => setOpen(false)}>
+          <Button variant="outlined" onClick={e => setOpen(false)}>
             Close
           </Button>
         </DialogActions>

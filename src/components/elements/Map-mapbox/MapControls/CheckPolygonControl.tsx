@@ -22,7 +22,6 @@ import {
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
-import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -121,7 +120,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      Log.error("Error clipping polygons:", error);
+      console.error("Error clipping polygons:", error);
       displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
     }
   });

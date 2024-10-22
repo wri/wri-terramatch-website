@@ -12,7 +12,6 @@ import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
-import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
 import { FormFooter } from "./FormFooter";
@@ -89,9 +88,11 @@ function WizardForm(props: WizardFormProps) {
 
   const formHasError = Object.values(formHook.formState.errors || {}).filter(item => !!item).length > 0;
 
-  Log.debug("Form Steps", props.steps);
-  Log.debug("Form Values", formHook.watch());
-  Log.debug("Form Errors", formHook.formState.errors);
+  if (process.env.NODE_ENV === "development") {
+    console.debug("Form Steps", props.steps);
+    console.debug("Form Values", formHook.watch());
+    console.debug("Form Errors", formHook.formState.errors);
+  }
 
   const onChange = useDebounce(() => !formHasError && props.onChange?.(formHook.getValues()));
 

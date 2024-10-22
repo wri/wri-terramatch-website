@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import { OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
-import Log from "@/utils/log";
 
 import Component, { DropdownProps as Props } from "./Dropdown";
 
@@ -53,7 +52,7 @@ export const SingleSelect: Story = {
           {...args}
           value={value}
           onChange={v => {
-            Log.info("onChange", v);
+            console.log(v);
             setValue(v);
           }}
         />

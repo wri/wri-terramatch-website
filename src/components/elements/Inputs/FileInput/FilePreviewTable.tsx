@@ -11,7 +11,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
-import Log from "@/utils/log";
 
 import Menu from "../../Menu/Menu";
 import Table from "../../Table/Table";
@@ -90,7 +89,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
         });
       }
     } catch (error) {
-      Log.error("Error updating cover status:", error);
+      console.error("Error updating cover status:", error);
     } finally {
       hideLoader();
     }
@@ -105,7 +104,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
       });
       updateFile?.({ ...item, is_public: checked });
     } catch (error) {
-      Log.error("Error updating public status:", error);
+      console.error("Error updating public status:", error);
     } finally {
       hideLoader();
     }

@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Log from "@/utils/log";
-
 import { IconNames } from "../Icon/Icon";
 import Component, { ModalWithLogoProps as Props } from "./ModalWithLogo";
 
@@ -34,11 +32,11 @@ export const Default: Story = {
     },
     primaryButtonProps: {
       children: "Close and continue later",
-      onClick: () => Log.info("close clicked")
+      onClick: console.log
     },
     secondaryButtonProps: {
       children: "Cancel",
-      onClick: () => Log.info("secondary clicked")
+      onClick: console.log
     }
   }
 };
