@@ -5,7 +5,7 @@ import { calculateTotals, GroupedBarChartData } from "@/utils/dashboardUtils";
 
 import { CustomBar } from "./CustomBarJobsCreated";
 import { CustomLegend } from "./CustomLegendJobsCreated";
-import { CustomTooltip } from "./CustomTooltipJobsCreated";
+import { CustomTooltip } from "./CustomTooltip";
 import { CustomYAxisTick } from "./CustomYAxisTickJobsCreated";
 
 const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
