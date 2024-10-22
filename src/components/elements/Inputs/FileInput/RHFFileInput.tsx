@@ -9,7 +9,6 @@ import {
   usePostV2FileUploadMODELCOLLECTIONUUID,
   usePutV2FilesUUID
 } from "@/generated/apiComponents";
-import { getCurrentPathEntity } from "@/helpers/entity";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
@@ -248,9 +247,6 @@ const RHFFileInput = ({
       {...(isPhotosAndVideo && {
         previewAsTable: true,
         descriptionInput: t("drag and drop or browse your device"),
-        description: t(
-          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
-        ),
         variant: VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP
       })}
       onDelete={onDeleteFile}
