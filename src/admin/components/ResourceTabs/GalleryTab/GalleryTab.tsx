@@ -14,7 +14,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2FilesUUID, useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
-import Log from "@/utils/log";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -99,7 +98,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
         collection="media"
         entityData={ctx?.record}
         setErrorMessage={message => {
-          Log.error(message);
+          console.error(message);
         }}
       />
     );

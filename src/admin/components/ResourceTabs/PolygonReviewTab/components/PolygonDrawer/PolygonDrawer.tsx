@@ -24,7 +24,6 @@ import {
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
-import Log from "@/utils/log";
 
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
@@ -155,7 +154,7 @@ const PolygonDrawer = ({
       hideLoader();
     },
     onError: error => {
-      Log.error("Error clipping polygons:", error);
+      console.error("Error clipping polygons:", error);
       openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
     }
   });
@@ -259,7 +258,7 @@ const PolygonDrawer = ({
       showLoader();
       clipPolygons({ pathParams: { uuid: polygonSelected } });
     } else {
-      Log.error("Polygon UUID is missing");
+      console.error("Polygon UUID is missing");
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };

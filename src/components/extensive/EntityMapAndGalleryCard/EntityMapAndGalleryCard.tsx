@@ -26,7 +26,6 @@ import {
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { EntityName, FileType } from "@/types/common";
-import Log from "@/utils/log";
 
 import ModalAddImages from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
@@ -167,7 +166,7 @@ const EntityMapAndGalleryCard = ({
         collection="media"
         entityData={entityData}
         setErrorMessage={message => {
-          Log.error(message);
+          console.error(message);
         }}
       />
     );

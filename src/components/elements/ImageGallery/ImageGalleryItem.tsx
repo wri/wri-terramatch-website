@@ -14,7 +14,6 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePostV2ExportImage } from "@/generated/apiComponents";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { SingularEntityName } from "@/types/common";
-import Log from "@/utils/log";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
 import Menu from "../Menu/Menu";
@@ -98,7 +97,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       });
 
       if (!response) {
-        Log.error("No response received from the server.");
+        console.error("No response received from the server.");
         openNotification("error", t("Error!"), t("No response received from the server."));
         return;
       }
@@ -117,7 +116,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       hideLoader();
       openNotification("success", t("Success!"), t("Image downloaded successfully"));
     } catch (error) {
-      Log.error("Download error:", error);
+      console.error("Download error:", error);
       hideLoader();
     }
   };

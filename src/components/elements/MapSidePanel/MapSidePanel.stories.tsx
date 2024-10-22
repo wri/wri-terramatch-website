@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import Log from "@/utils/log";
-
 import Component from "./MapSidePanel";
 
 const meta: Meta<typeof Component> = {
@@ -37,7 +35,7 @@ const items = [
     title: "Puerto Princesa Subterranean River National Park Forest Corridor",
     subtitle: "Created 03/12/21",
     status: "submitted",
-    setClickedButton: Log.info,
+    setClickedButton: console.log,
     onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
@@ -48,7 +46,7 @@ const items = [
     title: "A medium sized project site to see how it looks with 2 lines",
     subtitle: "Created 03/12/21",
     status: "submitted",
-    setClickedButton: Log.info,
+    setClickedButton: console.log,
     onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
@@ -59,7 +57,7 @@ const items = [
     title: "A shorter project site",
     subtitle: "Created 03/12/21",
     status: "submitted",
-    setClickedButton: Log.info,
+    setClickedButton: console.log,
     onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
@@ -71,7 +69,7 @@ const items = [
       "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
     subtitle: "Created 03/12/21",
     status: "submitted",
-    setClickedButton: Log.info,
+    setClickedButton: console.log,
     onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
@@ -82,7 +80,7 @@ const items = [
     title: "A shorter project site",
     subtitle: "Created 03/12/21",
     status: "submitted",
-    setClickedButton: Log.info,
+    setClickedButton: console.log,
     onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",
@@ -93,7 +91,7 @@ const items = [
     title: "A shorter project site",
     subtitle: "Created 03/12/21",
     status: "submitted",
-    setClickedButton: Log.info,
+    setClickedButton: console.log,
     onCheckboxChange: () => {},
     refContainer: null,
     type: "sites",

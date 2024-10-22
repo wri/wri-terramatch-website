@@ -1,4 +1,6 @@
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import router from "next/router";
+import { useEffect, useState } from "react";
 import { Admin, Resource } from "react-admin";
 
 import { authProvider } from "@/admin/apiProvider/authProvider";
@@ -6,18 +8,31 @@ import { dataProvider } from "@/admin/apiProvider/dataProviders";
 import { AppLayout } from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import LoginPage from "@/pages/auth/login/index.page";
 
 import modules from "../modules";
 
 const App = () => {
-  const [, { user }] = useMyUser();
-  if (user == null) return null;
+  const [identity, setIdentity] = useState<any>(null);
 
-  const canCreate = user.primaryRole === "admin-super";
-  const isAdmin = user.primaryRole.includes("admin");
+  useEffect(() => {
+    const getIdentity = async () => {
+      try {
+        const data: any = await authProvider?.getIdentity?.();
+        setIdentity(data);
+      } catch (error) {
+        router.push("/auth/login");
+      }
+    };
+
+    getIdentity();
+  }, []);
+
+  if (identity == null) return null;
+
+  const canCreate = identity.role === "admin-super";
+  const isAdmin = identity.role?.includes("admin");
   return (
     <LoadingProvider>
       <Admin

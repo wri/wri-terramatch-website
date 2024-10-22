@@ -16,7 +16,7 @@ import normalize from "@mapbox/geojson-normalize";
  *   { type: 'Feature', geometry: { type: 'Point', coordinates: [0, 1] }, properties: {} }
  * ]);
  *
- * Log.debug(JSON.stringify(mergedGeoJSON));
+ * console.log(JSON.stringify(mergedGeoJSON));
  */
 export const merge = (inputs: any) => {
   var output: any = {

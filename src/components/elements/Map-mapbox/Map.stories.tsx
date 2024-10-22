@@ -6,7 +6,6 @@ import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import ModalProvider from "@/context/modal.provider";
 import ToastProvider from "@/context/toast.provider";
-import Log from "@/utils/log";
 
 import Component from "./Map";
 import sample from "./sample.json";
@@ -35,8 +34,8 @@ export const Default: Story = {
     )
   ],
   args: {
-    onGeojsonChange: Log.info,
-    onError: errors => Log.info(JSON.stringify(errors))
+    onGeojsonChange: console.log,
+    onError: errors => console.log(JSON.stringify(errors))
   }
 };
 

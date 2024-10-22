@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import Log from "@/utils/log";
-
 import Component from "./SelectImage";
 
 const meta: Meta<typeof Component> = {
@@ -17,7 +15,7 @@ export const Default: Story = {
     label: "Select Image label",
     description: "Select Image description",
     placeholder: "placeholder",
-    onChange: Log.info,
+    onChange: console.log,
     options: [
       {
         title: "Option 1",

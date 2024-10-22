@@ -3,7 +3,6 @@ import { LngLatBoundsLike } from "mapbox-gl";
 import { useEffect } from "react";
 
 import { useMapContext } from "@/context/map.provider";
-import Log from "@/utils/log";
 
 interface GeoJSONLayerProps {
   geojson: any;
@@ -19,7 +18,7 @@ export const GeoJSONLayer = ({ geojson }: GeoJSONLayerProps) => {
       draw?.set(geojson);
       map.fitBounds(bbox(geojson) as LngLatBoundsLike, { padding: 50, animate: false });
     } catch (e) {
-      Log.error("invalid geoJSON", e);
+      console.log("invalid geoJSON", e);
     }
   }, [draw, geojson, map]);
 

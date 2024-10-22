@@ -17,7 +17,6 @@ import {
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
@@ -110,7 +109,7 @@ const showPolygons = (
   styles.forEach((style: LayerWithStyle, index: number) => {
     const layerName = `${name}-${index}`;
     if (!map.getLayer(layerName)) {
-      Log.warn(`Layer ${layerName} does not exist.`);
+      console.warn(`Layer ${layerName} does not exist.`);
       return;
     }
     const polygonStatus = style?.metadata?.polygonStatus;
@@ -154,7 +153,7 @@ const handleLayerClick = (
   const feature = features?.[0];
 
   if (!feature) {
-    Log.warn("No feature found in click event");
+    console.warn("No feature found in click event");
     return;
   }
 

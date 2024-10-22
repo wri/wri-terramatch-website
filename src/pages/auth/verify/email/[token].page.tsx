@@ -9,7 +9,6 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { fetchPatchV2AuthVerify } from "@/generated/apiComponents";
-import Log from "@/utils/log";
 
 const VerifyEmail: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = () => {
   const t = useT();
@@ -41,7 +40,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     await fetchPatchV2AuthVerify({ body: { token } });
   } catch (e) {
-    Log.error("Failed to verify auth", e);
+    console.log(e);
     options = {
       redirect: {
         permanent: false,

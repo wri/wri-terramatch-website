@@ -7,7 +7,6 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import Log from "@/utils/log";
 
 import { AuditLogEntity, AuditLogEntityEnum } from "../../../AuditLogTab/constants/types";
 import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
@@ -272,7 +271,7 @@ const StatusDisplay = ({
               "The request encountered an issue, or the comment exceeds 255 characters."
             );
 
-            Log.error("The request encountered an issue", e);
+            console.error(e);
           } finally {
             onFinallyRequest();
           }
@@ -308,7 +307,7 @@ const StatusDisplay = ({
               "Error!",
               "The request encountered an issue, or the comment exceeds 255 characters."
             );
-            Log.error("Request encountered an issue", e);
+            console.error(e);
           } finally {
             onFinallyRequest();
           }

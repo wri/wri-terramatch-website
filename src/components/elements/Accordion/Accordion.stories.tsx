@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import Log from "@/utils/log";
-
 import Accordion from "./Accordion";
 
 const meta: Meta<typeof Accordion> = {
@@ -35,7 +33,7 @@ export const WithCTA: Story = {
     ...Default.args,
     ctaButtonProps: {
       text: "Edit",
-      onClick: () => Log.info("CTA clicked")
+      onClick: console.log
     }
   }
 };

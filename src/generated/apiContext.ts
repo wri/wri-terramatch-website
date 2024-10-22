@@ -1,7 +1,8 @@
 import type { QueryKey, UseQueryOptions } from "@tanstack/react-query";
 
+import { useAuthContext } from "@/context/auth.provider";
+
 import { QueryOperation } from "./apiComponents";
-import { useLogin } from "@/connections/Login";
 
 export type ApiContext = {
   fetcherOptions: {
@@ -40,7 +41,7 @@ export function useApiContext<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
 >(_queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn">): ApiContext {
-  const [, { token }] = useLogin();
+  const { token } = useAuthContext();
 
   return {
     fetcherOptions: {

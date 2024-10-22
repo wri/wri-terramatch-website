@@ -21,7 +21,8 @@ import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/compone
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -49,7 +50,6 @@ import {
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
-import Log from "@/utils/log";
 
 import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
@@ -219,7 +219,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         linear: false
       });
     } else {
-      Log.error("Bounding box is not in the expected format");
+      console.error("Bounding box is not in the expected format");
     }
   };
 
@@ -236,7 +236,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         }
       })
       .catch(error => {
-        Log.error("Error deleting polygon:", error);
+        console.error("Error deleting polygon:", error);
       });
   };
 
@@ -382,7 +382,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             openNotification("success", "Success, Your Polygons were approved!", "");
             refetch();
           } catch (error) {
-            Log.error("Polygon approval error", error);
+            console.error(error);
           }
         }}
       />
