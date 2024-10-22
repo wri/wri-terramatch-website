@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
@@ -82,9 +83,14 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!filters }
   );
 
+  const { searchTerm } = useDashboardContext();
   const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
     { queryParams: queryParams },
-    { enabled: !!filters }
+    { enabled: !!searchTerm || !!filters }
+  );
+
+  const filteredProjects = activeProjects?.data.filter((project: { name: string | null }) =>
+    project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   const { data: dashboardRestorationGoalData } =
@@ -141,7 +147,7 @@ export const useDashboardData = (filters: any) => {
     topProject,
     refetchTotalSectionHeader,
     activeCountries,
-    activeProjects,
+    activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     listViewProjects
   };
