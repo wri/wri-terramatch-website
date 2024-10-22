@@ -14,7 +14,7 @@ import { formatLabelsVolunteers } from "@/utils/dashboardUtils";
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
-import { LABEL_LEGEND } from "./mockedData/dashboard";
+import { LABEL_LEGEND, OBJETIVE } from "./mockedData/dashboard";
 
 export interface DashboardTableDataProps {
   label: string;
@@ -30,7 +30,7 @@ export interface GraphicLegendProps {
 
 const Dashboard = () => {
   const t = useT();
-  const { filters } = useDashboardContext();
+  const { filters, setFilters } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -118,11 +118,19 @@ const Dashboard = () => {
       header: "",
       accessorKey: "link",
       enableSorting: false,
-      cell: () => {
+      cell: ({ row }: { row: { original: { uuid: string } } }) => {
+        const uuid = row.original.uuid;
+        const handleClick = () => {
+          setFilters(prevValues => ({
+            ...prevValues,
+            uuid: uuid
+          }));
+        };
+
         return (
-          <a href="/dashboard/project">
+          <button onClick={handleClick}>
             <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </a>
+          </button>
         );
       }
     }
@@ -244,7 +252,34 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-
+          <When condition={filters.uuid}>
+            <PageCard className="border-0 px-4 py-6" gap={8}>
+              <div className="flex items-center">
+                <img
+                  src="/images/_AJL2963.jpg"
+                  alt="tree"
+                  className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
+                />
+                <div>
+                  <Text variant="text-20-bold">{t("Restoration of Degraded Forest Lands in Ghana - PADO")}</Text>
+                  <Text variant="text-14-light" className="text-darkCustom">
+                    {t("Operations: Niger")}
+                    <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                    {t("Registration: Niger")}
+                    <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                    {t(" Organization: Non-Profit")}
+                  </Text>
+                </div>
+              </div>
+              <SecDashboard
+                title={t("Objective")}
+                classNameTitle="capitalize"
+                type="legend"
+                data={OBJETIVE}
+                variantTitle="text-18-semibold"
+              />
+            </PageCard>
+          </When>
           <PageCard
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"

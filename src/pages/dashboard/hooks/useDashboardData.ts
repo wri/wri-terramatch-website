@@ -58,7 +58,8 @@ export const useDashboardData = (filters: any) => {
       programmes: filters.programmes,
       country: filters.country.country_slug,
       "organisations.type": filters.organizations,
-      landscapes: filters.landscapes
+      landscapes: filters.landscapes,
+      "v2_projects.uuid": filters.uuid
     };
     setUpdateFilters(parsedFilters);
   }, [filters]);

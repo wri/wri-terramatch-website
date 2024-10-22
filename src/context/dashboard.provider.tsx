@@ -14,6 +14,7 @@ type DashboardType = {
     landscapes: string[];
     country: CountriesProps;
     organizations: string[];
+    uuid: string;
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -21,6 +22,7 @@ type DashboardType = {
       landscapes: string[];
       country: { country_slug: string; id: number; data: any };
       organizations: string[];
+      uuid: string;
     }>
   >;
 };
@@ -36,7 +38,8 @@ const defaultValues: DashboardType = {
         icon: ""
       }
     },
-    organizations: []
+    organizations: [],
+    uuid: ""
   },
   setFilters: () => {}
 };

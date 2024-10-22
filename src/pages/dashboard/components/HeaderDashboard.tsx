@@ -131,7 +131,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           icon: ""
         }
       },
-      organizations: []
+      organizations: [],
+      uuid: ""
     });
   };
   useEffect(() => {
@@ -140,7 +141,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       programmes: filters.programmes,
       landscapes: filters.landscapes,
       country: filters.country?.country_slug || undefined,
-      organizations: filters.organizations
+      organizations: filters.organizations,
+      uuid: filters.uuid
     };
 
     Object.keys(query).forEach(key => !query[key]?.length && delete query[key]);
@@ -156,13 +158,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   }, [filters]);
 
   useEffect(() => {
-    const { programmes, landscapes, country, organizations } = router.query;
+    const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
-      organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : []
+      organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
+      uuid: (uuid as string) || ""
     };
 
     setFilters(newFilters);
