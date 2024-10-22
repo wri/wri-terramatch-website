@@ -23,6 +23,8 @@ type DashboardType = {
       organizations: string[];
     }>
   >;
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
 };
 const defaultValues: DashboardType = {
   filters: {
@@ -38,15 +40,20 @@ const defaultValues: DashboardType = {
     },
     organizations: []
   },
-  setFilters: () => {}
+  setFilters: () => {},
+  searchTerm: "",
+  setSearchTerm: () => {}
 };
 const DashboardContext = createContext<DashboardType>(defaultValues);
 
 export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [filters, setFilters] = React.useState<DashboardType["filters"]>(defaultValues.filters);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const contextValue: DashboardType = {
     filters,
-    setFilters
+    setFilters,
+    searchTerm,
+    setSearchTerm
   };
   return <DashboardContext.Provider value={contextValue}>{children}</DashboardContext.Provider>;
 };
