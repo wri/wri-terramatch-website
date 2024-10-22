@@ -230,7 +230,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           refetch?.();
           const { map } = mapFunctions;
           if (map?.current) {
-            addSourcesToLayers(map.current, polygonDataMap);
+            addSourcesToLayers(map.current, polygonDataMap, undefined);
           }
           closeModal(ModalId.DELETE_POLYGON);
         }
