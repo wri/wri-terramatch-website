@@ -20,6 +20,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 
 import {
+  HECTARES_UNDER_RESTORATION_SECTION_TOOLTIP,
   MAP_TOOLTIP,
   RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
   TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP,
@@ -161,9 +162,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           subtitleMore={true}
           title={t("Hectares Under Restoration")}
           variantSubTitle="text-14-light"
-          tooltip={t(
-            "This section displays data related to Indicator 2: Hectares Under Restoration described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified. Restoration strategies and target land use types are defined <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>here</a>."
-          )}
+          tooltip={t(HECTARES_UNDER_RESTORATION_SECTION_TOOLTIP)}
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
             `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`

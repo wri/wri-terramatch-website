@@ -13,8 +13,7 @@ import SecDashboard from "../components/SecDashboard";
 import {
   ACTIVE_PROJECTS_TOOLTIP,
   HECTARES_UNDER_RESTORATION_TOOLTIP,
-  JOBS_CREATED_BY_AGE_TOOLTIP,
-  JOBS_CREATED_BY_GENDER_TOOLTIP,
+  JOBS_CREATED_SECTION_TOOLTIP,
   JOBS_CREATED_TOOLTIP,
   NEW_FULL_TIME_JOBS_TOOLTIP,
   NEW_PART_TIME_JOBS_TOOLTIP,
@@ -246,11 +245,10 @@ const ProjectView = () => {
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
+            tooltipTrigger="click"
             widthTooltip="w-80 lg:w-96"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-            tooltip={t(
-              "This section displays data related to Indicator 3: Jobs Created described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 years or older in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment.  Please refer to the linked framework for additional details on how these numbers are sourced and verified."
-            )}
+            tooltip={t(JOBS_CREATED_SECTION_TOOLTIP)}
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund’s MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}

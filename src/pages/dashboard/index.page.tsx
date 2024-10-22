@@ -21,12 +21,16 @@ import {
   NEW_FULL_TIME_JOBS_TOOLTIP,
   NEW_PART_TIME_JOBS_TOOLTIP,
   NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
-  NUMBER_OF_TREES_PLANTED_TOOLTIP,
   TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
   TOTAL_VOLUNTEERS_TOOLTIP,
   TREES_RESTORED_SECTION_TOOLTIP,
   VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
   VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
+} from "./constants/tooltips";
+import {
+  JOBS_CREATED_SECTION_TOOLTIP,
+  NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS,
+  NUMBER_OF_TREES_PLANTED_TOOLTIP
 } from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { LABEL_LEGEND } from "./mockedData/dashboard";
@@ -311,11 +315,10 @@ const Dashboard = () => {
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
+            tooltipTrigger="click"
             widthTooltip="w-80 lg:w-96"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-            tooltip={t(
-              "This section displays data related to Indicator 3: Jobs Created described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 years or older in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment.  Please refer to the linked framework for additional details on how these numbers are sourced and verified."
-            )}
+            tooltip={t(JOBS_CREATED_SECTION_TOOLTIP)}
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund's MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
@@ -388,7 +391,13 @@ const Dashboard = () => {
         centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
         titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
-        textTooltipTable={t(filters.country.id === 0 ? ACTIVE_COUNTRIES_TOOLTIP : ACTIVE_PROJECTS_TOOLTIP)}
+        textTooltipTable={t(
+          filters.country.id === 0
+            ? ACTIVE_COUNTRIES_TOOLTIP
+            : DATA_ACTIVE_COUNTRY.lengh > 0
+            ? ACTIVE_PROJECTS_TOOLTIP
+            : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
+        )}
         polygonsData={polygonsData}
       />
     </div>
