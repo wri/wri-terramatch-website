@@ -13,6 +13,7 @@ import { formatLabelsVolunteers } from "@/utils/dashboardUtils";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
+import { NUMBER_OF_TREES_PLANTED_TOOLTIP } from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { LABEL_LEGEND } from "./mockedData/dashboard";
 
@@ -266,9 +267,7 @@ const Dashboard = () => {
               title={t("Number of Trees Planted")}
               type="legend"
               secondOptionsData={LABEL_LEGEND}
-              tooltip={t(
-                "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
-              )}
+              tooltip={t(NUMBER_OF_TREES_PLANTED_TOOLTIP)}
               data={numberTreesPlanted}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.treesPlantedBarChart}

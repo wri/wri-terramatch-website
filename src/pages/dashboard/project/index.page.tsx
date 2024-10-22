@@ -10,7 +10,12 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
-import { TREES_PLANTED } from "../constants/tooltips";
+import {
+  HECTARES_UNDER_RESTORATION_TOOLTIP,
+  JOBS_CREATED_TOOLTIP,
+  NUMBER_OF_TREES_PLANTED_TOOLTIP,
+  TREES_PLANTED_TOOLTIP
+} from "../constants/tooltips";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
   DATA_ACTIVE_COUNTRY,
@@ -64,19 +69,17 @@ const ProjectView = () => {
     {
       label: "Trees Planted",
       value: "0",
-      tooltip: TREES_PLANTED
+      tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
       value: "0 ha",
-      tooltip:
-        "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts."
+      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
       value: "0",
-      tooltip:
-        "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
+      tooltip: JOBS_CREATED_TOOLTIP
     }
   ];
 
@@ -209,9 +212,7 @@ const ProjectView = () => {
               type="legend"
               secondOptionsData={LABEL_LEGEND}
               data={NUMBER_OF_TREES_PLANTED}
-              tooltip={t(
-                "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
-              )}
+              tooltip={t(NUMBER_OF_TREES_PLANTED_TOOLTIP)}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}

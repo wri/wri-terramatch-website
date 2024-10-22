@@ -17,7 +17,7 @@ import {
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
-import { TREES_PLANTED } from "../constants/tooltips";
+import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -25,17 +25,17 @@ export const useDashboardData = (filters: any) => {
     {
       label: "Trees Planted",
       value: "0",
-      tooltip: TREES_PLANTED
+      tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
       value: "0 ha",
-      tooltip: "Total land area with active restoration interventions."
+      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
       value: "0",
-      tooltip: "Number of jobs created to date."
+      tooltip: JOBS_CREATED_TOOLTIP
     }
   ]);
   const projectUuid = filters.project?.project_uuid;
