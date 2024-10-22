@@ -30,7 +30,7 @@ export const authProvider: AuthProvider = {
     const { user } = await loadMyUser();
     if (user == null) throw "No user logged in.";
 
-    return { id: user.uuid, fullName: user.fullName, primaryRole: user.primaryRole };
+    return { id: user.uuid, fullName: user.fullName ?? undefined, primaryRole: user.primaryRole };
   },
 
   // get the user permissions (optional)
