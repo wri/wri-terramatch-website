@@ -40,6 +40,7 @@ const Dashboard = () => {
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
+    polygonsData,
     activeCountries,
     activeProjects
   } = useDashboardData(filters);
@@ -393,6 +394,7 @@ const Dashboard = () => {
             ? "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date."
             : "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep."
         )}
+        polygonsData={polygonsData}
       />
     </div>
   );
