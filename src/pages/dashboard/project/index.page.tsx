@@ -10,6 +10,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
+import { TREES_PLANTED } from "../constants/tooltips";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
   DATA_ACTIVE_COUNTRY,
@@ -63,8 +64,7 @@ const ProjectView = () => {
     {
       label: "Trees Planted",
       value: "0",
-      tooltip:
-        "Total number of trees planted by funded projects to date, as reported through six-month progress reports. This also includes trees planted by projects as part of their assisted natural regeneration activities. "
+      tooltip: TREES_PLANTED
     },
     {
       label: "Hectares Under Restoration",
@@ -122,7 +122,7 @@ const ProjectView = () => {
 
   return (
     <div
-      className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
+      className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap"
       ref={sharedRef}
     >
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">

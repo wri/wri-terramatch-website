@@ -17,14 +17,15 @@ import {
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
+import { TREES_PLANTED } from "../constants/tooltips";
+
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
       value: "0",
-      tooltip:
-        "Total number of trees planted by funded projects to date, as reported through six-month progress reports. This also includes trees planted by projects as part of their assisted natural regeneration activities. "
+      tooltip: TREES_PLANTED
     },
     {
       label: "Hectares Under Restoration",

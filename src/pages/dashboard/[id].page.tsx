@@ -12,6 +12,7 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
+import { TREES_PLANTED } from "./constants/tooltips";
 import {
   DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
@@ -39,8 +40,7 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
     {
       label: "Trees Planted",
       value: "12.2M",
-      tooltip:
-        "Total number of trees planted by funded projects to date, as reported through six-month progress reports. This also includes trees planted by projects as part of their assisted natural regeneration activities. "
+      tooltip: TREES_PLANTED
     },
     {
       label: "Hectares Under Restoration",
@@ -97,7 +97,7 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   ];
 
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={!!selectedCountry}>
