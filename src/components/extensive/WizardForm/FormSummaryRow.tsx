@@ -16,7 +16,7 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonBbox, getSiteBbox, mapPolygonData } from "@/components/elements/Map-mapbox/utils";
+import { getPolygonBbox, getSiteBbox, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
@@ -218,7 +218,7 @@ const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) =
         site: uuid
       }
     });
-    return sitePolygonData ? mapPolygonData(sitePolygonData) : null;
+    return sitePolygonData ? parsePolygonData(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
     const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
       queryParams: {

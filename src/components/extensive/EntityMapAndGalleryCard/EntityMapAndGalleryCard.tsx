@@ -10,7 +10,7 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { mapPolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { getEntitiesOptions } from "@/constants/options/entities";
@@ -90,7 +90,7 @@ const EntityMapAndGalleryCard = ({
 
   const mapBbox = sitePolygonData?.bbox as BBox;
 
-  const polygonDataMap = mapPolygonData(sitePolygonData?.polygonsData);
+  const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
 
   const { data, refetch, isLoading } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
