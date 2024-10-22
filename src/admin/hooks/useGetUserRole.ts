@@ -5,9 +5,9 @@ export const useGetUserRole = () => {
   const user: any = data || {};
 
   return {
-    role: user.role,
-    isSuperAdmin: user.role === "admin-super",
-    isPPCAdmin: user.role === "admin-ppc",
-    isPPCTerrafundAdmin: user.role === "admin-terrafund"
+    role: user.primaryRole,
+    isSuperAdmin: user.primaryRole === "admin-super",
+    isPPCAdmin: user.primaryRole === "admin-ppc",
+    isPPCTerrafundAdmin: user.primaryRole === "admin-terrafund"
   };
 };

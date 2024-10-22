@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
+import Log from "@/utils/log";
+
 import Component from "./MapPolygonPanel";
 
 const meta: Meta<typeof Component> = {
@@ -95,7 +97,7 @@ export const Default: Story = {
   },
   args: {
     title: "Project Sites",
-    onSelectItem: console.log
+    onSelectItem: Log.info
   }
 };
 
@@ -113,6 +115,6 @@ export const OpenPolygonCheck: Story = {
   },
   args: {
     title: "Project Sites",
-    onSelectItem: console.log
+    onSelectItem: Log.info
   }
 };

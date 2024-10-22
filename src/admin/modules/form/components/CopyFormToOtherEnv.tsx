@@ -8,6 +8,7 @@ import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/compone
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
+import Log from "@/utils/log";
 
 const envOptions = [
   {
@@ -39,7 +40,7 @@ export const CopyFormToOtherEnv = () => {
     }
   });
   const { register, handleSubmit, formState, getValues } = formHook;
-  console.log(getValues(), formState.errors);
+  Log.info(getValues(), formState.errors);
 
   const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, framework_key, ...body }: any) => {
     const linkedFieldsData: any = await fetchGetV2FormsLinkedFieldListing({});
@@ -50,7 +51,7 @@ export const CopyFormToOtherEnv = () => {
       },
       body: JSON.stringify(body)
     });
-    console.log(loginResp);
+    Log.debug("Login response", loginResp);
 
     if (loginResp.status !== 200) {
       return notify("wrong username password", { type: "error" });

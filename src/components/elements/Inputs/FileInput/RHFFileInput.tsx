@@ -13,6 +13,7 @@ import { getCurrentPathEntity } from "@/helpers/entity";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
+import Log from "@/utils/log";
 
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
@@ -184,7 +185,7 @@ const RHFFileInput = ({
         body.append("lng", location.longitude.toString());
       }
     } catch (e) {
-      console.log(e);
+      Log.error("Failed to append geotagging information", e);
     }
 
     upload?.({

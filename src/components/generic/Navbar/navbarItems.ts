@@ -1,8 +1,8 @@
 import { useT } from "@transifex/react";
 
 import { tourSelectors } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
+import { MyOrganisationConnection } from "@/connections/Organisation";
 import { zendeskSupportLink } from "@/constants/links";
-import { V2MonitoringOrganisationRead } from "@/generated/apiSchemas";
 
 interface INavbarItem {
   title: string;
@@ -15,10 +15,10 @@ interface INavbarItems {
   private: INavbarItem[];
 }
 
-export const getNavbarItems = (t: typeof useT, myOrg?: V2MonitoringOrganisationRead | null): INavbarItems => {
-  const visibility = Boolean(
-    myOrg && myOrg?.status !== "rejected" && myOrg?.status !== "draft" && myOrg.users_status !== "requested"
-  );
+export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection): INavbarItems => {
+  const { userStatus, organisation } = myOrg ?? {};
+  const { status } = organisation ?? {};
+  const visibility = Boolean(organisation && status !== "rejected" && status !== "draft" && userStatus !== "requested");
 
   return {
     public: [
@@ -53,7 +53,7 @@ export const getNavbarItems = (t: typeof useT, myOrg?: V2MonitoringOrganisationR
       },
       {
         title: t("My Organization"),
-        url: myOrg?.uuid ? `/organization/${myOrg?.uuid}` : "/",
+        url: myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/",
         visibility,
         tourTarget: tourSelectors.ORGANIZATION
       },
