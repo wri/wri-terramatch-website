@@ -58,10 +58,10 @@ export const ACTIVE_PROJECTS_TOOLTIP =
   "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep.";
 
 export const TREES_RESTORED_SECTION_TOOLTIP =
-  "This section displays data related to Indicator 1: Trees Restored described in TerraFund’s Monitoring, Reporting, and Verification framework.";
+  "This section displays data related to Indicator 1: Trees Restored described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified.";
 
 export const HECTARES_UNDER_RESTORATION_SECTION_TOOLTIP =
-  "This section displays data related to Indicator 2: Hectares Under Restoration described in TerraFund’s Monitoring, Reporting, and Verification framework. Restoration strategies and target land use types are defined here.";
+  "This section displays data related to Indicator 2: Hectares Under Restoration described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified. Restoration strategies and target land use types are defined <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions' target='_blank'>here</a>.";
 
 export const JOBS_CREATED_SECTION_TOOLTIP =
   "This section displays data related to Indicator 3: Jobs Created described in TerraFund’s Monitoring, Reporting, and Verification framework.";

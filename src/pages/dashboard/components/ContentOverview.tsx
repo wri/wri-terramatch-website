@@ -20,6 +20,13 @@ import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 
 import {
+  MAP_TOOLTIP,
+  RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
+  TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP,
+  TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
+  TOTAL_NUMBER_OF_SITES_TOOLTIP
+} from "../constants/tooltips";
+import {
   RESTORATION_STRATEGIES_REPRESENTED,
   TARGET_LAND_USE_TYPES_REPRESENTED,
   TOTAL_HECTARES_UNDER_RESTORATION,
@@ -47,12 +54,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand
-        id="modalExpand"
-        title={t("MAP")}
-        closeModal={closeModal}
-        popUpContent="Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos."
-      >
+      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal} popUpContent={MAP_TOOLTIP}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
 
@@ -173,33 +175,25 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               title={t("Total Hectares Under Restoration")}
               data={TOTAL_HECTARES_UNDER_RESTORATION}
               classNameBody="w-full place-content-center"
-              tooltip={t(
-                "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects."
-              )}
+              tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
               data={TOTAL_NUMBER_OF_SITES}
               className="pl-12"
               classNameBody="w-full place-content-center"
-              tooltip={t(
-                "Sites are the fundamental unit for reporting data on TerraMatch. They consist of either a single restoration area or a grouping of restoration areas, represented by one or several geospatial polygons."
-              )}
+              tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
             />
           </div>
           <SecDashboard
             title={t("Restoration Strategies Represented")}
             data={RESTORATION_STRATEGIES_REPRESENTED}
-            tooltip={t(
-              "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare. Please refer to the link in the description above for detailed definitions."
-            )}
+            tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
             data={TARGET_LAND_USE_TYPES_REPRESENTED}
-            tooltip={t(
-              "Total hectares under restoration broken down by target land use types. Please refer to the link in the description above for detailed definitions."
-            )}
+            tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
           />
         </PageCard>
 
