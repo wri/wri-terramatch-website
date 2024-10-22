@@ -8,6 +8,7 @@ import {
 } from "@/generated/apiComponents";
 import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
 import { createQueryParams } from "@/utils/dashboardUtils";
+import Log from "@/utils/log";
 
 const client = new QueryClient();
 
@@ -61,7 +62,7 @@ export const DashboardPopup = (event: any) => {
         setItems(parsedItems);
         addPopupToMap();
       } else {
-        console.error("No data returned from the API");
+        Log.error("No data returned from the API");
       }
     }
 

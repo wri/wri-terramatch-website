@@ -4,8 +4,7 @@ import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
+import React, { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -34,6 +33,7 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
@@ -346,7 +346,7 @@ export const MapContainer = ({
         });
 
         if (!response) {
-          console.error("No response received from the server.");
+          Log.error("No response received from the server.");
           openNotification("error", t("Error!"), t("No response received from the server."));
           return;
         }
@@ -365,7 +365,7 @@ export const MapContainer = ({
         hideLoader();
         openNotification("success", t("Success!"), t("Image downloaded successfully"));
       } catch (error) {
-        console.error("Download error:", error);
+        Log.error("Download error:", error);
         hideLoader();
       }
     };
