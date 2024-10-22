@@ -1,6 +1,6 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer";
-import { isArray } from "lodash";
+import isArray from "lodash/isArray";
 import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
