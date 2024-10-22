@@ -48,9 +48,6 @@ const Dashboard = () => {
     activeProjects
   } = useDashboardData(filters);
 
-  useEffect(() => {
-    console.log("polygonsData", polygonsData);
-  }, [polygonsData]);
   const dataToggle = ["Absolute", "Relative"];
   const dataToggleGraphic = ["Table", "Graphic"];
 
