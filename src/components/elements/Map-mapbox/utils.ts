@@ -166,8 +166,7 @@ const handleLayerClick = (
 
   const newPopup = createPopup(lngLat);
 
-  const isWorldCountriesLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES;
-
+  const isFetchdataLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES || layerName === LAYERS_NAMES.CENTROIDS;
   const commonProps: PopupComponentProps = {
     feature,
     popup: newPopup,
@@ -178,9 +177,11 @@ const handleLayerClick = (
     setEditPolygon
   };
 
-  if (isWorldCountriesLayer) {
-    const addPopupToMap = () => newPopup.addTo(map);
-    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap }));
+  if (isFetchdataLayer) {
+    const addPopupToMap = () => {
+      newPopup.addTo(map);
+    };
+    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName }));
   } else {
     newPopup.addTo(map);
     root.render(createElement(PopupComponent, commonProps));
@@ -408,24 +409,31 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
+    if (name === LAYERS_NAMES.CENTROIDS) {
+      targetLayers = [targetLayers[0]];
+    }
     targetLayers.forEach(targetLayer => {
       map.on("click", targetLayer.id, (e: any) => {
         const currentMode = draw?.getMode();
-        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") {
-          return;
-        } else {
-          handleLayerClick(
-            e,
-            popupComponent,
-            map,
-            setPolygonFromMap,
-            sitePolygonData,
-            type,
-            editPolygon,
-            setEditPolygon,
-            name
-          );
-        }
+        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
+
+        const zoomLevel = map.getZoom();
+
+        if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
+
+        if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
+
+        handleLayerClick(
+          e,
+          popupComponent,
+          map,
+          setPolygonFromMap,
+          sitePolygonData,
+          type,
+          editPolygon,
+          setEditPolygon,
+          name
+        );
       });
     });
   }

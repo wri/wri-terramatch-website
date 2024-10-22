@@ -243,6 +243,7 @@ const RHFFileInput = ({
 
   return (
     <FileInput
+      {...fileInputProps}
       files={files}
       {...(isPhotosAndVideo && {
         previewAsTable: true,

@@ -147,8 +147,8 @@ const Dashboard = () => {
       )
     : [];
 
-  const DATA_ACTIVE_COUNTRY = activeProjects?.data
-    ? activeProjects.data.map(
+  const DATA_ACTIVE_COUNTRY = activeProjects
+    ? activeProjects?.map(
         (item: {
           uuid: string;
           name: string;

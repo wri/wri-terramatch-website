@@ -7,9 +7,9 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
+import { MapStyle } from "../MapControls/types";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
-const MAP_STYLE = "mapbox://styles/terramatch/clv3bkxut01y301pk317z5afu";
 const INITIAL_ZOOM = 2.5;
 const MAPBOX_TOKEN =
   process.env.REACT_APP_MAPBOX_TOKEN ||
@@ -41,12 +41,13 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     onSave?.(geojson, record);
   };
 
-  const initMap = () => {
+  const initMap = (isDashboard?: string) => {
     if (map.current) return;
+    const mapStyle = isDashboard ? MapStyle.Street : MapStyle.Satellite;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
-      style: MAP_STYLE,
+      style: mapStyle,
       zoom: zoom,
       accessToken: MAPBOX_TOKEN
     });
