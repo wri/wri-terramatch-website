@@ -20,6 +20,17 @@ export interface GroupedBarChartData {
   maxValue: number;
 }
 
+export interface ChartDataItemVolunteers {
+  name: string;
+  value: number;
+}
+
+export interface ChartDataVolunteers {
+  chartData: ChartDataItem[];
+  type: string;
+  total: number;
+}
+
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -149,4 +160,28 @@ export const calculateTotals = (data: GroupedBarChartData): { [key: string]: num
     acc[key2] = (acc[key2] || 0) + (item[key2] as number);
     return acc;
   }, {} as { [key: string]: number });
+};
+
+export const formatLabelsVolunteers = (value: string): string => {
+  const formattedValues: { [key: string]: string } = {
+    women: "Women",
+    youth: "Youth",
+    men: "Men",
+    non_youth: "Non-Youth"
+  };
+
+  return formattedValues[value] || value;
+};
+
+export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
+
+export const getPercentageVolunteers = (value: number, total: number): string => {
+  return ((value / total) * 100).toFixed(1);
+};
+
+export const calculateTotalsVolunteers = (chartData: ChartDataItem[]): { [key: string]: number } => {
+  return chartData.reduce<{ [key: string]: number }>((acc, item) => {
+    acc[item.name] = item.value as number;
+    return acc;
+  }, {});
 };

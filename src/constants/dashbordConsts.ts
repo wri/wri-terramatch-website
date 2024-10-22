@@ -1,7 +1,8 @@
 export const CHART_TYPES = {
   multiLineChart: "multiLineChart",
   treesPlantedBarChart: "treesPlantedBarChart",
-  groupedBarChart: "groupedBarChart"
+  groupedBarChart: "groupedBarChart",
+  doughnutChart: "doughnutChart"
 };
 
 export const JOBS_CREATED_CHART_TYPE = {

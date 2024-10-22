@@ -14,6 +14,7 @@ import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
+import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
@@ -148,6 +149,9 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
           <GroupedBarChart data={dataForChart} />
+        </When>
+        <When condition={chartType === CHART_TYPES.doughnutChart}>
+          <DoughnutChart data={dataForChart} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
