@@ -34,10 +34,11 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
+  polygonsData?: any;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
-  const { dataTable: data, columns, titleTable, textTooltipTable, centroids } = props;
+  const { dataTable: data, columns, titleTable, textTooltipTable, centroids, polygonsData } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
@@ -128,6 +129,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             isDashboard={"dashboard"}
             className="custom-popup-close-button"
             centroids={centroids}
+            showPopups={true}
+            polygonsData={polygonsData as Record<string, string[]>}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>

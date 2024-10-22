@@ -45,6 +45,11 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     if (map.current) return;
     const mapStyle = isDashboard ? MapStyle.Street : MapStyle.Satellite;
 
+    console.trace(mapContainer.current, "Initializing map...");
+
+    if (mapContainer.current && mapContainer.current.childNodes.length > 0) {
+      console.error("Map container is not empty:", mapContainer.current.childNodes);
+    }
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
       style: mapStyle,

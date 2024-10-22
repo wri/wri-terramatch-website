@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { LAYERS_NAMES } from "@/constants/layers";
 import {
+  fetchGetV2DashboardPolygonDataUuid,
   fetchGetV2DashboardProjectDataUuid,
   fetchGetV2DashboardTotalSectionHeaderCountry
 } from "@/generated/apiComponents";
@@ -19,7 +20,8 @@ type Item = {
 
 export const DashboardPopup = (event: any) => {
   const isoCountry = event?.feature?.properties?.iso;
-  const projectUuid = event?.feature?.properties?.uuid;
+  const itemUuid = event?.feature?.properties?.uuid;
+
   const { addPopupToMap, layerName } = event;
 
   const [items, setItems] = useState<Item[]>([]);
@@ -66,7 +68,7 @@ export const DashboardPopup = (event: any) => {
     }
 
     async function fetchProjectData() {
-      const response: any = await fetchGetV2DashboardProjectDataUuid({ pathParams: { uuid: projectUuid } });
+      const response: any = await fetchGetV2DashboardProjectDataUuid({ pathParams: { uuid: itemUuid } });
       if (response) {
         const filteredItems = response.data
           .filter((item: any) => item.key !== "project_name")
@@ -82,13 +84,32 @@ export const DashboardPopup = (event: any) => {
         addPopupToMap();
       }
     }
+    async function fetchPolygonData() {
+      const response: any = await fetchGetV2DashboardPolygonDataUuid({ pathParams: { uuid: itemUuid } });
+      if (response) {
+        const filteredItems = response.data
+          .filter((item: any) => item.key !== "poly_name")
+          .map((item: any) => ({
+            id: item.key,
+            title: item.title,
+            value: item.value
+          }));
+
+        const projectLabel = response.data.find((item: any) => item.key === "poly_name")?.value;
+        setLabel(projectLabel);
+        setItems(filteredItems);
+        addPopupToMap();
+      }
+    }
 
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
       fetchCountryData();
-    } else if (projectUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
       fetchProjectData();
+    } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
+      fetchPolygonData();
     }
-  }, [isoCountry, layerName, projectUuid]);
+  }, [isoCountry, layerName, itemUuid]);
   return (
     <QueryClientProvider client={client}>
       <TooltipGridMap label={label} learnMore={true} isoCountry={isoCountry} items={items} />
