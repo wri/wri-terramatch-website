@@ -7,15 +7,13 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { CHART_TYPES } from "@/constants/dashbordConsts";
+import { CHART_TYPES, JOBS_CREATED_CHART_TYPE } from "@/constants/dashbordConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
 import {
-  JOBS_CREATED_BY_AGE,
-  JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
   TOTAL_VOLUNTEERS,
   VOLUNTEERS_CREATED_BY_AGE,
@@ -40,8 +38,7 @@ const Dashboard = () => {
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
-    totalFtJobs,
-    totalPtJobs,
+    jobsCreatedData,
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
@@ -173,6 +170,33 @@ const Dashboard = () => {
       )
     : [];
 
+  const parseJobCreatedByType = (data: any, type: string) => {
+    if (!data) return { type, chartData: [] };
+
+    const ptWomen = data.total_pt_women || 0;
+    const ptMen = data.total_pt_men || 0;
+    const ptYouth = data.total_pt_youth || 0;
+    const ptNonYouth = data.total_pt_non_youth || 0;
+    const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
+    const chartData = [
+      {
+        name: "Part-Time",
+        [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
+          data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
+        [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
+          data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
+      },
+      {
+        name: "Full-Time",
+        [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
+          data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
+        [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
+          data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
+      }
+    ];
+    return { type, chartData, total: data.totalJobsCreated, maxValue };
+  };
+
   return (
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -281,7 +305,7 @@ const Dashboard = () => {
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
-                data={totalPtJobs}
+                data={{ value: jobsCreatedData?.data?.total_pt }}
                 classNameBody="w-full place-content-center"
                 tooltip={t(
                   "Number of part-time jobs created to date. TerraFund defines a part-time job as under 35 hours per work week."
@@ -289,7 +313,7 @@ const Dashboard = () => {
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
-                data={totalFtJobs}
+                data={{ value: jobsCreatedData?.data?.total_ft }}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
                 tooltip={t(
@@ -300,14 +324,18 @@ const Dashboard = () => {
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
-                data={JOBS_CREATED_BY_GENDER}
+                data={{}}
+                dataForChart={parseJobCreatedByType(jobsCreatedData?.data, JOBS_CREATED_CHART_TYPE.gender)}
+                chartType="groupedBarChart"
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t("Total number of jobs created broken down by gender.")}
               />
               <SecDashboard
                 title={t("Jobs Created by Age")}
-                data={JOBS_CREATED_BY_AGE}
+                data={{}}
+                dataForChart={parseJobCreatedByType(jobsCreatedData?.data, JOBS_CREATED_CHART_TYPE.age)}
+                chartType="groupedBarChart"
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(

@@ -14,6 +14,7 @@ import { CHART_TYPES } from "@/constants/dashbordConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
+import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
 import { DashboardDataProps } from "../project/index.page";
@@ -142,8 +143,11 @@ const SecDashboard = ({
             />
           </div>
         </When>
-        <When condition={chartType === "multiLineChart"}>
+        <When condition={chartType === CHART_TYPES.multiLineChart}>
           <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+        </When>
+        <When condition={chartType === CHART_TYPES.groupedBarChart}>
+          <GroupedBarChart data={dataForChart} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
