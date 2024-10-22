@@ -8,9 +8,9 @@ export const LAYERS_NAMES = {
   WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry",
   MEDIA_IMAGES: "media_images",
-  DELETED_GEOMETRIES: "deleted_geometries"
+  DELETED_GEOMETRIES: "deleted_geometries",
+  CENTROIDS: "centroids"
 };
-
 export const layersList: LayerType[] = [
   {
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
@@ -22,7 +22,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "fill-color": "#E468EF",
-          "fill-opacity": 0.7
+          "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.FillLayer,
@@ -32,17 +32,18 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": "#E468EF",
-          "line-width": 2
+          "line-width": 2,
+          "line-dasharray": [2, 4]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "submitted" },
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#2398d8",
-          "fill-opacity": 0.7
+          "fill-color": "#2398D8",
+          "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.FillLayer,
@@ -51,18 +52,19 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#2398d8",
-          "line-width": 2
+          "line-color": "#2398D8",
+          "line-width": 2,
+          "line-dasharray": [4, 2]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "approved" },
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#72d961",
-          "fill-opacity": 0.7
+          "fill-color": "#72D961",
+          "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.FillLayer,
@@ -71,18 +73,19 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#72d961",
-          "line-width": 2
+          "line-color": "#72D961",
+          "line-width": 2,
+          "line-dasharray": [1, 3]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#ff8938",
-          "fill-opacity": 0.7
+          "fill-color": "#FF8938",
+          "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.FillLayer,
@@ -91,11 +94,12 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#ff8938",
-          "line-width": 2
+          "line-color": "#FF8938",
+          "line-width": 2,
+          "line-dasharray": [3, 1]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
       {
         metadata: { polygonStatus: "form-polygons" },
         type: "fill",
@@ -143,5 +147,61 @@ export const layersList: LayerType[] = [
         filter: ["==", ["get", "uuid"], ""]
       } as mapboxgl.Style & mapboxgl.LineLayer
     ]
+  },
+  {
+    name: LAYERS_NAMES.WORLD_COUNTRIES,
+    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
+    styles: [
+      {
+        type: "line",
+        paint: {
+          "line-color": "#ff5a5f",
+          "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
+        }
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      {
+        type: "fill",
+        paint: {
+          "fill-color": "#ff5a5f",
+          "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
+        }
+      } as unknown as mapboxgl.FillLayer
+    ],
+    hover: true
+  },
+  {
+    name: LAYERS_NAMES.CENTROIDS,
+    geoserverLayerName: "",
+    styles: [
+      {
+        type: "circle",
+        paint: {
+          "circle-color": "#26a9e0",
+          "circle-blur": 1.5,
+          "circle-radius": 15
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        paint: {
+          "circle-color": "#26a9e0",
+          "circle-blur": 1.5,
+          "circle-radius": 10
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        paint: {
+          "circle-color": "hsl(242, 1%, 100%)",
+          "circle-radius": 4,
+          "circle-blur": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        paint: { "circle-color": "hsl(242, 1%, 100%)", "circle-radius": 1 }
+      } as mapboxgl.Style & mapboxgl.CircleLayer
+    ],
+    hover: true
   }
 ];

@@ -8,10 +8,12 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import { Else, If, Then } from "react-if";
 import { Provider as ReduxProvider } from "react-redux";
 
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
+import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
 import { loadLogin } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
@@ -36,6 +38,7 @@ const _App = ({ Component, ...rest }: AppProps) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
+  const isOnDashboards = router.asPath.includes("/dashboard");
 
   const { store, props } = wrapper.useWrappedStore(rest);
 
@@ -70,10 +73,19 @@ const _App = ({ Component, ...rest }: AppProps) => {
                       <NavbarProvider>
                         <ModalRoot />
                         <Toast />
-                        <MainLayout>
-                          <Component {...props.pageProps} />
-                          <CookieBanner />
-                        </MainLayout>
+                        <If condition={isOnDashboards}>
+                          <Then>
+                            <DashboardLayout>
+                              <Component {...props.pageProps} />
+                            </DashboardLayout>
+                          </Then>
+                          <Else>
+                            <MainLayout>
+                              <Component {...props.pageProps} />
+                              <CookieBanner />
+                            </MainLayout>
+                          </Else>
+                        </If>
                       </NavbarProvider>
                     </ModalProvider>
                   </NotificationProvider>

@@ -21,7 +21,7 @@ import {
   usePostV2TerrafundClipPolygonsSiteUuid,
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
-import { ClippedPolygonsResponse, SitePolygon } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -101,7 +101,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   });
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
-    onSuccess: (data: ClippedPolygonsResponse) => {
+    onSuccess: (data: ClippedPolygonResponse) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();
@@ -244,7 +244,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       </div>
       <When condition={polygonCheck}>
         <div className="relative flex max-h-[300px] w-[231px] flex-col gap-2 rounded-xl p-3">
-          <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
+          <div className="absolute left-0 top-0 -z-10 h-full w-full rounded-xl bg-[#FFFFFF33] backdrop-blur-md" />
           <button
             onClick={() => {
               setOpenCollapse(!openCollapse);
