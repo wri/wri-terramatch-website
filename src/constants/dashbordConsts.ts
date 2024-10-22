@@ -1,6 +1,12 @@
 export const CHART_TYPES = {
   multiLineChart: "multiLineChart",
-  treesPlantedBarChart: "treesPlantedBarChart"
+  treesPlantedBarChart: "treesPlantedBarChart",
+  groupedBarChart: "groupedBarChart"
+};
+
+export const JOBS_CREATED_CHART_TYPE = {
+  gender: "gender",
+  age: "age"
 };
 
 export const COLORS: Record<string, string> = {
