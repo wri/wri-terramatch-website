@@ -4,9 +4,9 @@ export const CHART_TYPES = {
 };
 
 export const COLORS: Record<string, string> = {
-  Total: "#053D38",
   Enterprise: "#27A9E0",
-  "Non Profit": "#7BBD31"
+  "Non Profit": "#7BBD31",
+  Total: "#053D38"
 };
 
 export const MONTHS = [
