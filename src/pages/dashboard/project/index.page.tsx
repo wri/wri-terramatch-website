@@ -64,7 +64,7 @@ const ProjectView = () => {
       label: "Trees Planted",
       value: "0",
       tooltip:
-        "Total number of trees planted by funded projects to date, including through assisted natural regeneration, as reported through six-month progress reports."
+        "Total number of trees planted by funded projects to date, as reported through six-month progress reports. This also includes trees planted by projects as part of their assisted natural regeneration activities. "
     },
     {
       label: "Hectares Under Restoration",
