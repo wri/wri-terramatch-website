@@ -13,3 +13,9 @@ export const usersFindIsFetching = (variables: UsersFindVariables) => (store: Ap
 
 export const usersFindFetchFailed = (variables: UsersFindVariables) => (store: ApiDataStore) =>
   fetchFailed<{}, UsersFindPathParams>({ store, url: "/users/v3/users/{id}", method: "get", ...variables });
+
+export const healthControllerCheckIsFetching = (store: ApiDataStore) =>
+  isFetching<{}, {}>({ store, url: "/health", method: "get" });
+
+export const healthControllerCheckFetchFailed = (store: ApiDataStore) =>
+  fetchFailed<{}, {}>({ store, url: "/health", method: "get" });

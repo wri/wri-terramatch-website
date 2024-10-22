@@ -18,7 +18,7 @@ const Page = () => {
   const [selectedTitleOption, setSelectedTitleOption] = useState<string>();
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
   const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: { country: "all" }
+    queryParams: {}
   });
   const refContentCard = React.useRef<HTMLDivElement>(null);
 

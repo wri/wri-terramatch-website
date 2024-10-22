@@ -27,6 +27,7 @@ export interface ModalFixOverlapsProps extends ModalProps {
   toggleButton?: boolean;
   status?: StatusEnum;
   onClose?: () => void;
+  selectedUUIDs?: string[];
   site: any;
 }
 
@@ -60,6 +61,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   status,
   site,
   onClose,
+  selectedUUIDs,
   ...rest
 }) => {
   const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
@@ -83,9 +85,13 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   useEffect(() => {
     if (!polygonList || !polygonsCriteriaData) return;
 
-    const failingPolygons = polygonList.filter(polygon => {
+    const filteredPolygonList = selectedUUIDs
+      ? polygonList.filter(polygon => polygon.poly_id && selectedUUIDs.includes(polygon.poly_id))
+      : polygonList;
+
+    const failingPolygons = filteredPolygonList.filter(polygon => {
       const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id);
-      return !memoizedCheckValidCriteria(criteria as Criteria);
+      return polygon.poly_id && !memoizedCheckValidCriteria(criteria as Criteria);
     });
 
     setDisplayedPolygons(

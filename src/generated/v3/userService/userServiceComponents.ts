@@ -152,3 +152,87 @@ export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =
     ...variables,
     signal
   });
+
+export type HealthControllerCheckError = Fetcher.ErrorWrapper<{
+  status: 503;
+  payload: {
+    /**
+     * @example error
+     */
+    status?: string;
+    /**
+     * @example {"database":{"status":"up"}}
+     */
+    info?: {
+      [key: string]: {
+        status: string;
+      } & {
+        [key: string]: any;
+      };
+    } | null;
+    /**
+     * @example {"redis":{"status":"down","message":"Could not connect"}}
+     */
+    error?: {
+      [key: string]: {
+        status: string;
+      } & {
+        [key: string]: any;
+      };
+    } | null;
+    /**
+     * @example {"database":{"status":"up"},"redis":{"status":"down","message":"Could not connect"}}
+     */
+    details?: {
+      [key: string]: {
+        status: string;
+      } & {
+        [key: string]: any;
+      };
+    };
+  };
+}>;
+
+export type HealthControllerCheckResponse = {
+  /**
+   * @example ok
+   */
+  status?: string;
+  /**
+   * @example {"database":{"status":"up"}}
+   */
+  info?: {
+    [key: string]: {
+      status: string;
+    } & {
+      [key: string]: any;
+    };
+  } | null;
+  /**
+   * @example {}
+   */
+  error?: {
+    [key: string]: {
+      status: string;
+    } & {
+      [key: string]: any;
+    };
+  } | null;
+  /**
+   * @example {"database":{"status":"up"}}
+   */
+  details?: {
+    [key: string]: {
+      status: string;
+    } & {
+      [key: string]: any;
+    };
+  };
+};
+
+export const healthControllerCheck = (signal?: AbortSignal) =>
+  userServiceFetch<HealthControllerCheckResponse, HealthControllerCheckError, undefined, {}, {}, {}>({
+    url: "/health",
+    method: "get",
+    signal
+  });

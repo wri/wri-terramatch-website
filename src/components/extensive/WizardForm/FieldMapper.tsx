@@ -80,6 +80,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           control={formHook.control}
           onChangeCapture={onChange}
           maxFileSize={10}
+          isPhotosAndVideo={field.fieldProps.collection === "photos" || field.fieldProps.collection === "videos"}
         />
       );
 

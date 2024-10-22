@@ -9,8 +9,12 @@ import Text from "@/components/elements/Text/Text";
 import Component, { TableProps as Props, TableState } from "./Table";
 import {
   VARIANT_TABLE_AIRTABLE,
+  VARIANT_TABLE_AIRTABLE_DASHBOARD,
   VARIANT_TABLE_BORDER,
   VARIANT_TABLE_BORDER_ALL,
+  VARIANT_TABLE_DASHBOARD_COUNTRIES,
+  VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
+  VARIANT_TABLE_ORGANISATION,
   VARIANT_TABLE_PRIMARY,
   VARIANT_TABLE_SECONDARY,
   VARIANT_TABLE_SECONDARY_WHITE,
@@ -764,6 +768,380 @@ export const TableVersion: Story = {
     ]
   }
 };
+
+export const TableOrganization: Story = {
+  render: (args: Props<any>) => {
+    const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
+
+    return (
+      <QueryClientProvider client={client}>
+        <div className="bg-neutral-600">
+          <Component
+            {...args}
+            onTableStateChange={setTableState}
+            data={tableData.filter((data: any) => {
+              for (const filter of tableState.filters) {
+                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                  return false;
+                } else if (filter.filter.type === "search") {
+                  //Weak implementation of full text search for demo purpose only
+                  const values: any[] = Object.values(data);
+                  for (const val of values) {
+                    if (`${val}`.toLowerCase().includes(filter.value)) {
+                      return true;
+                    }
+                  }
+                  return false;
+                }
+              }
+              return true;
+            })}
+          >
+            <Button>Create</Button>
+          </Component>
+        </div>
+      </QueryClientProvider>
+    );
+  },
+  args: {
+    variant: VARIANT_TABLE_ORGANISATION,
+    columns: [
+      {
+        accessorKey: "fundingType",
+        header: "Funding type",
+        enableSorting: false
+      },
+      {
+        accessorKey: "fundingSource",
+        header: "Funding source"
+      },
+      {
+        accessorKey: "fundingAmount",
+        header: "Funding amount"
+      },
+      {
+        accessorKey: "status",
+        cell: (props: any) => (
+          <StatusPill status={props.getValue()} className="w-fit">
+            <Text variant="text-bold-caption-100">{props.getValue()}</Text>
+          </StatusPill>
+        ),
+        header: "Status",
+        enableSorting: false
+      },
+      {
+        accessorKey: "id",
+        header: "",
+        cell: () => <Button>View</Button>,
+        meta: { align: "right" },
+        enableSorting: false
+      }
+    ],
+    columnFilters: [
+      { type: "search", accessorKey: "fundingType", placeholder: "Search" },
+      {
+        type: "dropDown",
+        accessorKey: "fundingSource",
+        label: "Funding source",
+
+        options: [
+          {
+            title: "VISA",
+            value: "VISA"
+          },
+          {
+            title: "Master Card",
+            value: "Master Card"
+          },
+          {
+            title: "American Express",
+            value: "American Express"
+          }
+        ]
+      }
+    ]
+  }
+};
+export const TableDashboardCountries: Story = {
+  render: (args: Props<any>) => {
+    const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
+
+    return (
+      <QueryClientProvider client={client}>
+        <div className="bg-neutral-600">
+          <Component
+            {...args}
+            onTableStateChange={setTableState}
+            data={tableData.filter((data: any) => {
+              for (const filter of tableState.filters) {
+                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                  return false;
+                } else if (filter.filter.type === "search") {
+                  //Weak implementation of full text search for demo purpose only
+                  const values: any[] = Object.values(data);
+                  for (const val of values) {
+                    if (`${val}`.toLowerCase().includes(filter.value)) {
+                      return true;
+                    }
+                  }
+                  return false;
+                }
+              }
+              return true;
+            })}
+          >
+            <Button>Create</Button>
+          </Component>
+        </div>
+      </QueryClientProvider>
+    );
+  },
+  args: {
+    variant: VARIANT_TABLE_DASHBOARD_COUNTRIES,
+    columns: [
+      {
+        accessorKey: "fundingType",
+        header: "Funding type",
+        enableSorting: false
+      },
+      {
+        accessorKey: "fundingSource",
+        header: "Funding source"
+      },
+      {
+        accessorKey: "fundingAmount",
+        header: "Funding amount"
+      },
+      {
+        accessorKey: "status",
+        cell: (props: any) => (
+          <StatusPill status={props.getValue()} className="w-fit">
+            <Text variant="text-bold-caption-100">{props.getValue()}</Text>
+          </StatusPill>
+        ),
+        header: "Status",
+        enableSorting: false
+      },
+      {
+        accessorKey: "id",
+        header: "",
+        cell: () => <Button>View</Button>,
+        meta: { align: "right" },
+        enableSorting: false
+      }
+    ],
+    columnFilters: [
+      { type: "search", accessorKey: "fundingType", placeholder: "Search" },
+      {
+        type: "dropDown",
+        accessorKey: "fundingSource",
+        label: "Funding source",
+
+        options: [
+          {
+            title: "VISA",
+            value: "VISA"
+          },
+          {
+            title: "Master Card",
+            value: "Master Card"
+          },
+          {
+            title: "American Express",
+            value: "American Express"
+          }
+        ]
+      }
+    ]
+  }
+};
+export const TableDashboardCountriesModal: Story = {
+  render: (args: Props<any>) => {
+    const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
+
+    return (
+      <QueryClientProvider client={client}>
+        <div className="bg-neutral-600">
+          <Component
+            {...args}
+            onTableStateChange={setTableState}
+            data={tableData.filter((data: any) => {
+              for (const filter of tableState.filters) {
+                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                  return false;
+                } else if (filter.filter.type === "search") {
+                  //Weak implementation of full text search for demo purpose only
+                  const values: any[] = Object.values(data);
+                  for (const val of values) {
+                    if (`${val}`.toLowerCase().includes(filter.value)) {
+                      return true;
+                    }
+                  }
+                  return false;
+                }
+              }
+              return true;
+            })}
+          >
+            <Button>Create</Button>
+          </Component>
+        </div>
+      </QueryClientProvider>
+    );
+  },
+  args: {
+    variant: VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
+    columns: [
+      {
+        accessorKey: "fundingType",
+        header: "Funding type",
+        enableSorting: false
+      },
+      {
+        accessorKey: "fundingSource",
+        header: "Funding source"
+      },
+      {
+        accessorKey: "fundingAmount",
+        header: "Funding amount"
+      },
+      {
+        accessorKey: "status",
+        cell: (props: any) => (
+          <StatusPill status={props.getValue()} className="w-fit">
+            <Text variant="text-bold-caption-100">{props.getValue()}</Text>
+          </StatusPill>
+        ),
+        header: "Status",
+        enableSorting: false
+      },
+      {
+        accessorKey: "id",
+        header: "",
+        cell: () => <Button>View</Button>,
+        meta: { align: "right" },
+        enableSorting: false
+      }
+    ],
+    columnFilters: [
+      { type: "search", accessorKey: "fundingType", placeholder: "Search" },
+      {
+        type: "dropDown",
+        accessorKey: "fundingSource",
+        label: "Funding source",
+
+        options: [
+          {
+            title: "VISA",
+            value: "VISA"
+          },
+          {
+            title: "Master Card",
+            value: "Master Card"
+          },
+          {
+            title: "American Express",
+            value: "American Express"
+          }
+        ]
+      }
+    ]
+  }
+};
+export const TableAirtableDashboard: Story = {
+  render: (args: Props<any>) => {
+    const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
+
+    return (
+      <QueryClientProvider client={client}>
+        <div className="bg-neutral-600">
+          <Component
+            {...args}
+            onTableStateChange={setTableState}
+            data={tableData.filter((data: any) => {
+              for (const filter of tableState.filters) {
+                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                  return false;
+                } else if (filter.filter.type === "search") {
+                  //Weak implementation of full text search for demo purpose only
+                  const values: any[] = Object.values(data);
+                  for (const val of values) {
+                    if (`${val}`.toLowerCase().includes(filter.value)) {
+                      return true;
+                    }
+                  }
+                  return false;
+                }
+              }
+              return true;
+            })}
+          >
+            <Button>Create</Button>
+          </Component>
+        </div>
+      </QueryClientProvider>
+    );
+  },
+  args: {
+    variant: VARIANT_TABLE_AIRTABLE_DASHBOARD,
+    columns: [
+      {
+        accessorKey: "fundingType",
+        header: "Funding type",
+        enableSorting: false
+      },
+      {
+        accessorKey: "fundingSource",
+        header: "Funding source"
+      },
+      {
+        accessorKey: "fundingAmount",
+        header: "Funding amount"
+      },
+      {
+        accessorKey: "status",
+        cell: (props: any) => (
+          <StatusPill status={props.getValue()} className="w-fit">
+            <Text variant="text-bold-caption-100">{props.getValue()}</Text>
+          </StatusPill>
+        ),
+        header: "Status",
+        enableSorting: false
+      },
+      {
+        accessorKey: "id",
+        header: "",
+        cell: () => <Button>View</Button>,
+        meta: { align: "right" },
+        enableSorting: false
+      }
+    ],
+    columnFilters: [
+      { type: "search", accessorKey: "fundingType", placeholder: "Search" },
+      {
+        type: "dropDown",
+        accessorKey: "fundingSource",
+        label: "Funding source",
+
+        options: [
+          {
+            title: "VISA",
+            value: "VISA"
+          },
+          {
+            title: "Master Card",
+            value: "Master Card"
+          },
+          {
+            title: "American Express",
+            value: "American Express"
+          }
+        ]
+      }
+    ]
+  }
+};
+
 const tableData = [
   { id: "1", fundingType: "Cash", fundingSource: "VISA", fundingAmount: 2000, status: "error" },
   { id: "2", fundingType: "Cash", fundingSource: "Master Card", fundingAmount: 1000, status: "awaiting" },

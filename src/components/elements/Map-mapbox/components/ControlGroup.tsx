@@ -13,7 +13,8 @@ export interface ControlGroupProps
     | "bottom-left-site"
     | "top-center"
     | "top-left-site"
-    | "top-centerSite";
+    | "top-centerSite"
+    | "top-centerPolygonsInCheckbox";
 }
 
 const ControlGroup = ({ children, position, className, ...props }: ControlGroupProps) => {
@@ -28,7 +29,8 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
           "bottom-8": position.includes("bottom"),
           "!left-[24vw] items-start": position.includes("site"),
           "left-[45%]": position.includes("center"),
-          "left-[calc(50%+11.5vw)] -translate-x-1/2": position.includes("centerSite")
+          "left-[calc(50%+11.5vw)] -translate-x-1/2": position.includes("centerSite"),
+          "left-[34%] lg:left-[35.5%]": position.includes("centerPolygonsInCheckbox")
         }),
         className
       )}

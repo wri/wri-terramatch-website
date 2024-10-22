@@ -9,12 +9,14 @@ import {
   usePostV2FileUploadMODELCOLLECTIONUUID,
   usePutV2FilesUUID
 } from "@/generated/apiComponents";
+import { getCurrentPathEntity } from "@/helpers/entity";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
 import Log from "@/utils/log";
 
 import FileInput, { FileInputProps } from "./FileInput";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
 
 export interface RHFFileInputProps
   extends Omit<FileInputProps, "files" | "loading" | "onChange" | "onDelete">,
@@ -25,6 +27,7 @@ export interface RHFFileInputProps
   formHook?: UseFormReturn;
   showPrivateCheckbox?: boolean;
   onChangeCapture?: () => void;
+  isPhotosAndVideo?: boolean;
 }
 
 /**
@@ -38,41 +41,47 @@ const RHFFileInput = ({
   uuid,
   showPrivateCheckbox,
   onChangeCapture,
+  isPhotosAndVideo = false,
   ...fileInputProps
 }: RHFFileInputProps) => {
   const t = useT();
+
   const { field } = useController(fileInputProps);
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
   const [files, setFiles] = useState<Partial<UploadedFile>[]>(toArray(value));
-
   const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
     onSuccess(data, variables) {
       //@ts-ignore swagger issue
       addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
     },
     onError(err, variables: any) {
+      const file = variables.file;
+      let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
+
       if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
         const error = err?.errors[0];
         const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
         formHook?.setError(fileInputProps.name, formError);
-
-        const file = variables.file;
-
-        addFileToValue({
-          collection_name: variables.pathParams.collection,
-          size: file?.size,
-          file_name: file?.name,
-          title: file?.name,
-          mime_type: file?.type,
-          rawFile: file,
-          uploadState: {
-            isLoading: false,
-            isSuccess: false,
-            error: formError.message
-          }
-        });
+        errorMessage = formError.message;
+      } else if (err?.statusCode === 413 || err?.statusCode === -1) {
+        errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
+        formHook?.setError(fileInputProps.name, { type: "manual", message: errorMessage });
       }
+
+      addFileToValue({
+        collection_name: variables.pathParams.collection,
+        size: file?.size,
+        file_name: file?.name,
+        title: file?.name,
+        mime_type: file?.type,
+        rawFile: file,
+        uploadState: {
+          isLoading: false,
+          isSuccess: false,
+          error: errorMessage
+        }
+      });
     }
   });
 
@@ -171,7 +180,7 @@ const RHFFileInput = ({
     try {
       const location = await exifr.gps(file);
 
-      if (location) {
+      if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
         body.append("lat", location.latitude.toString());
         body.append("lng", location.longitude.toString());
       }
@@ -218,6 +227,13 @@ const RHFFileInput = ({
     }
   };
 
+  const updateFileInValue = (updatedFile: Partial<UploadedFile>) => {
+    setFiles(prevFiles => {
+      const updatedFiles = prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file));
+      return updatedFiles;
+    });
+  };
+
   useEffect(() => {
     const tmp = toArray(files)
       //Only store uploaded files into form state.
@@ -228,12 +244,22 @@ const RHFFileInput = ({
 
   return (
     <FileInput
-      {...fileInputProps}
       files={files}
+      {...(isPhotosAndVideo && {
+        previewAsTable: true,
+        descriptionInput: t("drag and drop or browse your device"),
+        description: t(
+          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
+        ),
+        variant: VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP
+      })}
       onDelete={onDeleteFile}
       onChange={files => files.forEach(onSelectFile)}
       onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
+      formHook={formHook}
+      updateFile={updateFileInValue}
+      entityData={{ model, collection, uuid }}
     />
   );
 };

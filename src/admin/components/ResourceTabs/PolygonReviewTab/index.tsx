@@ -21,8 +21,7 @@ import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/compone
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import Icon from "@/components/extensive/Icon/Icon";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -313,14 +312,21 @@ const PolygonReviewTab: FC<IProps> = props => {
       hideLoader();
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = (error as { message: string }).message;
-        const parsedMessage = JSON.parse(errorMessage);
-        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          errorMessage = parsedMessage.message;
+        let errorMessage = error.message;
+        if (typeof errorMessage === "string") {
+          const parsedMessage = JSON.parse(errorMessage);
+          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+            errorMessage = parsedMessage.message;
+          }
+        }
+        if (errorMessage && typeof errorMessage === "object" && "message" in errorMessage) {
+          errorMessage = errorMessage.message;
         }
         openNotification("error", t("Error uploading file"), errorMessage);
+        hideLoader();
       } else {
         openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
+        hideLoader();
       }
     }
   };

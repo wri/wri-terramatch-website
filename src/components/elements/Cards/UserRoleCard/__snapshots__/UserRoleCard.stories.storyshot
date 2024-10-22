@@ -35,7 +35,7 @@ exports[`Storyshots Components/Elements/Cards/UserRoleCard Default 1`] = `
         Evaluate ROI, aid strategic investment decisions and guide funding priorities.
       </p>
       <div
-        className="relative w-fit-content"
+        className="relative w-fit-content cursor-pointer"
         onClick={[Function]}
       >
         <p

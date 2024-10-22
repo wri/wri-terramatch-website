@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Elements/Menu Placement Bottom Left 1`] = `
 <div
-  className="relative w-fit-content"
+  className="relative w-fit-content cursor-pointer"
   onClick={[Function]}
 >
   <button
@@ -53,7 +53,7 @@ exports[`Storyshots Components/Elements/Menu Placement Bottom Left 1`] = `
 
 exports[`Storyshots Components/Elements/Menu Placement Bottom Right 1`] = `
 <div
-  className="relative w-fit-content"
+  className="relative w-fit-content cursor-pointer"
   onClick={[Function]}
 >
   <button
@@ -104,7 +104,7 @@ exports[`Storyshots Components/Elements/Menu Placement Bottom Right 1`] = `
 
 exports[`Storyshots Components/Elements/Menu Placement Left Bottom 1`] = `
 <div
-  className="relative w-fit-content"
+  className="relative w-fit-content cursor-pointer"
   onClick={[Function]}
 >
   <button
@@ -155,7 +155,7 @@ exports[`Storyshots Components/Elements/Menu Placement Left Bottom 1`] = `
 
 exports[`Storyshots Components/Elements/Menu Placement Right Top 1`] = `
 <div
-  className="relative w-fit-content"
+  className="relative w-fit-content cursor-pointer"
   onClick={[Function]}
 >
   <button
@@ -206,7 +206,7 @@ exports[`Storyshots Components/Elements/Menu Placement Right Top 1`] = `
 
 exports[`Storyshots Components/Elements/Menu Primary 1`] = `
 <div
-  className="relative w-fit-content"
+  className="relative w-fit-content cursor-pointer"
   onClick={[Function]}
 >
   <button
@@ -257,7 +257,7 @@ exports[`Storyshots Components/Elements/Menu Primary 1`] = `
 
 exports[`Storyshots Components/Elements/Menu Secondary 1`] = `
 <div
-  className="relative w-fit-content"
+  className="relative w-fit-content cursor-pointer"
   onClick={[Function]}
 >
   <button
