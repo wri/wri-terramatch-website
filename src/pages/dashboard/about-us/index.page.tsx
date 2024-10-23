@@ -195,9 +195,10 @@ const Homepage = () => {
             Are you interested in becoming a funder, a restoration champion, or getting invovled in another way? If so,
             please email our support team at{" "}
             <a
-              href="/"
+              href="mailto:info@terramatch.org"
               target="_blank"
               className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
+              rel="noreferrer"
             >
               info@terramatch.org
             </a>
