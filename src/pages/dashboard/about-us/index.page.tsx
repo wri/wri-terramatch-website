@@ -7,32 +7,55 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 const Homepage = () => {
   const videoRef = useRef<HTMLIFrameElement>(null);
-  const sideVideoRef = useRef<HTMLDivElement>(null);
+  const usignRef = useRef<HTMLDivElement>(null);
+  const accessingRef = useRef<HTMLDivElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
   const [isVideoIntersecting, setIsVideoIntersecting] = useState(false);
   const sec1Ref = useRef<HTMLDivElement>(null);
   const sec2Ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const video = videoRef.current;
-    const sideVideo = sideVideoRef.current;
+    const elements = [
+      { ref: videoRef, container: videoContainerRef },
+      { ref: usignRef, container: usignRef },
+      { ref: accessingRef, container: accessingRef }
+    ];
 
-    if (video && sideVideo) {
-      const intersectionObserver = new IntersectionObserver(
-        entries => {
-          entries.map(entry => {
-            video.style.opacity = entry.isIntersecting ? "1" : "0";
-            sideVideo.style.opacity = entry.isIntersecting ? "1" : "0";
-            setIsVideoIntersecting(entry.isIntersecting);
-            console.log(entry.isIntersecting);
-          });
-        },
-        { threshold: 0.5 }
-      );
+    const hasScrolledDownMap = new Map();
 
-      intersectionObserver.observe(video);
-      return () => {
-        intersectionObserver.disconnect();
-      };
-    }
+    const handleIntersection = (entries: any[]) => {
+      entries.forEach(entry => {
+        const { target } = entry;
+        const correspondingElement = elements.find(el => el.ref.current === target);
+
+        if (correspondingElement && entry.isIntersecting && entry.boundingClientRect.top > 0) {
+          if (!hasScrolledDownMap.get(target)) {
+            if (correspondingElement.container.current) {
+              correspondingElement.container.current.style.opacity = "1";
+
+              if (correspondingElement.container.current === videoContainerRef.current) {
+                setIsVideoIntersecting(true);
+              }
+            }
+
+            hasScrolledDownMap.set(target, true);
+          }
+        }
+      });
+    };
+
+    const intersectionObserver = new IntersectionObserver(handleIntersection, { threshold: 0.15 });
+
+    elements.forEach(el => {
+      if (el.ref.current) {
+        hasScrolledDownMap.set(el.ref.current, false);
+        intersectionObserver.observe(el.ref.current);
+      }
+    });
+
+    return () => {
+      intersectionObserver.disconnect();
+    };
   }, []);
 
   return (
@@ -87,7 +110,8 @@ const Homepage = () => {
             />
           </div>
         </div>
-        <div className="flex w-full gap-8">
+
+        <div className="flex w-full gap-8 opacity-0 transition-all duration-500 ease-in-out" ref={usignRef}>
           <div className="w-2/5" style={{ height: sec2Ref.current ? `${sec2Ref.current.clientHeight}px` : "auto" }}>
             <When condition={!!sec2Ref.current}>
               <div className="flex h-full w-full flex-wrap gap-4">
@@ -148,8 +172,10 @@ const Homepage = () => {
             </Text>
           </div>
         </div>
-
-        <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-8">
+        <div
+          className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-8 opacity-0 transition-all duration-500 ease-in-out"
+          ref={accessingRef}
+        >
           <Text variant="text-20-semibold">Accessing the platform</Text>
           <Text variant="text-14-light" className="text-darkCustom text-opacity-80">
             Access the public dashboard{" "}
@@ -209,17 +235,19 @@ const Homepage = () => {
             .
           </Text>
         </div>
-        <div className="relative flex w-full items-end overflow-hidden">
+        <div
+          className="relative flex w-full items-end overflow-hidden opacity-0 transition-all duration-500 ease-in-out"
+          ref={videoContainerRef}
+        >
           <iframe
             ref={videoRef}
-            className="z-10 h-[500px] w-1/2 min-w-0 rounded-3xl transition-all duration-500 ease-in-out"
+            className="z-10 h-[500px] w-1/2 min-w-0 rounded-3xl"
             src="https://www.youtube.com/embed/nvgPWq2-l9M"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
           <div
-            ref={sideVideoRef}
             className={classNames(
               "flex h-fit w-1/2 flex-col gap-3 overflow-hidden rounded-r-3xl bg-neutral-40 p-12 transition-all duration-500 ease-in-out",
               {
