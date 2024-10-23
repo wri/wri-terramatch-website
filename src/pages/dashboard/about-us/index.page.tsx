@@ -32,7 +32,7 @@ const Homepage = () => {
   }, []);
 
   return (
-    <div className="w-full overflow-auto bg-white pt-16 pb-20 pl-13 pr-26">
+    <div className="w-full overflow-auto bg-white pb-20 pl-13 pr-26 pt-16">
       <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
       <div className="mt-5 grid gap-16">
         <div className="flex w-full gap-8">
@@ -146,7 +146,7 @@ const Homepage = () => {
         </div>
 
         <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-4">
-          <Text variant="text-18-semibold">Accessing the platform</Text>
+          <Text variant="text-20-semibold">Accessing the platform</Text>
           <Text variant="text-14-light" className="text-darkCustom text-opacity-80">
             Access the public dashboard{" "}
             <a
@@ -222,7 +222,7 @@ const Homepage = () => {
               }
             )}
           >
-            <Text variant="text-24-bold" className="text-darkCustom-150">
+            <Text variant="text-32-bold" className="text-darkCustom-150">
               About the data
             </Text>
             <Text variant="text-14-light" className="text-darkCustom-150">
@@ -230,7 +230,7 @@ const Homepage = () => {
               <a
                 href="/"
                 target="_blank"
-                className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
+                className="text-14-bold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
                 TerraFund Monitoring
               </a>
@@ -238,7 +238,7 @@ const Homepage = () => {
               <a
                 href="/"
                 target="_blank"
-                className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
+                className="text-14-bold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
                 Reporting, and Verification (MRV) Framework
               </a>
