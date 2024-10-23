@@ -3,7 +3,8 @@ export const CHART_TYPES = {
   treesPlantedBarChart: "treesPlantedBarChart",
   groupedBarChart: "groupedBarChart",
   doughnutChart: "doughnutChart",
-  barChart: "barChart"
+  barChart: "barChart",
+  simpleBarChart: "simpleBarChart"
 };
 
 export const JOBS_CREATED_CHART_TYPE = {

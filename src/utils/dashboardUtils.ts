@@ -254,6 +254,12 @@ const landUseTypeOptions: Option[] = [
   { title: "Open Natural Ecosystem", value: "open-natural-ecosystem" }
 ];
 
+const getRestorationStrategyOptions = {
+  "tree-planting": "Tree Planting",
+  "direct-seeding": "Direct Seeding",
+  "assisted-natural-regeneration": "Assisted Natural Regeneration"
+};
+
 export const parseHectaresUnderRestorationData = (
   totalSectionHeader: TotalSectionHeader,
   dashboardVolunteersSurvivalRate: DashboardVolunteersSurvivalRate,
@@ -289,8 +295,13 @@ export const parseHectaresUnderRestorationData = (
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
-
-  const restorationStrategiesRepresented = objectToArray(hectaresUnderRestoration?.restoration_strategies_represented);
+  console.log(hectaresUnderRestoration);
+  const restorationStrategiesRepresented = objectToArray(
+    hectaresUnderRestoration?.restoration_strategies_represented
+  ).map(item => ({
+    label: getRestorationStrategyOptions[item.label as keyof typeof getRestorationStrategyOptions] ?? item.label,
+    value: item.value
+  }));
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
     item => ({
