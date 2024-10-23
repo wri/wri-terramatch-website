@@ -8,6 +8,29 @@ type DataPoint = {
   "Non Profit": number;
 };
 
+export interface ChartDataItem {
+  name: string;
+  [key: string]: number | string;
+}
+
+export interface GroupedBarChartData {
+  type: "gender" | "age";
+  chartData: ChartDataItem[];
+  total: number;
+  maxValue: number;
+}
+
+export interface ChartDataItemVolunteers {
+  name: string;
+  value: number;
+}
+
+export interface ChartDataVolunteers {
+  chartData: ChartDataItem[];
+  type: string;
+  total: number;
+}
+
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -119,4 +142,46 @@ export const getRestorationGoalDataForChart = (data: any, isPercentage: boolean)
   chartData.push(nonProfitData);
 
   return chartData;
+};
+
+export const formatNumberLocaleString = (value: number): string => {
+  return value.toLocaleString();
+};
+
+export const getPercentage = (value: number, total: number): string => {
+  return ((value / total) * 100).toFixed(1);
+};
+
+export const calculateTotals = (data: GroupedBarChartData): { [key: string]: number } => {
+  return data.chartData.reduce((acc, item) => {
+    const key1 = data.type === "gender" ? "Women" : "Youth";
+    const key2 = data.type === "gender" ? "Men" : "Non-Youth";
+    acc[key1] = (acc[key1] || 0) + (item[key1] as number);
+    acc[key2] = (acc[key2] || 0) + (item[key2] as number);
+    return acc;
+  }, {} as { [key: string]: number });
+};
+
+export const formatLabelsVolunteers = (value: string): string => {
+  const formattedValues: { [key: string]: string } = {
+    women: "Women",
+    youth: "Youth",
+    men: "Men",
+    non_youth: "Non-Youth"
+  };
+
+  return formattedValues[value] || value;
+};
+
+export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
+
+export const getPercentageVolunteers = (value: number, total: number): string => {
+  return ((value / total) * 100).toFixed(1);
+};
+
+export const calculateTotalsVolunteers = (chartData: ChartDataItem[]): { [key: string]: number } => {
+  return chartData.reduce<{ [key: string]: number }>((acc, item) => {
+    acc[item.name] = item.value as number;
+    return acc;
+  }, {});
 };

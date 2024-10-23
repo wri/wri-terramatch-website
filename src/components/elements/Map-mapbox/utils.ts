@@ -146,10 +146,10 @@ const handleLayerClick = (
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  layerName?: string
+  layerName?: string,
+  isDashboard?: string | undefined
 ) => {
   removePopups("POLYGON");
-
   const { lngLat, features } = e;
   const feature = features?.[0];
 
@@ -167,7 +167,6 @@ const handleLayerClick = (
 
   const newPopup = createPopup(lngLat);
 
-  const isFetchdataLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES || layerName === LAYERS_NAMES.CENTROIDS;
   const commonProps: PopupComponentProps = {
     feature,
     popup: newPopup,
@@ -177,8 +176,7 @@ const handleLayerClick = (
     editPolygon,
     setEditPolygon
   };
-
-  if (isFetchdataLayer) {
+  if (isDashboard) {
     const addPopupToMap = () => {
       newPopup.addTo(map);
     };
@@ -358,12 +356,24 @@ export const addMediaSourceAndLayer = (
   });
 };
 
-export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  layersList.forEach((layer: LayerType) => {
-    if (map && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      addSourceToLayer(layer, map, polygonsData);
-    }
-  });
+export const addSourcesToLayers = (
+  map: mapboxgl.Map,
+  polygonsData: Record<string, string[]> | undefined,
+  centroids: DashboardGetProjectsData[] | undefined
+) => {
+  if (map) {
+    layersList.forEach((layer: LayerType) => {
+      if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
+        addSourceToLayer(layer, map, polygonsData);
+      }
+      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES) {
+        addSourceToLayer(layer, map, undefined);
+      }
+      if (layer.name === LAYERS_NAMES.CENTROIDS) {
+        addGeojsonSourceToLayer(centroids, map, layer);
+      }
+    });
+  }
 };
 
 export const addPopupsToMap = (
@@ -374,7 +384,8 @@ export const addPopupsToMap = (
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  draw: MapboxDraw
+  draw: MapboxDraw,
+  isDashboard?: string | undefined
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -387,7 +398,8 @@ export const addPopupsToMap = (
         type,
         editPolygon,
         setEditPolygon,
-        draw
+        draw,
+        isDashboard
       );
     });
   }
@@ -402,7 +414,8 @@ export const addPopupToLayer = (
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  draw: MapboxDraw
+  draw: MapboxDraw,
+  isDashboard?: string | undefined
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -433,7 +446,8 @@ export const addPopupToLayer = (
           type,
           editPolygon,
           setEditPolygon,
-          name
+          name,
+          isDashboard
         );
       });
     });
@@ -660,7 +674,7 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
     : "Unknown";
 };
 
-export function mapPolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
+export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygon) => {
     if (data.status && data.poly_id !== undefined) {
       if (!acc[data.status]) {

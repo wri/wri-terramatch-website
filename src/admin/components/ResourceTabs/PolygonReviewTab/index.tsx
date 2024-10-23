@@ -13,7 +13,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
   downloadSiteGeoJsonPolygons,
-  mapPolygonData,
+  parsePolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
@@ -201,7 +201,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     uuid: data.poly_id
   }));
 
-  const polygonDataMap = mapPolygonData(sitePolygonData);
+  const polygonDataMap = parsePolygonData(sitePolygonData);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -230,7 +230,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           refetch?.();
           const { map } = mapFunctions;
           if (map?.current) {
-            addSourcesToLayers(map.current, polygonDataMap);
+            addSourcesToLayers(map.current, polygonDataMap, undefined);
           }
           closeModal(ModalId.DELETE_POLYGON);
         }

@@ -62,7 +62,7 @@ const CustomYAxisTick: React.FC<any> = ({ x, y, payload, isAbsoluteData }) => {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={4} textAnchor="end" fill="#353535" className="text-xs">
+      <text x={0} y={0} dy={4} textAnchor="end" fill="#353535" className="text-10-light text-darkCustom">
         {formattedValue}
       </text>
     </g>
