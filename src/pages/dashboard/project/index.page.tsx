@@ -64,6 +64,7 @@ export interface DashboardDataProps {
   graphic?: string;
   tableData?: DashboardTableDataProps[];
   maxValue?: number;
+  totalSection?: { numberOfSites: number; totalHectaresRestored: number };
   graphicLegend?: GraphicLegendProps[];
   graphicTargetLandUseTypes?: DashboardTableDataProps[];
   objetiveText?: string;
@@ -310,6 +311,11 @@ const ProjectView = () => {
         dataTable={DATA_ACTIVE_COUNTRY}
         columns={COLUMN_ACTIVE_COUNTRY}
         titleTable={t("ACTIVE PROJECTS")}
+        dataHectaresUnderRestoration={{
+          totalSection: { numberOfSites: 0, totalHectaresRestored: 0 },
+          restorationStrategiesRepresented: [],
+          graphicTargetLandUseTypes: []
+        }}
         textTooltipTable={t(ACTIVE_PROJECTS_TOOLTIP)}
       />
     </div>

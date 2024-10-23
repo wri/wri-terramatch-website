@@ -7,6 +7,7 @@ import {
   useGetV2DashboardActiveProjects,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
+  useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
@@ -106,6 +107,10 @@ export const useDashboardData = (filters: any) => {
     queryParams: queryParams
   });
 
+  const { data: hectaresUnderRestoration } = useGetV2DashboardIndicatorHectaresRestoration<any>({
+    queryParams: queryParams
+  });
+
   useEffect(() => {
     if (topData?.data) {
       const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
@@ -143,6 +148,8 @@ export const useDashboardData = (filters: any) => {
     jobsCreatedData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
+    totalSectionHeader,
+    hectaresUnderRestoration,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,
