@@ -427,6 +427,9 @@ export const addPopupToLayer = (
       targetLayers = [targetLayers[0]];
     }
     targetLayers.forEach(targetLayer => {
+      if (!targetLayer?.id || !map.getLayer(targetLayer.id)) {
+        return;
+      }
       map.on("click", targetLayer.id, (e: any) => {
         const currentMode = draw?.getMode();
         if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
