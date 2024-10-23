@@ -258,6 +258,11 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
       </div>
       <ContentOverview
         dataTable={DATA_ACTIVE_COUNTRY}
+        dataHectaresUnderRestoration={{
+          totalSection: { numberOfSites: 0, totalHectaresRestored: 0 },
+          restorationStrategiesRepresented: [],
+          graphicTargetLandUseTypes: []
+        }}
         columns={COLUMN_ACTIVE_COUNTRY}
         titleTable={t("ACTIVE PROJECTS")}
         textTooltipTable={t(ACTIVE_PROJECTS_TOOLTIP)}
