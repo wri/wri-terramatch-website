@@ -7,16 +7,20 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 const Homepage = () => {
   const videoRef = useRef<HTMLIFrameElement>(null);
+  const sideVideoRef = useRef<HTMLDivElement>(null);
   const [isVideoIntersecting, setIsVideoIntersecting] = useState(false);
   const sec1Ref = useRef<HTMLDivElement>(null);
   const sec2Ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const video = videoRef.current;
+    const sideVideo = sideVideoRef.current;
 
-    if (video) {
+    if (video && sideVideo) {
       const intersectionObserver = new IntersectionObserver(
         entries => {
           entries.map(entry => {
+            video.style.opacity = entry.isIntersecting ? "1" : "0";
+            sideVideo.style.opacity = entry.isIntersecting ? "1" : "0";
             setIsVideoIntersecting(entry.isIntersecting);
             console.log(entry.isIntersecting);
           });
@@ -208,13 +212,14 @@ const Homepage = () => {
         <div className="relative flex w-full items-end overflow-hidden">
           <iframe
             ref={videoRef}
-            className="z-10 h-[500px] w-1/2 min-w-0 rounded-3xl"
+            className="z-10 h-[500px] w-1/2 min-w-0 rounded-3xl transition-all duration-500 ease-in-out"
             src="https://www.youtube.com/embed/nvgPWq2-l9M"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
           <div
+            ref={sideVideoRef}
             className={classNames(
               "flex h-fit w-1/2 flex-col gap-3 overflow-hidden rounded-r-3xl bg-neutral-40 p-12 transition-all duration-500 ease-in-out",
               {
