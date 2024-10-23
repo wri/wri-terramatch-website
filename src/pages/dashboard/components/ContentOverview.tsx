@@ -47,6 +47,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const userData = useUserData();
   const role = userData?.role;
   const { openModal, closeModal } = useModalContext();
+
   const ModalMap = () => {
     openModal(
       "modalExpand",

@@ -5,7 +5,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
-  useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
@@ -47,9 +46,6 @@ export const useDashboardData = (filters: any) => {
   };
   const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
   const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
-    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
-  });
-  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>({
     queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
   });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
@@ -140,7 +136,6 @@ export const useDashboardData = (filters: any) => {
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
-    listViewProjects,
-    polygonsData: polygonsData?.data ?? {}
+    listViewProjects
   };
 };
