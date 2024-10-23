@@ -45,7 +45,8 @@ const Dashboard = () => {
     centroidsDataProjects,
     polygonsData,
     activeCountries,
-    activeProjects
+    activeProjects,
+    listViewProjects
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -383,6 +384,7 @@ const Dashboard = () => {
             : "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep."
         )}
         polygonsData={polygonsData}
+        listViewProjects={listViewProjects}
       />
     </div>
   );

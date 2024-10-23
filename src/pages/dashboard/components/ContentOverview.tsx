@@ -18,6 +18,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
+import { useUserData } from "@/hooks/useUserData";
 
 import {
   RESTORATION_STRATEGIES_REPRESENTED,
@@ -35,14 +36,16 @@ interface ContentOverviewProps<TData> {
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
   polygonsData?: any;
+  listViewProjects?: any;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
-  const { dataTable: data, columns, titleTable, textTooltipTable, centroids, polygonsData } = props;
+  const { dataTable: data, columns, titleTable, textTooltipTable, centroids, polygonsData, listViewProjects } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-
+  const userData = useUserData();
+  const role = userData?.role;
   const { openModal, closeModal } = useModalContext();
   const ModalMap = () => {
     openModal(
@@ -131,6 +134,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             centroids={centroids}
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
+            listViewProjects={listViewProjects}
+            role={role}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>

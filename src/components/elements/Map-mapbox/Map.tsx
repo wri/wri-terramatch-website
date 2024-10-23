@@ -118,6 +118,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  listViewProjects?: any;
+  role?: any;
 }
 
 export const MapContainer = ({
@@ -150,6 +152,7 @@ export const MapContainer = ({
   entityData,
   imageGalleryRef,
   centroids,
+  listViewProjects,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -221,7 +224,8 @@ export const MapContainer = ({
     if (map?.current && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
       const setupMap = () => {
-        addSourcesToLayers(currentMap, polygonsData, centroids);
+        const zoomFilter = isDashboard ? 7 : undefined;
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, listViewProjects);
         setChangeStyle(true);
         if (showPopups) {
           addPopupsToMap(
@@ -244,7 +248,7 @@ export const MapContainer = ({
         currentMap.once("styledata", setupMap);
       }
     }
-  }, [sitePolygonData, polygonsData, showPopups]);
+  }, [sitePolygonData, polygonsData, showPopups, listViewProjects]);
 
   useEffect(() => {
     if (currentStyle) {
