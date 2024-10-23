@@ -29,11 +29,7 @@ import {
   TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
   TOTAL_NUMBER_OF_SITES_TOOLTIP
 } from "../constants/tooltips";
-import {
-  RESTORATION_STRATEGIES_REPRESENTED,
-  TOTAL_HECTARES_UNDER_RESTORATION,
-  TOTAL_NUMBER_OF_SITES
-} from "../mockedData/dashboard";
+import { RESTORATION_STRATEGIES_REPRESENTED } from "../mockedData/dashboard";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
@@ -182,13 +178,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
             <SecDashboard
               title={t("Total Hectares Under Restoration")}
-              data={TOTAL_HECTARES_UNDER_RESTORATION}
+              data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
-              data={TOTAL_NUMBER_OF_SITES}
+              data={{ value: dataHectaresUnderRestoration?.totalSection.numberOfSites }}
               className="pl-12"
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
