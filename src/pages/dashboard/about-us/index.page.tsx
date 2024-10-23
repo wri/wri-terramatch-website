@@ -122,7 +122,7 @@ const Homepage = () => {
                   style={{ height: sec2Ref.current ? `${sec2Ref.current.clientHeight / 2 - 8}px` : "auto" }}
                 />
                 <img
-                  src="/images/_AJL2963.jpg"
+                  src="/images/usign-platform.png"
                   alt="tree"
                   className="max-h-[100%] w-[calc(50%-8px)] rounded-2xl object-cover"
                   style={{ height: sec2Ref.current ? `${sec2Ref.current.clientHeight / 2 - 8}px` : "auto" }}
@@ -131,7 +131,7 @@ const Homepage = () => {
                 <img
                   src="/images/priceless-planet-coalition-explainer.webp"
                   alt="tree"
-                  className="col-span-2 max-h-[50%] w-full rounded-2xl object-cover"
+                  className="col-span-2 max-h-[50%] w-full rounded-2xl object-cover "
                   style={{ height: sec2Ref.current ? `${sec2Ref.current.clientHeight / 2 - 8}px` : "auto" }}
                 />
               </div>
@@ -241,7 +241,7 @@ const Homepage = () => {
         >
           <iframe
             ref={videoRef}
-            className="z-10 h-[500px] w-1/2 min-w-0 rounded-3xl"
+            className="z-10 h-[500px] w-1/2 min-w-0 rounded-l-3xl rounded-t-3xl"
             src="https://www.youtube.com/embed/nvgPWq2-l9M"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
