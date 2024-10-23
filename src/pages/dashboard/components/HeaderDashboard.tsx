@@ -25,13 +25,21 @@ interface HeaderDashboardProps {
   isProjectInsightsPage?: boolean;
   isProjectListPage?: boolean;
   isProjectPage?: boolean;
+  isHomepage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
 }
 
 const HeaderDashboard = (props: HeaderDashboardProps) => {
-  const { isProjectInsightsPage, isProjectListPage, isProjectPage, dashboardCountries, setSelectedCountry } = props;
+  const {
+    isProjectInsightsPage,
+    isProjectListPage,
+    isProjectPage,
+    isHomepage,
+    dashboardCountries,
+    setSelectedCountry
+  } = props;
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
@@ -178,11 +186,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (isProjectListPage) {
       return "Project List";
     }
+    if (isHomepage) {
+      return "TerraMatch Insights";
+    }
     return "TerraMatch Insights";
   };
 
   return (
-    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
@@ -199,7 +210,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             </ToolTip>
           </When>
         </Text>
-        <When condition={!isProjectInsightsPage}>
+        <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
             <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>
