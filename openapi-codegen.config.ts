@@ -24,7 +24,7 @@ dotenv.config();
 // are namespaced by feature set rather than service (a service may contain multiple namespaces), we
 // isolate the generated API integration by service to make it easier for a developer to find where
 // the associated BE code is for a given FE API integration.
-const SERVICES = ["user-service"];
+const SERVICES = ["user-service", "job-service"];
 
 const config: Record<string, Config> = {
   api: {
