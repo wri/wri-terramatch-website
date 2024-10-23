@@ -58,13 +58,11 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addDeleteLayer,
   addFilterOnLayer,
-  addGeojsonSourceToLayer,
   addGeojsonToDraw,
   addMarkerAndZoom,
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
-  addSourceToLayer,
   drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
@@ -156,7 +154,7 @@ export const MapContainer = ({
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
+  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -190,7 +188,7 @@ export const MapContainer = ({
     mapFunctions;
 
   useEffect(() => {
-    initMap();
+    initMap(isDashboard);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -199,35 +197,13 @@ export const MapContainer = ({
       }
     };
   }, []);
-
   useEffect(() => {
     if (!map) return;
     if (location && location.lat !== 0 && location.lng !== 0) {
       addMarkerAndZoom(map.current, location);
     }
   }, [map, location]);
-  useEffect(() => {
-    if (map?.current && isDashboard && styleLoaded && map.current.isStyleLoaded()) {
-      const layerCountry = layersList.find(layer => layer.name === LAYERS_NAMES.WORLD_COUNTRIES);
-      if (layerCountry) {
-        addSourceToLayer(layerCountry, map.current, undefined);
-      }
-      const centroidsLayer = layersList.find(layer => layer.name === LAYERS_NAMES.CENTROIDS);
-      if (centroidsLayer && centroids) {
-        addGeojsonSourceToLayer(centroids, map.current, centroidsLayer);
-      }
-      addPopupsToMap(
-        map.current,
-        DashboardPopup,
-        setPolygonFromMap,
-        sitePolygonData,
-        tooltipType,
-        editPolygonSelected,
-        setEditPolygon,
-        draw.current
-      );
-    }
-  }, [map, isDashboard, map?.current?.isStyleLoaded()]);
+
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
@@ -245,19 +221,19 @@ export const MapContainer = ({
     if (map?.current && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
       const setupMap = () => {
-        addSourcesToLayers(currentMap, polygonsData);
+        addSourcesToLayers(currentMap, polygonsData, centroids);
         setChangeStyle(true);
-
         if (showPopups) {
           addPopupsToMap(
             currentMap,
-            AdminPopup,
+            isDashboard ? DashboardPopup : AdminPopup,
             setPolygonFromMap,
             sitePolygonData,
             tooltipType,
             editPolygonSelected,
             setEditPolygon,
-            draw.current
+            draw.current,
+            isDashboard
           );
         }
       };
@@ -483,7 +459,7 @@ export const MapContainer = ({
               await reloadSiteData?.();
             }
             onCancel(polygonsData);
-            addSourcesToLayers(map.current, polygonsData);
+            addSourcesToLayers(map.current, polygonsData, centroids);
             setShouldRefetchPolygonData(true);
             openNotification(
               "success",

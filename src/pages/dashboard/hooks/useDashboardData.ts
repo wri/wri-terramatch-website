@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
+  useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
+  useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
@@ -15,23 +18,25 @@ import {
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
+import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
+
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
       value: "0",
-      tooltip: "Total number of trees planted by funded projects to date."
+      tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
       value: "0 ha",
-      tooltip: "Total land area with active restoration interventions."
+      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
       value: "0",
-      tooltip: "Number of jobs created to date."
+      tooltip: JOBS_CREATED_TOOLTIP
     }
   ]);
   const projectUuid = filters.project?.project_uuid;
@@ -46,6 +51,9 @@ export const useDashboardData = (filters: any) => {
   };
   const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
   const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
+    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
+  });
+  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>({
     queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
   });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
@@ -82,9 +90,14 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!filters }
   );
 
+  const { searchTerm } = useDashboardContext();
   const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
     { queryParams: queryParams },
-    { enabled: !!filters }
+    { enabled: !!searchTerm || !!filters }
+  );
+
+  const filteredProjects = activeProjects?.data.filter((project: { name: string | null }) =>
+    project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   const { data: dashboardRestorationGoalData } =
@@ -93,6 +106,10 @@ export const useDashboardData = (filters: any) => {
     });
 
   const { data: dashboardVolunteersSurvivalRate } = useGetV2DashboardVolunteersSurvivalRate<any>({
+    queryParams: queryParams
+  });
+
+  const { data: hectaresUnderRestoration } = useGetV2DashboardIndicatorHectaresRestoration<any>({
     queryParams: queryParams
   });
 
@@ -133,11 +150,14 @@ export const useDashboardData = (filters: any) => {
     jobsCreatedData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
+    totalSectionHeader,
+    hectaresUnderRestoration,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,
-    activeProjects,
+    activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
-    listViewProjects
+    listViewProjects,
+    polygonsData: polygonsData?.data ?? {}
   };
 };

@@ -145,10 +145,10 @@ const handleLayerClick = (
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  layerName?: string
+  layerName?: string,
+  isDashboard?: string | undefined
 ) => {
   removePopups("POLYGON");
-
   const { lngLat, features } = e;
   const feature = features?.[0];
 
@@ -166,8 +166,6 @@ const handleLayerClick = (
 
   const newPopup = createPopup(lngLat);
 
-  const isWorldCountriesLayer = layerName === LAYERS_NAMES.WORLD_COUNTRIES;
-
   const commonProps: PopupComponentProps = {
     feature,
     popup: newPopup,
@@ -177,10 +175,11 @@ const handleLayerClick = (
     editPolygon,
     setEditPolygon
   };
-
-  if (isWorldCountriesLayer) {
-    const addPopupToMap = () => newPopup.addTo(map);
-    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap }));
+  if (isDashboard) {
+    const addPopupToMap = () => {
+      newPopup.addTo(map);
+    };
+    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName }));
   } else {
     newPopup.addTo(map);
     root.render(createElement(PopupComponent, commonProps));
@@ -356,12 +355,24 @@ export const addMediaSourceAndLayer = (
   });
 };
 
-export const addSourcesToLayers = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
-  layersList.forEach((layer: LayerType) => {
-    if (map && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      addSourceToLayer(layer, map, polygonsData);
-    }
-  });
+export const addSourcesToLayers = (
+  map: mapboxgl.Map,
+  polygonsData: Record<string, string[]> | undefined,
+  centroids: DashboardGetProjectsData[] | undefined
+) => {
+  if (map) {
+    layersList.forEach((layer: LayerType) => {
+      if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
+        addSourceToLayer(layer, map, polygonsData);
+      }
+      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES) {
+        addSourceToLayer(layer, map, undefined);
+      }
+      if (layer.name === LAYERS_NAMES.CENTROIDS) {
+        addGeojsonSourceToLayer(centroids, map, layer);
+      }
+    });
+  }
 };
 
 export const addPopupsToMap = (
@@ -372,7 +383,8 @@ export const addPopupsToMap = (
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  draw: MapboxDraw
+  draw: MapboxDraw,
+  isDashboard?: string | undefined
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -385,7 +397,8 @@ export const addPopupsToMap = (
         type,
         editPolygon,
         setEditPolygon,
-        draw
+        draw,
+        isDashboard
       );
     });
   }
@@ -400,7 +413,8 @@ export const addPopupToLayer = (
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  draw: MapboxDraw
+  draw: MapboxDraw,
+  isDashboard?: string | undefined
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -408,24 +422,35 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
+    if (name === LAYERS_NAMES.CENTROIDS) {
+      targetLayers = [targetLayers[0]];
+    }
     targetLayers.forEach(targetLayer => {
+      if (!targetLayer?.id || !map.getLayer(targetLayer.id)) {
+        return;
+      }
       map.on("click", targetLayer.id, (e: any) => {
         const currentMode = draw?.getMode();
-        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") {
-          return;
-        } else {
-          handleLayerClick(
-            e,
-            popupComponent,
-            map,
-            setPolygonFromMap,
-            sitePolygonData,
-            type,
-            editPolygon,
-            setEditPolygon,
-            name
-          );
-        }
+        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
+
+        const zoomLevel = map.getZoom();
+
+        if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
+
+        if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
+
+        handleLayerClick(
+          e,
+          popupComponent,
+          map,
+          setPolygonFromMap,
+          sitePolygonData,
+          type,
+          editPolygon,
+          setEditPolygon,
+          name,
+          isDashboard
+        );
       });
     });
   }
@@ -651,7 +676,7 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
     : "Unknown";
 };
 
-export function mapPolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
+export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygon) => {
     if (data.status && data.poly_id !== undefined) {
       if (!acc[data.status]) {

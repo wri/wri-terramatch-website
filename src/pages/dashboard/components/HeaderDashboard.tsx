@@ -10,11 +10,15 @@ import { MENU_ITEM_VARIANT_SEARCH } from "@/components/elements/MenuItem/MenuIte
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_BOX_AIRTABLE } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 
+import { PROJECT_INSIGHTS_SECTION_TOOLTIP } from "../constants/tooltips";
+import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
 
 interface HeaderDashboardProps {
@@ -31,60 +35,28 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
+  const { filters, setFilters, setSearchTerm } = useDashboardContext();
+  const { activeProjects } = useDashboardData(filters);
 
-  const optionMenu = [
-    {
-      id: "1",
-      country: "Angola",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    },
-    {
-      id: "2",
-      country: "Kenya",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    },
-    {
-      id: "3",
-      country: "Ghana",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    },
-    {
-      id: "4",
-      country: "Congo",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    },
-    {
-      id: "5",
-      country: "Central African Republic",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    },
-    {
-      id: "6",
-      country: "Cameroon",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    },
-    {
-      id: "7",
-
-      country: "Åland Islands",
-      organization: "Annette Ward (3SC)",
-      project: "Goshen Global Vision",
-      programme: "TerraFund Top100"
-    }
-  ];
-  const { filters, setFilters } = useDashboardContext();
+  const optionMenu = activeProjects
+    ? activeProjects?.map(
+        (
+          item: {
+            project_country: string;
+            organisation: string;
+            name: string;
+            programme: string;
+          },
+          index: number
+        ) => ({
+          id: index,
+          country: item?.project_country,
+          organization: item?.organisation,
+          project: item?.name,
+          programme: item?.programme
+        })
+      )
+    : [];
 
   const organizationOptions = [
     {
@@ -217,6 +189,18 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
+          <When condition={isProjectInsightsPage}>
+            <ToolTip
+              title={""}
+              content={t(PROJECT_INSIGHTS_SECTION_TOOLTIP)}
+              placement="top"
+              width="w-64 lg:w-96"
+              trigger="click"
+              className="ml-1 !inline-block !whitespace-normal"
+            >
+              <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
+            </ToolTip>
+          </When>
         </Text>
         <When condition={!isProjectInsightsPage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
@@ -338,22 +322,34 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
-                  menu={optionMenu.map(option => ({
-                    id: option.id,
-                    render: () => (
-                      <span className="leading-[normal] tracking-[normal]">
-                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                          {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
-                        </Text>
-                        <Text variant="text-12-light" className="text-darkCustom" as="span">
-                          {t(option.project)},&nbsp;{t(option.programme)}
-                        </Text>
-                      </span>
-                    )
-                  }))}
+                  menu={optionMenu.map(
+                    (option: {
+                      id: number;
+                      country: string;
+                      organization: string;
+                      project: string;
+                      programme: string;
+                    }) => ({
+                      id: option.id,
+                      render: () => (
+                        <span className="leading-[normal] tracking-[normal]">
+                          <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                            {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
+                          </Text>
+                          <Text variant="text-12-light" className="text-darkCustom" as="span">
+                            {t(option.project)},&nbsp;{t(option.programme)}
+                          </Text>
+                        </span>
+                      )
+                    })
+                  )}
                 >
                   <BlurContainer className="lg:min-w-[287px]">
-                    <FilterSearchBox onChange={() => {}} placeholder="Search" variant={FILTER_SEARCH_BOX_AIRTABLE} />
+                    <FilterSearchBox
+                      onChange={e => setSearchTerm(e)}
+                      placeholder="Search"
+                      variant={FILTER_SEARCH_BOX_AIRTABLE}
+                    />
                   </BlurContainer>
                 </Menu>
               </When>
