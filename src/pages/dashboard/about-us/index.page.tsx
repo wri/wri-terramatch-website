@@ -145,7 +145,7 @@ const Homepage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-4">
+        <div className="flex flex-col gap-2 rounded-xl border border-yellow-500 bg-yellow p-8">
           <Text variant="text-20-semibold">Accessing the platform</Text>
           <Text variant="text-14-light" className="text-darkCustom text-opacity-80">
             Access the public dashboard{" "}
