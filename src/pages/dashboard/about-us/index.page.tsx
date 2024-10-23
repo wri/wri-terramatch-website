@@ -212,7 +212,7 @@ const Homepage = () => {
         <div className="relative flex w-full items-end overflow-hidden">
           <iframe
             ref={videoRef}
-            className="z-10 h-[500px] w-1/2 min-w-0 rounded-3xl transition-all duration-500 ease-in-out"
+            className="z-10 h-[500px] w-1/2 min-w-0 rounded-l-3xl  rounded-t-3xl transition-all duration-500 ease-in-out"
             src="https://www.youtube.com/embed/nvgPWq2-l9M"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
