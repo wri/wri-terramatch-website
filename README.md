@@ -57,7 +57,7 @@ When adding a new **resource** to the v3 API, a couple of steps are needed to in
   `RESOURCES` const. This will make sure it's listed in the type of the ApiStore so that resources that match that type are seamlessly folded into the store cache structure.
 * The shape of the resource should be specified by the auto-generated API. This type needs to be 
   added to the `ApiResource` type in `apiSlice.ts`. This allows us to have strongly typed results
-  coming from the redux APi store.
+  coming from the redux API store.
 
 ### Connections
 Connections are a **declarative** way for components to get access to the data from the cached API
