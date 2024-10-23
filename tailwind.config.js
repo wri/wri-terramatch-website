@@ -238,7 +238,10 @@ module.exports = {
       "5xl": "2.5rem", //40px
       //Wide extra
       "6xl": "2.75rem", //44px
-      "7xl": "3rem" //48px
+      "7xl": "3rem", //48px
+      "13xl": "4.5rem", //72px
+      "14xl": "4.75rem", //76px
+      "15xl": "5rem" //80px
     },
     listStyleType: {
       none: "none",
