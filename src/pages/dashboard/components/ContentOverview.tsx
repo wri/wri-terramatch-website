@@ -16,8 +16,10 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
+import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import {
   HECTARES_UNDER_RESTORATION_SECTION_TOOLTIP,
@@ -29,7 +31,6 @@ import {
 } from "../constants/tooltips";
 import {
   RESTORATION_STRATEGIES_REPRESENTED,
-  TARGET_LAND_USE_TYPES_REPRESENTED,
   TOTAL_HECTARES_UNDER_RESTORATION,
   TOTAL_NUMBER_OF_SITES
 } from "../mockedData/dashboard";
@@ -42,11 +43,20 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
+  dataHectaresUnderRestoration: HectaresUnderRestorationData;
   polygonsData?: any;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
-  const { dataTable: data, columns, titleTable, textTooltipTable, centroids, polygonsData } = props;
+  const {
+    dataTable: data,
+    columns,
+    titleTable,
+    textTooltipTable,
+    centroids,
+    polygonsData,
+    dataHectaresUnderRestoration
+  } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
@@ -191,7 +201,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
-            data={TARGET_LAND_USE_TYPES_REPRESENTED}
+            chartType={CHART_TYPES.barChart}
+            data={dataHectaresUnderRestoration}
             tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
           />
         </PageCard>

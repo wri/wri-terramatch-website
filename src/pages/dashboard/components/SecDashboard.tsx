@@ -10,7 +10,7 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { CHART_TYPES } from "@/constants/dashbordConsts";
+import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
@@ -20,7 +20,7 @@ import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
-import GraphicIconDashoard from "./GraphicIconDashoard";
+import GraphicIconDashboard from "./GraphicIconDashboard";
 import ObjectiveSec from "./ObjectiveSec";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
@@ -192,8 +192,11 @@ const SecDashboard = ({
             </div>
           </When>
         </When>
-        <When condition={!!data?.graphicTargetLandUseTypes}>
-          <GraphicIconDashoard data={data?.graphicTargetLandUseTypes ?? []} />
+        <When condition={chartType === CHART_TYPES.barChart}>
+          <GraphicIconDashboard
+            data={data?.graphicTargetLandUseTypes ?? []}
+            maxValue={data?.totalSection?.totalHectaresRestored ?? 0}
+          />
         </When>
         <When condition={!!data?.objetiveText}>
           <ObjectiveSec data={data} />

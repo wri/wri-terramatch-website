@@ -1,4 +1,4 @@
-import { MONTHS } from "@/constants/dashbordConsts";
+import { MONTHS } from "@/constants/dashboardConsts";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -29,6 +29,57 @@ export interface ChartDataVolunteers {
   chartData: ChartDataItem[];
   type: string;
   total: number;
+}
+
+interface Option {
+  title: string;
+  value: string;
+}
+
+interface TotalSectionHeader {
+  country_name: string;
+  total_enterprise_count: number;
+  total_entries: number;
+  total_hectares_restored: number;
+  total_hectares_restored_goal: number;
+  total_non_profit_count: number;
+  total_trees_restored: number;
+  total_trees_restored_goal: number;
+}
+
+interface DashboardVolunteersSurvivalRate {
+  enterprise_survival_rate: number;
+  men_volunteers: number;
+  non_profit_survival_rate: number;
+  non_youth_volunteers: number;
+  number_of_nurseries: number;
+  number_of_sites: number;
+  total_volunteers: number;
+  women_volunteers: number;
+  youth_volunteers: number;
+}
+
+interface HectaresUnderRestoration {
+  restoration_strategies_represented: Record<string, number>;
+  target_land_use_types_represented: Record<string, number>;
+}
+
+interface ParsedDataItem {
+  label: string;
+  value: number;
+}
+
+interface ParsedLandUseType extends ParsedDataItem {
+  valueText: string;
+}
+
+export interface HectaresUnderRestorationData {
+  totalSection: {
+    totalHectaresRestored: number;
+    numberOfSites: number;
+  };
+  restorationStrategiesRepresented: ParsedDataItem[];
+  graphicTargetLandUseTypes: ParsedLandUseType[];
 }
 
 export const formatNumberUS = (value: number) =>
@@ -152,6 +203,11 @@ export const getPercentage = (value: number, total: number): string => {
   return ((value / total) * 100).toFixed(1);
 };
 
+export const calculatePercentage = (value: number, total: number): number => {
+  if (!total) return 0;
+  return Number(((value / total) * 100).toFixed(1));
+};
+
 export const calculateTotals = (data: GroupedBarChartData): { [key: string]: number } => {
   return data.chartData.reduce((acc, item) => {
     const key1 = data.type === "gender" ? "Women" : "Youth";
@@ -184,4 +240,72 @@ export const calculateTotalsVolunteers = (chartData: ChartDataItem[]): { [key: s
     acc[item.name] = item.value as number;
     return acc;
   }, {});
+};
+
+const landUseTypeOptions: Option[] = [
+  { title: "Agroforest", value: "agroforest" },
+  { title: "Mangrove", value: "mangrove" },
+  { title: "Natural Forest", value: "natural-forest" },
+  { title: "Silvopasture", value: "silvopasture" },
+  { title: "Riparian Area or Wetland", value: "riparian-area-or-wetland" },
+  { title: "Urban Forest", value: "urban-forest" },
+  { title: "Woodlot or Plantation", value: "woodlot-or-plantation" },
+  { title: "Peatland", value: "peatland" },
+  { title: "Open Natural Ecosystem", value: "open-natural-ecosystem" }
+];
+
+export const parseHectaresUnderRestorationData = (
+  totalSectionHeader: TotalSectionHeader,
+  dashboardVolunteersSurvivalRate: DashboardVolunteersSurvivalRate,
+  hectaresUnderRestoration: HectaresUnderRestoration
+): HectaresUnderRestorationData => {
+  if (!totalSectionHeader || !dashboardVolunteersSurvivalRate || !hectaresUnderRestoration) {
+    return {
+      totalSection: {
+        totalHectaresRestored: 0,
+        numberOfSites: 0
+      },
+      restorationStrategiesRepresented: [],
+      graphicTargetLandUseTypes: []
+    };
+  }
+  const { total_hectares_restored } = totalSectionHeader;
+  const { number_of_sites } = dashboardVolunteersSurvivalRate;
+
+  const objectToArray = (obj: Record<string, number> = {}): ParsedDataItem[] => {
+    return Object.entries(obj).map(([name, value]) => ({
+      label: name,
+      value
+    }));
+  };
+
+  const formatValueText = (value: number): string => {
+    if (!total_hectares_restored) return "0 ha 0%";
+    const percentage = (value / total_hectares_restored) * 100;
+    return `${value} ha ${percentage.toFixed(2)}%`;
+  };
+
+  const getLandUseTypeTitle = (value: string): string => {
+    const option = landUseTypeOptions.find(opt => opt.value === value);
+    return option ? option.title : value;
+  };
+
+  const restorationStrategiesRepresented = objectToArray(hectaresUnderRestoration?.restoration_strategies_represented);
+
+  const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
+    item => ({
+      label: getLandUseTypeTitle(item.label),
+      value: item.value,
+      valueText: formatValueText(item.value)
+    })
+  );
+
+  return {
+    totalSection: {
+      totalHectaresRestored: total_hectares_restored ?? 0,
+      numberOfSites: number_of_sites ?? 0
+    },
+    restorationStrategiesRepresented,
+    graphicTargetLandUseTypes
+  };
 };

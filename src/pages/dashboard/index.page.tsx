@@ -7,9 +7,9 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { CHART_TYPES, JOBS_CREATED_CHART_TYPE } from "@/constants/dashbordConsts";
+import { CHART_TYPES, JOBS_CREATED_CHART_TYPE } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { formatLabelsVolunteers } from "@/utils/dashboardUtils";
+import { formatLabelsVolunteers, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -55,6 +55,8 @@ const Dashboard = () => {
     dashboardRestorationGoalData,
     jobsCreatedData,
     dashboardVolunteersSurvivalRate,
+    totalSectionHeader,
+    hectaresUnderRestoration,
     numberTreesPlanted,
     topProject,
     refetchTotalSectionHeader,
@@ -391,6 +393,11 @@ const Dashboard = () => {
         centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
         titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
+        dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
+          totalSectionHeader,
+          dashboardVolunteersSurvivalRate,
+          hectaresUnderRestoration
+        )}
         textTooltipTable={t(
           filters.country.id === 0
             ? ACTIVE_COUNTRIES_TOOLTIP
