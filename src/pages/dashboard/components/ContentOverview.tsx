@@ -29,7 +29,6 @@ import {
   TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
   TOTAL_NUMBER_OF_SITES_TOOLTIP
 } from "../constants/tooltips";
-import { RESTORATION_STRATEGIES_REPRESENTED } from "../mockedData/dashboard";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
@@ -196,7 +195,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           </div>
           <SecDashboard
             title={t("Restoration Strategies Represented")}
-            data={RESTORATION_STRATEGIES_REPRESENTED}
+            data={{}}
+            chartType={CHART_TYPES.simpleBarChart}
+            dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
           />
           <SecDashboard
