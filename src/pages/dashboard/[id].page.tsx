@@ -10,10 +10,8 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 
-import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
 import {
-  ACTIVE_PROJECTS_TOOLTIP,
   HECTARES_UNDER_RESTORATION_TOOLTIP,
   JOBS_CREATED_BY_AGE_TOOLTIP,
   JOBS_CREATED_BY_GENDER_TOOLTIP,
@@ -31,7 +29,6 @@ import {
   VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
 } from "./constants/tooltips";
 import {
-  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -68,46 +65,6 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
       label: "Jobs Created",
       value: "23,000",
       tooltip: JOBS_CREATED_TOOLTIP
-    }
-  ];
-
-  const COLUMN_ACTIVE_COUNTRY = [
-    {
-      header: "Project",
-      accessorKey: "project",
-      enableSorting: false
-    },
-    {
-      header: "Trees Planted",
-      accessorKey: "treesPlanted",
-      enableSorting: false
-    },
-    {
-      header: "Hectares",
-      accessorKey: "restoratioHectares",
-      enableSorting: false
-    },
-    {
-      header: "Jobs Created",
-      accessorKey: "jobsCreated",
-      enableSorting: false
-    },
-    {
-      header: "Volunteers",
-      accessorKey: "volunteers",
-      enableSorting: false
-    },
-    {
-      header: "",
-      accessorKey: "link",
-      enableSorting: false,
-      cell: () => {
-        return (
-          <a href="/dashboard/project">
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </a>
-        );
-      }
     }
   ];
 
@@ -256,7 +213,7 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
           </PageCard>
         </PageRow>
       </div>
-      <ContentOverview
+      {/* <ContentOverview
         dataTable={DATA_ACTIVE_COUNTRY}
         dataHectaresUnderRestoration={{
           totalSection: { numberOfSites: 0, totalHectaresRestored: 0 },
@@ -266,7 +223,7 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
         columns={COLUMN_ACTIVE_COUNTRY}
         titleTable={t("ACTIVE PROJECTS")}
         textTooltipTable={t(ACTIVE_PROJECTS_TOOLTIP)}
-      />
+      /> */}
     </div>
   );
 };

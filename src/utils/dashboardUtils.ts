@@ -8,6 +8,24 @@ type DataPoint = {
   "Non Profit": number;
 };
 
+type InputData = {
+  country: string;
+  countrySlug: string;
+  descriptionObjetive: string;
+  landTenure: string | null;
+  name: string;
+  organisation: string;
+  restorationStrategy: string | null;
+  survivalRate: string | null;
+  targetLandUse: string | null;
+};
+
+type Objetive = {
+  objetiveText: string;
+  preferredLanguage: string;
+  landTenure: string;
+};
+
 export interface ChartDataItem {
   name: string;
   [key: string]: number | string;
@@ -301,7 +319,6 @@ export const parseHectaresUnderRestorationData = (
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
-  console.log(hectaresUnderRestoration);
   const restorationStrategiesRepresented = objectToArray(
     hectaresUnderRestoration?.restoration_strategies_represented
   ).map(item => ({
@@ -325,4 +342,19 @@ export const parseHectaresUnderRestorationData = (
     restorationStrategiesRepresented,
     graphicTargetLandUseTypes
   };
+};
+
+export const parseDataToObjetive = (data: InputData): Objetive => {
+  const objetiveText = data?.descriptionObjetive;
+
+  return {
+    objetiveText,
+    preferredLanguage: "English",
+    landTenure: data?.landTenure ? data?.landTenure : "Unknown"
+  };
+};
+
+export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
+  const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
+  return framework ? framework.name : undefined;
 };

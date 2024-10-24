@@ -1,4 +1,4 @@
-import { ColumnDef, RowData } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React from "react";
 
@@ -31,6 +31,10 @@ import {
 } from "../constants/tooltips";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
+
+interface RowData {
+  uuid: string;
+}
 
 interface ContentOverviewProps<TData> {
   dataTable: TData[];

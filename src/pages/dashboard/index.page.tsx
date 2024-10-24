@@ -2,14 +2,20 @@ import { useT } from "@transifex/react";
 import { useEffect } from "react";
 import { When } from "react-if";
 
+import Breadcrumbs from "@/components/elements/Breadcrumbs/Breadcrumbs";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { CHART_TYPES, JOBS_CREATED_CHART_TYPE } from "@/constants/dashboardConsts";
+import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { formatLabelsVolunteers, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import {
+  formatLabelsVolunteers,
+  getFrameworkName,
+  parseDataToObjetive,
+  parseHectaresUnderRestorationData
+} from "@/utils/dashboardUtils";
 
 import ContentOverview from "./components/ContentOverview";
 import SecDashboard from "./components/SecDashboard";
@@ -49,7 +55,7 @@ export interface GraphicLegendProps {
 
 const Dashboard = () => {
   const t = useT();
-  const { filters } = useDashboardContext();
+  const { filters, setFilters, frameworks } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -58,6 +64,7 @@ const Dashboard = () => {
     totalSectionHeader,
     hectaresUnderRestoration,
     numberTreesPlanted,
+    dashboardProjectDetails,
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
@@ -140,11 +147,19 @@ const Dashboard = () => {
       header: "",
       accessorKey: "link",
       enableSorting: false,
-      cell: () => {
+      cell: ({ row }: { row: { original: { uuid: string } } }) => {
+        const uuid = row.original.uuid;
+        const handleClick = () => {
+          setFilters(prevValues => ({
+            ...prevValues,
+            uuid: uuid
+          }));
+        };
+
         return (
-          <a href="/dashboard/project">
+          <button onClick={handleClick}>
             <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </a>
+          </button>
         );
       }
     }
@@ -231,7 +246,7 @@ const Dashboard = () => {
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
-          <When condition={filters.country.id !== 0}>
+          <When condition={filters.country.id !== 0 && !filters.uuid}>
             <div className="flex items-center gap-2">
               <Text variant="text-14-light" className="uppercase text-black ">
                 {t("results for:")}
@@ -240,6 +255,23 @@ const Dashboard = () => {
               <Text variant="text-24-semibold" className="text-black">
                 {t(filters.country?.data.label)}
               </Text>
+            </div>
+          </When>
+          <When condition={filters.uuid}>
+            <div>
+              <Breadcrumbs
+                links={[
+                  {
+                    title: t(`${getFrameworkName(frameworks, dashboardProjectDetails?.framework)}`),
+                    path: "/dashboard"
+                  },
+                  { title: t(`${dashboardProjectDetails?.country}`), path: "/dashboard/country/AU" },
+                  { title: t(`${dashboardProjectDetails?.name}`) }
+                ]}
+                className="pt-0 "
+                textVariant="text-14"
+                clasNameText="!no-underline hover:text-primary hover:opacity-100 mt-0.5 hover:mb-0.5 hover:mt-0"
+              />
             </div>
           </When>
           <div className="grid w-full grid-cols-3 gap-4">
@@ -266,7 +298,38 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-
+          <When condition={filters.uuid}>
+            <PageCard className="border-0 px-4 py-6" gap={8}>
+              <div className="flex items-center">
+                <img
+                  src="/images/_AJL2963.jpg"
+                  alt="tree"
+                  className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
+                />
+                <div>
+                  <Text variant="text-20-bold">{t(dashboardProjectDetails?.name)}</Text>
+                  <Text variant="text-14-light" className="text-darkCustom">
+                    {t(`Operations: ${dashboardProjectDetails?.country}`)}
+                    <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                    {t(`Registration: ${dashboardProjectDetails?.country}`)}
+                    <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                    {t(
+                      `Organization: ${
+                        ORGANIZATIONS_TYPES[dashboardProjectDetails?.organisation as keyof typeof ORGANIZATIONS_TYPES]
+                      }`
+                    )}
+                  </Text>
+                </div>
+              </div>
+              <SecDashboard
+                title={t("Objective")}
+                classNameTitle="capitalize"
+                type="legend"
+                data={parseDataToObjetive(dashboardProjectDetails)}
+                variantTitle="text-18-semibold"
+              />
+            </PageCard>
+          </When>
           <PageCard
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
@@ -300,14 +363,16 @@ const Dashboard = () => {
               chartType={CHART_TYPES.multiLineChart}
               tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
             />
-            <SecDashboard
-              title={t("Top 5 Projects with the Most Planted Trees")}
-              type="toggle"
-              secondOptionsData={dataToggleGraphic}
-              data={topProject}
-              isTableProject={true}
-              tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
-            />
+            <When condition={!filters.uuid}>
+              <SecDashboard
+                title={t("Top 5 Projects with the Most Planted Trees")}
+                type="toggle"
+                secondOptionsData={dataToggleGraphic}
+                data={topProject}
+                isTableProject={true}
+                tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
+              />
+            </When>
           </PageCard>
 
           <PageCard
