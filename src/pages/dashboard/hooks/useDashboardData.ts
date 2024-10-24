@@ -9,6 +9,7 @@ import {
   useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
+  useGetV2DashboardProjectDetailsProject,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
@@ -112,6 +113,10 @@ export const useDashboardData = (filters: any) => {
   const { data: hectaresUnderRestoration } = useGetV2DashboardIndicatorHectaresRestoration<any>({
     queryParams: queryParams
   });
+  const { data: dashboardProjectDetails } = useGetV2DashboardProjectDetailsProject<any>(
+    { pathParams: { project: filters.uuid } },
+    { enabled: !!filters.uuid }
+  );
 
   useEffect(() => {
     if (topData?.data) {
@@ -152,6 +157,7 @@ export const useDashboardData = (filters: any) => {
     numberTreesPlanted,
     totalSectionHeader,
     hectaresUnderRestoration,
+    dashboardProjectDetails,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,

@@ -32,3 +32,8 @@ export const MONTHS = [
   "November",
   "December"
 ];
+
+export const ORGANIZATIONS_TYPES = {
+  "non-profit-organization": "Non-Profit",
+  "for-profit-organization": "Enterprise"
+};

@@ -35,7 +35,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
-  const { filters, setFilters, setSearchTerm } = useDashboardContext();
+  const { filters, setFilters, setSearchTerm, setFrameworks } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const optionMenu = activeProjects
@@ -87,6 +87,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           title: framework.name!,
           value: framework.framework_slug!
         }));
+      setFrameworks(frameworks);
       setProgrammeOptions(options);
     }
   }, [frameworks]);
