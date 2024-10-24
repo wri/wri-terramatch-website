@@ -41,7 +41,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
       <When condition={data.length > 0}>
         <div className="relative flex h-9 w-full rounded bg-blueCustom-30 first:rounded-l first-of-type:rounded-l lg:h-10">
           {data.map((item, index) => {
-            const percentage = getPercentage(item.value, 10000);
+            const percentage = getPercentage(item.value, maxValue);
             return (
               <div
                 className={classNames(
@@ -58,7 +58,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
         </div>
         <div className="w-full">
           {data.map((item, index) => {
-            const percentage = getPercentage(item.value, 10000);
+            const percentage = getPercentage(item.value, maxValue);
             return (
               <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
                 <div className="mb-1 flex w-full justify-between">
