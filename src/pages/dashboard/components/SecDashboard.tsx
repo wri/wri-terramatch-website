@@ -18,6 +18,7 @@ import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
+import SimpleBarChart from "../charts/SimpleBarChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashboard from "./GraphicIconDashboard";
@@ -152,6 +153,9 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
           <DoughnutChart data={dataForChart} />
+        </When>
+        <When condition={chartType === CHART_TYPES.simpleBarChart}>
+          <SimpleBarChart data={dataForChart} />
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
