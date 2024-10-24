@@ -3,7 +3,7 @@ import { When } from "react-if";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
-import { useGetAuthMe } from "@/generated/apiComponents";
+import { useMyUser } from "@/connections/User";
 
 import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
 
@@ -20,20 +20,14 @@ const CommentarySection = ({
   viewCommentsList?: boolean;
   loading?: boolean;
 }) => {
-  const { data: authMe } = useGetAuthMe({}) as {
-    data: {
-      data: any;
-      first_name: string;
-      last_name: string;
-    };
-  };
+  const [, { user }] = useMyUser();
 
   return (
     <div className="flex flex-col gap-4">
       <Text variant="text-16-bold">Send Comment</Text>
       <CommentaryBox
-        name={authMe?.data.first_name}
-        lastName={authMe?.data.last_name}
+        name={user?.firstName ?? ""}
+        lastName={user?.lastName ?? ""}
         refresh={refresh}
         record={record}
         entity={entity}

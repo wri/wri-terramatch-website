@@ -1,10 +1,9 @@
-import * as Sentry from "@sentry/nextjs";
 import { HttpError } from "react-admin";
 
 import { ErrorWrapper } from "@/generated/apiFetcher";
+import Log from "@/utils/log";
 
 export const getFormattedErrorForRA = (err: ErrorWrapper<undefined>) => {
-  console.log(err);
-  Sentry.captureException(err);
+  Log.error("Network error", err?.statusCode, ...(err?.errors ?? []));
   return new HttpError(err?.errors?.map?.(e => e.detail).join(", ") || "", err?.statusCode);
 };

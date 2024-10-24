@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import Log from "@/utils/log";
+
 import Components from "./TreeSpeciesInput";
 
 const meta: Meta<typeof Components> = {
@@ -32,8 +34,8 @@ export const Default: Story = {
         amount: 23
       }
     ],
-    onChange: value => console.log("onChange", value),
-    clearErrors: () => console.log("clearErrors")
+    onChange: value => Log.info("onChange", value),
+    clearErrors: () => Log.info("clearErrors")
   }
 };
 

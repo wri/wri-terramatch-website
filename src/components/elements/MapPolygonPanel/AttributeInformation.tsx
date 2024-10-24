@@ -8,6 +8,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 import Text from "../Text/Text";
 import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
@@ -175,7 +176,7 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
           }
         );
       } catch (error) {
-        console.error("Error updating polygon data:", error);
+        Log.error("Error updating polygon data:", error);
       }
     }
   };

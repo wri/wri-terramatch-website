@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 
 import { fetchGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 type MapAreaType = {
   isMonitoring: boolean;
@@ -134,7 +135,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       setIsMonitoring(isMonitoringPartner?.allowed ?? false);
     } catch (error) {
-      console.error("Failed to check if monitoring partner:", error);
+      Log.error("Failed to check if monitoring partner:", error);
       setIsMonitoring(false);
     }
   };

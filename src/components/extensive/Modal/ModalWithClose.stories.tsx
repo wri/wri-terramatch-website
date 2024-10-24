@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import Log from "@/utils/log";
+
 import { IconNames } from "../Icon/Icon";
 import { ModalProps as Props } from "./Modal";
 import Component from "./ModalWithClose";
@@ -28,11 +30,11 @@ export const Default: Story = {
     },
     primaryButtonProps: {
       children: "Close and continue later",
-      onClick: console.log
+      onClick: () => Log.info("close clicked")
     },
     secondaryButtonProps: {
       children: "Cancel",
-      onClick: console.log
+      onClick: () => Log.info("secondary clicked")
     }
   }
 };

@@ -4,9 +4,9 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 import Joyride, { Step } from "react-joyride";
 
+import { useMyUser } from "@/connections/User";
 import { useModalContext } from "@/context/modal.provider";
 import { useNavbarContext } from "@/context/navbar.provider";
-import { useUserData } from "@/hooks/useUserData";
 
 import { ModalId } from "../Modal/ModalConst";
 import ToolTip from "./Tooltip";
@@ -31,9 +31,9 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
   const { setIsOpen: setIsNavOpen, setLinksDisabled: setNavLinksDisabled } = useNavbarContext();
 
   const isLg = useMediaQuery("(min-width:1024px)");
-  const userData = useUserData();
+  const [, { user }] = useMyUser();
 
-  const TOUR_COMPLETED_STORAGE_KEY = `${tourId}_${TOUR_COMPLETED_KEY}_${userData?.uuid}`;
+  const TOUR_COMPLETED_STORAGE_KEY = `${tourId}_${TOUR_COMPLETED_KEY}_${user?.uuid}`;
   const TOUR_SKIPPED_STORAGE_KEY = `${tourId}_${TOUR_SKIPPED_KEY}`;
 
   const floaterProps = useMemo(() => {
@@ -79,16 +79,16 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
   }, [closeModal, isLg, setIsNavOpen, setNavLinksDisabled]);
 
   const handleDontShowAgain = useCallback(() => {
-    if (userData?.uuid) {
+    if (user?.uuid) {
       localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
       onDontShowAgain?.();
       setModalInteracted(true);
       closeModal(ModalId.WELCOME_MODAL);
     }
-  }, [TOUR_COMPLETED_STORAGE_KEY, closeModal, onDontShowAgain, userData?.uuid]);
+  }, [TOUR_COMPLETED_STORAGE_KEY, closeModal, onDontShowAgain, user?.uuid]);
 
   useEffect(() => {
-    const userId = userData?.uuid?.toString();
+    const userId = user?.uuid?.toString();
     if (userId) {
       const isSkipped = sessionStorage.getItem(TOUR_SKIPPED_STORAGE_KEY) === "true";
       const isCompleted = localStorage.getItem(TOUR_COMPLETED_STORAGE_KEY) === "true";
@@ -105,7 +105,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasWelcomeModal, modalInteracted, userData?.uuid]);
+  }, [hasWelcomeModal, modalInteracted, user?.uuid]);
 
   useEffect(() => {
     if (tourEnabled) {
@@ -134,7 +134,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
               }
             }}
             callback={data => {
-              if (data.status === "finished" && userData?.uuid) {
+              if (data.status === "finished" && user?.uuid) {
                 localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
                 setTourEnabled(false);
                 setNavLinksDisabled?.(false);

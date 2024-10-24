@@ -14,6 +14,7 @@ import {
   usePostV2TerrafundNewSitePolygonUuidNewVersion
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 const dropdownOptionsRestoration = [
   {
@@ -211,7 +212,7 @@ const AttributeInformation = ({
           }
         );
       } catch (error) {
-        console.error("Error creating polygon version:", error);
+        Log.error("Error creating polygon version:", error);
       }
     }
     const response = (await fetchGetV2SitePolygonUuid({
