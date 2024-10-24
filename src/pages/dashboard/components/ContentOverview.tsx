@@ -55,7 +55,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-  console.log("dataHectaresUnderRestoration", dataHectaresUnderRestoration);
 
   const { openModal, closeModal } = useModalContext();
   const ModalMap = () => {

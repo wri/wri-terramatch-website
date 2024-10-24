@@ -5,12 +5,13 @@ export const CustomXAxisTick: React.FC<any> = props => {
   const words = payload.value.split(" ");
   const lineHeight = 16;
   const topPadding = 20;
+  const maxLineLength = 16;
   let lines: string[] = [];
   let currentLine = words[0];
   for (let i = 1; i < words.length; i++) {
     const word = words[i];
     const testLine = `${currentLine} ${word}`;
-    if (testLine.length > 16) {
+    if (testLine.length > maxLineLength) {
       lines.push(currentLine);
       currentLine = word;
     } else {
