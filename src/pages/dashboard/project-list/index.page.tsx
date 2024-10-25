@@ -106,7 +106,7 @@ const ProjectList = () => {
           project: item?.name,
           organization: item?.organisation,
           programme: item?.programme,
-          country: { label: item?.project_country, image: `/flags/${item?.country_slug.toLowerCase()}.svg` },
+          country: { label: item?.project_country, image: `/flags/${item?.country_slug?.toLowerCase()}.svg` },
           treesPlanted: item.trees_under_restoration.toLocaleString(),
           restorationHectares: item.hectares_under_restoration.toLocaleString(),
           jobsCreated: item.jobs_created.toLocaleString()
