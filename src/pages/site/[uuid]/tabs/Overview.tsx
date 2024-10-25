@@ -40,6 +40,7 @@ import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/gene
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { FileType, UploadedFile } from "@/types/common";
+import Log from "@/utils/log";
 
 import SiteArea from "../components/SiteArea";
 
@@ -164,7 +165,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       setSubmitPolygonLoaded(false);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message as string;
+        let errorMessage = (error as { message: string }).message;
         const parsedMessage = JSON.parse(errorMessage);
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
@@ -348,7 +349,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             setShouldRefetchPolygonData(true);
             openNotification("success", t("Success! Your polygons were submitted."));
           } catch (error) {
-            console.log(error);
+            Log.error("Failed to fetch polygon statuses", error);
           }
         }}
       />

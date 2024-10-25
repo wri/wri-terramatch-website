@@ -10,11 +10,7 @@ import { useNavbarContext } from "@/context/navbar.provider";
 import Container from "../Layout/Container";
 import NavbarContent from "./NavbarContent";
 
-export interface NavbarProps {
-  isLoggedIn?: boolean;
-}
-
-const Navbar = (props: NavbarProps): JSX.Element => {
+const Navbar = (): JSX.Element => {
   const { isOpen, setIsOpen, linksDisabled } = useNavbarContext();
 
   const isLg = useMediaQuery("(min-width:1024px)");
@@ -37,7 +33,7 @@ const Navbar = (props: NavbarProps): JSX.Element => {
           <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         </a>
         <When condition={!isOpen}>
-          <NavbarContent className="hidden items-center sm:flex sm:gap-4 lg:gap-8" isLoggedIn={props.isLoggedIn} />
+          <NavbarContent className="hidden items-center sm:flex sm:gap-4 lg:gap-8" />
         </When>
         <If condition={isOpen}>
           <Then>
@@ -68,7 +64,6 @@ const Navbar = (props: NavbarProps): JSX.Element => {
             "relative flex flex-col items-center justify-center gap-4 sm:hidden",
             isOpen && "h-[calc(100vh-70px)]"
           )}
-          isLoggedIn={props.isLoggedIn}
           handleClose={() => setIsOpen?.(false)}
         />
       </When>
