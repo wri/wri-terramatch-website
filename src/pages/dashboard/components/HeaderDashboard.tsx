@@ -147,6 +147,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const handleChange = (selectName: string, value: OptionValue[]) => {
     setFilters(prevValues => ({
       ...prevValues,
+      uuid: prevValues.uuid ? "" : prevValues.uuid, // Actualiza a "" si tiene un valor
       [selectName]: value
     }));
   };
@@ -158,11 +159,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       setSelectedCountry(selectedCountry);
       setFilters(prevValues => ({
         ...prevValues,
+        uuid: prevValues.uuid ? "" : prevValues.uuid,
         country: selectedCountry
       }));
     } else {
       setFilters(prevValues => ({
         ...prevValues,
+        uuid: prevValues.uuid ? "" : prevValues.uuid,
         country: {
           country_slug: "",
           id: 0,
@@ -268,6 +271,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     setSelectedCountry(undefined);
                     setFilters(prevValues => ({
                       ...prevValues,
+                      uuid: prevValues.uuid ? "" : prevValues.uuid,
                       country: {
                         country_slug: "",
                         id: 0,

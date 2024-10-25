@@ -74,6 +74,15 @@ export const useDashboardData = (filters: any) => {
   }, [filters]);
 
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+
+  const activeProjectsQueryParams: any = useMemo(() => {
+    const modifiedFilters = {
+      ...updateFilters,
+      "v2_projects.uuid": ""
+    };
+    return createQueryParams(modifiedFilters);
+  }, [updateFilters]);
+
   const { showLoader, hideLoader } = useLoading();
   const {
     data: totalSectionHeader,
@@ -93,7 +102,7 @@ export const useDashboardData = (filters: any) => {
 
   const { searchTerm } = useDashboardContext();
   const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
-    { queryParams: queryParams },
+    { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
 

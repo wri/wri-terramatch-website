@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import { useEffect } from "react";
 import { When } from "react-if";
 
-import Breadcrumbs from "@/components/elements/Breadcrumbs/Breadcrumbs";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -18,6 +17,7 @@ import {
 } from "@/utils/dashboardUtils";
 
 import ContentOverview from "./components/ContentOverview";
+import DashboardBreadcrumbs from "./components/DashboardBreadcrumbs";
 import SecDashboard from "./components/SecDashboard";
 import {
   ACTIVE_COUNTRIES_TOOLTIP,
@@ -184,25 +184,23 @@ const Dashboard = () => {
       )
     : [];
 
-  const DATA_ACTIVE_COUNTRY = activeProjects
-    ? activeProjects?.map(
-        (item: {
-          uuid: string;
-          name: string;
-          hectares_under_restoration: number;
-          trees_under_restoration: number;
-          jobs_created: number;
-          volunteers: number;
-        }) => ({
-          uuid: item.uuid,
-          project: item?.name,
-          treesPlanted: item.trees_under_restoration.toLocaleString(),
-          restorationHectares: item.hectares_under_restoration.toLocaleString(),
-          jobsCreated: item.jobs_created.toLocaleString(),
-          volunteers: item.volunteers.toLocaleString()
-        })
-      )
-    : [];
+  const mapActiveProjects = (excludeUUID?: string) => {
+    return activeProjects
+      ? activeProjects
+          .filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID)
+          .map((item: any) => ({
+            uuid: item.uuid,
+            project: item.name,
+            treesPlanted: item.trees_under_restoration.toLocaleString(),
+            restorationHectares: item.hectares_under_restoration.toLocaleString(),
+            jobsCreated: item.jobs_created.toLocaleString(),
+            volunteers: item.volunteers.toLocaleString()
+          }))
+      : [];
+  };
+
+  const DATA_ACTIVE_COUNTRY = mapActiveProjects();
+  const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = mapActiveProjects(filters.uuid);
 
   const parseJobCreatedByType = (data: any, type: string) => {
     if (!data) return { type, chartData: [] };
@@ -259,18 +257,15 @@ const Dashboard = () => {
           </When>
           <When condition={filters.uuid}>
             <div>
-              <Breadcrumbs
-                links={[
-                  {
-                    title: t(`${getFrameworkName(frameworks, dashboardProjectDetails?.framework)}`),
-                    path: "/dashboard"
-                  },
-                  { title: t(`${dashboardProjectDetails?.country}`), path: "/dashboard/country/AU" },
-                  { title: t(`${dashboardProjectDetails?.name}`) }
-                ]}
-                className="pt-0 "
+              <DashboardBreadcrumbs
+                framework={getFrameworkName(frameworks, dashboardProjectDetails?.framework) || ""}
+                countryId={dashboardProjectDetails?.country_id}
+                countryName={dashboardProjectDetails?.country}
+                countrySlug={dashboardProjectDetails?.country_slug}
+                projectName={dashboardProjectDetails?.name}
+                className="pt-0"
                 textVariant="text-14"
-                clasNameText="!no-underline hover:text-primary hover:opacity-100 mt-0.5 hover:mb-0.5 hover:mt-0"
+                clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
               />
             </div>
           </When>
@@ -454,10 +449,22 @@ const Dashboard = () => {
         </PageRow>
       </div>
       <ContentOverview
-        dataTable={filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : DATA_ACTIVE_COUNTRY}
+        dataTable={
+          filters.country.id === 0
+            ? DATA_ACTIVE_PROGRAMME
+            : filters.uuid
+            ? DATA_ACTIVE_COUNTRY_WITHOUT_UUID
+            : DATA_ACTIVE_COUNTRY
+        }
         centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
-        titleTable={t(filters.country.id === 0 ? "ACTIVE COUNTRIES" : "ACTIVE PROJECTS")}
+        titleTable={t(
+          filters.country.id === 0
+            ? "ACTIVE COUNTRIES"
+            : filters.uuid
+            ? `Other Projects in ${filters?.country?.data?.label}`
+            : "ACTIVE PROJECTS"
+        )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
           totalSectionHeader,
           dashboardVolunteersSurvivalRate,
