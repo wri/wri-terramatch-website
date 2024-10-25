@@ -5901,7 +5901,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
             className="bg-blueCustom-100 "
           >
             <tr
-              className="bg-neutral-150 sticky top-0 z-10 "
+              className="bg-neutral-150 sticky top-0 z-auto"
             >
               <th
                 align="left"
