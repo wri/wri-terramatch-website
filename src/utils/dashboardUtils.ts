@@ -8,6 +8,24 @@ type DataPoint = {
   "Non Profit": number;
 };
 
+type InputData = {
+  country: string;
+  countrySlug: string;
+  descriptionObjetive: string;
+  landTenure: string | null;
+  name: string;
+  organisation: string;
+  restorationStrategy: string | null;
+  survivalRate: string | null;
+  targetLandUse: string | null;
+};
+
+type Objetive = {
+  objetiveText: string;
+  preferredLanguage: string;
+  landTenure: string;
+};
+
 export interface ChartDataItem {
   name: string;
   [key: string]: number | string;
@@ -231,6 +249,12 @@ export const formatLabelsVolunteers = (value: string): string => {
 
 export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
 
+export const getBarColorRestoration = (name: string) => {
+  if (name.includes("Tree Planting")) return "#7BBD31";
+  if (name.includes("direct seeding")) return "#27A9E0";
+  return "#13487A";
+};
+
 export const getPercentageVolunteers = (value: number, total: number): string => {
   return ((value / total) * 100).toFixed(1);
 };
@@ -253,6 +277,12 @@ const landUseTypeOptions: Option[] = [
   { title: "Peatland", value: "peatland" },
   { title: "Open Natural Ecosystem", value: "open-natural-ecosystem" }
 ];
+
+const getRestorationStrategyOptions = {
+  "tree-planting": "Tree Planting",
+  "direct-seeding": "Direct Seeding",
+  "assisted-natural-regeneration": "Assisted Natural Regeneration"
+};
 
 export const parseHectaresUnderRestorationData = (
   totalSectionHeader: TotalSectionHeader,
@@ -289,8 +319,12 @@ export const parseHectaresUnderRestorationData = (
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
-
-  const restorationStrategiesRepresented = objectToArray(hectaresUnderRestoration?.restoration_strategies_represented);
+  const restorationStrategiesRepresented = objectToArray(
+    hectaresUnderRestoration?.restoration_strategies_represented
+  ).map(item => ({
+    label: getRestorationStrategyOptions[item.label as keyof typeof getRestorationStrategyOptions] ?? item.label,
+    value: item.value
+  }));
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
     item => ({
@@ -308,4 +342,19 @@ export const parseHectaresUnderRestorationData = (
     restorationStrategiesRepresented,
     graphicTargetLandUseTypes
   };
+};
+
+export const parseDataToObjetive = (data: InputData): Objetive => {
+  const objetiveText = data?.descriptionObjetive;
+
+  return {
+    objetiveText,
+    preferredLanguage: "English",
+    landTenure: data?.landTenure ? data?.landTenure : "Unknown"
+  };
+};
+
+export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
+  const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
+  return framework ? framework.name : undefined;
 };

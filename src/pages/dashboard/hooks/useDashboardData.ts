@@ -9,6 +9,7 @@ import {
   useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
+  useGetV2DashboardProjectDetailsProject,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
@@ -66,11 +67,22 @@ export const useDashboardData = (filters: any) => {
       programmes: filters.programmes,
       country: filters.country.country_slug,
       "organisations.type": filters.organizations,
-      landscapes: filters.landscapes
+      landscapes: filters.landscapes,
+      "v2_projects.uuid": filters.uuid
     };
     setUpdateFilters(parsedFilters);
   }, [filters]);
+
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+
+  const activeProjectsQueryParams: any = useMemo(() => {
+    const modifiedFilters = {
+      ...updateFilters,
+      "v2_projects.uuid": ""
+    };
+    return createQueryParams(modifiedFilters);
+  }, [updateFilters]);
+
   const { showLoader, hideLoader } = useLoading();
   const {
     data: totalSectionHeader,
@@ -90,7 +102,7 @@ export const useDashboardData = (filters: any) => {
 
   const { searchTerm } = useDashboardContext();
   const { data: activeProjects } = useGetV2DashboardActiveProjects<any>(
-    { queryParams: queryParams },
+    { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
 
@@ -110,6 +122,10 @@ export const useDashboardData = (filters: any) => {
   const { data: hectaresUnderRestoration } = useGetV2DashboardIndicatorHectaresRestoration<any>({
     queryParams: queryParams
   });
+  const { data: dashboardProjectDetails } = useGetV2DashboardProjectDetailsProject<any>(
+    { pathParams: { project: filters.uuid } },
+    { enabled: !!filters.uuid }
+  );
 
   useEffect(() => {
     if (topData?.data) {
@@ -150,6 +166,7 @@ export const useDashboardData = (filters: any) => {
     numberTreesPlanted,
     totalSectionHeader,
     hectaresUnderRestoration,
+    dashboardProjectDetails,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,

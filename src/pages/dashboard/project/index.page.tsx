@@ -30,7 +30,6 @@ import {
 } from "../constants/tooltips";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
-  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -308,7 +307,7 @@ const ProjectView = () => {
         </PageRow>
       </div>
       <ContentOverview
-        dataTable={DATA_ACTIVE_COUNTRY}
+        dataTable={[]}
         columns={COLUMN_ACTIVE_COUNTRY}
         titleTable={t("ACTIVE PROJECTS")}
         dataHectaresUnderRestoration={{

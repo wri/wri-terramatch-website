@@ -34,7 +34,8 @@ export const DashboardPopup = (event: any) => {
         programmes: [],
         country: isoCountry,
         "organisations.type": [],
-        landscapes: []
+        landscapes: [],
+        uuid: ""
       };
       const queryParams: any = createQueryParams(parsedFilters);
       const response: any = await fetchGetV2DashboardTotalSectionHeaderCountry({ queryParams });
