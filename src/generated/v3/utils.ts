@@ -2,8 +2,6 @@ import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErro
 import Log from "@/utils/log";
 import { selectLogin } from "@/connections/Login";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
 type SelectorOptions<TQueryParams, TPathParams> = {
@@ -12,6 +10,29 @@ type SelectorOptions<TQueryParams, TPathParams> = {
   method: string;
   queryParams?: TQueryParams;
   pathParams?: TPathParams;
+};
+
+const USER_SERVICE_URL = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? "";
+const JOB_SERVICE_URL = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? "";
+const V3_NAMESPACES: Record<string, string> = {
+  auth: USER_SERVICE_URL,
+  users: USER_SERVICE_URL,
+  jobs: JOB_SERVICE_URL
+} as const;
+
+const getBaseUrl = (url: string) => {
+  if (process.env.NEXT_PUBLIC_API_BASE_URL?.startsWith("https:")) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+
+  // The v3 space is divided into services, and each service may host multiple namespaces. In
+  // local dev, we don't use a proxy, so the FE needs to know how to connect to each service
+  // individually.
+  const namespace = url.substring(1).split("/")[0];
+  const baseUrl = V3_NAMESPACES[namespace];
+  if (baseUrl == null) throw new Error(`Namespace not defined! [${namespace}]`);
+
+  return baseUrl;
 };
 
 export const resolveUrl = (
@@ -26,7 +47,8 @@ export const resolveUrl = (
   searchParams.sort();
   let query = searchParams.toString();
   if (query) query = `?${query}`;
-  return `${baseUrl}${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)]) + query}`;
+
+  return `${getBaseUrl(url)}${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)]) + query}`;
 };
 
 export function isFetching<TQueryParams extends {}, TPathParams extends {}>({

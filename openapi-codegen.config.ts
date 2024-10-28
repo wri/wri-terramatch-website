@@ -24,7 +24,9 @@ dotenv.config();
 // are namespaced by feature set rather than service (a service may contain multiple namespaces), we
 // isolate the generated API integration by service to make it easier for a developer to find where
 // the associated BE code is for a given FE API integration.
-const SERVICES = ["user-service", "job-service"];
+const SERVICES = {
+  "user-service": process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL
+};
 
 const config: Record<string, Config> = {
   api: {
@@ -63,12 +65,12 @@ const config: Record<string, Config> = {
   }
 };
 
-for (const service of SERVICES) {
+for (const [service, baseUrl] of Object.entries(SERVICES)) {
   const name = _.camelCase(service);
   config[name] = {
     from: {
       source: "url",
-      url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/${service}/documentation/api-json`
+      url: `${baseUrl}/${service}/documentation/api-json`
     },
     outputDir: `src/generated/v3/${name}`,
     to: async context => {

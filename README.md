@@ -41,8 +41,9 @@ The V3 API has a different API layer, but the generation is similar:
 yarn generate:services
 ```
 
-When adding a new **service** app to the v3 API, a few steps are needed to integrate it:
-* In `openapi-codegen.config.ts`, add the new service name to the `SERVICES` array (e.g. `foo-service`). 
+When adding a new **service** app to the v3 API:
+* In your local .env, define the service URL 
+* In `openapi-codegen.config.ts`, add the new service name to the `SERVICES` object (e.g. `foo-service`). 
 * This will generate a new target, which needs to be added to `package.json`:
   * Under scripts, add `"generate:fooService": "npm run generate:fooService"`
   * Under the `"generate:services"` script, add the new service: `"generate:services": "npm run generate:userService && npm run generate:fooService`
@@ -50,8 +51,12 @@ When adding a new **service** app to the v3 API, a few steps are needed to integ
   modify it to match `userServiceFetcher.ts`. 
   * This file does not get regenerated after the first time, and so it can utilize the same utilities 
     for interfacing with the redux API layer / connection system that the other v3 services use.
+* Follow directions below for all namespaces and resources in the new service
 
-When adding a new **resource** to the v3 API, a couple of steps are needed to integrate it:
+When adding a new **namespace** to the V3 API:
+* In `geneated/v3/utils.ts`, add namespace -> service URL mapping to `V3_NAMESPACES`
+
+When adding a new **resource** to the v3 API:
 * The resource needs to be specified in shape of the redux API store. In `apiSlice.ts`, add the new 
   resource plural name (the `type` returned in the API responses) to the store by adding it to the 
   `RESOURCES` const. This will make sure it's listed in the type of the ApiStore so that resources that match that type are seamlessly folded into the store cache structure.
