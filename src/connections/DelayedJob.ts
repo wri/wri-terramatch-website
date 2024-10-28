@@ -7,6 +7,7 @@ import { useConnection } from "@/hooks/useConnection";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
+import { loadConnection } from "@/utils/loadConnection";
 import { selectorCache } from "@/utils/selectorCache";
 
 type DelayedJobConnection = {
@@ -67,3 +68,28 @@ export const useDelayedJobResult = (delayedJobId?: string): Connected<DelayedJob
   const status = jobResult?.job?.status;
   return loaded && status !== "pending" ? [true, jobResult] : [false, {}];
 };
+
+export async function loadDelayedJobResult<T>(fetchPromise: Promise<{ job_uuid?: string }>): Promise<T> {
+  const initialResult = await fetchPromise;
+  if (initialResult.job_uuid != null) {
+    return initialResult as T;
+  }
+
+  const loadJob = () => loadConnection(delayedJobConnection, { delayedJobId: initialResult.job_uuid });
+
+  // Load the job initially, and then keep loading the job after the defined timeout until we either
+  // get a job find failed, or the job status is not pending.
+  let jobResult: DelayedJobConnection;
+  for (
+    jobResult = await loadJob();
+    !jobResult.jobFindFailed && jobResult.job!.status === "pending";
+    jobResult = await loadJob()
+  ) {
+    await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
+  }
+
+  if (jobResult.jobFindFailed) throw new Error("The jobs endpoint encountered an error");
+  if (jobResult.job!.status === "failed") throw new Error("Delayed job failed");
+
+  return jobResult.job!.payload as T;
+}
