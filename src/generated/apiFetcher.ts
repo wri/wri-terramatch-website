@@ -1,7 +1,8 @@
-import { getAccessToken } from "../admin/apiProvider/utils/token";
+import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { ApiContext } from "./apiContext";
 import FormData from "form-data";
 import Log from "@/utils/log";
+import { resolveUrl as resolveV3Url } from "./v3/utils";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
 
@@ -98,9 +99,9 @@ export async function apiFetch<
 
     if (response.headers.get("content-type")?.includes("json")) {
       const payload = await response.json();
-      if (payload.job_uuid == null) return payload;
+      if (payload.data?.job_uuid == null) return payload;
 
-      return await processDelayedJob<TData>(signal, payload.job_uuid);
+      return await processDelayedJob<TData>(signal, payload.data.job_uuid);
     } else {
       // if it is not a json response, assume it is a blob and cast it to TData
       return (await response.blob()) as unknown as TData;
@@ -122,7 +123,7 @@ const resolveUrl = (url: string, queryParams: Record<string, string> = {}, pathP
   return url.replace(/\{\w*\}/g, key => pathParams[key.slice(1, -1)]) + query;
 };
 
-const JOB_POLL_TIMEOUT = 300; // in ms
+const JOB_POLL_TIMEOUT = 500; // in ms
 
 type JobResult = {
   data: {
@@ -141,7 +142,8 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string): P
     const accessToken = typeof window !== "undefined" && getAccessToken();
     if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
-    response = await fetch(`${baseUrl}/jobs/v3/delayedJobs/${delayedJobId}`, { signal, headers });
+    const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
+    response = await fetch(url, { signal, headers });
     if (!response.ok) {
       try {
         error = {
