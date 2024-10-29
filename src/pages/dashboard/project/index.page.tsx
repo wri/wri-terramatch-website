@@ -316,6 +316,7 @@ const ProjectView = () => {
           graphicTargetLandUseTypes: []
         }}
         textTooltipTable={t(ACTIVE_PROJECTS_TOOLTIP)}
+        showImagesButton
       />
     </div>
   );
