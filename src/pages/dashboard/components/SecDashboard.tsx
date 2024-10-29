@@ -65,7 +65,7 @@ const SecDashboard = ({
 
   const tableColumns = [
     {
-      header: isTableProject ? "Project" : "Specie",
+      header: isTableProject ? "Organization" : "Specie",
       accessorKey: "label",
       enableSorting: false
     },
