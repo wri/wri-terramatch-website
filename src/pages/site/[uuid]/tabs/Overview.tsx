@@ -115,7 +115,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       uploadFiles();
       setSaveFlags(false);
       closeModal(ModalId.ADD_POLYGONS);
-      hideLoader();
     }
   }, [files, saveFlags]);
 
@@ -137,7 +136,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       formData.append("polygon_loaded", polygonLoaded.toString());
       formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
       let newRequest: any = formData;
-
+      showLoader();
       switch (fileType) {
         case "geojson":
           uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
@@ -174,6 +173,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       } else {
         openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
       }
+    } finally {
+      hideLoader();
     }
   };
 
