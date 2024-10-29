@@ -118,6 +118,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  showImagesButton?: boolean;
 }
 
 export const MapContainer = ({
@@ -150,6 +151,7 @@ export const MapContainer = ({
   entityData,
   imageGalleryRef,
   centroids,
+  showImagesButton,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -567,7 +569,9 @@ export const MapContainer = ({
         </ControlGroup>
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
-            <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            <When condition={showImagesButton}>
+              <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            </When>
             {isDashboard === "dashboard" ? (
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (

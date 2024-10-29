@@ -44,6 +44,7 @@ interface ContentOverviewProps<TData> {
   centroids?: DashboardGetProjectsData[];
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   polygonsData?: any;
+  showImagesButton?: boolean;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -54,7 +55,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     textTooltipTable,
     centroids,
     polygonsData,
-    dataHectaresUnderRestoration
+    dataHectaresUnderRestoration,
+    showImagesButton
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -142,6 +144,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             className="custom-popup-close-button"
             centroids={centroids}
             showPopups={true}
+            showImagesButton={showImagesButton}
             polygonsData={polygonsData as Record<string, string[]>}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">

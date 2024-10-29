@@ -3,7 +3,6 @@ import { useContext } from "react";
 
 import Breadcrumbs from "@/components/elements/Breadcrumbs/Breadcrumbs";
 import Text from "@/components/elements/Text/Text";
-import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
@@ -166,15 +165,6 @@ const ProjectView = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip
-                    title={item.label}
-                    content={t(item.tooltip)}
-                    placement="top"
-                    width="w-56 lg:w-64"
-                    trigger="click"
-                  >
-                    <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-                  </ToolTip>
                 </div>
               </div>
             ))}
@@ -316,6 +306,7 @@ const ProjectView = () => {
           graphicTargetLandUseTypes: []
         }}
         textTooltipTable={t(ACTIVE_PROJECTS_TOOLTIP)}
+        showImagesButton
       />
     </div>
   );
