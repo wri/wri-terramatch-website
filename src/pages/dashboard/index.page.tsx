@@ -350,7 +350,7 @@ const Dashboard = () => {
             />
             <When condition={!filters.uuid}>
               <SecDashboard
-                title={t("Top 5 Projects with the Most Planted Trees")}
+                title={t("Top 5 organizations with the Most Planted Trees")}
                 type="toggle"
                 secondOptionsData={dataToggleGraphic}
                 data={topProject}

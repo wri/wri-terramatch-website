@@ -125,8 +125,8 @@ export const useDashboardData = (filters: any) => {
   useEffect(() => {
     if (topData?.data) {
       const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
-      const tableData = projects.map((project: { project: string; trees_planted: number }) => ({
-        label: project.project,
+      const tableData = projects.map((project: { organization: string; project: string; trees_planted: number }) => ({
+        label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
         value: project.trees_planted
       }));
