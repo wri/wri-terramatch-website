@@ -8239,7 +8239,7 @@ export type GetV2WorkdaysENTITYUUIDResponse = {
     collection?: string;
     readable_collection?: string;
     demographics?: {
-      type?: "gender" | "age" | "ethnicity";
+      type?: "gender" | "age" | "ethnicity" | "caste";
       subtype?: string;
       name?: string;
       amount?: number;
@@ -8272,6 +8272,77 @@ export const useGetV2WorkdaysENTITYUUID = <TData = GetV2WorkdaysENTITYUUIDRespon
   return reactQuery.useQuery<GetV2WorkdaysENTITYUUIDResponse, GetV2WorkdaysENTITYUUIDError, TData>(
     queryKeyFn({ path: "/v2/workdays/{ENTITY}/{UUID}", operationId: "getV2WorkdaysENTITYUUID", variables }),
     ({ signal }) => fetchGetV2WorkdaysENTITYUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2RestorationPartnersENTITYUUIDPathParams = {
+  /**
+   * allowed values project-report
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type GetV2RestorationPartnersENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2RestorationPartnersENTITYUUIDResponse = {
+  data?: {
+    uuid?: string;
+    collection?: string;
+    readable_collection?: string;
+    demographics?: {
+      type?: "gender" | "age" | "ethnicity" | "caste";
+      subtype?: string;
+      name?: string;
+      amount?: number;
+    }[];
+  }[];
+};
+
+export type GetV2RestorationPartnersENTITYUUIDVariables = {
+  pathParams: GetV2RestorationPartnersENTITYUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2RestorationPartnersENTITYUUID = (
+  variables: GetV2RestorationPartnersENTITYUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2RestorationPartnersENTITYUUIDResponse,
+    GetV2RestorationPartnersENTITYUUIDError,
+    undefined,
+    {},
+    {},
+    GetV2RestorationPartnersENTITYUUIDPathParams
+  >({ url: "/v2/restoration-partners/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2RestorationPartnersENTITYUUID = <TData = GetV2RestorationPartnersENTITYUUIDResponse>(
+  variables: GetV2RestorationPartnersENTITYUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2RestorationPartnersENTITYUUIDResponse,
+      GetV2RestorationPartnersENTITYUUIDError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2RestorationPartnersENTITYUUIDResponse,
+    GetV2RestorationPartnersENTITYUUIDError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/restoration-partners/{ENTITY}/{UUID}",
+      operationId: "getV2RestorationPartnersENTITYUUID",
+      variables
+    }),
+    ({ signal }) => fetchGetV2RestorationPartnersENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -36178,6 +36249,11 @@ export type QueryOperation =
       path: "/v2/workdays/{ENTITY}/{UUID}";
       operationId: "getV2WorkdaysENTITYUUID";
       variables: GetV2WorkdaysENTITYUUIDVariables;
+    }
+  | {
+      path: "/v2/restoration-partners/{ENTITY}/{UUID}";
+      operationId: "getV2RestorationPartnersENTITYUUID";
+      variables: GetV2RestorationPartnersENTITYUUIDVariables;
     }
   | {
       path: "/v2/stratas/{ENTITY}/{UUID}";

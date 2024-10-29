@@ -4638,7 +4638,19 @@ export type V2WorkdayRead = {
   collection?: string;
   readable_collection?: string;
   demographics?: {
-    type?: "gender" | "age" | "ethnicity";
+    type?: "gender" | "age" | "ethnicity" | "caste";
+    subtype?: string;
+    name?: string;
+    amount?: number;
+  }[];
+};
+
+export type V2RestorationPartnerRead = {
+  uuid?: string;
+  collection?: string;
+  readable_collection?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity" | "caste";
     subtype?: string;
     name?: string;
     amount?: number;
@@ -22196,8 +22208,8 @@ export type V2ProjectInviteCreate = {
   email_address?: string;
 };
 
-export type WorkdayDemographic = {
-  type?: "gender" | "age" | "ethnicity";
+export type Demographic = {
+  type?: "gender" | "age" | "ethnicity" | "caste";
   subtype?: string;
   name?: string;
   amount?: number;
