@@ -30,6 +30,8 @@ import { wrapper } from "@/store/store";
 import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
 
+import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
+
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
   ssr: false
 });
@@ -75,9 +77,11 @@ const _App = ({ Component, ...rest }: AppProps) => {
                         <Toast />
                         <If condition={isOnDashboards}>
                           <Then>
-                            <DashboardLayout>
-                              <Component {...props.pageProps} />
-                            </DashboardLayout>
+                            <DashboardAnalyticsWrapper>
+                              <DashboardLayout>
+                                <Component {...props.pageProps} />
+                              </DashboardLayout>
+                            </DashboardAnalyticsWrapper>
                           </Then>
                           <Else>
                             <MainLayout>
