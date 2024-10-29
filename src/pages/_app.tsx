@@ -8,7 +8,6 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect } from "react";
 import { Else, If, Then } from "react-if";
 import { Provider as ReduxProvider } from "react-redux";
 
@@ -31,6 +30,8 @@ import { wrapper } from "@/store/store";
 import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
 
+import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
+
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
   ssr: false
 });
@@ -42,39 +43,6 @@ const _App = ({ Component, ...rest }: AppProps) => {
   const isOnDashboards = router.asPath.includes("/dashboard");
 
   const { store, props } = wrapper.useWrappedStore(rest);
-
-  useEffect(() => {
-    if (isOnDashboards) {
-      // Hotjar Script
-      const hotjarScript = document.createElement("script");
-      hotjarScript.innerHTML = `
-        (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:3357710,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-      `;
-      document.head.appendChild(hotjarScript);
-
-      // Google Analytics Script
-      const gaScript = document.createElement("script");
-      gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-2K60BYCCPY";
-      gaScript.async = true;
-      document.head.appendChild(gaScript);
-
-      const gaConfigScript = document.createElement("script");
-      gaConfigScript.innerHTML = `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-2K60BYCCPY');
-      `;
-      document.head.appendChild(gaConfigScript);
-    }
-  }, [isOnDashboards]);
 
   setClientSideTranslations(props);
   setupYup(t);
@@ -109,9 +77,11 @@ const _App = ({ Component, ...rest }: AppProps) => {
                         <Toast />
                         <If condition={isOnDashboards}>
                           <Then>
-                            <DashboardLayout>
-                              <Component {...props.pageProps} />
-                            </DashboardLayout>
+                            <DashboardAnalyticsWrapper>
+                              <DashboardLayout>
+                                <Component {...props.pageProps} />
+                              </DashboardLayout>
+                            </DashboardAnalyticsWrapper>
                           </Then>
                           <Else>
                             <MainLayout>
