@@ -3,27 +3,21 @@ import React from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import Icon from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 
 import SecDashboard from "./components/SecDashboard";
 import {
-  HECTARES_UNDER_RESTORATION_TOOLTIP,
   JOBS_CREATED_BY_AGE_TOOLTIP,
   JOBS_CREATED_BY_GENDER_TOOLTIP,
   JOBS_CREATED_SECTION_TOOLTIP,
-  JOBS_CREATED_TOOLTIP,
   NEW_FULL_TIME_JOBS_TOOLTIP,
   NEW_PART_TIME_JOBS_TOOLTIP,
   NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
   NUMBER_OF_TREES_PLANTED_TOOLTIP,
   TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
   TOTAL_VOLUNTEERS_TOOLTIP,
-  TREES_PLANTED_TOOLTIP,
   TREES_RESTORED_SECTION_TOOLTIP,
   VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
   VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
@@ -53,18 +47,15 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   const dashboardHeader = [
     {
       label: "Trees Planted",
-      value: "12.2M",
-      tooltip: TREES_PLANTED_TOOLTIP
+      value: "12.2M"
     },
     {
       label: "Hectares Under Restoration",
-      value: "5,220 ha",
-      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
+      value: "5,220 ha"
     },
     {
       label: "Jobs Created",
-      value: "23,000",
-      tooltip: JOBS_CREATED_TOOLTIP
+      value: "23,000"
     }
   ];
 
@@ -95,15 +86,6 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip
-                    title={t(item.label)}
-                    content={t(item.tooltip)}
-                    placement="top"
-                    width="w-56 lg:w-64"
-                    trigger="click"
-                  >
-                    <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-                  </ToolTip>
                 </div>
               </div>
             ))}

@@ -61,8 +61,7 @@ export interface SectionRow {
   amount: number;
 }
 
-export function calculateTotals(demographics: Demographic[]) {
-  const { framework } = useFrameworkContext();
+export function calculateTotals(demographics: Demographic[], framework: Framework) {
   const initialCounts = getInitialCounts(framework);
   const counts = demographics.reduce(function (counts, { type, amount }) {
     const typedType = type as keyof FrameworkDemographicCountTypes<typeof framework>;
@@ -87,9 +86,10 @@ export function calculateTotals(demographics: Demographic[]) {
 }
 
 export function useTableStatus(demographics: Demographic[]): { total: number; status: Status } {
+  const { framework } = useFrameworkContext();
   return useMemo(
     function () {
-      const { total, complete } = calculateTotals(demographics);
+      const { total, complete } = calculateTotals(demographics, framework);
 
       let status: Status = "in-progress";
       if (total === 0) {
