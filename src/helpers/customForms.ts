@@ -9,6 +9,7 @@ import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hook
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
+import { Framework } from "@/context/framework.provider";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { Option } from "@/types/common";
 import { urlValidation } from "@/utils/yup";
@@ -161,7 +162,7 @@ export const apiFormQuestionToFormField = (
   entity?: Entity,
   feedbackRequired?: boolean
 ): FormField | null => {
-  const validation = getFieldValidation(question, t);
+  const validation = getFieldValidation(question, t, (entity?.framework_key as Framework) ?? Framework.UNKNOWN);
   const required = question.validation?.required || false;
   const sharedProps = {
     name: question.uuid,
@@ -541,7 +542,7 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   return options;
 };
 
-const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySchema | null => {
+const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framework: Framework): AnySchema | null => {
   let validation;
   const required = question.validation?.required || false;
   const max = question.validation?.max;
@@ -643,7 +644,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
             const { demographics } = value.length > 0 ? value[0] : {};
             if (demographics == null) return true;
 
-            return calculateTotals(demographics).countsMatch;
+            return calculateTotals(demographics, framework).complete;
           }
         );
 
