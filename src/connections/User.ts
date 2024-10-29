@@ -24,7 +24,7 @@ export const selectMe = createSelector([selectMeId, selectUsers], (meId, users) 
 
 const FIND_ME: UsersFindVariables = { pathParams: { id: "me" } };
 
-export const myUserConnection: Connection<UserConnection> = {
+const myUserConnection: Connection<UserConnection> = {
   load: ({ isLoggedIn, user }) => {
     if (user == null && isLoggedIn) usersFind(FIND_ME);
   },
