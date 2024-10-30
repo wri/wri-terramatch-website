@@ -280,7 +280,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             ))}
           </div>
 
-          <div className="flex w-full flex-col gap-5" ref={cardRefsContainer}>
+          <div className="flex w-full flex-col gap-5">
             <div className="flex items-center justify-between">
               <FilterSearchBox placeholder="Search" />
               <div className="flex gap-4">
@@ -302,7 +302,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                 </Button>
               </div>
             </div>
-            <div className=" max-h-[85vh] overflow-auto">
+            <div className=" max-h-[85vh] overflow-auto" ref={cardRefsContainer}>
               {MonitoredCardData.map((data, index) => (
                 <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
                   <DataCard data={data} />

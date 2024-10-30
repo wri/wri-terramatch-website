@@ -192,7 +192,8 @@ export enum IconNames {
   MONITORING_PROFILE = "monitoring-profile",
   DASHBOARD = "dashboard",
   RUN_ALALYSIS = "run-analysis",
-  MAP = "map.svg"
+  MAP = "map",
+  TABLE = "table"
 }
 
 export interface IconProps {
