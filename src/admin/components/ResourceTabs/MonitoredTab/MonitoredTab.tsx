@@ -437,7 +437,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                 </Button>
               </div>
             </div>
-            <div className=" max-h-[85vh] overflow-auto" ref={cardRefsContainer}>
+            <div className=" flex max-h-[85vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
               {MonitoredCardData.map((data, index) => (
                 <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
                   <DataCard data={data} />
