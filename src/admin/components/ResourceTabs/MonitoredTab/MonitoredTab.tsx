@@ -1,15 +1,10 @@
 import classNames from "classnames";
 import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
-import { When } from "react-if";
 
-import Button from "@/components/elements/Button/Button";
-import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import DataCard, { DataStructure } from "./components/DataCard";
-import FormMonitored from "./components/FormMonitored";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -92,7 +87,7 @@ const TableData = [
 
 const MonitoredCardData: DataStructure[] = [
   {
-    label: "Tree Cover (TTC)",
+    label: "Tree Cover TTC",
     tooltipContent: "Tooltip",
     tableData: TableData
   },
@@ -107,22 +102,37 @@ const MonitoredCardData: DataStructure[] = [
     tableData: TableData
   },
   {
-    label: "Hectares by EcoRegion",
+    label: "Restoration by  EcoRegion",
     tooltipContent: "Tooltip",
     tableData: TableData
   },
   {
-    label: "Hectares by Strategy",
+    label: "Restoration by Strategy",
     tooltipContent: "Tooltip",
     tableData: TableData
   },
   {
-    label: "Hectares by Land Use",
+    label: "Restoration by Land Use",
     tooltipContent: "Tooltip",
     tableData: TableData
   },
   {
-    label: "Hectares by Land Use and Strategy",
+    label: "Tree Count",
+    tooltipContent: "Tooltip",
+    tableData: TableData
+  },
+  {
+    label: "Early Tree Verificaiton",
+    tooltipContent: "Tooltip",
+    tableData: TableData
+  },
+  {
+    label: "Field Monitoring",
+    tooltipContent: "Tooltip",
+    tableData: TableData
+  },
+  {
+    label: "MSU Carbon",
     tooltipContent: "Tooltip",
     tableData: TableData
   }
@@ -130,13 +140,9 @@ const MonitoredCardData: DataStructure[] = [
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const [intersectingCard, setIntersectingCard] = useState<string | null>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [isContainerLabelLeft, setIsContainerLabelLeft] = useState<boolean>();
-  const [isContainerLabelRigth, setIsContainerLabelRigth] = useState<boolean>();
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelsContainerRef = useRef<HTMLDivElement>(null);
-  const refWidth = useRef<HTMLDivElement>(null);
   const cardRefsContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -195,36 +201,6 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     };
   }, []);
 
-  useEffect(() => {
-    const labelsContainer = labelsContainerRef.current;
-    if (!labelsContainer) return;
-
-    const handleScroll = () => {
-      setIsContainerLabelLeft(labelsContainer.scrollLeft === 0);
-      setIsContainerLabelRigth(labelsContainer.scrollLeft + labelsContainer.clientWidth >= labelsContainer.scrollWidth);
-    };
-
-    labelsContainer.addEventListener("scroll", handleScroll);
-
-    return () => {
-      labelsContainer.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollRight = () => {
-    if (labelsContainerRef.current) {
-      const scroll = labelsContainerRef.current;
-      scroll.scrollBy({ left: scroll.clientWidth, behavior: "smooth" });
-    }
-  };
-
-  const scrollLeft = () => {
-    if (labelsContainerRef.current) {
-      const scroll = labelsContainerRef.current;
-      scroll.scrollBy({ left: -scroll.clientWidth, behavior: "smooth" });
-    }
-  };
-
   const focusOnCard = (index: number) => {
     const targetElement = cardRefs.current[index];
     if (targetElement) {
@@ -261,32 +237,10 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     }
   };
 
-  useEffect(() => {
-    const observedElement = refWidth.current;
-
-    if (!observedElement) return;
-
-    const resizeObserver = new ResizeObserver(entries => {
-      const entry = entries[0];
-      if (entry.contentRect) {
-        const newWidth = entry.contentRect.width;
-        setContainerWidth(newWidth);
-      }
-    });
-
-    resizeObserver.observe(observedElement);
-
-    return () => {
-      if (observedElement) {
-        resizeObserver.unobserve(observedElement);
-      }
-    };
-  }, []);
-
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
-        <div className="flex w-[22%] flex-col gap-4" ref={refWidth}>
+        {/* <div className="flex w-[22%] flex-col gap-4" ref={refWidth}>
           <div className="relative w-full self-center overflow-hidden rounded-lg">
             <img src="/images/map-img.png" alt="Monitored" className="w-full" />
             <div className="absolute top-0 z-10 flex h-full w-full items-center justify-center">
@@ -297,51 +251,31 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             </div>
           </div>
           <FormMonitored />
-        </div>
-        <div className="flex min-w-0 flex-col gap-4" style={{ width: Math.floor(containerWidth * 3.6) }}>
-          <div className="flex min-w-0 items-center gap-2">
-            <When condition={!isContainerLabelLeft}>
-              <Button variant="white-border" onClick={scrollLeft} className="min-h-fit rounded-full p-1">
-                <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 rotate-180" />
-              </Button>
-            </When>
-
-            <div
-              ref={labelsContainerRef}
-              className="scroll-indicator-hide flex min-w-0 items-center gap-2 overflow-auto"
-            >
-              {MonitoredCardData.map((data, index) => (
-                <button
-                  key={data.label}
-                  onClick={() => focusOnCard(index)}
-                  ref={el => (cardLabelRefs.current[index] = el)}
+        </div> */}
+        <div className="flex w-full min-w-0 gap-4">
+          <div
+            ref={labelsContainerRef}
+            className="scroll-indicator-hide flex w-[16%] min-w-0 flex-col items-center gap-2 overflow-auto"
+          >
+            {MonitoredCardData.map((data, index) => (
+              <button
+                key={data.label}
+                onClick={() => focusOnCard(index)}
+                ref={el => (cardLabelRefs.current[index] = el)}
+                className="w-full"
+              >
+                <Text
+                  variant="text-16-light"
+                  className={classNames("rounded-lg p-2 text-start hover:bg-grey-100", {
+                    "text-primary": intersectingCard === data.label,
+                    "bg-blueCustom-10": intersectingCard === data.label
+                  })}
                 >
-                  <Text
-                    variant="text-12-light"
-                    className={classNames(
-                      "whitespace-nowrap rounded-lg border border-grey-700 px-1 hover:bg-grey-100",
-                      {
-                        "!font-bold": intersectingCard === data.label
-                      }
-                    )}
-                  >
-                    {data.label}
-                  </Text>
-                </button>
-              ))}
-            </div>
-            <When condition={!isContainerLabelRigth}>
-              <Button variant="white-border" onClick={scrollRight} className="min-h-fit rounded-full p-1">
-                <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3" />
-              </Button>
-            </When>
+                  {data.label}
+                </Text>
+              </button>
+            ))}
           </div>
-          <StatusBar
-            title="Analysis is due for 345 Polygons for this project. Please run analysis."
-            status="awaiting"
-            className="!w-full"
-            classNameStatusBar="!w-full"
-          />
           <div className="flex max-h-[89vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
             {MonitoredCardData.map((data, index) => (
               <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>

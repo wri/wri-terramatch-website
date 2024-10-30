@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -134,59 +135,77 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
             </div>
           </div>
         </div>
-        <Button
-          className="mb-4"
-          variant="white-border"
-          onClick={() => {
-            ModalTable();
-          }}
-        >
-          <div className="flex items-center gap-1">
-            <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-            <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-              {t("Expand")}
-            </Text>
-          </div>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            className="mb-4"
+            variant="white-border"
+            onClick={() => {
+              ModalTable();
+            }}
+          >
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                {t("Expand")}
+              </Text>
+            </div>
+          </Button>
+          <Button className="mb-4" variant="white-border" onClick={() => {}}>
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                {t("Table")}
+              </Text>
+            </div>
+          </Button>
+          <Button className="mb-4" variant="white-border" onClick={() => {}}>
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                {t("Map")}
+              </Text>
+            </div>
+          </Button>
+        </div>
       </div>
       <div className="flex items-center gap-1">
         <div className="flex flex-[4] flex-col gap-2">
           <img src="/Images/graphic-8.svg" alt="graph" />
           <div className="grid w-full grid-cols-4 gap-1 pl-3">
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#D54789]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#D54789]" />
               Adison Thaochu A
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#489B7B]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#489B7B]" />
               AEK Nabara Selatan
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#DDAB3B]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#DDAB3B]" />
               AEK Raso
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#CB6527]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#CB6527]" />
               AEK Torup
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#7471AD]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#7471AD]" />
               Africas
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#9F7830]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#9F7830]" />
               Agoue Iboe
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#75A338]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#75A338]" />
               Agrajaya Baktitama
             </Text>
-            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#57C2FD]" />
+            <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="h-2 w-2 rounded-sm bg-[#57C2FD]" />
               Agralsa
             </Text>
           </div>
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <div className="flex flex-1 flex-col items-center justify-center border-r-2 border-grey-950">
               <Text variant={"text-12"} className="text-grey-600">
                 1YR AVG
@@ -211,11 +230,11 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
               </Text>
               <Text variant={"text-14"}>8,450</Text>
             </div>
-          </div>
+          </div> */}
         </div>
-        <div className="w-[55%] overflow-hidden">
+        <When condition={false}>
           <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} />
-        </div>
+        </When>
       </div>
     </div>
   );
