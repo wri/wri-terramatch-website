@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
@@ -279,6 +279,7 @@ const MonitoredCardData: DataStructure[] = [
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const [intersectingCard, setIntersectingCard] = useState<string | null>(MonitoredCardData[0].label);
   const [isCardsTable, setIsCardsTable] = useState(false);
+  const [widthValue, setWidthValue] = useState(0);
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelsContainerRef = useRef<HTMLDivElement>(null);
@@ -376,6 +377,12 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     }
   };
 
+  useLayoutEffect(() => {
+    if (!labelsContainerRef.current) return;
+    const labelContainer = labelsContainerRef.current;
+    setWidthValue(labelContainer.clientWidth);
+  }, []);
+
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
@@ -404,7 +411,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                 className="w-full"
               >
                 <Text
-                  variant="text-16-light"
+                  variant="text-14-light"
                   className={classNames("rounded-lg p-2 text-start hover:bg-grey-100", {
                     "text-primary": intersectingCard === data.label,
                     "bg-blueCustom-10": intersectingCard === data.label
@@ -416,7 +423,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             ))}
           </div>
 
-          <div className="flex w-full flex-col gap-5">
+          <div className="flex w-full max-w-[80%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
             <div className="flex items-center justify-between">
               <FilterSearchBox placeholder="Search" />
               <div className="flex gap-4">
