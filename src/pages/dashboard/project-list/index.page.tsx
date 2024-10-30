@@ -2,7 +2,9 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
+import { useDashboardContext } from "@/context/dashboard.provider";
+
+import { useDashboardData } from "../hooks/useDashboardData";
 
 export interface DashboardTableDataProps {
   label: string;
@@ -83,20 +85,33 @@ const ProjectList = () => {
     }
   ];
 
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
+  const { filters } = useDashboardContext();
 
-  const DATA_TABLE_PROJECT_LIST = dashboardCountries
-    ? dashboardCountries.data.map((country: any) => ({
-        project: "Annette Ward (3SC)",
-        organization: "Goshen Global Vision",
-        programme: "TerraFund Top100",
-        country: { label: country.data.label, image: country.data.icon },
-        treesPlanted: "12,000,000",
-        restorationHectares: "15,700",
-        jobsCreated: "9,000,000"
-      }))
+  const { activeProjects } = useDashboardData(filters);
+
+  const DATA_TABLE_PROJECT_LIST = activeProjects
+    ? activeProjects?.map(
+        (item: {
+          uuid: string;
+          name: string;
+          organisation: string;
+          programme: string;
+          country_slug: string;
+          project_country: string;
+          trees_under_restoration: number;
+          hectares_under_restoration: number;
+          jobs_created: number;
+        }) => ({
+          uuid: item.uuid,
+          project: item?.name,
+          organization: item?.organisation,
+          programme: item?.programme,
+          country: { label: item?.project_country, image: `/flags/${item?.country_slug?.toLowerCase()}.svg` },
+          treesPlanted: item.trees_under_restoration.toLocaleString(),
+          restorationHectares: item.hectares_under_restoration.toLocaleString(),
+          jobsCreated: item.jobs_created.toLocaleString()
+        })
+      )
     : [];
 
   return (
@@ -108,6 +123,7 @@ const ProjectList = () => {
         classNameWrapper="max-h-[calc(100%_-_4rem)] h-[calc(100%_-_4rem)] !px-0"
         hasPagination={true}
         invertSelectPagination={true}
+        initialTableState={{ pagination: { pageSize: 10 } }}
       />
     </div>
   );

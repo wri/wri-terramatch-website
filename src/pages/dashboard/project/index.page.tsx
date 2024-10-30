@@ -3,16 +3,32 @@ import { useContext } from "react";
 
 import Breadcrumbs from "@/components/elements/Breadcrumbs/Breadcrumbs";
 import Text from "@/components/elements/Text/Text";
-import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 import ContentOverview from "../components/ContentOverview";
 import SecDashboard from "../components/SecDashboard";
+import {
+  ACTIVE_PROJECTS_TOOLTIP,
+  HECTARES_UNDER_RESTORATION_TOOLTIP,
+  JOBS_CREATED_BY_AGE_TOOLTIP,
+  JOBS_CREATED_BY_GENDER_TOOLTIP,
+  JOBS_CREATED_SECTION_TOOLTIP,
+  JOBS_CREATED_TOOLTIP,
+  NEW_FULL_TIME_JOBS_TOOLTIP,
+  NEW_PART_TIME_JOBS_TOOLTIP,
+  NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
+  NUMBER_OF_TREES_PLANTED_TOOLTIP,
+  TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
+  TOTAL_VOLUNTEERS_TOOLTIP,
+  TREES_PLANTED_TOOLTIP,
+  TREES_RESTORED_SECTION_TOOLTIP,
+  VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
+  VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
+} from "../constants/tooltips";
 import { RefContext } from "../context/ScrollContext.provider";
 import {
-  DATA_ACTIVE_COUNTRY,
   JOBS_CREATED_BY_AGE,
   JOBS_CREATED_BY_GENDER,
   LABEL_LEGEND,
@@ -46,6 +62,7 @@ export interface DashboardDataProps {
   graphic?: string;
   tableData?: DashboardTableDataProps[];
   maxValue?: number;
+  totalSection?: { numberOfSites: number; totalHectaresRestored: number };
   graphicLegend?: GraphicLegendProps[];
   graphicTargetLandUseTypes?: DashboardTableDataProps[];
   objetiveText?: string;
@@ -63,20 +80,17 @@ const ProjectView = () => {
     {
       label: "Trees Planted",
       value: "0",
-      tooltip:
-        "Total number of trees planted by funded projects to date, including through assisted natural regeneration, as reported through six-month progress reports."
+      tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
       value: "0 ha",
-      tooltip:
-        "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts."
+      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
       value: "0",
-      tooltip:
-        "Number of jobs created to date. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards."
+      tooltip: JOBS_CREATED_TOOLTIP
     }
   ];
 
@@ -151,15 +165,6 @@ const ProjectView = () => {
                   <Text variant="text-20" className="text-darkCustom" as="span">
                     {t(item.value)}
                   </Text>
-                  <ToolTip
-                    title={item.label}
-                    content={t(item.tooltip)}
-                    placement="top"
-                    width="w-56 lg:w-64"
-                    trigger="click"
-                  >
-                    <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-                  </ToolTip>
                 </div>
               </div>
             ))}
@@ -194,9 +199,7 @@ const ProjectView = () => {
             gap={8}
             subtitleMore={true}
             title={t("TREES RESTORED")}
-            tooltip={t(
-              "This section displays data related to Indicator 1: Trees Restored described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified."
-            )}
+            tooltip={t(TREES_RESTORED_SECTION_TOOLTIP)}
             widthTooltip="w-52 lg:w-64"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             variantSubTitle="text-14-light"
@@ -209,9 +212,7 @@ const ProjectView = () => {
               type="legend"
               secondOptionsData={LABEL_LEGEND}
               data={NUMBER_OF_TREES_PLANTED}
-              tooltip={t(
-                "Total number of trees that funded projects have planted to date, including through assisted natural regeneration, as reported through 6-month progress reports and displayed as progress towards goal."
-              )}
+              tooltip={t(NUMBER_OF_TREES_PLANTED_TOOLTIP)}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
@@ -219,16 +220,14 @@ const ProjectView = () => {
               secondOptionsData={dataToggle}
               tooltipGraphic={true}
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
-              tooltip={t("Number of trees planted in each year.")}
+              tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
             />
             <SecDashboard
               title={t("Top 10 Projects With The Most Planted Trees")}
               type="toggle"
               secondOptionsData={dataToggleGraphic}
               data={TOP_10_PROJECTS_WITH_THE_MOST_PLANTED_TREES}
-              tooltip={t(
-                "The 10 projects that have planted the most trees and the number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference."
-              )}
+              tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
             />
           </PageCard>
           <PageCard
@@ -238,11 +237,10 @@ const ProjectView = () => {
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
+            tooltipTrigger="click"
             widthTooltip="w-80 lg:w-96"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-            tooltip={t(
-              "This section displays data related to Indicator 3: Jobs Created described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 years or older in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment.  Please refer to the linked framework for additional details on how these numbers are sourced and verified."
-            )}
+            tooltip={t(JOBS_CREATED_SECTION_TOOLTIP)}
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund’s MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
@@ -252,18 +250,14 @@ const ProjectView = () => {
                 title={t("New Part-Time Jobs")}
                 data={NEW_PART_TIME_JOBS}
                 classNameBody="w-full place-content-center"
-                tooltip={t(
-                  "Number of part-time jobs created to date. TerraFund defines a part-time job as under 35 hours per work week."
-                )}
+                tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={NEW_FULL_TIME_JOBS}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
-                tooltip={t(
-                  "Number of full-time jobs created to date. TerraFund defines a full-time job as over 35 hours per work week."
-                )}
+                tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
               />
             </div>
             <div className="grid w-full grid-cols-2 gap-12">
@@ -272,53 +266,47 @@ const ProjectView = () => {
                 data={JOBS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-                tooltip={t("Total number of jobs created broken down by gender.")}
+                tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
               />
               <SecDashboard
                 title={t("Jobs Created by Age")}
                 data={JOBS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-                tooltip={t(
-                  "Total number of jobs created broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old."
-                )}
+                tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
               />
             </div>
-            <SecDashboard
-              title={t("Total Volunteers")}
-              data={TOTAL_VOLUNTEERS}
-              tooltip={t(
-                "Number of unpaid volunteers contributing to the project. A volunteer is an individual that freely dedicates their time to the project because they see value in doing so but does not receive payment for their work. Paid workers or beneficiaries who do not dedicate their time to the project are not considered volunteers."
-              )}
-            />
+            <SecDashboard title={t("Total Volunteers")} data={TOTAL_VOLUNTEERS} tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)} />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
                 title={t("Volunteers Created by Gender")}
                 data={VOLUNTEERS_CREATED_BY_GENDER}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-                tooltip={t("Total number of volunteers broken down by gender.")}
+                tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
               />
               <SecDashboard
                 title={t("Volunteers Created by Age")}
                 data={VOLUNTEERS_CREATED_BY_AGE}
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-                tooltip={t(
-                  "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old."
-                )}
+                tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
               />
             </div>
           </PageCard>
         </PageRow>
       </div>
       <ContentOverview
-        dataTable={DATA_ACTIVE_COUNTRY}
+        dataTable={[]}
         columns={COLUMN_ACTIVE_COUNTRY}
         titleTable={t("ACTIVE PROJECTS")}
-        textTooltipTable={t(
-          "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep."
-        )}
+        dataHectaresUnderRestoration={{
+          totalSection: { numberOfSites: 0, totalHectaresRestored: 0 },
+          restorationStrategiesRepresented: [],
+          graphicTargetLandUseTypes: []
+        }}
+        textTooltipTable={t(ACTIVE_PROJECTS_TOOLTIP)}
+        showImagesButton
       />
     </div>
   );

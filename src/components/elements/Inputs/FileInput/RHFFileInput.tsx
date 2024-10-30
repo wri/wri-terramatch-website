@@ -9,10 +9,10 @@ import {
   usePostV2FileUploadMODELCOLLECTIONUUID,
   usePutV2FilesUUID
 } from "@/generated/apiComponents";
-import { getCurrentPathEntity } from "@/helpers/entity";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
+import Log from "@/utils/log";
 
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
@@ -184,7 +184,7 @@ const RHFFileInput = ({
         body.append("lng", location.longitude.toString());
       }
     } catch (e) {
-      console.log(e);
+      Log.error("Failed to append geotagging information", e);
     }
 
     upload?.({
@@ -243,13 +243,11 @@ const RHFFileInput = ({
 
   return (
     <FileInput
+      {...fileInputProps}
       files={files}
       {...(isPhotosAndVideo && {
         previewAsTable: true,
         descriptionInput: t("drag and drop or browse your device"),
-        description: t(
-          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
-        ),
         variant: VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP
       })}
       onDelete={onDeleteFile}

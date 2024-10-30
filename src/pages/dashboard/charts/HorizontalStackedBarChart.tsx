@@ -6,7 +6,8 @@ const HorizontalStackedBarChart = ({ data = [], className }: { data: any; classN
   const totalValue = data[0].value;
   const enterpriseValue = data[1].value;
   const nonProfitValue = data[2].value;
-  const remainingValue = totalValue - enterpriseValue - nonProfitValue;
+  const remainingValue =
+    enterpriseValue + nonProfitValue > totalValue ? 0 : totalValue - enterpriseValue - nonProfitValue;
 
   const chartData = [
     {

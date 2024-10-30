@@ -1,6 +1,8 @@
-import { AdminTokenStorageKey } from "../admin/apiProvider/utils/token";
+import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { ApiContext } from "./apiContext";
 import FormData from "form-data";
+import Log from "@/utils/log";
+import { resolveUrl as resolveV3Url } from "./v3/utils";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
 
@@ -55,10 +57,10 @@ export async function apiFetch<
       ...headers
     };
 
-    const adminToken = typeof window !== "undefined" && localStorage.getItem(AdminTokenStorageKey);
+    const accessToken = typeof window !== "undefined" && getAccessToken();
 
-    if (!requestHeaders?.Authorization && adminToken) {
-      requestHeaders.Authorization = `Bearer ${adminToken}`;
+    if (!requestHeaders?.Authorization && accessToken) {
+      requestHeaders.Authorization = `Bearer ${accessToken}`;
     }
 
     /**
@@ -86,9 +88,7 @@ export async function apiFetch<
           ...(await response.json())
         };
       } catch (e) {
-        if (process.env.NODE_ENV === "development") {
-          console.log("apiFetch", e);
-        }
+        Log.error("v1/2 API Fetch error", e);
         error = {
           statusCode: -1
         };
@@ -98,15 +98,16 @@ export async function apiFetch<
     }
 
     if (response.headers.get("content-type")?.includes("json")) {
-      return await response.json();
+      const payload = await response.json();
+      if (payload.data?.job_uuid == null) return payload;
+
+      return await processDelayedJob<TData>(signal, payload.data.job_uuid);
     } else {
       // if it is not a json response, assume it is a blob and cast it to TData
       return (await response.blob()) as unknown as TData;
     }
   } catch (e) {
-    if (process.env.NODE_ENV === "development") {
-      console.log("apiFetch", e);
-    }
+    Log.error("v1/2 API Fetch error", e);
     error = {
       statusCode: response?.status || -1,
       //@ts-ignore
@@ -121,3 +122,70 @@ const resolveUrl = (url: string, queryParams: Record<string, string> = {}, pathP
   if (query) query = `?${query}`;
   return url.replace(/\{\w*\}/g, key => pathParams[key.slice(1, -1)]) + query;
 };
+
+const JOB_POLL_TIMEOUT = 500; // in ms
+
+type JobResult = {
+  data: {
+    attributes: {
+      status: "pending" | "failed" | "succeeded";
+      statusCode: number | null;
+      payload: object | null;
+    };
+  };
+};
+
+async function loadJob(signal: AbortSignal | undefined, delayedJobId: string): Promise<JobResult> {
+  let response, error;
+  try {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    const accessToken = typeof window !== "undefined" && getAccessToken();
+    if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
+
+    const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
+    response = await fetch(url, { signal, headers });
+    if (!response.ok) {
+      try {
+        error = {
+          statusCode: response.status,
+          ...(await response.json())
+        };
+      } catch (e) {
+        error = { statusCode: -1 };
+      }
+
+      throw error;
+    }
+
+    return await response.json();
+  } catch (e) {
+    Log.error("Delayed Job Fetch error", e);
+    error = {
+      statusCode: response?.status || -1,
+      //@ts-ignore
+      ...(e || {})
+    };
+    throw error;
+  }
+}
+
+async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayedJobId: string): Promise<TData> {
+  const headers: HeadersInit = { "Content-Type": "application/json" };
+  const accessToken = typeof window !== "undefined" && getAccessToken();
+  if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
+
+  let jobResult;
+  for (
+    jobResult = await loadJob(signal, delayedJobId);
+    jobResult.data?.attributes?.status === "pending";
+    jobResult = await loadJob(signal, delayedJobId)
+  ) {
+    if (signal?.aborted) throw new Error("Aborted");
+    await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
+  }
+
+  const { status, statusCode, payload } = jobResult.data!.attributes;
+  if (status === "failed") throw { statusCode, ...payload };
+
+  return payload as TData;
+}

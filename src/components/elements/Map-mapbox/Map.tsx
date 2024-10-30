@@ -4,8 +4,7 @@ import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
+import React, { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -34,6 +33,7 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
@@ -58,13 +58,11 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addDeleteLayer,
   addFilterOnLayer,
-  addGeojsonSourceToLayer,
   addGeojsonToDraw,
   addMarkerAndZoom,
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
-  addSourceToLayer,
   drawTemporaryPolygon,
   removeMediaLayer,
   removePopups,
@@ -120,6 +118,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  showImagesButton?: boolean;
 }
 
 export const MapContainer = ({
@@ -152,11 +151,12 @@ export const MapContainer = ({
   entityData,
   imageGalleryRef,
   centroids,
+  showImagesButton,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
+  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -190,7 +190,7 @@ export const MapContainer = ({
     mapFunctions;
 
   useEffect(() => {
-    initMap();
+    initMap(isDashboard);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -199,35 +199,13 @@ export const MapContainer = ({
       }
     };
   }, []);
-
   useEffect(() => {
     if (!map) return;
     if (location && location.lat !== 0 && location.lng !== 0) {
       addMarkerAndZoom(map.current, location);
     }
   }, [map, location]);
-  useEffect(() => {
-    if (map?.current && isDashboard && styleLoaded && map.current.isStyleLoaded()) {
-      const layerCountry = layersList.find(layer => layer.name === LAYERS_NAMES.WORLD_COUNTRIES);
-      if (layerCountry) {
-        addSourceToLayer(layerCountry, map.current, undefined);
-      }
-      const centroidsLayer = layersList.find(layer => layer.name === LAYERS_NAMES.CENTROIDS);
-      if (centroidsLayer && centroids) {
-        addGeojsonSourceToLayer(centroids, map.current, centroidsLayer);
-      }
-      addPopupsToMap(
-        map.current,
-        DashboardPopup,
-        setPolygonFromMap,
-        sitePolygonData,
-        tooltipType,
-        editPolygonSelected,
-        setEditPolygon,
-        draw.current
-      );
-    }
-  }, [map, isDashboard, map?.current?.isStyleLoaded()]);
+
   useEffect(() => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
@@ -245,19 +223,19 @@ export const MapContainer = ({
     if (map?.current && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
       const setupMap = () => {
-        addSourcesToLayers(currentMap, polygonsData);
+        addSourcesToLayers(currentMap, polygonsData, centroids);
         setChangeStyle(true);
-
         if (showPopups) {
           addPopupsToMap(
             currentMap,
-            AdminPopup,
+            isDashboard ? DashboardPopup : AdminPopup,
             setPolygonFromMap,
             sitePolygonData,
             tooltipType,
             editPolygonSelected,
             setEditPolygon,
-            draw.current
+            draw.current,
+            isDashboard
           );
         }
       };
@@ -346,7 +324,7 @@ export const MapContainer = ({
         });
 
         if (!response) {
-          console.error("No response received from the server.");
+          Log.error("No response received from the server.");
           openNotification("error", t("Error!"), t("No response received from the server."));
           return;
         }
@@ -365,7 +343,7 @@ export const MapContainer = ({
         hideLoader();
         openNotification("success", t("Success!"), t("Image downloaded successfully"));
       } catch (error) {
-        console.error("Download error:", error);
+        Log.error("Download error:", error);
         hideLoader();
       }
     };
@@ -483,7 +461,7 @@ export const MapContainer = ({
               await reloadSiteData?.();
             }
             onCancel(polygonsData);
-            addSourcesToLayers(map.current, polygonsData);
+            addSourcesToLayers(map.current, polygonsData, centroids);
             setShouldRefetchPolygonData(true);
             openNotification(
               "success",
@@ -591,7 +569,9 @@ export const MapContainer = ({
         </ControlGroup>
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
-            <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            <When condition={showImagesButton}>
+              <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            </When>
             {isDashboard === "dashboard" ? (
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (
