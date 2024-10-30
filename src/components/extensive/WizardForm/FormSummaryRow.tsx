@@ -100,7 +100,13 @@ export const getFormEntries = (
         outputArr.push({
           title: f.label,
           type: f.type,
-          value: <DemographicsCollapseGrid demographics={workday?.demographics ?? []} variant={GRID_VARIANT_NARROW} />
+          value: (
+            <DemographicsCollapseGrid
+              demographics={workday?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              demographicalType="workdays"
+            />
+          )
         });
         break;
       }
@@ -114,6 +120,7 @@ export const getFormEntries = (
             <DemographicsCollapseGrid
               demographics={restorationPartner?.demographics ?? []}
               variant={GRID_VARIANT_NARROW}
+              demographicalType="restorationPartners"
             />
           )
         });

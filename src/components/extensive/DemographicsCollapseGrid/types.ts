@@ -29,8 +29,31 @@ export interface DemographicGridVariantProps {
   tertiaryCol?: string;
 }
 
+export const DEMOGRAPHICAL_TYPE_KEYS = ["workdays", "restorationPartners"] as const;
+export type DemographicalType = (typeof DEMOGRAPHICAL_TYPE_KEYS)[number];
+
+type DemographicalTypeProperties = {
+  sectionLabel: string;
+  rowLabelSingular: string;
+  rowLabelPlural: string;
+};
+
+export const DEMOGRAPHICAL_TYPES: { [k in DemographicalType]: DemographicalTypeProperties } = {
+  workdays: {
+    sectionLabel: "Total Workdays",
+    rowLabelSingular: "Day",
+    rowLabelPlural: "Days"
+  },
+  restorationPartners: {
+    sectionLabel: "Total Restoration Partners",
+    rowLabelSingular: "Person",
+    rowLabelPlural: "People"
+  }
+};
+
 export interface DemographicsCollapseGridProps {
   title?: string;
+  demographicalType: DemographicalType;
   demographics: Demographic[];
   variant: DemographicGridVariantProps;
   onChange?: (demographics: Demographic[]) => void;

@@ -13,13 +13,20 @@ import { useTableStatus } from "./hooks";
 import {
   Demographic,
   DEMOGRAPHIC_TYPES,
+  DEMOGRAPHICAL_TYPES,
   DemographicsCollapseGridProps,
   DemographicType,
   HBF_DEMOGRAPHIC_TYPES,
   HBFDemographicType
 } from "./types";
 
-const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
+const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({
+  title,
+  demographicalType,
+  demographics,
+  variant,
+  onChange
+}) => {
   const [open, setOpen] = useState(false);
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -41,8 +48,9 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, de
     [framework]
   );
 
-  const titleDays = t("{total} Days", { total });
-  const fullTitle = title == null ? titleDays : `${title} - ${titleDays}`;
+  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
+  const rowTitle = t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
+  const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
   return (
     <div>
@@ -89,6 +97,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, de
             {demographicTypes.map(type => (
               <DemographicsSection
                 key={type}
+                demographicalType={demographicalType}
                 onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}
                 demographics={byType[type] ?? []}
                 {...{ type, variant }}

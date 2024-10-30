@@ -77,6 +77,7 @@ export default function useDemographicData(
                     title={t(readable_collection)}
                     demographics={demographics ?? []}
                     variant={GRID_VARIANT_DEFAULT}
+                    demographicalType="workdays"
                   />
                 ),
                 collection

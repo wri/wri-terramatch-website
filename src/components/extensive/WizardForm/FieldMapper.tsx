@@ -155,6 +155,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           {...sharedProps}
           control={formHook.control}
           onChangeCapture={onChange}
+          demographicalType="workdays"
         />
       );
 
@@ -165,6 +166,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           {...sharedProps}
           control={formHook.control}
           onChangeCapture={onChange}
+          demographicalType="restorationPartners"
         />
       );
 

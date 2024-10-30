@@ -5,7 +5,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { Demographic } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { Demographic, DemographicalType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { Entity } from "@/types/common";
 
 import { DataTableProps } from "../DataTable/DataTable";
@@ -13,6 +13,7 @@ import { DataTableProps } from "../DataTable/DataTable";
 export interface RHFDemographicsTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
+  demographicalType: DemographicalType;
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   entity: Entity;
@@ -20,6 +21,7 @@ export interface RHFDemographicsTableProps
 }
 
 const RHFDemographicsTable = ({
+  demographicalType,
   onChangeCapture,
   entity,
   collection,
@@ -57,6 +59,7 @@ const RHFDemographicsTable = ({
     <InputWrapper error={props.error}>
       <DemographicsCollapseGrid
         title={props.label ?? ""}
+        demographicalType={demographicalType}
         demographics={demographics}
         variant={GRID_VARIANT_GREEN}
         onChange={updateDemographics}

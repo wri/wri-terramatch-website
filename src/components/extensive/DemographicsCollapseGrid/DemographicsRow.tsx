@@ -7,9 +7,16 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DemographicGridVariantProps, DemographicType, HBFDemographicType } from "./types";
+import {
+  DEMOGRAPHICAL_TYPES,
+  DemographicalType,
+  DemographicGridVariantProps,
+  DemographicType,
+  HBFDemographicType
+} from "./types";
 
 export interface DemographicsRowProps {
+  demographicalType: DemographicalType;
   type: DemographicType | HBFDemographicType;
   subtypes?: Dictionary<string>;
   label: string;
@@ -21,6 +28,7 @@ export interface DemographicsRowProps {
 }
 
 const DemographicsRow = ({
+  demographicalType,
   type,
   subtypes,
   label,
@@ -53,6 +61,8 @@ const DemographicsRow = ({
     [onChange, amount]
   );
 
+  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
+
   return (
     <Fragment>
       <div className={classNames("flex items-center justify-between bg-white px-4", variant.secondCol)}>
@@ -78,12 +88,12 @@ const DemographicsRow = ({
       <div className={classNames("relative flex items-center justify-center bg-white", variant.tertiaryCol)}>
         <When condition={onChange == null}>
           <Text variant="text-14-light" className="w-full px-4 py-[9.5px] text-center">
-            {t("{amount} Days", { amount })}
+            {t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
           </Text>
         </When>
         <When condition={onChange != null}>
           <input
-            value={focused ? amount : t("{amount} Days", { amount })}
+            value={focused ? amount : t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
             type={focused ? "number" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

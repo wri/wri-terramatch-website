@@ -44,7 +44,8 @@ export const Default: Story = {
       { type: "ethnicity", subtype: "other", name: "German", amount: 30 },
       { type: "ethnicity", subtype: "unknown", amount: 50 }
     ],
-    variant: GRID_VARIANT_DEFAULT
+    variant: GRID_VARIANT_DEFAULT,
+    demographicalType: "workdays"
   }
 };
 
@@ -70,7 +71,8 @@ export const VariantNarrow: Story = {
       { type: "ethnicity", subtype: "unknown", amount: 30 },
       { type: "ethnicity", subtype: "indigenous", name: "ABC", amount: 30 }
     ],
-    variant: GRID_VARIANT_NARROW
+    variant: GRID_VARIANT_NARROW,
+    demographicalType: "workdays"
   }
 };
 
@@ -96,7 +98,8 @@ export const CompleteGreen: Story = {
       { type: "ethnicity", subtype: "other", name: "Indonesian", amount: 25 },
       { type: "ethnicity", subtype: "unknown", amount: 15 }
     ],
-    variant: GRID_VARIANT_GREEN
+    variant: GRID_VARIANT_GREEN,
+    demographicalType: "workdays"
   }
 };
 
@@ -111,7 +114,8 @@ export const NotStartedGreen: Story = {
   args: {
     title: "A. Site Establishment Paid",
     demographics: [],
-    variant: GRID_VARIANT_GREEN
+    variant: GRID_VARIANT_GREEN,
+    demographicalType: "workdays"
   }
 };
 
@@ -129,6 +133,7 @@ export const InProgressGreen: Story = {
       { type: "gender", name: "female", amount: 20 },
       { type: "age", name: "adult", amount: 75 }
     ],
-    variant: GRID_VARIANT_GREEN
+    variant: GRID_VARIANT_GREEN,
+    demographicalType: "workdays"
   }
 };
