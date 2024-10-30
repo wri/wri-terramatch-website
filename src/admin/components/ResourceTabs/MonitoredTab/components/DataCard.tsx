@@ -1,4 +1,4 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React, { useState } from "react";
 import { When } from "react-if";
@@ -32,40 +32,41 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tableData: TableData[];
 }
 
-const TABLE_COLUMNS: ColumnDef<TableData>[] = [
+const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   {
-    header: "Polygon Name",
-    accessorKey: "polygonName"
+    id: "mainInfo",
+    header: "",
+    columns: [
+      { accessorKey: "polygonName", header: "Polygon Name" },
+      { accessorKey: "site", header: "Site (ha)" },
+      { accessorKey: "siteName", header: "Site Name" },
+      { accessorKey: "status", header: "Status" }
+    ]
   },
   {
-    header: "Site",
-    accessorKey: "site"
+    id: "analysis2024",
+    header: "2024 Analysis",
+    columns: [
+      { accessorKey: "dateRun2024", header: "Date Run" },
+      { accessorKey: "2024-2015", header: "2015" },
+      { accessorKey: "2024-2016", header: "2016" },
+      { accessorKey: "2024-2017", header: "2017" },
+      { accessorKey: "2024-2018", header: "2018" },
+      { accessorKey: "2024-2019", header: "2019" },
+      { accessorKey: "2024-2020", header: "2020" },
+      { accessorKey: "2024-2021", header: "2021" },
+      { accessorKey: "2024-2022", header: "2022" },
+      { accessorKey: "2024-2023", header: "2023" },
+      { accessorKey: "2024-2024", header: "2024" }
+    ]
   },
   {
-    header: "Year",
-    accessorKey: "year"
-  },
-  {
-    header: "% Cover",
-    accessorKey: "cover",
-    cell: () => {
-      return <img src={"/images/graphic-1.png"} alt="graphic" className="h-3" />;
-    },
-    enableSorting: false
-  },
-  {
-    header: () => (
-      <>
-        Confi-
-        <br />
-        dence
-      </>
-    ),
-    accessorKey: "confidence"
-  },
-  {
-    header: "Phase",
-    accessorKey: "phase"
+    id: "analysis2025",
+    header: "2025 Analysis",
+    columns: [
+      { accessorKey: "dateRun2025", header: "Date Run" },
+      { accessorKey: "2025-2016", header: "2016 " }
+    ]
   }
 ];
 
@@ -212,25 +213,25 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
               </Text>
             </div>
             {/* <div className="flex items-center">
-            <div className="flex flex-1 flex-col items-center justify-center border-r-2 border-grey-950">
+            <div className="flex flex-col items-center justify-center flex-1 border-r-2 border-grey-950">
               <Text variant={"text-12"} className="text-grey-600">
                 1YR AVG
               </Text>
               <Text variant={"text-14"}>3,020</Text>
             </div>
-            <div className="flex flex-1 flex-col items-center justify-center border-r-2 border-grey-950">
+            <div className="flex flex-col items-center justify-center flex-1 border-r-2 border-grey-950">
               <Text variant={"text-12"} className="text-grey-600">
                 3YR AVG
               </Text>
               <Text variant={"text-14"}>5,100</Text>
             </div>
-            <div className="flex flex-1 flex-col items-center justify-center border-r-2 border-grey-950">
+            <div className="flex flex-col items-center justify-center flex-1 border-r-2 border-grey-950">
               <Text variant={"text-12"} className="text-grey-600">
                 5YR AVG
               </Text>
               <Text variant={"text-14"}>6,800</Text>
             </div>
-            <div className="flex flex-1 flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center flex-1">
               <Text variant={"text-12"} className="text-grey-600">
                 10YR AVG
               </Text>
