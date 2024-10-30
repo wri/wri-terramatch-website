@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -7,17 +8,33 @@ import { DashboardDataProps } from "../project/index.page";
 
 const ObjectiveSec = ({ data }: { data: DashboardDataProps }) => {
   const t = useT();
+  const [collapseText, setCollapseText] = useState(true);
+  const [objectiveText, setObjectiveText] = useState(data.objetiveText);
+  const maxLength = 660;
+
+  useEffect(() => {
+    if (collapseText) {
+      setObjectiveText(data?.objetiveText?.slice(0, maxLength));
+    } else {
+      setObjectiveText(data?.objetiveText);
+    }
+  }, [collapseText, data?.objetiveText, objectiveText]);
 
   return (
     <div className="grid gap-6">
       <When condition={data?.objetiveText}>
         <div>
           <Text variant="text-14" className="text-darkCustom" containHtml={true}>
-            {t(data.objetiveText)}
+            {t(objectiveText)}
           </Text>
-          <Text variant="text-14-semibold" className="text-darkCustom">
-            {t("Read More...")}
-          </Text>
+          <When condition={(data?.objetiveText?.length ?? 0) > maxLength}>
+            <button onClick={() => setCollapseText(!collapseText)}>
+              &nbsp;
+              <Text variant="text-14-semibold" className="text-darkCustom">
+                {collapseText ? t("...Read More") : t("Show Less")}
+              </Text>
+            </button>
+          </When>
         </div>
       </When>
       <When condition={data?.preferredLanguage}>

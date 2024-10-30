@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WizardForm, { WizardFormProps } from "@/components/extensive/WizardForm";
 import { FormRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps } from "@/helpers/customForms";
+import Log from "@/utils/log";
 
 import formSchema from "./formSchema.json";
 
@@ -27,8 +28,8 @@ export const WithGetFormStepHook: Story = {
   ),
   args: {
     steps: getCustomFormSteps(formSchema as FormRead, (t: any) => t),
-    onStepChange: console.log,
-    onChange: console.log,
+    onStepChange: Log.info,
+    onChange: Log.info,
     nextButtonText: "Save and Continue",
     submitButtonText: "Submit",
     hideBackButton: false,

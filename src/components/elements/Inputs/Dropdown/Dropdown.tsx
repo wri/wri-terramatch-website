@@ -154,9 +154,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     if (selected.length > 1 && props.showLabelAsMultiple) {
       return `Multiple ${props.placeholder}s`;
     } else {
-      formatOptionsList(options, toArray<any>(value));
+      return formatOptionsList(options, toArray<any>(value));
     }
-    return formatOptionsList(options, selected.map(String));
   };
 
   return (

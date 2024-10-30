@@ -1,8 +1,8 @@
 import React from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { COLORS } from "@/constants/dashbordConsts";
-import { countValuesPerYear, formatDate, formatMonth, formatNumberChart } from "@/utils/dashboardUtils";
+import { COLORS } from "@/constants/dashboardConsts";
+import { formatDate, formatMonth, formatNumberChart } from "@/utils/dashboardUtils";
 
 type DataPoint = {
   time: string;
@@ -17,9 +17,10 @@ type ChartData = {
 
 type ChartProps = {
   data: ChartData[];
+  isAbsoluteData?: boolean;
 };
 
-const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
+const CustomTooltip: React.FC<any> = ({ active, payload, label, isAbsoluteData }) => {
   if (!active || !payload || !payload.length) return null;
 
   const [year, month] = label.split("-");
@@ -29,19 +30,46 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
   });
 
   return (
-    <div className="custom-tooltip border-gray-300 border bg-white p-2">
+    <div className="border-gray-300 custom-tooltip rounded-lg border bg-white p-2">
       <p className="text-xs font-bold text-black">{`${year} - ${formatMonth(Number(month))}`}</p>
       {orderedPayload.map((item: any, index: number) => (
         <p key={index} className="text-xs">
           <span className="text-xs font-normal text-black">{item.name}: </span>
-          <span className="text-xs font-bold text-black">{item.value.toLocaleString()}</span>
+          <span className="text-xs font-bold text-black">
+            {isAbsoluteData ? `${item.value.toFixed(2)}%` : item.value.toLocaleString()}
+          </span>
         </p>
       ))}
     </div>
   );
 };
 
-const MultiLineChart: React.FC<ChartProps> = ({ data = [] }) => {
+const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
+  const year = payload.value.split("-")[0];
+  const shouldDisplayYear = previousYear !== year;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={16} textAnchor="middle" fill="#353535" className="text-10-light text-darkCustom">
+        {shouldDisplayYear ? year : ""}
+      </text>
+    </g>
+  );
+};
+
+const CustomYAxisTick: React.FC<any> = ({ x, y, payload, isAbsoluteData }) => {
+  const formattedValue = isAbsoluteData ? `${payload.value}%` : formatNumberChart(payload.value);
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={4} textAnchor="end" fill="#353535" className="text-10-light text-darkCustom">
+        {formattedValue}
+      </text>
+    </g>
+  );
+};
+
+const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = false }) => {
   const formattedData: DataPoint[] =
     data[0]?.values?.map((item, index) => ({
       time: formatDate(item.time),
@@ -50,31 +78,32 @@ const MultiLineChart: React.FC<ChartProps> = ({ data = [] }) => {
       "Non Profit": data[2].values[index].value
     })) || [];
 
-  const yearCounts = countValuesPerYear(formattedData);
-
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={formattedData}>
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis
           dataKey="time"
-          tick={{ fill: "#353535", className: "text-xs" }}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(time, index) => {
-            const year = time.split("-")[0];
+          tick={props => {
+            const index = props.index;
             const previousYear = index > 0 ? formattedData[index - 1].time.split("-")[0] : null;
-            return yearCounts[year] > 1 && previousYear !== year ? year : "";
+            return <CustomXAxisTick {...props} previousYear={previousYear} />;
           }}
           interval={0}
+          padding={{ left: 10 }}
         />
         <YAxis
-          tick={{ fill: "#353535", fontSize: 12 }}
           tickLine={false}
           axisLine={false}
-          tickFormatter={formatNumberChart}
+          tick={props => <CustomYAxisTick {...props} isAbsoluteData={isAbsoluteData} />}
+          domain={isAbsoluteData ? [0, 100] : ["auto", "auto"]}
         />
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip
+          content={props => <CustomTooltip {...props} isAbsoluteData={isAbsoluteData} />}
+          cursor={{ stroke: "#a6a6a6", strokeWidth: 1, strokeDasharray: "4 4" }}
+        />
         {Object.keys(COLORS).map(key => (
           <Line
             key={key}

@@ -2,6 +2,8 @@ import { QueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import nookies from "nookies";
 
+import Log from "@/utils/log";
+
 /**
  * Prefetch queries in ServerSideProps
  * @param queryClient Tanstack QueryClient
@@ -32,7 +34,7 @@ export const downloadFile = async (fileUrl: string) => {
     const blob = await res.blob();
     downloadFileBlob(blob, fileName);
   } catch (err) {
-    console.log(err);
+    Log.error("Failed to download file", fileUrl, err);
   }
 };
 
@@ -53,6 +55,6 @@ export const downloadFileBlob = async (blob: Blob, fileName: string) => {
     // Clean up and remove the link
     link?.parentNode?.removeChild(link);
   } catch (err) {
-    console.log(err);
+    Log.error("Failed to download blob", fileName, err);
   }
 };

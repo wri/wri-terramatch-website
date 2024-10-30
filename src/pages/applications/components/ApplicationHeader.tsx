@@ -4,6 +4,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { fetchGetV2ApplicationsUUIDExport } from "@/generated/apiComponents";
+import Log from "@/utils/log";
 import { downloadFileBlob } from "@/utils/network";
 
 interface ApplicationHeaderProps {
@@ -25,7 +26,7 @@ const ApplicationHeader = ({ name, status, uuid }: ApplicationHeaderProps) => {
       if (!res) return;
       return downloadFileBlob(res, "Application.csv");
     } catch (err) {
-      console.log(err);
+      Log.error("Failed to fetch applications exports", err);
     }
   };
 
