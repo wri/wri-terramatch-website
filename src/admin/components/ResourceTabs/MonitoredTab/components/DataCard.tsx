@@ -1,6 +1,6 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -85,9 +85,13 @@ const DROPDOWN_OPTIONS = [
   }
 ];
 
-const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttributes<HTMLDivElement>) => {
+const DataCard = ({
+  data,
+  isCardsTable,
+  ...rest
+}: { data: DataStructure; isCardsTable: boolean } & React.HTMLAttributes<HTMLDivElement>) => {
   const { label, tooltipContent, tableData } = data;
-  const [isTable, setIsTable] = useState(false);
+  const [isTable, setIsTable] = useState(isCardsTable);
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const ModalTable = () => {
@@ -110,6 +114,10 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
       </ModalExpand>
     );
   };
+
+  useEffect(() => {
+    setIsTable(isCardsTable);
+  }, [isCardsTable]);
 
   return (
     <div {...rest} className="flex w-full flex-col rounded-lg border border-grey-850 bg-neutral-50 p-4 shadow">
@@ -148,7 +156,7 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
             <div className="flex items-center gap-1">
               <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
               <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
-                {t("Expand")}
+                Expand
               </Text>
             </div>
           </Button>
@@ -158,9 +166,9 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
             onClick={() => setIsTable(!isTable)}
           >
             <div className="flex items-center gap-1">
-              <Icon name={IconNames.TABLE} className="h-[14px] w-[14px]" />
+              <Icon name={isTable ? IconNames.DASHBOARD : IconNames.TABLE} className="h-[14px] w-[14px]" />
               <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
-                {t("Table")}
+                {isTable ? "Dashboard" : "Table"}
               </Text>
             </div>
           </Button>
@@ -168,7 +176,7 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
             <div className="flex items-center gap-1">
               <Icon name={IconNames.MAP} className="h-[14px] w-[14px]" />
               <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
-                {t("Map")}
+                Map
               </Text>
             </div>
           </Button>

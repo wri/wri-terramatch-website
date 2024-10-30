@@ -278,6 +278,7 @@ const MonitoredCardData: DataStructure[] = [
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const [intersectingCard, setIntersectingCard] = useState<string | null>(MonitoredCardData[0].label);
+  const [isCardsTable, setIsCardsTable] = useState(false);
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelsContainerRef = useRef<HTMLDivElement>(null);
@@ -429,10 +430,14 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                     Filter
                   </div>
                 </Button>
-                <Button variant="white-border" className="!h-min !min-h-min !rounded-lg !py-1">
+                <Button
+                  variant="white-border"
+                  className="!h-min !min-h-min !rounded-lg !py-1"
+                  onClick={() => setIsCardsTable(!isCardsTable)}
+                >
                   <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
-                    <Icon name={IconNames.DASHBOARD} className="h-4 w-4" />
-                    Dashboard
+                    <Icon name={isCardsTable ? IconNames.DASHBOARD : IconNames.TABLE} className="h-4 w-4" />
+                    {isCardsTable ? "Dashboard" : "Table"}
                   </div>
                 </Button>
               </div>
@@ -440,7 +445,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             <div className=" max-h-[85vh] overflow-auto" ref={cardRefsContainer}>
               {MonitoredCardData.map((data, index) => (
                 <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
-                  <DataCard data={data} />
+                  <DataCard data={data} isCardsTable={isCardsTable} />
                 </div>
               ))}
             </div>
