@@ -150,9 +150,42 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
         </Button>
       </div>
       <div className="flex items-center gap-1">
-        <div className="flex flex-[4] flex-col">
+        <div className="flex flex-[4] flex-col gap-2">
           <img src="/Images/graphic-8.svg" alt="graph" />
-          <div>leyends</div>
+          <div className="grid w-full grid-cols-4 gap-1 pl-3">
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#D54789]" />
+              Adison Thaochu A
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#489B7B]" />
+              AEK Nabara Selatan
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#DDAB3B]" />
+              AEK Raso
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#CB6527]" />
+              AEK Torup
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#7471AD]" />
+              Africas
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#9F7830]" />
+              Agoue Iboe
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#75A338]" />
+              Agrajaya Baktitama
+            </Text>
+            <Text variant="text-8-light" className="flex items-center gap-1 whitespace-nowrap text-black">
+              <div className="min-h-1.5 min-w-1.5 rounded-sm bg-[#57C2FD]" />
+              Agralsa
+            </Text>
+          </div>
           <div className="flex items-center">
             <div className="flex flex-1 flex-col items-center justify-center border-r-2 border-grey-950">
               <Text variant={"text-12"} className="text-grey-600">
