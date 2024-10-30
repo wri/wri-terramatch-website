@@ -50,8 +50,8 @@ const CASTES: Dictionary<string> = {
 };
 
 const AGES: Dictionary<string> = {
-  youth: "Youth (15-24)",
-  adult: "Adult (24-64)",
+  youth: "Youth (15-29)",
+  adult: "Adult (29-64)",
   elder: "Elder (65+)",
   unknown: "Unknown"
 };
