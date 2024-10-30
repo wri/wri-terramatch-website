@@ -8,18 +8,18 @@ import Text from "@/components/elements/Text/Text";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../Icon/Icon";
+import DemographicsSection from "./DemographicsSection";
 import { useTableStatus } from "./hooks";
 import {
   Demographic,
   DEMOGRAPHIC_TYPES,
+  DemographicsCollapseGridProps,
   DemographicType,
   HBF_DEMOGRAPHIC_TYPES,
-  HBFDemographicType,
-  WorkdayCollapseGridProps
+  HBFDemographicType
 } from "./types";
-import WorkdaySection from "./WorkdaySection";
 
-const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
+const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -87,7 +87,7 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
             )}
           >
             {demographicTypes.map(type => (
-              <WorkdaySection
+              <DemographicsSection
                 key={type}
                 onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}
                 demographics={byType[type] ?? []}
@@ -101,4 +101,4 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
   );
 };
 
-export default WorkdayCollapseGrid;
+export default DemographicsCollapseGrid;

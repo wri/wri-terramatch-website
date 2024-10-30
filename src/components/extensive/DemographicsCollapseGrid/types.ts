@@ -14,7 +14,7 @@ export interface Demographic {
   amount: number;
 }
 
-export interface WorkdayGridVariantProps {
+export interface DemographicGridVariantProps {
   header: string;
   open?: string;
   bodyCollapse: string;
@@ -29,10 +29,10 @@ export interface WorkdayGridVariantProps {
   tertiaryCol?: string;
 }
 
-export interface WorkdayCollapseGridProps {
+export interface DemographicsCollapseGridProps {
   title?: string;
   demographics: Demographic[];
-  variant: WorkdayGridVariantProps;
+  variant: DemographicGridVariantProps;
   onChange?: (demographics: Demographic[]) => void;
 }
 

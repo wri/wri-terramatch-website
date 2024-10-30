@@ -1,6 +1,6 @@
-import { WorkdayGridVariantProps } from "./types";
+import { DemographicGridVariantProps } from "./types";
 
-export const GRID_VARIANT_DEFAULT: WorkdayGridVariantProps = {
+export const GRID_VARIANT_DEFAULT: DemographicGridVariantProps = {
   header: "rounded bg-neutral-350",
   bodyCollapse: "bg-transparent pt-4 pr-11",
   columTitle: "bg-neutral-10",
@@ -14,7 +14,7 @@ export const GRID_VARIANT_DEFAULT: WorkdayGridVariantProps = {
   tertiaryCol: "col-span-4"
 };
 
-export const GRID_VARIANT_GREEN: WorkdayGridVariantProps = {
+export const GRID_VARIANT_GREEN: DemographicGridVariantProps = {
   header: "rounded-t-2xl bg-customGreen-100",
   open: "rounded-2xl",
   bodyCollapse: "bg-neutral-75 px-4 py-5",
@@ -29,7 +29,7 @@ export const GRID_VARIANT_GREEN: WorkdayGridVariantProps = {
   tertiaryCol: "col-span-4"
 };
 
-export const GRID_VARIANT_NARROW: WorkdayGridVariantProps = {
+export const GRID_VARIANT_NARROW: DemographicGridVariantProps = {
   header: "rounded bg-neutral-350",
   bodyCollapse: "bg-transparent pt-4",
   columTitle: "bg-neutral-10",

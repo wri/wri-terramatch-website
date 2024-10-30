@@ -4,7 +4,7 @@ import { Fragment, useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import WorkdayRow from "@/components/extensive/WorkdayCollapseGrid/WorkdayRow";
+import DemographicsRow from "@/components/extensive/DemographicsCollapseGrid/DemographicsRow";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -12,19 +12,19 @@ import { useSectionData } from "./hooks";
 import {
   Demographic,
   DEMOGRAPHIC_TYPE_MAP,
+  DemographicGridVariantProps,
   DemographicType,
   HBF_DEMOGRAPHIC_TYPE_MAP,
-  HBFDemographicType,
-  WorkdayGridVariantProps
+  HBFDemographicType
 } from "./types";
-export interface WorkdaySectionProps {
+export interface DemographicsSectionProps {
   demographics: Demographic[];
   type: DemographicType | HBFDemographicType;
-  variant: WorkdayGridVariantProps;
+  variant: DemographicGridVariantProps;
   onChange?: (demographics: Demographic[]) => void;
 }
 
-const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectionProps) => {
+const DemographicsSection = ({ demographics, type, variant, onChange }: DemographicsSectionProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const { framework } = useFrameworkContext();
   const t = useT();
@@ -121,7 +121,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
         </Text>
       </div>
       {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (
-        <WorkdayRow
+        <DemographicsRow
           key={index}
           onChange={
             onChange == null
@@ -169,4 +169,4 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
   );
 };
 
-export default WorkdaySection;
+export default DemographicsSection;

@@ -7,9 +7,9 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DemographicType, HBFDemographicType, WorkdayGridVariantProps } from "./types";
+import { DemographicGridVariantProps, DemographicType, HBFDemographicType } from "./types";
 
-export interface WorkdayRowProps {
+export interface DemographicsRowProps {
   type: DemographicType | HBFDemographicType;
   subtypes?: Dictionary<string>;
   label: string;
@@ -17,10 +17,19 @@ export interface WorkdayRowProps {
   amount: number;
   onChange?: (amount: number, userLabel?: string) => void;
   onDelete?: () => void;
-  variant: WorkdayGridVariantProps;
+  variant: DemographicGridVariantProps;
 }
 
-const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDelete, variant }: WorkdayRowProps) => {
+const DemographicsRow = ({
+  type,
+  subtypes,
+  label,
+  userLabel,
+  amount,
+  onChange,
+  onDelete,
+  variant
+}: DemographicsRowProps) => {
   const [focused, setFocused] = useState(false);
   const t = useT();
 
@@ -92,4 +101,4 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
   );
 };
 
-export default WorkdayRow;
+export default DemographicsRow;

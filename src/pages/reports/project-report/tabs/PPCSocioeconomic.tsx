@@ -10,8 +10,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import Loader from "@/components/generic/Loading/Loader";
 import { COLLECTION_PROJECT_PAID_OTHER, PROJECT_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
-import { useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
-import useWorkdayData from "@/hooks/useWorkdayData";
+import useDemographicData from "@/hooks/useDemographicData";
 
 interface ReportOverviewTabProps {
   report: any;
@@ -20,12 +19,12 @@ interface ReportOverviewTabProps {
 const PPCSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
   const t = useT();
 
-  const { data: response } = useGetV2WorkdaysENTITYUUID(
-    { pathParams: { entity: "project-report", uuid: report.uuid } },
-    { keepPreviousData: true }
+  const { grids, title } = useDemographicData(
+    "project-report",
+    report.uuid,
+    PROJECT_WORKDAY_COLLECTIONS,
+    "Project Workdays"
   );
-
-  const { grids, title } = useWorkdayData(response, PROJECT_WORKDAY_COLLECTIONS, "Project Workdays");
 
   if (grids.length == 0) {
     return (

@@ -1,33 +1,33 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import { Demographic, WorkdayCollapseGridProps } from "@/components/extensive/WorkdayCollapseGrid/types";
+import { Demographic, DemographicsCollapseGridProps } from "@/components/extensive/DemographicsCollapseGrid/types";
 
-import WorkdayCollapseGrid from "./WorkdayCollapseGrid";
-import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_NARROW } from "./WorkdayVariant";
+import DemographicsCollapseGrid from "./DemographicsCollapseGrid";
+import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_NARROW } from "./DemographicVariant";
 
-const meta: Meta<typeof WorkdayCollapseGrid> = {
-  title: "Components/Extensive/WorkdayCollapse",
-  component: WorkdayCollapseGrid
+const meta: Meta<typeof DemographicsCollapseGrid> = {
+  title: "Components/Extensive/DemographicsCollapse",
+  component: DemographicsCollapseGrid
 };
 
-type Story = StoryObj<typeof WorkdayCollapseGrid>;
+type Story = StoryObj<typeof DemographicsCollapseGrid>;
 
 export default meta;
 
-const ControlWrapper = (args: WorkdayCollapseGridProps) => {
+const ControlWrapper = (args: DemographicsCollapseGridProps) => {
   const [demographics, setDemographics] = useState(args.demographics);
   const onChange = (updatedDemographics: Demographic[]) => {
     setDemographics(updatedDemographics);
   };
-  return <WorkdayCollapseGrid {...{ ...args, demographics, onChange }} />;
+  return <DemographicsCollapseGrid {...{ ...args, demographics, onChange }} />;
 };
 
 export const Default: Story = {
-  render: (args: WorkdayCollapseGridProps) => {
+  render: (args: DemographicsCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <WorkdayCollapseGrid {...args} />
+        <DemographicsCollapseGrid {...args} />
       </div>
     );
   },
@@ -49,10 +49,10 @@ export const Default: Story = {
 };
 
 export const VariantNarrow: Story = {
-  render: (args: WorkdayCollapseGridProps) => {
+  render: (args: DemographicsCollapseGridProps) => {
     return (
       <div className="w-1/2 rounded-2xl">
-        <WorkdayCollapseGrid {...args} />
+        <DemographicsCollapseGrid {...args} />
       </div>
     );
   },
@@ -75,7 +75,7 @@ export const VariantNarrow: Story = {
 };
 
 export const CompleteGreen: Story = {
-  render: (args: WorkdayCollapseGridProps) => {
+  render: (args: DemographicsCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
         <ControlWrapper {...args} />
@@ -101,7 +101,7 @@ export const CompleteGreen: Story = {
 };
 
 export const NotStartedGreen: Story = {
-  render: (args: WorkdayCollapseGridProps) => {
+  render: (args: DemographicsCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
         <ControlWrapper {...args} />
@@ -116,7 +116,7 @@ export const NotStartedGreen: Story = {
 };
 
 export const InProgressGreen: Story = {
-  render: (args: WorkdayCollapseGridProps) => {
+  render: (args: DemographicsCollapseGridProps) => {
     return (
       <div className="rounded-2xl">
         <ControlWrapper {...args} />

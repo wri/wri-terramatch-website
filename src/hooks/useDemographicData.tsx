@@ -1,11 +1,11 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
-import { Demographic } from "@/components/extensive/WorkdayCollapseGrid/types";
-import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
-import { GRID_VARIANT_DEFAULT } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
+import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
+import { GRID_VARIANT_DEFAULT } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
+import { Demographic } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import { GetV2WorkdaysENTITYUUIDResponse } from "@/generated/apiComponents";
+import { useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
 
 interface DemographicCounts {
   gender: number;
@@ -18,9 +18,6 @@ interface HBFDemographicCounts {
   age: number;
   caste: number;
 }
-
-export type DemographicCountsType = keyof DemographicCounts;
-export type HBFDemographicCountsType = keyof HBFDemographicCounts;
 
 function getInitialCounts<T extends Framework>(framework: T) {
   return framework === Framework.HBF
@@ -46,30 +43,36 @@ export interface Workday {
   demographics?: Demographic[];
 }
 
-export default function useWorkdayData(
-  response: GetV2WorkdaysENTITYUUIDResponse | undefined,
-  workdayCollection: string[],
+export default function useDemographicData(
+  entityType: string,
+  uuid: string,
+  collections: string[],
   titlePrefix: string
 ) {
   const t = useT();
   const { framework } = useFrameworkContext();
 
+  const { data: response } = useGetV2WorkdaysENTITYUUID(
+    { pathParams: { entity: entityType, uuid } },
+    { keepPreviousData: true }
+  );
+
   return useMemo(
     function () {
       const filteredCollections = response?.data?.filter(workday =>
-        workdayCollection.includes(workday?.collection as string)
+        collections.includes(workday?.collection as string)
       );
       const workdays = filteredCollections as Workday[];
 
       const grids =
         workdays == null
           ? []
-          : workdayCollection.map(collection => {
+          : collections.map(collection => {
               const workday = workdays.find(workday => workday.collection == collection);
               const { readable_collection, demographics } = workday ?? {};
               return {
                 grid: (
-                  <WorkdayCollapseGrid
+                  <DemographicsCollapseGrid
                     key={collection}
                     title={t(readable_collection)}
                     demographics={demographics ?? []}
@@ -118,6 +121,6 @@ export default function useWorkdayData(
       const title = t(`${titlePrefix} - {total}`, { total: total ?? "...loading" });
       return { grids, title };
     },
-    [response, t, titlePrefix, workdayCollection, framework]
+    [response, t, titlePrefix, collections, framework]
   );
 }

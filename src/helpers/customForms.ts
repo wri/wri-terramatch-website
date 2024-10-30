@@ -4,8 +4,8 @@ import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
+import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hooks";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
