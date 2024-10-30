@@ -4,11 +4,11 @@ import { Option } from "@/types/common";
 
 export const getAgeOptions = (t: typeof useT = (t: string) => t): Option[] => [
   {
-    title: t("Youth (15-29)"),
+    title: t("Youth (15-24)"),
     value: "youth"
   },
   {
-    title: t("Adult (29-64)"),
+    title: t("Adult (24-65)"),
     value: "adult"
   },
   {

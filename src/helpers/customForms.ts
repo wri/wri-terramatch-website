@@ -644,7 +644,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
             const { demographics } = value.length > 0 ? value[0] : {};
             if (demographics == null) return true;
 
-            return calculateTotals(demographics, framework).counts;
+            return calculateTotals(demographics, framework).complete;
           }
         );
 
