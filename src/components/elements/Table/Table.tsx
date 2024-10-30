@@ -147,7 +147,8 @@ function Table<TData extends RowData>({
                           onClick={header.column.getToggleSortingHandler()}
                           className={tw(
                             `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
-                            classNames({ "cursor-pointer": header.column.getCanSort() })
+                            classNames({ "cursor-pointer": header.column.getCanSort() }),
+                            classNames({ [variant.thHeaderSort || ""]: !header.column.getCanSort() })
                           )}
                           align="left"
                         >
