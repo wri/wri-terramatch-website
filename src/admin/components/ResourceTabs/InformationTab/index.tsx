@@ -75,7 +75,8 @@ const InformationTab: FC<IProps> = props => {
 
   if (isLoading) return null;
 
-  const formSteps = getCustomFormSteps(response?.data.form!, t);
+  const framework = record.framework_key as Framework;
+  const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
 
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
@@ -101,7 +102,7 @@ const InformationTab: FC<IProps> = props => {
   })();
 
   return (
-    <FrameworkProvider frameworkKey={record.framework_key}>
+    <FrameworkProvider frameworkKey={framework}>
       <When condition={!isLoading}>
         <TabbedShowLayout.Tab label={tabTitle} {...props}>
           <Grid spacing={2} container>
