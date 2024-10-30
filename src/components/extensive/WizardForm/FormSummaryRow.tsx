@@ -105,6 +105,21 @@ export const getFormEntries = (
         break;
       }
 
+      case FieldType.RestorationPartnersTable: {
+        const restorationPartner = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: (
+            <DemographicsCollapseGrid
+              demographics={restorationPartner?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+            />
+          )
+        });
+        break;
+      }
+
       case FieldType.Map: {
         outputArr.push({
           title: f.label,

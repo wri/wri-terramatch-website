@@ -65,6 +65,7 @@ export enum FieldType {
   InvasiveDataTable = "invasiveDataTable",
   SeedingsDataTable = "seedingsDataTable",
   WorkdaysTable = "workdays",
+  RestorationPartnersTable = "restorationPartners",
   InputTable = "inputTable",
   SelectImage = "selectImage",
   Map = "map",
@@ -121,6 +122,10 @@ export type FormField =
   | FieldTypeBuilder<FieldType.SeedingsDataTable, Omit<RHFSeedingProps, "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<
       FieldType.WorkdaysTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.RestorationPartnersTable,
       Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<

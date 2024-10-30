@@ -158,6 +158,16 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
         />
       );
 
+    case FieldType.RestorationPartnersTable:
+      return (
+        <RHFDemographicsTable
+          {...field.fieldProps}
+          {...sharedProps}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+
     case FieldType.FundingTypeDataTable:
       return (
         <FundingTypeDataTable

@@ -455,6 +455,19 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "restorationPartners": {
+      return {
+        ...sharedProps,
+        type: FieldType.RestorationPartnersTable,
+
+        fieldProps: {
+          required,
+          entity,
+          collection: question.collection
+        }
+      };
+    }
+
     case "select-image":
       return {
         ...sharedProps,
@@ -616,7 +629,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
-    case "workdays": {
+    case "workdays":
+    case "restorationPartners": {
       validation = yup
         .array()
         .min(0)
