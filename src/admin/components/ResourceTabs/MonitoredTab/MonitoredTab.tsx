@@ -2,7 +2,10 @@ import classNames from "classnames";
 import { FC, useEffect, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
+import Button from "@/components/elements/Button/Button";
+import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import DataCard, { DataStructure } from "./components/DataCard";
 
@@ -241,10 +244,10 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
         {/* <div className="flex w-[22%] flex-col gap-4" ref={refWidth}>
-          <div className="relative w-full self-center overflow-hidden rounded-lg">
+          <div className="relative self-center w-full overflow-hidden rounded-lg">
             <img src="/images/map-img.png" alt="Monitored" className="w-full" />
-            <div className="absolute top-0 z-10 flex h-full w-full items-center justify-center">
-              <button className="text-12-semibold flex items-center rounded-full bg-white object-center px-2 py-1 text-primary hover:bg-primary hover:text-white lg:px-3">
+            <div className="absolute top-0 z-10 flex items-center justify-center w-full h-full">
+              <button className="flex items-center object-center px-2 py-1 bg-white rounded-full text-12-semibold text-primary hover:bg-primary hover:text-white lg:px-3">
                 <Icon name={IconNames.MAP_PIN} className="mr-[3px] w-[10px] lg:w-3" />
                 View Map
               </button>
@@ -276,12 +279,36 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
               </button>
             ))}
           </div>
-          <div className="flex max-h-[89vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
-            {MonitoredCardData.map((data, index) => (
-              <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
-                <DataCard data={data} />
+
+          <div className="flex w-full flex-col gap-5" ref={cardRefsContainer}>
+            <div className="flex items-center justify-between">
+              <FilterSearchBox placeholder="Search" />
+              <div className="flex gap-4">
+                <Button variant="purple">
+                  <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
+                  Run Analysis
+                </Button>
+                <Button variant="white-border" className="!h-min !min-h-min !rounded-lg !py-1">
+                  <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
+                    <Icon name={IconNames.IC_FILTER} className="h-4 w-4" />
+                    Filter
+                  </div>
+                </Button>
+                <Button variant="white-border" className="!h-min !min-h-min !rounded-lg !py-1">
+                  <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
+                    <Icon name={IconNames.DASHBOARD} className="h-4 w-4" />
+                    Dashboard
+                  </div>
+                </Button>
               </div>
-            ))}
+            </div>
+            <div className=" max-h-[85vh] overflow-auto">
+              {MonitoredCardData.map((data, index) => (
+                <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
+                  <DataCard data={data} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

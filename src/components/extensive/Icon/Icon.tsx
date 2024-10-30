@@ -189,7 +189,9 @@ export enum IconNames {
   PIN = "pin",
   LINK_AIRTABLE = "link-aritable",
   IC_USER = "ic-user",
-  MONITORING_PROFILE = "monitoring-profile"
+  MONITORING_PROFILE = "monitoring-profile",
+  DASHBOARD = "dashboard",
+  RUN_ALALYSIS = "run-analysis"
 }
 
 export interface IconProps {

@@ -162,7 +162,10 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
-        100: "#8096D3"
+        500: "#4249E6",
+        100: "#8096D3",
+        60: "#ddddfb",
+        50: "#ededfd"
       },
       grey: {
         100: "#F4F4F4",
