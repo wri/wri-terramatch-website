@@ -10,6 +10,7 @@ export interface TableVariant {
   name: string;
   table?: string;
   trHeader: string;
+  thHeaderSort?: string;
   tBody?: string;
   trBody: string;
   tdBody?: string;
@@ -183,9 +184,11 @@ export const VARIANT_TABLE_MONITORED = {
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto ",
   trHeader: "bg-white sticky top-0 z-10 ",
   thHeader:
-    "text-nowrap first:pl-2 first:pr-2 last:pr-2 border-y border-neutral-200 text-10-semibold px-[3px] border-t-0 py-2",
+    "text-nowrap first:pl-2 first:pr-2 last:pr-2 border-y border-neutral-200 text-10-semibold px-[3px] border-t-0 py-2 bg-neutral-50",
   tBody: "",
+  thHeaderSort: "!border-x !place-items-center py-2",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-10-light px-[3px] py-1 first:pl-2 first:pr-2 last:pr-2",
-  thead: "bg-blueCustom-100 "
+  tdBody: "text-10-light px-[3px] py-2 first:pl-2 first:pr-2 last:pr-2",
+  thead: "bg-blueCustom-100 ",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };

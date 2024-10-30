@@ -38,7 +38,7 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     header: "",
     columns: [
       { accessorKey: "polygonName", header: "Polygon Name" },
-      { accessorKey: "site", header: "Site (ha)" },
+      { accessorKey: "size", header: "Size (ha)" },
       { accessorKey: "siteName", header: "Site Name" },
       { accessorKey: "status", header: "Status" }
     ]
@@ -250,7 +250,7 @@ const DataCard = ({
         </When>
 
         <When condition={isTable}>
-          <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} />
+          <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
         </When>
       </div>
     </div>
