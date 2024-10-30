@@ -160,7 +160,7 @@ const DataCard = ({ data, ...rest }: { data: DataStructure } & React.HTMLAttribu
           </Button>
           <Button className="mb-4" variant="white-border" onClick={() => {}}>
             <div className="flex items-center gap-1">
-              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              <Icon name={IconNames.MAP} className="h-[14px] w-[14px]" />
               <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
                 {t("Map")}
               </Text>

@@ -142,7 +142,7 @@ const MonitoredCardData: DataStructure[] = [
 ];
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
-  const [intersectingCard, setIntersectingCard] = useState<string | null>(null);
+  const [intersectingCard, setIntersectingCard] = useState<string | null>(MonitoredCardData[0].label);
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelsContainerRef = useRef<HTMLDivElement>(null);
