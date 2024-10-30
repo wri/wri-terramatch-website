@@ -70,9 +70,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   ];
 
   const landscapeOption = [
-    { title: "Kenya’s Greater Rift Valley", value: "kenya_greater_rift_valley" },
-    { title: "Ghana Cocoa Belt ", value: "ghana_cocoa_belt" },
-    { title: "Lake Kivu and Rusizi River Basin ", value: "lake_kivu_rusizi_river_basin" }
+    { title: "Greater Rift Valley of Kenya", value: "Greater Rift Valley of Kenya" },
+    { title: "Ghana Cocoa Belt ", value: "Ghana Cocoa Belt" },
+    { title: "Lake Kivu & Rusizi River Basin ", value: "Lake Kivu & Rusizi River Basin" }
   ];
 
   const { data: frameworks } = useGetV2DashboardFrameworks({
