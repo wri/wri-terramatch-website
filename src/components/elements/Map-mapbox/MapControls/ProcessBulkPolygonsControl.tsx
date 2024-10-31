@@ -39,7 +39,8 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
   const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
   const sitePolygonData = context?.sitePolygonData as Array<SitePolygon>;
   const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
-  const openFormModalHandlerProcessBulkPolygons = (selectedUUIDs: string[]) => {
+
+  const openFormModalHandlerProcessBulkPolygons = () => {
     openModal(
       ModalId.DELETE_BULK_POLYGONS,
       <ModalProcessBulkPolygons
@@ -47,31 +48,31 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
         onClose={() => closeModal(ModalId.DELETE_BULK_POLYGONS)}
         content={t("Confirm that the following polygons will be deleted. This operation is not reversible.")}
         primaryButtonText={t("Delete")}
+        onClick={(currentSelectedUuids: any) => {
+          showLoader();
+          closeModal(ModalId.DELETE_BULK_POLYGONS);
+          deletePolygons(
+            {
+              body: {
+                uuids: currentSelectedUuids
+              }
+            },
+            {
+              onSuccess: () => {
+                refetchData();
+                hideLoader();
+                openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+              },
+              onError: () => {
+                hideLoader();
+                openNotification("error", t("Error!"), t("Failed to delete polygons"));
+              }
+            }
+          );
+        }}
         primaryButtonProps={{
           className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => {
-            showLoader();
-            closeModal(ModalId.DELETE_BULK_POLYGONS);
-            deletePolygons(
-              {
-                body: {
-                  uuids: selectedUUIDs
-                }
-              },
-              {
-                onSuccess: () => {
-                  refetchData();
-                  hideLoader();
-                  openNotification("success", t("Success!"), t("Polygons deleted successfully"));
-                },
-                onError: () => {
-                  hideLoader();
-                  openNotification("error", t("Error!"), t("Failed to delete polygons"));
-                }
-              }
-            );
-          }
+          variant: "primary"
         }}
         secondaryButtonText={t("Cancel")}
         secondaryButtonProps={{
@@ -174,7 +175,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
     } else if (type === "fix") {
       openFormModalHandlerSubmitPolygon(selectedUUIDs);
     } else {
-      openFormModalHandlerProcessBulkPolygons(selectedUUIDs);
+      openFormModalHandlerProcessBulkPolygons();
     }
   };
 

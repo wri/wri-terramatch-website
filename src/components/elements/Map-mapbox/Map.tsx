@@ -391,7 +391,7 @@ export const MapContainer = ({
   }
 
   useEffect(() => {
-    if (selectedPolygonsInCheckbox && map.current && styleLoaded && map.current.isStyleLoaded()) {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
       const newPolygonData = {
         [DELETED_POLYGONS]: selectedPolygonsInCheckbox
       };
@@ -401,7 +401,7 @@ export const MapContainer = ({
         newPolygonData
       );
     }
-  }, [selectedPolygonsInCheckbox]);
+  }, [selectedPolygonsInCheckbox, styleLoaded]);
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");

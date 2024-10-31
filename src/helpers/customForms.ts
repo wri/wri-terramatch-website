@@ -129,7 +129,7 @@ export const getCustomFormSteps = (
   framework?: Framework,
   feedback_fields?: string[]
 ): FormStepSchema[] => {
-  return sortBy(schema.form_sections, ["order"]).map(section =>
+  return sortBy(schema?.form_sections, ["order"]).map(section =>
     apiFormSectionToFormStep(section, t, entity, framework, feedback_fields)
   );
 };
