@@ -355,7 +355,20 @@ const DataCard = ({
               </div>
             </Button>
           </div>
-          <img src="/Images/graphic-8.svg" alt="graph" />
+          <div className="relative">
+            <div className="absolute left-[73%] top-[-5%] flex flex-col gap-1 rounded bg-white p-2 shadow-all">
+              <Text variant="text-10">2021</Text>
+              {dataLeyend.map(item => (
+                <LeyendItem
+                  key={item.label}
+                  backgroundColor={item.color}
+                  label={item.label}
+                  percentage={item.percentage}
+                />
+              ))}
+            </div>
+            <img src="/Images/graphic-8.svg" alt="graph" />
+          </div>
         </div>
       </When>
       <When condition={isTable}>
