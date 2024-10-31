@@ -13,10 +13,7 @@ import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_HALF_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
-import {
-  VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
-  VARIANT_TABLE_MONITORED
-} from "@/components/elements/Table/TableVariants";
+import { VARIANT_TABLE_MONITORED } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -259,7 +256,8 @@ const DataCard = ({
               };
             })}
             data={tableData}
-            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
+            variant={VARIANT_TABLE_MONITORED}
+            hasPagination={true}
           />
         </div>
       </ModalExpand>
