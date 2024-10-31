@@ -200,11 +200,11 @@ const DataCard = ({
       key: 0,
       label: "Leyend",
       content: (
-        <>
+        <div className="flex flex-col gap-1">
           {dataLeyend.map(item => (
             <LeyendItem key={item.label} backgroundColor={item.color} label={item.label} percentage={item.percentage} />
           ))}
-        </>
+        </div>
       )
     },
     {
@@ -326,7 +326,7 @@ const DataCard = ({
           {tabItems[tabActive].content}
         </div>
         <div className="h-[inherit] w-[1px] bg-grey-850" />
-        <div className="flex flex-col gap-1 py-4 pr-4">
+        <div className="flex w-full flex-col gap-4 py-4 pr-4">
           <div className="flex items-center gap-2 self-end">
             <Button
               className="!h-min !min-h-min !rounded-lg !py-1"
