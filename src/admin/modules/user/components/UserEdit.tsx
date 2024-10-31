@@ -10,9 +10,13 @@ import {
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
-import { countriesChoices, frameworkChoices, userPrimaryRoleChoices } from "@/admin/modules/user/const";
+import {
+  countriesChoices,
+  directFrameworkChoices,
+  frameworkChoices,
+  userPrimaryRoleChoices
+} from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
-import { Framework } from "@/context/framework.provider";
 
 import modules from "../..";
 import UserTitle from "./UserTitle";
@@ -53,7 +57,7 @@ const UserEdit = () => {
         <SelectArrayInput
           source="direct_frameworks"
           label="Direct Frameworks"
-          choices={Object.values(Framework).map(slug => ({ id: slug, name: slug }))}
+          choices={directFrameworkChoices}
           fullWidth
         />
       </SimpleForm>
