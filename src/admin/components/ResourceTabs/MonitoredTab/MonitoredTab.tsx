@@ -5,6 +5,7 @@ import { TabbedShowLayout, TabProps } from "react-admin";
 import Button from "@/components/elements/Button/Button";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import Text from "@/components/elements/Text/Text";
+import Toggle from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import DataCard, { DataStructure } from "./components/DataCard";
@@ -287,12 +288,37 @@ const MonitoredCardData: DataStructure[] = [
 
 const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const [intersectingCard, setIntersectingCard] = useState<string | null>(MonitoredCardData[0].label);
-  const [isCardsTable, setIsCardsTable] = useState(false);
   const [widthValue, setWidthValue] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const cardLabelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelsContainerRef = useRef<HTMLDivElement>(null);
   const cardRefsContainer = useRef<HTMLDivElement>(null);
+
+  const toggleItems = [
+    {
+      id: "dashboard",
+      render: (
+        <Text variant="text-14">
+          <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
+            <Icon name={IconNames.DASHBOARD} className="h-4 w-4" />
+            Dashboard
+          </div>
+        </Text>
+      )
+    },
+    {
+      id: "table",
+      render: (
+        <Text variant="text-14">
+          <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
+            <Icon name={IconNames.TABLE} className="h-4 w-4" />
+            Table
+          </div>
+        </Text>
+      )
+    }
+  ];
 
   useEffect(() => {
     const cardElements = cardRefs.current;
@@ -392,21 +418,14 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     setWidthValue(labelContainer.clientWidth);
   }, []);
 
+  const [first, setFirst] = useState(false);
+  useEffect(() => {
+    setFirst(activeIndex === 1);
+  }, [activeIndex]);
+
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
-        {/* <div className="flex w-[22%] flex-col gap-4" ref={refWidth}>
-          <div className="relative self-center w-full overflow-hidden rounded-lg">
-            <img src="/images/map-img.png" alt="Monitored" className="w-full" />
-            <div className="absolute top-0 z-10 flex items-center justify-center w-full h-full">
-              <button className="flex items-center object-center px-2 py-1 bg-white rounded-full text-12-semibold text-primary hover:bg-primary hover:text-white lg:px-3">
-                <Icon name={IconNames.MAP_PIN} className="mr-[3px] w-[10px] lg:w-3" />
-                View Map
-              </button>
-            </div>
-          </div>
-          <FormMonitored />
-        </div> */}
         <div className="flex w-full min-w-0 gap-4">
           <div
             ref={labelsContainerRef}
@@ -436,6 +455,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             <div className="flex items-center justify-between">
               <FilterSearchBox placeholder="Search" onChange={() => {}} />
               <div className="flex gap-4">
+                <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex}></Toggle>
                 <Button variant="purple">
                   <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
                   Run Analysis
@@ -446,22 +466,12 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
                     Filter
                   </div>
                 </Button>
-                <Button
-                  variant="white-border"
-                  className="!h-min !min-h-min !rounded-lg !py-1"
-                  onClick={() => setIsCardsTable(!isCardsTable)}
-                >
-                  <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
-                    <Icon name={isCardsTable ? IconNames.DASHBOARD : IconNames.TABLE} className="h-4 w-4" />
-                    {isCardsTable ? "Dashboard" : "Table"}
-                  </div>
-                </Button>
               </div>
             </div>
             <div className=" flex max-h-[85vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
               {MonitoredCardData.map((data, index) => (
                 <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
-                  <DataCard data={data} isCardsTable={isCardsTable} />
+                  <DataCard data={data} isCardsTable={first} />
                 </div>
               ))}
             </div>

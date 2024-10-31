@@ -1,10 +1,15 @@
 import classNames from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 import { ToggleVariants, VARIANT_TOGGLE_PRIMARY } from "./ToggleVariants";
 
+interface TogglePropsItem {
+  id: string;
+  render: ReactNode;
+}
+
 export interface ToggleProps {
-  items: string[];
+  items: TogglePropsItem[];
   activeIndex: number;
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
   textClassName?: string;
@@ -38,7 +43,7 @@ const Toggle = (props: ToggleProps) => {
       />
       {items.map((tab, index) => (
         <button
-          key={tab}
+          key={tab.id}
           ref={el => (buttonRefs.current[index] = el)}
           type="button"
           onClick={() => setActiveIndex(index)}
@@ -50,7 +55,7 @@ const Toggle = (props: ToggleProps) => {
             activeIndex !== index && variant.textInactive
           )}
         >
-          {tab}
+          {tab.render}
         </button>
       ))}
     </div>
