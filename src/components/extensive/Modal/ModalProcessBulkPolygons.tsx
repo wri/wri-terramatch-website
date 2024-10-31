@@ -41,7 +41,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   const t = useT();
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
   const [currentSelectedUuids, setCurrentSelectedUuids] = useState<string[]>([]);
-
+  const [selectAll, setSelectAll] = useState(false);
   useEffect(() => {
     if (sitePolygonData) {
       const initialSelection = sitePolygonData.map((polygon: any) =>
@@ -56,7 +56,11 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
     setPolygonsSelected(prev => {
       const newSelected = [...prev];
       newSelected[index] = !prev[index];
-
+      if (newSelected.every(Boolean)) {
+        setSelectAll(true);
+      } else {
+        setSelectAll(false);
+      }
       const polygonUuid: string = sitePolygonData[index].poly_id as string;
       if (newSelected[index]) {
         setCurrentSelectedUuids([...currentSelectedUuids, polygonUuid]);
@@ -68,6 +72,8 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   };
   const handleSelectAll = (isChecked: boolean) => {
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
+    setCurrentSelectedUuids(isChecked ? sitePolygonData.map(polygon => polygon.poly_id as string) : []);
+    setSelectAll(isChecked);
   };
   return (
     <ModalBaseSubmit {...rest}>
@@ -97,7 +103,8 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
           </Text>
         </When>
         <Text variant="text-14-bold" className="mb-2 flex items-center justify-end gap-1 pr-[50px]">
-          {t("Select All")} <Checkbox name="Select All" onChange={e => handleSelectAll(e.target.checked)} />
+          {t("Select All")}{" "}
+          <Checkbox name="Select All" checked={selectAll} onChange={e => handleSelectAll(e.target.checked)} />
         </Text>
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">

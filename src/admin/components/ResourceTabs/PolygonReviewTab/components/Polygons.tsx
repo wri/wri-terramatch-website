@@ -196,7 +196,8 @@ const Polygons = (props: IPolygonProps) => {
         return prevCheckedUuids.filter((id: string) => id !== uuid);
       }
     };
-    setSelectedPolygonsInCheckbox(polygonsChecked);
+    const checkedUuids = polygonsChecked(selectedPolygonsInCheckbox);
+    setSelectedPolygonsInCheckbox(checkedUuids);
   };
 
   return (
