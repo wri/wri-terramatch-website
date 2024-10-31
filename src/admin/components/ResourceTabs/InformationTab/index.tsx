@@ -11,7 +11,7 @@ import SeedingsTable from "@/admin/components/Tables/SeedingsTable";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import List from "@/components/extensive/List/List";
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework } from "@/context/framework.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
@@ -75,7 +75,7 @@ const InformationTab: FC<IProps> = props => {
 
   if (isLoading) return null;
 
-  const framework = record.framework_key as Framework;
+  const { framework } = useFrameworkContext();
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
 
   const values = record.migrated
