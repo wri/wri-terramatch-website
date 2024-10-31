@@ -240,32 +240,6 @@ const DataCard = ({
                 Agralsa
               </Text>
             </div>
-            {/* <div className="flex items-center">
-            <div className="flex flex-col items-center justify-center flex-1 border-r-2 border-grey-950">
-              <Text variant={"text-12"} className="text-grey-600">
-                1YR AVG
-              </Text>
-              <Text variant={"text-14"}>3,020</Text>
-            </div>
-            <div className="flex flex-col items-center justify-center flex-1 border-r-2 border-grey-950">
-              <Text variant={"text-12"} className="text-grey-600">
-                3YR AVG
-              </Text>
-              <Text variant={"text-14"}>5,100</Text>
-            </div>
-            <div className="flex flex-col items-center justify-center flex-1 border-r-2 border-grey-950">
-              <Text variant={"text-12"} className="text-grey-600">
-                5YR AVG
-              </Text>
-              <Text variant={"text-14"}>6,800</Text>
-            </div>
-            <div className="flex flex-col items-center justify-center flex-1">
-              <Text variant={"text-12"} className="text-grey-600">
-                10YR AVG
-              </Text>
-              <Text variant={"text-14"}>8,450</Text>
-            </div>
-          </div> */}
           </div>
         </div>
       </When>
