@@ -367,7 +367,7 @@ const DataCard = ({
                 />
               ))}
             </div>
-            <img src="/Images/graphic-8.svg" alt="graph" />
+            <img src="/images/graphic-8.svg" alt="graph" />
           </div>
         </div>
       </When>
