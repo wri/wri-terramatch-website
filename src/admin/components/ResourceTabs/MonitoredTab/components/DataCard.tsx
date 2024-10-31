@@ -20,6 +20,8 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import { useModalContext } from "@/context/modal.provider";
 
+import LeyendItem from "./LeyendItem";
+
 interface TableData {
   polygonName: string;
   site: string;
@@ -95,9 +97,73 @@ const DataCard = ({
 }: { data: DataStructure; isCardsTable: boolean } & React.HTMLAttributes<HTMLDivElement>) => {
   const { label, tooltipContent, tableData } = data;
   const [isTable, setIsTable] = useState(isCardsTable);
+  const [tabActive, setTabActive] = useState(0);
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const modalMapFunctions = useMap();
+
+  const dataLeyend = [
+    { label: "Agrariala Palma", percentage: "1.0", color: "#AA57FD" },
+    { label: "Agraisa", percentage: "0.9", color: "#577EFD" },
+    { label: "Agrajaya Batitama", percentage: "0.8", color: "#57C2FD" },
+    { label: "Agoue Iboe", percentage: "0.7", color: "#75A338" },
+    { label: "Africas", percentage: "0.6", color: "#9F7830" },
+    { label: "AEK Torup", percentage: "0.5", color: "#7471AD" },
+    { label: "AEK Raso", percentage: "0.4", color: "#CB6527" },
+    { label: "AEK Nabara Selatan", percentage: "0.3", color: "#DDAB3B" },
+    { label: "Adison Thaochu A", percentage: "0.2", color: "#489B7B" },
+    { label: "ABA", percentage: "0.1", color: "#D54789" }
+  ];
+
+  const tabItems = [
+    {
+      key: 0,
+      label: "Leyend",
+      content: (
+        <>
+          {dataLeyend.map(item => (
+            <LeyendItem key={item.label} backgroundColor={item.color} label={item.label} percentage={item.percentage} />
+          ))}
+        </>
+      )
+    },
+    {
+      key: 1,
+      label: "Stadistics",
+      content: (
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
+            <Text variant="text-14-light">• HTTP 4XX Errors</Text>
+            <div className="flex items-center gap-1">
+              <Text variant="text-14-bold">108K</Text>
+              <Text variant="text-14-light">12%</Text>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text variant="text-14-light">• HTTP 4XX Errors</Text>
+            <div className="flex items-center gap-1">
+              <Text variant="text-14-bold">108K</Text>
+              <Text variant="text-14-light">12%</Text>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text variant="text-14-light">• HTTP 4XX Errors</Text>
+            <div className="flex items-center gap-1">
+              <Text variant="text-14-bold">108K</Text>
+              <Text variant="text-14-light">12%</Text>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text variant="text-14-light">• HTTP 4XX Errors</Text>
+            <div className="flex items-center gap-1">
+              <Text variant="text-14-bold">108K</Text>
+              <Text variant="text-14-light">12%</Text>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   const ModalTable = () => {
     openModal(
@@ -139,7 +205,7 @@ const DataCard = ({
     <div
       {...rest}
       className={classNames("flex w-full gap-3", {
-        "rounded-lg border border-grey-850 bg-neutral-50 shadow": !isTable
+        "rounded-lg border border-grey-850 bg-white shadow": !isTable
       })}
     >
       <When condition={!isTable}>
@@ -164,7 +230,24 @@ const DataCard = ({
               />
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex">
+            {tabItems.map(item => (
+              <button
+                key={item.key}
+                onClick={() => setTabActive(item.key)}
+                className={classNames("text-14 border-b border-darkCustom-40 px-3 py-1 text-darkCustom-40", {
+                  "!border-b-2 !border-blueCustom-900 !font-bold !text-blueCustom-900": item.key === tabActive
+                })}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {tabItems[tabActive].content}
+        </div>
+        <div className="h-[inherit] w-[1px] bg-grey-850" />
+        <div className="flex flex-col gap-1 py-4 pr-4">
+          <div className="flex items-center gap-2 self-end">
             <Button
               className="!h-min !min-h-min !rounded-lg !py-1"
               variant="white-border"
@@ -194,53 +277,7 @@ const DataCard = ({
               </div>
             </Button>
           </div>
-          <div className="flex flex-col gap-1">
-            <Text variant="text-14-light">• HTTP 4XX Errors</Text>
-            <div className="flex items-center gap-1">
-              <Text variant="text-14-bold">108K</Text>
-              <Text variant="text-14-light">12%</Text>
-            </div>
-          </div>
-        </div>
-        <div className="h-[inherit] w-[1px] bg-grey-850" />
-        <div className="flex items-center gap-1 py-4 pr-4">
-          <div className="flex flex-[4] flex-col gap-2">
-            <img src="/Images/graphic-8.svg" alt="graph" />
-            <div className="grid w-full grid-cols-4 gap-1 pl-3">
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#D54789]" />
-                Adison Thaochu A
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#489B7B]" />
-                AEK Nabara Selatan
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#DDAB3B]" />
-                AEK Raso
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#CB6527]" />
-                AEK Torup
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#7471AD]" />
-                Africas
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#9F7830]" />
-                Agoue Iboe
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#75A338]" />
-                Agrajaya Baktitama
-              </Text>
-              <Text variant="text-10-light" className="flex items-center gap-1 whitespace-nowrap text-black">
-                <div className="h-2 w-2 rounded-sm bg-[#57C2FD]" />
-                Agralsa
-              </Text>
-            </div>
-          </div>
+          <img src="/Images/graphic-8.svg" alt="graph" />
         </div>
       </When>
       <When condition={isTable}>

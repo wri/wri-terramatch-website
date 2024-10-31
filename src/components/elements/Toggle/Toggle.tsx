@@ -1,11 +1,11 @@
 import classNames from "classnames";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { ToggleVariants, VARIANT_TOGGLE_PRIMARY } from "./ToggleVariants";
 
 interface TogglePropsItem {
   id: string;
-  render: ReactNode;
+  render: React.ReactNode;
 }
 
 export interface ToggleProps {
@@ -19,14 +19,25 @@ export interface ToggleProps {
 
 const Toggle = (props: ToggleProps) => {
   const { items, activeIndex, setActiveIndex, disabledIndexes = [], variant = VARIANT_TOGGLE_PRIMARY } = props;
+
   const [width, setWidth] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const currentButton = buttonRefs.current[activeIndex];
+    console.log(activeIndex);
+
     if (currentButton) {
-      const newWidth = currentButton.getBoundingClientRect().width;
-      setWidth(newWidth);
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const newWidth = entry.target.clientWidth;
+          setWidth(newWidth);
+        }
+      });
+
+      resizeObserver.observe(currentButton);
+
+      return () => resizeObserver.disconnect();
     }
   }, [activeIndex]);
 
@@ -38,7 +49,7 @@ const Toggle = (props: ToggleProps) => {
         className={classNames("absolute top-1 transition-all", variant.activeToggle)}
         style={{
           width: width,
-          transform: `translateX(calc(${buttonRefs.current[activeIndex]?.offsetLeft}px - 4px))`
+          transform: `translateX(calc(${buttonRefs.current[activeIndex]?.offsetLeft || 0}px - 4px))`
         }}
       />
       {items.map((tab, index) => (
