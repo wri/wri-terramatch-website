@@ -434,7 +434,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
 
           <div className="flex w-full max-w-[80%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
             <div className="flex items-center justify-between">
-              <FilterSearchBox placeholder="Search" />
+              <FilterSearchBox placeholder="Search" onChange={() => {}} />
               <div className="flex gap-4">
                 <Button variant="purple">
                   <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
