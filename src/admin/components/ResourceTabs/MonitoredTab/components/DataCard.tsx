@@ -4,6 +4,7 @@ import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
@@ -22,11 +23,31 @@ import { useModalContext } from "@/context/modal.provider";
 
 interface TableData {
   polygonName: string;
-  site: string;
-  year: string;
-  cover: string;
-  confidence: string;
-  phase: string;
+  size: string;
+  siteName: string;
+  status: string;
+  dateRun2024: string;
+  "2024-2015": string;
+  "2024-2016": string;
+  "2024-2017": string;
+  "2024-2018": string;
+  "2024-2019": string;
+  "2024-2020": string;
+  "2024-2021": string;
+  "2024-2022": string;
+  "2024-2023": string;
+  "2024-2024": string;
+  dateRun2025: string;
+  "2025-2016": string;
+  "2025-2017": string;
+  "2025-2018": string;
+  "2025-2019": string;
+  "2025-2020": string;
+  "2025-2021": string;
+  "2025-2022": string;
+  "2025-2023": string;
+  "2025-2024": string;
+  "2025-2025": string;
 }
 
 export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
@@ -40,10 +61,19 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     id: "mainInfo",
     header: "",
     columns: [
-      { accessorKey: "polygonName", header: "Polygon Name" },
+      { accessorKey: "polygonName", header: "Polygon Name", meta: { sticky: true, left: 0 } },
       { accessorKey: "size", header: "Size (ha)" },
       { accessorKey: "siteName", header: "Site Name" },
-      { accessorKey: "status", header: "Status" }
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: (props: any) => (
+          <CustomChipField
+            label={props.getValue()}
+            classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+          />
+        )
+      }
     ]
   },
   {
@@ -68,7 +98,16 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     header: "2025 Analysis",
     columns: [
       { accessorKey: "dateRun2025", header: "Date Run" },
-      { accessorKey: "2025-2016", header: "2016 " }
+      { accessorKey: "2025-2016", header: "2016 " },
+      { accessorKey: "2025-2017", header: "2017" },
+      { accessorKey: "2025-2018", header: "2018" },
+      { accessorKey: "2025-2019", header: "2019" },
+      { accessorKey: "2025-2020", header: "2020" },
+      { accessorKey: "2025-2021", header: "2021" },
+      { accessorKey: "2025-2022", header: "2022" },
+      { accessorKey: "2025-2023", header: "2023" },
+      { accessorKey: "2025-2024", header: "2024" },
+      { accessorKey: "2025-2025", header: "2025" }
     ]
   }
 ];

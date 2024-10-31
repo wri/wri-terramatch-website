@@ -26,6 +26,15 @@ import Pagination from "@/components/extensive/Pagination";
 
 import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
 
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData extends RowData, TValue = unknown> {
+    sticky?: boolean;
+    left?: string | number;
+    align?: "left" | "center" | "right";
+    data?: TData | TValue;
+  }
+}
+
 export interface TableProps<TData>
   extends DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>,
     PropsWithChildren {
@@ -138,17 +147,21 @@ function Table<TData extends RowData>({
             <thead className={variant.thead}>
               {getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id} className={variant.trHeader}>
-                  {headerGroup.headers.map(
-                    header =>
-                      !header.isPlaceholder && (
+                  {headerGroup.headers.map(header => {
+                    if (!header.isPlaceholder) {
+                      const isSticky = header.column.columnDef.meta?.sticky;
+
+                      return (
                         <th
                           key={header.id}
                           colSpan={header.colSpan}
                           onClick={header.column.getToggleSortingHandler()}
                           className={tw(
                             `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
+
                             classNames({ "cursor-pointer": header.column.getCanSort() }),
-                            classNames({ [variant.thHeaderSort || ""]: !header.column.getCanSort() })
+                            classNames({ [variant.thHeaderSort || ""]: !header.column.getCanSort() }),
+                            classNames({ [variant.thHeaderSticky || ""]: isSticky })
                           )}
                           align="left"
                         >
@@ -161,9 +174,7 @@ function Table<TData extends RowData>({
                               fontFamily: "inherit"
                             }}
                           >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
+                            {flexRender(header.column.columnDef.header, header.getContext())}
                             <When condition={header.column.getCanSort()}>
                               <Icon
                                 name={
@@ -178,8 +189,10 @@ function Table<TData extends RowData>({
                             </When>
                           </div>
                         </th>
-                      )
-                  )}
+                      );
+                    }
+                    return null;
+                  })}
                 </tr>
               ))}
             </thead>
@@ -243,9 +256,11 @@ function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData,
     [cell.getValue()]
   );
 
+  const isSticky = cell.column.columnDef.meta?.sticky;
+
   return (
     <td
-      className={classNames("text-normal-subtitle-400", variant.tdBody)}
+      className={classNames("text-normal-subtitle-400", variant.tdBody, { [variant.tdBodySticky || ""]: isSticky })}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}
     >
