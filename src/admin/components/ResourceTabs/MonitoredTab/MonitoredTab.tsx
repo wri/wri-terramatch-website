@@ -7,6 +7,9 @@ import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSea
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
+import { useModalContext } from "@/context/modal.provider";
 
 import DataCard, { DataStructure } from "./components/DataCard";
 
@@ -330,6 +333,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelsContainerRef = useRef<HTMLDivElement>(null);
   const cardRefsContainer = useRef<HTMLDivElement>(null);
+  const { openModal, closeModal } = useModalContext();
 
   const toggleItems: TogglePropsItem[] = [
     {
@@ -459,6 +463,31 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     setFirst(activeIndex === 1);
   }, [activeIndex]);
 
+  const openRunAnalysis = () => {
+    openModal(
+      ModalId.MODAL_RUN_ANALYSIS,
+      <ModalRunAnalysis
+        title="Run Analysis "
+        content="Project Developers may submit one or all polygons for review."
+        primaryButtonText="Submit"
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            closeModal(ModalId.MODAL_RUN_ANALYSIS);
+          }
+        }}
+        onClose={() => closeModal(ModalId.MODAL_RUN_ANALYSIS)}
+        secondaryButtonText="Cancel"
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => closeModal(ModalId.MODAL_RUN_ANALYSIS)
+        }}
+      />
+    );
+  };
+
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
       <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
@@ -491,8 +520,13 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             <div className="flex items-center justify-between">
               <FilterSearchBox placeholder="Search" onChange={() => {}} />
               <div className="flex gap-4">
-                <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
-                <Button variant="purple">
+                <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex}></Toggle>
+                <Button
+                  variant="purple"
+                  onClick={() => {
+                    openRunAnalysis();
+                  }}
+                >
                   <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
                   Run Analysis
                 </Button>
