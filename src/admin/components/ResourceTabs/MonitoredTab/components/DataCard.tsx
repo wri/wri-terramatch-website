@@ -1,11 +1,14 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
@@ -94,11 +97,13 @@ const DataCard = ({
   const [isTable, setIsTable] = useState(isCardsTable);
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const modalMapFunctions = useMap();
+
   const ModalTable = () => {
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title={"Table"} closeModal={closeModal}>
-        <div className="w-full px-6">
+        <div className="h-full w-full px-6 pb-6">
           <Table
             columns={TABLE_COLUMNS.map(column => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
@@ -115,15 +120,30 @@ const DataCard = ({
     );
   };
 
+  const ModalMap = () => {
+    openModal(
+      "modalExpand",
+      <ModalExpand id="modalExpand" title={"Map"} closeModal={closeModal}>
+        <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
+          <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
+        </div>
+      </ModalExpand>
+    );
+  };
+
   useEffect(() => {
     setIsTable(isCardsTable);
   }, [isCardsTable]);
 
   return (
-    <div {...rest} className="flex w-full flex-col rounded-lg border border-grey-850 bg-neutral-50 p-4 shadow">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
+    <div
+      {...rest}
+      className={classNames("flex w-full gap-3", {
+        "rounded-lg border border-grey-850 bg-neutral-50 shadow": !isTable
+      })}
+    >
+      <When condition={!isTable}>
+        <div className="flex flex-col gap-2 py-4 pl-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <Text variant={"text-16-semibold"}>{label}</Text>
@@ -144,46 +164,46 @@ const DataCard = ({
               />
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <Button
+              className="!h-min !min-h-min !rounded-lg !py-1"
+              variant="white-border"
+              onClick={() => {
+                ModalTable();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.TABLE} className="h-[14px] w-[14px]" />
+                <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
+                  Table
+                </Text>
+              </div>
+            </Button>
+            <Button
+              className="!h-min !min-h-min !rounded-lg !py-1"
+              variant="white-border"
+              onClick={() => {
+                ModalMap();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.MAP} className="h-[14px] w-[14px]" />
+                <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
+                  Map
+                </Text>
+              </div>
+            </Button>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text variant="text-14-light">• HTTP 4XX Errors</Text>
+            <div className="flex items-center gap-1">
+              <Text variant="text-14-bold">108K</Text>
+              <Text variant="text-14-light">12%</Text>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            className="!h-min !min-h-min !rounded-lg !py-1"
-            variant="white-border"
-            onClick={() => {
-              ModalTable();
-            }}
-          >
-            <div className="flex items-center gap-1">
-              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-              <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
-                Expand
-              </Text>
-            </div>
-          </Button>
-          <Button
-            className="!h-min !min-h-min !rounded-lg !py-1"
-            variant="white-border"
-            onClick={() => setIsTable(!isTable)}
-          >
-            <div className="flex items-center gap-1">
-              <Icon name={isTable ? IconNames.DASHBOARD : IconNames.TABLE} className="h-[14px] w-[14px]" />
-              <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
-                {isTable ? "Dashboard" : "Table"}
-              </Text>
-            </div>
-          </Button>
-          <Button className="!h-min !min-h-min !rounded-lg !py-1" variant="white-border" onClick={() => {}}>
-            <div className="flex items-center gap-1">
-              <Icon name={IconNames.MAP} className="h-[14px] w-[14px]" />
-              <Text variant="text-14-bold" className="capitalize text-blueCustom-900">
-                Map
-              </Text>
-            </div>
-          </Button>
-        </div>
-      </div>
-      <div className="flex items-center gap-1">
-        <When condition={!isTable}>
+        <div className="h-[inherit] w-[1px] bg-grey-850" />
+        <div className="flex items-center gap-1 py-4 pr-4">
           <div className="flex flex-[4] flex-col gap-2">
             <img src="/Images/graphic-8.svg" alt="graph" />
             <div className="grid w-full grid-cols-4 gap-1 pl-3">
@@ -247,12 +267,11 @@ const DataCard = ({
             </div>
           </div> */}
           </div>
-        </When>
-
-        <When condition={isTable}>
-          <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
-        </When>
-      </div>
+        </div>
+      </When>
+      <When condition={isTable}>
+        <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
+      </When>
     </div>
   );
 };
