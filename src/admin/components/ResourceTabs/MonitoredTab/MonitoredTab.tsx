@@ -5,7 +5,7 @@ import { TabbedShowLayout, TabProps } from "react-admin";
 import Button from "@/components/elements/Button/Button";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import Text from "@/components/elements/Text/Text";
-import Toggle from "@/components/elements/Toggle/Toggle";
+import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import DataCard, { DataStructure } from "./components/DataCard";
@@ -17,9 +17,8 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 const TableData = [
   {
     polygonName: "ABA",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
-    status: "Approved",
+    status: "Draft",
     size: "7,473",
     dateRun2024: "9/26/24",
     dateRun2025: "10/25/24",
@@ -34,16 +33,20 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "50.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "Adison Thaochu A",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
-    status: "Approved",
+    status: "Submitted",
     size: "7,473",
     dateRun2024: "9/26/24",
     dateRun2025: "10/25/24",
@@ -58,16 +61,20 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "85.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "AEK Nabara Selatan",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
-    status: "Approved",
+    status: "Needs Info",
     size: "7,473",
     dateRun2024: "9/26/24",
     dateRun2025: "10/25/24",
@@ -82,14 +89,18 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "75.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "AEK Raso",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
@@ -106,14 +117,18 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "50.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "AEK Torup",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
@@ -130,14 +145,18 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "65.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "Africas",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
@@ -154,14 +173,18 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "50.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "Agoue Iboe",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
@@ -178,14 +201,18 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "55.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "Agrajaya Baktitama",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
@@ -202,14 +229,18 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "50.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   },
   {
     polygonName: "Agralsa",
-    site: "Tannous/Brayton Road",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
@@ -226,10 +257,15 @@ const TableData = [
     "2024-2023": "0.457",
     "2024-2024": "0.966",
     "2025-2016": "0.966",
-    year: "2024",
-    cover: "",
-    confidence: "75.0",
-    phase: "baseline"
+    "2025-2017": "0.655",
+    "2025-2018": "0.208",
+    "2025-2019": "0.654",
+    "2025-2020": "0.466",
+    "2025-2021": "0.151",
+    "2025-2022": "0.385",
+    "2025-2023": "0.457",
+    "2025-2024": "0.966",
+    "2025-2025": "0.966"
   }
 ];
 
@@ -295,7 +331,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const labelsContainerRef = useRef<HTMLDivElement>(null);
   const cardRefsContainer = useRef<HTMLDivElement>(null);
 
-  const toggleItems = [
+  const toggleItems: TogglePropsItem[] = [
     {
       id: "dashboard",
       render: (

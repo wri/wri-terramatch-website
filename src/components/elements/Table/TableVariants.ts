@@ -11,12 +11,14 @@ export interface TableVariant {
   table?: string;
   trHeader: string;
   thHeaderSort?: string;
+  thHeaderSticky?: string;
   tBody?: string;
   trBody: string;
   tdBody?: string;
   thHeader?: string;
   thead?: string;
   paginationVariant?: VariantPagination;
+  tdBodySticky?: string;
 }
 
 export const VARIANT_TABLE_PRIMARY = {
@@ -179,7 +181,7 @@ export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
 };
 
 export const VARIANT_TABLE_MONITORED = {
-  table: "border-collapse",
+  table: "border-collapse w-full",
   name: "border-airtable",
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto ",
   trHeader: "bg-white sticky top-0 z-10 ",
@@ -188,7 +190,9 @@ export const VARIANT_TABLE_MONITORED = {
   tBody: "",
   thHeaderSort: "!border-x !place-items-center py-2",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-10-light px-[3px] py-2 first:pl-2 first:pr-2 last:pr-2",
+  tdBody: "text-10-light px-[3px] py-2 first:pl-2 first:pr-2 last:pr-2 bg-white",
   thead: "bg-blueCustom-100 ",
-  paginationVariant: VARIANT_PAGINATION_DASHBOARD
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD,
+  thHeaderSticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
+  tdBodySticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg"
 };

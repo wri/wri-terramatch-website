@@ -4,11 +4,14 @@ import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_LEFT_HALF_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
@@ -24,11 +27,31 @@ import LeyendItem from "./LeyendItem";
 
 interface TableData {
   polygonName: string;
-  site: string;
-  year: string;
-  cover: string;
-  confidence: string;
-  phase: string;
+  size: string;
+  siteName: string;
+  status: string;
+  dateRun2024: string;
+  "2024-2015": string;
+  "2024-2016": string;
+  "2024-2017": string;
+  "2024-2018": string;
+  "2024-2019": string;
+  "2024-2020": string;
+  "2024-2021": string;
+  "2024-2022": string;
+  "2024-2023": string;
+  "2024-2024": string;
+  dateRun2025: string;
+  "2025-2016": string;
+  "2025-2017": string;
+  "2025-2018": string;
+  "2025-2019": string;
+  "2025-2020": string;
+  "2025-2021": string;
+  "2025-2022": string;
+  "2025-2023": string;
+  "2025-2024": string;
+  "2025-2025": string;
 }
 
 export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,15 +60,45 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tableData: TableData[];
 }
 
+const tableItemMenu = () => [
+  {
+    id: "1",
+    render: () => (
+      <div className="flex items-center gap-2" onClick={() => {}}>
+        <Icon name={IconNames.POLYGON} className="h-6 w-6" />
+        <Text variant="text-12-bold">Edit</Text>
+      </div>
+    )
+  },
+  {
+    id: "32",
+    render: () => (
+      <div className="flex items-center gap-2" onClick={() => {}}>
+        <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
+        <Text variant="text-12-bold">Delete</Text>
+      </div>
+    )
+  }
+];
+
 const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   {
     id: "mainInfo",
     header: "",
     columns: [
-      { accessorKey: "polygonName", header: "Polygon Name" },
+      { accessorKey: "polygonName", header: "Polygon Name", meta: { sticky: true, left: 0 } },
       { accessorKey: "size", header: "Size (ha)" },
       { accessorKey: "siteName", header: "Site Name" },
-      { accessorKey: "status", header: "Status" }
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: (props: any) => (
+          <CustomChipField
+            label={props.getValue()}
+            classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+          />
+        )
+      }
     ]
   },
   {
@@ -70,7 +123,34 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     header: "2025 Analysis",
     columns: [
       { accessorKey: "dateRun2025", header: "Date Run" },
-      { accessorKey: "2025-2016", header: "2016 " }
+      { accessorKey: "2025-2016", header: "2016 " },
+      { accessorKey: "2025-2017", header: "2017" },
+      { accessorKey: "2025-2018", header: "2018" },
+      { accessorKey: "2025-2019", header: "2019" },
+      { accessorKey: "2025-2020", header: "2020" },
+      { accessorKey: "2025-2021", header: "2021" },
+      { accessorKey: "2025-2022", header: "2022" },
+      { accessorKey: "2025-2023", header: "2023" },
+      { accessorKey: "2025-2024", header: "2024" },
+      { accessorKey: "2025-2025", header: "2025" }
+    ]
+  },
+  {
+    id: "moreInfo",
+    header: "",
+    columns: [
+      {
+        accessorKey: "more",
+        header: "",
+        enableSorting: false,
+        cell: props => (
+          <Menu menu={tableItemMenu()} placement={MENU_PLACEMENT_LEFT_HALF_BOTTOM}>
+            <div className="rounded p-1 hover:bg-primary-200">
+              <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+            </div>
+          </Menu>
+        )
+      }
     ]
   }
 ];
