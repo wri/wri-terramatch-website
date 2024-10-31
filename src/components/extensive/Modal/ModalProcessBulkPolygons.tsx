@@ -19,6 +19,7 @@ export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   sitePolygonData: SitePolygonsDataResponse;
   selectedPolygonsInCheckbox: string[];
   refetch?: () => void;
+  onClick?: (currentSelectedUuids: any) => void;
 }
 
 const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
@@ -33,17 +34,20 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   onClose,
   sitePolygonData,
   selectedPolygonsInCheckbox,
+  onClick,
   refetch,
   ...rest
 }) => {
   const t = useT();
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
+  const [currentSelectedUuids, setCurrentSelectedUuids] = useState<string[]>([]);
 
   useEffect(() => {
     if (sitePolygonData) {
       const initialSelection = sitePolygonData.map((polygon: any) =>
         selectedPolygonsInCheckbox.includes(polygon.poly_id)
       );
+      setCurrentSelectedUuids(selectedPolygonsInCheckbox);
       setPolygonsSelected(initialSelection);
     }
   }, [sitePolygonData, selectedPolygonsInCheckbox]);
@@ -52,13 +56,19 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
     setPolygonsSelected(prev => {
       const newSelected = [...prev];
       newSelected[index] = !prev[index];
+
+      const polygonUuid: string = sitePolygonData[index].poly_id as string;
+      if (newSelected[index]) {
+        setCurrentSelectedUuids([...currentSelectedUuids, polygonUuid]);
+      } else {
+        setCurrentSelectedUuids(currentSelectedUuids.filter(uuid => uuid !== polygonUuid));
+      }
       return newSelected;
     });
   };
   const handleSelectAll = (isChecked: boolean) => {
     setPolygonsSelected(sitePolygonData.map(() => isChecked));
   };
-
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -118,7 +128,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps}>
+        <Button {...primaryButtonProps} onClick={() => onClick && onClick(currentSelectedUuids)}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
