@@ -60,6 +60,7 @@ const SiteReportDetailPage = () => {
 
   const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
     "site-report",
+    "workdays",
     siteReportUUID,
     SITE_WORKDAY_COLLECTIONS,
     "Site Workdays"

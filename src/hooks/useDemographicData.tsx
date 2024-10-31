@@ -3,9 +3,9 @@ import { useMemo } from "react";
 
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_DEFAULT } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { Demographic } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { Demographic, DemographicalType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import { useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2RestorationPartnersENTITYUUID, useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
 
 interface DemographicCounts {
   gender: number;
@@ -37,14 +37,26 @@ export type FrameworkDemographicCountTypes<T extends Framework> = T extends Fram
   ? HBFDemographicCounts
   : DemographicCounts;
 
-export interface Workday {
+interface Demographical {
   collection: string;
   readable_collection: string;
   demographics?: Demographic[];
 }
 
+type DemographicalReturnType =
+  | ReturnType<typeof useGetV2WorkdaysENTITYUUID>
+  | ReturnType<typeof useGetV2RestorationPartnersENTITYUUID>;
+
+const DEMOGRAPHIC_HOOKS: { [k in DemographicalType]: (entityType: string, uuid: string) => DemographicalReturnType } = {
+  workdays: (entityType, uuid) =>
+    useGetV2WorkdaysENTITYUUID({ pathParams: { entity: entityType, uuid } }, { keepPreviousData: true }),
+  restorationPartners: (entityType, uuid) =>
+    useGetV2RestorationPartnersENTITYUUID({ pathParams: { entity: entityType, uuid } }, { keepPreviousData: true })
+};
+
 export default function useDemographicData(
   entityType: string,
+  demographicalType: DemographicalType,
   uuid: string,
   collections: string[],
   titlePrefix: string
@@ -52,24 +64,20 @@ export default function useDemographicData(
   const t = useT();
   const { framework } = useFrameworkContext();
 
-  const { data: response } = useGetV2WorkdaysENTITYUUID(
-    { pathParams: { entity: entityType, uuid } },
-    { keepPreviousData: true }
-  );
+  const useGetDemographicalData = DEMOGRAPHIC_HOOKS[demographicalType];
+  const { data: response } = useGetDemographicalData(entityType, uuid);
+  const data = (response as any)?.data as Demographical[];
 
   return useMemo(
     function () {
-      const filteredCollections = response?.data?.filter(workday =>
-        collections.includes(workday?.collection as string)
-      );
-      const workdays = filteredCollections as Workday[];
+      const demographicals = data?.filter(demographical => collections.includes(demographical.collection!));
 
       const grids =
-        workdays == null
+        demographicals == null
           ? []
           : collections.map(collection => {
-              const workday = workdays.find(workday => workday.collection == collection);
-              const { readable_collection, demographics } = workday ?? {};
+              const demographical = demographicals.find(demographical => demographical.collection === collection);
+              const { readable_collection, demographics } = demographical ?? {};
               return {
                 grid: (
                   <DemographicsCollapseGrid
@@ -77,7 +85,7 @@ export default function useDemographicData(
                     title={t(readable_collection)}
                     demographics={demographics ?? []}
                     variant={GRID_VARIANT_DEFAULT}
-                    demographicalType="workdays"
+                    demographicalType={demographicalType}
                   />
                 ),
                 collection
@@ -93,7 +101,7 @@ export default function useDemographicData(
         return framework === Framework.HBF;
       }
 
-      const counts = workdays?.reduce((counts, { demographics }) => {
+      const counts = demographicals?.reduce((counts, { demographics }) => {
         return (
           demographics?.reduce((counts, { type, amount }) => {
             const typedType = type as keyof FrameworkDemographicCountTypes<typeof framework>;
@@ -122,6 +130,6 @@ export default function useDemographicData(
       const title = t(`${titlePrefix} - {total}`, { total: total ?? "...loading" });
       return { grids, title };
     },
-    [response, t, titlePrefix, collections, framework]
+    [data, collections, framework, t, titlePrefix]
   );
 }
