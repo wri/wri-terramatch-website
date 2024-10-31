@@ -1,9 +1,18 @@
-import { AutocompleteInput, Edit, ReferenceInput, SelectInput, SimpleForm, TextInput } from "react-admin";
+import {
+  AutocompleteInput,
+  Edit,
+  ReferenceInput,
+  SelectArrayInput,
+  SelectInput,
+  SimpleForm,
+  TextInput
+} from "react-admin";
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import { countriesChoices, frameworkChoices, userPrimaryRoleChoices } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
+import { Framework } from "@/context/framework.provider";
 
 import modules from "../..";
 import UserTitle from "./UserTitle";
@@ -41,6 +50,12 @@ const UserEdit = () => {
         {isSuperAdmin && <SelectInput source="role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
         <SelectInput source="country" label="Country" choices={countriesChoices} fullWidth />
+        <SelectArrayInput
+          source="direct_frameworks"
+          label="Direct Frameworks"
+          choices={Object.values(Framework).map(slug => ({ id: slug, name: slug }))}
+          fullWidth
+        />
       </SimpleForm>
     </Edit>
   );
