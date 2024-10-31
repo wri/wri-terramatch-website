@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 import { ToggleVariants, VARIANT_TOGGLE_PRIMARY } from "./ToggleVariants";
 
-interface TogglePropsItem {
+export interface TogglePropsItem {
   id: string;
   render: ReactNode;
 }

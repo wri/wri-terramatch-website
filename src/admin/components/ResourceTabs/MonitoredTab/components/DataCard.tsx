@@ -10,6 +10,8 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import Menu from "@/components/elements/Menu/Menu";
+import { MENU_PLACEMENT_LEFT_HALF_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL,
@@ -55,6 +57,27 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tooltipContent: string;
   tableData: TableData[];
 }
+
+const tableItemMenu = () => [
+  {
+    id: "1",
+    render: () => (
+      <div className="flex items-center gap-2" onClick={() => {}}>
+        <Icon name={IconNames.POLYGON} className="h-6 w-6" />
+        <Text variant="text-12-bold">Edit</Text>
+      </div>
+    )
+  },
+  {
+    id: "32",
+    render: () => (
+      <div className="flex items-center gap-2" onClick={() => {}}>
+        <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
+        <Text variant="text-12-bold">Delete</Text>
+      </div>
+    )
+  }
+];
 
 const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   {
@@ -108,6 +131,24 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
       { accessorKey: "2025-2023", header: "2023" },
       { accessorKey: "2025-2024", header: "2024" },
       { accessorKey: "2025-2025", header: "2025" }
+    ]
+  },
+  {
+    id: "moreInfo",
+    header: "",
+    columns: [
+      {
+        accessorKey: "more",
+        header: "",
+        enableSorting: false,
+        cell: props => (
+          <Menu menu={tableItemMenu()} placement={MENU_PLACEMENT_LEFT_HALF_BOTTOM}>
+            <div className="rounded p-1 hover:bg-primary-200">
+              <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+            </div>
+          </Menu>
+        )
+      }
     ]
   }
 ];

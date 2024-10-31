@@ -5,7 +5,7 @@ import { TabbedShowLayout, TabProps } from "react-admin";
 import Button from "@/components/elements/Button/Button";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import Text from "@/components/elements/Text/Text";
-import Toggle from "@/components/elements/Toggle/Toggle";
+import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import DataCard, { DataStructure } from "./components/DataCard";
@@ -331,7 +331,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
   const labelsContainerRef = useRef<HTMLDivElement>(null);
   const cardRefsContainer = useRef<HTMLDivElement>(null);
 
-  const toggleItems = [
+  const toggleItems: TogglePropsItem[] = [
     {
       id: "dashboard",
       render: (
