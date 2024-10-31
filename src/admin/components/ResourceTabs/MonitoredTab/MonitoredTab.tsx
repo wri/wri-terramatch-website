@@ -333,7 +333,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
 
   const toggleItems: TogglePropsItem[] = [
     {
-      id: "dashboard",
+      key: "dashboard",
       render: (
         <Text variant="text-14">
           <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
@@ -344,7 +344,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
       )
     },
     {
-      id: "table",
+      key: "table",
       render: (
         <Text variant="text-14">
           <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
@@ -491,7 +491,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             <div className="flex items-center justify-between">
               <FilterSearchBox placeholder="Search" onChange={() => {}} />
               <div className="flex gap-4">
-                <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex}></Toggle>
+                <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
                 <Button variant="purple">
                   <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
                   Run Analysis

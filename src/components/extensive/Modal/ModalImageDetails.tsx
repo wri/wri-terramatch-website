@@ -142,7 +142,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   };
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
-  const tabs = ["Image", "Location"];
+  const tabs = [
+    { key: "Image", render: "Image" },
+    { key: "Location", render: "Location" }
+  ];
   const handleDelete = () => {
     onClose?.();
     openModal(

@@ -73,8 +73,14 @@ export interface DashboardDataProps {
 
 const ProjectView = () => {
   const t = useT();
-  const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graphic"];
+  const dataToggle = [
+    { tooltip: { key: "Absolute", render: "Absolute" } },
+    { tooltip: { key: "Relative", render: "Relative" } }
+  ];
+  const dataToggleGraphic = [
+    { tooltip: { key: "Table", render: "Table" } },
+    { tooltip: { key: "Graphic", render: "Graphic" } }
+  ];
   const sharedRef = useContext(RefContext);
   const dashboardHeader = [
     {

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ToggleVariants, VARIANT_TOGGLE_PRIMARY } from "./ToggleVariants";
 
 export interface TogglePropsItem {
-  id: string;
+  key: string;
   render: React.ReactNode;
 }
 
@@ -54,7 +54,7 @@ const Toggle = (props: ToggleProps) => {
       />
       {items.map((tab, index) => (
         <button
-          key={tab.id}
+          key={tab.key}
           ref={el => (buttonRefs.current[index] = el)}
           type="button"
           onClick={() => setActiveIndex(index)}

@@ -42,8 +42,14 @@ interface ChildComponentProps {
 
 const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
   const t = useT();
-  const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graphic"];
+  const dataToggle = [
+    { tooltip: { key: "Absolute", render: "Absolute" } },
+    { tooltip: { key: "Relative", render: "Relative" } }
+  ];
+  const dataToggleGraphic = [
+    { tooltip: { key: "Table", render: "Table" } },
+    { tooltip: { key: "Graphic", render: "Graphic" } }
+  ];
   const dashboardHeader = [
     {
       label: "Trees Planted",

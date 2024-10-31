@@ -24,6 +24,10 @@ const ToggleWrapper = (args: ToggleProps) => {
 export const Horizontal: Story = {
   render: args => <ToggleWrapper {...args} />,
   args: {
-    items: ["Tab 1", "Tab 2", "Tab 3"]
+    items: [
+      { key: "Tab 1", render: '"Tab 1"' },
+      { key: "Tab 2", render: '"Tab 2"' },
+      { key: "Tab 3", render: '"Tab 3"' }
+    ]
   }
 };

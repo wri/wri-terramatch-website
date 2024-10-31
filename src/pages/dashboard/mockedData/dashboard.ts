@@ -1,11 +1,11 @@
 export const LABEL_LEGEND = [
   {
-    label: "Non-Profit",
+    tooltip: { key: "Non-Profit", render: "Non-Profit" },
     color: "bg-secondary-600"
   },
   {
-    label: "Enterprise",
-    color: "bg-primary"
+    tooltip: { key: "Enterprise", render: "Enterprise" },
+    color: "bg-secondary-600"
   }
 ];
 
