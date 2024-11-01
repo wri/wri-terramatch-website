@@ -4,6 +4,7 @@ import { TabbedShowLayout, TabProps } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
+import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -504,8 +505,8 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
 
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
-      <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4">
-        <div className="flex w-full min-w-0">
+      <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4 py-1">
+        <div className="flex w-full min-w-0 gap-4">
           <div
             ref={labelsContainerRef}
             className="scroll-indicator-hide flex w-[16%] min-w-0 flex-col items-center gap-2 overflow-auto"
@@ -532,7 +533,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
 
           <div className="flex w-full max-w-[80%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
             <div className="flex items-center justify-between pl-4 pr-2">
-              <FilterSearchBox placeholder="Search" onChange={() => {}} />
+              <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
               <div className="flex gap-4">
                 <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex}></Toggle>
                 <Button

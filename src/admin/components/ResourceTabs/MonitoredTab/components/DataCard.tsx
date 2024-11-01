@@ -83,7 +83,15 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     header: "",
     columns: [
       { accessorKey: "polygonName", header: "Polygon Name", meta: { sticky: true, left: 0 } },
-      { accessorKey: "size", header: "Size (ha)" },
+      {
+        accessorKey: "size",
+        header: "Size (ha)",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
       { accessorKey: "siteName", header: "Site Name" },
       {
         accessorKey: "status",
@@ -101,34 +109,210 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     id: "analysis2024",
     header: "2024 Analysis",
     columns: [
-      { accessorKey: "dateRun2024", header: "Date Run" },
-      { accessorKey: "2024-2015", header: "2015" },
-      { accessorKey: "2024-2016", header: "2016" },
-      { accessorKey: "2024-2017", header: "2017" },
-      { accessorKey: "2024-2018", header: "2018" },
-      { accessorKey: "2024-2019", header: "2019" },
-      { accessorKey: "2024-2020", header: "2020" },
-      { accessorKey: "2024-2021", header: "2021" },
-      { accessorKey: "2024-2022", header: "2022" },
-      { accessorKey: "2024-2023", header: "2023" },
-      { accessorKey: "2024-2024", header: "2024" }
+      {
+        accessorKey: "dateRun2024",
+        header: "Date Run",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2015",
+        header: "2015",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2016",
+        header: "2016",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2017",
+        header: "2017",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2018",
+        header: "2018",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2019",
+        header: "2019",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2020",
+        header: "2020",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2021",
+        header: "2021",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2022",
+        header: "2022",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2023",
+        header: "2023",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2024-2024",
+        header: "2024",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      }
     ]
   },
   {
     id: "analysis2025",
     header: "2025 Analysis",
     columns: [
-      { accessorKey: "dateRun2025", header: "Date Run" },
-      { accessorKey: "2025-2016", header: "2016 " },
-      { accessorKey: "2025-2017", header: "2017" },
-      { accessorKey: "2025-2018", header: "2018" },
-      { accessorKey: "2025-2019", header: "2019" },
-      { accessorKey: "2025-2020", header: "2020" },
-      { accessorKey: "2025-2021", header: "2021" },
-      { accessorKey: "2025-2022", header: "2022" },
-      { accessorKey: "2025-2023", header: "2023" },
-      { accessorKey: "2025-2024", header: "2024" },
-      { accessorKey: "2025-2025", header: "2025" }
+      {
+        accessorKey: "dateRun2025",
+        header: "Date Run",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2016",
+        header: "2016 ",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2017",
+        header: "2017",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2018",
+        header: "2018",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2019",
+        header: "2019",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2020",
+        header: "2020",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2021",
+        header: "2021",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2022",
+        header: "2022",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2023",
+        header: "2023",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2024",
+        header: "2024",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      },
+      {
+        accessorKey: "2025-2025",
+        header: "2025",
+        cell: (props: any) => (
+          <Text variant="text-10" className="text-right">
+            {props.getValue()}
+          </Text>
+        )
+      }
     ]
   },
   {
@@ -371,7 +555,7 @@ const DataCard = ({
                 />
               ))}
             </div>
-            <img src="/Images/graphic-8.svg" alt="graph" />
+            <img src="/images/graphic-8.svg" alt="graph" />
           </div>
         </div>
       </When>
