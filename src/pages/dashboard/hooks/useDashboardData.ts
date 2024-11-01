@@ -101,7 +101,7 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!searchTerm || !!filters }
   );
 
-  const filteredProjects = activeProjects?.data.filter((project: { name: string | null }) =>
+  const filteredProjects = activeProjects?.data?.filter((project: { name: string | null }) =>
     project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
