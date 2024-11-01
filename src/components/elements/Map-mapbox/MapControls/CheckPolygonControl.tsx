@@ -22,6 +22,7 @@ import {
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -116,12 +117,14 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           .filter(Boolean)
           .join(", ");
         openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
+        hideLoader();
       }
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      console.error("Error clipping polygons:", error);
+      Log.error("Error clipping polygons:", error);
       displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
+      hideLoader();
     }
   });
 
@@ -164,6 +167,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
+      showLoader();
       clipPolygons({ pathParams: { uuid: siteUuid } });
     } else {
       displayNotification(t("Cannot fix polygons: Site UUID is missing."), "error", t("Error"));

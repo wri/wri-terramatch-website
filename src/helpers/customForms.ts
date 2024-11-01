@@ -9,8 +9,9 @@ import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hook
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
+import { Framework } from "@/context/framework.provider";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
-import { Option } from "@/types/common";
+import { Entity, Option } from "@/types/common";
 import { urlValidation } from "@/utils/yup";
 
 export function normalizedFormData<T = any>(values: T, steps: FormStepSchema[]): T {
@@ -125,10 +126,11 @@ export const getCustomFormSteps = (
   schema: FormRead,
   t: typeof useT,
   entity?: Entity,
+  framework?: Framework,
   feedback_fields?: string[]
 ): FormStepSchema[] => {
-  return sortBy(schema.form_sections, ["order"]).map(section =>
-    apiFormSectionToFormStep(section, t, entity, feedback_fields)
+  return sortBy(schema?.form_sections, ["order"]).map(section =>
+    apiFormSectionToFormStep(section, t, entity, framework, feedback_fields)
   );
 };
 
@@ -136,20 +138,27 @@ export const apiFormSectionToFormStep = (
   section: FormSectionRead,
   t: typeof useT,
   entity?: Entity,
+  framework?: Framework,
   feedback_fields?: string[]
 ): FormStepSchema => {
   return {
     title: section.title,
     subtitle: section.description,
-    fields: apiQuestionsToFormFields(section.form_questions, t, entity, feedback_fields)
+    fields: apiQuestionsToFormFields(section.form_questions, t, entity, framework, feedback_fields)
   };
 };
 
-export const apiQuestionsToFormFields = (questions: any, t: typeof useT, entity?: Entity, feedback_fields?: string[]) =>
+export const apiQuestionsToFormFields = (
+  questions: any,
+  t: typeof useT,
+  entity?: Entity,
+  framework?: Framework,
+  feedback_fields?: string[]
+) =>
   sortBy(questions, "order")
     .map((question, index, array) => {
       const feedbackRequired = feedback_fields?.includes(question.uuid);
-      return apiFormQuestionToFormField(question, t, index, array, entity, feedbackRequired);
+      return apiFormQuestionToFormField(question, t, index, array, entity, framework, feedbackRequired);
     })
     .filter(field => !!field) as FormField[];
 
@@ -159,9 +168,10 @@ export const apiFormQuestionToFormField = (
   index: number,
   questions: FormQuestionRead[],
   entity?: Entity,
+  framework?: Framework,
   feedbackRequired?: boolean
 ): FormField | null => {
-  const validation = getFieldValidation(question, t);
+  const validation = getFieldValidation(question, t, framework ?? Framework.UNDEFINED);
   const required = question.validation?.required || false;
   const sharedProps = {
     name: question.uuid,
@@ -304,7 +314,7 @@ export const apiFormQuestionToFormField = (
         fieldProps: {
           required,
           headers: sortBy(question.table_headers, "order")?.map(h => h.label),
-          rows: sortBy(question.children, "order").map(q => apiFormQuestionToFormField(q, t, entity)),
+          rows: sortBy(question.children, "order").map(q => apiFormQuestionToFormField(q, t, entity, framework)),
           hasTotal: question.with_numbers
         }
       };
@@ -318,7 +328,7 @@ export const apiFormQuestionToFormField = (
         fieldProps: {
           required,
           addButtonCaption: question.add_button_text,
-          fields: sortBy(question.children, "order").map(q => apiFormQuestionToFormField(q, t, entity)),
+          fields: sortBy(question.children, "order").map(q => apiFormQuestionToFormField(q, t, entity, framework)),
           tableColumns: sortBy(question.children, "order").map(q => ({ title: q.header_label, key: q.uuid }))
         }
       };
@@ -490,7 +500,7 @@ export const apiFormQuestionToFormField = (
           required,
           id: question.uuid,
           inputId: question.uuid,
-          fields: apiQuestionsToFormFields(question.children, t, entity)
+          fields: apiQuestionsToFormFields(question.children, t, entity, framework)
         }
       };
 
@@ -541,7 +551,7 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   return options;
 };
 
-const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySchema | null => {
+const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framework: Framework): AnySchema | null => {
   let validation;
   const required = question.validation?.required || false;
   const max = question.validation?.max;
@@ -638,12 +648,15 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT): AnySche
         )
         .test(
           "totals-match",
-          () => "The totals for each demographic type do not match",
+          () =>
+            framework === Framework.HBF
+              ? "At least one entry in gender is required"
+              : "The totals for each demographic type do not match",
           value => {
             const { demographics } = value.length > 0 ? value[0] : {};
             if (demographics == null) return true;
 
-            return calculateTotals(demographics).countsMatch;
+            return calculateTotals(demographics, framework).complete;
           }
         );
 

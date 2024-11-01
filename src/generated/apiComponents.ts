@@ -30515,6 +30515,70 @@ export const useGetV2AdminENTITYExportFRAMEWORK = <TData = Blob>(
   );
 };
 
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams = {
+  /**
+   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+   */
+  entity: string;
+  /**
+   * allowed values terrafund/ppc
+   */
+  framework: string;
+};
+
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKResponse = {
+  url?: string;
+};
+
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKVariables = {
+  pathParams: GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminENTITYPresignedUrlFRAMEWORK = (
+  variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
+    GetV2AdminENTITYPresignedUrlFRAMEWORKError,
+    undefined,
+    {},
+    {},
+    GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams
+  >({ url: "/v2/admin/{entity}/presigned-url/{framework}", method: "get", ...variables, signal });
+
+export const useGetV2AdminENTITYPresignedUrlFRAMEWORK = <TData = GetV2AdminENTITYPresignedUrlFRAMEWORKResponse>(
+  variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
+      GetV2AdminENTITYPresignedUrlFRAMEWORKError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
+    GetV2AdminENTITYPresignedUrlFRAMEWORKError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}",
+      operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK",
+      variables
+    }),
+    ({ signal }) => fetchGetV2AdminENTITYPresignedUrlFRAMEWORK({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2ProjectsUUIDENTITYExportPathParams = {
   /**
    * allowed values sites|nurseries|project-reports
@@ -34351,6 +34415,7 @@ export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>
 export type GetV2DashboardTopTreesPlantedResponse = {
   data?: {
     top_projects_most_planted_trees?: {
+      organization?: string;
       project?: string;
       uuid?: string;
       trees_planted?: number;
@@ -34396,6 +34461,151 @@ export const useGetV2DashboardTopTreesPlanted = <TData = GetV2DashboardTopTreesP
   return reactQuery.useQuery<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>(
     queryKeyFn({ path: "/v2/dashboard/top-trees-planted", operationId: "getV2DashboardTopTreesPlanted", variables }),
     ({ signal }) => fetchGetV2DashboardTopTreesPlanted({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardIndicatorHectaresRestorationQueryParams = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+};
+
+export type GetV2DashboardIndicatorHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardIndicatorHectaresRestorationResponse = {
+  data?: {
+    restoration_strategies_represented?: {
+      /**
+       * Total amount for tree planting projects.
+       */
+      ["tree-planting"]?: number;
+      /**
+       * Total amount for projects involving both tree planting and direct seeding.
+       */
+      ["tree-planting,direct-seeding"]?: number;
+      /**
+       * Total amount for assisted natural regeneration projects.
+       */
+      ["assisted-natural-regeneration"]?: number;
+      /**
+       * Total amount for projects involving both tree planting and assisted natural regeneration.
+       */
+      ["tree-planting,assisted-natural-regeneration"]?: number;
+      /**
+       * Total amount for direct seeding projects.
+       */
+      ["direct-seeding"]?: number;
+      /**
+       * Total amount for control projects.
+       */
+      control?: number;
+      /**
+       * Total amount for projects with no specific restoration category.
+       */
+      ["null"]?: number;
+    };
+    target_land_use_types_represented?: {
+      /**
+       * Total amount for projects without a defined land use type.
+       */
+      ["null"]?: number;
+      /**
+       * Total amount for projects involving natural forest.
+       */
+      ["natural-forest"]?: number;
+      /**
+       * Total amount for agroforest projects.
+       */
+      agroforest?: number;
+      /**
+       * Total amount for silvopasture projects.
+       */
+      silvopasture?: number;
+      /**
+       * Total amount for woodlot or plantation projects.
+       */
+      ["woodlot-or-plantation"]?: number;
+      /**
+       * Total amount for riparian area or wetland projects.
+       */
+      ["riparian-area-or-wetland"]?: number;
+      /**
+       * Total amount for projects involving both agroforest and riparian area or wetland.
+       */
+      ["agroforest,riparian-area-or-wetland"]?: number;
+      /**
+       * Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+       */
+      ["riparian-area-or-wetland,woodlot-or-plantation"]?: number;
+      /**
+       * Total amount for projects involving open natural ecosystem or grasslands.
+       */
+      ["Open natural ecosystem or Grasslands"]?: number;
+      /**
+       * Total amount for urban forest projects.
+       */
+      ["urban-forest"]?: number;
+    };
+  };
+};
+
+export type GetV2DashboardIndicatorHectaresRestorationVariables = {
+  queryParams?: GetV2DashboardIndicatorHectaresRestorationQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
+ */
+export const fetchGetV2DashboardIndicatorHectaresRestoration = (
+  variables: GetV2DashboardIndicatorHectaresRestorationVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardIndicatorHectaresRestorationResponse,
+    GetV2DashboardIndicatorHectaresRestorationError,
+    undefined,
+    {},
+    GetV2DashboardIndicatorHectaresRestorationQueryParams,
+    {}
+  >({ url: "/v2/dashboard/indicator/hectares-restoration", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
+ */
+export const useGetV2DashboardIndicatorHectaresRestoration = <
+  TData = GetV2DashboardIndicatorHectaresRestorationResponse
+>(
+  variables: GetV2DashboardIndicatorHectaresRestorationVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardIndicatorHectaresRestorationResponse,
+      GetV2DashboardIndicatorHectaresRestorationError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardIndicatorHectaresRestorationResponse,
+    GetV2DashboardIndicatorHectaresRestorationError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/indicator/hectares-restoration",
+      operationId: "getV2DashboardIndicatorHectaresRestoration",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardIndicatorHectaresRestoration({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -36370,6 +36580,11 @@ export type QueryOperation =
       variables: GetV2AdminENTITYExportFRAMEWORKVariables;
     }
   | {
+      path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}";
+      operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK";
+      variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables;
+    }
+  | {
       path: "/v2/projects/{UUID}/{ENTITY}/export";
       operationId: "getV2ProjectsUUIDENTITYExport";
       variables: GetV2ProjectsUUIDENTITYExportVariables;
@@ -36533,6 +36748,11 @@ export type QueryOperation =
       path: "/v2/dashboard/top-trees-planted";
       operationId: "getV2DashboardTopTreesPlanted";
       variables: GetV2DashboardTopTreesPlantedVariables;
+    }
+  | {
+      path: "/v2/dashboard/indicator/hectares-restoration";
+      operationId: "getV2DashboardIndicatorHectaresRestoration";
+      variables: GetV2DashboardIndicatorHectaresRestorationVariables;
     }
   | {
       path: "/v2/project-pipeline";

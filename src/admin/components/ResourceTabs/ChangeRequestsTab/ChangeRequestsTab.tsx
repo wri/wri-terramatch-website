@@ -17,6 +17,7 @@ import { Else, If, Then, When } from "react-if";
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
+import { Framework } from "@/context/framework.provider";
 import { useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps } from "@/helpers/customForms";
 import { EntityName, SingularEntityName } from "@/types/common";
@@ -46,6 +47,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
 
   // @ts-ignore
   const changeRequest = currentValues?.data?.update_request;
+  const framework = changeRequest?.framework_key as Framework;
   const changes = changeRequest?.content;
   // @ts-ignore
   const current = currentValues?.data?.answers;
@@ -54,7 +56,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   // @ts-ignore
   const form = currentValues?.data?.form;
 
-  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t)), [form, t]);
+  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t, undefined, framework)), [form, t]);
   const formChanges = useFormChanges(current, changes, formSteps ?? []);
   const numFieldsAffected = useMemo(
     () =>

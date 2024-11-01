@@ -22938,6 +22938,7 @@ export type DashboardProjectProfileData = {
 export type DashboardTopProjectsResponse = {
   data?: {
     top_projects_most_planted_trees?: {
+      organization?: string;
       project?: string;
       uuid?: string;
       trees_planted?: number;
@@ -22950,6 +22951,7 @@ export type DashboardTopProjectsResponse = {
 };
 
 export type DashboardTopPlantedTree = {
+  organization?: string;
   project?: string;
   uuid?: string;
   trees_planted?: number;
@@ -23416,4 +23418,156 @@ export type FileResource = {
   photographer?: string;
   is_public?: boolean;
   is_cover?: boolean;
+};
+
+export type DashboardIndicatorHectaresRestorationResponse = {
+  data?: {
+    restoration_strategies_represented?: {
+      /**
+       * Total amount for tree planting projects.
+       */
+      ["tree-planting"]?: number;
+      /**
+       * Total amount for projects involving both tree planting and direct seeding.
+       */
+      ["tree-planting,direct-seeding"]?: number;
+      /**
+       * Total amount for assisted natural regeneration projects.
+       */
+      ["assisted-natural-regeneration"]?: number;
+      /**
+       * Total amount for projects involving both tree planting and assisted natural regeneration.
+       */
+      ["tree-planting,assisted-natural-regeneration"]?: number;
+      /**
+       * Total amount for direct seeding projects.
+       */
+      ["direct-seeding"]?: number;
+      /**
+       * Total amount for control projects.
+       */
+      control?: number;
+      /**
+       * Total amount for projects with no specific restoration category.
+       */
+      ["null"]?: number;
+    };
+    target_land_use_types_represented?: {
+      /**
+       * Total amount for projects without a defined land use type.
+       */
+      ["null"]?: number;
+      /**
+       * Total amount for projects involving natural forest.
+       */
+      ["natural-forest"]?: number;
+      /**
+       * Total amount for agroforest projects.
+       */
+      agroforest?: number;
+      /**
+       * Total amount for silvopasture projects.
+       */
+      silvopasture?: number;
+      /**
+       * Total amount for woodlot or plantation projects.
+       */
+      ["woodlot-or-plantation"]?: number;
+      /**
+       * Total amount for riparian area or wetland projects.
+       */
+      ["riparian-area-or-wetland"]?: number;
+      /**
+       * Total amount for projects involving both agroforest and riparian area or wetland.
+       */
+      ["agroforest,riparian-area-or-wetland"]?: number;
+      /**
+       * Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+       */
+      ["riparian-area-or-wetland,woodlot-or-plantation"]?: number;
+      /**
+       * Total amount for projects involving open natural ecosystem or grasslands.
+       */
+      ["Open natural ecosystem or Grasslands"]?: number;
+      /**
+       * Total amount for urban forest projects.
+       */
+      ["urban-forest"]?: number;
+    };
+  };
+};
+
+export type DashboardIndicatorHectaresRestorationData = {
+  restoration_strategies_represented?: {
+    /**
+     * Total amount for tree planting projects.
+     */
+    ["tree-planting"]?: number;
+    /**
+     * Total amount for projects involving both tree planting and direct seeding.
+     */
+    ["tree-planting,direct-seeding"]?: number;
+    /**
+     * Total amount for assisted natural regeneration projects.
+     */
+    ["assisted-natural-regeneration"]?: number;
+    /**
+     * Total amount for projects involving both tree planting and assisted natural regeneration.
+     */
+    ["tree-planting,assisted-natural-regeneration"]?: number;
+    /**
+     * Total amount for direct seeding projects.
+     */
+    ["direct-seeding"]?: number;
+    /**
+     * Total amount for control projects.
+     */
+    control?: number;
+    /**
+     * Total amount for projects with no specific restoration category.
+     */
+    ["null"]?: number;
+  };
+  target_land_use_types_represented?: {
+    /**
+     * Total amount for projects without a defined land use type.
+     */
+    ["null"]?: number;
+    /**
+     * Total amount for projects involving natural forest.
+     */
+    ["natural-forest"]?: number;
+    /**
+     * Total amount for agroforest projects.
+     */
+    agroforest?: number;
+    /**
+     * Total amount for silvopasture projects.
+     */
+    silvopasture?: number;
+    /**
+     * Total amount for woodlot or plantation projects.
+     */
+    ["woodlot-or-plantation"]?: number;
+    /**
+     * Total amount for riparian area or wetland projects.
+     */
+    ["riparian-area-or-wetland"]?: number;
+    /**
+     * Total amount for projects involving both agroforest and riparian area or wetland.
+     */
+    ["agroforest,riparian-area-or-wetland"]?: number;
+    /**
+     * Total amount for projects involving both riparian area or wetland and woodlot or plantation.
+     */
+    ["riparian-area-or-wetland,woodlot-or-plantation"]?: number;
+    /**
+     * Total amount for projects involving open natural ecosystem or grasslands.
+     */
+    ["Open natural ecosystem or Grasslands"]?: number;
+    /**
+     * Total amount for urban forest projects.
+     */
+    ["urban-forest"]?: number;
+  };
 };

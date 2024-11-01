@@ -13,7 +13,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
   downloadSiteGeoJsonPolygons,
-  mapPolygonData,
+  parsePolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
@@ -50,6 +50,7 @@ import {
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
+import Log from "@/utils/log";
 
 import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
@@ -201,7 +202,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     uuid: data.poly_id
   }));
 
-  const polygonDataMap = mapPolygonData(sitePolygonData);
+  const polygonDataMap = parsePolygonData(sitePolygonData);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -219,7 +220,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         linear: false
       });
     } else {
-      console.error("Bounding box is not in the expected format");
+      Log.error("Bounding box is not in the expected format");
     }
   };
 
@@ -230,13 +231,13 @@ const PolygonReviewTab: FC<IProps> = props => {
           refetch?.();
           const { map } = mapFunctions;
           if (map?.current) {
-            addSourcesToLayers(map.current, polygonDataMap);
+            addSourcesToLayers(map.current, polygonDataMap, undefined);
           }
           closeModal(ModalId.DELETE_POLYGON);
         }
       })
       .catch(error => {
-        console.error("Error deleting polygon:", error);
+        Log.error("Error deleting polygon:", error);
       });
   };
 
@@ -382,7 +383,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             openNotification("success", "Success, Your Polygons were approved!", "");
             refetch();
           } catch (error) {
-            console.error(error);
+            Log.error("Polygon approval error", error);
           }
         }}
       />

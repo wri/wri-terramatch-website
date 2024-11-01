@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
@@ -48,10 +49,12 @@ export const EntityEdit = () => {
   // @ts-ignore
   const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
-  const formSteps = useGetCustomFormSteps(formData.form, {
+  const entity = {
     entityName: pluralEntityNameToSingular(entityName),
     entityUUID
-  });
+  };
+  const framework = formData?.form?.framework_key as Framework;
+  const formSteps = useGetCustomFormSteps(formData.form, entity, framework);
 
   const defaultValues = useNormalizedFormDefaultValue(
     // @ts-ignore
@@ -65,34 +68,37 @@ export const EntityEdit = () => {
   if (loadError) {
     return notFound();
   }
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>
-        <WizardForm
-          steps={formSteps!}
-          errors={error}
-          onBackFirstStep={() => navigate("..")}
-          onChange={data =>
-            updateEntity({
-              pathParams: { uuid: entityUUID, entity: entityName },
-              body: { answers: normalizedFormData(data, formSteps!) }
-            })
-          }
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
-          defaultValues={defaultValues}
-          title={title}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
-          summaryOptions={{
-            title: "Review Details",
-            downloadButtonText: "Download"
-          }}
-          roundedCorners
-          hideSaveAndCloseButton
-        />
+        <FrameworkProvider frameworkKey={framework}>
+          <WizardForm
+            steps={formSteps!}
+            errors={error}
+            onBackFirstStep={() => navigate("..")}
+            onChange={data =>
+              updateEntity({
+                pathParams: { uuid: entityUUID, entity: entityName },
+                body: { answers: normalizedFormData(data, formSteps!) }
+              })
+            }
+            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+            onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
+            defaultValues={defaultValues}
+            title={title}
+            tabOptions={{
+              markDone: true,
+              disableFutureTabs: true
+            }}
+            summaryOptions={{
+              title: "Review Details",
+              downloadButtonText: "Download"
+            }}
+            roundedCorners
+            hideSaveAndCloseButton
+          />
+        </FrameworkProvider>
       </LoadingContainer>
     </div>
   );

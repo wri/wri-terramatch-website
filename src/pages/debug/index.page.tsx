@@ -8,6 +8,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
+import Log from "@/utils/log";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
 
@@ -27,7 +28,7 @@ const DebugPage = () => {
             };
           } catch (e) {
             if (process.env.NODE_ENV === "development") {
-              console.log("apiFetch", e);
+              Log.error("apiFetch", e);
             }
             error = {
               statusCode: -1
@@ -38,7 +39,7 @@ const DebugPage = () => {
         }
       } catch (e) {
         if (process.env.NODE_ENV === "development") {
-          console.log("apiFetch", e);
+          Log.error("apiFetch", e);
         }
         error = {
           statusCode: response?.status || -1,
