@@ -1,5 +1,4 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -175,7 +174,6 @@ const DataCard = ({
   const { label, tooltipContent, tableData } = data;
   const [isTable, setIsTable] = useState(isCardsTable);
   const [tabActive, setTabActive] = useState(0);
-  const t = useT();
   const { openModal, closeModal } = useModalContext();
   const modalMapFunctions = useMap();
 
@@ -197,7 +195,7 @@ const DataCard = ({
       key: 0,
       label: "Leyend",
       content: (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 overflow-auto">
           {dataLeyend.map(item => (
             <LeyendItem key={item.label} backgroundColor={item.color} label={item.label} percentage={item.percentage} />
           ))}
@@ -208,7 +206,7 @@ const DataCard = ({
       key: 1,
       label: "Stadistics",
       content: (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 overflow-auto">
           <div className="flex flex-col gap-1">
             <Text variant="text-14-light">• HTTP 4XX Errors</Text>
             <div className="flex items-center gap-1">
@@ -282,30 +280,35 @@ const DataCard = ({
   return (
     <div
       {...rest}
-      className={classNames("flex w-full gap-3", {
-        "rounded-lg border border-grey-850 bg-white shadow": !isTable
+      className={classNames("ml-4 mr-2 flex w-[calc(100%_-_24px)] gap-3", {
+        "relative rounded-lg border border-grey-850 bg-white shadow": !isTable
       })}
     >
       <When condition={!isTable}>
-        <div className="flex flex-col gap-2 py-4 pl-4">
+        <div className="absolute left-0 top-0 flex h-full w-[25%] flex-col gap-2 py-4 pl-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <Text variant={"text-16-semibold"}>{label}</Text>
-              <ToolTip content={t(tooltipContent)}>
+              <ToolTip content={tooltipContent}>
                 <Icon name={IconNames.IC_INFO} className="w-3.5" />
               </ToolTip>
             </div>
-            <div className="flex items-center gap-1">
-              <Text variant={"text-12-light"} className="text-black">
-                {t("10-Year Retrospective from:")}
+            <div className="flex flex-wrap items-center gap-1 lg:flex-nowrap">
+              <Text variant={"text-12-light"} className="whitespace-nowrap text-black">
+                10-Year Retrospective
               </Text>
-              <Dropdown
-                options={DROPDOWN_OPTIONS}
-                onChange={() => {}}
-                variant={VARIANT_DROPDOWN_SIMPLE}
-                inputVariant="text-14-semibold"
-                defaultValue={[DROPDOWN_OPTIONS[0].value]}
-              />
+              <div className="flex items-center gap-1">
+                <Text variant={"text-12-light"} className="text-black">
+                  from:
+                </Text>
+                <Dropdown
+                  options={DROPDOWN_OPTIONS}
+                  onChange={() => {}}
+                  variant={VARIANT_DROPDOWN_SIMPLE}
+                  inputVariant="text-14-semibold"
+                  defaultValue={[DROPDOWN_OPTIONS[0].value]}
+                />
+              </div>
             </div>
           </div>
           <div className="flex">
@@ -324,7 +327,7 @@ const DataCard = ({
           {tabItems[tabActive].content}
         </div>
         <div className="h-[inherit] w-[1px] bg-grey-850" />
-        <div className="flex w-full flex-col gap-4 py-4 pr-4">
+        <div className="ml-[25%] flex h-fit w-[75%] flex-col gap-6 py-4 pr-4">
           <div className="flex items-center gap-2 self-end">
             <Button
               className="!h-min !min-h-min !rounded-lg !py-1"
@@ -356,14 +359,15 @@ const DataCard = ({
             </Button>
           </div>
           <div className="relative">
-            <div className="absolute left-[73%] top-[-5%] flex flex-col gap-1 rounded bg-white p-2 shadow-all">
-              <Text variant="text-10">2021</Text>
+            <div className="absolute left-[73%] top-[-10%] flex flex-col gap-1 rounded bg-white p-2 shadow-all">
+              <Text variant="text-8">2021</Text>
               {dataLeyend.map(item => (
                 <LeyendItem
                   key={item.label}
                   backgroundColor={item.color}
                   label={item.label}
                   percentage={item.percentage}
+                  textVariant="text-8-light"
                 />
               ))}
             </div>
