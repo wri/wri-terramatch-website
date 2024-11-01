@@ -30515,6 +30515,70 @@ export const useGetV2AdminENTITYExportFRAMEWORK = <TData = Blob>(
   );
 };
 
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams = {
+  /**
+   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+   */
+  entity: string;
+  /**
+   * allowed values terrafund/ppc
+   */
+  framework: string;
+};
+
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKResponse = {
+  url?: string;
+};
+
+export type GetV2AdminENTITYPresignedUrlFRAMEWORKVariables = {
+  pathParams: GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminENTITYPresignedUrlFRAMEWORK = (
+  variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
+    GetV2AdminENTITYPresignedUrlFRAMEWORKError,
+    undefined,
+    {},
+    {},
+    GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams
+  >({ url: "/v2/admin/{entity}/presigned-url/{framework}", method: "get", ...variables, signal });
+
+export const useGetV2AdminENTITYPresignedUrlFRAMEWORK = <TData = GetV2AdminENTITYPresignedUrlFRAMEWORKResponse>(
+  variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
+      GetV2AdminENTITYPresignedUrlFRAMEWORKError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
+    GetV2AdminENTITYPresignedUrlFRAMEWORKError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}",
+      operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK",
+      variables
+    }),
+    ({ signal }) => fetchGetV2AdminENTITYPresignedUrlFRAMEWORK({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2ProjectsUUIDENTITYExportPathParams = {
   /**
    * allowed values sites|nurseries|project-reports
@@ -34351,6 +34415,7 @@ export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>
 export type GetV2DashboardTopTreesPlantedResponse = {
   data?: {
     top_projects_most_planted_trees?: {
+      organization?: string;
       project?: string;
       uuid?: string;
       trees_planted?: number;
@@ -36513,6 +36578,11 @@ export type QueryOperation =
       path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}";
       operationId: "getV2AdminENTITYExportFRAMEWORK";
       variables: GetV2AdminENTITYExportFRAMEWORKVariables;
+    }
+  | {
+      path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}";
+      operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK";
+      variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables;
     }
   | {
       path: "/v2/projects/{UUID}/{ENTITY}/export";
