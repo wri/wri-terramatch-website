@@ -62,8 +62,8 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
       fetchGetV2AdminENTITYPresignedUrlFRAMEWORK({
         pathParams: { entity, framework }
       })
-        .then((url: any) => {
-          downloadPresignedUrl(url, `${exportPrefix} - ${framework}.csv`);
+        .then((data: any) => {
+          downloadPresignedUrl(data.url, `${exportPrefix} - ${framework}.csv`);
         })
         .finally(() => setExporting(false));
 
