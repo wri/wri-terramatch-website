@@ -557,7 +557,7 @@ const DataCard = ({
           </div>
         </div>
       </When>
-      <div className={classNames({ block: isCardsTable }, { hidden: !isCardsTable })}>
+      <div className={classNames({ "block w-full": isCardsTable }, { hidden: !isCardsTable })}>
         <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
       </div>
     </div>
