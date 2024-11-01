@@ -526,7 +526,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             ))}
           </div>
 
-          <div className="flex w-full max-w-[80%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
+          <div className="flex max-w-[82%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
             <div className="flex items-center justify-between pl-4 pr-2">
               <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
               <div className="flex gap-4">
