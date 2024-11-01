@@ -46,11 +46,11 @@ export const downloadFile = async (fileUrl: string) => {
 export const downloadPresignedUrl = async (presignedUrl: string, fileName: string) => {
   try {
     const link = document.createElement("a");
-    link.href = presignedUrl;
-    link.download = fileName;
+    link.setAttribute("href", presignedUrl);
+    link.setAttribute("download", "");
+    link.setAttribute("target", "_blank");
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
   } catch (err) {
     Log.error("Failed to download file", presignedUrl, err);
   }
