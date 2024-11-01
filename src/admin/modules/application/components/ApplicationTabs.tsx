@@ -13,6 +13,7 @@ import { Else, If, Then, When } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { Framework } from "@/context/framework.provider";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { Entity } from "@/types/common";
@@ -48,7 +49,8 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
 
 const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
   const t = useT();
-  const formSteps = getCustomFormSteps(record?.form!, t);
+  const framework = record?.form?.framework_key as Framework;
+  const formSteps = getCustomFormSteps(record?.form!, t, undefined, framework);
   const values = normalizedFormDefaultValue(record?.answers, formSteps);
   const currentPitchEntity: Entity = {
     entityName: "project-pitches",

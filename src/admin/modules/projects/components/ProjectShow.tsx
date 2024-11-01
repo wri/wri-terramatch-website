@@ -9,6 +9,7 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import ShowTitle from "@/admin/components/ShowTitle";
+import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const ProjectShow: FC = () => {
   return (
@@ -17,14 +18,16 @@ const ProjectShow: FC = () => {
       actions={<ShowActions titleSource="name" resourceName="project" />}
       className="-mt-[50px] bg-neutral-100"
     >
-      <TabbedShowLayout tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" />}>
-        <InformationTab type="projects" />
-        <GalleryTab label="Project Gallery" entity="projects" />
-        <DocumentTab label="Project Documents" entity="projects" />
-        <ChangeRequestsTab entity="projects" singularEntity="project" />
-        <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab>
-        <AuditLogTab entity={AuditLogButtonStates.PROJECT} />
-      </TabbedShowLayout>
+      <RecordFrameworkProvider>
+        <TabbedShowLayout tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" />}>
+          <InformationTab type="projects" />
+          <GalleryTab label="Project Gallery" entity="projects" />
+          <DocumentTab label="Project Documents" entity="projects" />
+          <ChangeRequestsTab entity="projects" singularEntity="project" />
+          <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab>
+          <AuditLogTab entity={AuditLogButtonStates.PROJECT} />
+        </TabbedShowLayout>
+      </RecordFrameworkProvider>
     </Show>
   );
 };
