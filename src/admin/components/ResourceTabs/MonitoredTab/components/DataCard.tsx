@@ -442,6 +442,7 @@ const DataCard = ({
             data={tableData}
             variant={VARIANT_TABLE_MONITORED}
             hasPagination={true}
+            invertSelectPagination={true}
           />
         </div>
       </ModalExpand>
@@ -559,8 +560,14 @@ const DataCard = ({
           </div>
         </div>
       </When>
-      <div className={classNames({ "block w-full": isCardsTable }, { hidden: !isCardsTable })}>
-        <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
+      <div className={classNames({ "mb-5 block w-full": isCardsTable }, { hidden: !isCardsTable })}>
+        <Table
+          columns={TABLE_COLUMNS}
+          data={tableData}
+          variant={VARIANT_TABLE_MONITORED}
+          hasPagination={true}
+          invertSelectPagination={true}
+        />
       </div>
     </div>
   );

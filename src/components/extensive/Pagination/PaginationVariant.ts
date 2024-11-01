@@ -13,6 +13,7 @@ export interface VariantPagination {
   iconPagination?: string;
   iconContentPagination?: string;
   contentPageSelector?: string;
+  containerClassName?: string;
 }
 
 export const VARIANT_PAGINATION_DEFAULT: VariantPagination = {
@@ -39,4 +40,21 @@ export const VARIANT_PAGINATION_DASHBOARD: VariantPagination = {
   iconContentPagination:
     "bg-white !w-8 !h-8 lg:!h-9 lg:!w-9 rounded-lg border border-grey-350 flex items-center justify-center",
   contentPageSelector: "!gap-2 items-center"
+};
+
+export const VARIANT_PAGINATION_MONITORED: VariantPagination = {
+  VariantPageText: "text-12",
+  VariantPrePageText: "text-12-bold",
+  label: "order-1",
+  value: "!w-14 !h-8 lg:!h-9 lg:!w-[68px] order-2 border border-grey-350 bg-white rounded-lg shadow-none",
+  labelText: "Rows per page:",
+  iconContent: "bg-white",
+  icon: "h-3 w-3 mb-0",
+  textNumberPagination: "hidden",
+  labelsPagination: true,
+  iconPagination: "h-3 w-3 !fill-black hover:!fill-primary cursor-pointer",
+  iconContentPagination:
+    "bg-white !w-8 !h-8 lg:!h-9 lg:!w-9 rounded-lg border border-grey-350 flex items-center justify-center",
+  contentPageSelector: "!gap-2 items-center",
+  containerClassName: "!mt-3"
 };

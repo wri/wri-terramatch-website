@@ -1,5 +1,6 @@
 import {
   VARIANT_PAGINATION_DASHBOARD,
+  VARIANT_PAGINATION_MONITORED,
   VARIANT_PAGINATION_TEXT_16,
   VariantPagination
 } from "@/components/extensive/Pagination/PaginationVariant";
@@ -186,13 +187,13 @@ export const VARIANT_TABLE_MONITORED = {
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto ",
   trHeader: "bg-white sticky top-0 z-10 ",
   thHeader:
-    "text-nowrap first:pl-2 first:pr-2 last:pr-2 border-y border-neutral-200 text-10-semibold px-[3px] border-t-0 py-2 bg-neutral-50",
+    "text-nowrap first:pl-2 first:pr-2 last:pr-2 border-y border-neutral-200 text-10-semibold px-2 border-t-0 py-2 bg-neutral-50",
   tBody: "",
   thHeaderSort: "!border-x !place-items-center py-2",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-10-light px-[3px] py-2 first:pl-2 first:pr-2 last:pr-2 bg-white",
+  tdBody: "text-10-light px-2 py-2 first:pl-2 first:pr-2 last:pr-2 bg-white",
   thead: "bg-blueCustom-100 ",
-  paginationVariant: VARIANT_PAGINATION_DASHBOARD,
+  paginationVariant: VARIANT_PAGINATION_MONITORED,
   thHeaderSticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
   tdBodySticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg"
 };
