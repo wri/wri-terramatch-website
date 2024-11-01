@@ -473,11 +473,6 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
     };
   }, []);
 
-  const [first, setFirst] = useState(false);
-  useEffect(() => {
-    setFirst(activeIndex === 1);
-  }, [activeIndex]);
-
   const openRunAnalysis = () => {
     openModal(
       ModalId.MODAL_RUN_ANALYSIS,
@@ -556,7 +551,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             <div className=" flex max-h-[85vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
               {MonitoredCardData.map((data, index) => (
                 <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
-                  <DataCard data={data} isCardsTable={first} />
+                  <DataCard data={data} isCardsTable={activeIndex === 1} />
                 </div>
               ))}
             </div>
