@@ -23,7 +23,7 @@ type ChartProps = {
 const CustomTooltip: React.FC<any> = ({ active, payload, label, isAbsoluteData }) => {
   if (!active || !payload || !payload.length) return null;
 
-  const [year, month] = label.split("-");
+  const [year, month] = typeof label === "string" ? label.split("-") : ["", ""];
   const orderedPayload = payload.sort((a: any, b: any) => {
     const order = ["Total", "Non Profit", "Enterprise"];
     return order.indexOf(a.name) - order.indexOf(b.name);
