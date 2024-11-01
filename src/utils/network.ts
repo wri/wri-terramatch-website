@@ -39,6 +39,24 @@ export const downloadFile = async (fileUrl: string) => {
 };
 
 /**
+ * Downloads a file from remote url using fileName
+ * @param presignedUrl File Url to download
+ * @param fileName File Name to download
+ */
+export const downloadPresignedUrl = async (presignedUrl: string, fileName: string) => {
+  try {
+    const link = document.createElement("a");
+    link.href = presignedUrl;
+    link.download = fileName; // Optional: get the filename from the fileKey
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    Log.error("Failed to download file", presignedUrl, err);
+  }
+};
+
+/**
  * Force Downloads a blob
  * @param fileBlob File Url to download
  */
