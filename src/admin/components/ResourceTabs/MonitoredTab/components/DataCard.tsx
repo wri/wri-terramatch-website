@@ -1,6 +1,6 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { When } from "react-if";
 
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
@@ -356,7 +356,6 @@ const DataCard = ({
   ...rest
 }: { data: DataStructure; isCardsTable: boolean } & React.HTMLAttributes<HTMLDivElement>) => {
   const { label, tooltipContent, tableData } = data;
-  const [isTable, setIsTable] = useState(isCardsTable);
   const [tabActive, setTabActive] = useState(0);
   const { openModal, closeModal } = useModalContext();
   const modalMapFunctions = useMap();
@@ -460,18 +459,14 @@ const DataCard = ({
     );
   };
 
-  useEffect(() => {
-    setIsTable(isCardsTable);
-  }, [isCardsTable]);
-
   return (
     <div
       {...rest}
       className={classNames("ml-4 mr-2 flex w-[calc(100%_-_24px)] gap-3", {
-        "relative rounded-lg border border-grey-850 bg-white shadow": !isTable
+        "relative rounded-lg border border-grey-850 bg-white shadow": !isCardsTable
       })}
     >
-      <When condition={!isTable}>
+      <When condition={!isCardsTable}>
         <div className="absolute left-0 top-0 flex h-full w-[25%] flex-col gap-2 py-4 pl-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
@@ -562,7 +557,7 @@ const DataCard = ({
           </div>
         </div>
       </When>
-      <When condition={isTable}>
+      <When condition={isCardsTable}>
         <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
       </When>
     </div>
