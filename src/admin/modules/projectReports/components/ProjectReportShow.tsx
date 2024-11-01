@@ -9,6 +9,7 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import ShowTitle from "@/admin/components/ShowTitle";
+import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const ProjectReportShow: FC = () => {
   return (
@@ -17,13 +18,15 @@ const ProjectReportShow: FC = () => {
       actions={<ShowActions titleSource="title" resourceName="project report" />}
       className="-mt-[50px] bg-neutral-100"
     >
-      <TabbedShowLayout>
-        <InformationTab type="project-reports" />
-        <GalleryTab label="Project Report Gallery" entity="project-reports" />
-        <DocumentTab label="Project Report Documents" entity="project-reports" />
-        <ChangeRequestsTab entity="project-reports" singularEntity="project-report" />
-        <AuditLogTab entity={AuditLogButtonStates.PROJECT_REPORT} />
-      </TabbedShowLayout>
+      <RecordFrameworkProvider>
+        <TabbedShowLayout>
+          <InformationTab type="project-reports" />
+          <GalleryTab label="Project Report Gallery" entity="project-reports" />
+          <DocumentTab label="Project Report Documents" entity="project-reports" />
+          <ChangeRequestsTab entity="project-reports" singularEntity="project-report" />
+          <AuditLogTab entity={AuditLogButtonStates.PROJECT_REPORT} />
+        </TabbedShowLayout>
+      </RecordFrameworkProvider>
     </Show>
   );
 };

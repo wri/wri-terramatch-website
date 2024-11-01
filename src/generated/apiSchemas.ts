@@ -22950,6 +22950,7 @@ export type DashboardProjectProfileData = {
 export type DashboardTopProjectsResponse = {
   data?: {
     top_projects_most_planted_trees?: {
+      organization?: string;
       project?: string;
       uuid?: string;
       trees_planted?: number;
@@ -22962,6 +22963,7 @@ export type DashboardTopProjectsResponse = {
 };
 
 export type DashboardTopPlantedTree = {
+  organization?: string;
   project?: string;
   uuid?: string;
   trees_planted?: number;

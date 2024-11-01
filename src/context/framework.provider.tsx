@@ -1,4 +1,5 @@
 import { ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
+import { useShowContext } from "react-admin";
 
 export enum Framework {
   PPC = "ppc",
@@ -62,6 +63,11 @@ export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
   };
   FrameworkShowHide.displayName = `withFrameworkShow(${displayName})`;
   return FrameworkShowHide;
+}
+
+export function RecordFrameworkProvider({ children }: { children: ReactNode }) {
+  const { record } = useShowContext();
+  return <FrameworkProvider frameworkKey={record?.framework_key}>{children}</FrameworkProvider>;
 }
 
 export default FrameworkProvider;

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
+import { useFrameworkContext } from "@/context/framework.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
   usePutV2FormsENTITYUUID,
@@ -27,6 +28,7 @@ interface EditEntityFormProps {
 const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
+  const { framework } = useFrameworkContext();
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
@@ -50,6 +52,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
       entityName: pluralEntityNameToSingular(entityName),
       entityUUID
     },
+    framework,
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
 

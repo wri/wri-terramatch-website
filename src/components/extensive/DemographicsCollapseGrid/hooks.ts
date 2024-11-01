@@ -72,14 +72,12 @@ export function calculateTotals(demographics: Demographic[], framework: Framewor
   let total: number = 0;
   let complete: boolean = false;
 
-  if (counts) {
-    if (isHBFDemographicCounts(counts, framework)) {
-      total = counts.gender;
-      complete = counts.gender > 0;
-    } else {
-      total = Math.max(counts.age, counts.gender, counts.ethnicity);
-      complete = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
-    }
+  if (isHBFDemographicCounts(counts, framework)) {
+    total = counts.gender;
+    complete = counts.gender > 0;
+  } else {
+    total = Math.max(counts.age, counts.gender, counts.ethnicity);
+    complete = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
   }
 
   return { counts, total, complete };
@@ -100,7 +98,7 @@ export function useTableStatus(demographics: Demographic[]): { total: number; st
 
       return { total, status };
     },
-    [demographics]
+    [demographics, framework]
   );
 }
 

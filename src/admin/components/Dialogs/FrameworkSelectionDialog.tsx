@@ -8,9 +8,9 @@ import * as yup from "yup";
 
 import { validateForm } from "@/admin/utils/forms";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { fetchGetV2AdminENTITYExportFRAMEWORK } from "@/generated/apiComponents";
+import { fetchGetV2AdminENTITYPresignedUrlFRAMEWORK } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
-import { downloadFileBlob } from "@/utils/network";
+import { downloadPresignedUrl } from "@/utils/network";
 
 interface FrameworkSelectionDialogContentProps {
   onCancel: () => void;
@@ -59,11 +59,11 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
 
       const exportPrefix = split(entity, "-").map(capitalize).join(" ");
 
-      fetchGetV2AdminENTITYExportFRAMEWORK({
+      fetchGetV2AdminENTITYPresignedUrlFRAMEWORK({
         pathParams: { entity, framework }
       })
-        .then((response: any) => {
-          downloadFileBlob(response, `${exportPrefix} - ${framework}.csv`);
+        .then((data: any) => {
+          downloadPresignedUrl(data.url, `${exportPrefix} - ${framework}.csv`);
         })
         .finally(() => setExporting(false));
 

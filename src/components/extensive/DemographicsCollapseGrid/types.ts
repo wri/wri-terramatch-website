@@ -79,7 +79,9 @@ const AGES: Dictionary<string> = {
   unknown: "Unknown"
 };
 
-const HBF_AGES = Object.fromEntries(Object.entries(AGES).filter(([key]) => key === "youth"));
+const HBF_AGES: Dictionary<string> = {
+  youth: "Youth (15-29)"
+};
 
 const ETHNICITIES: Dictionary<string> = {
   indigenous: "Indigenous",
