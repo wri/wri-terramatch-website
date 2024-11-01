@@ -47,7 +47,7 @@ export const downloadPresignedUrl = async (presignedUrl: string, fileName: strin
   try {
     const link = document.createElement("a");
     link.href = presignedUrl;
-    link.download = fileName; // Optional: get the filename from the fileKey
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
