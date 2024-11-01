@@ -8,18 +8,25 @@ import Text from "@/components/elements/Text/Text";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../Icon/Icon";
+import DemographicsSection from "./DemographicsSection";
 import { useTableStatus } from "./hooks";
 import {
   Demographic,
   DEMOGRAPHIC_TYPES,
+  DEMOGRAPHICAL_TYPES,
+  DemographicsCollapseGridProps,
   DemographicType,
   HBF_DEMOGRAPHIC_TYPES,
-  HBFDemographicType,
-  WorkdayCollapseGridProps
+  HBFDemographicType
 } from "./types";
-import WorkdaySection from "./WorkdaySection";
 
-const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics, variant, onChange }) => {
+const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({
+  title,
+  demographicalType,
+  demographics,
+  variant,
+  onChange
+}) => {
   const [open, setOpen] = useState(false);
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -41,8 +48,9 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
     [framework]
   );
 
-  const titleDays = t("{total} Days", { total });
-  const fullTitle = title == null ? titleDays : `${title} - ${titleDays}`;
+  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
+  const rowTitle = t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
+  const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
   return (
     <div>
@@ -87,8 +95,9 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
             )}
           >
             {demographicTypes.map(type => (
-              <WorkdaySection
+              <DemographicsSection
                 key={type}
+                demographicalType={demographicalType}
                 onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}
                 demographics={byType[type] ?? []}
                 {...{ type, variant }}
@@ -101,4 +110,4 @@ const WorkdayCollapseGrid: FC<WorkdayCollapseGridProps> = ({ title, demographics
   );
 };
 
-export default WorkdayCollapseGrid;
+export default DemographicsCollapseGrid;

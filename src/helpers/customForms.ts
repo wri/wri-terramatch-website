@@ -4,8 +4,8 @@ import { isNumber, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
+import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { calculateTotals } from "@/components/extensive/WorkdayCollapseGrid/hooks";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
 import { getCountriesStatesOptions } from "@/constants/options/states";
@@ -464,6 +464,19 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "restorationPartners": {
+      return {
+        ...sharedProps,
+        type: FieldType.RestorationPartnersTable,
+
+        fieldProps: {
+          required,
+          entity,
+          collection: question.collection
+        }
+      };
+    }
+
     case "select-image":
       return {
         ...sharedProps,
@@ -625,7 +638,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
-    case "workdays": {
+    case "workdays":
+    case "restorationPartners": {
       validation = yup
         .array()
         .min(0)

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Components/Extensive/WorkdayCollapse Complete Green 1`] = `
+exports[`Storyshots Components/Extensive/DemographicsCollapse Complete Green 1`] = `
 <div
   className=" rounded-2xl"
 >
@@ -46,7 +46,7 @@ exports[`Storyshots Components/Extensive/WorkdayCollapse Complete Green 1`] = `
 </div>
 `;
 
-exports[`Storyshots Components/Extensive/WorkdayCollapse Default 1`] = `
+exports[`Storyshots Components/Extensive/DemographicsCollapse Default 1`] = `
 <div
   className=" rounded-2xl"
 >
@@ -78,7 +78,7 @@ exports[`Storyshots Components/Extensive/WorkdayCollapse Default 1`] = `
 </div>
 `;
 
-exports[`Storyshots Components/Extensive/WorkdayCollapse In Progress Green 1`] = `
+exports[`Storyshots Components/Extensive/DemographicsCollapse In Progress Green 1`] = `
 <div
   className="rounded-2xl"
 >
@@ -116,7 +116,7 @@ exports[`Storyshots Components/Extensive/WorkdayCollapse In Progress Green 1`] =
 </div>
 `;
 
-exports[`Storyshots Components/Extensive/WorkdayCollapse Not Started Green 1`] = `
+exports[`Storyshots Components/Extensive/DemographicsCollapse Not Started Green 1`] = `
 <div
   className=" rounded-2xl"
 >
@@ -154,7 +154,7 @@ exports[`Storyshots Components/Extensive/WorkdayCollapse Not Started Green 1`] =
 </div>
 `;
 
-exports[`Storyshots Components/Extensive/WorkdayCollapse Variant Narrow 1`] = `
+exports[`Storyshots Components/Extensive/DemographicsCollapse Variant Narrow 1`] = `
 <div
   className="w-1/2 rounded-2xl"
 >

@@ -3,28 +3,30 @@ import { PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
-import { Demographic } from "@/components/extensive/WorkdayCollapseGrid/types";
-import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
-import { GRID_VARIANT_GREEN } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
+import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
+import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
+import { Demographic, DemographicalType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { Entity } from "@/types/common";
 
 import { DataTableProps } from "../DataTable/DataTable";
 
-export interface RHFWorkdaysTableProps
+export interface RHFDemographicsTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
+  demographicalType: DemographicalType;
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   entity: Entity;
   collection: string;
 }
 
-const RHFWorkdaysTable = ({
+const RHFDemographicsTable = ({
+  demographicalType,
   onChangeCapture,
   entity,
   collection,
   ...props
-}: PropsWithChildren<RHFWorkdaysTableProps>) => {
+}: PropsWithChildren<RHFDemographicsTableProps>) => {
   const {
     field: { value, onChange }
   } = useController(props);
@@ -38,7 +40,7 @@ const RHFWorkdaysTable = ({
       // set to the collection multiple times. Here, we take the last value for each combo, and discard
       // the rest. Once the changes have propagated through the form system, the risk of duplicates
       // goes away because the useSectionData hook will see the new value and provide the correct
-      // data to the individual WorkdayRows
+      // data to the individual DemographicsRows
       updatedDemographics = updatedDemographics.filter(
         ({ type, subtype, name }, index) =>
           index ===
@@ -55,8 +57,9 @@ const RHFWorkdaysTable = ({
 
   return (
     <InputWrapper error={props.error}>
-      <WorkdayCollapseGrid
+      <DemographicsCollapseGrid
         title={props.label ?? ""}
+        demographicalType={demographicalType}
         demographics={demographics}
         variant={GRID_VARIANT_GREEN}
         onChange={updateDemographics}
@@ -65,4 +68,4 @@ const RHFWorkdaysTable = ({
   );
 };
 
-export default RHFWorkdaysTable;
+export default RHFDemographicsTable;

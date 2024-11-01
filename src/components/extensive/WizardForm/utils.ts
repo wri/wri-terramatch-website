@@ -164,6 +164,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     case FieldType.DisturbanceDataTable:
     case FieldType.InvasiveDataTable:
     case FieldType.WorkdaysTable:
+    case FieldType.RestorationPartnersTable:
     case FieldType.SeedingsDataTable: {
       let headers: AccessorKeyColumnDef<any>[] = [];
 

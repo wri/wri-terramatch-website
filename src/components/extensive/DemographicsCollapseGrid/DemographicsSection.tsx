@@ -4,7 +4,7 @@ import { Fragment, useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import WorkdayRow from "@/components/extensive/WorkdayCollapseGrid/WorkdayRow";
+import DemographicsRow from "@/components/extensive/DemographicsCollapseGrid/DemographicsRow";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -12,19 +12,29 @@ import { useSectionData } from "./hooks";
 import {
   Demographic,
   DEMOGRAPHIC_TYPE_MAP,
+  DEMOGRAPHICAL_TYPES,
+  DemographicalType,
+  DemographicGridVariantProps,
   DemographicType,
   HBF_DEMOGRAPHIC_TYPE_MAP,
-  HBFDemographicType,
-  WorkdayGridVariantProps
+  HBFDemographicType
 } from "./types";
-export interface WorkdaySectionProps {
+
+export interface DemographicsSectionProps {
+  demographicalType: DemographicalType;
   demographics: Demographic[];
   type: DemographicType | HBFDemographicType;
-  variant: WorkdayGridVariantProps;
+  variant: DemographicGridVariantProps;
   onChange?: (demographics: Demographic[]) => void;
 }
 
-const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectionProps) => {
+const DemographicsSection = ({
+  demographicalType,
+  demographics,
+  type,
+  variant,
+  onChange
+}: DemographicsSectionProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const { framework } = useFrameworkContext();
   const t = useT();
@@ -83,6 +93,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
   const rowSpanCount = subtypes == null || onChange == null ? rows.length + 1 : rows.length + 2;
   const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
 
   return (
     <Fragment>
@@ -99,7 +110,7 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
 
       <div className={classNames("bg-white", variant.secondCol)}>
         <Text variant="text-14-semibold" className={classNames("text-customBlue-50 px-4 py-2", variant.columTitle)}>
-          {t("Total Workdays")}
+          {t(sectionLabel)}
         </Text>
       </div>
       <div
@@ -117,12 +128,13 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
             { [`${variant.roundedTr}`]: position === "first" }
           )}
         >
-          {t("{total} Days", { total })}
+          {t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total })}
         </Text>
       </div>
       {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (
-        <WorkdayRow
+        <DemographicsRow
           key={index}
+          demographicalType={demographicalType}
           onChange={
             onChange == null
               ? undefined
@@ -169,4 +181,4 @@ const WorkdaySection = ({ demographics, type, variant, onChange }: WorkdaySectio
   );
 };
 
-export default WorkdaySection;
+export default DemographicsSection;

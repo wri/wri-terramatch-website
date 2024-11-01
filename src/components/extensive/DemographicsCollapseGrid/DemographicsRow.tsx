@@ -7,9 +7,16 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DemographicType, HBFDemographicType, WorkdayGridVariantProps } from "./types";
+import {
+  DEMOGRAPHICAL_TYPES,
+  DemographicalType,
+  DemographicGridVariantProps,
+  DemographicType,
+  HBFDemographicType
+} from "./types";
 
-export interface WorkdayRowProps {
+export interface DemographicsRowProps {
+  demographicalType: DemographicalType;
   type: DemographicType | HBFDemographicType;
   subtypes?: Dictionary<string>;
   label: string;
@@ -17,10 +24,20 @@ export interface WorkdayRowProps {
   amount: number;
   onChange?: (amount: number, userLabel?: string) => void;
   onDelete?: () => void;
-  variant: WorkdayGridVariantProps;
+  variant: DemographicGridVariantProps;
 }
 
-const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDelete, variant }: WorkdayRowProps) => {
+const DemographicsRow = ({
+  demographicalType,
+  type,
+  subtypes,
+  label,
+  userLabel,
+  amount,
+  onChange,
+  onDelete,
+  variant
+}: DemographicsRowProps) => {
   const [focused, setFocused] = useState(false);
   const t = useT();
 
@@ -43,6 +60,8 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
     },
     [onChange, amount]
   );
+
+  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
 
   return (
     <Fragment>
@@ -69,12 +88,12 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
       <div className={classNames("relative flex items-center justify-center bg-white", variant.tertiaryCol)}>
         <When condition={onChange == null}>
           <Text variant="text-14-light" className="w-full px-4 py-[9.5px] text-center">
-            {t("{amount} Days", { amount })}
+            {t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
           </Text>
         </When>
         <When condition={onChange != null}>
           <input
-            value={focused ? amount : t("{amount} Days", { amount })}
+            value={focused ? amount : t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
             type={focused ? "number" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
@@ -92,4 +111,4 @@ const WorkdayRow = ({ type, subtypes, label, userLabel, amount, onChange, onDele
   );
 };
 
-export default WorkdayRow;
+export default DemographicsRow;
