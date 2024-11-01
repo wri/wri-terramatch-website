@@ -42,7 +42,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
     },
     {
       accessorKey: "run",
-      header: "Run",
+      header: "Run Analysis",
       enableSorting: false,
       cell: () => <Checkbox name="Select All" onClick={() => {}} />
     }

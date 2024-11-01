@@ -19,7 +19,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import { useModalContext } from "@/context/modal.provider";
 
-import LeyendItem from "./LeyendItem";
+import LegendItem from "./LegendItem";
 
 interface TableData {
   polygonName: string;
@@ -360,7 +360,7 @@ const DataCard = ({
   const { openModal, closeModal } = useModalContext();
   const modalMapFunctions = useMap();
 
-  const dataLeyend = [
+  const dataLegend = [
     { label: "Agrariala Palma", percentage: "1.0", color: "#AA57FD" },
     { label: "Agraisa", percentage: "0.9", color: "#577EFD" },
     { label: "Agrajaya Batitama", percentage: "0.8", color: "#57C2FD" },
@@ -376,18 +376,18 @@ const DataCard = ({
   const tabItems = [
     {
       key: 0,
-      label: "Leyend",
+      label: "Legend",
       content: (
         <div className="flex flex-col gap-1 overflow-auto">
-          {dataLeyend.map(item => (
-            <LeyendItem key={item.label} backgroundColor={item.color} label={item.label} percentage={item.percentage} />
+          {dataLegend.map(item => (
+            <LegendItem key={item.label} backgroundColor={item.color} label={item.label} percentage={item.percentage} />
           ))}
         </div>
       )
     },
     {
       key: 1,
-      label: "Stadistics",
+      label: "Statistics",
       content: (
         <div className="flex flex-col gap-2 overflow-auto">
           <div className="flex flex-col gap-1">
@@ -470,14 +470,16 @@ const DataCard = ({
         <div className="absolute left-0 top-0 flex h-full w-[25%] flex-col gap-2 py-4 pl-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <Text variant={"text-16-semibold"}>{label}</Text>
+              <Text variant={"text-16-semibold"} className="whitespace-nowrap">
+                {label}
+              </Text>
               <ToolTip content={tooltipContent}>
                 <Icon name={IconNames.IC_INFO} className="w-3.5" />
               </ToolTip>
             </div>
             <div className="flex flex-wrap items-center gap-1 lg:flex-nowrap">
               <Text variant={"text-12-light"} className="whitespace-nowrap text-black">
-                10-Year Retrospective
+                10-Year Retro
               </Text>
               <div className="flex items-center gap-1">
                 <Text variant={"text-12-light"} className="text-black">
@@ -543,8 +545,8 @@ const DataCard = ({
           <div className="relative">
             <div className="absolute left-[73%] top-[-10%] z-10 flex flex-col gap-1 rounded bg-white p-2 shadow-all">
               <Text variant="text-8">2021</Text>
-              {dataLeyend.map(item => (
-                <LeyendItem
+              {dataLegend.map(item => (
+                <LegendItem
                   key={item.label}
                   backgroundColor={item.color}
                   label={item.label}

@@ -3,7 +3,7 @@ import React from "react";
 import Text from "@/components/elements/Text/Text";
 import { TextVariants } from "@/types/common";
 
-interface LeyendItemProps {
+interface LegendItemProps {
   key: string | number;
   backgroundColor: string;
   label: string;
@@ -11,7 +11,7 @@ interface LeyendItemProps {
   textVariant?: TextVariants;
 }
 
-const LeyendItem = (props: LeyendItemProps) => {
+const LegendItem = (props: LegendItemProps) => {
   const { key, backgroundColor, label, percentage, textVariant } = props;
   return (
     <div className="flex" key={key}>
@@ -28,4 +28,4 @@ const LeyendItem = (props: LeyendItemProps) => {
   );
 };
 
-export default LeyendItem;
+export default LegendItem;

@@ -515,12 +515,19 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
               >
                 <Text
                   variant="text-14-light"
-                  className={classNames("rounded-lg p-2 text-start hover:bg-grey-100", {
+                  className={classNames("flex flex-wrap gap-1 rounded-lg p-2 text-start hover:bg-grey-100", {
                     "text-primary": intersectingCard === data.label,
                     "bg-blueCustom-10": intersectingCard === data.label
                   })}
                 >
-                  {data.label}
+                  {"Restoration by Land Use" === data.label ? (
+                    <>
+                      <span className="text-14-light">Restoration by</span>
+                      <span className="text-14-light">Land Use</span>
+                    </>
+                  ) : (
+                    data.label
+                  )}
                 </Text>
               </button>
             ))}
