@@ -424,10 +424,13 @@ const DataCard = ({
     }
   ];
 
+  const tooltipText =
+    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
+
   const ModalTable = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title={"Table"} closeModal={closeModal}>
+      <ModalExpand id="modalExpand" title={"Tree Cover Loss"} closeModal={closeModal} popUpContent={tooltipText}>
         <div className="h-full w-full px-6 pb-6">
           <Table
             columns={TABLE_COLUMNS.map(column => {
@@ -449,7 +452,7 @@ const DataCard = ({
   const ModalMap = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title={"Map"} closeModal={closeModal}>
+      <ModalExpand id="modalExpand" title={"Tree Cover Loss"} closeModal={closeModal} popUpContent={tooltipText}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
         </div>
@@ -543,7 +546,7 @@ const DataCard = ({
             </Button>
           </div>
           <div className="relative">
-            <div className="absolute left-[73%] top-[-10%] flex flex-col gap-1 rounded bg-white p-2 shadow-all">
+            <div className="absolute left-[73%] top-[-10%] z-10 flex flex-col gap-1 rounded bg-white p-2 shadow-all">
               <Text variant="text-8">2021</Text>
               {dataLeyend.map(item => (
                 <LeyendItem
