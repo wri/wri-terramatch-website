@@ -557,9 +557,9 @@ const DataCard = ({
           </div>
         </div>
       </When>
-      <When condition={isCardsTable}>
+      <div className={classNames({ block: isCardsTable }, { hidden: !isCardsTable })}>
         <Table columns={TABLE_COLUMNS} data={tableData} variant={VARIANT_TABLE_MONITORED} hasPagination={true} />
-      </When>
+      </div>
     </div>
   );
 };
