@@ -279,8 +279,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         <div className="flex max-h-[62vh] flex-1 flex-col gap-4 overflow-auto">
           <Toggle
             items={tabs}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
+            onChangeActiveIndex={setActiveIndex}
             textClassName="!w-1/2 flex justify-center py-1"
             disabledIndexes={isGeotagged ? [] : [1]}
           />

@@ -127,10 +127,7 @@ const SecDashboard = ({
         <When condition={type === "toggle"}>
           <Toggle
             items={secondOptionsData.map(item => item.tooltip)}
-            activeIndex={toggleValue}
-            setActiveIndex={() => {
-              setToggleValue(toggleValue === 0 ? 1 : 0);
-            }}
+            onChangeActiveIndex={setToggleValue}
             variant={VARIANT_TOGGLE_DASHBOARD}
           />
         </When>

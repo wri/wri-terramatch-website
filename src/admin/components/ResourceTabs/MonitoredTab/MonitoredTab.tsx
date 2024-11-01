@@ -530,7 +530,7 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
             <div className="flex items-center justify-between pl-4 pr-2">
               <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
               <div className="flex gap-4">
-                <Toggle items={toggleItems} activeIndex={activeIndex} setActiveIndex={setActiveIndex}></Toggle>
+                <Toggle items={toggleItems} onChangeActiveIndex={setActiveIndex}></Toggle>
                 <Button
                   variant="purple"
                   onClick={() => {

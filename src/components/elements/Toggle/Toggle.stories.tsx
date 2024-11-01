@@ -16,7 +16,10 @@ const ToggleWrapper = (args: ToggleProps) => {
 
   return (
     <div className="w-fit">
-      <Component {...args} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+      <Component {...args} onChangeActiveIndex={setActiveIndex} />
+      {activeIndex === 0 && <div>Tab 1</div>}
+      {activeIndex === 1 && <div>Tab 2</div>}
+      {activeIndex === 2 && <div>Tab 3</div>}
     </div>
   );
 };

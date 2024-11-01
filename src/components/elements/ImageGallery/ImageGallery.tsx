@@ -338,7 +338,7 @@ const ImageGallery = ({
               placeholder={"Search..."}
               className="w-64"
             />
-            <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+            <Toggle items={tabs} onChangeActiveIndex={setActiveIndex} />
           </div>
           <div className="flex gap-4">
             <button className="text-primary hover:text-red" onClick={handleClearFilters}>

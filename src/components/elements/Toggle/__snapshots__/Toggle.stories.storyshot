@@ -41,5 +41,8 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       "Tab 3"
     </button>
   </div>
+  <div>
+    Tab 1
+  </div>
 </div>
 `;

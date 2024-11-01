@@ -10,22 +10,21 @@ export interface TogglePropsItem {
 
 export interface ToggleProps {
   items: TogglePropsItem[];
-  activeIndex: number;
-  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
   textClassName?: string;
   disabledIndexes?: number[];
   variant?: ToggleVariants;
+  onChangeActiveIndex?: (index: number) => void;
 }
 
 const Toggle = (props: ToggleProps) => {
-  const { items, activeIndex, setActiveIndex, disabledIndexes = [], variant = VARIANT_TOGGLE_PRIMARY } = props;
+  const { items, disabledIndexes = [], variant = VARIANT_TOGGLE_PRIMARY, onChangeActiveIndex } = props;
 
+  const [activeIndex, setActiveIndex] = useState(0);
   const [width, setWidth] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const currentButton = buttonRefs.current[activeIndex];
-    console.log(activeIndex);
 
     if (currentButton) {
       const resizeObserver = new ResizeObserver(entries => {
@@ -40,6 +39,11 @@ const Toggle = (props: ToggleProps) => {
       return () => resizeObserver.disconnect();
     }
   }, [activeIndex]);
+
+  const handleClick = (index: number) => {
+    setActiveIndex(index);
+    if (onChangeActiveIndex) onChangeActiveIndex(index);
+  };
 
   const isDisabled = (index: number) => disabledIndexes.includes(index);
 
@@ -57,7 +61,7 @@ const Toggle = (props: ToggleProps) => {
           key={tab.key}
           ref={el => (buttonRefs.current[index] = el)}
           type="button"
-          onClick={() => setActiveIndex(index)}
+          onClick={() => handleClick(index)}
           disabled={isDisabled(index)}
           className={classNames(
             "hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out",
