@@ -83,6 +83,9 @@ const SecDashboard = ({
   }, []);
 
   useEffect(() => {
+    if (dataForChart && dataForChart?.message === "Job dispatched") {
+      return;
+    }
     if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
       const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
       setTreesPlantedByYear(data);

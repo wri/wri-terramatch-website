@@ -156,13 +156,13 @@ export const getRestorationGoalDataForChart = (data: any, isPercentage: boolean)
   const totalData = {
     name: "Total",
     values: isPercentage
-      ? data?.treesUnderRestorationActualTotal.map(
+      ? data?.treesUnderRestorationActualTotal?.map(
           (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
             totalSum += item.treeSpeciesPercentage;
             return { time: new Date(item.dueDate), value: totalSum, name: "Total" };
           }
         )
-      : data?.treesUnderRestorationActualTotal.map(
+      : data?.treesUnderRestorationActualTotal?.map(
           (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
             totalSum += item.treeSpeciesAmount;
             return { time: new Date(item.dueDate), value: totalSum, name: "Total" };
@@ -175,13 +175,13 @@ export const getRestorationGoalDataForChart = (data: any, isPercentage: boolean)
   const enterpriseData = {
     name: "Enterprise",
     values: isPercentage
-      ? data?.treesUnderRestorationActualForProfit.map(
+      ? data?.treesUnderRestorationActualForProfit?.map(
           (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
             enterpriseSum += item.treeSpeciesPercentage;
             return { time: new Date(item.dueDate), value: enterpriseSum, name: "Enterprise" };
           }
         )
-      : data?.treesUnderRestorationActualForProfit.map(
+      : data?.treesUnderRestorationActualForProfit?.map(
           (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
             enterpriseSum += item.treeSpeciesAmount;
             return { time: new Date(item.dueDate), value: enterpriseSum, name: "Enterprise" };
@@ -194,13 +194,13 @@ export const getRestorationGoalDataForChart = (data: any, isPercentage: boolean)
   const nonProfitData = {
     name: "Non Profit",
     values: isPercentage
-      ? data?.treesUnderRestorationActualNonProfit.map(
+      ? data?.treesUnderRestorationActualNonProfit?.map(
           (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
             nonProfitSum += item.treeSpeciesPercentage;
             return { time: new Date(item.dueDate), value: nonProfitSum, name: "Non Profit" };
           }
         )
-      : data?.treesUnderRestorationActualNonProfit.map(
+      : data?.treesUnderRestorationActualNonProfit?.map(
           (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
             nonProfitSum += item.treeSpeciesAmount;
             return { time: new Date(item.dueDate), value: nonProfitSum, name: "Non Profit" };
