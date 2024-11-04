@@ -27,9 +27,9 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports, useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
-import useWorkdayData from "@/hooks/useWorkdayData";
+import useDemographicData from "@/hooks/useDemographicData";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
@@ -58,13 +58,10 @@ const SiteReportDetailPage = () => {
   const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
 
-  const { data: workdayResponse } = useGetV2WorkdaysENTITYUUID(
-    { pathParams: { entity: "site-report", uuid: siteReportUUID } },
-    { keepPreviousData: true }
-  );
-
-  const { grids: workdayGrids, title: workdaysTitle } = useWorkdayData(
-    workdayResponse,
+  const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
+    "site-report",
+    "workdays",
+    siteReportUUID,
     SITE_WORKDAY_COLLECTIONS,
     "Site Workdays"
   );

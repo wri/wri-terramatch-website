@@ -10,16 +10,18 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { CHART_TYPES } from "@/constants/dashbordConsts";
+import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
 
+import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
+import SimpleBarChart from "../charts/SimpleBarChart";
 import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
-import GraphicIconDashoard from "./GraphicIconDashoard";
+import GraphicIconDashboard from "./GraphicIconDashboard";
 import ObjectiveSec from "./ObjectiveSec";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
@@ -63,7 +65,7 @@ const SecDashboard = ({
 
   const tableColumns = [
     {
-      header: isTableProject ? "Project" : "Specie",
+      header: isTableProject ? "Organization" : "Specie",
       accessorKey: "label",
       enableSorting: false
     },
@@ -149,6 +151,12 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
           <GroupedBarChart data={dataForChart} />
         </When>
+        <When condition={chartType === CHART_TYPES.doughnutChart}>
+          <DoughnutChart data={dataForChart} />
+        </When>
+        <When condition={chartType === CHART_TYPES.simpleBarChart}>
+          <SimpleBarChart data={dataForChart} />
+        </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
           <div>
@@ -188,8 +196,11 @@ const SecDashboard = ({
             </div>
           </When>
         </When>
-        <When condition={!!data?.graphicTargetLandUseTypes}>
-          <GraphicIconDashoard data={data?.graphicTargetLandUseTypes ?? []} />
+        <When condition={chartType === CHART_TYPES.barChart}>
+          <GraphicIconDashboard
+            data={data?.graphicTargetLandUseTypes ?? []}
+            maxValue={data?.totalSection?.totalHectaresRestored ?? 0}
+          />
         </When>
         <When condition={!!data?.objetiveText}>
           <ObjectiveSec data={data} />

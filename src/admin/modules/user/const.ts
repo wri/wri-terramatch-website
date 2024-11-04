@@ -1,4 +1,5 @@
 import { getCountriesOptions } from "@/constants/options/countries";
+import { Framework } from "@/context/framework.provider";
 
 export const userPrimaryRoleChoices = [
   {
@@ -50,3 +51,7 @@ export const frameworkChoices = [
     name: "TerraFund"
   }
 ];
+
+export const directFrameworkChoices = Object.values(Framework)
+  .filter(slug => slug !== "undefined")
+  .map(slug => ({ id: slug, name: slug }));

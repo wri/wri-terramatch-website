@@ -4,8 +4,7 @@ import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { DetailedHTMLProps, HTMLAttributes, useState } from "react";
+import React, { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
@@ -34,6 +33,7 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import Log from "@/utils/log";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
@@ -118,6 +118,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  showImagesButton?: boolean;
   listViewProjects?: any;
   role?: any;
 }
@@ -153,6 +154,7 @@ export const MapContainer = ({
   imageGalleryRef,
   centroids,
   listViewProjects,
+  showImagesButton,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -326,7 +328,7 @@ export const MapContainer = ({
         });
 
         if (!response) {
-          console.error("No response received from the server.");
+          Log.error("No response received from the server.");
           openNotification("error", t("Error!"), t("No response received from the server."));
           return;
         }
@@ -345,7 +347,7 @@ export const MapContainer = ({
         hideLoader();
         openNotification("success", t("Success!"), t("Image downloaded successfully"));
       } catch (error) {
-        console.error("Download error:", error);
+        Log.error("Download error:", error);
         hideLoader();
       }
     };
@@ -393,7 +395,7 @@ export const MapContainer = ({
   }
 
   useEffect(() => {
-    if (selectedPolygonsInCheckbox && map.current && styleLoaded && map.current.isStyleLoaded()) {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
       const newPolygonData = {
         [DELETED_POLYGONS]: selectedPolygonsInCheckbox
       };
@@ -403,7 +405,7 @@ export const MapContainer = ({
         newPolygonData
       );
     }
-  }, [selectedPolygonsInCheckbox]);
+  }, [selectedPolygonsInCheckbox, styleLoaded]);
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");
@@ -463,6 +465,7 @@ export const MapContainer = ({
               await reloadSiteData?.();
             }
             onCancel(polygonsData);
+            addSourcesToLayers(map.current, polygonsData, centroids);
             addSourcesToLayers(map.current, polygonsData, centroids);
             setShouldRefetchPolygonData(true);
             openNotification(
@@ -571,7 +574,9 @@ export const MapContainer = ({
         </ControlGroup>
         <When condition={!formMap}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
-            <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            <When condition={showImagesButton}>
+              <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
+            </When>
             {isDashboard === "dashboard" ? (
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (

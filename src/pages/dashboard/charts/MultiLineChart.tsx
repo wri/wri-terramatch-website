@@ -1,7 +1,7 @@
 import React from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { COLORS } from "@/constants/dashbordConsts";
+import { COLORS } from "@/constants/dashboardConsts";
 import { formatDate, formatMonth, formatNumberChart } from "@/utils/dashboardUtils";
 
 type DataPoint = {

@@ -4,17 +4,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import * as api from "@/generated/apiComponents";
+import { OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { middleware } from "./middleware.page";
 
 //@ts-ignore
 Headers.prototype.getAll = () => []; //To fix TypeError: this._headers.getAll is not a function
-
-jest.mock("@/generated/apiComponents", () => ({
-  __esModule: true,
-  fetchGetAuthMe: jest.fn()
-}));
 
 const domain = "https://localhost:3000";
 
@@ -87,20 +82,44 @@ describe("User is not Logged In", () => {
   });
 });
 
+function mockUsersMe(
+  userAttributes: Partial<UserDto>,
+  org: {
+    attributes?: Partial<OrganisationDto>;
+    id?: string;
+    userStatus?: string;
+  } = {}
+) {
+  jest.spyOn(global, "fetch").mockImplementation(() =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: {
+          attributes: userAttributes,
+          relationships: {
+            org: {
+              data: {
+                id: org.id,
+                meta: { userStatus: org.userStatus }
+              }
+            }
+          }
+        },
+        included: [{ attributes: org.attributes }]
+      })
+    } as Response)
+  );
+}
+
 describe("User is Logged In and not verified", () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.resetAllMocks();
   });
 
   it("redirect not verified users to /auth/signup/confirm", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address: "test@example.com",
-        email_address_verified_at: null
-      }
-    });
+    mockUsersMe({ emailAddress: "test@example.com" });
 
     await middleware(getRequest("/", true));
     await testMultipleRoute(spy, `/auth/signup/confirm?email=test@example.com`);
@@ -108,21 +127,13 @@ describe("User is Logged In and not verified", () => {
 });
 
 describe("User is Logged In and verified", () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.resetAllMocks();
   });
 
   it("redirect routes that start with /organization/create to /organization/create/confirm when org has been approved", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          status: "approved"
-        }
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" }, { attributes: { status: "approved" } });
 
     await middleware(getRequest("/organization/create/test", true));
     expect(spy).toBeCalledWith(new URL("/organization/create/confirm", domain));
@@ -133,86 +144,45 @@ describe("User is Logged In and verified", () => {
 
   it("redirect any route to /admin when user is an admin", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: null,
-        role: "admin-super"
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z", primaryRole: "admin-super" });
+
     await testMultipleRoute(spy, "/admin");
   });
 
   it("redirect any route to /organization/assign when org does not exist", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: null
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" });
+
     await testMultipleRoute(spy, "/organization/assign");
   });
 
   it("redirect any route to /organization/create when org is a draft", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          status: "draft"
-        }
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" }, { attributes: { status: "draft" } });
+
     await testMultipleRoute(spy, "/organization/create");
   });
 
   it("redirect any route to /organization/status/pending when user is awaiting org approval", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          users_status: "requested"
-        }
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" }, { userStatus: "requested" });
 
     await testMultipleRoute(spy, "/organization/status/pending");
   });
 
   it("redirect any route to /organization/status/rejected when user is rejected", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          status: "rejected"
-        }
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" }, { attributes: { status: "rejected" } });
 
     await testMultipleRoute(spy, "/organization/status/rejected");
   });
 
   it("redirect /organization to /organization/[org_uuid]", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          status: "approved",
-          name: "",
-          uuid: "uuid"
-        }
-      }
-    });
+    mockUsersMe(
+      { emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" },
+      { attributes: { status: "approved" }, id: "uuid" }
+    );
 
     await middleware(getRequest("/organization", true));
 
@@ -221,16 +191,7 @@ describe("User is Logged In and verified", () => {
 
   it("redirect / to /home", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          status: "approved",
-          name: ""
-        }
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" }, { attributes: { status: "approved" } });
 
     await middleware(getRequest("/", true));
 
@@ -239,16 +200,7 @@ describe("User is Logged In and verified", () => {
 
   it("redirect routes that startWith /auth to /home", async () => {
     const spy = jest.spyOn(NextResponse, "redirect");
-    //@ts-ignore
-    api.fetchGetAuthMe.mockResolvedValue({
-      data: {
-        email_address_verified_at: "2023-02-17T10:54:16.000000Z",
-        organisation: {
-          status: "approved",
-          name: ""
-        }
-      }
-    });
+    mockUsersMe({ emailAddressVerifiedAt: "2023-02-17T10:54:16.000000Z" }, { attributes: { status: "approved" } });
 
     await middleware(getRequest("/auth", true));
     expect(spy).toBeCalledWith(new URL("/home", domain));

@@ -13,10 +13,10 @@ import Form from "@/components/extensive/Form/Form";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useMyOrg } from "@/connections/Organisation";
 import { useGetV2FormsUUID, useGetV2ProjectPitches, usePostV2FormsSubmissions } from "@/generated/apiComponents";
 import { FormRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
-import { useMyOrg } from "@/hooks/useMyOrg";
 
 const schema = yup.object({
   pitch_uuid: yup.string().required(),
@@ -28,11 +28,10 @@ export type FormData = yup.InferType<typeof schema>;
 const FormIntroPage = () => {
   const t = useT();
   const router = useRouter();
-  const myOrg = useMyOrg();
   const { format } = useDate();
+  const [, { organisationId }] = useMyOrg();
 
   const formUUID = router.query.id as string;
-  const orgUUID = myOrg?.uuid as string;
 
   const form = useForm<FormData>({
     resolver: yupResolver(schema)
@@ -51,11 +50,11 @@ const FormIntroPage = () => {
         page: 1,
         per_page: 10000,
         //@ts-ignore
-        "filter[organisation_id]": orgUUID
+        "filter[organisation_id]": organisationId
       }
     },
     {
-      enabled: !!orgUUID
+      enabled: !!organisationId
     }
   );
 

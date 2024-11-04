@@ -13,6 +13,7 @@ import { RHFLeadershipTeamTableProps } from "@/components/elements/Inputs/DataTa
 import { RHFOwnershipStakeTableProps } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { RHFSeedingProps } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { RHFStrataTableProps } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import { RHFDemographicsTableProps } from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import { RHFDropdownProps } from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { RHFFileInputProps } from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
@@ -23,7 +24,6 @@ import { RHFSelectImageProps } from "@/components/elements/Inputs/SelectImage/RH
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
-import { RHFWorkdaysTableProps } from "@/components/elements/Inputs/WorkdaysInput/RHFWorkdaysTable";
 
 export interface FormStepSchema {
   title: string;
@@ -65,6 +65,7 @@ export enum FieldType {
   InvasiveDataTable = "invasiveDataTable",
   SeedingsDataTable = "seedingsDataTable",
   WorkdaysTable = "workdays",
+  RestorationPartnersTable = "restorationPartners",
   InputTable = "inputTable",
   SelectImage = "selectImage",
   Map = "map",
@@ -119,7 +120,14 @@ export type FormField =
       Omit<RHFInvasiveTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<FieldType.SeedingsDataTable, Omit<RHFSeedingProps, "onChangeCapture" | keyof UseControllerProps>>
-  | FieldTypeBuilder<FieldType.WorkdaysTable, Omit<RHFWorkdaysTableProps, "onChangeCapture" | keyof UseControllerProps>>
+  | FieldTypeBuilder<
+      FieldType.WorkdaysTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.RestorationPartnersTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
   | FieldTypeBuilder<
       FieldType.InputTable,
       Omit<RHFInputTableProps, "formHook" | "onChangeCapture" | "errors" | "error" | keyof UseControllerProps>

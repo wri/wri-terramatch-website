@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Provider as ReduxProvider } from "react-redux";
 
 import { LAYERS_NAMES } from "@/constants/layers";
 import {
@@ -8,7 +9,9 @@ import {
   fetchGetV2DashboardTotalSectionHeaderCountry
 } from "@/generated/apiComponents";
 import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
+import ApiSlice from "@/store/apiSlice";
 import { createQueryParams } from "@/utils/dashboardUtils";
+import Log from "@/utils/log";
 
 const client = new QueryClient();
 
@@ -33,7 +36,8 @@ export const DashboardPopup = (event: any) => {
         programmes: [],
         country: isoCountry,
         "organisations.type": [],
-        landscapes: []
+        landscapes: [],
+        uuid: ""
       };
       const queryParams: any = createQueryParams(parsedFilters);
       const response: any = await fetchGetV2DashboardTotalSectionHeaderCountry({ queryParams });
@@ -63,7 +67,7 @@ export const DashboardPopup = (event: any) => {
         setItems(parsedItems);
         addPopupToMap();
       } else {
-        console.error("No data returned from the API");
+        Log.error("No data returned from the API");
       }
     }
 
@@ -111,8 +115,10 @@ export const DashboardPopup = (event: any) => {
     }
   }, [isoCountry, layerName, itemUuid]);
   return (
-    <QueryClientProvider client={client}>
-      <TooltipGridMap label={label} learnMore={true} isoCountry={isoCountry} items={items} />
-    </QueryClientProvider>
+    <ReduxProvider store={ApiSlice.redux}>
+      <QueryClientProvider client={client}>
+        <TooltipGridMap label={label} learnMore={true} isoCountry={isoCountry} items={items} />
+      </QueryClientProvider>
+    </ReduxProvider>
   );
 };

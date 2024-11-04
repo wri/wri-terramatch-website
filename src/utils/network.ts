@@ -2,6 +2,8 @@ import { QueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import nookies from "nookies";
 
+import Log from "@/utils/log";
+
 /**
  * Prefetch queries in ServerSideProps
  * @param queryClient Tanstack QueryClient
@@ -32,7 +34,25 @@ export const downloadFile = async (fileUrl: string) => {
     const blob = await res.blob();
     downloadFileBlob(blob, fileName);
   } catch (err) {
-    console.log(err);
+    Log.error("Failed to download file", fileUrl, err);
+  }
+};
+
+/**
+ * Downloads a file from remote url using fileName
+ * @param presignedUrl File Url to download
+ * @param fileName File Name to download
+ */
+export const downloadPresignedUrl = async (presignedUrl: string, fileName: string) => {
+  try {
+    const link = document.createElement("a");
+    link.href = presignedUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    Log.error("Failed to download file", presignedUrl, err);
   }
 };
 
@@ -53,6 +73,6 @@ export const downloadFileBlob = async (blob: Blob, fileName: string) => {
     // Clean up and remove the link
     link?.parentNode?.removeChild(link);
   } catch (err) {
-    console.log(err);
+    Log.error("Failed to download blob", fileName, err);
   }
 };

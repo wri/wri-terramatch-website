@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import Log from "@/utils/log";
+
 import Component from "./PerPageSelector";
 
 const meta: Meta<typeof Component> = {
@@ -18,5 +20,5 @@ export const Default: Story = {
       </div>
     )
   ],
-  args: { options: [5, 10, 15, 20, 50], onChange: console.log, defaultValue: 5 }
+  args: { options: [5, 10, 15, 20, 50], onChange: Log.info, defaultValue: 5 }
 };
