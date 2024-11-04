@@ -56,9 +56,8 @@ const RHFDemographicsTable = ({
   );
 
   return (
-    <InputWrapper error={props.error}>
+    <InputWrapper {...props}>
       <DemographicsCollapseGrid
-        title={props.label ?? ""}
         demographicalType={demographicalType}
         demographics={demographics}
         variant={GRID_VARIANT_GREEN}
