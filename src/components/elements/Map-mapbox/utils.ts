@@ -615,6 +615,7 @@ export const addSourceToLayer = (
       loadLayersInMap(map, polygonsData, layer, zoomFilter);
     }
     if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      console.log("Added source with name: ", name);
       addHoverEvent(layer, map);
     }
   }
@@ -686,20 +687,29 @@ export const addLayerGeojsonStyle = (
 export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: string) => {
   const filter = ["==", ["get", "iso"], country];
   map.setFilter(layerName, filter);
+
+  console.log("The filter has been set", filter, map.getLayer(layerName));
 };
 export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
   if (country) {
     const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
     const countryLayer = layersList.find(layer => layer.name === styleName);
     const countryStyles = countryLayer?.styles;
+    console.log("map.getSource(LAYERS_NAMES.WORLD_COUNTRIES)", map.getSource(LAYERS_NAMES.WORLD_COUNTRIES));
     if (map.getSource(LAYERS_NAMES.WORLD_COUNTRIES)) {
       countryStyles?.forEach(style => {
         if (style.type === "line") {
-          addLayerStyle(map, LAYERS_NAMES.WORLD_COUNTRIES, LAYERS_NAMES.WORLD_COUNTRIES, style, "-line");
+          console.log("Will access here");
+          addLayerStyle(map, LAYERS_NAMES.WORLD_COUNTRIES, LAYERS_NAMES.WORLD_COUNTRIES, style, "line");
           setFilterCountry(map, `${LAYERS_NAMES.WORLD_COUNTRIES}-line`, country);
         }
       });
     }
+  }
+};
+export const removeBorderCountry = (map: mapboxgl.Map) => {
+  if (map.getLayer(`${LAYERS_NAMES.WORLD_COUNTRIES}-line`)) {
+    map.removeLayer(`${LAYERS_NAMES.WORLD_COUNTRIES}-line`);
   }
 };
 export const addLayerStyle = (

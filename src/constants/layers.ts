@@ -170,6 +170,21 @@ export const layersList: LayerType[] = [
     hover: true
   },
   {
+    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
+    name: `${LAYERS_NAMES.WORLD_COUNTRIES}-line`,
+    styles: [
+      {
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#ff5a5f",
+          "line-width": 2
+        }
+      }
+    ],
+    hover: false
+  },
+  {
     name: LAYERS_NAMES.CENTROIDS,
     geoserverLayerName: "",
     styles: [

@@ -61,9 +61,14 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const { data: countryBbox } = useGetV2DashboardCountryCountry({
-    pathParams: { country: filters.country.country_slug }
-  });
+  const { data: countryBbox } = useGetV2DashboardCountryCountry(
+    {
+      pathParams: { country: filters.country.country_slug }
+    },
+    {
+      enabled: !!filters.country.country_slug
+    }
+  );
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
