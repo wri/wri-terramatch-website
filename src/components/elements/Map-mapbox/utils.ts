@@ -683,21 +683,40 @@ export const addLayerGeojsonStyle = (
   );
   moveDeleteLayers(map);
 };
+export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: string) => {
+  const filter = ["==", ["get", "iso"], country];
+  map.setFilter(layerName, filter);
+};
+export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
+  if (country) {
+    const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
+    const countryLayer = layersList.find(layer => layer.name === styleName);
+    const countryStyles = countryLayer?.styles;
+    if (map.getSource(LAYERS_NAMES.WORLD_COUNTRIES)) {
+      countryStyles?.forEach(style => {
+        if (style.type === "line") {
+          addLayerStyle(map, LAYERS_NAMES.WORLD_COUNTRIES, LAYERS_NAMES.WORLD_COUNTRIES, style, "-line");
+          setFilterCountry(map, `${LAYERS_NAMES.WORLD_COUNTRIES}-line`, country);
+        }
+      });
+    }
+  }
+};
 export const addLayerStyle = (
   map: mapboxgl.Map,
   layerName: string,
   sourceName: string,
   style: LayerWithStyle,
-  index: number
+  index_suffix: number | string
 ) => {
   const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
-  if (map.getLayer(`${layerName}-${index}`)) {
-    map.removeLayer(`${layerName}-${index}`);
+  if (map.getLayer(`${layerName}-${index_suffix}`)) {
+    map.removeLayer(`${layerName}-${index_suffix}`);
   }
   map.addLayer(
     {
       ...style,
-      id: `${layerName}-${index}`,
+      id: `${layerName}-${index_suffix}`,
       source: sourceName,
       "source-layer": sourceName
     } as mapboxgl.AnyLayer,

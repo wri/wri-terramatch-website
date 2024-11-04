@@ -29,6 +29,7 @@ import {
   TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
   TOTAL_NUMBER_OF_SITES_TOOLTIP
 } from "../constants/tooltips";
+import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
@@ -46,6 +47,7 @@ interface ContentOverviewProps<TData> {
   listViewProjects?: any;
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
+  countryBbox: BBox | undefined;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -58,7 +60,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     polygonsData,
     listViewProjects,
     dataHectaresUnderRestoration,
-    showImagesButton
+    showImagesButton,
+    countryBbox
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -151,6 +154,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             listViewProjects={listViewProjects}
             role={role}
             showImagesButton={showImagesButton}
+            bbox={countryBbox}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>

@@ -5,6 +5,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
+  useGetV2DashboardCountryCountry,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
@@ -19,8 +20,12 @@ import {
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
+import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
+
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
+  const [countryBboxParsed, setCountryBboxParsed] = useState<BBox | undefined>(undefined);
+
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
@@ -55,6 +60,9 @@ export const useDashboardData = (filters: any) => {
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
     value: 0,
     totalValue: 0
+  });
+  const { data: countryBbox } = useGetV2DashboardCountryCountry({
+    pathParams: { country: filters.country.country_slug }
   });
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
@@ -165,6 +173,13 @@ export const useDashboardData = (filters: any) => {
       }, 5000);
     }
   }, [totalSectionHeader]);
+  useEffect(() => {
+    if (countryBbox && Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
+      setCountryBboxParsed(countryBbox.bbox[1] as unknown as BBox);
+    } else {
+      setCountryBboxParsed(undefined);
+    }
+  }, [countryBbox]);
 
   return {
     dashboardHeader,
@@ -181,6 +196,7 @@ export const useDashboardData = (filters: any) => {
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     listViewProjects,
-    polygonsData: polygonsData?.data ?? {}
+    polygonsData: polygonsData?.data ?? {},
+    countryBbox: countryBboxParsed
   };
 };

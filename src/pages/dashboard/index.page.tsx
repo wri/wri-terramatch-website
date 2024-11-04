@@ -69,7 +69,8 @@ const Dashboard = () => {
     centroidsDataProjects,
     activeCountries,
     activeProjects,
-    listViewProjects
+    listViewProjects,
+    countryBbox
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -469,6 +470,7 @@ const Dashboard = () => {
         )}
         polygonsData={listViewProjects?.polygonsUuids}
         listViewProjects={listViewProjects}
+        countryBbox={countryBbox}
       />
     </div>
   );
