@@ -11,6 +11,9 @@ interface CustomLegendProps {
 export const CustomLegendVolunteers: React.FC<CustomLegendProps> = ({ payload, totals, totalVolunteers }) => {
   if (!payload) return null;
 
+  const hasValues = Object.values(totals).some(value => !!value);
+  if (!hasValues) return null;
+
   return (
     <div>
       <ul className="m-0 flex list-none justify-center p-0">

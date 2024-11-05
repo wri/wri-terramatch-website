@@ -378,13 +378,13 @@ const Dashboard = () => {
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
-                data={{ value: jobsCreatedData?.data?.total_pt }}
+                data={{ value: jobsCreatedData?.total_pt }}
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
-                data={{ value: jobsCreatedData?.data?.total_ft }}
+                data={{ value: jobsCreatedData?.total_ft }}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
@@ -394,7 +394,7 @@ const Dashboard = () => {
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={{}}
-                dataForChart={parseJobCreatedByType(jobsCreatedData?.data, JOBS_CREATED_CHART_TYPE.gender)}
+                dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender)}
                 chartType="groupedBarChart"
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
@@ -403,7 +403,7 @@ const Dashboard = () => {
               <SecDashboard
                 title={t("Jobs Created by Age")}
                 data={{}}
-                dataForChart={parseJobCreatedByType(jobsCreatedData?.data, JOBS_CREATED_CHART_TYPE.age)}
+                dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age)}
                 chartType="groupedBarChart"
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
