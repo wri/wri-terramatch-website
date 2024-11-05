@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useState } from "react";
 
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { fetchGetV2ENTITYUUIDExport } from "@/generated/apiComponents";
@@ -21,9 +22,11 @@ export const useGetExportEntityHandler = (
 ) => {
   const t = useT();
   const { openToast } = useToastContext();
+  const [loading, setLoading] = useState(false);
 
   return {
     handleExport: () => {
+      setLoading(true);
       fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid } })
         .then((response: any) => {
           downloadFileBlob(response, `${entity}-${name}.${extension}`);
@@ -31,7 +34,11 @@ export const useGetExportEntityHandler = (
         })
         .catch(() => {
           openToast(t("Something went wrong!"), ToastType.ERROR);
+        })
+        .finally(() => {
+          setLoading(false);
         });
-    }
+    },
+    loading
   };
 };

@@ -10,11 +10,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import {
-  GetV2ReportingFrameworksUUIDResponse,
-  useGetV2ProjectsUUID,
-  useGetV2ReportingFrameworksUUID
-} from "@/generated/apiComponents";
+import { useGetV2ProjectsUUID } from "@/generated/apiComponents";
 import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
@@ -45,15 +41,6 @@ const ProjectDetailPage = () => {
 
   const project = (data?.data || {}) as any;
 
-  const { data: reportingFrameworkData } = useGetV2ReportingFrameworksUUID(
-    { pathParams: { uuid: project.framework_uuid } },
-    {
-      enabled: !!project.framework_uuid
-    }
-  );
-  //@ts-ignore
-  const reportingFramework = (reportingFrameworkData?.data || {}) as GetV2ReportingFrameworksUUIDResponse;
-
   return (
     <MapAreaProvider>
       <FrameworkProvider frameworkKey={project.framework_key}>
@@ -67,7 +54,7 @@ const ProjectDetailPage = () => {
             <title>{t("Project")}</title>
           </Head>
           <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project.name }]} />
-          <ProjectHeader project={project} frameworkName={reportingFramework.name} />
+          <ProjectHeader project={project} />
           <StatusBar entityName="projects" entity={project} />
           <SecondaryTabs
             tabItems={[
