@@ -18,7 +18,7 @@ export const useGetCustomFormSteps = (
   return useMemo(
     () => (schema ? getCustomFormSteps(schema, t, entity, framework, feedback_fields) : undefined),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [schema, t]
+    [schema, t, framework]
   );
 };
 
