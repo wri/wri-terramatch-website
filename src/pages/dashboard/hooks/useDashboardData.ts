@@ -40,23 +40,6 @@ export const useDashboardData = (filters: any) => {
       value: "0"
     }
   ]);
-  const projectUuid = filters.project?.project_uuid;
-  const queryParamsCountryProject: any = (country?: string, project?: string) => {
-    if (country) {
-      return { country: country };
-    } else if (project) {
-      return { uuid: project };
-    } else {
-      return {};
-    }
-  };
-  const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
-  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
-    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
-  });
-  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>({
-    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
-  });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
     value: 0,
     totalValue: 0
@@ -81,7 +64,9 @@ export const useDashboardData = (filters: any) => {
     setUpdateFilters(parsedFilters);
   }, [filters]);
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
-
+  const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({
+    queryParams: queryParams
+  });
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
@@ -112,6 +97,13 @@ export const useDashboardData = (filters: any) => {
     { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
+
+  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
+    queryParams: queryParams
+  });
+  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>({
+    queryParams: queryParams
+  });
 
   const filteredProjects = activeProjects?.data?.filter((project: { name: string | null }) =>
     project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())

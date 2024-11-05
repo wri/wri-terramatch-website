@@ -213,6 +213,7 @@ const handleLayerClick = (
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
+  console.log("Should remove this popups right now", popupAttachedMap[key]);
   popupAttachedMap[key].forEach(popup => {
     popup.remove();
   });
@@ -429,6 +430,7 @@ export const addPopupsToMap = (
     });
   }
 };
+const activeClickHandlers: Record<string, any> = {};
 
 export const addPopupToLayer = (
   map: mapboxgl.Map,
@@ -451,30 +453,37 @@ export const addPopupToLayer = (
     if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
       targetLayers = [targetLayers[0]];
     }
+    const clickHandler = (e: any) => {
+      console.log("How Many clicks access here", e.features);
+      const currentMode = draw?.getMode();
+      if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
+
+      const zoomLevel = map.getZoom();
+
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
+
+      if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
+
+      handleLayerClick(
+        e,
+        popupComponent,
+        map,
+        setPolygonFromMap,
+        sitePolygonData,
+        type,
+        editPolygon,
+        setEditPolygon,
+        name,
+        isDashboard
+      );
+    };
     targetLayers.forEach(targetLayer => {
-      map.on("click", targetLayer.id, (e: any) => {
-        const currentMode = draw?.getMode();
-        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
-
-        const zoomLevel = map.getZoom();
-
-        if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
-
-        if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
-
-        handleLayerClick(
-          e,
-          popupComponent,
-          map,
-          setPolygonFromMap,
-          sitePolygonData,
-          type,
-          editPolygon,
-          setEditPolygon,
-          name,
-          isDashboard
-        );
-      });
+      if (activeClickHandlers[targetLayer.id]) {
+        map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
+        delete activeClickHandlers[targetLayer.id];
+      }
+      activeClickHandlers[targetLayer.id] = clickHandler;
+      map.on("click", targetLayer.id, clickHandler);
     });
   }
 };
@@ -615,7 +624,6 @@ export const addSourceToLayer = (
       loadLayersInMap(map, polygonsData, layer, zoomFilter);
     }
     if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-      console.log("Added source with name: ", name);
       addHoverEvent(layer, map);
     }
   }
@@ -687,31 +695,47 @@ export const addLayerGeojsonStyle = (
 export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: string) => {
   const filter = ["==", ["get", "iso"], country];
   map.setFilter(layerName, filter);
-
-  console.log("The filter has been set", filter, map.getLayer(layerName));
 };
 export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
-  if (country) {
-    const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-    const countryLayer = layersList.find(layer => layer.name === styleName);
-    const countryStyles = countryLayer?.styles;
-    console.log("map.getSource(LAYERS_NAMES.WORLD_COUNTRIES)", map.getSource(LAYERS_NAMES.WORLD_COUNTRIES));
-    if (map.getSource(LAYERS_NAMES.WORLD_COUNTRIES)) {
-      countryStyles?.forEach(style => {
-        if (style.type === "line") {
-          console.log("Will access here");
-          addLayerStyle(map, LAYERS_NAMES.WORLD_COUNTRIES, LAYERS_NAMES.WORLD_COUNTRIES, style, "line");
-          setFilterCountry(map, `${LAYERS_NAMES.WORLD_COUNTRIES}-line`, country);
-        }
-      });
-    }
+  if (!country || !map) return;
+
+  const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
+  const countryLayer = layersList.find(layer => layer.name === styleName);
+  if (!countryLayer) return;
+  const countryStyles = countryLayer.styles || [];
+  const sourceName = countryLayer.name;
+  const GEOSERVER_TILE_URL = getGeoserverURL(countryLayer.geoserverLayerName);
+
+  if (!map.getSource(sourceName)) {
+    map.addSource(sourceName, {
+      type: "vector",
+      tiles: [GEOSERVER_TILE_URL]
+    });
   }
+  if (map.getLayer(sourceName)) {
+    map.removeLayer(sourceName);
+  }
+  const style = countryStyles[0];
+  map.addLayer({
+    ...style,
+    id: sourceName,
+    source: sourceName,
+    "source-layer": countryLayer.geoserverLayerName
+  } as mapboxgl.AnyLayer);
+  setFilterCountry(map, sourceName, country);
 };
+
 export const removeBorderCountry = (map: mapboxgl.Map) => {
-  if (map.getLayer(`${LAYERS_NAMES.WORLD_COUNTRIES}-line`)) {
-    map.removeLayer(`${LAYERS_NAMES.WORLD_COUNTRIES}-line`);
+  const layerName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
+  console.log("About to remove", layerName);
+  if (map.getLayer(layerName)) {
+    map.removeLayer(layerName);
+  }
+  if (map.getSource(layerName)) {
+    map.removeSource(layerName);
   }
 };
+
 export const addLayerStyle = (
   map: mapboxgl.Map,
   layerName: string,

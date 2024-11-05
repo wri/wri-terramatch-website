@@ -248,14 +248,14 @@ export const MapContainer = ({
           );
         }
       };
-
+      setSourcesAdded(false);
       if (currentMap.isStyleLoaded()) {
         setupMap();
       } else {
         currentMap.once("styledata", setupMap);
       }
     }
-  }, [sitePolygonData, polygonsData, showPopups, listViewProjects]);
+  }, [sitePolygonData, polygonsData, showPopups, listViewProjects, centroids]);
 
   useEffect(() => {
     if (currentStyle) {
