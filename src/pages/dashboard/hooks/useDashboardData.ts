@@ -57,9 +57,9 @@ export const useDashboardData = (filters: any) => {
     const parsedFilters = {
       programmes: filters.programmes,
       country: filters.country.country_slug,
-      "organisations.type": filters.organizations,
+      organisationType: filters.organizations,
       landscapes: filters.landscapes,
-      "v2_projects.uuid": filters.uuid
+      projectUuid: filters.uuid
     };
     setUpdateFilters(parsedFilters);
   }, [filters]);
@@ -70,7 +70,7 @@ export const useDashboardData = (filters: any) => {
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
-      "v2_projects.uuid": ""
+      projectUuid: ""
     };
     return createQueryParams(modifiedFilters);
   }, [updateFilters]);
@@ -127,9 +127,9 @@ export const useDashboardData = (filters: any) => {
   );
 
   useEffect(() => {
-    if (topData?.data) {
-      const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
-      const tableData = projects.map((project: { organization: string; project: string; trees_planted: number }) => ({
+    if (topData?.top_projects_most_planted_trees) {
+      const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
+      const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
         value: project.trees_planted
@@ -144,11 +144,7 @@ export const useDashboardData = (filters: any) => {
   }, [isLoading, showLoader, hideLoader]);
 
   useEffect(() => {
-    if (
-      totalSectionHeader?.total_trees_restored &&
-      totalSectionHeader?.total_hectares_restored &&
-      totalSectionHeader?.total_entries
-    ) {
+    if (totalSectionHeader) {
       setDashboardHeader(prev => [
         { ...prev[0], value: totalSectionHeader.total_trees_restored.toLocaleString() },
         { ...prev[1], value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha` },
@@ -158,16 +154,6 @@ export const useDashboardData = (filters: any) => {
         value: totalSectionHeader.total_trees_restored,
         totalValue: totalSectionHeader.total_trees_restored_goal
       });
-    } else {
-      setDashboardHeader([
-        { label: "Trees Planted", value: "Loading" },
-        { label: "Hectares Under Restoration", value: "Loading" },
-        { label: "Jobs Created", value: "Loading" }
-      ]);
-      setNumberTreesPlanted({ value: 0, totalValue: 0 });
-      setTimeout(() => {
-        refetchTotalSectionHeader();
-      }, 5000);
     }
   }, [totalSectionHeader]);
   useEffect(() => {
