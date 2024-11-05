@@ -24,17 +24,28 @@ export const useGetExportEntityHandler = (
   const { openToast } = useToastContext();
   const [loading, setLoading] = useState(false);
 
+  const onSuccess = (response: any) => {
+    downloadFileBlob(response, `${entity}-${name}.${extension}`);
+    openToast(t(`{name} successfully exported`, { name }));
+  };
+
+  const onError = () => {
+    openToast(t("Something went wrong!"), ToastType.ERROR);
+  };
+
   return {
     handleExport: () => {
       setLoading(true);
       fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid } })
         .then((response: any) => {
-          downloadFileBlob(response, `${entity}-${name}.${extension}`);
-          openToast(t(`{name} successfully exported`, { name }));
+          if (response.message) {
+            return fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid }, queryParams: { force: true } });
+          } else {
+            return response;
+          }
         })
-        .catch(() => {
-          openToast(t("Something went wrong!"), ToastType.ERROR);
-        })
+        .then(onSuccess)
+        .catch(onError)
         .finally(() => {
           setLoading(false);
         });
