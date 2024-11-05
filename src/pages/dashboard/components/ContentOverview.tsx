@@ -67,7 +67,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-  const role = "";
   const { openModal, closeModal } = useModalContext();
   const { filters } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
@@ -158,7 +157,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
             listViewProjects={listViewProjects}
-            role={role}
             showImagesButton={showImagesButton}
             bbox={countryBbox}
             selectedCountry={selectedCountry}
