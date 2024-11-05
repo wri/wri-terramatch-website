@@ -54,13 +54,8 @@ const RHFWorkdaysTable = ({
   );
 
   return (
-    <InputWrapper error={props.error}>
-      <WorkdayCollapseGrid
-        title={props.label ?? ""}
-        demographics={demographics}
-        variant={GRID_VARIANT_GREEN}
-        onChange={updateDemographics}
-      />
+    <InputWrapper {...props}>
+      <WorkdayCollapseGrid demographics={demographics} variant={GRID_VARIANT_GREEN} onChange={updateDemographics} />
     </InputWrapper>
   );
 };
