@@ -164,8 +164,8 @@ const Dashboard = () => {
     }
   ];
 
-  const DATA_ACTIVE_PROGRAMME = Array.isArray(activeCountries)
-    ? activeCountries.map(
+  const DATA_ACTIVE_PROGRAMME = Array.isArray(activeCountries?.data)
+    ? activeCountries?.data.map(
         (item: {
           country: string;
           country_slug: string;
