@@ -28988,6 +28988,44 @@ export const usePatchAuthChange = (
   );
 };
 
+export type PutV2AuthCompleteSignupError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2AuthCompleteSignupRequestBody = {
+  token?: string;
+  password?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  phone_number?: string;
+  role?: string;
+};
+
+export type PutV2AuthCompleteSignupVariables = {
+  body?: PutV2AuthCompleteSignupRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2AuthCompleteSignup = (variables: PutV2AuthCompleteSignupVariables, signal?: AbortSignal) =>
+  apiFetch<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupRequestBody, {}, {}, {}>({
+    url: "/v2/auth/complete/signup",
+    method: "put",
+    ...variables,
+    signal
+  });
+
+export const usePutV2AuthCompleteSignup = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupVariables>(
+    (variables: PutV2AuthCompleteSignupVariables) => fetchPutV2AuthCompleteSignup({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostAuthResetError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostAuthResetRequestBody = {
