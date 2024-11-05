@@ -48,7 +48,7 @@ interface ContentOverviewProps<TData> {
   listViewProjects?: any;
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
-  countryBbox: BBox | undefined;
+  countryBbox?: BBox | undefined;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
