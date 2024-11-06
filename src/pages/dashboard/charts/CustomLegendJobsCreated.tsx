@@ -12,10 +12,10 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
   if (!payload) return null;
 
   return (
-    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", justifyContent: "center" }}>
+    <ul style={{ listStyle: "none", padding: "0 0 0 30px", margin: 0, display: "flex", justifyContent: "center" }}>
       {payload.map((entry: any, index: number) => (
-        <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", marginRight: "20px" }}>
-          <svg width="10" height="10" style={{ marginRight: "5px" }}>
+        <li key={`item-${index}`} style={{ display: "flex", alignItems: "center" }}>
+          <svg width="12" height="10" style={{ marginRight: "7px" }}>
             <circle cx="5" cy="5" r="5" fill={entry.color} />
           </svg>
           <span style={{ color: "black", display: "flex", flexDirection: "column" }}>
