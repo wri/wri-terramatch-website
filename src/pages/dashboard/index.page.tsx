@@ -67,9 +67,10 @@ const Dashboard = () => {
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
-    polygonsData,
     activeCountries,
-    activeProjects
+    activeProjects,
+    listViewProjects,
+    countryBbox
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -467,7 +468,9 @@ const Dashboard = () => {
             ? ACTIVE_PROJECTS_TOOLTIP
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
-        polygonsData={polygonsData}
+        polygonsData={listViewProjects?.polygonsUuids}
+        listViewProjects={listViewProjects}
+        countryBbox={countryBbox}
       />
     </div>
   );

@@ -56,6 +56,7 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
+  addBorderCountry,
   addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
@@ -64,6 +65,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  removeBorderCountry,
   removeMediaLayer,
   removePopups,
   startDrawing,
@@ -119,6 +121,9 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
   showImagesButton?: boolean;
+  listViewProjects?: any;
+  role?: any;
+  selectedCountry?: string | null;
 }
 
 export const MapContainer = ({
@@ -151,13 +156,15 @@ export const MapContainer = ({
   entityData,
   imageGalleryRef,
   centroids,
+  listViewProjects,
   showImagesButton,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
+  const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const { reloadSiteData } = context ?? {};
@@ -223,8 +230,10 @@ export const MapContainer = ({
     if (map?.current && !_.isEmpty(polygonsData)) {
       const currentMap = map.current as mapboxgl.Map;
       const setupMap = () => {
-        addSourcesToLayers(currentMap, polygonsData, centroids);
+        const zoomFilter = isDashboard ? 7 : undefined;
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, listViewProjects);
         setChangeStyle(true);
+        setSourcesAdded(true);
         if (showPopups) {
           addPopupsToMap(
             currentMap,
@@ -239,14 +248,14 @@ export const MapContainer = ({
           );
         }
       };
-
+      setSourcesAdded(false);
       if (currentMap.isStyleLoaded()) {
         setupMap();
       } else {
         currentMap.once("styledata", setupMap);
       }
     }
-  }, [sitePolygonData, polygonsData, showPopups]);
+  }, [sitePolygonData, polygonsData, showPopups, listViewProjects, centroids]);
 
   useEffect(() => {
     if (currentStyle) {
@@ -265,7 +274,14 @@ export const MapContainer = ({
       zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);
-
+  useEffect(() => {
+    if (!map.current || !styleLoaded || !sourcesAdded) return;
+    if (selectedCountry) {
+      addBorderCountry(map.current, selectedCountry);
+    } else {
+      removeBorderCountry(map.current);
+    }
+  }, [selectedCountry, styleLoaded, sourcesAdded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");

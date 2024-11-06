@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -17,6 +17,7 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
+import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
@@ -29,6 +30,7 @@ import {
   TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
   TOTAL_NUMBER_OF_SITES_TOOLTIP
 } from "../constants/tooltips";
+import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
@@ -42,9 +44,11 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
-  dataHectaresUnderRestoration: HectaresUnderRestorationData;
   polygonsData?: any;
+  listViewProjects?: any;
+  dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
+  countryBbox?: BBox | undefined;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -55,14 +59,21 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     textTooltipTable,
     centroids,
     polygonsData,
+    listViewProjects,
     dataHectaresUnderRestoration,
-    showImagesButton
+    showImagesButton,
+    countryBbox
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-
   const { openModal, closeModal } = useModalContext();
+  const { filters } = useDashboardContext();
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    setSelectedCountry(filters.country.country_slug);
+  }, [filters.country]);
+
   const ModalMap = () => {
     openModal(
       "modalExpand",
@@ -144,8 +155,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             className="custom-popup-close-button"
             centroids={centroids}
             showPopups={true}
-            showImagesButton={showImagesButton}
             polygonsData={polygonsData as Record<string, string[]>}
+            listViewProjects={listViewProjects}
+            showImagesButton={showImagesButton}
+            bbox={countryBbox}
+            selectedCountry={selectedCountry}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
             <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
