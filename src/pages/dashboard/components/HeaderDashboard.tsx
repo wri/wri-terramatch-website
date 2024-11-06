@@ -35,7 +35,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
-  const { filters, setFilters, setSearchTerm, setFrameworks } = useDashboardContext();
+  const { filters, setFilters, setSearchTerm, setFrameworks, setDashboardCountries } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const optionMenu = activeProjects
@@ -131,6 +131,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   }, [filters]);
 
   useEffect(() => {
+    setDashboardCountries(dashboardCountries);
     const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {

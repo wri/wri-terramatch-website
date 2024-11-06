@@ -68,7 +68,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal } = useModalContext();
-  const { filters } = useDashboardContext();
+  const { filters, setFilters } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
@@ -123,6 +123,14 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             hasPagination={true}
             invertSelectPagination={true}
             initialTableState={{ pagination: { pageSize: 10 } }}
+            onRowClick={row => {
+              if (row.uuid === undefined) return;
+              closeModal("modalExpand");
+              setFilters(prevValues => ({
+                ...prevValues,
+                uuid: row.uuid
+              }));
+            }}
           />
         </div>
       </ModalExpand>
@@ -250,7 +258,19 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             </Button>
           }
         >
-          <Table visibleRows={5} columns={columns} data={data} variant={VARIANT_TABLE_DASHBOARD_COUNTRIES} />
+          <Table
+            visibleRows={5}
+            columns={columns}
+            data={data}
+            onRowClick={row => {
+              if (row.uuid === undefined) return;
+              setFilters(prevValues => ({
+                ...prevValues,
+                uuid: row.uuid
+              }));
+            }}
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+          />
         </PageCard>
       </PageRow>
     </div>
