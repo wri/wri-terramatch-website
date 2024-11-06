@@ -44,8 +44,7 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
-  polygonsData?: any;
-  listViewProjects?: any;
+  polygonsData?: Record<string, string[]>;
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
   countryBbox?: BBox | undefined;
@@ -59,7 +58,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     textTooltipTable,
     centroids,
     polygonsData,
-    listViewProjects,
     dataHectaresUnderRestoration,
     showImagesButton,
     countryBbox
@@ -156,7 +154,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             centroids={centroids}
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
-            listViewProjects={listViewProjects}
             showImagesButton={showImagesButton}
             bbox={countryBbox}
             selectedCountry={selectedCountry}

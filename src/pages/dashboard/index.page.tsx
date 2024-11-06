@@ -69,7 +69,7 @@ const Dashboard = () => {
     centroidsDataProjects,
     activeCountries,
     activeProjects,
-    listViewProjects,
+    polygonsData,
     countryBbox
   } = useDashboardData(filters);
 
@@ -468,8 +468,7 @@ const Dashboard = () => {
             ? ACTIVE_PROJECTS_TOOLTIP
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
-        polygonsData={listViewProjects?.polygonsUuids}
-        listViewProjects={listViewProjects}
+        polygonsData={polygonsData}
         countryBbox={countryBbox}
       />
     </div>

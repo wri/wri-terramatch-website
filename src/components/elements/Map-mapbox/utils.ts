@@ -384,8 +384,7 @@ export const addSourcesToLayers = (
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
-  zoomFilter?: number | undefined,
-  listViewProjects?: any
+  zoomFilter?: number | undefined
 ) => {
   if (map) {
     layersList.forEach((layer: LayerType) => {
@@ -396,7 +395,7 @@ export const addSourcesToLayers = (
         addSourceToLayer(layer, map, undefined);
       }
       if (layer.name === LAYERS_NAMES.CENTROIDS) {
-        addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, listViewProjects);
+        addGeojsonSourceToLayer(centroids, map, layer);
       }
     });
   }
@@ -521,42 +520,40 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
     });
   }
 };
-const addZoomBasedFilter = (
-  map: mapboxgl.Map,
-  layerIds: any,
-  zoomLevel: number,
-  visibleProjectsUuids = [],
-  isAdmin = false
-) => {
-  const updateFilter = () => {
-    const zoom = map.getZoom();
-    if (zoom >= zoomLevel) {
-      layerIds.forEach((layerId: any) => {
-        if (isAdmin) {
-          map.setFilter(layerId, ["!has", "uuid"]);
-        } else {
-          if (visibleProjectsUuids.length > 0) {
-            map.setFilter(layerId, ["match", ["get", "uuid"], visibleProjectsUuids, false, true]);
-          } else {
-            map.setFilter(layerId, null);
-          }
-        }
-      });
-    } else {
-      layerIds.forEach((layerId: any) => {
-        map.setFilter(layerId, null);
-      });
-    }
-  };
-  map.on("zoom", updateFilter);
-  updateFilter();
-};
+// const addZoomBasedFilter = (
+//   map: mapboxgl.Map,
+//   layerIds: any,
+//   zoomLevel: number,
+//   visibleProjectsUuids = [],
+//   isAdmin = false
+// ) => {
+//   const updateFilter = () => {
+//     const zoom = map.getZoom();
+//     if (zoom >= zoomLevel) {
+//       layerIds.forEach((layerId: any) => {
+//         if (isAdmin) {
+//           map.setFilter(layerId, ["!has", "uuid"]);
+//         } else {
+//           if (visibleProjectsUuids.length > 0) {
+//             map.setFilter(layerId, ["match", ["get", "uuid"], visibleProjectsUuids, false, true]);
+//           } else {
+//             map.setFilter(layerId, null);
+//           }
+//         }
+//       });
+//     } else {
+//       layerIds.forEach((layerId: any) => {
+//         map.setFilter(layerId, null);
+//       });
+//     }
+//   };
+//   map.on("zoom", updateFilter);
+//   updateFilter();
+// };
 export const addGeojsonSourceToLayer = (
   centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
-  layer: LayerType,
-  zoomFilter?: number | undefined,
-  listViewProjects?: any
+  layer: LayerType
 ) => {
   const { name, styles } = layer;
   if (map && centroids) {
@@ -586,14 +583,15 @@ export const addGeojsonSourceToLayer = (
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
-    if (zoomFilter) {
-      addZoomBasedFilter(
-        map,
-        styles.map((_: unknown, index: number) => `${name}-${index}`),
-        zoomFilter,
-        listViewProjects?.projectsUuids
-      );
-    }
+    // remove this once changed filters are implemented
+    // if (zoomFilter) {
+    //   addZoomBasedFilter(
+    //     map,
+    //     styles.map((_: unknown, index: number) => `${name}-${index}`),
+    //     zoomFilter,
+    //     listViewProjects?.projectsUuids
+    //   );
+    // }
   }
 };
 export const addSourceToLayer = (
@@ -726,7 +724,6 @@ export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
 
 export const removeBorderCountry = (map: mapboxgl.Map) => {
   const layerName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-  console.log("About to remove", layerName);
   if (map.getLayer(layerName)) {
     map.removeLayer(layerName);
   }
