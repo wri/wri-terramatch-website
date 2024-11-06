@@ -41,6 +41,7 @@ export interface TableProps<TData>
   isLoading?: boolean;
   invertSelectPagination?: boolean;
   visibleRows?: number;
+  onRowClick?: (row: TData) => void;
 }
 
 export interface TableState {
@@ -71,6 +72,7 @@ function Table<TData extends RowData>({
   invertSelectPagination = false,
   hasPagination = false,
   visibleRows = 10,
+  onRowClick,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -200,7 +202,11 @@ function Table<TData extends RowData>({
                     </tr>
                   )}
                   {getRowModel().rows.map(row => (
-                    <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
+                    <tr
+                      key={row.id}
+                      className={classNames("rounded-lg", variant.trBody)}
+                      onClick={() => onRowClick?.(row.original)}
+                    >
                       {row.getVisibleCells().map(cell => (
                         <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
                       ))}

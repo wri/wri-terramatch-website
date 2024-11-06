@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -85,7 +87,8 @@ const ProjectList = () => {
     }
   ];
 
-  const { filters } = useDashboardContext();
+  const router = useRouter();
+  const { filters, setFilters } = useDashboardContext();
 
   const { activeProjects } = useDashboardData(filters);
 
@@ -106,7 +109,11 @@ const ProjectList = () => {
           project: item?.name,
           organization: item?.organisation,
           programme: item?.programme,
-          country: { label: item?.project_country, image: `/flags/${item?.country_slug?.toLowerCase()}.svg` },
+          country: {
+            country_slug: item?.country_slug,
+            label: item?.project_country,
+            image: `/flags/${item?.country_slug?.toLowerCase()}.svg`
+          },
           treesPlanted: item.trees_under_restoration.toLocaleString(),
           restorationHectares: item.hectares_under_restoration.toLocaleString(),
           jobsCreated: item.jobs_created.toLocaleString()
@@ -123,6 +130,16 @@ const ProjectList = () => {
         classNameWrapper="max-h-[calc(100%_-_4rem)] h-[calc(100%_-_4rem)] !px-0"
         hasPagination={true}
         invertSelectPagination={true}
+        onRowClick={(row: { uuid: string; country: { country_slug: string } }) => {
+          setFilters(prevValues => ({
+            ...prevValues,
+            uuid: row.uuid as string
+          }));
+          router.push({
+            pathname: "/dashboard",
+            query: { ...filters, country: row?.country?.country_slug, uuid: row.uuid as string }
+          });
+        }}
         initialTableState={{ pagination: { pageSize: 10 } }}
       />
     </div>
