@@ -88,7 +88,7 @@ const ProjectList = () => {
   ];
 
   const router = useRouter();
-  const { filters, setFilters } = useDashboardContext();
+  const { filters, setFilters, dashboardCountries } = useDashboardContext();
 
   const { activeProjects } = useDashboardData(filters);
 
@@ -133,7 +133,10 @@ const ProjectList = () => {
         onRowClick={(row: { uuid: string; country: { country_slug: string } }) => {
           setFilters(prevValues => ({
             ...prevValues,
-            uuid: row.uuid as string
+            uuid: row.uuid as string,
+            country:
+              dashboardCountries?.find(country => country.country_slug === row?.country?.country_slug) ||
+              prevValues.country
           }));
           router.push({
             pathname: "/dashboard",

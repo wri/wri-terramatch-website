@@ -29,6 +29,8 @@ type DashboardType = {
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   frameworks: { framework_slug?: string; name?: string }[];
   setFrameworks: React.Dispatch<React.SetStateAction<{ framework_slug?: string; name?: string }[]>>;
+  dashboardCountries: CountriesProps[];
+  setDashboardCountries: React.Dispatch<React.SetStateAction<CountriesProps[]>>;
 };
 const defaultValues: DashboardType = {
   filters: {
@@ -49,7 +51,9 @@ const defaultValues: DashboardType = {
   searchTerm: "",
   setSearchTerm: () => {},
   frameworks: [],
-  setFrameworks: () => {}
+  setFrameworks: () => {},
+  dashboardCountries: [],
+  setDashboardCountries: () => {}
 };
 const DashboardContext = createContext<DashboardType>(defaultValues);
 
@@ -57,13 +61,16 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [filters, setFilters] = React.useState<DashboardType["filters"]>(defaultValues.filters);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [frameworks, setFrameworks] = React.useState<{ framework_slug?: string; name?: string }[]>([]);
+  const [dashboardCountries, setDashboardCountries] = React.useState<CountriesProps[]>([]);
   const contextValue: DashboardType = {
     filters,
     setFilters,
     searchTerm,
     setSearchTerm,
     frameworks,
-    setFrameworks
+    setFrameworks,
+    dashboardCountries,
+    setDashboardCountries
   };
   return <DashboardContext.Provider value={contextValue}>{children}</DashboardContext.Provider>;
 };
