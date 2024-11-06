@@ -227,7 +227,6 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    console.log("POolygons data ", polygonsData);
     if (
       map?.current &&
       ((isDashboard && (!_.isEmpty(polygonsData) || !_.isEmpty(centroids))) ||

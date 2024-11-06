@@ -575,7 +575,8 @@ export const addGeojsonSourceToLayer = (
           },
           properties: {
             uuid: centroid.uuid,
-            name: centroid.name
+            name: centroid.name,
+            type: centroid.type
           }
         }))
       }
