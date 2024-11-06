@@ -15,11 +15,11 @@ export const CustomLegendVolunteers: React.FC<CustomLegendProps> = ({ payload, t
   if (!hasValues) return null;
 
   return (
-    <div>
+    <div className="pl-7">
       <ul className="m-0 flex list-none justify-center p-0">
         {payload.map((entry, index) => (
-          <li key={`item-${index}`} className="mr-5 flex items-center">
-            <svg width="10" height="10" className="mr-1">
+          <li key={`item-${index}`} className="flex items-center">
+            <svg width="12" height="10" className="mr-1">
               <circle cx="5" cy="5" r="5" fill={entry.color} />
             </svg>
             <span className="flex flex-col text-black">
