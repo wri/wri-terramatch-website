@@ -5,6 +5,7 @@ import { VARIANT_TABLE_DASHBOARD } from "@/components/elements/Table/TableVarian
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { getFrameworkName } from "@/utils/dashboardUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
 
@@ -88,8 +89,7 @@ const ProjectList = () => {
   ];
 
   const router = useRouter();
-  const { filters, setFilters, dashboardCountries } = useDashboardContext();
-
+  const { filters, setFilters, dashboardCountries, frameworks } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const DATA_TABLE_PROJECT_LIST = activeProjects
@@ -108,7 +108,7 @@ const ProjectList = () => {
           uuid: item.uuid,
           project: item?.name,
           organization: item?.organisation,
-          programme: item?.programme,
+          programme: getFrameworkName(frameworks, item?.programme),
           country: {
             country_slug: item?.country_slug,
             label: item?.project_country,
