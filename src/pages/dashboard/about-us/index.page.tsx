@@ -3,6 +3,8 @@ import { useRef } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
+import TabCarouselAboutUs from "../components/TabCarouselAboutUs";
+
 const Homepage = () => {
   const sec2Ref = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,7 @@ const Homepage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-tree bg-cover px-13 pt-13 pb-8">
+      <div className="flex flex-col bg-tree bg-cover px-13 pb-8 pt-13">
         <Text variant="text-40-bold" className="leading-[normal] text-darkCustom-150">
           Accessing the
         </Text>
@@ -158,6 +160,7 @@ const Homepage = () => {
           </div>
         </div>
       </div>
+      <TabCarouselAboutUs />
 
       <div className="flex w-full items-center gap-12 bg-white pb-20 pl-13 pr-26 pt-16">
         <div className="w-2/5 pr-5">

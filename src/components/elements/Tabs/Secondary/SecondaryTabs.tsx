@@ -7,9 +7,13 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 
+import { SecundaryTabsVariants, VARIANT_TABS_PRIMARY } from "./SecuandaryTabsVariants";
+
 export interface SecondaryTabsProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   tabItems: TabItem[];
   containerClassName?: string;
+  setSelectedIndex?: (index: number) => void;
+  variant?: SecundaryTabsVariants;
 }
 
 export interface TabItem {
@@ -25,7 +29,14 @@ export interface TabItem {
   hide?: Framework[];
 }
 
-const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...divProps }: SecondaryTabsProps) => {
+const SecondaryTabs = ({
+  tabItems: _tabItems,
+  className,
+  containerClassName,
+  setSelectedIndex,
+  variant = VARIANT_TABS_PRIMARY,
+  ...divProps
+}: SecondaryTabsProps) => {
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const tabItems = _tabItems.filter(item => {
@@ -50,17 +61,19 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
       router.query.tab = key;
       router.push(router, undefined, { shallow: true });
     }
+    setSelectedIndex && setSelectedIndex(index);
   };
 
   return (
     <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
-      <HTab.List {...divProps} className={classNames(className, "h-max w-full border-b-2 border-neutral-200 bg-white")}>
+      <HTab.List {...divProps} className={classNames(className, "h-max w-full", variant.classNameContentList)}>
         <List
           as="div"
           className={classNames(
             containerClassName,
             tabItems.length <= 5 ? "justify-between lg:justify-start lg:gap-30" : "justify-between",
-            "m-auto flex h-full items-center"
+            "flex h-full items-center",
+            variant.listClassName
           )}
           itemAs={Fragment}
           items={tabItems}
@@ -68,15 +81,15 @@ const SecondaryTabs = ({ tabItems: _tabItems, className, containerClassName, ...
             <HTab as={Fragment}>
               {({ selected }) => (
                 <button
-                  className={classNames("mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none", {
-                    "border-primary": selected,
+                  className={classNames("mb-[-2px] h-full outline-none", variant.itemTabClassName, {
+                    [variant.selectedTabClassName || "border-primary"]: selected,
                     "border-transparent": !selected
                   })}
                   disabled={item.disabled}
                 >
                   <Text
-                    variant={selected ? "text-16-bold" : "text-16-light"}
-                    className={classNames("whitespace-nowrap", "text-black")}
+                    variant={selected ? variant.textVariantSelected : variant.textVariantNotSelected}
+                    className={classNames("whitespace-nowrap")}
                   >
                     {item.title}
                   </Text>
