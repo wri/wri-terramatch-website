@@ -11,11 +11,14 @@ const Homepage = () => {
   return (
     <div className="overflow-auto">
       <div className="w-full bg-white pb-20 pl-13 pr-26 pt-16">
-        <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
+        <Icon
+          name={IconNames.WRI_LOGO}
+          className="h-[30px] w-[108px] lg:h-[50px] lg:w-[150px] wide:h-[85px] wide:w-[200px]"
+        />
         <div className="mt-5 grid gap-16">
           <div className="flex w-full gap-12">
             <div className="h-min w-3/5 text-darkCustom">
-              <div className="grid gap-2">
+              <div className="grid gap-6 lg:gap-8">
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
                   Welcome to the TerraMatch Dashboard! Here, restoration champions of all shapes and sizes – local
                   organizations that grow trees, their financial and government partners, and the wider public – can
