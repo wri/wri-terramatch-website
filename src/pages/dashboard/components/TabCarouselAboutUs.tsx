@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_ABOUT_US } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
 import Text from "@/components/elements/Text/Text";
@@ -51,12 +52,12 @@ const TabCarouselAboutUs = () => {
       url: "/images/about-us-4.png"
     }
   ];
-
   useEffect(() => {
-    setTimeout(() => {
-      setActiveTab(activeTab === aboutUs.length - 1 ? 0 : activeTab + 1);
+    const interval = setInterval(() => {
+      setActiveTab(prevTab => (prevTab === aboutUs.length - 1 ? 0 : prevTab + 1));
     }, 15000);
-  }, [activeTab]);
+    return () => clearInterval(interval);
+  }, [aboutUs.length]);
 
   return (
     <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px]">
@@ -99,12 +100,12 @@ const TabCarouselAboutUs = () => {
           <div className="flex w-full items-center">
             <div className="w-[61%] pr-16 text-darkCustom">
               <Text variant="text-36-bold" className="mb-6">
-                {aboutUs.title}
-              </Text>
-              <Text variant="text-36-bold" className="mb-6">
                 Using the platform
               </Text>
               <Text variant="text-18-light">{aboutUs.description}</Text>
+              <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
+                {t("Open Dashboard")}
+              </Button>
             </div>
             <img
               src={aboutUs.url}
