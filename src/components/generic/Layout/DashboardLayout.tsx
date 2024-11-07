@@ -54,6 +54,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
   const isProjectInsightsPage = router.pathname.includes("dashboard/project-insights");
   const isProjectListPage = router.pathname === "/dashboard/project-list";
   const isProjectPage = router.pathname === "dashboard/project";
+  const isHomepage = router.pathname === "/dashboard/about-us";
   const childrenWithProps = props.children ? cloneElement(props.children as ReactElement, { selectedCountry }) : null;
 
   return (
@@ -72,6 +73,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                 isProjectInsightsPage={isProjectInsightsPage}
                 isProjectListPage={isProjectListPage}
                 isProjectPage={isProjectPage}
+                isHomepage={isHomepage}
                 dashboardCountries={dashboardCountries.data}
                 defaultSelectedCountry={selectedCountry}
                 setSelectedCountry={setSelectedCountry}

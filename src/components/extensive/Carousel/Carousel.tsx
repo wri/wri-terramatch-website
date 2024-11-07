@@ -24,6 +24,7 @@ export interface CarouselProps<T> extends SwiperProps {
   setSelectedImage?: (index: number) => void;
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
+  numberSlidesPerView?: number | "auto";
 }
 
 export type CarouselBreakPoints = {
@@ -43,6 +44,7 @@ const Carousel = <T extends Record<any, any>>({
   selectedImage,
   setSelectedImage,
   buttonsOutside = false,
+  numberSlidesPerView,
   smallSwiperButtons,
   ...swiperProps
 }: CarouselProps<T>) => {
@@ -87,7 +89,7 @@ const Carousel = <T extends Record<any, any>>({
           className={classNames(swiperClassName, "flex-1")}
           modules={[Navigation, Pagination]}
           spaceBetween={smallSwiperButtons ? 8 : 25}
-          slidesPerView={3}
+          slidesPerView={numberSlidesPerView || 3}
           navigation={{ nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }}
           pagination={{
             clickable: true,
