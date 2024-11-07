@@ -1,6 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
 import * as turfHelper from "@turf/helpers";
+import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
@@ -395,7 +396,7 @@ export const addSourcesToLayers = (
         addSourceToLayer(layer, map, undefined);
       }
       if (layer.name === LAYERS_NAMES.CENTROIDS) {
-        addGeojsonSourceToLayer(centroids, map, layer);
+        addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
       }
     });
   }
@@ -553,7 +554,9 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
 export const addGeojsonSourceToLayer = (
   centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
-  layer: LayerType
+  layer: LayerType,
+  zoomFilter: number | undefined,
+  existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
   if (map && centroids) {
@@ -584,15 +587,12 @@ export const addGeojsonSourceToLayer = (
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
-    // remove this once changed filters are implemented
-    // if (zoomFilter) {
-    //   addZoomBasedFilter(
-    //     map,
-    //     styles.map((_: unknown, index: number) => `${name}-${index}`),
-    //     zoomFilter,
-    //     listViewProjects?.projectsUuids
-    //   );
-    // }
+    const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
+    if (existsPolygons && zoomFilter !== undefined) {
+      layerIds.forEach(layerId => {
+        map.setFilter(layerId, ["<=", ["zoom"], zoomFilter]);
+      });
+    }
   }
 };
 export const addSourceToLayer = (
