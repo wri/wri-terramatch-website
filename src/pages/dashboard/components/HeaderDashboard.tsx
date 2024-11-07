@@ -221,7 +221,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   value={filters.programmes}
-                  placeholder="Programme"
+                  placeholder="All Data"
+                  multipleText="Multiple programmes"
                   onChange={(value: OptionValue[]) => {
                     handleChange("programmes", value);
                   }}
@@ -243,7 +244,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   prefix={<Text variant="text-14-light">{t("Landscape:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Landscape"
+                  placeholder="All Data"
+                  multipleText="Multiple Landscapes"
                   value={filters.landscapes}
                   onChange={value => {
                     handleChange("landscapes", value);
@@ -263,7 +265,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   prefix={<Text variant="text-14-light">{t("Country:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Global"
+                  placeholder="All Data"
                   value={filters.country?.id ? [filters.country.id] : undefined}
                   onChange={value => {
                     handleChangeCountry(value);
@@ -302,7 +304,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Organization Type"
+                  placeholder="All Data"
+                  multipleText="Multiple Organization Types"
                   value={filters.organizations}
                   onChange={value => {
                     handleChange("organizations", value);
