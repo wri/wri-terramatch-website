@@ -70,7 +70,8 @@ const Dashboard = () => {
     activeCountries,
     activeProjects,
     polygonsData,
-    countryBbox
+    countryBbox,
+    projectBbox
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -79,7 +80,6 @@ const Dashboard = () => {
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);
-
   const COLUMN_ACTIVE_PROGRAMME = [
     {
       header: "Country",
@@ -469,7 +469,7 @@ const Dashboard = () => {
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
         polygonsData={polygonsData}
-        countryBbox={countryBbox}
+        bbox={filters.uuid ? projectBbox : countryBbox}
       />
     </div>
   );

@@ -47,7 +47,7 @@ interface ContentOverviewProps<TData> {
   polygonsData?: Record<string, string[]>;
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
-  countryBbox?: BBox | undefined;
+  bbox?: BBox | undefined;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -60,7 +60,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     polygonsData,
     dataHectaresUnderRestoration,
     showImagesButton,
-    countryBbox
+    bbox
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -163,7 +163,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
             showImagesButton={showImagesButton}
-            bbox={countryBbox}
+            bbox={bbox}
             selectedCountry={selectedCountry}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
