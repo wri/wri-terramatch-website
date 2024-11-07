@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
@@ -12,7 +12,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
-import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
+import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
 import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
@@ -134,7 +134,9 @@ const SecDashboard = ({
         </When>
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
-        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
+        {data?.value !== undefined && (
+          <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
+        )}
         <When condition={data?.totalValue}>
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
@@ -149,16 +151,52 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
-          <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+          <If condition={isEmptyChartData(chartType ?? "", treesPlantedByYear)}>
+            <Then>
+              <Text variant="text-14" className="text-darkCustom">
+                {t("No data available")}
+              </Text>
+            </Then>
+            <Else>
+              <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+            </Else>
+          </If>
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
-          <GroupedBarChart data={dataForChart} />
+          <If condition={isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}>
+            <Then>
+              <Text variant="text-14" className="text-darkCustom">
+                {t("No data available")}
+              </Text>
+            </Then>
+            <Else>
+              <GroupedBarChart data={dataForChart} />
+            </Else>
+          </If>
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
-          <DoughnutChart data={dataForChart} />
+          <If condition={isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}>
+            <Then>
+              <Text variant="text-14" className="text-darkCustom">
+                {t("No data available")}
+              </Text>
+            </Then>
+            <Else>
+              <DoughnutChart data={dataForChart} />
+            </Else>
+          </If>
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
-          <SimpleBarChart data={dataForChart} />
+          <If condition={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}>
+            <Then>
+              <Text variant="text-14" className="text-darkCustom">
+                {t("No data available")}
+              </Text>
+            </Then>
+            <Else>
+              <SimpleBarChart data={dataForChart} />
+            </Else>
+          </If>
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />

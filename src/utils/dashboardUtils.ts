@@ -1,4 +1,4 @@
-import { MONTHS } from "@/constants/dashboardConsts";
+import { CHART_TYPES, MONTHS } from "@/constants/dashboardConsts";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -357,4 +357,27 @@ export const parseDataToObjetive = (data: InputData): Objetive => {
 export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
   const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
   return framework ? framework.name : undefined;
+};
+
+export const isEmptyChartData = (chartType: string, data: any): boolean => {
+  if (!data) return false;
+  switch (chartType) {
+    case CHART_TYPES.multiLineChart:
+      return data?.every((item: any) => Array.isArray(item.values) && item.values.length === 0);
+    case CHART_TYPES.groupedBarChart:
+      if (data.chartData && data.type === "gender") {
+        return data?.chartData.every((item: any) => item.Women === 0 && item.Men === 0);
+      }
+      if (data.chartData && data.type === "age") {
+        return data?.chartData.every((item: any) => item.Youth === 0 && item["Non-Youth"] === 0);
+      }
+      if (data.length === 0) return true;
+      return false;
+    case CHART_TYPES.doughnutChart:
+      return data?.chartData?.every((item: any) => item.value === 0);
+    case CHART_TYPES.simpleBarChart:
+      return data?.length === 0;
+    default:
+      return false;
+  }
 };
