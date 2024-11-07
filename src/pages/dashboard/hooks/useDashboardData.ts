@@ -14,7 +14,7 @@ import {
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
-  useGetV2DashboardViewProjectList,
+  useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
@@ -64,9 +64,15 @@ export const useDashboardData = (filters: any) => {
     setUpdateFilters(parsedFilters);
   }, [filters]);
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
-  const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({
-    queryParams: queryParams
-  });
+  const { data: isUserAllowed } = useGetV2DashboardViewProjectUuid<any>(
+    {
+      pathParams: { uuid: filters.uuid }
+    },
+    {
+      enabled: !!filters.uuid
+    }
+  );
+
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
@@ -101,9 +107,14 @@ export const useDashboardData = (filters: any) => {
   const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
     queryParams: queryParams
   });
-  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>({
-    queryParams: queryParams
-  });
+  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>(
+    {
+      queryParams: queryParams
+    },
+    {
+      enabled: !!filters.uuid
+    }
+  );
 
   const filteredProjects = activeProjects?.data?.filter((project: { name: string | null }) =>
     project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
@@ -178,8 +189,8 @@ export const useDashboardData = (filters: any) => {
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
-    listViewProjects,
     polygonsData: polygonsData?.data ?? {},
-    countryBbox: countryBboxParsed
+    countryBbox: countryBboxParsed,
+    isUserAllowed
   };
 };

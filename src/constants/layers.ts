@@ -190,31 +190,57 @@ export const layersList: LayerType[] = [
     styles: [
       {
         type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
         paint: {
-          "circle-color": "#26a9e0",
-          "circle-blur": 1.5,
-          "circle-radius": 15
+          "circle-color": "#795305",
+          "circle-opacity": 0.2,
+          "circle-radius": 8
         }
       } as mapboxgl.Style & mapboxgl.CircleLayer,
       {
         type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
         paint: {
-          "circle-color": "#26a9e0",
-          "circle-blur": 1.5,
-          "circle-radius": 10
+          "circle-color": "white",
+          "circle-radius": 4.5,
+          "circle-opacity": 1
         }
       } as mapboxgl.Style & mapboxgl.CircleLayer,
       {
         type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
         paint: {
-          "circle-color": "hsl(242, 1%, 100%)",
-          "circle-radius": 4,
-          "circle-blur": 1
+          "circle-color": "#795305",
+          "circle-radius": 3,
+          "circle-opacity": 1
         }
       } as mapboxgl.Style & mapboxgl.CircleLayer,
       {
         type: "circle",
-        paint: { "circle-color": "hsl(242, 1%, 100%)", "circle-radius": 1 }
+        filter: ["==", ["get", "type"], "for-profit-organization"],
+        paint: {
+          "circle-color": "#0179FE",
+          "circle-opacity": 0.2,
+          "circle-radius": 8
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        filter: ["==", ["get", "type"], "for-profit-organization"],
+        paint: {
+          "circle-color": "white",
+          "circle-radius": 4.5,
+          "circle-opacity": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        filter: ["==", ["get", "type"], "for-profit-organization"],
+        paint: {
+          "circle-color": "#0179FE",
+          "circle-radius": 3,
+          "circle-opacity": 1
+        }
       } as mapboxgl.Style & mapboxgl.CircleLayer
     ],
     hover: true

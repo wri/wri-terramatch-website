@@ -227,13 +227,19 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    if (map?.current && !_.isEmpty(polygonsData)) {
+    if (
+      map?.current &&
+      ((isDashboard && (!_.isEmpty(polygonsData) || !_.isEmpty(centroids))) ||
+        (!isDashboard && !_.isEmpty(polygonsData)))
+    ) {
       const currentMap = map.current as mapboxgl.Map;
+
       const setupMap = () => {
         const zoomFilter = isDashboard ? 7 : undefined;
-        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, listViewProjects);
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter);
         setChangeStyle(true);
         setSourcesAdded(true);
+
         if (showPopups) {
           addPopupsToMap(
             currentMap,
@@ -248,14 +254,18 @@ export const MapContainer = ({
           );
         }
       };
+
       setSourcesAdded(false);
+
       if (currentMap.isStyleLoaded()) {
         setupMap();
       } else {
-        currentMap.once("styledata", setupMap);
+        currentMap.once("idle", () => {
+          setupMap();
+        });
       }
     }
-  }, [sitePolygonData, polygonsData, showPopups, listViewProjects, centroids]);
+  }, [sitePolygonData, polygonsData, showPopups, centroids, styleLoaded]);
 
   useEffect(() => {
     if (currentStyle) {
