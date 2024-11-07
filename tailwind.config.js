@@ -37,7 +37,9 @@ module.exports = {
         imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
         "square-pattern": "url('/icons/ic-bg.svg')",
         "back-map": "url('/icons/bg-map.svg')",
-        dash: "url('/icons/dash.svg')"
+        dash: "url('/icons/dash.svg')",
+        tree: "url('/images/tree.png')",
+        "about-us-header": "url(/images/about-us-header.png)"
       },
       gridTemplateColumns: {
         1: "repeat(1, minmax(0, 1fr))",

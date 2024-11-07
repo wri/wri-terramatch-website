@@ -188,7 +188,11 @@ export enum IconNames {
   EDIT_PA = "edit-pa",
   PIN = "pin",
   LINK_AIRTABLE = "link-aritable",
-  IC_USER = "ic-user"
+  IC_USER = "ic-user",
+  REQUEST_ACCOUNT = "request-account",
+  PRE_FILTERED_PAGE = "pre-filtered-page",
+  VISIT_DASHBOARD = "visit-dashboard",
+  ORANGE_DOTS = "orange-dots"
 }
 
 export interface IconProps {

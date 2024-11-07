@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -187,13 +188,18 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       return "Project List";
     }
     if (isHomepage) {
-      return "TerraMatch Insights";
+      return "About Us";
     }
     return "TerraMatch Insights";
   };
 
   return (
-    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pt-5 pb-4">
+    <header
+      className={classNames("flex max-w-full justify-between gap-3 bg-cover px-4 pt-5 pb-4", {
+        "bg-dashboardHeader": !isHomepage,
+        "bg-about-us-header bg-center": isHomepage
+      })}
+    >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
