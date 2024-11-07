@@ -98,8 +98,8 @@ const TabCarouselAboutUs = () => {
       <Carousel
         carouselItem={aboutUs => (
           <div className="flex w-full items-center">
-            <div className="w-[61%] pr-16 text-darkCustom">
-              <Text variant="text-36-bold" className="mb-6">
+            <div className="w-[61%] pr-16 text-darkCustom-150">
+              <Text variant="text-36-bold" className="mb-6 text-darkCustom-150">
                 Using the platform
               </Text>
               <Text variant="text-18-light">{aboutUs.description}</Text>
