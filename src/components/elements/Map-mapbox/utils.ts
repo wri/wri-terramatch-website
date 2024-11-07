@@ -521,36 +521,6 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
     });
   }
 };
-// const addZoomBasedFilter = (
-//   map: mapboxgl.Map,
-//   layerIds: any,
-//   zoomLevel: number,
-//   visibleProjectsUuids = [],
-//   isAdmin = false
-// ) => {
-//   const updateFilter = () => {
-//     const zoom = map.getZoom();
-//     if (zoom >= zoomLevel) {
-//       layerIds.forEach((layerId: any) => {
-//         if (isAdmin) {
-//           map.setFilter(layerId, ["!has", "uuid"]);
-//         } else {
-//           if (visibleProjectsUuids.length > 0) {
-//             map.setFilter(layerId, ["match", ["get", "uuid"], visibleProjectsUuids, false, true]);
-//           } else {
-//             map.setFilter(layerId, null);
-//           }
-//         }
-//       });
-//     } else {
-//       layerIds.forEach((layerId: any) => {
-//         map.setFilter(layerId, null);
-//       });
-//     }
-//   };
-//   map.on("zoom", updateFilter);
-//   updateFilter();
-// };
 export const addGeojsonSourceToLayer = (
   centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
@@ -590,7 +560,7 @@ export const addGeojsonSourceToLayer = (
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
     if (existsPolygons && zoomFilter !== undefined) {
       layerIds.forEach(layerId => {
-        map.setFilter(layerId, ["<=", ["zoom"], zoomFilter]);
+        map.setFilter(layerId, ["<=", ["zoom"], zoomFilter + 1]);
       });
     }
   }
