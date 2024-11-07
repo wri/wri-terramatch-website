@@ -240,7 +240,10 @@ const Dashboard = () => {
     ];
     return { type, chartData, total: data.total_volunteers };
   };
-
+  const projectCounts = {
+    total_enterprise_count: totalSectionHeader?.total_enterprise_count,
+    total_non_profit_count: totalSectionHeader?.total_non_profit_count
+  };
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -475,6 +478,7 @@ const Dashboard = () => {
         )}
         polygonsData={polygonsData}
         bbox={filters.uuid ? projectBbox : countryBbox}
+        projectCounts={projectCounts}
       />
     </div>
   );

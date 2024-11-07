@@ -48,6 +48,10 @@ interface ContentOverviewProps<TData> {
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
   bbox?: BBox | undefined;
+  projectCounts?: {
+    total_enterprise_count: number;
+    total_non_profit_count: number;
+  };
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -60,7 +64,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     polygonsData,
     dataHectaresUnderRestoration,
     showImagesButton,
-    bbox
+    bbox,
+    projectCounts
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -75,8 +80,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalMap = () => {
     const { map } = dashboardMapFunctions;
     const bounds = (map.current as mapboxgl.Map).getBounds();
-    const sw = bounds.getSouthWest(); // Get southwest corner
-    const ne = bounds.getNorthEast(); // Get northeast corner
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
     const currentBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
     openModal(
       "modalExpand",
@@ -105,13 +110,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects (32)")}
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
               </Text>
             </div>
             <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects (457)")}
+                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
               </Text>
             </div>
           </div>
@@ -151,7 +156,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       </ModalExpand>
     );
   };
-
+  useEffect(() => {
+    console.log("dataHectaresUnderRestoration", dataHectaresUnderRestoration);
+  }, [dataHectaresUnderRestoration]);
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="w-full gap-4 p-0">
@@ -191,13 +198,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects (32)")}
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
               </Text>
             </div>
             <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects (457)")}
+                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
               </Text>
             </div>
           </div>
