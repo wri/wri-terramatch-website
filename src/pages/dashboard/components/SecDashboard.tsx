@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { Else, If, Then, When } from "react-if";
+import { When } from "react-if";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
@@ -156,28 +156,20 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
-          <If condition={isEmptyChartData(chartType ?? "", treesPlantedByYear)}>
-            <Then>
-              <Text variant="text-14" className="text-darkCustom">
-                {t("No data available")}
-              </Text>
-            </Then>
-            <Else>
-              <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
-            </Else>
-          </If>
+          <BlurContainer
+            isBlur={isEmptyChartData(chartType ?? "", treesPlantedByYear)}
+            textInformation={noDataInformation}
+          >
+            <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
-          <If condition={isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}>
-            <Then>
-              <Text variant="text-14" className="text-darkCustom">
-                {t("No data available")}
-              </Text>
-            </Then>
-            <Else>
-              <GroupedBarChart data={dataForChart} />
-            </Else>
-          </If>
+          <BlurContainer
+            isBlur={isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <GroupedBarChart data={dataForChart} />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
           <BlurContainer
@@ -188,16 +180,12 @@ const SecDashboard = ({
           </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
-          <If condition={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}>
-            <Then>
-              <Text variant="text-14" className="text-darkCustom">
-                {t("No data available")}
-              </Text>
-            </Then>
-            <Else>
-              <SimpleBarChart data={dataForChart} />
-            </Else>
-          </If>
+          <BlurContainer
+            isBlur={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <SimpleBarChart data={dataForChart} />
+          </BlurContainer>
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
