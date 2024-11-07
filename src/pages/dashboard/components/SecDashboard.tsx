@@ -11,7 +11,13 @@ import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVar
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { CHART_TYPES } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
+  DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
+  DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
+  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+} from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
@@ -160,7 +166,14 @@ const SecDashboard = ({
             isBlur={isEmptyChartData(chartType ?? "", treesPlantedByYear)}
             textInformation={noDataInformation}
           >
-            <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+            <MultiLineChart
+              data={
+                isEmptyChartData(chartType ?? "", treesPlantedByYear)
+                  ? DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART
+                  : treesPlantedByYear
+              }
+              isAbsoluteData={toggleValue === 1}
+            />
           </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
@@ -168,7 +181,13 @@ const SecDashboard = ({
             isBlur={isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}
             textInformation={noDataInformation}
           >
-            <GroupedBarChart data={dataForChart} />
+            <GroupedBarChart
+              data={
+                isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER
+                  : dataForChart
+              }
+            />
           </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
@@ -176,7 +195,13 @@ const SecDashboard = ({
             isBlur={isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
             textInformation={noDataInformation}
           >
-            <DoughnutChart data={dataForChart} />
+            <DoughnutChart
+              data={
+                isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER
+                  : dataForChart
+              }
+            />
           </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
@@ -184,7 +209,13 @@ const SecDashboard = ({
             isBlur={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
             textInformation={noDataInformation}
           >
-            <SimpleBarChart data={dataForChart} />
+            <SimpleBarChart
+              data={
+                isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+                  : dataForChart
+              }
+            />
           </BlurContainer>
         </When>
         <When condition={data?.graphic}>

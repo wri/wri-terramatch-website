@@ -33151,8 +33151,6 @@ export type GetV2DashboardJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
 export type GetV2DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;
-    forProfitJobsCreated?: number;
-    nonProfitJobsCreated?: number;
     total_ft?: number;
     total_pt?: number;
     total_men?: number;
@@ -33326,9 +33324,6 @@ export type GetV2DashboardTreeRestorationGoalResponse = {
     treeSpeciesAmount?: number;
     treeSpeciesPercentage?: number;
   }[];
-  averageSurvivalRateTotal?: number;
-  averageSurvivalRateForProfit?: number;
-  averageSurvivalRateNonProfit?: number;
 };
 
 export type GetV2DashboardTreeRestorationGoalVariables = {
@@ -33923,21 +33918,9 @@ export type GetV2DashboardVolunteersSurvivalRateResponse = {
      */
     non_youth_volunteers?: number;
     /**
-     * Survival rate for non-profit entities.
-     */
-    non_profit_survival_rate?: number;
-    /**
-     * Survival rate for enterprise entities.
-     */
-    enterprise_survival_rate?: number;
-    /**
      * number of sites.
      */
     number_of_sites?: number;
-    /**
-     * number of nurseries.
-     */
-    number_of_nurseries?: number;
   };
 };
 
@@ -34196,8 +34179,6 @@ export type GetV2DashboardActiveCountriesResponse = {
     number_of_projects?: number;
     total_trees_planted?: number;
     total_jobs_created?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
   }[];
 };
 

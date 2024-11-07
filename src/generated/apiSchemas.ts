@@ -22297,21 +22297,9 @@ export type DashboardVolunteersSurvivalRateResponse = {
      */
     non_youth_volunteers?: number;
     /**
-     * Survival rate for non-profit entities.
-     */
-    non_profit_survival_rate?: number;
-    /**
-     * Survival rate for enterprise entities.
-     */
-    enterprise_survival_rate?: number;
-    /**
      * number of sites.
      */
     number_of_sites?: number;
-    /**
-     * number of nurseries.
-     */
-    number_of_nurseries?: number;
   };
 };
 
@@ -22337,21 +22325,9 @@ export type DashboardVolundteersSurvivalRateData = {
    */
   non_youth_volunteers?: number;
   /**
-   * Survival rate for non-profit entities.
-   */
-  non_profit_survival_rate?: number;
-  /**
-   * Survival rate for enterprise entities.
-   */
-  enterprise_survival_rate?: number;
-  /**
    * number of sites.
    */
   number_of_sites?: number;
-  /**
-   * number of nurseries.
-   */
-  number_of_nurseries?: number;
 };
 
 export type AuditStatusCreateRequest = {
@@ -22626,8 +22602,6 @@ export type DashboardPolygonResponse = {
 export type DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;
-    forProfitJobsCreated?: number;
-    nonProfitJobsCreated?: number;
     total_ft?: number;
     total_pt?: number;
     total_men?: number;
@@ -22647,8 +22621,6 @@ export type DashboardJobsCreatedResponse = {
 
 export type DashboardJobsCreatedData = {
   totalJobsCreated?: number;
-  forProfitJobsCreated?: number;
-  nonProfitJobsCreated?: number;
   total_ft?: number;
   total_pt?: number;
   total_men?: number;
@@ -22720,9 +22692,6 @@ export type DashboardTreeRestorationGoalResponse = {
     treeSpeciesAmount?: number;
     treeSpeciesPercentage?: number;
   }[];
-  averageSurvivalRateTotal?: number;
-  averageSurvivalRateForProfit?: number;
-  averageSurvivalRateNonProfit?: number;
 };
 
 export type DashboardTreesUnderRestorationActual = {
@@ -22879,8 +22848,6 @@ export type DashboardActiveCountriesResponse = {
     number_of_projects?: number;
     total_trees_planted?: number;
     total_jobs_created?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
   }[];
 };
 
