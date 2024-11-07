@@ -285,11 +285,20 @@ export const MapContainer = ({
     }
   }, [bbox]);
   useEffect(() => {
-    if (!map.current || !styleLoaded || !sourcesAdded) return;
-    if (selectedCountry) {
-      addBorderCountry(map.current, selectedCountry);
+    if (!map.current || !sourcesAdded) return;
+    const setupBorders = () => {
+      if (selectedCountry) {
+        addBorderCountry(map.current, selectedCountry);
+      } else {
+        removeBorderCountry(map.current);
+      }
+    };
+    if (map.current.isStyleLoaded()) {
+      setupBorders();
     } else {
-      removeBorderCountry(map.current);
+      map.current.once("render", () => {
+        setupBorders();
+      });
     }
   }, [selectedCountry, styleLoaded, sourcesAdded]);
   useEffect(() => {

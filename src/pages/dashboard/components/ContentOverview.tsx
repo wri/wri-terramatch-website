@@ -73,11 +73,28 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   }, [filters.country]);
 
   const ModalMap = () => {
+    const { map } = dashboardMapFunctions;
+    const bounds = (map.current as mapboxgl.Map).getBounds();
+    const sw = bounds.getSouthWest(); // Get southwest corner
+    const ne = bounds.getNorthEast(); // Get northeast corner
+    const currentBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal} popUpContent={MAP_TOOLTIP}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
+          <MapContainer
+            id="modal"
+            showLegend={false}
+            mapFunctions={modalMapFunctions}
+            isDashboard={"modal"}
+            className="custom-popup-close-button"
+            centroids={centroids}
+            showPopups={true}
+            polygonsData={polygonsData as Record<string, string[]>}
+            showImagesButton={showImagesButton}
+            bbox={currentBbox}
+            selectedCountry={selectedCountry}
+          />
 
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
