@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -6,7 +6,53 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import TabCarouselAboutUs from "../components/TabCarouselAboutUs";
 
 const Homepage = () => {
-  const sec2Ref = useRef<HTMLDivElement>(null);
+  const first = useRef<HTMLDivElement>(null);
+  const second = useRef<HTMLDivElement>(null);
+  const third = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const elements = [first, second, third];
+
+    const hasScrolledDownMap = new Map();
+
+    const handleIntersection = (entries: any[]) => {
+      entries.forEach((entry: { isIntersecting?: any; boundingClientRect?: any; target?: any }) => {
+        const { target } = entry;
+        const correspondingElement = elements.find(el => el.current === target);
+
+        if (correspondingElement && entry.isIntersecting && entry.boundingClientRect.top > 0) {
+          if (!hasScrolledDownMap.get(target)) {
+            if (correspondingElement.current) {
+              correspondingElement.current.style.opacity = "1";
+            }
+
+            hasScrolledDownMap.set(target, true);
+          }
+        } else if (entry.boundingClientRect.top > window.innerHeight - 170) {
+          hasScrolledDownMap.set(target, false);
+          if (correspondingElement && correspondingElement.current) {
+            correspondingElement.current.style.opacity = "0";
+          }
+        }
+      });
+    };
+
+    const intersectionObserver = new IntersectionObserver(handleIntersection, {
+      threshold: 0.3,
+      rootMargin: "50px"
+    });
+
+    elements.forEach(el => {
+      if (el.current) {
+        hasScrolledDownMap.set(el.current, false);
+        intersectionObserver.observe(el.current);
+      }
+    });
+
+    return () => {
+      intersectionObserver.disconnect();
+    };
+  }, []);
 
   return (
     <div className="overflow-auto">
@@ -52,7 +98,7 @@ const Homepage = () => {
               </div>
             </div>
             <div className="w-2/5 pr-5">
-              <div className="grid h-fit w-full grid-cols-2 gap-4" ref={sec2Ref}>
+              <div className="grid h-fit w-full grid-cols-2 gap-4">
                 <img
                   src="/images/upcoming-opportunities-explainer.webp"
                   alt="tree"
@@ -62,8 +108,7 @@ const Homepage = () => {
                 <img
                   src="/images/priceless-planet-coalition-explainer.webp"
                   alt="tree"
-                  className="col-span-2 w-full rounded-2xl object-cover"
-                  style={{ height: sec2Ref.current ? `${sec2Ref.current.clientHeight / 2}px` : "auto" }}
+                  className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] "
                 />
               </div>
             </div>
@@ -71,7 +116,10 @@ const Homepage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-tree bg-cover px-13 pb-8 pt-13">
+      <div
+        className="flex flex-col bg-tree bg-cover px-13 pb-8 pt-13 transition-all duration-500 ease-in-out"
+        ref={first}
+      >
         <Text variant="text-40-bold" className="leading-[normal] text-darkCustom-150">
           Accessing the
         </Text>
@@ -163,11 +211,17 @@ const Homepage = () => {
           </div>
         </div>
       </div>
-      <TabCarouselAboutUs />
 
-      <div className="flex w-full items-center gap-12 bg-white pb-20 pl-13 pr-26 pt-16">
+      <div ref={second} className="transition-all duration-500 ease-in-out">
+        <TabCarouselAboutUs />
+      </div>
+
+      <div
+        className="flex w-full items-center gap-12 bg-white pb-20 pl-13 pr-26 pt-16 transition-all duration-500 ease-in-out"
+        ref={third}
+      >
         <div className="w-2/5 pr-5">
-          <div className="grid h-fit w-full grid-cols-2 gap-4" ref={sec2Ref}>
+          <div className="grid h-fit w-full grid-cols-2 gap-4">
             <img
               src="/images/upcoming-opportunities-explainer.webp"
               alt="tree"
@@ -177,8 +231,7 @@ const Homepage = () => {
             <img
               src="/images/priceless-planet-coalition-explainer.webp"
               alt="tree"
-              className="col-span-2 w-full rounded-2xl object-cover"
-              style={{ height: sec2Ref.current ? `${sec2Ref.current.clientHeight / 2}px` : "auto" }}
+              className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] "
             />
           </div>
         </div>
