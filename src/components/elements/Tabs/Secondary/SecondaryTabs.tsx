@@ -1,7 +1,7 @@
 import { Tab as HTab } from "@headlessui/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, useEffect } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
@@ -14,6 +14,7 @@ export interface SecondaryTabsProps extends DetailedHTMLProps<HTMLAttributes<HTM
   containerClassName?: string;
   setSelectedIndex?: (index: number) => void;
   variant?: SecundaryTabsVariants;
+  selectedIndex?: number;
 }
 
 export interface TabItem {
@@ -34,6 +35,7 @@ const SecondaryTabs = ({
   className,
   containerClassName,
   setSelectedIndex,
+  selectedIndex,
   variant = VARIANT_TABS_PRIMARY,
   ...divProps
 }: SecondaryTabsProps) => {
@@ -63,6 +65,12 @@ const SecondaryTabs = ({
     }
     setSelectedIndex && setSelectedIndex(index);
   };
+
+  useEffect(() => {
+    if (selectedIndex !== undefined) {
+      onTabChange(selectedIndex);
+    }
+  }, [selectedIndex]);
 
   return (
     <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>

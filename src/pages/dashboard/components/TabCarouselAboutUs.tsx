@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_ABOUT_US } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
@@ -32,7 +32,7 @@ const TabCarouselAboutUs = () => {
       description: t(
         "Using the map, you can click on a country to view country-level details or click on a dot to view details on specific projects. Clicking “learn more” will automatically add a country filter to the dashboard."
       ),
-      url: "/images/  .png"
+      url: "/images/about-us-3.png"
     },
     {
       id: "4",
@@ -51,6 +51,12 @@ const TabCarouselAboutUs = () => {
       url: "/images/about-us-4.png"
     }
   ];
+
+  useEffect(() => {
+    setTimeout(() => {
+      setActiveTab(activeTab === aboutUs.length - 1 ? 0 : activeTab + 1);
+    }, 15000);
+  }, [activeTab]);
 
   return (
     <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px]">
@@ -86,11 +92,15 @@ const TabCarouselAboutUs = () => {
           setActiveTab(e);
         }}
         variant={VARIANT_TABS_ABOUT_US}
+        selectedIndex={activeTab}
       />
       <Carousel
         carouselItem={aboutUs => (
           <div className="flex w-full items-center">
             <div className="w-[61%] pr-16 text-darkCustom">
+              <Text variant="text-36-bold" className="mb-6">
+                {aboutUs.title}
+              </Text>
               <Text variant="text-36-bold" className="mb-6">
                 Using the platform
               </Text>
@@ -107,6 +117,9 @@ const TabCarouselAboutUs = () => {
         selectedImage={activeTab}
         swiperSlideClassName="!w-full"
         numberSlidesPerView={1}
+        swiperButtonsClassName="!hidden"
+        hidePaginationBullet={true}
+        setSelectedImage={setActiveTab}
         breakpoints={{
           1000: {
             slidesPerView: 1
