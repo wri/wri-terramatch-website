@@ -9,6 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
@@ -62,6 +63,10 @@ const SecDashboard = ({
   >([]);
   const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
+
+  const noDataInformation = t(
+    "Data is still being collected and checked. This visual will remain empty until data is properly quality assured."
+  );
 
   const tableColumns = [
     {
@@ -175,16 +180,12 @@ const SecDashboard = ({
           </If>
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
-          <If condition={isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}>
-            <Then>
-              <Text variant="text-14" className="text-darkCustom">
-                {t("No data available")}
-              </Text>
-            </Then>
-            <Else>
-              <DoughnutChart data={dataForChart} />
-            </Else>
-          </If>
+          <BlurContainer
+            isBlur={isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <DoughnutChart data={dataForChart} />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
           <If condition={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}>
