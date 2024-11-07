@@ -48,7 +48,7 @@ const Sidebar = () => {
           </a>
         </Tooltip>
 
-        <Tooltip content={t("PROJECT INSIGHTS")} placement="right">
+        <Tooltip content={t("COMING SOON")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
               "text-white": router.asPath.includes("/dashboard/project-insights")
@@ -60,17 +60,6 @@ const Sidebar = () => {
               {t("PROJECT")} <br />
               {t("INSIGHTS")}
             </Text>
-          </a>
-        </Tooltip>
-
-        <Tooltip content={t("COMING SOON")} placement="right">
-          <a
-            className={classNames("flex cursor-not-allowed flex-col items-center gap-1 opacity-50", {
-              "text-white": router.asPath.includes("/dashboard/reports")
-            })}
-          >
-            <Icon name={IconNames.DASHBOARD_REPORTS} className="h-8 w-8" />
-            <Text variant={"text-8"}>{t("REPORTS")}</Text>
           </a>
         </Tooltip>
 

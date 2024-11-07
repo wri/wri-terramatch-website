@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -7,6 +8,7 @@ import { DashboardTableDataProps } from "../index.page";
 
 const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[]; maxValue: number }) => {
   const t = useT();
+  const router = useRouter();
   const [animatedWidths, setAnimatedWidths] = useState<number[]>([]);
 
   useEffect(() => {
@@ -25,6 +27,10 @@ const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[];
       timeouts.forEach(timeout => clearTimeout(timeout));
     };
   }, [data, maxValue]);
+
+  const handleViewAllClick = () => {
+    router.push("/dashboard/project-list");
+  };
 
   return (
     <div className="w-full rounded-lg border border-grey-350 p-4">
@@ -49,8 +55,8 @@ const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[];
         );
       })}
 
-      <Text variant="text-14" className="mt-1 text-primary underline">
-        {t("VIEW ALL PROJECTS ")}
+      <Text variant="text-14" className="mt-1 cursor-pointer text-primary underline" onClick={handleViewAllClick}>
+        {t("VIEW ALL PROJECTS")}
       </Text>
     </div>
   );

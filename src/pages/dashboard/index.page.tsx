@@ -10,6 +10,7 @@ import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES } from "@/con
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
   formatLabelsVolunteers,
+  getCoverFileUrl,
   getFrameworkName,
   parseDataToObjetive,
   parseHectaresUnderRestorationData
@@ -258,11 +259,11 @@ const Dashboard = () => {
           <When condition={filters.uuid}>
             <div>
               <DashboardBreadcrumbs
-                framework={getFrameworkName(frameworks, dashboardProjectDetails?.framework) || ""}
-                countryId={dashboardProjectDetails?.country_id}
-                countryName={dashboardProjectDetails?.country}
-                countrySlug={dashboardProjectDetails?.country_slug}
-                projectName={dashboardProjectDetails?.name}
+                framework={getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework) || ""}
+                countryId={dashboardProjectDetails?.data?.country_id}
+                countryName={dashboardProjectDetails?.data?.country}
+                countrySlug={dashboardProjectDetails?.data?.country_slug}
+                projectName={dashboardProjectDetails?.data?.name}
                 className="pt-0"
                 textVariant="text-14"
                 clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
@@ -288,22 +289,26 @@ const Dashboard = () => {
             <PageCard className="border-0 px-4 py-6" gap={8}>
               <div className="flex items-center">
                 <img
-                  src="/images/_AJL2963.jpg"
+                  src={getCoverFileUrl(dashboardProjectDetails?.data?.file) ?? "/images/_AJL2963.jpg"}
                   alt="tree"
                   className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
                 />
                 <div>
-                  <Text variant="text-20-bold">{t(dashboardProjectDetails?.name)}</Text>
+                  <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
                   <Text variant="text-14-light" className="text-darkCustom">
-                    {t(`Operations: ${dashboardProjectDetails?.country}`)}
+                    {t(`Operations: ${dashboardProjectDetails?.data?.country}`)}
                     <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                    {t(`Registration: ${dashboardProjectDetails?.country}`)}
+                    {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
                     <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                     {t(
                       `Organization: ${
-                        ORGANIZATIONS_TYPES[dashboardProjectDetails?.organisation as keyof typeof ORGANIZATIONS_TYPES]
+                        ORGANIZATIONS_TYPES[
+                          dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
+                        ]
                       }`
                     )}
+                    <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                    {t(`Programme: ${getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework)}`)}
                   </Text>
                 </div>
               </div>
@@ -311,7 +316,7 @@ const Dashboard = () => {
                 title={t("Objective")}
                 classNameTitle="capitalize"
                 type="legend"
-                data={parseDataToObjetive(dashboardProjectDetails)}
+                data={parseDataToObjetive(dashboardProjectDetails?.data)}
                 variantTitle="text-18-semibold"
               />
             </PageCard>

@@ -9,10 +9,17 @@ import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { CHART_TYPES } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
+  DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
+  DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
+  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+} from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
-import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
+import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
 import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
@@ -62,6 +69,10 @@ const SecDashboard = ({
   >([]);
   const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
+
+  const noDataInformation = t(
+    "Data is still being collected and checked. This visual will remain empty until data is properly quality assured."
+  );
 
   const tableColumns = [
     {
@@ -134,7 +145,9 @@ const SecDashboard = ({
         </When>
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
-        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
+        {data?.value !== undefined && (
+          <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
+        )}
         <When condition={data?.totalValue}>
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
@@ -149,16 +162,61 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
-          <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+          <BlurContainer
+            isBlur={isEmptyChartData(chartType ?? "", treesPlantedByYear)}
+            textInformation={noDataInformation}
+          >
+            <MultiLineChart
+              data={
+                isEmptyChartData(chartType ?? "", treesPlantedByYear)
+                  ? DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART
+                  : treesPlantedByYear
+              }
+              isAbsoluteData={toggleValue === 1}
+            />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
-          <GroupedBarChart data={dataForChart} />
+          <BlurContainer
+            isBlur={isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <GroupedBarChart
+              data={
+                isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER
+                  : dataForChart
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
-          <DoughnutChart data={dataForChart} />
+          <BlurContainer
+            isBlur={isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <DoughnutChart
+              data={
+                isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER
+                  : dataForChart
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
-          <SimpleBarChart data={dataForChart} />
+          <BlurContainer
+            isBlur={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <SimpleBarChart
+              data={
+                isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+                  : dataForChart
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />

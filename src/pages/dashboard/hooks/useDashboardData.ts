@@ -165,9 +165,22 @@ export const useDashboardData = (filters: any) => {
   useEffect(() => {
     if (totalSectionHeader) {
       setDashboardHeader(prev => [
-        { ...prev[0], value: totalSectionHeader.total_trees_restored.toLocaleString() },
-        { ...prev[1], value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha` },
-        { ...prev[2], value: totalSectionHeader.total_entries.toLocaleString() }
+        {
+          ...prev[0],
+          value: totalSectionHeader.total_trees_restored
+            ? totalSectionHeader.total_trees_restored.toLocaleString()
+            : "-"
+        },
+        {
+          ...prev[1],
+          value: totalSectionHeader.total_hectares_restored
+            ? `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+            : "-"
+        },
+        {
+          ...prev[2],
+          value: totalSectionHeader.total_entries ? totalSectionHeader.total_entries.toLocaleString() : "-"
+        }
       ]);
       setNumberTreesPlanted({
         value: totalSectionHeader.total_trees_restored,

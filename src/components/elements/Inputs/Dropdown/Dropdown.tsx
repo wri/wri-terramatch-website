@@ -52,6 +52,7 @@ export interface DropdownProps {
   onChangeConfirm?: boolean;
   showClear?: boolean;
   showLabelAsMultiple?: boolean;
+  multipleText?: string;
   disableOptionTitles?: string[] | undefined;
   setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
@@ -150,9 +151,20 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return props?.disableOptionTitles?.includes(title);
   };
 
-  const formatSelectedValues = (selected: OptionValue[], options: Option[], value: any) => {
-    if (selected.length > 1 && props.showLabelAsMultiple) {
-      return `Multiple ${props.placeholder}s`;
+  const formatSelectedValues = (
+    selected: OptionValue[],
+    options: Option[],
+    value: any,
+    showLabelAsMultiple?: boolean,
+    placeholder?: string,
+    multipleText?: string
+  ) => {
+    if (selected.length > 1 && showLabelAsMultiple) {
+      if (multipleText) {
+        return multipleText;
+      }
+      const basePlaceholder = placeholder?.endsWith("s") ? placeholder.slice(0, -1) : placeholder;
+      return `Multiple ${basePlaceholder}s`;
     } else {
       return formatOptionsList(options, toArray<any>(value));
     }
@@ -198,9 +210,23 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname)}
-                  title={formatSelectedValues(selected, options, value)}
+                  title={formatSelectedValues(
+                    selected,
+                    options,
+                    value,
+                    props.showLabelAsMultiple,
+                    props.placeholder,
+                    props.multipleText
+                  )}
                 >
-                  {formatSelectedValues(selected, options, value) || props.placeholder}
+                  {formatSelectedValues(
+                    selected,
+                    options,
+                    value,
+                    props.showLabelAsMultiple,
+                    props.placeholder,
+                    props.multipleText
+                  ) || props.placeholder}
                 </Text>
               </div>
               <When condition={selected.length > 0 && showClear}>
