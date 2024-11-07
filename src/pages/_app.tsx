@@ -42,7 +42,10 @@ const _App = ({ Component, ...rest }: AppProps) => {
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
 
-  const { store, props } = wrapper.useWrappedStore(rest);
+  const {
+    store,
+    props: { props, pageProps }
+  } = wrapper.useWrappedStore(rest);
 
   setClientSideTranslations(props);
   setupYup(t);
@@ -55,7 +58,7 @@ const _App = ({ Component, ...rest }: AppProps) => {
             <NotificationProvider>
               <ModalProvider>
                 <ModalRoot />
-                <Component {...props.pageProps} />
+                <Component {...pageProps} />
               </ModalProvider>
             </NotificationProvider>
           </LoadingProvider>
@@ -67,7 +70,7 @@ const _App = ({ Component, ...rest }: AppProps) => {
       <ReduxProvider store={store}>
         <ToastProvider>
           <WrappedQueryClientProvider>
-            <Hydrate state={props.pageProps.dehydratedState}>
+            <Hydrate state={pageProps.dehydratedState}>
               <RouteHistoryProvider>
                 <LoadingProvider>
                   <NotificationProvider>
@@ -79,13 +82,13 @@ const _App = ({ Component, ...rest }: AppProps) => {
                           <Then>
                             <DashboardAnalyticsWrapper>
                               <DashboardLayout>
-                                <Component {...props.pageProps} />
+                                <Component {...pageProps} />
                               </DashboardLayout>
                             </DashboardAnalyticsWrapper>
                           </Then>
                           <Else>
                             <MainLayout>
-                              <Component {...props.pageProps} />
+                              <Component {...pageProps} />
                               <CookieBanner />
                             </MainLayout>
                           </Else>
