@@ -317,7 +317,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   showSelectAll
                   showLabelAsMultiple
                   showClear
-                  prefix={<Text variant="text-14-light">{t("Organization:")}</Text>}
+                  prefix={<Text variant="text-14-light">{t("Organization Type:")}</Text>}
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
