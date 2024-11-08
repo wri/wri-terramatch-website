@@ -116,7 +116,6 @@ const Country: React.FC<ChildComponentProps> = ({ selectedCountry }) => {
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
-              tooltipGraphic={true}
               data={NUMBER_OF_TREES_PLANTED_BY_YEAR}
               tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
             />
