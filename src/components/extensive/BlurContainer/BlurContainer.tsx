@@ -10,6 +10,10 @@ export interface BlurContainerProps {
 }
 
 const BlurContainer = ({ isBlur, textInformation, children, ...props }: BlurContainerProps) => {
+  if (!isBlur) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="relative w-full text-black">
       <div
