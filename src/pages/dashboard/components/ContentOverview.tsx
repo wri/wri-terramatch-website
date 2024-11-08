@@ -98,7 +98,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     const ne = bounds.getNorthEast();
     const dashboardBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
     const handleModalClose = (modalId: any) => {
-      handleCloseModal(); // Call the parent function to set the currentBbox
+      handleCloseModal();
       closeModal(modalId);
     };
     openModal(
