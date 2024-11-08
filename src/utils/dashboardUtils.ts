@@ -383,7 +383,7 @@ export const parseDataToObjetive = (data: InputData): Objetive => {
   return {
     objetiveText,
     preferredLanguage: "English",
-    landTenure: data?.landTenure ? data?.landTenure : "Unknown"
+    landTenure: data?.landTenure ? data?.landTenure : "Under Review"
   };
 };
 
