@@ -163,7 +163,7 @@ const SecDashboard = ({
               src="/images/treeBackground.svg"
               id="treeBackground"
               alt="secondValue"
-              className="absolute right-0 z-10 h-9 w-[316px]"
+              className="z-1 absolute right-0 h-9 w-[316px]"
             />
           </div>
         </When>

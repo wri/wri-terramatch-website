@@ -38,6 +38,8 @@ export const ORGANIZATIONS_TYPES = {
   "for-profit-organization": "Enterprise"
 };
 
+export const NO_DATA_INFORMATION = "No data available";
+
 export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {
     name: "Total",
