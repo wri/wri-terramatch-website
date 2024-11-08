@@ -6,13 +6,14 @@ import { formatDate, formatMonth, formatNumberChart } from "@/utils/dashboardUti
 
 type DataPoint = {
   time: string;
-  Total: number;
-  Enterprise: number;
-  "Non Profit": number;
+  Total?: number;
+  Enterprise?: number;
+  "Non Profit"?: number;
 };
 
 type ChartData = {
-  values: { time: string; value: number }[];
+  name: string;
+  values: { time: string; value: number; name: string }[];
 };
 
 type ChartProps = {
@@ -70,13 +71,27 @@ const CustomYAxisTick: React.FC<any> = ({ x, y, payload, isAbsoluteData }) => {
 };
 
 const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = false }) => {
-  const formattedData: DataPoint[] =
-    data[0]?.values?.map((item, index) => ({
-      time: formatDate(item.time),
-      Total: data[0].values[index].value,
-      Enterprise: data[1].values[index].value,
-      "Non Profit": data[2].values[index].value
-    })) || [];
+  const dataMap = new Map(data.map(item => [item.name, item]));
+  const referenceSeries = data[0]?.values || [];
+
+  const formattedData: DataPoint[] = referenceSeries.map((item, index) => {
+    const timePoint = formatDate(item.time);
+    const dataPoint: DataPoint = { time: timePoint };
+
+    if (dataMap.has("Total")) {
+      dataPoint.Total = dataMap.get("Total")?.values[index].value;
+    }
+    if (dataMap.has("Enterprise")) {
+      dataPoint.Enterprise = dataMap.get("Enterprise")?.values[index].value;
+    }
+    if (dataMap.has("Non Profit")) {
+      dataPoint["Non Profit"] = dataMap.get("Non Profit")?.values[index].value;
+    }
+
+    return dataPoint;
+  });
+
+  const availableColors = Object.fromEntries(Object.entries(COLORS).filter(([key]) => dataMap.has(key)));
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -104,13 +119,13 @@ const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = fals
           content={props => <CustomTooltip {...props} isAbsoluteData={isAbsoluteData} />}
           cursor={{ stroke: "#a6a6a6", strokeWidth: 1, strokeDasharray: "4 4" }}
         />
-        {Object.keys(COLORS).map(key => (
+        {Object.entries(availableColors).map(([key, color]) => (
           <Line
             key={key}
             type="linear"
             dataKey={key}
-            stroke={COLORS[key]}
-            dot={{ stroke: COLORS[key], strokeWidth: 2, r: 4 }}
+            stroke={color}
+            dot={{ stroke: color, strokeWidth: 2, r: 4 }}
             strokeWidth={2}
           />
         ))}

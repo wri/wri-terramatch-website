@@ -118,6 +118,29 @@ export interface HectaresUnderRestorationData {
   graphicTargetLandUseTypes: ParsedLandUseType[];
 }
 
+interface TreeSpeciesData {
+  treeSpeciesAmount: number;
+  treeSpeciesPercentage: number;
+  dueDate: string | number | Date;
+}
+
+interface RestorationData {
+  treesUnderRestorationActualTotal?: TreeSpeciesData[];
+  treesUnderRestorationActualForProfit?: TreeSpeciesData[];
+  treesUnderRestorationActualNonProfit?: TreeSpeciesData[];
+}
+
+interface ChartDataPoint {
+  time: Date;
+  value: number;
+  name: string;
+}
+
+interface ChartCategory {
+  name: string;
+  values: ChartDataPoint[];
+}
+
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -165,68 +188,60 @@ export const getRestorationGoalResumeData = (data: DashboardTreeRestorationGoalR
     { name: "Non Profit", value: data?.nonProfitTreeCount, color: "#B9EDFF" }
   ];
 };
-export const getRestorationGoalDataForChart = (data: any, isPercentage: boolean) => {
-  let chartData = [];
-  let totalSum = 0;
-  let enterpriseSum = 0;
-  let nonProfitSum = 0;
 
-  const totalData = {
-    name: "Total",
-    values: isPercentage
-      ? data?.treesUnderRestorationActualTotal?.map(
-          (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
-            totalSum += item.treeSpeciesPercentage;
-            return { time: new Date(item.dueDate), value: totalSum, name: "Total" };
-          }
-        )
-      : data?.treesUnderRestorationActualTotal?.map(
-          (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
-            totalSum += item.treeSpeciesAmount;
-            return { time: new Date(item.dueDate), value: totalSum, name: "Total" };
-          }
-        )
+export const getRestorationGoalDataForChart = (
+  data: RestorationData,
+  isPercentage: boolean,
+  isProjectView: boolean
+): ChartCategory[] => {
+  const createChartPoints = (
+    sourceData: TreeSpeciesData[] | undefined,
+    categoryName: string
+  ): { sum: number; values: ChartDataPoint[] } => {
+    let sum = 0;
+    const values =
+      sourceData?.map(item => {
+        sum += isPercentage ? item.treeSpeciesPercentage : item.treeSpeciesAmount;
+        return {
+          time: new Date(item.dueDate),
+          value: sum,
+          name: categoryName
+        };
+      }) || [];
+
+    return { sum, values };
   };
 
-  chartData.push(totalData);
-
-  const enterpriseData = {
-    name: "Enterprise",
-    values: isPercentage
-      ? data?.treesUnderRestorationActualForProfit?.map(
-          (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
-            enterpriseSum += item.treeSpeciesPercentage;
-            return { time: new Date(item.dueDate), value: enterpriseSum, name: "Enterprise" };
-          }
-        )
-      : data?.treesUnderRestorationActualForProfit?.map(
-          (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
-            enterpriseSum += item.treeSpeciesAmount;
-            return { time: new Date(item.dueDate), value: enterpriseSum, name: "Enterprise" };
-          }
-        )
+  const addCategoryToChart = (
+    chartData: ChartCategory[],
+    categoryName: string,
+    values: ChartDataPoint[],
+    sum: number
+  ): void => {
+    const shouldAdd = !isProjectView || (isProjectView && sum > 0);
+    if (shouldAdd) {
+      chartData.push({ name: categoryName, values });
+    }
   };
 
-  chartData.push(enterpriseData);
+  const chartData: ChartCategory[] = [];
 
-  const nonProfitData = {
-    name: "Non Profit",
-    values: isPercentage
-      ? data?.treesUnderRestorationActualNonProfit?.map(
-          (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
-            nonProfitSum += item.treeSpeciesPercentage;
-            return { time: new Date(item.dueDate), value: nonProfitSum, name: "Non Profit" };
-          }
-        )
-      : data?.treesUnderRestorationActualNonProfit?.map(
-          (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
-            nonProfitSum += item.treeSpeciesAmount;
-            return { time: new Date(item.dueDate), value: nonProfitSum, name: "Non Profit" };
-          }
-        )
-  };
+  if (!isProjectView) {
+    const { values } = createChartPoints(data.treesUnderRestorationActualTotal, "Total");
+    chartData.push({ name: "Total", values });
+  }
 
-  chartData.push(nonProfitData);
+  const { sum: enterpriseSum, values: enterpriseValues } = createChartPoints(
+    data.treesUnderRestorationActualForProfit,
+    "Enterprise"
+  );
+  addCategoryToChart(chartData, "Enterprise", enterpriseValues, enterpriseSum);
+
+  const { sum: nonProfitSum, values: nonProfitValues } = createChartPoints(
+    data.treesUnderRestorationActualNonProfit,
+    "Non Profit"
+  );
+  addCategoryToChart(chartData, "Non Profit", nonProfitValues, nonProfitSum);
 
   return chartData;
 };

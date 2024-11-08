@@ -374,7 +374,7 @@ const Dashboard = () => {
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
-              tooltipGraphic={true}
+              isProjectView={!!filters.uuid}
               data={{}}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.multiLineChart}
