@@ -47,7 +47,8 @@ const TabCarouselAboutUs = () => {
       id: "5",
       title: t("Coming Soon"),
       description: t(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla at purus ac tellus. Nulla facilisi. Donec euismod, odio nec ultricies."
+        `In early 2025, more features will come. Impact stories, taken from narrative reports, will give color and context to the numerical data on project profiles. And the Project Insights section will contain additional analyses showing trends and insights across the portfolio, tapping into the rich data housed on TerraMatch.
+        <div style="margin-top: 8px">If you have questions or would like to provide feedback, please email our support team at <a href="mailto:info@terramatch.org" target="_blank" className="underline text-14-bold underline-offset-4" rel="noreferrer">info@terramatch.org</a>.</div>`
       ),
       url: "/images/about-us-4.png"
     }
@@ -102,7 +103,9 @@ const TabCarouselAboutUs = () => {
               <Text variant="text-36-bold" className="mb-6 text-darkCustom-150">
                 Using the platform
               </Text>
-              <Text variant="text-18-light">{aboutUs.description}</Text>
+              <Text variant="text-18-light" containHtml={true}>
+                {aboutUs.description}
+              </Text>
               <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
                 {t("Open Dashboard")}
               </Button>
