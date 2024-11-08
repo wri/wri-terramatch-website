@@ -117,7 +117,7 @@ export const useDashboardData = (filters: any) => {
       queryParams: queryParams
     },
     {
-      enabled: !!filters.uuid
+      enabled: !!filters.uuid && isUserAllowed?.allowed === true
     }
   );
 
