@@ -92,9 +92,10 @@ const ProjectList = () => {
       enableSorting: false,
       cell: () => {
         return (
-          <a href="/dashboard/project">
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </a>
+          <Icon
+            name={IconNames.IC_ARROW_COLLAPSE}
+            className="h-3 w-3 rotate-90 text-darkCustom hover:cursor-pointer hover:text-primary"
+          />
         );
       }
     }
