@@ -64,7 +64,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     polygonsData,
     dataHectaresUnderRestoration,
     showImagesButton,
-    bbox,
+    bbox: initialBbox,
     projectCounts
   } = props;
   const t = useT();
@@ -76,16 +76,34 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
   }, [filters.country]);
+  const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
+  useEffect(() => {
+    if (initialBbox) {
+      setCurrentBbox(initialBbox);
+    }
+  }, [initialBbox]);
+  const handleCloseModal = () => {
+    const { map } = modalMapFunctions;
+    const bounds = (map.current as mapboxgl.Map).getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    const modalBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+    setCurrentBbox(modalBbox);
+  };
 
   const ModalMap = () => {
     const { map } = dashboardMapFunctions;
     const bounds = (map.current as mapboxgl.Map).getBounds();
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
-    const currentBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+    const dashboardBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+    const handleModalClose = (modalId: any) => {
+      handleCloseModal(); // Call the parent function to set the currentBbox
+      closeModal(modalId);
+    };
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal} popUpContent={MAP_TOOLTIP}>
+      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={handleModalClose} popUpContent={MAP_TOOLTIP}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
           <MapContainer
             id="modal"
@@ -97,7 +115,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
             showImagesButton={showImagesButton}
-            bbox={currentBbox}
+            bbox={dashboardBbox}
             selectedCountry={selectedCountry}
           />
 
@@ -156,9 +174,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       </ModalExpand>
     );
   };
-  useEffect(() => {
-    console.log("dataHectaresUnderRestoration", dataHectaresUnderRestoration);
-  }, [dataHectaresUnderRestoration]);
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="w-full gap-4 p-0">
@@ -187,7 +202,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
             showImagesButton={showImagesButton}
-            bbox={bbox}
+            bbox={currentBbox}
             selectedCountry={selectedCountry}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
