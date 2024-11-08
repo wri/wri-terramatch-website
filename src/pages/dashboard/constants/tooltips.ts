@@ -1,5 +1,5 @@
 export const TREES_PLANTED_TOOLTIP =
-  "Total number of trees planted by funded projects to date, as reported through six-month progress reports. This also includes trees planted by projects as part of their assisted natural regeneration activities.";
+  "Total number of trees planted by funded projects to date, as reported through six-month progress reports.";
 
 export const HECTARES_UNDER_RESTORATION_TOOLTIP =
   "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts.";
@@ -8,7 +8,7 @@ export const JOBS_CREATED_TOOLTIP =
   "Number of people newly employed directly by the project. Terrafund defines a job as any individual or person, aged 18 years or older, that is directly compensated by a project at any time to support their restoration activities.";
 
 export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
-  "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal. It also includes trees planted as part of assisted natural regeneration activities.";
+  "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal.";
 
 export const NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP = "Number of trees planted in each year.";
 

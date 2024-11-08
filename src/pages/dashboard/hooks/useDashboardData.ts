@@ -21,6 +21,7 @@ import {
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
+import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 
 export const useDashboardData = (filters: any) => {
@@ -30,15 +31,18 @@ export const useDashboardData = (filters: any) => {
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
-      value: "0"
+      value: "0",
+      tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
-      value: "0 ha"
+      value: "0 ha",
+      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
-      value: "0"
+      value: "0",
+      tooltip: JOBS_CREATED_TOOLTIP
     }
   ]);
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
