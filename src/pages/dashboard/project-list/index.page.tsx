@@ -47,7 +47,19 @@ const ProjectList = () => {
     },
     {
       header: "Programme",
-      accessorKey: "programme"
+      accessorKey: "programme",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value === "TerraFund Top 100" ? (
+          <Text variant="text-14-light">
+            TerraFund
+            <br />
+            Top 100
+          </Text>
+        ) : (
+          <Text variant="text-14-light">{value}</Text>
+        );
+      }
     },
     {
       header: "Country",
