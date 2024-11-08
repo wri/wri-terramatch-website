@@ -25,7 +25,8 @@ const Sidebar = () => {
               "text-white":
                 router.asPath.includes("/dashboard") &&
                 !router.asPath.includes("/dashboard/project-list") &&
-                !router.asPath.includes("/dashboard/project-insights")
+                !router.asPath.includes("/dashboard/project-insights") &&
+                !router.asPath.includes("/dashboard/about-us")
             })}
             href="/dashboard"
           >

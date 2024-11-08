@@ -6,6 +6,7 @@ import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
   useGetV2DashboardCountryCountry,
+  useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
@@ -136,7 +137,14 @@ export const useDashboardData = (filters: any) => {
     { pathParams: { project: filters.uuid } },
     { enabled: !!filters.uuid }
   );
-
+  const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
+    {
+      queryParams: queryParams
+    },
+    {
+      enabled: !!filters.uuid
+    }
+  );
   useEffect(() => {
     if (topData?.top_projects_most_planted_trees) {
       const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
@@ -204,6 +212,7 @@ export const useDashboardData = (filters: any) => {
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData?.data ?? {},
     countryBbox: countryBboxParsed,
-    isUserAllowed
+    isUserAllowed,
+    projectBbox: projectBbox?.bbox
   };
 };

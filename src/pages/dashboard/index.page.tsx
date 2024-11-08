@@ -71,7 +71,8 @@ const Dashboard = () => {
     activeCountries,
     activeProjects,
     polygonsData,
-    countryBbox
+    countryBbox,
+    projectBbox
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -80,7 +81,6 @@ const Dashboard = () => {
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);
-
   const COLUMN_ACTIVE_PROGRAMME = [
     {
       header: "Country",
@@ -240,7 +240,10 @@ const Dashboard = () => {
     ];
     return { type, chartData, total: data.total_volunteers };
   };
-
+  const projectCounts = {
+    total_enterprise_count: totalSectionHeader?.total_enterprise_count,
+    total_non_profit_count: totalSectionHeader?.total_non_profit_count
+  };
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
@@ -474,7 +477,8 @@ const Dashboard = () => {
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
         polygonsData={polygonsData}
-        countryBbox={countryBbox}
+        bbox={filters.uuid ? projectBbox : countryBbox}
+        projectCounts={projectCounts}
       />
     </div>
   );

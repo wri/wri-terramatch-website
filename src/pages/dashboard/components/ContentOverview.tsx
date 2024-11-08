@@ -47,7 +47,11 @@ interface ContentOverviewProps<TData> {
   polygonsData?: Record<string, string[]>;
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
-  countryBbox?: BBox | undefined;
+  bbox?: BBox | undefined;
+  projectCounts?: {
+    total_enterprise_count: number;
+    total_non_profit_count: number;
+  };
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -60,7 +64,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     polygonsData,
     dataHectaresUnderRestoration,
     showImagesButton,
-    countryBbox
+    bbox,
+    projectCounts
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -73,11 +78,28 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   }, [filters.country]);
 
   const ModalMap = () => {
+    const { map } = dashboardMapFunctions;
+    const bounds = (map.current as mapboxgl.Map).getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    const currentBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title={t("MAP")} closeModal={closeModal} popUpContent={MAP_TOOLTIP}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <MapContainer showLegend={false} mapFunctions={modalMapFunctions} className="!h-full" isDashboard={"modal"} />
+          <MapContainer
+            id="modal"
+            showLegend={false}
+            mapFunctions={modalMapFunctions}
+            isDashboard={"modal"}
+            className="custom-popup-close-button"
+            centroids={centroids}
+            showPopups={true}
+            polygonsData={polygonsData as Record<string, string[]>}
+            showImagesButton={showImagesButton}
+            bbox={currentBbox}
+            selectedCountry={selectedCountry}
+          />
 
           <TooltipGridMap label="Angola" learnMore={true} />
           <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
@@ -88,13 +110,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects (32)")}
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
               </Text>
             </div>
             <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects (457)")}
+                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
               </Text>
             </div>
           </div>
@@ -134,7 +156,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       </ModalExpand>
     );
   };
-
+  useEffect(() => {
+    console.log("dataHectaresUnderRestoration", dataHectaresUnderRestoration);
+  }, [dataHectaresUnderRestoration]);
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="w-full gap-4 p-0">
@@ -163,7 +187,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showPopups={true}
             polygonsData={polygonsData as Record<string, string[]>}
             showImagesButton={showImagesButton}
-            bbox={countryBbox}
+            bbox={bbox}
             selectedCountry={selectedCountry}
           />
           <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
@@ -174,13 +198,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects (32)")}
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
               </Text>
             </div>
             <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects (457)")}
+                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
               </Text>
             </div>
           </div>

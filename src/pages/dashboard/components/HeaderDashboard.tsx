@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -25,13 +26,21 @@ interface HeaderDashboardProps {
   isProjectInsightsPage?: boolean;
   isProjectListPage?: boolean;
   isProjectPage?: boolean;
+  isHomepage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
 }
 
 const HeaderDashboard = (props: HeaderDashboardProps) => {
-  const { isProjectInsightsPage, isProjectListPage, isProjectPage, dashboardCountries, setSelectedCountry } = props;
+  const {
+    isProjectInsightsPage,
+    isProjectListPage,
+    isProjectPage,
+    isHomepage,
+    dashboardCountries,
+    setSelectedCountry
+  } = props;
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
@@ -186,11 +195,19 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (isProjectListPage) {
       return "Project List";
     }
+    if (isHomepage) {
+      return "About Us";
+    }
     return "TerraMatch Insights";
   };
 
   return (
-    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+    <header
+      className={classNames("flex max-w-full justify-between gap-3 bg-cover ", {
+        "bg-dashboardHeader px-4 pb-4 pt-5": !isHomepage,
+        "bg-about-us-header bg-center px-14 py-10": isHomepage
+      })}
+    >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
@@ -207,7 +224,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             </ToolTip>
           </When>
         </Text>
-        <When condition={!isProjectInsightsPage}>
+        <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
             <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer disabled={isProjectPage}>

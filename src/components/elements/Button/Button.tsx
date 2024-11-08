@@ -29,6 +29,7 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "white-toggle"
     | "white-border"
     | "orange"
+    | "about-us"
     | "transparent-toggle"
     | "white-button-map";
   fullWidth?: boolean;
@@ -157,6 +158,11 @@ const Button: FC<IButtonProps> = props => {
         return {
           container: "h-fit rounded-lg bg-white px-4 py-2 shadow hover:bg-neutral-200",
           span: "flex items-center gap-2"
+        };
+      case "about-us":
+        return {
+          container: "h-fit rounded-lg bg-green-200 px-5 py-[18px] hover:bg-green-60 text-white",
+          span: "flex items-center text-16-bold"
         };
       default:
         return { container: "", span: "" };
