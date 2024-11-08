@@ -196,7 +196,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       return "Project List";
     }
     if (isHomepage) {
-      return "About Us";
+      return "About the TerraMatch Dashboards";
     }
     return "TerraMatch Insights";
   };
