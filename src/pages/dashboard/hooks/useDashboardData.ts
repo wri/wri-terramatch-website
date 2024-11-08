@@ -109,13 +109,14 @@ export const useDashboardData = (filters: any) => {
     { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
+  const shouldSendQueryParamsForCentroids = !(filters.uuid && user?.primaryRole === "government");
 
   const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
-    queryParams: queryParams
+    queryParams: shouldSendQueryParamsForCentroids ? queryParams : undefined
   });
   const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>(
     {
-      queryParams: user?.primaryRole !== "government" ? queryParams : undefined
+      queryParams: queryParams
     },
     {
       enabled: !!filters.uuid && isUserAllowed?.allowed === true && user?.primaryRole !== "government"
