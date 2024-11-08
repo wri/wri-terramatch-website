@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
@@ -63,6 +64,7 @@ const SecDashboard = ({
   dataForChart?: any;
   chartType?: string;
 }) => {
+  const router = useRouter();
   const [toggleValue, setToggleValue] = useState(0);
   const [restorationGoalResume, setRestorationGoalResume] = useState<
     { name: string; value: number | undefined; color: string }[]
@@ -86,6 +88,10 @@ const SecDashboard = ({
       enableSorting: false
     }
   ];
+
+  const handleViewAllClick = () => {
+    router.push("/dashboard/project-list");
+  };
 
   useEffect(() => {
     if (data?.tableData) {
@@ -247,12 +253,21 @@ const SecDashboard = ({
           <When condition={toggleValue === 0}>
             <div className="w-full">
               {data && (
-                <Table
-                  data={data?.tableData ?? []}
-                  hasPagination={false}
-                  columns={tableColumns}
-                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                />
+                <>
+                  <Table
+                    data={data?.tableData ?? []}
+                    hasPagination={false}
+                    columns={tableColumns}
+                    variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  />
+                  <Text
+                    variant="text-14"
+                    className="mt-1 cursor-pointer pt-2 pl-4 text-primary underline"
+                    onClick={handleViewAllClick}
+                  >
+                    {t("VIEW ALL PROJECTS")}
+                  </Text>
+                </>
               )}
             </div>
           </When>
